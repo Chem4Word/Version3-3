@@ -55,10 +55,6 @@ namespace Chem4Word.ACME.Models
             {
                 _cml = value;
                 LoadOtherNames(value);
-                if (!Initializing)
-                {
-                    Save();
-                }
                 OnPropertyChanged();
             }
         }
@@ -71,7 +67,7 @@ namespace Chem4Word.ACME.Models
                 if (_libraryOptions != null)
                 {
                     var lib = new Library(_telemetry, _libraryOptions);
-                    lib.UpdateChemistry(Id, Name, Cml, Formula);
+                    lib.UpdateChemistry(Id, Name, Cml, Formula, MolecularWeight);
                 }
             }
             catch (Exception ex)

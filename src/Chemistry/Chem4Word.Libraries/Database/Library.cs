@@ -483,7 +483,7 @@ namespace Chem4Word.Libraries.Database
 
                         var conn = transaction.Connection;
 
-                        var id = AddChemistry(conn, model, chemicalName, model.ConciseFormula);
+                        var id = AddChemistry(conn, model, chemicalName, model.ConciseFormula, model.MolecularWeight);
                         foreach (var name in mol.Names)
                         {
                             AddChemicalName(conn, id, name.Value, name.FullType);
@@ -504,6 +504,21 @@ namespace Chem4Word.Libraries.Database
             return result;
         }
 
+        private void UpdateMolWeight(SQLiteConnection conn, long id, double molWeight)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("UPDATE Gallery");
+            sb.AppendLine("SET MolWeight = @weight");
+            sb.AppendLine("WHERE Id = @id");
+
+            var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@id", DbType.Int64).Value = id;
+            command.Parameters.Add("@weight", DbType.Double).Value = molWeight;
+
+            command.ExecuteNonQuery();
+        }
+
         /// <summary>
         /// This is called by ...
         /// </summary>
@@ -511,14 +526,14 @@ namespace Chem4Word.Libraries.Database
         /// <param name="name"></param>
         /// <param name="xml"></param>
         /// <param name="formula"></param>
-        public void UpdateChemistry(long id, string name, string xml, string formula)
+        public void UpdateChemistry(long id, string name, string xml, string formula, double weight)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 using (SQLiteConnection conn = LibraryConnection())
                 {
-                    UpdateChemistry(conn, id, name, xml, formula);
+                    UpdateChemistry(conn, id, name, xml, formula, weight);
                 }
             }
             catch (Exception ex)
@@ -530,20 +545,21 @@ namespace Chem4Word.Libraries.Database
             }
         }
 
-        private void UpdateChemistry(SQLiteConnection conn, long id, string name, string xml, string formula)
+        private void UpdateChemistry(SQLiteConnection conn, long id, string name, string xml, string formula, double weight)
         {
             Byte[] blob = Encoding.UTF8.GetBytes(xml);
 
             var sb = new StringBuilder();
-            sb.AppendLine("UPDATE GALLERY");
-            sb.AppendLine("SET Name = @name, Chemistry = @blob, Formula = @formula");
-            sb.AppendLine("WHERE ID = @id");
+            sb.AppendLine("UPDATE Gallery");
+            sb.AppendLine("SET Name = @name, Chemistry = @blob, Formula = @formula, MolWeight = @weight");
+            sb.AppendLine("WHERE Id = @id");
 
             var command = new SQLiteCommand(sb.ToString(), conn);
             command.Parameters.Add("@id", DbType.Int64).Value = id;
             command.Parameters.Add("@blob", DbType.Binary, blob.Length).Value = blob;
-            command.Parameters.Add("@name", DbType.String, name?.Length ?? 0).Value = name ?? "";
-            command.Parameters.Add("@formula", DbType.String, formula?.Length ?? 0).Value = formula ?? "";
+            command.Parameters.Add("@name", DbType.String, name.Length).Value = name;
+            command.Parameters.Add("@formula", DbType.String, formula.Length).Value = formula;
+            command.Parameters.Add("@weight", DbType.Double).Value = weight;
 
             using (SQLiteTransaction tr = conn.BeginTransaction())
             {
@@ -677,7 +693,7 @@ namespace Chem4Word.Libraries.Database
         /// <param name="chemistryName"></param>
         /// <param name="formula"></param>
         /// <returns></returns>
-        public long AddChemistry(Model model, string chemistryName, string formula)
+        public long AddChemistry(Model model, string chemistryName, string formula, double weight)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             long result;
@@ -685,7 +701,7 @@ namespace Chem4Word.Libraries.Database
             {
                 using (SQLiteConnection conn = LibraryConnection())
                 {
-                    result = AddChemistry(conn, model, chemistryName, formula);
+                    result = AddChemistry(conn, model, chemistryName, formula, weight);
                 }
             }
             catch (Exception ex)
@@ -709,7 +725,7 @@ namespace Chem4Word.Libraries.Database
         /// <param name="chemistryName"></param>
         /// <param name="formula"></param>
         /// <returns></returns>
-        private long AddChemistry(SQLiteConnection conn, Model model, string chemistryName, string formula)
+        private long AddChemistry(SQLiteConnection conn, Model model, string chemistryName, string formula, double weight)
         {
             var sb = new StringBuilder();
 
@@ -717,14 +733,15 @@ namespace Chem4Word.Libraries.Database
             //var blob = Encoding.UTF8.GetBytes(_sdFileConverter.Export(model))
 
             sb.AppendLine("INSERT INTO Gallery");
-            sb.AppendLine(" (Chemistry, Name, Formula)");
+            sb.AppendLine(" (Chemistry, Name, Formula, MolWeight)");
             sb.AppendLine("VALUES");
-            sb.AppendLine(" (@blob, @name, @formula)");
+            sb.AppendLine(" (@blob, @name, @formula, @weight)");
 
             var command = new SQLiteCommand(sb.ToString(), conn);
             command.Parameters.Add("@blob", DbType.Binary, blob.Length).Value = blob;
             command.Parameters.Add("@name", DbType.String, chemistryName.Length).Value = chemistryName;
             command.Parameters.Add("@formula", DbType.String, formula.Length).Value = formula;
+            command.Parameters.Add("@weight", DbType.Double).Value = weight;
 
             command.ExecuteNonQuery();
 
@@ -777,10 +794,13 @@ namespace Chem4Word.Libraries.Database
             try
             {
                 var sw = new Stopwatch();
-                sw.Start();
+
+                Dictionary<long, double> weights = new Dictionary<long, double>();
 
                 using (SQLiteConnection conn = LibraryConnection())
                 {
+                    sw.Start();
+
                     var allTaggedItems = GetAllChemistryTags(conn);
 
                     using (SQLiteDataReader chemistry = GetAllChemistry(conn))
@@ -799,14 +819,46 @@ namespace Chem4Word.Libraries.Database
                                     Tags = allTaggedItems.Where(t => t.ChemistryId == id).ToList()
                                 };
 
+                                // Handle inserting of MolWeight if required
+                                var molWeight = chemistry["molweight"].ToString();
+                                if (string.IsNullOrEmpty(molWeight))
+                                {
+                                    var model = _cmlConverter.Import(dto.Cml);
+                                    dto.MolWeight = model.MolecularWeight;
+                                    weights.Add(id, model.MolecularWeight);
+                                }
+                                else
+                                {
+                                    dto.MolWeight = double.Parse(molWeight);
+                                }
+
                                 results.Add(dto);
                             }
                         }
                     }
+
+                    sw.Stop();
+                    _telemetry.Write(module, "Timing", $"Reading {results.Count} structures took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms");
                 }
 
-                sw.Stop();
-                _telemetry.Write(module, "Timing", $"Reading {results.Count} structures took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms");
+                // Write back any calculated weights
+                if (weights.Count > 0)
+                {
+                    using (SQLiteConnection conn = LibraryConnection())
+                    {
+                        sw.Start();
+                        using (SQLiteTransaction tr = conn.BeginTransaction())
+                        {
+                            foreach (var weight in weights)
+                            {
+                                UpdateMolWeight(conn, weight.Key, weight.Value);
+                            }
+                            tr.Commit();
+                        }
+                        sw.Stop();
+                        _telemetry.Write(module, "Information", $"Saving MolWeight for {weights.Count} structures took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -857,7 +909,7 @@ namespace Chem4Word.Libraries.Database
             SQLiteDataReader result = null;
             var sb = new StringBuilder();
 
-            sb.AppendLine("SELECT Id, Chemistry, Name, Formula");
+            sb.AppendLine("SELECT Id, Chemistry, Name, Formula, MolWeight");
             sb.AppendLine("FROM Gallery");
             sb.AppendLine("ORDER BY Name");
 

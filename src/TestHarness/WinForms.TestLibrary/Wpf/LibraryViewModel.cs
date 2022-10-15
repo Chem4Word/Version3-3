@@ -149,7 +149,7 @@ namespace WinForms.TestLibrary.Wpf
                     foreach (ChemistryObject chemistry in eNewItems)
                     {
                         var cmlConverter = new CMLConverter();
-                        chemistry.Id = lib.AddChemistry(cmlConverter.Import(chemistry.Cml), chemistry.Name, chemistry.Formula);
+                        chemistry.Id = lib.AddChemistry(cmlConverter.Import(chemistry.Cml), chemistry.Name, chemistry.Formula, chemistry.MolecularWeight);
                     }
                 }
             }

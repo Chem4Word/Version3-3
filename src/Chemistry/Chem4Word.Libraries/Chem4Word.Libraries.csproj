@@ -118,7 +118,6 @@
     <EmbeddedResource Include="Resources\Patches.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Database\V3.1-Schema.sql" />
     <Content Include="Ionic.Zip.xml" />
   </ItemGroup>
   <ItemGroup />

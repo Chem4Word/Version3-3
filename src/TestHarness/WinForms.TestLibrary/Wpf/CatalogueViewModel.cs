@@ -77,19 +77,15 @@ namespace WinForms.TestLibrary.Wpf
                 var lib = new Library(_telemetry, _libraryOptions);
                 List<ChemistryDataObject> dto = lib.GetAllChemistry();
 
-                var cmlCoverter = new CMLConverter();
-
                 foreach (var chemistryDto in dto)
                 {
-                    var model = cmlCoverter.Import(chemistryDto.Cml);
-
                     var obj = new ChemistryObject(_telemetry, _libraryOptions)
                     {
                         Id = chemistryDto.Id,
                         Cml = chemistryDto.Cml,
                         Formula = chemistryDto.Formula,
                         Name = chemistryDto.Name,
-                        MolecularWeight = model.MolecularWeight,
+                        MolecularWeight = chemistryDto.MolWeight,
                         Tags = chemistryDto.Tags.Select(t => t.Text).ToList()
                     };
 

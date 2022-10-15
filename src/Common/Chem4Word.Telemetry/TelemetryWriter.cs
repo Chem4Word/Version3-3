@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Chem4Word.Core.Helpers;
+using Chem4Word.Shared;
 using IChem4Word.Contracts;
 
 namespace Chem4Word.Telemetry
@@ -27,11 +28,12 @@ namespace Chem4Word.Telemetry
         private static WmiHelper _wmiHelper;
 
         private readonly bool _permissionGranted;
+        private readonly bool _isBeta;
 
-        public TelemetryWriter(bool permissionGranted, SystemHelper helper)
+        public TelemetryWriter(bool permissionGranted, bool isBeta, SystemHelper helper)
         {
             _permissionGranted = permissionGranted;
-
+            _isBeta = isBeta;
             _helper = helper;
 
             if (_helper == null)
@@ -118,6 +120,18 @@ namespace Chem4Word.Telemetry
                                 }
                             }
                         }
+
+                        var failedToFetch =  _helper.GitStatus
+                                                     .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                                                     .FirstOrDefault(l => l.Contains("is not a git command"));
+                        if (!string.IsNullOrEmpty(failedToFetch))
+                        {
+                            // One of these two commands is required to be run, most likely the first one ...
+                            // git config --global --unset credential.helper
+                            // git config --global credential.helper store
+                            MessageBox.Show(@"Git fetch failed\nYou need to run 'git config --global --unset credential.helper' from a command prompt.", "WARNING");
+                        }
+
                     }
                 }
             }
@@ -158,7 +172,7 @@ namespace Chem4Word.Telemetry
             }
             WritePrivate("StartUp", "Information", Environment.GetCommandLineArgs()[0]);
 
-            WritePrivate("StartUp", "Information", $"Browser Version: {_helper.BrowserVersion}");
+            //WritePrivate("StartUp", "Information", $"Browser Version: {_helper.BrowserVersion}");
 
             if (_helper.StartUpTimings != null)
             {
@@ -264,10 +278,16 @@ namespace Chem4Word.Telemetry
 
             lines.Add($"Debug - Environment.CommandLine: {Environment.CommandLine}");
             lines.Add($"Debug - AddIn Location: {_helper.AddInLocation}");
-            lines.Add($"Debug - Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
-            lines.Add($"Debug - Environment.Is64BitProcess: {Environment.Is64BitProcess}");
 
             WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, lines));
+
+            if (_isBeta)
+            {
+                WritePrivate("StartUp", "Information", $"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
+                WritePrivate("StartUp", "Information", $"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
+
+                WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, OfficeHelper.GetWinWordSearchPaths()));
+            }
 
             if (!string.IsNullOrEmpty(_helper.GitStatus))
             {
@@ -324,7 +344,7 @@ namespace Chem4Word.Telemetry
                 utcOffset = _helper.UtcOffset;
                 processId = _helper.ProcessId;
             }
-            var sbm = new ServiceBusMessage(utcOffset, processId);
+            var sbm = new OutputMessage(utcOffset, processId);
             sbm.MachineId = _helper.MachineId;
             sbm.Operation = operation;
             sbm.Level = level;

@@ -142,7 +142,7 @@ namespace WinForms.TestLibrary.Wpf
                         var result = UIUtils.ShowSketcher(_acmeOptions, _telemetry, topLeft, item.Cml);
                         if (result.IsDirty)
                         {
-                            _library.UpdateChemistry(id, item.Name, result.Cml, result.Formua);
+                            _library.UpdateChemistry(id, item.Name, result.Cml, result.Formua, result.MolecularWeight);
 
                             item.Cml = result.Cml;
                             item.Formula = result.Formua;

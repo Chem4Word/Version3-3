@@ -8,6 +8,7 @@
 // Shared file (Add As Link)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,6 +32,18 @@ namespace Chem4Word.Shared
             @"Microsoft Office\root\Office{0}",
             @"Microsoft Office {0}\Client{1}\Root\Office{0}"
         };
+
+        public static List<string> GetWinWordSearchPaths()
+        {
+            var paths = new List<string>();
+
+            paths.Add($"GetFromRegistryMethod1 => '{GetFromRegistryMethod1()}'");
+            paths.Add($"GetFromRegistryMethod2 => '{GetFromRegistryMethod2()}'");
+            paths.Add($"GetFromRegistryMethod3 => '{GetFromRegistryMethod3()}'");
+            paths.Add($"GetFromKnownPathSearch => '{GetFromKnownPathSearch()}'");
+
+            return paths;
+        }
 
         public static FileVersionInfo GetWinWordVersion(string path = null)
         {
@@ -59,78 +72,92 @@ namespace Chem4Word.Shared
         /// <returns></returns>
         public static int GetWinWordVersionNumber(string path = null)
         {
+            int result;
+
             if (path == null)
             {
                 path = GetWinWordPath();
             }
 
-            if (path != null)
+            if (!string.IsNullOrEmpty(path))
             {
                 var fi = GetWinWordVersion(path);
 
-                return HumanOfficeVersion(fi.FileMajorPart);
+                result = HumanOfficeVersion(fi.FileMajorPart);
             }
             else
             {
-                return 0;
+                result = -1;
             }
+
+            return result;
         }
 
         public static string GetWordProduct(string clickToRun)
         {
+            string result;
+
             string pathToWinword = GetWinWordPath();
-            var fi = GetWinWordVersion(pathToWinword);
 
-            string wordVersionNumber = fi.FileVersion;
-
-            string officeProductName = string.Empty;
-
-            // If this is Office 2016/2019/2021/365
-            if (wordVersionNumber.StartsWith("16."))
+            if (!string.IsNullOrEmpty(pathToWinword))
             {
-                officeProductName = DecodeClickToRun(clickToRun);
-            }
+                var fi = GetWinWordVersion(pathToWinword);
 
-            if (string.IsNullOrEmpty(officeProductName))
-            {
-                officeProductName = GetOfficeProductName();
-            }
+                string wordVersionNumber = fi.FileVersion;
 
-            if (string.IsNullOrEmpty(officeProductName))
-            {
-                officeProductName = fi.ProductName;
-            }
+                string officeProductName = string.Empty;
 
-            string servicePack = GetOfficeServicePack(fi.FileVersion);
-            if (!string.IsNullOrEmpty(servicePack))
-            {
-                officeProductName = officeProductName + " " + servicePack.Trim();
-            }
-
-            // Get a bit more information about this version
-            if (officeProductName.Contains("-0000000FF1CE}"))
-            {
-                officeProductName += Environment.NewLine + fi.ProductName;
-            }
-
-            string result = officeProductName + " [" + wordVersionNumber + "]";
-
-            // Not 100% sure why we would ever get this ???
-            if (result.Contains("[11."))
-            {
-                result = $"Microsoft Office 2003 [{wordVersionNumber}]";
-            }
-
-            int limiter = 32;
-            while (result.IndexOf("  ", StringComparison.Ordinal) >= 0)
-            {
-                result = result.Replace("\t", " ");
-                result = result.Replace("  ", " ");
-                limiter--;
-                if (limiter == 0)
+                // If this is Office 2016/2019/2021/365
+                if (wordVersionNumber.StartsWith("16."))
                 {
-                    break;
+                    officeProductName = DecodeClickToRun(clickToRun);
                 }
+
+                if (string.IsNullOrEmpty(officeProductName))
+                {
+                    officeProductName = GetOfficeProductName();
+                }
+
+                if (string.IsNullOrEmpty(officeProductName))
+                {
+                    officeProductName = fi.ProductName;
+                }
+
+                string servicePack = GetOfficeServicePack(fi.FileVersion);
+                if (!string.IsNullOrEmpty(servicePack))
+                {
+                    officeProductName = officeProductName + " " + servicePack.Trim();
+                }
+
+                // Get a bit more information about this version
+                if (officeProductName.Contains("-0000000FF1CE}"))
+                {
+                    officeProductName += Environment.NewLine + fi.ProductName;
+                }
+
+                result = officeProductName + " [" + wordVersionNumber + "]";
+
+                // Not 100% sure why we would ever get this ???
+                if (result.Contains("[11."))
+                {
+                    result = $"Microsoft Office 2003 [{wordVersionNumber}]";
+                }
+
+                int limiter = 32;
+                while (result.IndexOf("  ", StringComparison.Ordinal) >= 0)
+                {
+                    result = result.Replace("\t", " ");
+                    result = result.Replace("  ", " ");
+                    limiter--;
+                    if (limiter == 0)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                result = "Unable to detect path to Word !";
             }
 
             return result;
@@ -236,6 +263,11 @@ namespace Chem4Word.Shared
                         break;
                     }
 
+                    if (p3.Contains("homeprem"))
+                    {
+                        productName = "Home Premium";
+                        break;
+                    }
                     if (p3.Contains("homepremium"))
                     {
                         productName = "Home Premium";
@@ -699,21 +731,59 @@ namespace Chem4Word.Shared
         {
             string result = null;
 
-            result = GetFromRegistryMethod1();
-
-            if (result == null)
+            try
             {
-                result = GetFromRegistryMethod2();
+                result = GetFromRegistryMethod1();
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine(exception.Message);
+                Debugger.Break();
             }
 
             if (result == null)
             {
-                result = GetFromRegistryMethod3();
+                try
+                {
+                    result = GetFromRegistryMethod2();
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine(exception.Message);
+                    Debugger.Break();
+                }
             }
 
             if (result == null)
             {
-                result = GetFromKnownPathSearch();
+                try
+                {
+                    result = GetFromRegistryMethod3();
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine(exception.Message);
+                    Debugger.Break();
+                }
+            }
+
+            if (result == null)
+            {
+                try
+                {
+                    result = GetFromKnownPathSearch();
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine(exception.Message);
+                    Debugger.Break();
+                }
+            }
+
+            if (result == null)
+            {
+                Debug.WriteLine("SNAFU in GetWinWordPath() !");
+                Debugger.Break();
             }
 
             return result;
@@ -784,8 +854,8 @@ namespace Chem4Word.Shared
         {
             string result = null;
 
-            // HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\14.0\Word\InstallRoot == "C:\Program Files\Microsoft Office\root\Office16\"
-            // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Office\14.0\Word\InstallRoot == "C:\Program Files (x86)\Microsoft Office\root\Office16\"
+            // HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\16.0\Word\InstallRoot == "C:\Program Files\Microsoft Office\root\Office16\"
+            // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Office\16.0\Word\InstallRoot == "C:\Program Files (x86)\Microsoft Office\root\Office16\"
 
             foreach (var version in OfficeVersions)
             {
@@ -833,7 +903,7 @@ namespace Chem4Word.Shared
             }
             else
             {
-                Debug.WriteLine("");
+                Debug.WriteLine($@"Registry key '{rootKey}\{path}' not found!");
             }
 
             return result;
@@ -850,7 +920,7 @@ namespace Chem4Word.Shared
                 foreach (var template in FileSearchTemplates)
                 {
                     string programFiles;
-                    if (Environment.Is64BitOperatingSystem)
+                    if (Environment.Is64BitOperatingSystem && Environment.Is64BitProcess)
                     {
                         programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
                         result = FindExe(programFiles, template, version);
@@ -946,6 +1016,10 @@ namespace Chem4Word.Shared
 
                 case 16:
                     version = 2016;
+                    break;
+
+                case 17:
+                    version = 2019;
                     break;
             }
             return version;

@@ -14,6 +14,7 @@ namespace Chem4Word.Libraries.Database
         public long Id { get; set; }
         public string Name { get; set; }
         public string Formula { get; set; }
+        public double MolWeight { get; set; }
         public string Cml { get; set; }
 
         public List<ChemistryTagDataObject> Tags { get; set; }
