@@ -237,6 +237,10 @@
       <Component Id="OpenXML.SDK.Dependancy">
         <File Id="WindowsBase.dll" Source="$(var.Chem4Word.V3.TargetDir)WindowsBase.dll" />
       </Component>
+      <!-- Google Protocol Buffers-->
+      <Component Id="Google.Protobuf">
+          <File Id="Google.Protobuf.dll" Source="$(var.Chem4Word.V3.TargetDir)Google.Protobuf.dll" />
+      </Component>
       <!-- Database -->
       <Component Id="EntityFramework">
         <File Id="EntityFramework.dll" Source="$(var.Chem4Word.V3.TargetDir)EntityFramework.dll" />

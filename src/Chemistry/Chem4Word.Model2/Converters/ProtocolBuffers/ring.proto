@@ -1,0 +1,17 @@
+﻿// ---------------------------------------------------------------------------
+//  Copyright (c) 2022, The .NET Foundation.
+//  This software is released under the Apache License, Version 2.0.
+//  The license and further copyright text can be found in the file LICENSE.md
+//  at the root directory of the distribution.
+// ---------------------------------------------------------------------------
+
+syntax ="proto3";
+
+package model;
+
+option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
+import "Converters/ProtocolBuffers/atom.proto";
+message PBRing
+{
+	repeated PBAtom Atoms = 1;
+}

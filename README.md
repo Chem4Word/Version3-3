@@ -20,21 +20,23 @@ Azure Devops Build must be set to use VS2022 build agent
 |--|--|--|--|
 |Azure.Core.Amqp|1.2.0|MIT|2|
 |Azure.Core|1.25.0|MIT|2|
-|Azure.Messaging.ServiceBus|7.10.0|MIT|2|
-|DocumentFormat.OpenXml|2.17.1|MIT|3|
+|Azure.Messaging.ServiceBus|7.11.0|MIT|2|
+|DocumentFormat.OpenXml|2.18.0|MIT|3|
 |DotNetProjects.WpfToolkit.Input|6.1.94|MS-PL|1|
 |EntityFramework|6.4.4|Apache-2.0|3|
+|Google.Protobuf|3.21.8|BSD-3-Clause|1|
+|Grpc.Tools|2.50.0|Apache-2.0|1|
 |Jacobslusser.ScintillaNET|3.6.3|MIT|1|
 |Microsoft.Azure.Amqp|2.5.12|MIT|2|
 |Microsoft.Bcl.AsyncInterfaces|6.0.0|MIT|2|
-|Microsoft.NETCore.Platforms|6.0.5|MIT|2|
+|Microsoft.NETCore.Platforms|6.0.6|MIT|2|
 |Microsoft.NETCore.Targets|5.0.0|MIT|2|
 |Microsoft.Xaml.Behaviors.Wpf|1.1.39|MIT|1|
 |Microsoft_VisualStudio_QualityTools_UnitTestFramework.STW|12.0.21005.1|Microsoft|1|
 |Newtonsoft.Json|13.0.1|MIT|16|
 |Ookii.Dialogs.WinForms|4.0.0|Public Domain|1|
 |Stub.System.Data.SQLite.Core.NetFramework|1.0.116.0|Public Domain|3|
-|System.Buffers|4.5.1|MIT|3|
+|System.Buffers|4.5.1|MIT|4|
 |System.Collections.Immutable|6.0.0|MIT|1|
 |System.Data.SQLite.Core|1.0.116.0|Public Domain|3|
 |System.Data.SQLite.EF6|1.0.116.0|Public Domain|3|
@@ -44,19 +46,19 @@ Azure Devops Build must be set to use VS2022 build agent
 |System.IO.FileSystem.Primitives|4.3.0|MS-.NET-Library|3|
 |System.IO.Packaging|6.0.0|MIT|3|
 |System.Memory.Data|6.0.0|MIT|2|
-|System.Memory|4.5.5|MIT|3|
+|System.Memory|4.5.5|MIT|4|
 |System.Net.Http|4.3.4|MS-.NET-Library|9|
-|System.Numerics.Vectors|4.5.0|MIT|3|
+|System.Numerics.Vectors|4.5.0|MIT|4|
 |System.Private.Uri|4.3.2|MIT|2|
 |System.Resources.Extensions|6.0.0|MIT|1|
-|System.Runtime.CompilerServices.Unsafe|6.0.0|MIT|3|
+|System.Runtime.CompilerServices.Unsafe|6.0.0|MIT|4|
 |System.Runtime.InteropServices.RuntimeInformation|4.3.0|MS-.NET-Library|2|
 |System.Security.Cryptography.Algorithms|4.3.1|MS-.NET-Library|9|
 |System.Security.Cryptography.Encoding|4.3.0|MS-.NET-Library|9|
 |System.Security.Cryptography.Primitives|4.3.0|MS-.NET-Library|9|
 |System.Security.Cryptography.X509Certificates|4.3.2|MS-.NET-Library|9|
 |System.Text.Encodings.Web|6.0.0|MIT|2|
-|System.Text.Json|6.0.5|MIT|2|
+|System.Text.Json|6.0.6|MIT|2|
 |System.Threading.Tasks.Extensions|4.5.4|MIT|2|
 |System.ValueTuple|4.5.0|MIT|5|
 |Unofficial.Ionic.Zip|1.9.1.8|Unknown ?|3|

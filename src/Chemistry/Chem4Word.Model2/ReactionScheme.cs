@@ -4,12 +4,12 @@
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
+using Chem4Word.Model2.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using Chem4Word.Model2.Interfaces;
 
 namespace Chem4Word.Model2
 {
@@ -22,7 +22,7 @@ namespace Chem4Word.Model2
         public readonly ReadOnlyDictionary<Guid, Reaction> Reactions;
         private readonly Dictionary<Guid, Reaction> _reactions;
         public string Id { get; set; }
-        public Guid InternalId { get; }
+        public Guid InternalId { get; internal set; }
         public Model Parent { get; set; }
         public IChemistryContainer Root => throw new NotImplementedException();
 

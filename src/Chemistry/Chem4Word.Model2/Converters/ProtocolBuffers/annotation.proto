@@ -1,0 +1,23 @@
+﻿// ---------------------------------------------------------------------------
+//  Copyright (c) 2022, The .NET Foundation.
+//  This software is released under the Apache License, Version 2.0.
+//  The license and further copyright text can be found in the file LICENSE.md
+//  at the root directory of the distribution.
+// ---------------------------------------------------------------------------
+
+syntax ="proto3";
+package model;
+
+option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
+import "Converters/ProtocolBuffers/point.proto";
+import "google/protobuf/wrappers.proto";
+message PBAnnotation
+{
+	string ID = 1;
+	bool IsEditable = 2;
+	string Xaml = 3;
+	PBPoint Position = 4;
+	int32 EstLength = 5;
+	google.protobuf.DoubleValue SymbolSize = 6;
+
+}

@@ -5,14 +5,17 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Model2.Helpers;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using Xunit;
+using Point = System.Windows.Point;
 
 namespace Chem4WordTests
 {
@@ -387,7 +390,7 @@ namespace Chem4WordTests
 
             // Check that names and formulae have not been trashed
             Assert.True(m.Molecules.Values.First().Names.Count == 2, $"Expected 2 Chemical Names; Got {m.Molecules.Values.First().Names.Count}");
-            Assert.True(m.Molecules.Values.First().Formulas.Count == 2, $"Expected 2 Formulae; Got {m.Molecules.Values.First().Formulas.Count }");
+            Assert.True(m.Molecules.Values.First().Formulas.Count == 2, $"Expected 2 Formulae; Got {m.Molecules.Values.First().Formulas.Count}");
 
             // Check that we have one ring
             Assert.True(m.Molecules.Values.First().Rings.Count == 1, $"Expected 1 Ring; Got {m.Molecules.Values.First().Rings.Count}");
@@ -410,6 +413,170 @@ namespace Chem4WordTests
             // Check that we got three rings
             var mol2 = mol.Molecules.Values.Skip(1).First();
             Assert.True(mol2.Rings.Count == 3, $"Expected 3 Rings; Got {mol2.Rings.Count}");
+        }
+
+        [Fact]
+        public void PBuffExportBasicParafuchsin()
+        {
+            ProtocolBufferConverter pc = new ProtocolBufferConverter();
+            SdFileConverter mc = new SdFileConverter();
+            string molfile = ResourceHelper.GetStringResource("BasicParafuchsin.txt");
+            Model m = mc.Import(molfile);
+
+            var bytestuff = pc.Export(m);
+            Assert.True(bytestuff.Length > 0);
+        }
+
+        [Fact]
+        public void PbuffExportNested()
+        {
+            Stopwatch sw = new Stopwatch();
+
+            CMLConverter mc = new CMLConverter();
+
+            string cml = ResourceHelper.GetStringResource("NestedMolecules.xml");
+            ProtocolBufferConverter pc = new ProtocolBufferConverter();
+            Debug.WriteLine($"CML Length = {cml.Length}");
+            Model m = mc.Import(cml);
+            sw.Start();
+            var pbm = pc.Export(m);
+            sw.Stop();
+            Debug.WriteLine($"Export CML elapsed = {sw.ElapsedMilliseconds} ");
+            Assert.NotNull(pbm);
+
+            var bytestuff = pc.Export(m);
+            Assert.True(bytestuff.Length > 0);
+            Debug.WriteLine($"Protocol Buffer Length = {bytestuff.Length}");
+            m = pc.Import(bytestuff);
+
+            // Basic Sanity Checks
+            Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
+            // Check molecule m0 has 4 child molecules and no atoms
+            Molecule molecule_1 = m.Molecules.Values.First();
+            Assert.True(molecule_1.Molecules.Count == 4, $"Expected 4 Molecule; Got {molecule_1.Molecules.Count}");
+            Assert.True(molecule_1.Atoms.Count == 0, $"Expected 0 Atoms; Got {molecule_1.Atoms.Count}");
+            // Check molecule m2 has no child molecules and 6 atoms
+            molecule_1 = m.Molecules.Values.First().Molecules.Values.ToList()[1];
+            Assert.True(molecule_1.Molecules.Count == 0, $"Expected 0 Molecule; Got {molecule_1.Molecules.Count}");
+            Assert.True(molecule_1.Atoms.Count == 6, $"Expected 6 Atoms; Got {molecule_1.Atoms.Count}");
+            // Check molecule m1 has 1 child molecules and no atoms
+            molecule_1 = m.Molecules.Values.First().Molecules.Values.First();
+            Assert.True(molecule_1.Molecules.Count == 1, $"Expected 1 Molecule; Got {molecule_1.Molecules.Count}");
+            Assert.True(molecule_1.Atoms.Count == 0, $"Expected 0 Atoms; Got {molecule_1.Atoms.Count}");
+            // Check molecule m5 has 1 child molecules and 6 atoms
+            molecule_1 = m.Molecules.Values.First().Molecules.Values.First().Molecules.Values.First();
+            Assert.True(molecule_1.Molecules.Count == 0, $"Expected 0 Molecule; Got {molecule_1.Molecules.Count}");
+            Assert.True(molecule_1.Atoms.Count == 6, $"Expected 6 Atoms; Got {molecule_1.Atoms.Count}");
+        }
+
+        [Fact]
+        public void PBuffExportBig()
+        {
+            CMLConverter mc = new CMLConverter();
+
+            string cml = ResourceHelper.GetStringResource("Insulin.xml");
+            ProtocolBufferConverter pc = new ProtocolBufferConverter();
+
+            var cmlasbytes = Encoding.ASCII.GetBytes(cml);
+
+            Debug.WriteLine($"CML as Bytes Length = {cmlasbytes.Length}");
+            Model m = mc.Import(cml);
+            Stopwatch sw = new Stopwatch();
+
+            sw.Start();
+            byte[] buffer = pc.Export(m);
+            sw.Stop();
+
+            Debug.WriteLine($"PBffExportBig Elapsed = {sw.ElapsedMilliseconds}");
+            Debug.WriteLine($"Protocol Buffer Length = {buffer.Length}");
+        }
+
+        [Fact]
+        public void PBuffRoundTrip()
+        {
+            Stopwatch sw = new Stopwatch();
+            CMLConverter mc = new CMLConverter();
+            string cml = ResourceHelper.GetStringResource("Insulin.xml");
+            ProtocolBufferConverter pc = new ProtocolBufferConverter();
+
+            var cmlasbytes = Encoding.ASCII.GetBytes(cml);
+
+            Debug.WriteLine($"CML as Bytes Length = {cmlasbytes.Length}");
+
+            sw.Start();
+            Model m = mc.Import(cml);
+            sw.Stop();
+            Debug.WriteLine($"Round Trip CML Import (Elapsed) = {sw.ElapsedMilliseconds}");
+
+            sw.Reset();
+
+            sw.Start();
+
+            byte[] buffer = pc.Export(m);
+
+            sw.Stop();
+            Debug.WriteLine($"Round Trip Export To Stream (Elapsed) = {sw.ElapsedMilliseconds}");
+
+            Debug.WriteLine($"Round Trip Export To Stream (Length) = {buffer.Length}");
+
+            sw.Reset();
+            sw.Start();
+
+            var impModel = pc.Import(buffer);
+            Assert.True(impModel.Molecules.First().Value.Rings.Count == m.Molecules.First().Value.Rings.Count);
+            sw.Stop();
+            Assert.NotNull(impModel);
+
+            Assert.True(impModel.Molecules.Count == m.Molecules.Count);
+            Assert.True(impModel.Molecules.First().Value.Atoms.Count == m.Molecules.First().Value.Atoms.Count);
+            Assert.True(impModel.Molecules.First().Value.Bonds.Count == m.Molecules.First().Value.Bonds.Count);
+
+            Debug.WriteLine($"Round Trip Import From Stream (Elapsed) = {sw.ElapsedMilliseconds}");
+            Debug.WriteLine($"Round Trip Import From Stream (Length) = {buffer.Length}");
+        }
+
+
+        [Fact]
+        public void PBuffRoundTripSmall()
+        {
+            Stopwatch sw = new Stopwatch();
+            CMLConverter mc = new CMLConverter();
+            string cml = ResourceHelper.GetStringResource("Benzene.xml");
+            ProtocolBufferConverter pc = new ProtocolBufferConverter();
+
+            var cmlasbytes = Encoding.ASCII.GetBytes(cml);
+
+            Debug.WriteLine($"CML as Bytes Length = {cmlasbytes.Length}");
+
+            sw.Start();
+            Model m = mc.Import(cml);
+            sw.Stop();
+            Debug.WriteLine($"Round Trip CML Import (Elapsed) = {sw.ElapsedMilliseconds}");
+
+            sw.Reset();
+
+            sw.Start();
+            byte[] buffer = pc.Export(m);
+            sw.Stop();
+
+            Debug.WriteLine($"Round Trip Export To Stream (Elapsed) = {sw.ElapsedMilliseconds}");
+
+            Debug.WriteLine($"Round Trip Export To Stream (Length) = {buffer.Length}");
+
+            sw.Reset();
+            sw.Start();
+
+            var impModel = pc.Import(buffer);
+            sw.Stop();
+
+            Assert.NotNull(impModel);
+
+            Assert.True(impModel.Molecules.Count == m.Molecules.Count);
+            Assert.True(impModel.Molecules.First().Value.Atoms.Count == m.Molecules.First().Value.Atoms.Count);
+            Assert.True(impModel.Molecules.First().Value.Bonds.Count == m.Molecules.First().Value.Bonds.Count);
+            Assert.True(impModel.Molecules.First().Value.Rings.Count == m.Molecules.First().Value.Rings.Count);
+            Debug.WriteLine($"Round Trip Import From Stream (Elapsed) = {sw.ElapsedMilliseconds}");
+            Debug.WriteLine($"Round Trip Import From Stream (Length) = {buffer.Length}");
         }
     }
 }

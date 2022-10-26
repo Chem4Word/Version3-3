@@ -159,7 +159,7 @@ namespace Chem4Word.Model2
 
         public string Id { get; set; }
 
-        public Guid InternalId { get; }
+        public Guid InternalId { get; internal set; }
 
         public IChemistryContainer Parent { get; set; }
 

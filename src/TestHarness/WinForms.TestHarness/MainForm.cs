@@ -5,6 +5,20 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME;
+using Chem4Word.Editor.ACME;
+using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Converters.MDL;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
+using Chem4Word.Model2.Helpers;
+using Chem4Word.Renderer.OoXmlV4;
+using Chem4Word.Searcher.ChEBIPlugin;
+using Chem4Word.Searcher.OpsinPlugIn;
+using Chem4Word.Searcher.PubChemPlugIn;
+using Chem4Word.Shared;
+using Chem4Word.Telemetry;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,21 +28,11 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
-using Chem4Word.ACME;
-using Chem4Word.Editor.ACME;
-using Chem4Word.Model2;
-using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Converters.MDL;
-using Chem4Word.Model2.Helpers;
-using Chem4Word.Renderer.OoXmlV4;
-using Chem4Word.Searcher.ChEBIPlugin;
-using Chem4Word.Searcher.OpsinPlugIn;
-using Chem4Word.Searcher.PubChemPlugIn;
-using Chem4Word.Shared;
-using Chem4Word.Telemetry;
-using Newtonsoft.Json;
+using Color = System.Drawing.Color;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace WinForms.TestHarness
 {
@@ -76,6 +80,7 @@ namespace WinForms.TestHarness
                 sb.Append("All molecule files (*.mol, *.sdf, *.cml, *.xml)|*.mol;*.sdf;*.cml;*.xml");
                 sb.Append("|CML molecule files (*.cml, *.xml)|*.cml;*.xml");
                 sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
+                sb.Append("|Protocol Buffer (*.pbuff)|*.pbuff");
 
                 openFileDialog1.Title = "Open Structure";
                 openFileDialog1.InitialDirectory = Environment.SpecialFolder.MyDocuments.ToString();
@@ -114,6 +119,19 @@ namespace WinForms.TestHarness
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
                             model = cmlConvertor.Import(mol);
+                            stopwatch.Stop();
+                            elapsed1 = stopwatch.Elapsed;
+                            break;
+
+                        case ".pbuff":
+                            var pbc = new ProtocolBufferConverter();
+
+                            stopwatch = new Stopwatch();
+                            stopwatch.Start();
+
+                            var inputBytes = File.ReadAllBytes(openFileDialog1.FileName);
+                            model = pbc.Import(inputBytes);
+
                             stopwatch.Stop();
                             elapsed1 = stopwatch.Elapsed;
                             break;
@@ -170,7 +188,7 @@ namespace WinForms.TestHarness
             }
         }
 
-        private Brush ColorToBrush(System.Drawing.Color colour)
+        private Brush ColorToBrush(Color colour)
         {
             string hex = $"#{colour.A:X2}{colour.R:X2}{colour.G:X2}{colour.B:X2}";
             var converter = new BrushConverter();
@@ -263,7 +281,7 @@ namespace WinForms.TestHarness
                             Debugger.Break();
                         }
 
-                        allAtoms[targetAtom].Element = x as ElementBase;
+                        allAtoms[targetAtom].Element = x;
                         if (x.Symbol.Equals("C"))
                         {
                             //allAtoms[targetAtom].ShowSymbol = ShowCarbons.Checked
@@ -390,9 +408,8 @@ namespace WinForms.TestHarness
                     Information.Text =
                         $"Formula: {model.ConciseFormula} BondLength: {model.MeanBondLength.ToString("#,##0.00")}";
 
-                    model.Refresh();
-
                     Display.Chemistry = model;
+
                     Debug.WriteLine($"FlexForm is displaying {model.ConciseFormula}");
 
                     EnableNormalButtons();
@@ -422,7 +439,6 @@ namespace WinForms.TestHarness
             foreach (var item in stack)
             {
                 var model = item.Copy();
-                model.Refresh();
                 list.Add(new Controller(model));
             }
 
@@ -579,7 +595,7 @@ namespace WinForms.TestHarness
                 Model m = cmlConverter.Import(_lastCml);
                 m.CustomXmlPartGuid = "";
 
-                string filter = "CML molecule files (*.cml, *.xml)|*.cml;*.xml|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf";
+                string filter = "CML molecule files (*.cml, *.xml)|*.cml;*.xml|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf| Protocol Buffers (*.pbuff)|*.pbuff";
                 using (SaveFileDialog sfd = new SaveFileDialog { Filter = filter })
                 {
                     DialogResult dr = sfd.ShowDialog();
@@ -609,6 +625,9 @@ namespace WinForms.TestHarness
                                 SdFileConverter converter = new SdFileConverter();
                                 File.WriteAllText(sfd.FileName, converter.Export(m));
                                 break;
+                            case ".pbuff":
+                                WritePBuffFile(sfd.FileName, m);
+                                break;
                         }
                     }
                 }
@@ -619,6 +638,13 @@ namespace WinForms.TestHarness
                 _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
+        }
+
+        private void WritePBuffFile(string sfdFileName, Model model)
+        {
+            ProtocolBufferConverter pbc = new ProtocolBufferConverter();
+            var bytes = pbc.Export(model);
+            File.WriteAllBytes(sfdFileName, bytes);
         }
 
         private void ClearChemistry_Click(object sender, EventArgs e)
@@ -662,7 +688,7 @@ namespace WinForms.TestHarness
         {
             OoXmlV4Settings settings = new OoXmlV4Settings();
             settings.Telemetry = _telemetry;
-            settings.TopLeft = new System.Windows.Point(Left + 24, Top + 24);
+            settings.TopLeft = new Point(Left + 24, Top + 24);
 
             var tempOptions = _renderOptions.Clone();
             settings.RendererOptions = tempOptions;
@@ -681,7 +707,7 @@ namespace WinForms.TestHarness
         {
             AcmeSettingsHost settings = new AcmeSettingsHost();
             settings.Telemetry = _telemetry;
-            settings.TopLeft = new System.Windows.Point(Left + 24, Top + 24);
+            settings.TopLeft = new Point(Left + 24, Top + 24);
 
             var tempOptions = _editorOptions.Clone();
             settings.EditorOptions = tempOptions;
@@ -891,7 +917,7 @@ namespace WinForms.TestHarness
         {
             var renderer = new Renderer();
             renderer.Telemetry = _telemetry;
-            renderer.TopLeft = new System.Windows.Point(Left + 24, Top + 24);
+            renderer.TopLeft = new Point(Left + 24, Top + 24);
             renderer.Cml = _lastCml;
             renderer.Properties = new Dictionary<string, string>();
             renderer.Properties.Add("Guid", Guid.NewGuid().ToString("N"));
@@ -913,7 +939,7 @@ namespace WinForms.TestHarness
             {
                 searcher.Telemetry = _telemetry;
                 searcher.UserOptions = new ChEBIOptions();
-                searcher.TopLeft = new System.Windows.Point(Left + 24, Top + 24);
+                searcher.TopLeft = new Point(Left + 24, Top + 24);
 
                 DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
@@ -933,7 +959,7 @@ namespace WinForms.TestHarness
             {
                 searcher.Telemetry = _telemetry;
                 searcher.UserOptions = new PubChemOptions();
-                searcher.TopLeft = new System.Windows.Point(Left + 24, Top + 24);
+                searcher.TopLeft = new Point(Left + 24, Top + 24);
 
                 DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
@@ -953,7 +979,7 @@ namespace WinForms.TestHarness
             {
                 searcher.Telemetry = _telemetry;
                 searcher.UserOptions = new SearcherOptions();
-                searcher.TopLeft = new System.Windows.Point(Left + 24, Top + 24);
+                searcher.TopLeft = new Point(Left + 24, Top + 24);
 
                 DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)

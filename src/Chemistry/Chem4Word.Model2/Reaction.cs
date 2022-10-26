@@ -4,6 +4,7 @@
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
+using Chem4Word.Core.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +12,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using Chem4Word.Core.Helpers;
 
 namespace Chem4Word.Model2
 {
@@ -100,7 +100,7 @@ namespace Chem4Word.Model2
         public TextOffset? ConditionsBlockOffset { get; set; }
 
         public string Id { get; set; }
-        public Guid InternalId { get; }
+        public Guid InternalId { get; internal set; }
 
         public ReactionScheme Parent { get; set; }
         public bool InhibitEvents { get; private set; }

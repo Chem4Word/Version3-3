@@ -641,7 +641,7 @@ namespace Chem4Word.Model2
         /// <summary>
         /// The internal ID ties atoms and bonds together
         /// </summary>
-        public Guid InternalId { get; }
+        public Guid InternalId { get; internal set; }
 
         public bool Singleton => Parent?.Atoms.Count == 1 && Parent?.Atoms.Values.First() == this;
 

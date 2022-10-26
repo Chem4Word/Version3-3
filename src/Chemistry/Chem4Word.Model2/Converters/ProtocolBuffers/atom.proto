@@ -1,0 +1,42 @@
+﻿// ---------------------------------------------------------------------------
+//  Copyright (c) 2022, The .NET Foundation.
+//  This software is released under the Apache License, Version 2.0.
+//  The license and further copyright text can be found in the file LICENSE.md
+//  at the root directory of the distribution.
+// ---------------------------------------------------------------------------
+
+syntax ="proto3";
+package model;
+
+option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
+import "Converters/ProtocolBuffers/point.proto";
+import "google/protobuf/wrappers.proto";
+
+message PBChemicalElement
+{
+	string Symbol = 1;
+	google.protobuf.Int32Value PlacementH = 2;
+};
+
+message PBFunctionalGroup
+{
+	string ShortCode=1;
+	google.protobuf.Int32Value PlacementFG = 2;
+}
+message PBAtom
+{
+	repeated string Messages = 1;
+	
+	google.protobuf.BoolValue ExplicitC = 2;
+	oneof Symbol
+	{
+		PBChemicalElement Element = 3;
+		PBFunctionalGroup FunctionalGroup = 4;
+	}
+	string ID = 5;
+	google.protobuf.Int32Value IsotopeNumber = 6;
+	google.protobuf.Int32Value SpinMultiplicity = 7;
+	google.protobuf.Int32Value FormalCharge = 8;
+	PBPoint Position = 9;
+	bool DoubleRadical =11;
+}

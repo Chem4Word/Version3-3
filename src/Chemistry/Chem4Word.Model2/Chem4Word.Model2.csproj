@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Grpc.Tools.2.50.0\build\Grpc.Tools.props" Condition="Exists('..\..\packages\Grpc.Tools.2.50.0\build\Grpc.Tools.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +13,8 @@
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,12 +49,28 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Google.Protobuf, Version=3.21.8.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Google.Protobuf.3.21.8\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -82,6 +101,7 @@
     <Compile Include="Converters\MDL\SdFileBase.cs" />
     <Compile Include="Converters\MDL\SdFileConverter.cs" />
     <Compile Include="Converters\MDL\SdfState.cs" />
+    <Compile Include="Converters\ProtocolBuffers\ProtocolBufferConverter.cs" />
     <Compile Include="CrossedBonds.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ElementBase.cs" />
@@ -128,6 +148,20 @@
     <EmbeddedResource Include="Resources\PeriodicTable.csv" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <Protobuf Include="Converters\ProtocolBuffers\atom.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\bond.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\model.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\reaction.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\reactionScheme.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\compassPoints.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\ring.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\reactionType.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\point.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\textualProperty.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\bondStereo.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\bondDirection.proto" />
+    <Protobuf Include="Converters\ProtocolBuffers\substanceRole.proto" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\FunctionalGroups.json" />
     <None Include="Resources\PeriodicTable.xlsx" />
@@ -139,6 +173,19 @@
       <Name>Chem4Word.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Protobuf Include="Converters\ProtocolBuffers\molecule.proto" />
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="Converters\ProtocolBuffers\annotation.proto" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Grpc.Tools.2.50.0\build\Grpc.Tools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Grpc.Tools.2.50.0\build\Grpc.Tools.props'))" />
+    <Error Condition="!Exists('..\..\packages\Grpc.Tools.2.50.0\build\Grpc.Tools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Grpc.Tools.2.50.0\build\Grpc.Tools.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\Grpc.Tools.2.50.0\build\Grpc.Tools.targets" Condition="Exists('..\..\packages\Grpc.Tools.2.50.0\build\Grpc.Tools.targets')" />
 </Project>
