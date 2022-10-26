@@ -416,18 +416,6 @@ namespace Chem4WordTests
         }
 
         [Fact]
-        public void PBuffExportBasicParafuchsin()
-        {
-            ProtocolBufferConverter pc = new ProtocolBufferConverter();
-            SdFileConverter mc = new SdFileConverter();
-            string molfile = ResourceHelper.GetStringResource("BasicParafuchsin.txt");
-            Model m = mc.Import(molfile);
-
-            var bytestuff = pc.Export(m);
-            Assert.True(bytestuff.Length > 0);
-        }
-
-        [Fact]
         public void PbuffExportNested()
         {
             Stopwatch sw = new Stopwatch();
@@ -469,114 +457,64 @@ namespace Chem4WordTests
             Assert.True(molecule_1.Atoms.Count == 6, $"Expected 6 Atoms; Got {molecule_1.Atoms.Count}");
         }
 
-        [Fact]
-        public void PBuffExportBig()
+        [Theory]
+        [InlineData("NoAtoms.xml")]
+        [InlineData("Insulin.xml")]
+        [InlineData("Benzene.xml")]
+        [InlineData("Testosterone.xml")]
+        [InlineData("Phthalocyanine.xml")]
+        [InlineData("CopperPhthalocyanine.xml")]
+        public void PBuffRoundTripFromCml(string cmlFile)
         {
-            CMLConverter mc = new CMLConverter();
+            var sw = new Stopwatch();
+            var cmlConverter = new CMLConverter();
+            var protocolBufferConverter = new ProtocolBufferConverter();
 
-            string cml = ResourceHelper.GetStringResource("Insulin.xml");
-            ProtocolBufferConverter pc = new ProtocolBufferConverter();
+            var cml = ResourceHelper.GetStringResource(cmlFile);
+            var shortName = cmlFile.Replace(".xml", "");
 
-            var cmlasbytes = Encoding.ASCII.GetBytes(cml);
-
-            Debug.WriteLine($"CML as Bytes Length = {cmlasbytes.Length}");
-            Model m = mc.Import(cml);
-            Stopwatch sw = new Stopwatch();
-
+            // Import from CML
             sw.Start();
-            byte[] buffer = pc.Export(m);
+            var modelFromCml = cmlConverter.Import(cml);
             sw.Stop();
+            Assert.NotNull(modelFromCml);
 
-            Debug.WriteLine($"PBffExportBig Elapsed = {sw.ElapsedMilliseconds}");
-            Debug.WriteLine($"Protocol Buffer Length = {buffer.Length}");
-        }
+            Debug.WriteLine($"{shortName} - Atoms: {modelFromCml.GetAllAtoms().Count} Bonds: {modelFromCml.GetAllBonds().Count}");
+            Debug.WriteLine($"{shortName} - Import from CML took {sw.ElapsedMilliseconds}ms");
 
-        [Fact]
-        public void PBuffRoundTrip()
-        {
-            Stopwatch sw = new Stopwatch();
-            CMLConverter mc = new CMLConverter();
-            string cml = ResourceHelper.GetStringResource("Insulin.xml");
-            ProtocolBufferConverter pc = new ProtocolBufferConverter();
-
-            var cmlasbytes = Encoding.ASCII.GetBytes(cml);
-
-            Debug.WriteLine($"CML as Bytes Length = {cmlasbytes.Length}");
-
-            sw.Start();
-            Model m = mc.Import(cml);
-            sw.Stop();
-            Debug.WriteLine($"Round Trip CML Import (Elapsed) = {sw.ElapsedMilliseconds}");
-
-            sw.Reset();
-
-            sw.Start();
-
-            byte[] buffer = pc.Export(m);
-
-            sw.Stop();
-            Debug.WriteLine($"Round Trip Export To Stream (Elapsed) = {sw.ElapsedMilliseconds}");
-
-            Debug.WriteLine($"Round Trip Export To Stream (Length) = {buffer.Length}");
-
+            // Export to CML
             sw.Reset();
             sw.Start();
-
-            var impModel = pc.Import(buffer);
-            Assert.True(impModel.Molecules.First().Value.Rings.Count == m.Molecules.First().Value.Rings.Count);
-            sw.Stop();
-            Assert.NotNull(impModel);
-
-            Assert.True(impModel.Molecules.Count == m.Molecules.Count);
-            Assert.True(impModel.Molecules.First().Value.Atoms.Count == m.Molecules.First().Value.Atoms.Count);
-            Assert.True(impModel.Molecules.First().Value.Bonds.Count == m.Molecules.First().Value.Bonds.Count);
-
-            Debug.WriteLine($"Round Trip Import From Stream (Elapsed) = {sw.ElapsedMilliseconds}");
-            Debug.WriteLine($"Round Trip Import From Stream (Length) = {buffer.Length}");
-        }
-
-
-        [Fact]
-        public void PBuffRoundTripSmall()
-        {
-            Stopwatch sw = new Stopwatch();
-            CMLConverter mc = new CMLConverter();
-            string cml = ResourceHelper.GetStringResource("Benzene.xml");
-            ProtocolBufferConverter pc = new ProtocolBufferConverter();
-
-            var cmlasbytes = Encoding.ASCII.GetBytes(cml);
-
-            Debug.WriteLine($"CML as Bytes Length = {cmlasbytes.Length}");
-
-            sw.Start();
-            Model m = mc.Import(cml);
-            sw.Stop();
-            Debug.WriteLine($"Round Trip CML Import (Elapsed) = {sw.ElapsedMilliseconds}");
-
-            sw.Reset();
-
-            sw.Start();
-            byte[] buffer = pc.Export(m);
+            cml = cmlConverter.Export(modelFromCml);
             sw.Stop();
 
-            Debug.WriteLine($"Round Trip Export To Stream (Elapsed) = {sw.ElapsedMilliseconds}");
+            var cmlBytes = Encoding.ASCII.GetBytes(cml);
+            Debug.WriteLine($"{shortName} - Export to CML took {sw.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"{shortName} - Export to CML size is {cmlBytes.Length} bytes");
 
-            Debug.WriteLine($"Round Trip Export To Stream (Length) = {buffer.Length}");
-
+            // Export to Protocol Buffer byte[]
             sw.Reset();
             sw.Start();
-
-            var impModel = pc.Import(buffer);
+            var protocolBufferBytes = protocolBufferConverter.Export(modelFromCml);
             sw.Stop();
 
-            Assert.NotNull(impModel);
+            Debug.WriteLine($"{shortName} - Export to Protocol Buffer took {sw.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"{shortName} - Export to Protocol Buffer size is {protocolBufferBytes.Length} bytes");
 
-            Assert.True(impModel.Molecules.Count == m.Molecules.Count);
-            Assert.True(impModel.Molecules.First().Value.Atoms.Count == m.Molecules.First().Value.Atoms.Count);
-            Assert.True(impModel.Molecules.First().Value.Bonds.Count == m.Molecules.First().Value.Bonds.Count);
-            Assert.True(impModel.Molecules.First().Value.Rings.Count == m.Molecules.First().Value.Rings.Count);
-            Debug.WriteLine($"Round Trip Import From Stream (Elapsed) = {sw.ElapsedMilliseconds}");
-            Debug.WriteLine($"Round Trip Import From Stream (Length) = {buffer.Length}");
+            // Import from Protocol Buffer byte[]
+            sw.Reset();
+            sw.Start();
+            var modelFromProtoBufer = protocolBufferConverter.Import(protocolBufferBytes);
+            sw.Stop();
+
+            Debug.WriteLine($"{shortName} - Import from Protocol Buffer took {sw.ElapsedMilliseconds}ms");
+
+            // A few sanity checks
+            Assert.NotNull(modelFromProtoBufer);
+            Assert.True(modelFromProtoBufer.Molecules.Count == modelFromCml.Molecules.Count);
+            Assert.True(modelFromProtoBufer.Molecules.First().Value.Atoms.Count == modelFromCml.Molecules.First().Value.Atoms.Count);
+            Assert.True(modelFromProtoBufer.Molecules.First().Value.Bonds.Count == modelFromCml.Molecules.First().Value.Bonds.Count);
+            Assert.True(modelFromProtoBufer.Molecules.First().Value.Rings.Count == modelFromCml.Molecules.First().Value.Rings.Count);
         }
     }
 }

@@ -16,5 +16,4 @@ message PBTextualProperty
 	string Id = 1;
 	google.protobuf.StringValue TypeCode = 2;
 	string Value = 3;
-
 }

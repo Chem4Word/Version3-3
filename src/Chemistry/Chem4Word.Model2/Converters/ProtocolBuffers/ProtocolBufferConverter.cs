@@ -34,34 +34,32 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
         {
             Dictionary<string, PBMolecule> moleculeLookup = new Dictionary<string, PBMolecule>();
             //create the model first
-            PBModel result = new PBModel();
+            PBModel pbModel = new PBModel();
 
             //add annotations
             foreach (var ann in model.Annotations.Values)
             {
-
-                result.Annotations[ann.Id] = AnnotationToPBuff(ann);
+                pbModel.Annotations[ann.Id] = AnnotationToPBuff(ann);
             }
 
             //recurse through molecule tree
             foreach (var molecule in model.Molecules.Values)
             {
-
                 var moleculeBuffer = MoleculeToPBuff(molecule);
-                result.Molecules[molecule.Id] = moleculeBuffer;
+                pbModel.Molecules[molecule.Id] = moleculeBuffer;
                 moleculeLookup[molecule.Id] = moleculeBuffer;
             }
+
             //reaction schemes
             foreach (var scheme in model.ReactionSchemes.Values)
             {
                 var schemeBuffer = new PBReactionScheme()
                 {
                     Id = scheme.Id
-
                 };
+
                 foreach (var reaction in scheme.Reactions.Values)
                 {
-
                     var reactionBuffer = new PBReaction()
                     {
                         ConditionsText = reaction.ConditionsText,
@@ -79,31 +77,26 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                             Y = reaction.TailPoint.Y
                         }
                     };
+
                     foreach (var reactant in reaction.Reactants.Values)
                     {
-
                         reactionBuffer.Reactants.Add(reactant.Id);
                     }
+
                     foreach (var product in reaction.Products.Values)
                     {
-
                         reactionBuffer.Products.Add(product.Id);
                     }
 
                     schemeBuffer.Reactions[reaction.Id] = reactionBuffer;
                 }
 
-                result.ReactionSchemes[schemeBuffer.Id] = schemeBuffer;
+                pbModel.ReactionSchemes[schemeBuffer.Id] = schemeBuffer;
             }
 
-            return result.ToByteArray();
+            return pbModel.ToByteArray();
         }
 
-        /// <summary>
-        /// Converts a molecule to its protocol buffer representation
-        /// </summary>
-        /// <param name="mol">Molecule object to convert</param>
-        /// <returns>protocol buffer representation of molecule</returns>
         private PBMolecule MoleculeToPBuff(Molecule mol)
         {
             Dictionary<string, PBAtom> atomLookup = new Dictionary<string, PBAtom>();
@@ -116,16 +109,19 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 SpinMultiplicity = mol.SpinMultiplicity,
                 Title = mol.Title
             };
+
             foreach (var atom in mol.Atoms.Values)
             {
                 var atomToPBuff = AtomToPBuff(atom);
                 result.Atoms[atom.Id] = atomToPBuff;
                 atomLookup[atom.Id] = atomToPBuff;
             }
+
             foreach (var molecule in mol.Molecules.Values)
             {
                 result.Molecules[molecule.Id] = MoleculeToPBuff(molecule);
             }
+
             foreach (var bond in mol.Bonds)
             {
                 result.Bonds.Add(BondToPBuff(bond));
@@ -140,6 +136,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 }
                 result.Rings.Add(newRing);
             }
+
             //misc props
             foreach (var formula in mol.Formulas)
             {
@@ -170,7 +167,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             PBAtom result = new PBAtom()
             {
                 ExplicitC = atom.ExplicitC,
-                ID = atom.Id,
+                Id = atom.Id,
                 Position = new PBPoint() { X = atom.Position.X, Y = atom.Position.Y },
                 SpinMultiplicity = atom.SpinMultiplicity,
                 FormalCharge = atom.FormalCharge,
@@ -215,10 +212,9 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
         private PBAnnotation AnnotationToPBuff(Annotation annValue) =>
             new PBAnnotation
             {
-                ID = annValue.Id,
+                Id = annValue.Id,
                 IsEditable = annValue.IsEditable,
                 Position = new PBPoint { X = annValue.Position.X, Y = annValue.Position.Y },
-                SymbolSize = annValue.SymbolSize,
                 Xaml = annValue.Xaml
             };
 
@@ -242,6 +238,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             ImportReactionSchemes(protoBuffModel, result);
 
             return result;
+
             //local function
             void ImportAnnotations(PBModel model, Model result1)
             {
@@ -250,16 +247,16 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     var annValue = ann.Value;
                     var newAnnotation = new Annotation()
                     {
-                        Id = annValue.ID,
+                        Id = annValue.Id,
                         Xaml = annValue.Xaml,
                         Position = new System.Windows.Point(annValue.Position.X, annValue.Position.Y),
-                        SymbolSize = annValue.SymbolSize,
                         IsEditable = annValue.IsEditable,
                         Parent = result1
                     };
                     result1.AddAnnotation(newAnnotation);
                 }
             }
+
             //local function
             void ImportMolecules(PBModel protoBuffModel1, Model model1, Dictionary<string, Molecule> dictionary)
             {
@@ -268,6 +265,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     PBuffToMolecule(molecule, model1, dictionary);
                 }
             }
+
             //local function
             Reaction ImportReaction(PBReaction reactionVal, ReactionScheme rs)
             {
@@ -295,8 +293,10 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     var product = moleculeLookup[productId];
                     newReaction.AddProduct(product);
                 }
+
                 return newReaction;
             }
+
             //local function
             void ImportReactionSchemes(PBModel protoBuffModel2, Model result2)
             {
@@ -309,6 +309,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                         Parent = result2
                     };
                     result2.AddReactionScheme(rs);
+
                     foreach (var reaction in schemeval.Reactions)
                     {
                         var reactionVal = reaction.Value;
@@ -339,13 +340,12 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
             foreach (var atom in molval.Atoms.Values)
             {
-
                 Atom newAtom = new Atom
                 {
                     DoubletRadical = atom.DoubleRadical,
                     ExplicitC = atom.ExplicitC,
                     FormalCharge = atom.FormalCharge,
-                    Id = atom.ID,
+                    Id = atom.Id,
                     IsotopeNumber = atom.IsotopeNumber,
                     Position = new System.Windows.Point(atom.Position.X, atom.Position.Y),
                     SpinMultiplicity = atom.SpinMultiplicity,
@@ -389,7 +389,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 Ring newRing = new Ring();
                 foreach (PBAtom ringAtom in ring.Atoms)
                 {
-                    newRing.Atoms.Add(atomLookup[ringAtom.ID]);
+                    newRing.Atoms.Add(atomLookup[ringAtom.Id]);
                 }
                 newMol.Rings.Add(newRing);
             }

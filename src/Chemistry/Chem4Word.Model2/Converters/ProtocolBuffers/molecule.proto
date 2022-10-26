@@ -14,6 +14,7 @@ import "Converters/ProtocolBuffers/bond.proto";
 import "Converters/ProtocolBuffers/textualProperty.proto";
 import "Converters/ProtocolBuffers/ring.proto";
 import "google/protobuf/wrappers.proto";
+
 message PBMolecule
 {
 	string Id = 1;

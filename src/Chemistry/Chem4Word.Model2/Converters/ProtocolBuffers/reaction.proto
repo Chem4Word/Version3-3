@@ -9,10 +9,10 @@ syntax ="proto3";
 package model;
 
 option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
-import "Converters/ProtocolBuffers/molecule.proto";
 import "Converters/ProtocolBuffers/reactionType.proto";
 import "Converters/ProtocolBuffers/point.proto";
 import "google/protobuf/wrappers.proto";
+
 message PBReaction
 {
 	PBReactionType ReactionType = 1;

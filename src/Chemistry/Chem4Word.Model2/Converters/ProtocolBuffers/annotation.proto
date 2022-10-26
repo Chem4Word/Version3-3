@@ -11,13 +11,11 @@ package model;
 option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
 import "Converters/ProtocolBuffers/point.proto";
 import "google/protobuf/wrappers.proto";
+
 message PBAnnotation
 {
-	string ID = 1;
+	string Id = 1;
 	bool IsEditable = 2;
 	string Xaml = 3;
 	PBPoint Position = 4;
-	int32 EstLength = 5;
-	google.protobuf.DoubleValue SymbolSize = 6;
-
 }

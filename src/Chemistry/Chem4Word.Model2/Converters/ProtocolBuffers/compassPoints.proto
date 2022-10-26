@@ -10,7 +10,6 @@ package model;
 
 option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
 
-
 enum PBCompassPoints
 {
 	North = 0;

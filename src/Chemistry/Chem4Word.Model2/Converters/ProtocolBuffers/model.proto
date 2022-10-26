@@ -12,7 +12,8 @@ option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
 import "Converters/ProtocolBuffers/molecule.proto";
 import "Converters/ProtocolBuffers/reactionScheme.proto";
 import "Converters/ProtocolBuffers/annotation.proto";
-message PBModel 
+
+message PBModel
 {
 	map<string,PBMolecule> Molecules = 1;
 	map<string, PBReactionScheme> ReactionSchemes = 2;

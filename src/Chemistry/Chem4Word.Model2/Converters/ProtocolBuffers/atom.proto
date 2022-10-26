@@ -23,6 +23,7 @@ message PBFunctionalGroup
 	string ShortCode=1;
 	google.protobuf.Int32Value PlacementFG = 2;
 }
+
 message PBAtom
 {
 	repeated string Messages = 1;
@@ -33,7 +34,7 @@ message PBAtom
 		PBChemicalElement Element = 3;
 		PBFunctionalGroup FunctionalGroup = 4;
 	}
-	string ID = 5;
+	string Id = 5;
 	google.protobuf.Int32Value IsotopeNumber = 6;
 	google.protobuf.Int32Value SpinMultiplicity = 7;
 	google.protobuf.Int32Value FormalCharge = 8;

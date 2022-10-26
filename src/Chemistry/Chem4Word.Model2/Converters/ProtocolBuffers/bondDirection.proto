@@ -9,6 +9,7 @@ syntax ="proto3";
 package model;
 
 option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
+
 enum PBBondDirection
 {
 	NoDirection = 0;
