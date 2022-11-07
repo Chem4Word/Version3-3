@@ -12,12 +12,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Xml.Linq;
-using Chem4Word.Libraries;
-using Chem4Word.Libraries.Database;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Converters.CML;
 using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 
 namespace Chem4Word.ACME.Models
 {
@@ -27,7 +27,7 @@ namespace Chem4Word.ACME.Models
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
         private readonly IChem4WordTelemetry _telemetry;
-        private readonly LibraryOptions _libraryOptions;
+        private readonly IChem4WordDriver _librarian;
 
         public bool Initializing { get; set; }
 
@@ -36,10 +36,10 @@ namespace Chem4Word.ACME.Models
             // Required for WPF XAML Designer
         }
 
-        public ChemistryObject(IChem4WordTelemetry telemetry, LibraryOptions libraryOptions)
+        public ChemistryObject(IChem4WordTelemetry telemetry, IChem4WordDriver librarian)
         {
             _telemetry = telemetry;
-            _libraryOptions = libraryOptions;
+            _librarian = librarian;
             Initializing = true;
         }
 
@@ -64,10 +64,18 @@ namespace Chem4Word.ACME.Models
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                if (_libraryOptions != null)
+                if (_librarian != null)
                 {
-                    var lib = new Library(_telemetry, _libraryOptions);
-                    lib.UpdateChemistry(Id, Name, Cml, Formula, MolecularWeight);
+                    var chem = new ChemistryDataObject
+                               {
+                                   Id = Id,
+                                   DataType = "cml",
+                                   Chemistry = Encoding.UTF8.GetBytes(Cml),
+                                   Name = Name,
+                                   Formula = Formula,
+                                   MolWeight = MolecularWeight
+                               };
+                    _librarian.UpdateChemistry(chem);
                 }
             }
             catch (Exception ex)

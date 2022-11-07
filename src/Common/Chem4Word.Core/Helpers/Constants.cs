@@ -18,7 +18,7 @@ namespace Chem4Word.Core.Helpers
 
         public const double TopLeftOffset = 24;
         public const string OoXmlBookmarkPrefix = "C4W_";
-        public const string LibraryFileName = "Library.db";
+        public const string LegacyLibraryFileName = "Library.db";
 
         public const string Chem4WordWebServiceUri = "https://chemicalservices.azurewebsites.net/api/Resolve";
 

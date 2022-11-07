@@ -50,6 +50,9 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -67,11 +70,22 @@
   <ItemGroup>
     <Compile Include="IChem4WordCommon.cs" />
     <Compile Include="IChem4WordEditor.cs" />
+    <Compile Include="IChem4WordDriver.cs" />
     <Compile Include="IChem4WordRenderer.cs" />
     <Compile Include="IChem4WordSearcher.cs" />
     <Compile Include="IChem4WordTelemetry.cs" />
+    <Compile Include="DatabaseDetails.cs" />
+    <Compile Include="Dto\ChemistryNameDataObject.cs" />
+    <Compile Include="ListOfLibraries.cs" />
+    <Compile Include="Dto\ChemistryDataObject.cs" />
+    <Compile Include="Dto\ChemistryTagDataObject.cs" />
+    <Compile Include="Dto\LibraryTagDataObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>if "$(ConfigurationName)" == "Vso-Ci" (

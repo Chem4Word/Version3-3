@@ -158,7 +158,7 @@ namespace Chem4Word.Model2.Converters.MDL
                 writer.Flush();
             }
 
-            result = Encoding.ASCII.GetString(stream.ToArray());
+            result = Encoding.UTF8.GetString(stream.ToArray());
             return result;
 
             // Local Function

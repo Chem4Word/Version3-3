@@ -1,0 +1,24 @@
+{
+  "SelectedLibrary": "User Library",
+  "DefaultLocation": "C:\\ProgramData\\Chem4Word.V3\\Libraries",
+  "AvailableDatabases": [
+    {
+      "DisplayName": "User Library",
+      "Connection": "C:\\ProgramData\\Chem4Word.V3\\Libraries\\Library.db",
+      "ShortFileName": "Library.db",
+      "Driver": "SQLite Standard"
+    },
+    {
+      "DisplayName": "Starter Library",
+      "Connection": "C:\\ProgramData\\Chem4Word.V3\\Libraries\\Starter Library.db",
+      "ShortFileName": "Starter Library.db",
+      "Driver": "SQLite Standard"
+    },
+    {
+      "DisplayName": "Plant Essential Oils",
+      "Connection": "C:\\ProgramData\\Chem4Word.V3\\Libraries\\Plant Essential Oils.db",
+      "ShortFileName": "Plant Essential Oils.db",
+      "Driver": "SQLite Standard"
+    }
+  ]
+}

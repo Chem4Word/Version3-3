@@ -138,11 +138,8 @@
     <Compile Include="Graphics\EquilibriumArrow.cs" />
     <Compile Include="Graphics\Harpoon.cs" />
     <Compile Include="Graphics\RetrosyntheticArrow.cs" />
-    <Compile Include="Models\CloudSpace.cs" />
     <Compile Include="Models\CryptoRandomizer.cs" />
     <Compile Include="Controls\FormulaBlock.cs" />
-    <Compile Include="Entities\FrequencyTable.cs" />
-    <Compile Include="Entities\FrequencyTableRow.cs" />
     <Compile Include="Interfaces\IPositioner.cs" />
     <Compile Include="Interfaces\IRandomizer.cs" />
     <Compile Include="Controls\MoleculePropertyEditor.xaml.cs">
@@ -158,17 +155,12 @@
     <Compile Include="Controls\SketcherHost.xaml.cs">
       <DependentUpon>SketcherHost.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\SpiralPositioner.cs" />
     <Compile Include="Controls\TaggingControl.xaml.cs">
       <DependentUpon>TaggingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TagItem.xaml.cs">
       <DependentUpon>TagItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\WordCloud.xaml.cs">
-      <DependentUpon>WordCloud.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Models\WordCloudData.cs" />
     <Compile Include="Entities\WordCloudEntry.cs" />
     <Compile Include="Entities\WordCloudTheme.cs" />
     <Compile Include="Entities\WordCloudThemes.cs" />
@@ -363,10 +355,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\WordCloud.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="LabelsEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -444,10 +432,6 @@
     <ProjectReference Include="..\..\PlugIns\Contracts\Chem4Word.Contracts.csproj">
       <Project>{BDFEE6C1-3F34-4200-9100-C543BF4C3783}</Project>
       <Name>Chem4Word.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Chem4Word.Libraries\Chem4Word.Libraries.csproj">
-      <Project>{2a5f1d74-ce8e-4874-a803-f3499bb3cfbc}</Project>
-      <Name>Chem4Word.Libraries</Name>
     </ProjectReference>
     <ProjectReference Include="..\Chem4Word.Model2\Chem4Word.Model2.csproj">
       <Project>{c69bab8f-4881-4d5f-9929-fc8470df1e48}</Project>

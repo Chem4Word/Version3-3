@@ -488,7 +488,7 @@ namespace Chem4WordTests
             cml = cmlConverter.Export(modelFromCml);
             sw.Stop();
 
-            var cmlBytes = Encoding.ASCII.GetBytes(cml);
+            var cmlBytes = Encoding.UTF8.GetBytes(cml);
             Debug.WriteLine($"{shortName} - Export to CML took {sw.ElapsedMilliseconds}ms");
             Debug.WriteLine($"{shortName} - Export to CML size is {cmlBytes.Length} bytes");
 

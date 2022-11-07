@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -25,7 +26,6 @@ using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.JSON;
 using IChem4Word.Contracts;
-using Ionic.Zip;
 using Control = System.Windows.Forms.Control;
 using Path = System.IO.Path;
 using UserControl = System.Windows.Controls.UserControl;
@@ -580,10 +580,8 @@ namespace Chem4Word.Editor.ChemDoodleWeb800
                     Stream stream = ResourceHelper.GetBinaryResource(Assembly.GetExecutingAssembly(), "ChemDoodleWeb.ChemDoodleWeb_800.zip");
 
                     // NB: Top level of zip file must be the folder ChemDoodleWeb
-                    using (ZipFile zip = ZipFile.Read(stream))
-                    {
-                        zip.ExtractAll(SettingsPath, ExtractExistingFileAction.OverwriteSilently);
-                    }
+                    var archive = new ZipArchive(stream);
+                    archive.ExtractToDirectory(SettingsPath);
 
                     string cssfile = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "ChemDoodleWeb.Chem4Word.css");
                     File.WriteAllText(Path.Combine(SettingsPath, "Chem4Word.css"), cssfile);

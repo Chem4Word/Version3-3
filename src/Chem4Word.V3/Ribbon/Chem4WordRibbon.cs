@@ -30,6 +30,7 @@ using Chem4Word.Telemetry;
 using Chem4Word.UI;
 using Chem4Word.UI.WPF;
 using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using Microsoft.Office.Core;
 using Microsoft.Office.Tools.Ribbon;
 using CustomTaskPane = Microsoft.Office.Tools.CustomTaskPane;
@@ -391,7 +392,7 @@ namespace Chem4Word
 
                     try
                     {
-                        var f = new Chem4WordSettingsHost(true);
+                        var f = new SettingsHost(true);
                         var options = Globals.Chem4WordV3.SystemOptions.Clone();
                         options.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
                         f.SystemOptions = options;
@@ -1481,10 +1482,15 @@ namespace Chem4Word
                                         Globals.Chem4WordV3.LoadNamesFromLibrary();
                                     }
 
-                                    var lib = new Libraries.Database.Library(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.LibraryOptions);
-                                    var transaction = lib.StartTransaction();
-                                    var done = lib.ImportCml(cml, transaction);
-                                    lib.EndTransaction(transaction, !done);
+                                    Debugger.Break();
+                                    var lib = Globals.Chem4WordV3.GetDriverPlugIn("");
+                                    var dto = new ChemistryDataObject();
+                                    dto.Chemistry = Encoding.UTF8.GetBytes(cml);
+                                    dto.DataType = "cml";
+                                    dto.Name = model.ConciseFormula; // ToDo Change This
+                                    dto.Formula = model.ConciseFormula;
+                                    dto.MolWeight = model.MolecularWeight;
+                                    lib.AddChemistry(dto);
 
                                     // Re- Read the Library Names
                                     Globals.Chem4WordV3.LoadNamesFromLibrary();

@@ -44,7 +44,7 @@ namespace Chem4Word.Library
                 {
                     if (_libraryController == null)
                     {
-                        _libraryController = new LibraryController(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.LibraryOptions);
+                        _libraryController = new LibraryController(Globals.Chem4WordV3.Telemetry);
                     }
                     libraryView1.DataContext = _libraryController;
                 }

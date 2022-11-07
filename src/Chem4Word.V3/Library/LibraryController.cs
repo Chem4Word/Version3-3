@@ -7,16 +7,15 @@
 
 using Chem4Word.ACME.Models;
 using Chem4Word.Core.UI.Forms;
-using Chem4Word.Libraries;
-using Chem4Word.Libraries.Database;
-using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Telemetry;
+using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 
 namespace Chem4Word.Library
@@ -30,15 +29,18 @@ namespace Chem4Word.Library
         public ObservableCollection<ChemistryObject> ChemistryItems { get; }
 
         private bool _initializing;
-        private readonly TelemetryWriter _telemetry;
-        private readonly LibraryOptions _libraryOptions;
+        private readonly IChem4WordTelemetry _telemetry;
+        private IChem4WordDriver _driver;
 
-        public LibraryController(TelemetryWriter telemetry, LibraryOptions libraryOptions)
+        public LibraryController(IChem4WordTelemetry telemetry)
         {
             _telemetry = telemetry;
-            _libraryOptions = libraryOptions;
 
-            ChemistryItems = new ObservableCollection<ACME.Models.ChemistryObject>();
+            var details = Globals.Chem4WordV3.GetDatabaseDetails();
+            _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+            _driver.DatabaseDetails = details;
+
+            ChemistryItems = new ObservableCollection<ChemistryObject>();
             ChemistryItems.CollectionChanged += ChemistryItems_CollectionChanged;
 
             LoadChemistryItems();
@@ -52,17 +54,17 @@ namespace Chem4Word.Library
                 _initializing = true;
                 ChemistryItems.Clear();
 
-                var lib = new Libraries.Database.Library(_telemetry, _libraryOptions);
-                List<ChemistryDataObject> dto = lib.GetAllChemistry();
+                var dataObjects = _driver.GetAllChemistry();
 
-                foreach (var chemistryDto in dto)
+                foreach (var dto in dataObjects)
                 {
                     var obj = new ChemistryObject
                     {
-                        Id = chemistryDto.Id,
-                        Cml = chemistryDto.Cml,
-                        Formula = chemistryDto.Formula,
-                        Name = chemistryDto.Name
+                        Id = dto.Id.Value,
+                        Cml = Encoding.UTF8.GetString(dto.Chemistry),
+                        Formula = dto.Formula,
+                        Name = dto.Name,
+                        MolecularWeight = dto.MolWeight
                     };
 
                     ChemistryItems.Add(obj);
@@ -117,10 +119,10 @@ namespace Chem4Word.Library
             {
                 if (!_initializing)
                 {
-                    var lib = new Libraries.Database.Library(_telemetry, _libraryOptions);
                     foreach (ChemistryObject chemistry in eOldItems)
                     {
-                        lib.DeleteChemistry(chemistry.Id);
+                        _driver.DeleteChemistryById(chemistry.Id);
+                        _telemetry.Write(module, "Information", $"Structure {chemistry.Id} deleted from {_driver.DatabaseDetails.DisplayName}");
                     }
                 }
             }
@@ -140,11 +142,22 @@ namespace Chem4Word.Library
             {
                 if (!_initializing)
                 {
-                    var lib = new Libraries.Database.Library(_telemetry, _libraryOptions);
                     foreach (ChemistryObject chemistry in eNewItems)
                     {
-                        var cmlConverter = new CMLConverter();
-                        chemistry.Id = lib.AddChemistry(cmlConverter.Import(chemistry.Cml), chemistry.Name, chemistry.Formula, chemistry.MolecularWeight);
+                        var dto = new ChemistryDataObject
+                        {
+                            Chemistry = Encoding.UTF8.GetBytes(chemistry.Cml),
+                            DataType = "cml",
+                            Name = chemistry.Name,
+                            Formula = chemistry.Formula,
+                            MolWeight = chemistry.MolecularWeight
+                        };
+
+                        // ToDo: Add names
+                        //dto.OtherNames = new List<string>();
+
+                        chemistry.Id = _driver.AddChemistry(dto);
+                        _telemetry.Write(module, "Information", $"Structure {chemistry.Id} added to {_driver.DatabaseDetails.DisplayName}");
                     }
                 }
             }

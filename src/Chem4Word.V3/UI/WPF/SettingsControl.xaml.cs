@@ -1,0 +1,628 @@
+﻿// ---------------------------------------------------------------------------
+//  Copyright (c) 2022, The .NET Foundation.
+//  This software is released under the Apache License, Version 2.0.
+//  The license and further copyright text can be found in the file LICENSE.md
+//  at the root directory of the distribution.
+// ---------------------------------------------------------------------------
+
+using Chem4Word.Core;
+using Chem4Word.Core.Helpers;
+using Chem4Word.Core.UI.Forms;
+using Chem4Word.Core.UI.Wpf;
+using IChem4Word.Contracts;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
+
+using Forms = System.Windows.Forms;
+
+using UserControl = System.Windows.Controls.UserControl;
+
+namespace Chem4Word.UI.WPF
+{
+    /// <summary>
+    /// Interaction logic for SettingsControl.xaml
+    /// </summary>
+    public partial class SettingsControl : UserControl
+    {
+        private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
+        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+
+        public event EventHandler OnButtonClick;
+
+        public Chem4WordOptions SystemOptions { get; set; }
+        public Point TopLeft { get; set; }
+        public bool Dirty { get; set; }
+
+        private bool _loading;
+        private string _selectedDatabase;
+
+        public SettingsControl()
+        {
+            _loading = true;
+
+            InitializeComponent();
+        }
+
+        #region Form Load
+
+        private void SettingsControl_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
+            #region Load Images
+
+            // Tab 1 - Plug Ins
+            var imageStream = ResourceHelper.GetBinaryResource(Assembly.GetExecutingAssembly(), "Preferences.png");
+            if (imageStream != null)
+            {
+                var bitmap = CreateImageFromStream(imageStream);
+
+                EditorSettingsButtonImage.Source = bitmap;
+                RendererSettingsButtonImage.Source = bitmap;
+                SearcherSettingsButtonImage.Source = bitmap;
+            }
+
+            // Tab 5 Maintenance
+            imageStream = ResourceHelper.GetBinaryResource(Assembly.GetExecutingAssembly(), "File-Open.png");
+            if (imageStream != null)
+            {
+                var bitmap = CreateImageFromStream(imageStream);
+                LibraryFolderButtonImage.Source = bitmap;
+                SettingsFolderButtonImage.Source = bitmap;
+                PlugInsFolderButtonImage.Source = bitmap;
+            }
+
+            #endregion Load Images
+
+            #region Set Current Values
+
+            if (SystemOptions != null)
+            {
+                LoadSettings();
+            }
+
+            #endregion Set Current Values
+
+            _loading = false;
+        }
+
+        #endregion Form Load
+
+        #region Bottom Buttons
+
+        private void OkButton_Click(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            WpfEventArgs args = new WpfEventArgs();
+            args.Button = "Ok";
+            args.OutputValue = "";
+
+            OnButtonClick?.Invoke(this, args);
+        }
+
+        private void CancelButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            WpfEventArgs args = new WpfEventArgs();
+            args.Button = "Cancel";
+            args.OutputValue = "";
+
+            OnButtonClick?.Invoke(this, args);
+        }
+
+        private void DefaultsButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            try
+            {
+                Forms.DialogResult dr = UserInteractions.AskUserOkCancel("Restore default settings");
+                if (dr == Forms.DialogResult.OK)
+                {
+                    _loading = true;
+                    Dirty = true;
+                    SystemOptions.RestoreDefaults();
+                    LoadSettings();
+                    _loading = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, ex).ShowDialog();
+            }
+        }
+
+        #endregion Bottom Buttons
+
+        #region Plug-Ins Tab Events
+
+        private void SelectedEditorSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            var editor = Globals.Chem4WordV3.GetEditorPlugIn(SelectEditorPlugIn.SelectedItem.ToString());
+            editor.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
+            editor.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
+        }
+
+        private void SelectedRendererSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            var renderer = Globals.Chem4WordV3.GetRendererPlugIn(SelectRendererPlugIn.SelectedItem.ToString());
+            renderer.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
+            renderer.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
+        }
+
+        private void SelectedSearcherSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            var searcher = Globals.Chem4WordV3.GetSearcherPlugIn(SelectSearcherPlugIn.SelectedItem.ToString());
+            searcher.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
+            searcher.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
+        }
+
+        private void SelectEditorPlugIn_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            if (!_loading)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+                var pci = SelectEditorPlugIn.SelectedItem as PlugInComboItem;
+                SystemOptions.SelectedEditorPlugIn = pci?.Name;
+                SelectedEditorPlugInDescription.Text = pci?.Description;
+                var editor = Globals.Chem4WordV3.GetEditorPlugIn(pci.Name);
+                SelectedEditorSettings.IsEnabled = editor.HasSettings;
+
+                Dirty = true;
+            }
+        }
+
+        private void SelectRenderer_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            if (!_loading)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+                var pci = SelectRendererPlugIn.SelectedItem as PlugInComboItem;
+                SystemOptions.SelectedRendererPlugIn = pci?.Name;
+                SelectedRendererDescription.Text = pci?.Description;
+                var renderer = Globals.Chem4WordV3.GetRendererPlugIn(pci.Name);
+                SelectedRendererSettings.IsEnabled = renderer.HasSettings;
+
+                Dirty = true;
+            }
+        }
+
+        private void SelectSearcher_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            if (!_loading)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+                var pci = SelectSearcherPlugIn.SelectedItem as PlugInComboItem;
+                SelectedSearcherDescription.Text = pci?.Description;
+                var searcher = Globals.Chem4WordV3.GetSearcherPlugIn(pci.Name);
+                SelectedSearcherSettings.IsEnabled = searcher.HasSettings;
+
+                Dirty = true;
+            }
+        }
+
+        #endregion Plug-Ins Tab Events
+
+        #region General Tab Events
+
+        private void BondLength_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            if (!_loading)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+                var cbi = DefaultBondLength.SelectedItem as ComboBoxItem;
+                SystemOptions.BondLength = int.Parse((string)cbi.Tag);
+
+                Dirty = true;
+            }
+        }
+
+        private void RemoveExplicitOnImportFile_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.RemoveExplicitHydrogensOnImportFromFile = RemoveExplicitOnImportFile.IsChecked.Value;
+            Dirty = true;
+        }
+
+        private void RemoveExplicitOnImportSearch_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.RemoveExplicitHydrogensOnImportFromSearch = RemoveExplicitOnImportSearch.IsChecked.Value;
+            Dirty = true;
+        }
+
+        private void RemoveExplicitOnImportLibrary_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.RemoveExplicitHydrogensOnImportFromLibrary = RemoveExplicitOnImportLibrary.IsChecked.Value;
+            Dirty = true;
+        }
+
+        private void ApplyDefaultOnImportFile_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.SetBondLengthOnImportFromFile = ApplyDefaultOnImportFile.IsChecked.Value;
+            Dirty = true;
+        }
+
+        private void ApplyDefaultOnImportSearch_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.SetBondLengthOnImportFromSearch = ApplyDefaultOnImportSearch.IsChecked.Value;
+            Dirty = true;
+        }
+
+        private void ApplyDefaultOnImportLibrary_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.SetBondLengthOnImportFromLibrary = ApplyDefaultOnImportLibrary.IsChecked.Value;
+            Dirty = true;
+        }
+
+        #endregion General Tab Events
+
+        #region Privacy Tab Events
+
+        private void TelemetryEnabled_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            if (!_loading)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                SystemOptions.TelemetryEnabled = TelemetryEnabled.IsChecked.Value;
+                Dirty = true;
+            }
+        }
+
+        #endregion Privacy Tab Events
+
+        #region Library Tab Events
+
+        private void OnBrowseLibraryLocation(object sender, RoutedEventArgs e)
+        {
+            Debugger.Break();
+        }
+
+        private void OnAddLibrary(object sender, RoutedEventArgs e)
+        {
+            Debugger.Break();
+        }
+
+        private void OnNewLibrary(object sender, RoutedEventArgs e)
+        {
+            Debugger.Break();
+        }
+
+        private void OnDownloadLibrary(object sender, RoutedEventArgs e)
+        {
+            Debugger.Break();
+        }
+
+        private void OnRemoveLibrary(object sender, RoutedEventArgs e)
+        {
+            Debugger.Break();
+        }
+
+        private void OnEditLibrary(object sender, RoutedEventArgs e)
+        {
+            var editor = new LibraryEditorHost();
+            editor.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
+            editor.Telemetry = Globals.Chem4WordV3.Telemetry;
+            editor.SelectedDatabase = _selectedDatabase;
+            editor.ShowDialog();
+        }
+
+        #endregion Library Tab Events
+
+        #region Maintenance Tab Events
+
+        private void SettingsFolder_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            try
+            {
+                Process.Start(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
+            }
+            catch (Exception ex)
+            {
+                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, ex).ShowDialog();
+            }
+        }
+
+        private void LibraryFolder_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            try
+            {
+                Process.Start(Globals.Chem4WordV3.AddInInfo.ProgramDataPath);
+            }
+            catch (Exception ex)
+            {
+                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, ex).ShowDialog();
+            }
+        }
+
+        private void PlugInsFolder_OnClick(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            try
+            {
+                Process.Start(Path.Combine(Globals.Chem4WordV3.AddInInfo.DeploymentPath, "PlugIns"));
+            }
+            catch (Exception ex)
+            {
+                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, ex).ShowDialog();
+            }
+        }
+
+        #endregion Maintenance Tab Events
+
+        #region Private methods
+
+        private void SetButtonState(bool enabled)
+        {
+            Ok.IsEnabled = enabled;
+            Cancel.IsEnabled = enabled;
+            Defaults.IsEnabled = enabled;
+            TabControl.IsEnabled = enabled;
+        }
+
+        private void LoadSettings()
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
+            #region Plug-Ins Tab
+
+            string selectedEditor = SystemOptions.SelectedEditorPlugIn;
+            string selectedRenderer = SystemOptions.SelectedRendererPlugIn;
+
+            // ToDo: Add Librarians Drop Down here ...
+
+            SelectEditorPlugIn.Items.Clear();
+            SelectRendererPlugIn.Items.Clear();
+            SelectSearcherPlugIn.Items.Clear();
+            SelectedEditorSettings.IsEnabled = false;
+            SelectedRendererSettings.IsEnabled = false;
+            SelectedSearcherSettings.IsEnabled = false;
+
+            foreach (IChem4WordEditor editor in Globals.Chem4WordV3.Editors)
+            {
+                var pci = new PlugInComboItem
+                {
+                    Name = editor.Name,
+                    Description = editor.Description
+                };
+                int item = SelectEditorPlugIn.Items.Add(pci);
+
+                if (editor.Name.Equals(selectedEditor))
+                {
+                    SelectedEditorSettings.IsEnabled = editor.HasSettings;
+                    SelectedEditorPlugInDescription.Text = editor.Description;
+                    SelectEditorPlugIn.SelectedIndex = item;
+                }
+            }
+
+            foreach (IChem4WordRenderer renderer in Globals.Chem4WordV3.Renderers)
+            {
+                var pci = new PlugInComboItem
+                {
+                    Name = renderer.Name,
+                    Description = renderer.Description
+                };
+                int item = SelectRendererPlugIn.Items.Add(pci);
+                if (renderer.Name.Equals(selectedRenderer))
+                {
+                    SelectedRendererSettings.IsEnabled = renderer.HasSettings;
+                    SelectedRendererDescription.Text = renderer.Description;
+                    SelectRendererPlugIn.SelectedIndex = item;
+                }
+            }
+
+            foreach (IChem4WordSearcher searcher in Globals.Chem4WordV3.Searchers.OrderBy(s => s.DisplayOrder))
+            {
+                var pci = new PlugInComboItem
+                {
+                    Name = searcher.Name,
+                    Description = searcher.Description
+                };
+                int item = SelectSearcherPlugIn.Items.Add(pci);
+                if (SelectSearcherPlugIn.Items.Count == 1)
+                {
+                    SelectedSearcherSettings.IsEnabled = searcher.HasSettings;
+                    SelectedSearcherDescription.Text = searcher.Description;
+                    SelectSearcherPlugIn.SelectedIndex = item;
+                }
+            }
+
+            #endregion Plug-Ins Tab
+
+            #region Telemetry Tab
+
+            string betaValue = Globals.Chem4WordV3.ThisVersion.Root?.Element("IsBeta")?.Value;
+            bool isBeta = betaValue != null && bool.Parse(betaValue);
+
+            TelemetryEnabled.IsChecked = isBeta || SystemOptions.TelemetryEnabled;
+            TelemetryEnabled.IsEnabled = !isBeta;
+            if (!isBeta)
+            {
+                BetaInformation.Visibility = Visibility.Hidden;
+            }
+
+            #endregion Telemetry Tab
+
+            #region General Tab
+
+            ApplyDefaultOnImportFile.IsChecked = SystemOptions.SetBondLengthOnImportFromFile;
+            ApplyDefaultOnImportSearch.IsChecked = SystemOptions.SetBondLengthOnImportFromSearch;
+            ApplyDefaultOnImportLibrary.IsChecked = SystemOptions.SetBondLengthOnImportFromLibrary;
+
+            RemoveExplicitOnImportFile.IsChecked = SystemOptions.RemoveExplicitHydrogensOnImportFromFile;
+            RemoveExplicitOnImportSearch.IsChecked = SystemOptions.RemoveExplicitHydrogensOnImportFromSearch;
+            RemoveExplicitOnImportLibrary.IsChecked = SystemOptions.RemoveExplicitHydrogensOnImportFromLibrary;
+
+            foreach (var item in DefaultBondLength.Items)
+            {
+                var cbi = item as ComboBoxItem;
+                if (int.Parse(cbi.Tag as string) == SystemOptions.BondLength)
+                {
+                    DefaultBondLength.SelectedItem = item;
+                    break;
+                }
+            }
+
+            #endregion General Tab
+        }
+
+        private BitmapImage CreateImageFromStream(Stream stream)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
+            var bitmap = new BitmapImage();
+
+            bitmap.BeginInit();
+            bitmap.StreamSource = stream;
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+
+            return bitmap;
+        }
+
+        #endregion Private methods
+
+        private void TabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                var selectedTab = e.AddedItems[0] as TabItem;
+                if (selectedTab != null)
+                {
+                    Debug.WriteLine($"Selected tab is {selectedTab.Name}");
+
+                    if (selectedTab.Name.Equals("Libraries"))
+                    {
+                        var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                        var data = new List<SettingsLibrariesGridSource>();
+
+                        foreach (var database in libraries.AvailableDatabases)
+                        {
+                            var obj = new SettingsLibrariesGridSource
+                            {
+                                Name = database.DisplayName,
+                                FileName = database.ShortFileName,
+                                Dictionary = false,
+                                Locked = GetPropertyValue(database, "Owner", "User").Equals("System") ? "Yes" : "No",
+                                License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required"
+                            };
+                            data.Add(obj);
+                        }
+
+                        LibrariesGrid.ItemsSource = data;
+
+                        var selectedLibrary = libraries.SelectedLibrary;
+                        SetSelectedLibrary(selectedLibrary);
+
+                        // Local Function
+                        string GetPropertyValue(DatabaseDetails details, string key, string defaultValue)
+                        {
+                            string result = defaultValue;
+
+                            if (details.Properties.ContainsKey(key))
+                            {
+                                result = details.Properties[key];
+                            }
+
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void SetSelectedLibrary(string selectedLibrary)
+        {
+            int idx = 0;
+            LibrariesGrid.Focus();
+            foreach (object item in LibrariesGrid.Items)
+            {
+                if (item is SettingsLibrariesGridSource source)
+                {
+                    if (source.Name.Equals(selectedLibrary))
+                    {
+                        LibrariesGrid.SelectedItems.Clear();
+                        LibrariesGrid.SelectedIndex = idx;
+                        LibrariesGrid.SelectedItems.Add(item);
+                        LibrariesGrid.ScrollIntoView(item);
+                        LibrariesGrid.CurrentItem = item;
+
+                        DataGridRow row = (DataGridRow)LibrariesGrid.ItemContainerGenerator.ContainerFromIndex(idx);
+                        if (row != null)
+                        {
+                            row.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                            row.Focus();
+                        }
+                        break;
+                    }
+                }
+
+                idx++;
+            }
+        }
+
+        private void OnGridSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Debug.WriteLine("Grid Selection Changed");
+            if (e.AddedItems.Count > 0)
+            {
+                if (e.AddedItems[0] is SettingsLibrariesGridSource source)
+                {
+                    _selectedDatabase = source.Name;
+                    Debug.WriteLine(source.Name);
+                }
+            }
+        }
+    }
+}

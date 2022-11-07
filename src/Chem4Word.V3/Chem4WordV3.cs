@@ -25,8 +25,8 @@ using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Helpers;
-using Chem4Word.Libraries;
 using Chem4Word.Library;
+using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Navigator;
 using Chem4Word.Telemetry;
@@ -81,14 +81,15 @@ namespace Chem4Word
         public C4wAddInInfo AddInInfo;
         public SystemHelper Helper;
         public Chem4WordOptions SystemOptions;
-        public LibraryOptions LibraryOptions;
         public TelemetryWriter Telemetry;
 
         public List<IChem4WordEditor> Editors = new List<IChem4WordEditor>();
         public List<IChem4WordRenderer> Renderers = new List<IChem4WordRenderer>();
         public List<IChem4WordSearcher> Searchers = new List<IChem4WordSearcher>();
+        public List<IChem4WordDriver> Drivers = new List<IChem4WordDriver>();
 
-        public Dictionary<string, int> LibraryNames = null;
+        public Dictionary<string, int> LibraryNames;
+        public ListOfLibraries ListOfDetectedLibraries;
 
         private static readonly string[] ContextMenusTargets = { "Text", "Table Text", "Spelling", "Grammar", "Grammar (2)", "Lists", "Table Lists" };
         private const string ContextMenuTag = "2829AECC-061C-4DC5-8CC0-CAEC821B9127";
@@ -312,6 +313,7 @@ namespace Chem4Word
                 _configWatcher = new ConfigWatcher(AddInInfo.ProductAppDataPath);
 
                 Telemetry = new TelemetryWriter(true, true, Helper);
+                ListOfDetectedLibraries = new LibraryFileHelper(Telemetry, AddInInfo.ProgramDataPath).GetListOfLibraries();
 
                 sw.Stop();
                 message = $"{module} took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms";
@@ -418,9 +420,12 @@ namespace Chem4Word
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                if (LibraryOptions != null)
+                var details = GetDatabaseDetails();
+                var lib = GetDriverPlugIn(details.Driver);
+                lib.DatabaseDetails = details;
+
+                if (lib != null)
                 {
-                    var lib = new Libraries.Database.Library(Telemetry, LibraryOptions);
                     LibraryNames = lib.GetLibraryNames();
                 }
                 else
@@ -496,36 +501,32 @@ namespace Chem4Word
                         if (string.IsNullOrEmpty(SystemOptions.SelectedEditorPlugIn))
                         {
                             SystemOptions.SelectedEditorPlugIn = Constants.DefaultEditorPlugIn;
+                            settingsChanged = true;
                         }
-                        else
+                        if (Editors.Count > 0)
                         {
-                            if (Editors.Count > 0)
+                            var editor = GetEditorPlugIn(SystemOptions.SelectedEditorPlugIn);
+                            if (editor == null)
                             {
-                                var editor = GetEditorPlugIn(SystemOptions.SelectedEditorPlugIn);
-                                if (editor == null)
-                                {
-                                    SystemOptions.SelectedEditorPlugIn = Constants.DefaultEditorPlugIn;
-                                    Telemetry.Write(module, "Information", $"Setting editor to {SystemOptions.SelectedEditorPlugIn}");
-                                    settingsChanged = true;
-                                }
+                                SystemOptions.SelectedEditorPlugIn = Constants.DefaultEditorPlugIn;
+                                Telemetry.Write(module, "Information", $"Setting editor to {SystemOptions.SelectedEditorPlugIn}");
+                                settingsChanged = true;
                             }
                         }
 
                         if (string.IsNullOrEmpty(SystemOptions.SelectedRendererPlugIn))
                         {
                             SystemOptions.SelectedRendererPlugIn = Constants.DefaultRendererPlugIn;
+                            settingsChanged = true;
                         }
-                        else
+                        if (Renderers.Count > 0)
                         {
-                            if (Renderers.Count > 0)
+                            var renderer = GetRendererPlugIn(SystemOptions.SelectedRendererPlugIn);
+                            if (renderer == null)
                             {
-                                var renderer = GetRendererPlugIn(SystemOptions.SelectedRendererPlugIn);
-                                if (renderer == null)
-                                {
-                                    SystemOptions.SelectedRendererPlugIn = Constants.DefaultRendererPlugIn;
-                                    Telemetry.Write(module, "Information", $"Setting renderer to {SystemOptions.SelectedRendererPlugIn}");
-                                    settingsChanged = true;
-                                }
+                                SystemOptions.SelectedRendererPlugIn = Constants.DefaultRendererPlugIn;
+                                Telemetry.Write(module, "Information", $"Setting renderer to {SystemOptions.SelectedRendererPlugIn}");
+                                settingsChanged = true;
                             }
                         }
 
@@ -544,15 +545,6 @@ namespace Chem4Word
                     {
                         //
                     }
-
-                    LibraryOptions = new LibraryOptions
-                    {
-                        ParentTopLeft = WordTopLeft,
-                        ProgramDataPath = AddInInfo.ProgramDataPath,
-                        PreferredBondLength = SystemOptions.BondLength,
-                        SetBondLengthOnImport = SystemOptions.SetBondLengthOnImportFromLibrary,
-                        RemoveExplicitHydrogensOnImport = SystemOptions.RemoveExplicitHydrogensOnImportFromLibrary
-                    };
                 }
             }
             catch (Exception exception)
@@ -607,6 +599,15 @@ namespace Chem4Word
                     {
                         Searchers[i].Telemetry = null;
                         Searchers[i] = null;
+                    }
+                }
+
+                if (Drivers != null)
+                {
+                    for (var i = 0; i < Drivers.Count; i++)
+                    {
+                        Drivers[i].Telemetry = null;
+                        Drivers[i] = null;
                     }
                 }
 
@@ -758,6 +759,7 @@ namespace Chem4Word
             var editorType = typeof(IChem4WordEditor);
             var rendererType = typeof(IChem4WordRenderer);
             var searcherType = typeof(IChem4WordSearcher);
+            var driverType = typeof(IChem4WordDriver);
 
             foreach (var plugIn in plugInsFound)
             {
@@ -800,8 +802,8 @@ namespace Chem4Word
                                 if (type.GetInterface(editorType.FullName) != null)
                                 {
                                     var plugin = (IChem4WordEditor)Activator.CreateInstance(type);
-                                    plugin.SettingsPath = AddInInfo.ProductAppDataPath;
                                     Editors.Add(plugin);
+
                                     break;
                                 }
                             }
@@ -820,8 +822,8 @@ namespace Chem4Word
                                 if (type.GetInterface(rendererType.FullName) != null)
                                 {
                                     var plugin = (IChem4WordRenderer)Activator.CreateInstance(type);
-                                    plugin.SettingsPath = AddInInfo.ProductAppDataPath;
                                     Renderers.Add(plugin);
+
                                     break;
                                 }
                             }
@@ -840,14 +842,34 @@ namespace Chem4Word
                                 if (type.GetInterface(searcherType.FullName) != null)
                                 {
                                     var plugin = (IChem4WordSearcher)Activator.CreateInstance(type);
-                                    plugin.SettingsPath = AddInInfo.ProductAppDataPath;
                                     Searchers.Add(plugin);
+
                                     break;
                                 }
                             }
                         }
 
                         #endregion Load Searcher(s)
+
+                        #region Load Driver(s)
+
+                        if (parts[1].Contains("IChem4WordDriver"))
+                        {
+                            var asm = Assembly.LoadFile(sourceFile);
+                            var types = asm.GetTypes();
+                            foreach (var type in types)
+                            {
+                                if (type.GetInterface(driverType.FullName) != null)
+                                {
+                                    var plugin = (IChem4WordDriver)Activator.CreateInstance(type);
+                                    Drivers.Add(plugin);
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        #endregion Load Driver(s)
                     }
                 }
             }
@@ -857,6 +879,34 @@ namespace Chem4Word
             message = $"{module} examining {filesFound} files took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms";
             Debug.WriteLine(message);
             StartUpTimings.Add(message);
+        }
+
+        public DatabaseDetails GetDatabaseDetails()
+        {
+            return ListOfDetectedLibraries.AvailableDatabases
+                          .FirstOrDefault(l => l.DisplayName.Equals(ListOfDetectedLibraries.SelectedLibrary));
+        }
+
+        public IChem4WordDriver GetDriverPlugIn(string name)
+        {
+            IChem4WordDriver plugin = null;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                foreach (var ice in Drivers)
+                {
+                    if (ice.Name.Equals(name))
+                    {
+                        plugin = ice;
+                        plugin.Telemetry = Telemetry;
+                        plugin.TopLeft = WordTopLeft;
+
+                        break;
+                    }
+                }
+            }
+
+            return plugin;
         }
 
         public IChem4WordEditor GetEditorPlugIn(string name)
@@ -873,6 +923,7 @@ namespace Chem4Word
                         plugin.Telemetry = Telemetry;
                         plugin.SettingsPath = AddInInfo.ProductAppDataPath;
                         plugin.TopLeft = WordTopLeft;
+
                         break;
                     }
                 }
@@ -895,6 +946,7 @@ namespace Chem4Word
                         plugin.Telemetry = Telemetry;
                         plugin.SettingsPath = AddInInfo.ProductAppDataPath;
                         plugin.TopLeft = WordTopLeft;
+
                         break;
                     }
                 }
@@ -917,6 +969,7 @@ namespace Chem4Word
                         plugin.Telemetry = Telemetry;
                         plugin.SettingsPath = AddInInfo.ProductAppDataPath;
                         plugin.TopLeft = WordTopLeft;
+
                         break;
                     }
                 }
@@ -1365,10 +1418,10 @@ namespace Chem4Word
                 {
                     var targetWord = JsonConvert.DeserializeObject<TargetWord>(ctrl.Tag);
 
-                    var library = new Libraries.Database.Library(Telemetry, LibraryOptions);
-                    var cml = library.GetChemistryById(targetWord.ChemistryId);
+                    var library = GetDriverPlugIn("");
+                    var dto = library.GetChemistryById(targetWord.ChemistryId);
 
-                    if (cml == null)
+                    if (dto == null)
                     {
                         UserInteractions.WarnUser($"No match for '{targetWord.ChemicalName}' was found in your library");
                     }
@@ -1378,11 +1431,20 @@ namespace Chem4Word
 
                         // Generate new CustomXmlPartGuid
                         var converter = new CMLConverter();
-                        var model = converter.Import(cml);
+                        Model model;
+                        if (dto.DataType.Equals("cml"))
+                        {
+                            model = converter.Import(Encoding.UTF8.GetString(dto.Chemistry));
+                        }
+                        else
+                        {
+                            Debugger.Break();
+                            model = new Model();
+                        }
                         model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
                         model.EnsureBondLength(SystemOptions.BondLength,
                                                SystemOptions.SetBondLengthOnImportFromLibrary);
-                        cml = converter.Export(model);
+                        var cml = converter.Export(model);
 
                         #region Find Id of name
 

@@ -10,7 +10,6 @@ package model;
 
 option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
 import "Converters/ProtocolBuffers/point.proto";
-import "google/protobuf/wrappers.proto";
 
 message PBAnnotation
 {

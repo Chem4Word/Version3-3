@@ -20,24 +20,22 @@ message PBChemicalElement
 
 message PBFunctionalGroup
 {
-	string ShortCode=1;
+	string ShortCode = 1;
 	google.protobuf.Int32Value PlacementFG = 2;
 }
 
 message PBAtom
 {
-	repeated string Messages = 1;
-	
-	google.protobuf.BoolValue ExplicitC = 2;
+	google.protobuf.BoolValue ExplicitC = 1;
 	oneof Symbol
 	{
-		PBChemicalElement Element = 3;
-		PBFunctionalGroup FunctionalGroup = 4;
+		PBChemicalElement Element = 2;
+		PBFunctionalGroup FunctionalGroup = 3;
 	}
-	string Id = 5;
-	google.protobuf.Int32Value IsotopeNumber = 6;
-	google.protobuf.Int32Value SpinMultiplicity = 7;
-	google.protobuf.Int32Value FormalCharge = 8;
-	PBPoint Position = 9;
-	bool DoubleRadical =11;
+	string Id = 4;
+	google.protobuf.Int32Value IsotopeNumber = 5;
+	google.protobuf.Int32Value SpinMultiplicity = 6;
+	google.protobuf.Int32Value FormalCharge = 7;
+	PBPoint Position = 8;
+	bool DoubleRadical = 9;
 }
