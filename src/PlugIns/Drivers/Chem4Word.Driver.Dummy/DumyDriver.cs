@@ -22,9 +22,6 @@ namespace Chem4Word.Driver.Dummy
         public IChem4WordTelemetry Telemetry { get; set; }
         public DatabaseDetails DatabaseDetails { get; set; }
 
-        public string SettingsPath { get; set; }
-        public string ProgramDataPath { get; set; }
-
         public Dictionary<string, string> GetProperties() => new Dictionary<string, string>();
 
         public Dictionary<string, int> GetLibraryNames() => new Dictionary<string, int>();

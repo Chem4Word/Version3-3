@@ -38,6 +38,8 @@ namespace Chem4Word.Core.Helpers
         public const string Chem4WordMessagesRegistryKey = @"SOFTWARE\Chem4Word V3\Messages";
         public const string Chem4WordExceptionsRegistryKey = @"SOFTWARE\Chem4Word V3\Exceptions";
 
+        public const string XmlFileHeader = "<?xml version='1.0' encoding='utf-8'?>";
+
         // Update Checks
         public const int MaximumVersionsBehind = 7;
 

@@ -414,6 +414,30 @@ namespace Chem4Word.Model2
             }
         }
 
+        public string QuickName
+        {
+            get
+            {
+                var result = ConciseFormula;
+
+                var names = Molecules.Values.First().Names.ToList();
+                foreach (var name in names)
+                {
+                    // not numeric
+                    if (!long.TryParse(name.Value, out _))
+                    {
+                        if (!name.Value.Contains("-"))
+                        {
+                            result = name.Value;
+                            break;
+                        }
+                    }
+                }
+
+                return result;
+            }
+        }
+
         /// <summary>
         /// Bond length used in Xaml
         /// </summary>

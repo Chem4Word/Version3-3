@@ -7,10 +7,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfToolkit="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
-    controls:ChemistryItem.ChemistryItemButtonClick="OnChemistryItemButtonClick"
+    Name="EditorControl"
+    controls:ChemistryItem.ChemistryItemButtonClick="OnChemistryItem_ButtonClick"
     d:DesignHeight="600"
     d:DesignWidth="800"
-    Name="EditorControl"
     mc:Ignorable="d">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Chem4WordBlue">
@@ -100,300 +100,260 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
-            <Grid>
+        <ToolBar
+            Height="40"
+            HorizontalContentAlignment="Stretch"
+            Background="White"
+            OverflowMode="Never">
+            <Button
+                x:Name="AddButton"
+                Grid.Column="0"
+                Click="OnClick_AddNewButton"
+                Style="{StaticResource NavButtonStyle}"
+                ToolTip="Add new structure">
+                <Button.Content>
+                    <Viewbox Stretch="Uniform">
+                        <Canvas
+                            Width="32"
+                            Height="32"
+                            ClipToBounds="True">
+                            <Path
+                                Canvas.Left="4"
+                                Canvas.Top="4"
+                                Width="24"
+                                Height="24"
+                                Fill="{StaticResource Chem4WordBlue}"
+                                Stretch="Fill"
+                                Style="{StaticResource AddButtonPath}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+            <Button
+                x:Name="ExportButton"
+                Grid.Column="3"
+                Click="OnClick_ExportButton"
+                Style="{StaticResource NavButtonStyle}"
+                ToolTip="Export structures">
+                <Button.Content>
+                    <Viewbox Stretch="Uniform">
+                        <Canvas
+                            Width="32"
+                            Height="32"
+                            ClipToBounds="True">
+                            <Path
+                                Canvas.Left="4"
+                                Canvas.Top="4"
+                                Width="24"
+                                Height="24"
+                                Fill="{StaticResource Chem4WordBlue}"
+                                Stretch="Fill"
+                                Style="{StaticResource ExportButtonPath}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+            <Button
+                x:Name="ImportButton"
+                Grid.Column="2"
+                Click="OnClick_ImportButton"
+                Style="{StaticResource NavButtonStyle}"
+                ToolTip="Import structures">
+                <Button.Content>
+                    <Viewbox Stretch="Uniform">
+                        <Canvas
+                            Width="32"
+                            Height="32"
+                            ClipToBounds="True">
+                            <Path
+                                Canvas.Left="4"
+                                Canvas.Top="4"
+                                Width="24"
+                                Height="24"
+                                Fill="{StaticResource Chem4WordBlue}"
+                                Stretch="Fill"
+                                Style="{StaticResource ImportButtonPath}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+            <Button
+                x:Name="TrashButton"
+                Grid.Column="4"
+                Click="OnClick_TrashButton"
+                IsEnabled="True"
+                Style="{StaticResource NavButtonStyle}"
+                ToolTip="Delete selected items">
+                <Button.Content>
+                    <Viewbox Stretch="Uniform">
+                        <Canvas
+                            Width="32"
+                            Height="32"
+                            ClipToBounds="True">
+                            <Path
+                                Canvas.Left="4"
+                                Canvas.Top="4"
+                                Width="24"
+                                Height="24"
+                                Fill="{StaticResource Chem4WordBlue}"
+                                Stretch="Fill"
+                                Style="{StaticResource TrashButtonPath}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+            <Separator />
+            <Slider
+                Name="Slider"
+                Width="100"
+                Margin="5,0,5,0"
+                Foreground="{StaticResource Chem4WordBlue}"
+                IsSnapToTickEnabled="True"
+                Maximum="500"
+                Minimum="200"
+                TickFrequency="50"
+                TickPlacement="BottomRight"
+                ValueChanged="OnValueChanged_Slider"
+                Value="200" />
+            <Separator />
+            <ComboBox
+                Name="ComboBox"
+                Width="Auto"
+                Margin="5,0,5,0"
+                HorizontalAlignment="Left"
+                VerticalContentAlignment="Center"
+                BorderThickness="0"
+                Foreground="{StaticResource Chem4WordBlue}"
+                SelectedIndex="0"
+                SelectionChanged="OnSelectionChanged_Selector">
+                <ComboBoxItem>Name</ComboBoxItem>
+                <ComboBoxItem>MolecularWeight</ComboBoxItem>
+                <ComboBoxItem>Id</ComboBoxItem>
+            </ComboBox>
+            <Separator />
+            <!--  The width of this next grid out to fill the rest of the toolbar  -->
+            <Grid Width="300">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" MinWidth="250" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <GroupBox
+                <Border
                     Grid.Column="0"
-                    Margin="0,0,5,0"
+                    Grid.ColumnSpan="2"
                     BorderBrush="{StaticResource Chem4WordBlue}"
-                    BorderThickness="2"
-                    Header="Filter">
+                    BorderThickness="1">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border
+                        <TextBox
+                            Name="SearchBox"
                             Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            BorderBrush="{StaticResource Chem4WordBlue}"
-                            BorderThickness="1">
-                            <Grid>
-                                <TextBox
-                                    Name="SearchBox"
-                                    Grid.Column="0"
-                                    Margin="0,0,24,0"
-                                    VerticalAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    BorderThickness="0"
-                                    FontSize="24"
-                                    Foreground="{StaticResource Chem4WordBlue}"
-                                    KeyDown="SearchBox_KeyDown"
-                                    TextChanged="SearchBox_OnTextChanged" />
-                                <TextBlock
-                                    Margin="2,2"
-                                    VerticalAlignment="Center"
-                                    FontSize="18"
-                                    Foreground="LightSteelBlue"
-                                    IsHitTestVisible="False"
-                                    Text="Filter ..."
-                                    Visibility="{Binding ElementName=SearchBox, Path=Text.IsEmpty, Converter={StaticResource BoolToVisConverter}}" />
-                                <Button
-                                    x:Name="ClearButton"
+                            Margin="0,0,24,0"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            BorderThickness="0"
+                            FontSize="24"
+                            Foreground="{StaticResource Chem4WordBlue}"
+                            KeyDown="OnKeyDown_SearchBox"
+                            TextChanged="OnTextChanged_SearchBox" />
+                        <TextBlock
+                            Margin="2,2"
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            Foreground="LightSteelBlue"
+                            IsHitTestVisible="False"
+                            Text="Filter ..."
+                            Visibility="{Binding ElementName=SearchBox, Path=Text.IsEmpty, Converter={StaticResource BoolToVisConverter}}" />
+                        <Button
+                            x:Name="ClearButton"
+                            Width="24"
+                            Height="24"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="OnClick_ClearButton"
+                            IsEnabled="False"
+                            Style="{StaticResource NavButtonStyle}"
+                            ToolTip="Clear filter">
+                            <Button.Content>
+                                <Viewbox Stretch="Uniform">
+                                    <Canvas
+                                        Width="24"
+                                        Height="24"
+                                        ClipToBounds="True">
+                                        <Path
+                                            Canvas.Left="2"
+                                            Canvas.Top="2"
+                                            Width="20"
+                                            Height="20"
+                                            Fill="Red"
+                                            Stretch="Fill"
+                                            Style="{StaticResource DelButtonPath}" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
+                </Border>
+                <Button
+                    x:Name="SearchButton"
+                    Grid.Column="2"
+                    Click="OnClick_SearchButton"
+                    IsEnabled="False"
+                    Style="{StaticResource NavButtonStyle}"
+                    ToolTip="Apply filter">
+                    <Button.Content>
+                        <Viewbox Stretch="Uniform">
+                            <Canvas
+                                Width="32"
+                                Height="32"
+                                ClipToBounds="True">
+                                <Path
+                                    Canvas.Left="4"
+                                    Canvas.Top="4"
                                     Width="24"
                                     Height="24"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Click="ClearButton_OnClick"
-                                    IsEnabled="False"
-                                    Style="{StaticResource NavButtonStyle}"
-                                    ToolTip="Clear filter">
-                                    <Button.Content>
-                                        <Viewbox Stretch="Uniform">
-                                            <Canvas
-                                                Width="24"
-                                                Height="24"
-                                                ClipToBounds="True">
-                                                <Path
-                                                    Canvas.Left="2"
-                                                    Canvas.Top="2"
-                                                    Width="20"
-                                                    Height="20"
-                                                    Fill="Red"
-                                                    Stretch="Fill"
-                                                    Style="{StaticResource DelButtonPath}" />
-                                            </Canvas>
-                                        </Viewbox>
-                                    </Button.Content>
-                                </Button>
-                            </Grid>
-                        </Border>
-                        <Button
-                            x:Name="SearchButton"
-                            Grid.Column="2"
-                            Click="SearchButton_OnClick"
-                            IsEnabled="False"
-                            Style="{StaticResource NavButtonStyle}"
-                            ToolTip="Apply filter">
-                            <Button.Content>
-                                <Viewbox Stretch="Uniform">
-                                    <Canvas
-                                        Width="32"
-                                        Height="32"
-                                        ClipToBounds="True">
-                                        <Path
-                                            Canvas.Left="4"
-                                            Canvas.Top="4"
-                                            Width="24"
-                                            Height="24"
-                                            Fill="{StaticResource Chem4WordBlue}"
-                                            Stretch="Fill"
-                                            Style="{StaticResource SearchButtonPath}" />
-                                    </Canvas>
-                                </Viewbox>
-                            </Button.Content>
-                        </Button>
-                        <ToggleButton
-                            Name="CheckedFilterButton"
-                            Grid.Column="3"
-                            Width="32"
-                            Height="32"
-                            Margin="0,1"
-                            Click="CheckedFilterButton_OnClick"
-                            IsEnabled="False"
-                            Style="{StaticResource ToggleButtonStyle}"
-                            ToolTip="Show Checked Items">
-                            <ToggleButton.Content>
-                                <Viewbox Stretch="Uniform">
-                                    <Canvas
-                                        Width="32"
-                                        Height="32"
-                                        ClipToBounds="True">
-                                        <Path
-                                            Canvas.Left="4"
-                                            Canvas.Top="4"
-                                            Width="24"
-                                            Height="24"
-                                            Fill="{StaticResource Chem4WordBlue}"
-                                            Stretch="Fill"
-                                            Style="{StaticResource CheckedButtonPath}" />
-                                    </Canvas>
-                                </Viewbox>
-                            </ToggleButton.Content>
-                        </ToggleButton>
-                    </Grid>
-                </GroupBox>
-                <GroupBox
-                    Grid.Column="1"
-                    Margin="0,0,5,0"
-                    BorderBrush="{StaticResource Chem4WordBlue}"
-                    BorderThickness="2"
-                    Header="Sort by">
-                    <ComboBox
-                        Name="ComboBox"
-                        Width="Auto"
-                        Margin="5,0,5,0"
-                        HorizontalAlignment="Left"
-                        VerticalContentAlignment="Center"
-                        BorderThickness="0"
-                        Foreground="{StaticResource Chem4WordBlue}"
-                        SelectedIndex="0"
-                        SelectionChanged="Selector_OnSelectionChanged">
-                        <ComboBoxItem>Name</ComboBoxItem>
-                        <ComboBoxItem>MolecularWeight</ComboBoxItem>
-                        <ComboBoxItem>Id</ComboBoxItem>
-                    </ComboBox>
-                </GroupBox>
-                <GroupBox
-                    Grid.Column="2"
-                    Margin="0,0,5,0"
-                    BorderBrush="{StaticResource Chem4WordBlue}"
-                    BorderThickness="2"
-                    Header="Zoom">
-                    <Slider
-                        Name="Slider"
-                        Width="100"
-                        Margin="5,0,5,0"
-                        Foreground="{StaticResource Chem4WordBlue}"
-                        IsSnapToTickEnabled="True"
-                        Maximum="500"
-                        Minimum="200"
-                        TickFrequency="50"
-                        TickPlacement="BottomRight"
-                        ValueChanged="Slider_OnValueChanged"
-                        Value="200" />
-                </GroupBox>
-                <GroupBox
+                                    Fill="{StaticResource Chem4WordBlue}"
+                                    Stretch="Fill"
+                                    Style="{StaticResource SearchButtonPath}" />
+                            </Canvas>
+                        </Viewbox>
+                    </Button.Content>
+                </Button>
+                <ToggleButton
+                    Name="CheckedFilterButton"
                     Grid.Column="3"
-                    BorderBrush="{StaticResource Chem4WordBlue}"
-                    BorderThickness="2"
-                    Header="Actions">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Button
-                            x:Name="AddButton"
-                            Grid.Column="0"
-                            Click="AddButton_OnClick"
-                            Style="{StaticResource NavButtonStyle}"
-                            ToolTip="Add new structure">
-                            <Button.Content>
-                                <Viewbox Stretch="Uniform">
-                                    <Canvas
-                                        Width="32"
-                                        Height="32"
-                                        ClipToBounds="True">
-                                        <Path
-                                            Canvas.Left="4"
-                                            Canvas.Top="4"
-                                            Width="24"
-                                            Height="24"
-                                            Fill="{StaticResource Chem4WordBlue}"
-                                            Stretch="Fill"
-                                            Style="{StaticResource AddButtonPath}" />
-                                    </Canvas>
-                                </Viewbox>
-                            </Button.Content>
-                        </Button>
-                        <Button
-                            x:Name="ImportButton"
-                            Grid.Column="2"
-                            Click="ImportButton_OnClick"
-                            Style="{StaticResource NavButtonStyle}"
-                            ToolTip="Import structures">
-                            <Button.Content>
-                                <Viewbox Stretch="Uniform">
-                                    <Canvas
-                                        Width="32"
-                                        Height="32"
-                                        ClipToBounds="True">
-                                        <Path
-                                            Canvas.Left="4"
-                                            Canvas.Top="4"
-                                            Width="24"
-                                            Height="24"
-                                            Fill="{StaticResource Chem4WordBlue}"
-                                            Stretch="Fill"
-                                            Style="{StaticResource ImportButtonPath}" />
-                                    </Canvas>
-                                </Viewbox>
-                            </Button.Content>
-                        </Button>
-                        <Button
-                            x:Name="ExportButton"
-                            Grid.Column="3"
-                            Click="ExportButton_OnClick"
-                            Style="{StaticResource NavButtonStyle}"
-                            ToolTip="Export structures">
-                            <Button.Content>
-                                <Viewbox Stretch="Uniform">
-                                    <Canvas
-                                        Width="32"
-                                        Height="32"
-                                        ClipToBounds="True">
-                                        <Path
-                                            Canvas.Left="4"
-                                            Canvas.Top="4"
-                                            Width="24"
-                                            Height="24"
-                                            Fill="{StaticResource Chem4WordBlue}"
-                                            Stretch="Fill"
-                                            Style="{StaticResource ExportButtonPath}" />
-                                    </Canvas>
-                                </Viewbox>
-                            </Button.Content>
-                        </Button>
-                        <Button
-                            x:Name="TrashButton"
-                            Grid.Column="4"
-                            Click="TrashButton_OnClick"
-                            IsEnabled="True"
-                            Style="{StaticResource NavButtonStyle}"
-                            ToolTip="Delete selected items">
-                            <Button.Content>
-                                <Viewbox Stretch="Uniform">
-                                    <Canvas
-                                        Width="32"
-                                        Height="32"
-                                        ClipToBounds="True">
-                                        <Path
-                                            Canvas.Left="4"
-                                            Canvas.Top="4"
-                                            Width="24"
-                                            Height="24"
-                                            Fill="{StaticResource Chem4WordBlue}"
-                                            Stretch="Fill"
-                                            Style="{StaticResource TrashButtonPath}" />
-                                    </Canvas>
-                                </Viewbox>
-                            </Button.Content>
-                        </Button>
-                    </Grid>
-                </GroupBox>
+                    Width="32"
+                    Height="32"
+                    Margin="0,1"
+                    Click="OnClick_CheckedFilterButton"
+                    IsEnabled="False"
+                    Style="{StaticResource ToggleButtonStyle}"
+                    ToolTip="Show Checked Items">
+                    <ToggleButton.Content>
+                        <Viewbox Stretch="Uniform">
+                            <Canvas
+                                Width="32"
+                                Height="32"
+                                ClipToBounds="True">
+                                <Path
+                                    Canvas.Left="4"
+                                    Canvas.Top="4"
+                                    Width="24"
+                                    Height="24"
+                                    Fill="{StaticResource Chem4WordBlue}"
+                                    Stretch="Fill"
+                                    Style="{StaticResource CheckedButtonPath}" />
+                            </Canvas>
+                        </Viewbox>
+                    </ToggleButton.Content>
+                </ToggleButton>
             </Grid>
-        </StackPanel>
+        </ToolBar>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="163.301" />
+                <ColumnDefinition Width="109.699" />
             </Grid.ColumnDefinitions>
             <ListBox
                 Name="CatalogueItems"
@@ -462,6 +422,7 @@
             <Expander
                 Name="Expander"
                 Grid.Column="1"
+                Grid.ColumnSpan="2"
                 ExpandDirection="Right"
                 IsExpanded="True">
                 <Expander.Header>
@@ -577,17 +538,37 @@
                                 Name="TaggingControl"
                                 Height="Auto"
                                 VerticalAlignment="Top"
-                                LostFocus="TaggingControl_OnLostFocus"
-                                LostKeyboardFocus="TaggingControl_OnLostFocus" />
+                                LostFocus="OnLostFocus_TaggingControl"
+                                LostKeyboardFocus="OnLostFocus_TaggingControl" />
                         </Border>
                     </Grid>
                 </Grid>
             </Expander>
         </Grid>
-        <StackPanel Grid.Row="2">
-            <StatusBar Height="25">
-                <TextBlock Name="StatusBar">...</TextBlock>
-            </StatusBar>
-        </StackPanel>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Name="StatusBar"
+                Grid.Column="0"
+                Margin="5"
+                VerticalAlignment="Center">
+                ...
+            </TextBlock>
+            <ProgressBar
+                x:Name="ProgressBar"
+                Grid.Column="1"
+                Margin="5"
+                Value="0" />
+            <TextBlock
+                x:Name="ProgressBarMessage"
+                Grid.Column="1"
+                Margin="5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="" />
+        </Grid>
     </Grid>
 </UserControl>

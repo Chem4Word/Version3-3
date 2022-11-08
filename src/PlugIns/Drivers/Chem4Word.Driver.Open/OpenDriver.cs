@@ -9,6 +9,7 @@ using Chem4Word.Driver.Open.SqLite;
 using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Reflection;
 using Point = System.Windows.Point;
 
@@ -26,9 +27,6 @@ namespace Chem4Word.Driver.Open
 
         public IChem4WordTelemetry Telemetry { get; set; }
         public DatabaseDetails DatabaseDetails { get; set; }
-
-        public string SettingsPath { get; set; }
-        public string ProgramDataPath { get; set; }
 
         public Dictionary<string, string> GetProperties()
         {

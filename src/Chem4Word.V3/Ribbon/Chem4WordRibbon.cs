@@ -505,6 +505,7 @@ namespace Chem4Word
 
                                     var importErrors = new ImportErrors();
                                     importErrors.TopLeft = Globals.Chem4WordV3.WordTopLeft;
+                                    //ToDo: Why is this hard coded?
                                     model.ScaleToAverageBondLength(40);
                                     importErrors.Model = model;
                                     dialogResult = importErrors.ShowDialog();
@@ -1482,12 +1483,14 @@ namespace Chem4Word
                                         Globals.Chem4WordV3.LoadNamesFromLibrary();
                                     }
 
-                                    Debugger.Break();
-                                    var lib = Globals.Chem4WordV3.GetDriverPlugIn("");
+                                    var details = Globals.Chem4WordV3.GetDatabaseDetails();
+                                    var lib = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+                                    lib.DatabaseDetails = details;
+
                                     var dto = new ChemistryDataObject();
                                     dto.Chemistry = Encoding.UTF8.GetBytes(cml);
                                     dto.DataType = "cml";
-                                    dto.Name = model.ConciseFormula; // ToDo Change This
+                                    dto.Name = model.QuickName;
                                     dto.Formula = model.ConciseFormula;
                                     dto.MolWeight = model.MolecularWeight;
                                     lib.AddChemistry(dto);
@@ -1495,8 +1498,8 @@ namespace Chem4Word
                                     // Re- Read the Library Names
                                     Globals.Chem4WordV3.LoadNamesFromLibrary();
 
-                                    UserInteractions.InformUser($"Structure '{model.ConciseFormula}' added into Library");
-                                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Structure '{model.ConciseFormula}' added into Library");
+                                    UserInteractions.InformUser($"Structure '{dto.Name}' added into Library");
+                                    Globals.Chem4WordV3.Telemetry?.Write(module, "Information", $"Structure '{model.ConciseFormula}' added into Library");
                                 }
                                 else
                                 {

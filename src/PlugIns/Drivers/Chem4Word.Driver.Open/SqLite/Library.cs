@@ -118,7 +118,6 @@ namespace Chem4Word.Driver.Open.SqLite
                     if (fileInfo.DirectoryName != null)
                     {
                         var backup = Path.Combine(fileInfo.DirectoryName, @"..\Backups", $"{SafeDate.ToIsoFilePrefix(DateTime.Now)} {_details.ShortFileName}");
-
                         File.Copy(_details.Connection, backup);
 
                         if (!ApplyPatches(conn, currentVersion))
@@ -197,8 +196,8 @@ namespace Chem4Word.Driver.Open.SqLite
                             var command = new SQLiteCommand(script, conn);
                             command.ExecuteNonQuery();
                         }
+                        AddPatchRecord(conn, patch.Version);
                     }
-                    AddPatchRecord(conn, patch.Version);
                 }
             }
             catch (Exception ex)
@@ -269,12 +268,14 @@ namespace Chem4Word.Driver.Open.SqLite
             return command.ExecuteReader();
         }
 
+        // ToDo: Figure out how to get transactions working
         public SQLiteTransaction StartTransaction()
         {
             var conn = LibraryConnection();
             return conn.BeginTransaction();
         }
 
+        // ToDo: Figure out how to get transactions working
         public void EndTransaction(SQLiteTransaction transaction, bool rollback)
         {
             var conn = transaction.Connection;
@@ -378,7 +379,6 @@ namespace Chem4Word.Driver.Open.SqLite
                                     DataType = chemistry["datatype"] as string,
                                     Name = chemistry["name"] as string,
                                     Formula = chemistry["formula"] as string,
-                                    MolWeight = double.Parse(chemistry["molweight"].ToString()),
                                     OtherNames = allNames.Where(t => t.ChemistryId == id)
                                                          .Select(s => s.Name)
                                                          .ToList(),
@@ -386,6 +386,12 @@ namespace Chem4Word.Driver.Open.SqLite
                                                          .ToList()
                                 };
 
+                                // Handle new field(s) which may be null
+                                var molWeight = chemistry["molweight"].ToString();
+                                if (!string.IsNullOrEmpty(molWeight))
+                                {
+                                    dto.MolWeight = double.Parse(molWeight);
+                                }
                                 results.Add(dto);
                             }
                         }
@@ -420,7 +426,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        internal long AddChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
+        private long AddChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
         {
             var sb = new StringBuilder();
 
@@ -500,7 +506,13 @@ namespace Chem4Word.Driver.Open.SqLite
                             result.Chemistry = (byte[])chemistry["Chemistry"];
                             result.Name = chemistry["name"] as string;
                             result.Formula = chemistry["formula"] as string;
-                            result.MolWeight = double.Parse(chemistry["molweight"].ToString());
+
+                            // Handle new field(s) which may be null
+                            var molWeight = chemistry["molweight"].ToString();
+                            if (!string.IsNullOrEmpty(molWeight))
+                            {
+                                result.MolWeight = double.Parse(molWeight);
+                            }
                         }
                     }
 

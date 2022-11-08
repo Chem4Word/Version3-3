@@ -5,6 +5,10 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2.Annotations;
+using Chem4Word.Model2.Converters.CML;
+using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,10 +18,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml.Linq;
-using Chem4Word.Model2.Annotations;
-using Chem4Word.Model2.Converters.CML;
-using IChem4Word.Contracts;
-using IChem4Word.Contracts.Dto;
 
 namespace Chem4Word.ACME.Models
 {
@@ -67,14 +67,14 @@ namespace Chem4Word.ACME.Models
                 if (_librarian != null)
                 {
                     var chem = new ChemistryDataObject
-                               {
-                                   Id = Id,
-                                   DataType = "cml",
-                                   Chemistry = Encoding.UTF8.GetBytes(Cml),
-                                   Name = Name,
-                                   Formula = Formula,
-                                   MolWeight = MolecularWeight
-                               };
+                    {
+                        Id = Id,
+                        DataType = "cml",
+                        Chemistry = Encoding.UTF8.GetBytes(Cml),
+                        Name = Name,
+                        Formula = Formula,
+                        MolWeight = MolecularWeight
+                    };
                     _librarian.UpdateChemistry(chem);
                 }
             }
