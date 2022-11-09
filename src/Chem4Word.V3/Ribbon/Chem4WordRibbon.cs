@@ -5,14 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Windows.Forms;
 using Chem4Word.ACME;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
@@ -33,6 +25,14 @@ using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
 using Microsoft.Office.Core;
 using Microsoft.Office.Tools.Ribbon;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 using CustomTaskPane = Microsoft.Office.Tools.CustomTaskPane;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
@@ -505,7 +505,7 @@ namespace Chem4Word
 
                                     var importErrors = new ImportErrors();
                                     importErrors.TopLeft = Globals.Chem4WordV3.WordTopLeft;
-                                    //ToDo: Why is this hard coded?
+                                    //ToDo: [MAW] Why is this hard coded?
                                     model.ScaleToAverageBondLength(40);
                                     importErrors.Model = model;
                                     dialogResult = importErrors.ShowDialog();
@@ -1139,9 +1139,8 @@ namespace Chem4Word
                                 switch (fileType)
                                 {
                                     case ".cml":
-                                        var temp = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                                                   + Environment.NewLine
-                                                   + cmlConverter.Export(model);
+                                        var temp = Constants.XmlFileHeader + Environment.NewLine
+                                                                           + cmlConverter.Export(model);
                                         File.WriteAllText(sfd.FileName, temp);
                                         break;
 
@@ -1487,12 +1486,15 @@ namespace Chem4Word
                                     var lib = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
                                     lib.DatabaseDetails = details;
 
-                                    var dto = new ChemistryDataObject();
-                                    dto.Chemistry = Encoding.UTF8.GetBytes(cml);
-                                    dto.DataType = "cml";
-                                    dto.Name = model.QuickName;
-                                    dto.Formula = model.ConciseFormula;
-                                    dto.MolWeight = model.MolecularWeight;
+                                    var dto = new ChemistryDataObject
+                                    {
+                                        Chemistry = Encoding.UTF8.GetBytes(cml),
+                                        DataType = "cml",
+                                        Name = model.QuickName,
+                                        Formula = model.ConciseFormula,
+                                        MolWeight = model.MolecularWeight
+                                        // ToDo: [V3.3] Add Names
+                                    };
                                     lib.AddChemistry(dto);
 
                                     // Re- Read the Library Names

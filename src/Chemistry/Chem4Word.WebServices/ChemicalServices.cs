@@ -117,7 +117,7 @@ namespace Chem4Word.WebServices
             DateTime ended = DateTime.Now;
             TimeSpan duration = ended - started;
 
-            Telemetry.Write(module, "Timing", $"Calling Azure http Function Took {SafeDouble.Duration(duration.TotalMilliseconds)}ms");
+            Telemetry.Write(module, "Timing", $"Calling Azure http Function Took {SafeDouble.AsString0(duration.TotalMilliseconds)}ms");
 
             return data;
         }

@@ -9,6 +9,7 @@ using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
+using Chem4Word.Helpers;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
-
 using Forms = System.Windows.Forms;
 
 using UserControl = System.Windows.Controls.UserControl;
@@ -43,7 +41,7 @@ namespace Chem4Word.UI.WPF
         public bool Dirty { get; set; }
 
         private bool _loading;
-        private string _selectedDatabase;
+        private string _selectedLibrary;
 
         public SettingsControl()
         {
@@ -315,45 +313,153 @@ namespace Chem4Word.UI.WPF
 
         #region Library Tab Events
 
-        private void OnBrowseLibraryLocation(object sender, RoutedEventArgs e)
+        private void OnClick_BrowseLibraryLocation(object sender, RoutedEventArgs e)
         {
             Debugger.Break();
         }
 
-        private void OnAddLibrary(object sender, RoutedEventArgs e)
+        private void OnClick_AddExistingLibrary(object sender, RoutedEventArgs e)
         {
             Debugger.Break();
         }
 
-        private void OnNewLibrary(object sender, RoutedEventArgs e)
+        private void OnClick_CreateNewLibrary(object sender, RoutedEventArgs e)
+        {
+            var browser = new Forms.SaveFileDialog();
+            browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
+            browser.AddExtension = true;
+            browser.Filter = "*.db|*.db";
+            browser.ShowHelp = false;
+            var result = browser.ShowDialog();
+            if (result == Forms.DialogResult.OK)
+            {
+                var fileName = browser.FileName;
+                if (!fileName.EndsWith(".db"))
+                {
+                    fileName += ".db";
+                }
+                var fileInfo = new FileInfo(fileName);
+                if (Directory.Exists(fileInfo.DirectoryName))
+                {
+                    if (!File.Exists(browser.FileName))
+                    {
+                        // Safe to create a file here ...
+                        var driver = Globals.Chem4WordV3.GetDriverPlugIn(Constants.SQLiteStandardDriver);
+                        if (driver != null)
+                        {
+                            var details = new DatabaseDetails
+                            {
+                                Driver = Constants.SQLiteStandardDriver,
+                                DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
+                                Connection = fileName,
+                                ShortFileName = fileInfo.Name
+                            };
+                            driver.CreateNewDatabase(details);
+
+                            // ToDo: [V3.3] Add to libraries.json
+                            Globals.Chem4WordV3.ListOfDetectedLibraries = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath).GetListOfLibraries();
+                            LoadLibrariesList();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OnClick_DownloadLibrary(object sender, RoutedEventArgs e)
         {
             Debugger.Break();
         }
 
-        private void OnDownloadLibrary(object sender, RoutedEventArgs e)
+        private void OnClick_RemoveLibrary(object sender, RoutedEventArgs e)
         {
             Debugger.Break();
         }
 
-        private void OnRemoveLibrary(object sender, RoutedEventArgs e)
-        {
-            Debugger.Break();
-        }
-
-        private void OnEditLibrary(object sender, RoutedEventArgs e)
+        private void OnClick_EditLibrary(object sender, RoutedEventArgs e)
         {
             var editor = new LibraryEditorHost();
             editor.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
             editor.Telemetry = Globals.Chem4WordV3.Telemetry;
-            editor.SelectedDatabase = _selectedDatabase;
+            editor.SelectedDatabase = _selectedLibrary;
             editor.ShowDialog();
+        }
+
+        private void SetSelectedLibrary(string selectedLibrary)
+        {
+            foreach (var item in LibrariesList.Items)
+            {
+                if (item is LibrariesSettingsGridSource source
+                    && source.Name.Equals(selectedLibrary))
+                {
+                    LibrariesList.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
+        private void OnLostFocus_LibrariesList(object sender, RoutedEventArgs e)
+        {
+            if (!_loading)
+            {
+                if (e.Source is ListView listview)
+                {
+                    if (listview.SelectedItem is LibrariesSettingsGridSource source)
+                    {
+                        Debug.WriteLine(source.Name);
+                        PerformRenameIfRequired(source);
+                    }
+                }
+            }
+        }
+
+        private void PerformRenameIfRequired(LibrariesSettingsGridSource source)
+        {
+            if (!source.FileName.Equals($"{source.Name}.db"))
+            {
+                Debug.WriteLine($"Rename {source.FileName} to {source.Name}.db ?");
+                if (!source.FileName.Equals($"{source.Name}.db"))
+                {
+                    // ToDo [V3.3]
+                    // See if the rename can be done
+                    // If so do rename
+                    // Save new Libraries.json
+                    // Re-Load it?
+                    Globals.Chem4WordV3.ListOfDetectedLibraries = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath).GetListOfLibraries();
+                    LoadLibrariesList();
+                }
+            }
+        }
+
+        private void OnSelectionChanged_ListOfLibraries(object sender, SelectionChangedEventArgs e)
+        {
+            if (!_loading)
+            {
+                Debug.WriteLine($"Added = {e.AddedItems.Count} Removed = {e.RemovedItems.Count}");
+
+                if (e.RemovedItems.Count > 0)
+                {
+                    if (e.RemovedItems[0] is LibrariesSettingsGridSource source)
+                    {
+                        Debug.WriteLine(source.Name);
+                        PerformRenameIfRequired(source);
+                    }
+                }
+
+                if (e.AddedItems.Count > 0)
+                {
+                    if (e.AddedItems[0] is LibrariesSettingsGridSource source)
+                    {
+                        _selectedLibrary = source.Name;
+                    }
+                }
+            }
         }
 
         #endregion Library Tab Events
 
         #region Maintenance Tab Events
 
-        private void SettingsFolder_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_SettingsFolder(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -368,7 +474,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void LibraryFolder_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_LibraryFolder(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -383,7 +489,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void PlugInsFolder_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_PlugInsFolder(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -418,8 +524,6 @@ namespace Chem4Word.UI.WPF
 
             string selectedEditor = SystemOptions.SelectedEditorPlugIn;
             string selectedRenderer = SystemOptions.SelectedRendererPlugIn;
-
-            // ToDo: Add Librarians Drop Down here ...
 
             SelectEditorPlugIn.Items.Clear();
             SelectRendererPlugIn.Items.Clear();
@@ -493,6 +597,12 @@ namespace Chem4Word.UI.WPF
 
             #endregion Telemetry Tab
 
+            #region Libraries Tab
+
+            LoadLibrariesList();
+
+            #endregion Libraries Tab
+
             #region General Tab
 
             ApplyDefaultOnImportFile.IsChecked = SystemOptions.SetBondLengthOnImportFromFile;
@@ -516,6 +626,30 @@ namespace Chem4Word.UI.WPF
             #endregion General Tab
         }
 
+        private void LoadLibrariesList()
+        {
+            var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+            var data = new List<LibrariesSettingsGridSource>();
+
+            foreach (var database in libraries.AvailableDatabases)
+            {
+                var obj = new LibrariesSettingsGridSource
+                {
+                    Name = database.DisplayName,
+                    FileName = database.ShortFileName,
+                    Count = GetPropertyValue(database, "Count", "?"),
+                    Dictionary = false,
+                    Locked = GetPropertyValue(database, "Owner", "User").Equals("System") ? "Yes" : "No",
+                    License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required"
+                };
+                data.Add(obj);
+            }
+            LibrariesList.ItemsSource = data;
+
+            _selectedLibrary = libraries.SelectedLibrary;
+            SetSelectedLibrary(_selectedLibrary);
+        }
+
         private BitmapImage CreateImageFromStream(Stream stream)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
@@ -531,98 +665,18 @@ namespace Chem4Word.UI.WPF
             return bitmap;
         }
 
+        private string GetPropertyValue(DatabaseDetails details, string key, string defaultValue)
+        {
+            string result = defaultValue;
+
+            if (details.Properties.ContainsKey(key))
+            {
+                result = details.Properties[key];
+            }
+
+            return result;
+        }
+
         #endregion Private methods
-
-        private void TabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count > 0)
-            {
-                var selectedTab = e.AddedItems[0] as TabItem;
-                if (selectedTab != null)
-                {
-                    Debug.WriteLine($"Selected tab is {selectedTab.Name}");
-
-                    if (selectedTab.Name.Equals("Libraries"))
-                    {
-                        var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                        var data = new List<SettingsLibrariesGridSource>();
-
-                        foreach (var database in libraries.AvailableDatabases)
-                        {
-                            var obj = new SettingsLibrariesGridSource
-                            {
-                                Name = database.DisplayName,
-                                FileName = database.ShortFileName,
-                                Dictionary = false,
-                                Locked = GetPropertyValue(database, "Owner", "User").Equals("System") ? "Yes" : "No",
-                                License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required"
-                            };
-                            data.Add(obj);
-                        }
-
-                        LibrariesGrid.ItemsSource = data;
-
-                        var selectedLibrary = libraries.SelectedLibrary;
-                        SetSelectedLibrary(selectedLibrary);
-
-                        // Local Function
-                        string GetPropertyValue(DatabaseDetails details, string key, string defaultValue)
-                        {
-                            string result = defaultValue;
-
-                            if (details.Properties.ContainsKey(key))
-                            {
-                                result = details.Properties[key];
-                            }
-
-                            return result;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void SetSelectedLibrary(string selectedLibrary)
-        {
-            int idx = 0;
-            LibrariesGrid.Focus();
-            foreach (object item in LibrariesGrid.Items)
-            {
-                if (item is SettingsLibrariesGridSource source)
-                {
-                    if (source.Name.Equals(selectedLibrary))
-                    {
-                        LibrariesGrid.SelectedItems.Clear();
-                        LibrariesGrid.SelectedIndex = idx;
-                        LibrariesGrid.SelectedItems.Add(item);
-                        LibrariesGrid.ScrollIntoView(item);
-                        LibrariesGrid.CurrentItem = item;
-
-                        DataGridRow row = (DataGridRow)LibrariesGrid.ItemContainerGenerator.ContainerFromIndex(idx);
-                        if (row != null)
-                        {
-                            row.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-                            row.Focus();
-                        }
-                        break;
-                    }
-                }
-
-                idx++;
-            }
-        }
-
-        private void OnGridSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Debug.WriteLine("Grid Selection Changed");
-            if (e.AddedItems.Count > 0)
-            {
-                if (e.AddedItems[0] is SettingsLibrariesGridSource source)
-                {
-                    _selectedDatabase = source.Name;
-                    Debug.WriteLine(source.Name);
-                }
-            }
-        }
     }
 }

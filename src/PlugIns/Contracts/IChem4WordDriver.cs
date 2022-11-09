@@ -5,9 +5,9 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using IChem4Word.Contracts.Dto;
 using System.Collections.Generic;
 using System.Windows;
-using IChem4Word.Contracts.Dto;
 
 namespace IChem4Word.Contracts
 {
@@ -22,18 +22,30 @@ namespace IChem4Word.Contracts
         IChem4WordTelemetry Telemetry { get; set; }
         DatabaseDetails DatabaseDetails { get; set; }
 
+        void StartTransaction();
+        void EndTransaction(bool rollback);
+
+        void CreateNewDatabase(DatabaseDetails details);
+
         // I/O
         Dictionary<string, string> GetProperties();
-        Dictionary<string, int> GetLibraryNames();
+
+        Dictionary<string, int> GetSubstanceNamesWithIds();
 
         List<ChemistryDataObject> GetAllChemistry();
+
         long AddChemistry(ChemistryDataObject chemistry);
+
         void UpdateChemistry(ChemistryDataObject chemistry);
+
         ChemistryDataObject GetChemistryById(long id);
+
         void DeleteAllChemistry();
+
         void DeleteChemistryById(long id);
 
         List<LibraryTagDataObject> GetAllTags();
+
         void AddTags(long Id, List<string> tags);
     }
 }

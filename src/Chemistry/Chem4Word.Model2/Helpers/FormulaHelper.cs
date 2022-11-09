@@ -115,7 +115,7 @@ namespace Chem4Word.Model2.Helpers
                         {
                             result += string.Concat($"{absCharge}".Select(c => SuperScriptNumbers[c - 48]));
                         }
-                        // ToDo: Unicode Superscript for + or -
+                        // Unicode Superscript for + or -
                         switch (part.Text)
                         {
                             case "+":

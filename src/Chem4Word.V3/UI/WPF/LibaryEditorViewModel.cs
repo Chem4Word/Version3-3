@@ -17,6 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using Chem4Word.ACME.Models;
+using Chem4Word.Core.UI.Forms;
 using Chem4Word.Model2.Annotations;
 using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
@@ -74,21 +75,21 @@ namespace Chem4Word.UI.WPF
             {
                 ChemistryItems.Clear();
 
-                List<ChemistryDataObject> dto = _driver.GetAllChemistry();
-
-                foreach (var chemistryDto in dto)
+                var dataObjects = _driver.GetAllChemistry();
+                foreach (var chemistryDto in dataObjects)
                 {
+                    // ToDo: [V3.3] Handle chemistryDto.DataType
                     var obj = new ChemistryObject(_telemetry, _driver)
                     {
-                        Id = chemistryDto.Id.Value,
+                        Id = chemistryDto.Id,
                         Cml = Encoding.UTF8.GetString(chemistryDto.Chemistry),
                         Formula = chemistryDto.Formula,
                         Name = chemistryDto.Name,
                         MolecularWeight = chemistryDto.MolWeight,
-                        Tags = chemistryDto.Tags.Select(t => t.Text).ToList()
+                        Tags = chemistryDto.Tags.Select(t => t.Text).ToList(),
+                        ChemicalNames = chemistryDto.Names.Select(t => t.Name).Distinct().ToList(),
+                        Initializing = false
                     };
-
-                    obj.Initializing = false;
 
                     ChemistryItems.Add(obj);
                 }
@@ -96,10 +97,10 @@ namespace Chem4Word.UI.WPF
             catch (Exception ex)
             {
                 Debug.WriteLine($"{module} {ex.Message}");
-                //using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
-                //{
-                //    form.ShowDialog();
-                //}
+                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                {
+                    form.ShowDialog();
+                }
             }
         }
 
@@ -120,10 +121,10 @@ namespace Chem4Word.UI.WPF
             catch (Exception ex)
             {
                 Debug.WriteLine($"{module} {ex.Message}");
-                //using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
-                //{
-                //    form.ShowDialog();
-                //}
+                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                {
+                    form.ShowDialog();
+                }
             }
         }
     }

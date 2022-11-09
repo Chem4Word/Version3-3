@@ -178,7 +178,7 @@ namespace Chem4Word.UI.WPF
             {
                 var items = controller.ChemistryItems.Count;
 
-                if (_filteredItems == 0)
+                if (SearchBox.Text.Length == 0)
                 {
                     sb.Append($"Showing all {items} items");
                 }
@@ -239,14 +239,14 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
             }
         }
 
-        private void OnSelectionChanged_Selector(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_SortBy(object sender, SelectionChangedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -297,7 +297,7 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -334,7 +334,7 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -408,7 +408,7 @@ namespace Chem4Word.UI.WPF
                               var queryString = SearchBox.Text.ToUpper();
                               if (item != null
                                   && (item.Name.ToUpper().Contains(queryString)
-                                      || item.OtherNames.Any(n => n.ToUpper().Contains(queryString))
+                                      || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString))
                                       || item.Tags.Any(n => n.ToUpper().Contains(queryString)))
                               )
                               {
@@ -446,23 +446,23 @@ namespace Chem4Word.UI.WPF
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                // ToDo: Implement
+                // ToDo: [V3.3] Implement
                 Debug.WriteLine($"{_class} -> Add Button Clicked");
             }
             catch (Exception exception)
             {
-                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, exception).ShowDialog();
+                new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
             }
         }
 
         private void OnClick_TrashButton(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, "Action", "Triggered");
 
             try
             {
-                // ToDo: Should only delete selected structures ...
+                // ToDo: [V3.3] Should only delete selected structures ...
 
                 var sb = new StringBuilder();
                 sb.AppendLine("This will delete all the selected structures from the Library");
@@ -472,8 +472,8 @@ namespace Chem4Word.UI.WPF
                 var dialogResult = UserInteractions.AskUserYesNo(sb.ToString(), Forms.MessageBoxDefaultButton.Button2);
                 if (dialogResult == Forms.DialogResult.Yes)
                 {
-                    // ToDo: Backup the file
-                    _driver.DeleteAllChemistry(); // ToDo: This is currently wrong
+                    // ToDo: [V3.3] Backup the file
+                    _driver.DeleteAllChemistry(); // ToDo: [V3.3] This is currently wrong
 
                     // Refresh the control's data
                     var controller = new LibaryEditorViewModel(_telemetry, _driver);
@@ -483,7 +483,7 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception exception)
             {
-                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, exception).ShowDialog();
+                new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
             }
         }
 
@@ -513,7 +513,7 @@ namespace Chem4Word.UI.WPF
                         string doneFile = Path.Combine(selectedFolder, "library-import-done.txt");
 
                         sb = new StringBuilder();
-                        sb.AppendLine("Do you want to import the Gallery structures into the Library?");
+                        sb.AppendLine("Do you want to import these structures into the Library?");
                         dr = UserInteractions.AskUserYesNo(sb.ToString());
                         if (dr == Forms.DialogResult.Yes
                             && File.Exists(doneFile))
@@ -532,8 +532,12 @@ namespace Chem4Word.UI.WPF
                         {
                             int fileCount = 0;
 
-                            // ToDo: Figure out how to implement transactions
-                            //_driver.StartTransaction();
+                            var sw = new Stopwatch();
+                            sw.Start();
+
+                            _driver.StartTransaction();
+
+                            int progress = 0;
 
                             try
                             {
@@ -542,7 +546,6 @@ namespace Chem4Word.UI.WPF
 
                                 if (files.Count > 0)
                                 {
-                                    int progress = 0;
                                     int total = files.Count;
 
                                     ProgressBar.Maximum = files.Count;
@@ -576,9 +579,18 @@ namespace Chem4Word.UI.WPF
                                             Formula = model.ConciseFormula,
                                             MolWeight = model.MolecularWeight
                                         };
+                                        foreach (var property in model.GetAllNames())
+                                        {
+                                            var name = new ChemistryNameDataObject
+                                            {
+                                                Name = property.Value,
+                                                NameSpace = property.FullType.Split(':')[0],
+                                                Tag = property.FullType.Split(':')[1]
+                                            };
+                                            dto.Names.Add(name);
+                                        }
 
                                         _driver.AddChemistry(dto);
-                                        Debug.WriteLine($" [{progress}/{total}]");
                                         fileCount++;
                                     }
 
@@ -586,17 +598,18 @@ namespace Chem4Word.UI.WPF
                                     FileInfo fi = new FileInfo(doneFile);
                                     fi.Attributes = FileAttributes.Hidden;
 
-                                    // ToDo: Figure out how to implement transactions
-                                    //_driver.EndTransaction(false);
+                                    _driver.EndTransaction(false);
                                 }
                             }
                             catch (Exception exception)
                             {
-                                // ToDo: Figure out how to implement transactions
-                                //_driver.EndTransaction(true);
-                                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, exception).ShowDialog();
+                                _driver.EndTransaction(true);
+                                new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
                             }
 
+                            sw.Stop();
+
+                            _telemetry.Write(module, "Timing", $"Import of {progress} files took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
                             ClearProgress();
 
                             // Refresh the control's data
@@ -609,7 +622,7 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception exception)
             {
-                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, exception).ShowDialog();
+                new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
             }
         }
 
@@ -622,7 +635,7 @@ namespace Chem4Word.UI.WPF
         private void ClearProgress()
         {
             ProgressBar.Value = 0;
-            ProgressBar.Maximum = 0;
+            ProgressBar.Maximum = 100;
             ProgressBarMessage.Text = "";
         }
 
@@ -679,7 +692,8 @@ namespace Chem4Word.UI.WPF
                                     var model = converter.Import(Encoding.UTF8.GetString(obj.Chemistry));
                                     model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength, false);
 
-                                    var contents = Constants.XmlFileHeader + Environment.NewLine + converter.Export(model);
+                                    var contents = Constants.XmlFileHeader + Environment.NewLine
+                                                                           + converter.Export(model);
                                     File.WriteAllText(filename, contents);
                                     exported++;
                                 }
@@ -697,7 +711,7 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception exception)
             {
-                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, exception).ShowDialog();
+                new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
             }
         }
 
@@ -722,7 +736,7 @@ namespace Chem4Word.UI.WPF
             if (DataContext is LibaryEditorViewModel dc
                 && dc.SelectedChemistryObject != null)
             {
-                // ToDo: Handle null SettingsPath
+                // ToDo: [V3.3] Handle null SettingsPath
                 var userTagsFile = Path.Combine(_acmeOptions.SettingsPath, UserTagsFileName);
                 if (File.Exists(userTagsFile))
                 {
@@ -784,7 +798,7 @@ namespace Chem4Word.UI.WPF
             if (!lt.Equals(tt))
             {
                 // Save the updated user file
-                // ToDo: Handle _acmeOptions.SettingsPath is null
+                // ToDo: [V3.3] Handle _acmeOptions.SettingsPath is null
                 var userTagsFile = Path.Combine(_acmeOptions.SettingsPath, UserTagsFileName);
                 var jsonOut = JsonConvert.SerializeObject(_userTags, Formatting.Indented);
                 File.WriteAllText(userTagsFile, jsonOut);
@@ -797,7 +811,7 @@ namespace Chem4Word.UI.WPF
                 _driver.AddTags(dc.SelectedChemistryObject.Id, tags);
 
                 sw.Stop();
-                _telemetry.Write(module, "Timing", $"Writing {tags.Count} tags took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms");
+                _telemetry.Write(module, "Timing", $"Writing {tags.Count} tags took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
 
                 // Update the grid view
                 dc.SelectedChemistryObject.Tags = tags;

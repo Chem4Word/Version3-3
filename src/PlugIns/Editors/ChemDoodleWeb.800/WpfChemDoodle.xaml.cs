@@ -135,7 +135,7 @@ namespace Chem4Word.Editor.ChemDoodleWeb800
 
                     _sw.Stop();
 
-                    Telemetry.Write(module, "Timing", $"ChemDoodle Web ready in {SafeDouble.Duration(_sw.ElapsedMilliseconds)}ms");
+                    Telemetry.Write(module, "Timing", $"ChemDoodle Web ready in {SafeDouble.AsString0(_sw.ElapsedMilliseconds)}ms");
 
                     _loading = false;
                 }
@@ -504,7 +504,7 @@ namespace Chem4Word.Editor.ChemDoodleWeb800
                 }
                 File.WriteAllText(Path.Combine(SettingsPath, "Editor.html"), htmlfile);
 
-                Telemetry.Write(module, "Timing", $"Writing resources to disk took {SafeDouble.Duration(sw.ElapsedMilliseconds)}ms");
+                Telemetry.Write(module, "Timing", $"Writing resources to disk took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
 
                 Telemetry.Write(module, "Information", "Starting browser");
                 WebBrowser.Navigate(Path.Combine(SettingsPath, "Editor.html"));
@@ -592,7 +592,7 @@ namespace Chem4Word.Editor.ChemDoodleWeb800
 
                 sw.Stop();
 
-                Telemetry.Write(module, "Timing", $"Writing resources to disk took {SafeDouble.Duration(sw.ElapsedMilliseconds)}ms");
+                Telemetry.Write(module, "Timing", $"Writing resources to disk took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
             }
         }
 

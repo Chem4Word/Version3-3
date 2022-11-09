@@ -22,9 +22,24 @@ namespace Chem4Word.Driver.Dummy
         public IChem4WordTelemetry Telemetry { get; set; }
         public DatabaseDetails DatabaseDetails { get; set; }
 
+        public void StartTransaction()
+        {
+            Debugger.Break();
+        }
+
+        public void EndTransaction(bool rollback)
+        {
+            Debugger.Break();
+        }
+
+        public void CreateNewDatabase(DatabaseDetails details)
+        {
+            Debugger.Break();
+        }
+
         public Dictionary<string, string> GetProperties() => new Dictionary<string, string>();
 
-        public Dictionary<string, int> GetLibraryNames() => new Dictionary<string, int>();
+        public Dictionary<string, int> GetSubstanceNamesWithIds() => new Dictionary<string, int>();
 
         public List<ChemistryDataObject> GetAllChemistry() => new List<ChemistryDataObject>();
 

@@ -11,6 +11,8 @@
     controls:ChemistryItem.ChemistryItemButtonClick="OnChemistryItem_ButtonClick"
     d:DesignHeight="600"
     d:DesignWidth="800"
+    FontFamily="Arial"
+    FontSize="18"
     mc:Ignorable="d">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Chem4WordBlue">
@@ -98,7 +100,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ToolBar
             Height="40"
@@ -222,10 +224,19 @@
                 Margin="5,0,5,0"
                 HorizontalAlignment="Left"
                 VerticalContentAlignment="Center"
+                Background="White"
                 BorderThickness="0"
                 Foreground="{StaticResource Chem4WordBlue}"
                 SelectedIndex="0"
-                SelectionChanged="OnSelectionChanged_Selector">
+                SelectionChanged="OnSelectionChanged_SortBy">
+                <ComboBox.Resources>
+                    <!--  Selected color when the ComboBox is focused  -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="White" />
+                    <!--  Selected color when the ComboBox is not focused  -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="White" />
+                    <!--  selected text  -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White" />
+                </ComboBox.Resources>
                 <ComboBoxItem>Name</ComboBoxItem>
                 <ComboBoxItem>MolecularWeight</ComboBoxItem>
                 <ComboBoxItem>Id</ComboBoxItem>
@@ -252,14 +263,12 @@
                             VerticalAlignment="Center"
                             VerticalContentAlignment="Center"
                             BorderThickness="0"
-                            FontSize="24"
                             Foreground="{StaticResource Chem4WordBlue}"
                             KeyDown="OnKeyDown_SearchBox"
                             TextChanged="OnTextChanged_SearchBox" />
                         <TextBlock
                             Margin="2,2"
                             VerticalAlignment="Center"
-                            FontSize="18"
                             Foreground="LightSteelBlue"
                             IsHitTestVisible="False"
                             Text="Filter ..."
@@ -352,8 +361,7 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="163.301" />
-                <ColumnDefinition Width="109.699" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <ListBox
                 Name="CatalogueItems"
@@ -422,7 +430,6 @@
             <Expander
                 Name="Expander"
                 Grid.Column="1"
-                Grid.ColumnSpan="2"
                 ExpandDirection="Right"
                 IsExpanded="True">
                 <Expander.Header>

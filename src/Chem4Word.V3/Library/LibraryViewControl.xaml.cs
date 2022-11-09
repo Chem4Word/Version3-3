@@ -136,7 +136,7 @@ namespace Chem4Word.Library
                                       var queryString = SearchBox.Text.ToUpper();
                                       return item != null
                                              && (item.Name.ToUpper().Contains(queryString)
-                                                 || item.OtherNames.Any(n => n.ToUpper().Contains(queryString)));
+                                                 || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString)));
                                   };
                 }
             }

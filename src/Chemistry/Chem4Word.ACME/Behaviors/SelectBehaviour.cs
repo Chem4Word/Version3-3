@@ -250,7 +250,7 @@ namespace Chem4Word.ACME.Behaviors
         {
             //this is a *tunnelling* event which means it fires on the outmost
             //container before any of the visual children
-            //TODO:  disable the hydrogen rotator selector
+            //TODO:  [DCD] Disable the hydrogen rotator selector
             var pos = Mouse.GetPosition(CurrentEditor);
             Vector shift; //how much we want to shift the objects by
             //first check to see whether we're dragging a thumb of some kind

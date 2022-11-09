@@ -6,18 +6,15 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2.Annotations;
-using Chem4Word.Model2.Converters.CML;
 using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Xml.Linq;
 
 namespace Chem4Word.ACME.Models
 {
@@ -54,7 +51,6 @@ namespace Chem4Word.ACME.Models
             set
             {
                 _cml = value;
-                LoadOtherNames(value);
                 OnPropertyChanged();
             }
         }
@@ -89,6 +85,7 @@ namespace Chem4Word.ACME.Models
         /// Formula of the structure
         /// </summary>
         public string Formula { get; set; }
+        public List<ChemistryNameDataObject> Names { get; set; }
 
         private string _name;
 
@@ -162,7 +159,7 @@ namespace Chem4Word.ACME.Models
         /// <summary>
         /// List of Chemical Names for the structure (Library mode)
         /// </summary>
-        public List<string> OtherNames { get; private set; } = new List<string>();
+        public List<string> ChemicalNames { get; set; } = new List<string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -174,15 +171,6 @@ namespace Chem4Word.ACME.Models
             {
                 Debug.WriteLine($"OnPropertyChanged invoked for {propertyName} from {this}");
             }
-        }
-
-        private void LoadOtherNames(string cml)
-        {
-            XDocument cmlDoc = XDocument.Parse(cml);
-            XName nameNodeName = CMLNamespaces.cml + "name";
-            OtherNames = (from element in cmlDoc.Descendants(nameNodeName)
-                          where element.Name == nameNodeName
-                          select element.Value).Distinct().ToList();
         }
     }
 }

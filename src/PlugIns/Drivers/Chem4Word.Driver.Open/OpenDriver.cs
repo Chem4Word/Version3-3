@@ -10,6 +10,7 @@ using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Reflection;
 using Point = System.Windows.Point;
 
@@ -28,6 +29,49 @@ namespace Chem4Word.Driver.Open
         public IChem4WordTelemetry Telemetry { get; set; }
         public DatabaseDetails DatabaseDetails { get; set; }
 
+        private SQLiteTransaction _transaction;
+        private Library _library;
+
+        public void StartTransaction()
+        {
+            _library = new Library(Telemetry, DatabaseDetails, TopLeft);
+            var connection = _library.LibraryConnection();
+            _transaction = connection.BeginTransaction();
+        }
+
+        public void EndTransaction(bool rollback)
+        {
+            if (_transaction != null)
+            {
+                var conn = _transaction.Connection;
+                if (rollback)
+                {
+                    _transaction.Rollback();
+                }
+                else
+                {
+                    _transaction.Commit();
+                }
+
+                conn.Close();
+                conn.Dispose();
+            }
+
+            _transaction = null;
+            _library = null;
+        }
+
+        public void CreateNewDatabase(DatabaseDetails details)
+        {
+            Library.CreateNewDatabase(details.Connection);
+
+            var library = new Library(Telemetry, details, TopLeft);
+            // Fetch it's properties which will apply patches
+            var temp = library.GetProperties();
+            // ToDo: [V3.3] Set this database's Id (Guid)
+            Debug.WriteLine(temp.Count);
+        }
+
         public Dictionary<string, string> GetProperties()
         {
             var result = new Dictionary<string, string>();
@@ -41,14 +85,14 @@ namespace Chem4Word.Driver.Open
             return result;
         }
 
-        public Dictionary<string, int> GetLibraryNames()
+        public Dictionary<string, int> GetSubstanceNamesWithIds()
         {
             var result = new Dictionary<string, int>();
 
             if (DatabaseDetails != null)
             {
                 var library = new Library(Telemetry, DatabaseDetails, TopLeft);
-                result = library.GetLibraryNames();
+                result = library.GetSubstanceNamesWithIds();
             }
 
             return result;
@@ -73,8 +117,15 @@ namespace Chem4Word.Driver.Open
 
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
-                result = library.AddChemistry(chemistry);
+                if (_transaction != null)
+                {
+                    result = _library.AddChemistry(_transaction.Connection, chemistry);
+                }
+                else
+                {
+                    var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                    result = library.AddChemistry(chemistry);
+                }
             }
 
             return result;

@@ -106,7 +106,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileHandler.cs" />
     <Compile Include="OpenDriver.cs" />
     <Compile Include="SqLite\Library.cs" />
     <Compile Include="SqLite\Patch.cs" />
@@ -137,6 +136,7 @@
   <ItemGroup>
     <Content Include="Notes.txt" />
     <Content Include="Resources\Button Images\Gallery-Find.png" />
+    <EmbeddedResource Include="Resources\CreateV3-1Database.sql" />
     <EmbeddedResource Include="Resources\Button Images\Gallery-Toggle.png" />
     <EmbeddedResource Include="Resources\Button Images\Gallery-Save.png" />
   </ItemGroup>

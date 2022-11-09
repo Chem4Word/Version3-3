@@ -225,7 +225,7 @@ namespace Chem4Word
                     PerformStartUpActions();
 
                     sw.Stop();
-                    message = $"{module} took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms";
+                    message = $"{module} took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms";
                     StartUpTimings.Add(message);
                     Debug.WriteLine(message);
 
@@ -316,7 +316,7 @@ namespace Chem4Word
                 ListOfDetectedLibraries = new LibraryFileHelper(Telemetry, AddInInfo.ProgramDataPath).GetListOfLibraries();
 
                 sw.Stop();
-                message = $"{module} took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms";
+                message = $"{module} took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms";
                 Debug.WriteLine(message);
                 StartUpTimings.Add(message);
             }
@@ -426,7 +426,7 @@ namespace Chem4Word
 
                 if (lib != null)
                 {
-                    LibraryNames = lib.GetLibraryNames();
+                    LibraryNames = lib.GetSubstanceNamesWithIds();
                 }
                 else
                 {
@@ -876,7 +876,7 @@ namespace Chem4Word
 
             sw.Stop();
 
-            message = $"{module} examining {filesFound} files took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms";
+            message = $"{module} examining {filesFound} files took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms";
             Debug.WriteLine(message);
             StartUpTimings.Add(message);
         }

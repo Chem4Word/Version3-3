@@ -1895,7 +1895,7 @@ namespace Chem4Word.ACME
                         }
                         else if (selectedItem is Reaction reaction)
                         {
-                            //TODO: Handle multiple reaction schemes in future. This is a kludge
+                            //TODO: [DCD] Handle multiple reaction schemes in future. This is a kludge
                             tempModel.DefaultReactionScheme.AddReaction(reaction);
                         }
                         else if (selectedItem is Annotation annotation)
@@ -1986,7 +1986,7 @@ namespace Chem4Word.ACME
                     Clipboard.Clear();
                     IDataObject ido = new DataObject();
                     ido.SetData(FormatCML, export);
-                    string header = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+                    var header = Core.Helpers.Constants.XmlFileHeader + Environment.NewLine;
                     ido.SetData(DataFormats.Text, header + export);
                     Clipboard.SetDataObject(ido, true);
                 }

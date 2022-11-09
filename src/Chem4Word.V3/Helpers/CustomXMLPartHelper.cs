@@ -140,7 +140,7 @@ namespace Chem4Word.Helpers
             }
 
             string backupFolder = Path.Combine(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath, "Backups");
-            string header = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + Environment.NewLine;
+            string header = Constants.XmlFileHeader + Environment.NewLine;
 
             foreach (CustomXMLPart customXmlPart in AllChemistryParts(doc))
             {

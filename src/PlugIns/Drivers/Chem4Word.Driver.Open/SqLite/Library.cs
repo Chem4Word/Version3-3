@@ -49,10 +49,27 @@ namespace Chem4Word.Driver.Open.SqLite
             Patch(_patches.Max(p => p.Version));
         }
 
-        private SQLiteConnection LibraryConnection()
+        public static void CreateNewDatabase(string filename)
+        {
+            SQLiteConnection.CreateFile(filename);
+            var conn = new SQLiteConnection($"Data Source={filename};Synchronous=Full");
+            conn.Open();
+            var resource = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "CreateV3-1Database.sql");
+            var lines = resource.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrEmpty(line) && !line.StartsWith("--"))
+                {
+                    var command = new SQLiteCommand(line, conn);
+                    command.ExecuteNonQuery();
+                }
+            }
+            conn.Close();
+        }
+
+        internal SQLiteConnection LibraryConnection()
         {
             // Source https://www.connectionstrings.com/sqlite/
-            Debug.WriteLine($"Opening {_details.Connection}");
             var conn = new SQLiteConnection($"Data Source={_details.Connection};Synchronous=Full");
 
             return conn.OpenAndReturn();
@@ -74,9 +91,6 @@ namespace Chem4Word.Driver.Open.SqLite
                         {
                             if (tables["Name"] is string name)
                             {
-                                var type = tables["Type"] as string;
-                                Debug.WriteLine($"Found {type} '{name}'");
-
                                 if (name.Equals("Patches"))
                                 {
                                     patchTableExists = true;
@@ -97,9 +111,6 @@ namespace Chem4Word.Driver.Open.SqLite
                             {
                                 if (patches["Version"] is string version)
                                 {
-                                    var applied = patches["Applied"] as string;
-                                    Debug.WriteLine($"Patch {version} was applied on {applied}");
-
                                     var thisVersion = Version.Parse(version);
                                     if (thisVersion > currentVersion)
                                     {
@@ -215,8 +226,8 @@ namespace Chem4Word.Driver.Open.SqLite
 
             try
             {
+                // Add Patch record
                 var versionString = version.ToString(3);
-
                 var sb = new StringBuilder();
 
                 sb.AppendLine("INSERT INTO Patches");
@@ -229,6 +240,27 @@ namespace Chem4Word.Driver.Open.SqLite
                 var applied = SafeDate.ToShortDate(DateTime.Today);
                 command.Parameters.Add("@applied", DbType.String, applied.Length).Value = applied;
 
+                command.ExecuteNonQuery();
+
+                // Delete old record from Properties
+                sb = new StringBuilder();
+
+                sb.AppendLine("DELETE FROM Properties");
+                sb.AppendLine("WHERE Key = 'Version'");
+
+                command = new SQLiteCommand(sb.ToString(), conn);
+                command.ExecuteNonQuery();
+
+                // Add new record in Properties
+                sb = new StringBuilder();
+
+                sb.AppendLine("INSERT INTO Properties");
+                sb.AppendLine(" (Key, Value)");
+                sb.AppendLine("VALUES");
+                sb.AppendLine(" ('Version', @version)");
+
+                command = new SQLiteCommand(sb.ToString(), conn);
+                command.Parameters.Add("@version", DbType.String, versionString.Length).Value = versionString;
                 command.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -253,9 +285,45 @@ namespace Chem4Word.Driver.Open.SqLite
                         }
                     }
                 }
+
+                if (!results.ContainsKey("Id"))
+                {
+                    var guid = Guid.NewGuid().ToString("D");
+                    AddProperty(conn, "Id", guid);
+                    results.Add("Id", guid);
+                }
+
+                results.Add("Count", CountOfStructures(conn));
             }
 
             return results;
+        }
+
+        private string CountOfStructures(SQLiteConnection conn)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("SELECT COUNT(1)");
+            sb.AppendLine("FROM Gallery");
+
+            var cmd = new SQLiteCommand(sb.ToString(), conn);
+
+            var count = (long)cmd.ExecuteScalar();
+            return count.ToString();
+        }
+
+        private void AddProperty(SQLiteConnection conn, string key, string value)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("INSERT INTO Properties");
+            sb.AppendLine(" (Key, Value)");
+            sb.AppendLine("VALUES");
+            sb.AppendLine(" (@key, @value)");
+
+            var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@key", DbType.String, key.Length).Value = key;
+            command.Parameters.Add("@value", DbType.String, value.Length).Value = value;
+
+            command.ExecuteNonQuery();
         }
 
         private SQLiteDataReader GetProperties(SQLiteConnection conn)
@@ -268,35 +336,11 @@ namespace Chem4Word.Driver.Open.SqLite
             return command.ExecuteReader();
         }
 
-        // ToDo: Figure out how to get transactions working
-        public SQLiteTransaction StartTransaction()
-        {
-            var conn = LibraryConnection();
-            return conn.BeginTransaction();
-        }
-
-        // ToDo: Figure out how to get transactions working
-        public void EndTransaction(SQLiteTransaction transaction, bool rollback)
-        {
-            var conn = transaction.Connection;
-            if (rollback)
-            {
-                transaction.Rollback();
-            }
-            else
-            {
-                transaction.Commit();
-            }
-
-            conn.Close();
-            conn.Dispose();
-        }
-
         /// <summary>
         /// This is called by LoadNamesFromLibrary in Add-In which happens on right click
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, int> GetLibraryNames()
+        public Dictionary<string, int> GetSubstanceNamesWithIds()
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             var allNames = new Dictionary<string, int>();
@@ -340,7 +384,7 @@ namespace Chem4Word.Driver.Open.SqLite
             sw.Stop();
 #if DEBUG
             // Task 810
-            _telemetry.Write(module, "Timing", $"Reading {allNames.Count} Chemical names took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms");
+            _telemetry.Write(module, "Timing", $"Reading {allNames.Count} Chemical names took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
 #endif
             return allNames;
         }
@@ -363,7 +407,7 @@ namespace Chem4Word.Driver.Open.SqLite
                     sw.Start();
 
                     var allTaggedItems = GetAllChemistryTags(conn);
-                    var allNames = GetAllOtherNames(conn);
+                    var allNames = GetAllChemicalNames(conn);
 
                     using (SQLiteDataReader chemistry = GetAllChemistry(conn))
                     {
@@ -379,10 +423,9 @@ namespace Chem4Word.Driver.Open.SqLite
                                     DataType = chemistry["datatype"] as string,
                                     Name = chemistry["name"] as string,
                                     Formula = chemistry["formula"] as string,
-                                    OtherNames = allNames.Where(t => t.ChemistryId == id)
-                                                         .Select(s => s.Name)
-                                                         .ToList(),
                                     Tags = allTaggedItems.Where(t => t.ChemistryId == id)
+                                                         .ToList(),
+                                    Names = allNames.Where(t => t.ChemistryId == id)
                                                          .ToList()
                                 };
 
@@ -398,7 +441,7 @@ namespace Chem4Word.Driver.Open.SqLite
                     }
 
                     sw.Stop();
-                    _telemetry.Write(module, "Timing", $"Reading {results.Count} structures took {SafeDouble.AsString(sw.ElapsedMilliseconds)}ms");
+                    _telemetry.Write(module, "Timing", $"Reading {results.Count} structures took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
                 }
             }
             catch (Exception ex)
@@ -426,7 +469,25 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        private long AddChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
+        private void AddName(SQLiteConnection conn, ChemistryNameDataObject name, long id)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("INSERT INTO ChemicalNames");
+            sb.AppendLine(" (Name, Namespace, Tag, ChemistryID)");
+            sb.AppendLine("VALUES");
+            sb.AppendLine(" (@name, @namespace, @tag, @chemstryId)");
+
+            var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@name", DbType.String, name.Name.Length).Value = name.Name;
+            command.Parameters.Add("@namespace", DbType.String, name.NameSpace.Length).Value = name.NameSpace;
+            command.Parameters.Add("@tag", DbType.String, name.Tag.Length).Value = name.Tag;
+            command.Parameters.Add("@chemstryId", DbType.Int64).Value = id;
+
+            command.ExecuteNonQuery();
+        }
+
+        internal long AddChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
         {
             var sb = new StringBuilder();
 
@@ -446,11 +507,14 @@ namespace Chem4Word.Driver.Open.SqLite
 
             string sql = "SELECT last_insert_rowid()";
             var cmd = new SQLiteCommand(sql, conn);
-
             var id = (long)cmd.ExecuteScalar();
 
-            //ToDo: Insert :-
-            // chemistry.OtherNames
+            foreach (var name in chemistry.Names)
+            {
+                AddName(conn, name, id);
+            }
+
+            //ToDo: [V3.3] Insert :-
             // chemistry.Tags
 
             return id;
@@ -462,8 +526,16 @@ namespace Chem4Word.Driver.Open.SqLite
             {
                 UpdateChemistry(conn, chemistry);
 
-                //ToDo Update/Replace :-
-                // chemistry.OtherNames
+                // Delete 'old' names
+                DeleteNames(conn, chemistry.Id);
+
+                // Insert 'new' names
+                foreach (var name in chemistry.Names)
+                {
+                    AddName(conn, name, chemistry.Id);
+                }
+
+                //ToDo: [V3.3] Update/Replace :-
                 // chemistry.Tags
             }
         }
@@ -507,7 +579,7 @@ namespace Chem4Word.Driver.Open.SqLite
                             result.Name = chemistry["name"] as string;
                             result.Formula = chemistry["formula"] as string;
 
-                            // Handle new field(s) which may be null
+                            // Handle new field(s) which might be null
                             var molWeight = chemistry["molweight"].ToString();
                             if (!string.IsNullOrEmpty(molWeight))
                             {
@@ -516,8 +588,7 @@ namespace Chem4Word.Driver.Open.SqLite
                         }
                     }
 
-                    // ToDo: Get OtherNames
-                    // ToDo: Get Tags
+                    // ToDo: [V3.3] Get Names and Tags
                 }
             }
 
@@ -778,16 +849,13 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        private List<ChemistryNameDataObject> GetAllOtherNames(SQLiteConnection conn)
+        private List<ChemistryNameDataObject> GetAllChemicalNames(SQLiteConnection conn)
         {
             var results = new List<ChemistryNameDataObject>();
 
             var sb = new StringBuilder();
             sb.AppendLine("SELECT ChemicalNameId, Name, Namespace, Tag, ChemistryID");
             sb.AppendLine("FROM ChemicalNames");
-            //sb.AppendLine("WHERE NOT (Namespace = 'chem4word' AND Tag = 'cev_freq')");
-            //sb.AppendLine(" AND NOT (Namespace = 'pubchem' AND Tag = 'Id')");
-            //sb.AppendLine(" AND NOT (Name = 'chemical compound')");
 
             var command = new SQLiteCommand(sb.ToString(), conn);
 

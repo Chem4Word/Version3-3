@@ -65,12 +65,12 @@ namespace Chem4Word.Helpers
                         var details = new DatabaseDetails
                         {
                             Connection = Path.Combine(_programDataPath, "Libraries", fileInfo.Name),
-                            DisplayName = "User Library",
-                            Driver = "SQLite Standard",
-                            ShortFileName = "Library.db"
+                            DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
+                            Driver = Constants.SQLiteStandardDriver,
+                            ShortFileName = fileInfo.Name
                         };
                         result.AvailableDatabases.Add(details);
-                        result.SelectedLibrary = "User Library";
+                        result.SelectedLibrary = details.DisplayName;
                     }
                 }
 
@@ -89,7 +89,7 @@ namespace Chem4Word.Helpers
                         {
                             Connection = path1,
                             DisplayName = "Starter Library",
-                            Driver = "SQLite Standard",
+                            Driver = Constants.SQLiteStandardDriver,
                             ShortFileName = "Starter Library.db"
                         };
                         result.AvailableDatabases.Add(details);
@@ -111,11 +111,17 @@ namespace Chem4Word.Helpers
                         {
                             Connection = path2,
                             DisplayName = "Plant Essential Oils",
-                            Driver = "SQLite Standard",
+                            Driver = Constants.SQLiteStandardDriver,
                             ShortFileName = "Plant Essential Oils.db"
                         };
                         result.AvailableDatabases.Add(details);
                     }
+                }
+
+
+                if (string.IsNullOrEmpty(result.SelectedLibrary))
+                {
+                    result.SelectedLibrary = result.AvailableDatabases.FirstOrDefault()?.DisplayName;
                 }
 
                 // Write new 'Libraries.json' file
@@ -127,7 +133,7 @@ namespace Chem4Word.Helpers
             {
                 // Read in all Properties for each database
                 // We should be able to always use the standard driver if the database is one of our SQLite ones.
-                var driver = Globals.Chem4WordV3.GetDriverPlugIn("SQLite Standard");
+                var driver = Globals.Chem4WordV3.GetDriverPlugIn(Constants.SQLiteStandardDriver);
                 if (driver != null)
                 {
                     foreach (var database in result.AvailableDatabases)
@@ -141,11 +147,6 @@ namespace Chem4Word.Helpers
                         };
                         database.Properties = driver.GetProperties();
                     }
-                }
-
-                if (string.IsNullOrEmpty(result.SelectedLibrary))
-                {
-                    result.SelectedLibrary = result.AvailableDatabases.FirstOrDefault()?.DisplayName;
                 }
             }
 

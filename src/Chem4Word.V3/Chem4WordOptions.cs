@@ -90,7 +90,7 @@ namespace Chem4Word
         public Chem4WordOptions()
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            // ToDo: Take this out after beta is completed
+            // ToDo: [MAW] Take this out after beta is completed
             RegistryHelper.StoreMessage(module, "Chem4WordOptions()");
 
             Errors = new List<string>();
@@ -104,7 +104,7 @@ namespace Chem4Word
         public Chem4WordOptions(string path)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            // ToDo: Take this out after beta is completed
+            // ToDo: [MAW] Take this out after beta is completed
             RegistryHelper.StoreMessage(module, "Chem4WordOptions(string path)");
             RegistryHelper.StoreMessage(module, $"path = {path}");
 
@@ -184,7 +184,7 @@ namespace Chem4Word
                             }
                             else
                             {
-                                // ToDo: Take this out after beta is completed
+                                // ToDo: [MAW] Take this out after beta is completed
                                 RegistryHelper.StoreMessage(module, fileContents);
 
                                 var options = JsonConvert.DeserializeObject<Chem4WordOptions>(fileContents);
@@ -304,12 +304,12 @@ namespace Chem4Word
 
             try
             {
-                // ToDo: Take this out after beta is completed
+                // ToDo: [MAW] Take this out after beta is completed
                 RegistryHelper.StoreMessage(module, $"Saving Chem4Word Options to {filename}");
                 Debug.WriteLine($"Saving Chem4Word Options to {filename}");
 
                 var contents = JsonConvert.SerializeObject(this, Formatting.Indented);
-                // ToDo: Take this out after beta is completed
+                // ToDo: [MAW] Take this out after beta is completed
                 RegistryHelper.StoreMessage(module, contents);
 
                 using (var outStream = new FileStream(filename,

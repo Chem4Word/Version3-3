@@ -1113,6 +1113,18 @@ namespace Chem4Word.Model2
             }
         }
 
+        public List<TextualProperty> GetAllNames()
+        {
+            var result = new List<TextualProperty>();
+
+            foreach (var mol in GetAllMolecules())
+            {
+                result.AddRange(mol.AllTextualProperties.Where(x => x.TypeCode.Equals("N")));
+            }
+
+            return result;
+        }
+
         public List<Atom> GetAllAtoms()
         {
             List<Atom> allAtoms = new List<Atom>();

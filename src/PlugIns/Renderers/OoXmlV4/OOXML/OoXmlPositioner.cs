@@ -289,7 +289,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             }
             else
             {
-                // ToDo: Implement if required
+                // ToDo: [MAW] Implement if required
                 Debugger.Break();
             }
 

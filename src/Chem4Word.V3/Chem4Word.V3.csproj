@@ -455,7 +455,7 @@
     <Compile Include="UI\WPF\LibraryEditorHost.Designer.cs">
       <DependentUpon>LibraryEditorHost.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\WPF\SettingsLibrariesGridSource.cs" />
+    <Compile Include="UI\WPF\LibrariesSettingsGridSource.cs" />
     <Compile Include="UI\XmlViewer.cs">
       <SubType>Form</SubType>
     </Compile>

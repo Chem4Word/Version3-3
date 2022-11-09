@@ -5,19 +5,20 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 
 namespace IChem4Word.Contracts.Dto
 {
     public class ChemistryDataObject
     {
-        public long? Id { get; set; }
+        public long Id { get; set; }
         public byte[] Chemistry { get; set; }
         public string DataType { get; set; }
         public string Name { get; set; }
         public string Formula { get; set; }
         public double MolWeight { get; set; }
-        public List<string> OtherNames { get; set; } = new List<string>();
         public List<ChemistryTagDataObject> Tags { get; set; } = new List<ChemistryTagDataObject>();
+        public List<ChemistryNameDataObject> Names { get; set; } = new List<ChemistryNameDataObject>();
     }
 }

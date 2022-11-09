@@ -5,12 +5,15 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-namespace Chem4Word.ACME.Enums
+namespace Chem4Word.UI.WPF
 {
-    public enum WordCloudThemeWordRotation
+    public class LibrariesSettingsGridSource
     {
-        Horizontal,
-        Mixed,
-        Random
+        public string Name { get; set; }
+        public string FileName { get; set; }
+        public string Count { get; set; }
+        public bool Dictionary { get; set; }
+        public string Locked { get; set; }
+        public string License { get; set; }
     }
 }

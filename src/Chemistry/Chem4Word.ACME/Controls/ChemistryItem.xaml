@@ -42,7 +42,7 @@
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Foreground" Value="Blue" />
         </Style>
-        <Style x:Key="OtherNamesStyle" TargetType="ItemsControl">
+        <Style x:Key="ChemicalNamesStyle" TargetType="ItemsControl">
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
@@ -65,6 +65,7 @@
                         <TextBlock
                             Margin="1"
                             Padding="1"
+                            FontSize="12"
                             Text="{Binding}" />
                     </DataTemplate>
                 </Setter.Value>
@@ -136,8 +137,9 @@
                 </Grid.RowDefinitions>
                 <local:FormulaBlock
                     Grid.Row="0"
+                    FontFamily="Arial"
                     Foreground="{StaticResource Chem4WordBlue}"
-                    Formula="{Binding Path=Formula}" FontFamily="Arial" />
+                    Formula="{Binding Path=Formula}" />
                 <Expander
                     Grid.Row="1"
                     MaxWidth="{Binding ElementName=LibraryTopGrid, Path=ActualWidth}"
@@ -147,14 +149,14 @@
                     ToolTip="Click to see more names ...">
                     <Expander.Header>
                         <TextBlock
-                            FontSize="16"
+                            FontSize="14"
                             Foreground="{StaticResource Chem4WordBlue}"
                             Text="{Binding Path=Name}" />
                     </Expander.Header>
                     <ItemsControl
                         Foreground="{StaticResource Chem4WordBlue}"
-                        ItemsSource="{Binding Path=OtherNames}"
-                        Style="{StaticResource OtherNamesStyle}">
+                        ItemsSource="{Binding Path=ChemicalNames}"
+                        Style="{StaticResource ChemicalNamesStyle}">
                         <i:Interaction.Behaviors>
                             <behaviors:IgnoreMouseWheelBehavior />
                         </i:Interaction.Behaviors>
@@ -168,8 +170,9 @@
                 Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Navigator}}">
                 <local:FormulaBlock
                     Grid.Column="0"
+                    FontFamily="Arial"
                     Foreground="{StaticResource Chem4WordBlue}"
-                    Formula="{Binding Path=Formula}" FontFamily="Arial" />
+                    Formula="{Binding Path=Formula}" />
             </Grid>
             <!--  Top Panel for Catalogue Mode  -->
             <Grid
@@ -188,8 +191,9 @@
                     </Grid.ColumnDefinitions>
                     <local:FormulaBlock
                         Grid.Column="0"
+                        FontFamily="Arial"
                         Foreground="{StaticResource Chem4WordBlue}"
-                        Formula="{Binding Path=Formula}" FontFamily="Arial" />
+                        Formula="{Binding Path=Formula}" />
                     <CheckBox
                         Name="CheckBox"
                         Grid.Column="1"
@@ -207,14 +211,14 @@
                     ToolTip="Click to see more names ...">
                     <Expander.Header>
                         <TextBlock
-                            FontSize="16"
+                            FontSize="14"
                             Foreground="{StaticResource Chem4WordBlue}"
                             Text="{Binding Path=Name}" />
                     </Expander.Header>
                     <ItemsControl
                         Foreground="{StaticResource Chem4WordBlue}"
-                        ItemsSource="{Binding Path=OtherNames}"
-                        Style="{StaticResource OtherNamesStyle}">
+                        ItemsSource="{Binding Path=ChemicalNames}"
+                        Style="{StaticResource ChemicalNamesStyle}">
                         <i:Interaction.Behaviors>
                             <behaviors:IgnoreMouseWheelBehavior />
                         </i:Interaction.Behaviors>
