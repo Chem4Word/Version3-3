@@ -5,26 +5,23 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Models;
+using Chem4Word.Core.UI.Forms;
+using Chem4Word.Helpers;
+using Chem4Word.Model2.Annotations;
+using IChem4Word.Contracts;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
-using Chem4Word.ACME.Models;
-using Chem4Word.Core.UI.Forms;
-using Chem4Word.Model2.Annotations;
-using IChem4Word.Contracts;
-using IChem4Word.Contracts.Dto;
 
 namespace Chem4Word.UI.WPF
 {
-    public class LibaryEditorViewModel : DependencyObject, INotifyPropertyChanged
+    public class LibraryEditorViewModel : DependencyObject, INotifyPropertyChanged
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
@@ -32,7 +29,7 @@ namespace Chem4Word.UI.WPF
         private readonly IChem4WordTelemetry _telemetry;
         private readonly IChem4WordDriver _driver;
 
-        public LibaryEditorViewModel(IChem4WordTelemetry telemetry, IChem4WordDriver driver)
+        public LibraryEditorViewModel(IChem4WordTelemetry telemetry, IChem4WordDriver driver)
         {
             _telemetry = telemetry;
             _driver = driver;
@@ -78,19 +75,8 @@ namespace Chem4Word.UI.WPF
                 var dataObjects = _driver.GetAllChemistry();
                 foreach (var chemistryDto in dataObjects)
                 {
-                    // ToDo: [V3.3] Handle chemistryDto.DataType
-                    var obj = new ChemistryObject(_telemetry, _driver)
-                    {
-                        Id = chemistryDto.Id,
-                        Cml = Encoding.UTF8.GetString(chemistryDto.Chemistry),
-                        Formula = chemistryDto.Formula,
-                        Name = chemistryDto.Name,
-                        MolecularWeight = chemistryDto.MolWeight,
-                        Tags = chemistryDto.Tags.Select(t => t.Text).ToList(),
-                        ChemicalNames = chemistryDto.Names.Select(t => t.Name).Distinct().ToList(),
-                        Initializing = false
-                    };
-
+                    var obj = DtoHelper.CreateFromDto(chemistryDto);
+                    obj.SetDriver(_driver);
                     ChemistryItems.Add(obj);
                 }
             }

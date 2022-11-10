@@ -38,6 +38,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Chem4Word.Helpers;
 using Forms = System.Windows.Forms;
 using Size = System.Windows.Size;
 
@@ -127,7 +128,7 @@ namespace Chem4Word.UI.WPF
         private void OnChemistryItem_ButtonClick(object sender, RoutedEventArgs e)
         {
             if (e.OriginalSource is WpfEventArgs source
-                && DataContext is LibaryEditorViewModel controller)
+                && DataContext is LibraryEditorViewModel controller)
             {
                 Debug.WriteLine($"{_class} -> {source.Button} {source.OutputValue}");
 
@@ -151,13 +152,12 @@ namespace Chem4Word.UI.WPF
                         var result = UIUtils.ShowSketcher(_acmeOptions, _telemetry, topLeft, item.Cml);
                         if (result.IsDirty)
                         {
-                            var dto = new ChemistryDataObject();
+                            var cmlConverter = new CMLConverter();
+                            var model = cmlConverter.Import(result.Cml);
+
+                            var dto = DtoHelper.CreateFromModel(model, Encoding.UTF8.GetBytes(result.Cml), "cml");
                             dto.Id = id;
-                            dto.Chemistry = Encoding.UTF8.GetBytes(result.Cml);
-                            dto.DataType = "cml";
                             dto.Name = item.Name;
-                            dto.Formula = result.Formua;
-                            dto.MolWeight = result.MolecularWeight;
                             _driver.UpdateChemistry(dto);
 
                             item.Cml = result.Cml;
@@ -174,7 +174,7 @@ namespace Chem4Word.UI.WPF
         public void UpdateStatusBar()
         {
             var sb = new StringBuilder();
-            if (DataContext is LibaryEditorViewModel controller)
+            if (DataContext is LibraryEditorViewModel controller)
             {
                 var items = controller.ChemistryItems.Count;
 
@@ -347,7 +347,7 @@ namespace Chem4Word.UI.WPF
         {
             if (e.OriginalSource is ListBox source
                 && source.SelectedItem is ChemistryObject selected
-                && source.DataContext is LibaryEditorViewModel context)
+                && source.DataContext is LibraryEditorViewModel context)
             {
                 context.SelectedChemistryObject = selected;
                 _lastTags = context.SelectedChemistryObject.Tags;
@@ -476,7 +476,7 @@ namespace Chem4Word.UI.WPF
                     _driver.DeleteAllChemistry(); // ToDo: [V3.3] This is currently wrong
 
                     // Refresh the control's data
-                    var controller = new LibaryEditorViewModel(_telemetry, _driver);
+                    var controller = new LibraryEditorViewModel(_telemetry, _driver);
                     DataContext = controller;
                     UpdateStatusBar();
                 }
@@ -571,25 +571,7 @@ namespace Chem4Word.UI.WPF
                                         }
 
                                         string cml = cmlConverter.Export(model, compressed: true);
-                                        var dto = new ChemistryDataObject
-                                        {
-                                            Chemistry = Encoding.UTF8.GetBytes(cml),
-                                            DataType = "cml",
-                                            Name = model.QuickName,
-                                            Formula = model.ConciseFormula,
-                                            MolWeight = model.MolecularWeight
-                                        };
-                                        foreach (var property in model.GetAllNames())
-                                        {
-                                            var name = new ChemistryNameDataObject
-                                            {
-                                                Name = property.Value,
-                                                NameSpace = property.FullType.Split(':')[0],
-                                                Tag = property.FullType.Split(':')[1]
-                                            };
-                                            dto.Names.Add(name);
-                                        }
-
+                                        var dto = DtoHelper.CreateFromModel(model, Encoding.UTF8.GetBytes(cml), "cml");
                                         _driver.AddChemistry(dto);
                                         fileCount++;
                                     }
@@ -613,7 +595,7 @@ namespace Chem4Word.UI.WPF
                             ClearProgress();
 
                             // Refresh the control's data
-                            var controller = new LibaryEditorViewModel(_telemetry, _driver);
+                            var controller = new LibraryEditorViewModel(_telemetry, _driver);
                             DataContext = controller;
                             UpdateStatusBar();
                         }
@@ -733,7 +715,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnSelectedItemChanged(object sender, DataTransferEventArgs e)
         {
-            if (DataContext is LibaryEditorViewModel dc
+            if (DataContext is LibraryEditorViewModel dc
                 && dc.SelectedChemistryObject != null)
             {
                 // ToDo: [V3.3] Handle null SettingsPath
@@ -807,7 +789,7 @@ namespace Chem4Word.UI.WPF
                 var sw = new Stopwatch();
                 sw.Start();
 
-                var dc = DataContext as LibaryEditorViewModel;
+                var dc = DataContext as LibraryEditorViewModel;
                 _driver.AddTags(dc.SelectedChemistryObject.Id, tags);
 
                 sw.Stop();

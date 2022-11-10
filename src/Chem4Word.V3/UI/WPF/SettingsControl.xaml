@@ -357,9 +357,8 @@
                         Grid.Row="1"
                         Grid.Column="0"
                         Margin="5"
-                        SelectionMode="Single"
-                        LostFocus="OnLostFocus_LibrariesList"
-                        SelectionChanged="OnSelectionChanged_ListOfLibraries">
+                        SelectionChanged="OnSelectionChanged_ListOfLibraries"
+                        SelectionMode="Single">
                         <ListView.Resources>
                             <Style TargetType="{x:Type GridViewColumnHeader}">
                                 <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -372,7 +371,7 @@
                         </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Width="250" Header="Name">
+                                <!--<GridViewColumn Width="250" Header="Name">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBox
@@ -381,7 +380,11 @@
                                                 Text="{Binding Path=Name}" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
+                                </GridViewColumn>-->
+                                <GridViewColumn
+                                    Width="250"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    Header="Name" />
                                 <GridViewColumn
                                     Width="80"
                                     DisplayMemberBinding="{Binding Count}"

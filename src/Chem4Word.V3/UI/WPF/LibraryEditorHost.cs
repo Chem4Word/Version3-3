@@ -55,7 +55,7 @@ namespace Chem4Word.UI.WPF
                 {
                     _driver.DatabaseDetails = details;
 
-                    var controller = new LibaryEditorViewModel(Telemetry, _driver);
+                    var controller = new LibraryEditorViewModel(Telemetry, _driver);
                     editor.TopLeft = TopLeft;
 
                     var acmeOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);

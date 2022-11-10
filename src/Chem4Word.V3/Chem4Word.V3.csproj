@@ -349,6 +349,7 @@
     <Compile Include="Helpers\ChemistryHelper.cs" />
     <Compile Include="Helpers\ConfigWatcher.cs" />
     <Compile Include="Helpers\DocumentHelper.cs" />
+    <Compile Include="Helpers\DtoHelper.cs" />
     <Compile Include="Helpers\LibraryFileHelper.cs" />
     <Compile Include="Helpers\ReferenceKeeper.cs" />
     <Compile Include="Helpers\RegistryHelper.cs" />
@@ -429,7 +430,7 @@
     <Compile Include="UI\WPF\LibraryEditorControl.xaml.cs">
       <DependentUpon>LibraryEditorControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\WPF\LibaryEditorViewModel.cs" />
+    <Compile Include="UI\WPF\LibraryEditorViewModel.cs" />
     <Compile Include="UI\WPF\EditLabelsHost.cs">
       <SubType>Form</SubType>
     </Compile>

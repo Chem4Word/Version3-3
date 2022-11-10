@@ -23,23 +23,31 @@ namespace Chem4Word.ACME.Models
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        private readonly IChem4WordTelemetry _telemetry;
-        private readonly IChem4WordDriver _librarian;
+        private IChem4WordDriver _driver;
 
         public bool Initializing { get; set; }
 
         public ChemistryObject()
         {
             // Required for WPF XAML Designer
-        }
-
-        public ChemistryObject(IChem4WordTelemetry telemetry, IChem4WordDriver librarian)
-        {
-            _telemetry = telemetry;
-            _librarian = librarian;
             Initializing = true;
         }
 
+        public void SetDriver(IChem4WordDriver driver)
+        {
+            _driver = driver;
+        }
+
+        /// <summary>
+        /// List of Chemical Names for the structure (Library mode)
+        /// </summary>
+        public List<string> ChemicalNames { get; set; } = new List<string>();
+
+        public List<ChemistryNameDataObject> Names { get; set; }
+        public List<ChemistryNameDataObject> Formulae { get; set; }
+        public List<ChemistryNameDataObject> Captions { get; set; }
+
+        // ToDo: Change string Cml to object Chemistry
         private string _cml;
 
         /// <summary>
@@ -55,23 +63,32 @@ namespace Chem4Word.ACME.Models
             }
         }
 
+        public ChemistryDataObject ConvertToDto()
+        {
+            var chem = new ChemistryDataObject
+            {
+                Id = Id,
+                // ToDo [V3.3] change to protoBuffer
+                DataType = "cml",
+                Chemistry = Encoding.UTF8.GetBytes(_cml),
+                Name = Name,
+                Formula = Formula,
+                MolWeight = MolecularWeight,
+                Names = Names,
+                Formulae = Formulae,
+                Captions = Captions
+            };
+            return chem;
+        }
+
         private void Save()
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                if (_librarian != null)
+                if (_driver != null)
                 {
-                    var chem = new ChemistryDataObject
-                    {
-                        Id = Id,
-                        DataType = "cml",
-                        Chemistry = Encoding.UTF8.GetBytes(Cml),
-                        Name = Name,
-                        Formula = Formula,
-                        MolWeight = MolecularWeight
-                    };
-                    _librarian.UpdateChemistry(chem);
+                    _driver.UpdateChemistry(ConvertToDto());
                 }
             }
             catch (Exception ex)
@@ -85,7 +102,6 @@ namespace Chem4Word.ACME.Models
         /// Formula of the structure
         /// </summary>
         public string Formula { get; set; }
-        public List<ChemistryNameDataObject> Names { get; set; }
 
         private string _name;
 
@@ -155,11 +171,6 @@ namespace Chem4Word.ACME.Models
                 OnPropertyChanged();
             }
         }
-
-        /// <summary>
-        /// List of Chemical Names for the structure (Library mode)
-        /// </summary>
-        public List<string> ChemicalNames { get; set; } = new List<string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

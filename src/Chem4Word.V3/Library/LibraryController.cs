@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using Chem4Word.Helpers;
 
 namespace Chem4Word.Library
 {
@@ -57,16 +58,7 @@ namespace Chem4Word.Library
 
                 foreach (var dto in dataObjects)
                 {
-                    var obj = new ChemistryObject
-                    {
-                        Id = dto.Id,
-                        Cml = Encoding.UTF8.GetString(dto.Chemistry),
-                        Formula = dto.Formula,
-                        Name = dto.Name,
-                        MolecularWeight = dto.MolWeight,
-                        Names = dto.Names
-                    };
-
+                    var obj = DtoHelper.CreateFromDto(dto);
                     ChemistryItems.Add(obj);
                 }
 
@@ -144,18 +136,7 @@ namespace Chem4Word.Library
                 {
                     foreach (ChemistryObject chemistry in eNewItems)
                     {
-                        var dto = new ChemistryDataObject
-                        {
-                            Chemistry = Encoding.UTF8.GetBytes(chemistry.Cml),
-                            DataType = "cml",
-                            Name = chemistry.Name,
-                            Formula = chemistry.Formula,
-                            MolWeight = chemistry.MolecularWeight,
-                            Names = chemistry.Names
-                        };
-
-                        // ToDo: [V3.3] Add Tags
-
+                        var dto = chemistry.ConvertToDto();
                         chemistry.Id = _driver.AddChemistry(dto);
                         _telemetry.Write(module, "Information", $"Structure {chemistry.Id} added to {_driver.DatabaseDetails.DisplayName}");
                     }

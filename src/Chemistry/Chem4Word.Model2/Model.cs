@@ -1125,6 +1125,30 @@ namespace Chem4Word.Model2
             return result;
         }
 
+        public List<TextualProperty> GetAllFormulae()
+        {
+            var result = new List<TextualProperty>();
+
+            foreach (var mol in GetAllMolecules())
+            {
+                result.AddRange(mol.AllTextualProperties.Where(x => x.TypeCode.Equals("F")));
+            }
+
+            return result;
+        }
+
+        public List<TextualProperty> GetAllCaptions()
+        {
+            var result = new List<TextualProperty>();
+
+            foreach (var mol in GetAllMolecules())
+            {
+                result.AddRange(mol.Captions);
+            }
+
+            return result;
+        }
+
         public List<Atom> GetAllAtoms()
         {
             List<Atom> allAtoms = new List<Atom>();

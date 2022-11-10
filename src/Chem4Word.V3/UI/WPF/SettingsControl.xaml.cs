@@ -397,60 +397,16 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void OnLostFocus_LibrariesList(object sender, RoutedEventArgs e)
-        {
-            if (!_loading)
-            {
-                if (e.Source is ListView listview)
-                {
-                    if (listview.SelectedItem is LibrariesSettingsGridSource source)
-                    {
-                        Debug.WriteLine(source.Name);
-                        PerformRenameIfRequired(source);
-                    }
-                }
-            }
-        }
-
-        private void PerformRenameIfRequired(LibrariesSettingsGridSource source)
-        {
-            if (!source.FileName.Equals($"{source.Name}.db"))
-            {
-                Debug.WriteLine($"Rename {source.FileName} to {source.Name}.db ?");
-                if (!source.FileName.Equals($"{source.Name}.db"))
-                {
-                    // ToDo [V3.3]
-                    // See if the rename can be done
-                    // If so do rename
-                    // Save new Libraries.json
-                    // Re-Load it?
-                    Globals.Chem4WordV3.ListOfDetectedLibraries = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath).GetListOfLibraries();
-                    LoadLibrariesList();
-                }
-            }
-        }
-
         private void OnSelectionChanged_ListOfLibraries(object sender, SelectionChangedEventArgs e)
         {
             if (!_loading)
             {
                 Debug.WriteLine($"Added = {e.AddedItems.Count} Removed = {e.RemovedItems.Count}");
 
-                if (e.RemovedItems.Count > 0)
+                if (e.AddedItems.Count > 0
+                    && e.AddedItems[0] is LibrariesSettingsGridSource source)
                 {
-                    if (e.RemovedItems[0] is LibrariesSettingsGridSource source)
-                    {
-                        Debug.WriteLine(source.Name);
-                        PerformRenameIfRequired(source);
-                    }
-                }
-
-                if (e.AddedItems.Count > 0)
-                {
-                    if (e.AddedItems[0] is LibrariesSettingsGridSource source)
-                    {
-                        _selectedLibrary = source.Name;
-                    }
+                    _selectedLibrary = source.Name;
                 }
             }
         }
@@ -631,23 +587,26 @@ namespace Chem4Word.UI.WPF
             var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
             var data = new List<LibrariesSettingsGridSource>();
 
-            foreach (var database in libraries.AvailableDatabases)
+            if (libraries != null)
             {
-                var obj = new LibrariesSettingsGridSource
+                foreach (var database in libraries.AvailableDatabases)
                 {
-                    Name = database.DisplayName,
-                    FileName = database.ShortFileName,
-                    Count = GetPropertyValue(database, "Count", "?"),
-                    Dictionary = false,
-                    Locked = GetPropertyValue(database, "Owner", "User").Equals("System") ? "Yes" : "No",
-                    License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required"
-                };
-                data.Add(obj);
-            }
-            LibrariesList.ItemsSource = data;
+                    var obj = new LibrariesSettingsGridSource
+                    {
+                        Name = database.DisplayName,
+                        FileName = database.ShortFileName,
+                        Count = GetPropertyValue(database, "Count", "?"),
+                        Dictionary = false,
+                        Locked = GetPropertyValue(database, "Owner", "User").Equals("System") ? "Yes" : "No",
+                        License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required"
+                    };
+                    data.Add(obj);
+                }
+                LibrariesList.ItemsSource = data;
 
-            _selectedLibrary = libraries.SelectedLibrary;
-            SetSelectedLibrary(_selectedLibrary);
+                _selectedLibrary = libraries.SelectedLibrary;
+                SetSelectedLibrary(_selectedLibrary);
+            }
         }
 
         private BitmapImage CreateImageFromStream(Stream stream)

@@ -487,6 +487,42 @@ namespace Chem4Word.Driver.Open.SqLite
             command.ExecuteNonQuery();
         }
 
+        private void AddFormula(SQLiteConnection conn, ChemistryNameDataObject formula, long id)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("INSERT INTO ChemicalFormulae");
+            sb.AppendLine(" (Name, Namespace, Tag, ChemistryID)");
+            sb.AppendLine("VALUES");
+            sb.AppendLine(" (@name, @namespace, @tag, @chemstryId)");
+
+            var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@name", DbType.String, formula.Name.Length).Value = formula.Name;
+            command.Parameters.Add("@namespace", DbType.String, formula.NameSpace.Length).Value = formula.NameSpace;
+            command.Parameters.Add("@tag", DbType.String, formula.Tag.Length).Value = formula.Tag;
+            command.Parameters.Add("@chemstryId", DbType.Int64).Value = id;
+
+            command.ExecuteNonQuery();
+        }
+
+        private void AddCaption(SQLiteConnection conn, ChemistryNameDataObject caption, long id)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("INSERT INTO ChemicalCaptions");
+            sb.AppendLine(" (Name, Namespace, Tag, ChemistryID)");
+            sb.AppendLine("VALUES");
+            sb.AppendLine(" (@name, @namespace, @tag, @chemstryId)");
+
+            var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@name", DbType.String, caption.Name.Length).Value = caption.Name;
+            command.Parameters.Add("@namespace", DbType.String, caption.NameSpace.Length).Value = caption.NameSpace;
+            command.Parameters.Add("@tag", DbType.String, caption.Tag.Length).Value = caption.Tag;
+            command.Parameters.Add("@chemstryId", DbType.Int64).Value = id;
+
+            command.ExecuteNonQuery();
+        }
+
         internal long AddChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
         {
             var sb = new StringBuilder();
@@ -513,6 +549,14 @@ namespace Chem4Word.Driver.Open.SqLite
             {
                 AddName(conn, name, id);
             }
+            foreach (var formula in chemistry.Formulae)
+            {
+                AddFormula(conn, formula, id);
+            }
+            foreach (var caption in chemistry.Captions)
+            {
+                AddCaption(conn, caption, id);
+            }
 
             //ToDo: [V3.3] Insert :-
             // chemistry.Tags
@@ -526,13 +570,22 @@ namespace Chem4Word.Driver.Open.SqLite
             {
                 UpdateChemistry(conn, chemistry);
 
-                // Delete 'old' names
                 DeleteNames(conn, chemistry.Id);
-
-                // Insert 'new' names
                 foreach (var name in chemistry.Names)
                 {
                     AddName(conn, name, chemistry.Id);
+                }
+
+                DeleteFormulae(conn, chemistry.Id);
+                foreach (var formula in chemistry.Formulae)
+                {
+                    AddFormula(conn, formula, chemistry.Id);
+                }
+
+                DeleteCaptions(conn, chemistry.Id);
+                foreach (var caption in chemistry.Captions)
+                {
+                    AddCaption(conn, caption, chemistry.Id);
                 }
 
                 //ToDo: [V3.3] Update/Replace :-
@@ -618,28 +671,30 @@ namespace Chem4Word.Driver.Open.SqLite
 
         private void DeleteAllChemistry(SQLiteConnection conn)
         {
-            var command1 = new SQLiteCommand("DELETE FROM Gallery", conn);
-            var command2 = new SQLiteCommand("DELETE FROM ChemicalNames", conn);
-            var command3 = new SQLiteCommand("DELETE FROM TaggedChemistry", conn);
-            var command4 = new SQLiteCommand("DELETE FROM Tags", conn);
+            var commands = new List<SQLiteCommand>();
 
-            var command5 = new SQLiteCommand("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Gallery'", conn);
-            var command6 = new SQLiteCommand("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Tags'", conn);
+            commands.Add(new SQLiteCommand("DELETE FROM ChemicalNames", conn));
+            commands.Add(new SQLiteCommand("DELETE FROM ChemicalFormulae", conn));
+            commands.Add(new SQLiteCommand("DELETE FROM ChemicalCaptions", conn));
+            commands.Add(new SQLiteCommand("DELETE FROM TaggedChemistry", conn));
+            commands.Add(new SQLiteCommand("DELETE FROM Tags", conn));
 
-            var command7 = new SQLiteCommand("VACUUM", conn);
-
-            using (SQLiteTransaction tr = conn.BeginTransaction())
-            {
-                command1.ExecuteNonQuery();
-                command2.ExecuteNonQuery();
-                command3.ExecuteNonQuery();
-                command4.ExecuteNonQuery();
+            commands.Add(new SQLiteCommand("DELETE FROM Gallery", conn));
 #if DEBUG
-                command5.ExecuteNonQuery();
-                command6.ExecuteNonQuery();
+            commands.Add(new SQLiteCommand("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Gallery'", conn));
+            commands.Add(new SQLiteCommand("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Tags'", conn));
 #endif
-                tr.Commit();
-                command7.ExecuteNonQuery();
+
+            using (var transaction = conn.BeginTransaction())
+            {
+                foreach (var sqLiteCommand in commands)
+                {
+                    sqLiteCommand.ExecuteNonQuery();
+                }
+                transaction.Commit();
+
+                var vacuum = new SQLiteCommand("VACUUM", conn);
+                vacuum.ExecuteNonQuery();
             }
         }
 
@@ -657,8 +712,11 @@ namespace Chem4Word.Driver.Open.SqLite
 
             using (SQLiteTransaction tr = conn.BeginTransaction())
             {
-                DeleteTags(conn, id);
                 DeleteNames(conn, id);
+                DeleteFormulae(conn, id);
+                DeleteCaptions(conn, id);
+
+                DeleteTags(conn, id);
 
                 sb.AppendLine("DELETE FROM Gallery");
                 sb.AppendLine("WHERE ID = @id");
@@ -895,6 +953,28 @@ namespace Chem4Word.Driver.Open.SqLite
         {
             var sb = new StringBuilder();
             sb.AppendLine("DELETE FROM ChemicalNames");
+            sb.AppendLine("WHERE ChemistryId = @id");
+
+            var nameCommand = new SQLiteCommand(sb.ToString(), conn);
+            nameCommand.Parameters.Add("@id", DbType.Int64, 20).Value = chemistryId;
+            nameCommand.ExecuteNonQuery();
+        }
+
+        private void DeleteFormulae(SQLiteConnection conn, long chemistryId)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("DELETE FROM ChemicalFormula");
+            sb.AppendLine("WHERE ChemistryId = @id");
+
+            var nameCommand = new SQLiteCommand(sb.ToString(), conn);
+            nameCommand.Parameters.Add("@id", DbType.Int64, 20).Value = chemistryId;
+            nameCommand.ExecuteNonQuery();
+        }
+
+        private void DeleteCaptions(SQLiteConnection conn, long chemistryId)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("DELETE FROM ChemicalCaptions");
             sb.AppendLine("WHERE ChemistryId = @id");
 
             var nameCommand = new SQLiteCommand(sb.ToString(), conn);

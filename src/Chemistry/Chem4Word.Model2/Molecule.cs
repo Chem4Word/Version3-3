@@ -34,12 +34,13 @@ namespace Chem4Word.Model2
         internal readonly List<Bond> _bonds;
         private readonly Dictionary<Guid, Molecule> _molecules;
         public readonly ReadOnlyDictionary<Guid, Molecule> Molecules;
+
         public ObservableCollection<TextualProperty> Formulas { get; internal set; }
         public ObservableCollection<TextualProperty> Names { get; internal set; }
+        public ObservableCollection<TextualProperty> Captions { get; set; }
+
         public List<string> Warnings { get; set; }
         public List<string> Errors { get; set; }
-
-        public ObservableCollection<TextualProperty> Captions { get; set; }
 
         #endregion Collections
 
