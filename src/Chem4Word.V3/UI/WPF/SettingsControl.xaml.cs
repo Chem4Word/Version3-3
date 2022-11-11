@@ -11,6 +11,7 @@ using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
 using IChem4Word.Contracts;
+using Ookii.Dialogs.WinForms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,9 +20,10 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Forms = System.Windows.Forms;
-
+using Point = System.Windows.Point;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace Chem4Word.UI.WPF
@@ -315,12 +317,70 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_BrowseLibraryLocation(object sender, RoutedEventArgs e)
         {
-            Debugger.Break();
+            var browser = new VistaFolderBrowserDialog();
+            browser.Description = "Select a folder to set as your default location";
+            browser.UseDescriptionForTitle = true;
+            browser.RootFolder = Environment.SpecialFolder.Desktop;
+            browser.ShowNewFolderButton = true;
+            browser.SelectedPath = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
+
+            var result = browser.ShowDialog();
+            if (result == Forms.DialogResult.OK)
+            {
+                if (Directory.Exists(browser.SelectedPath))
+                {
+                    DefaultLocation.Text = browser.SelectedPath;
+                    var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                    listOfDetectedLibraries.DefaultLocation = browser.SelectedPath;
+                    new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                        .SaveFile(listOfDetectedLibraries);
+                    ReloadGlobalListOfLibraries();
+                }
+            }
         }
 
         private void OnClick_AddExistingLibrary(object sender, RoutedEventArgs e)
         {
-            Debugger.Break();
+            var browser = new Forms.OpenFileDialog();
+            browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
+            browser.AddExtension = true;
+            browser.Filter = "*.db|*.db";
+            browser.FileName = "New Library.db";
+            browser.ShowHelp = false;
+
+            var result = browser.ShowDialog();
+            if (result == Forms.DialogResult.OK)
+            {
+                var fileInfo = new FileInfo(browser.FileName);
+                if (Directory.Exists(fileInfo.DirectoryName)
+                    && File.Exists(browser.FileName))
+                {
+                    var details = new DatabaseDetails
+                    {
+                        Driver = Constants.SQLiteStandardDriver,
+                        DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
+                        Connection = browser.FileName,
+                        ShortFileName = fileInfo.Name
+                    };
+
+                    var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                    var existing = listOfDetectedLibraries.AvailableDatabases
+                                                          .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
+                    // Prevent add if there is a name clash
+                    if (existing == null)
+                    {
+                        listOfDetectedLibraries.AvailableDatabases.Add(details);
+                        new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                            .SaveFile(listOfDetectedLibraries);
+                        ReloadGlobalListOfLibraries();
+                        LoadLibrariesListTab();
+                    }
+                    else
+                    {
+                        UserInteractions.WarnUser("Couldn't add existing database due to display name clash");
+                    }
+                }
+            }
         }
 
         private void OnClick_CreateNewLibrary(object sender, RoutedEventArgs e)
@@ -329,7 +389,9 @@ namespace Chem4Word.UI.WPF
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
             browser.AddExtension = true;
             browser.Filter = "*.db|*.db";
+            browser.FileName = "New Library.db";
             browser.ShowHelp = false;
+
             var result = browser.ShowDialog();
             if (result == Forms.DialogResult.OK)
             {
@@ -339,27 +401,38 @@ namespace Chem4Word.UI.WPF
                     fileName += ".db";
                 }
                 var fileInfo = new FileInfo(fileName);
-                if (Directory.Exists(fileInfo.DirectoryName))
+                if (Directory.Exists(fileInfo.DirectoryName)
+                    && !File.Exists(browser.FileName))
                 {
-                    if (!File.Exists(browser.FileName))
+                    var displayName = fileInfo.Name.Replace(fileInfo.Extension, "");
+                    var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                    var existing = listOfDetectedLibraries.AvailableDatabases
+                                                          .FirstOrDefault(n => n.DisplayName.Equals(displayName));
+
+                    if (existing == null)
                     {
-                        // Safe to create a file here ...
                         var driver = Globals.Chem4WordV3.GetDriverPlugIn(Constants.SQLiteStandardDriver);
                         if (driver != null)
                         {
                             var details = new DatabaseDetails
                             {
                                 Driver = Constants.SQLiteStandardDriver,
-                                DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
+                                DisplayName = displayName,
                                 Connection = fileName,
                                 ShortFileName = fileInfo.Name
                             };
                             driver.CreateNewDatabase(details);
 
-                            // ToDo: [V3.3] Add to libraries.json
-                            Globals.Chem4WordV3.ListOfDetectedLibraries = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath).GetListOfLibraries();
-                            LoadLibrariesList();
+                            listOfDetectedLibraries.AvailableDatabases.Add(details);
+                            new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                .SaveFile(listOfDetectedLibraries);
+                            ReloadGlobalListOfLibraries();
+                            LoadLibrariesListTab();
                         }
+                    }
+                    else
+                    {
+                        UserInteractions.WarnUser("Couldn't create new database due to display name clash");
                     }
                 }
             }
@@ -372,7 +445,13 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_RemoveLibrary(object sender, RoutedEventArgs e)
         {
-            Debugger.Break();
+            var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+            var item = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(r => r.DisplayName.Equals(_selectedLibrary));
+            listOfDetectedLibraries.AvailableDatabases.Remove(item);
+            new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                .SaveFile(listOfDetectedLibraries);
+            ReloadGlobalListOfLibraries();
+            LoadLibrariesListTab();
         }
 
         private void OnClick_EditLibrary(object sender, RoutedEventArgs e)
@@ -382,6 +461,9 @@ namespace Chem4Word.UI.WPF
             editor.Telemetry = Globals.Chem4WordV3.Telemetry;
             editor.SelectedDatabase = _selectedLibrary;
             editor.ShowDialog();
+
+            ReloadGlobalListOfLibraries();
+            LoadLibrariesListTab();
         }
 
         private void SetSelectedLibrary(string selectedLibrary)
@@ -399,15 +481,13 @@ namespace Chem4Word.UI.WPF
 
         private void OnSelectionChanged_ListOfLibraries(object sender, SelectionChangedEventArgs e)
         {
-            if (!_loading)
+            if (e.AddedItems.Count > 0
+                && e.AddedItems[0] is LibrariesSettingsGridSource source)
             {
-                Debug.WriteLine($"Added = {e.AddedItems.Count} Removed = {e.RemovedItems.Count}");
-
-                if (e.AddedItems.Count > 0
-                    && e.AddedItems[0] is LibrariesSettingsGridSource source)
-                {
-                    _selectedLibrary = source.Name;
-                }
+                _selectedLibrary = source.Name;
+                var cantRemove = source.IsDefault;
+                RemoveLibrary.IsEnabled = !cantRemove;
+                RemoveLibraryIcon.Fill = cantRemove ? new SolidColorBrush(Colors.Gray) : new SolidColorBrush(Colors.Red);
             }
         }
 
@@ -555,7 +635,13 @@ namespace Chem4Word.UI.WPF
 
             #region Libraries Tab
 
-            LoadLibrariesList();
+            if (Globals.Chem4WordV3.ListOfDetectedLibraries == null)
+            {
+                // Belt and braces just in case someone clicks too early
+                ReloadGlobalListOfLibraries();
+            }
+
+            LoadLibrariesListTab();
 
             #endregion Libraries Tab
 
@@ -582,23 +668,27 @@ namespace Chem4Word.UI.WPF
             #endregion General Tab
         }
 
-        private void LoadLibrariesList()
+        private void LoadLibrariesListTab()
         {
             var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
             var data = new List<LibrariesSettingsGridSource>();
 
             if (libraries != null)
             {
+                DefaultLocation.Text = libraries.DefaultLocation;
                 foreach (var database in libraries.AvailableDatabases)
                 {
+                    var isDefault = libraries.SelectedLibrary.Equals(database.DisplayName);
                     var obj = new LibrariesSettingsGridSource
                     {
                         Name = database.DisplayName,
                         FileName = database.ShortFileName,
+                        Connection = database.Connection,
                         Count = GetPropertyValue(database, "Count", "?"),
                         Dictionary = false,
                         Locked = GetPropertyValue(database, "Owner", "User").Equals("System") ? "Yes" : "No",
-                        License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required"
+                        License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required",
+                        IsDefault = isDefault
                     };
                     data.Add(obj);
                 }
@@ -607,6 +697,13 @@ namespace Chem4Word.UI.WPF
                 _selectedLibrary = libraries.SelectedLibrary;
                 SetSelectedLibrary(_selectedLibrary);
             }
+        }
+
+        private void ReloadGlobalListOfLibraries()
+        {
+            Globals.Chem4WordV3.ListOfDetectedLibraries
+                = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                    .GetListOfLibraries();
         }
 
         private BitmapImage CreateImageFromStream(Stream stream)

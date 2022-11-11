@@ -963,7 +963,7 @@ namespace Chem4Word.Driver.Open.SqLite
         private void DeleteFormulae(SQLiteConnection conn, long chemistryId)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("DELETE FROM ChemicalFormula");
+            sb.AppendLine("DELETE FROM ChemicalFormulae");
             sb.AppendLine("WHERE ChemistryId = @id");
 
             var nameCommand = new SQLiteCommand(sb.ToString(), conn);

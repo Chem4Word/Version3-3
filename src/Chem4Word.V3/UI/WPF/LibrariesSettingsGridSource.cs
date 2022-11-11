@@ -11,9 +11,11 @@ namespace Chem4Word.UI.WPF
     {
         public string Name { get; set; }
         public string FileName { get; set; }
+        public string Connection { get; set; }
         public string Count { get; set; }
         public bool Dictionary { get; set; }
         public string Locked { get; set; }
         public string License { get; set; }
+        public bool IsDefault { get; set; }
     }
 }

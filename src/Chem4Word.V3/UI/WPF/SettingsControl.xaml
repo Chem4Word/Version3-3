@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="600"
     d:DesignWidth="915.315"
-    FontFamily="Arial"
+    FontFamily="Segoe UI"
     FontSize="16"
     Loaded="SettingsControl_OnLoaded"
     mc:Ignorable="d">
@@ -325,13 +325,12 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Margin="5" VerticalAlignment="Center">Default Location:</TextBlock>
                         <TextBox
+                            Name="DefaultLocation"
                             Grid.Column="1"
                             Margin="5"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
-                            HorizontalContentAlignment="Stretch">
-                            C:\ProgramData\Chem4Word.V3\Libraries
-                        </TextBox>
+                            HorizontalContentAlignment="Stretch" />
                     </Grid>
                     <Button
                         Grid.Row="0"
@@ -367,10 +366,16 @@
                         <ListView.ItemContainerStyle>
                             <Style TargetType="{x:Type ListViewItem}">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="ToolTip">
+                                    <Setter.Value>
+                                        <TextBlock Text="{Binding Connection}" />
+                                    </Setter.Value>
+                                </Setter>
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
+                                <!--  This allows name to be edited, saving this just in case it's ever needed  -->
                                 <!--<GridViewColumn Width="250" Header="Name">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
@@ -449,7 +454,8 @@
                             Margin="5"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
-                            Click="OnClick_DownloadLibrary">
+                            Click="OnClick_DownloadLibrary"
+                            IsEnabled="False">
                             <StackPanel Orientation="Horizontal">
                                 <Path
                                     Width="32"
@@ -457,18 +463,20 @@
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     Data="M12.360001,11.130005L15.194,11.130005 15.194,21.208008 15.455002,20.945984 20.402,16 20.402,20.290039 16.042,24.64801 16.005997,24.684998 16.024002,24.705017 13.879997,26.848999 11.734001,24.705017 7.3759995,20.346008 7.3759995,16.05603 12.320999,21.002991 12.360001,21.041992z M11.077995,2.697998L10.896996,8.5839844C10.896996,8.5839844,10.661995,12.476013,6.3730011,12.005981L2.697998,11.906006 2.697998,28.627014C2.697998,28.999023,3.0009995,29.301025,3.3730011,29.301025L22.264999,29.301025C22.636002,29.301025,22.939995,28.999023,22.939995,28.627014L22.939995,3.3729858C22.939995,3.0020142,22.636002,2.697998,22.264999,2.697998z M10.902,0L22.264999,0C24.128998,0,25.639999,1.5109863,25.639999,3.3729858L25.639999,28.627014C25.639999,30.48999,24.128998,32,22.264999,32L3.3730011,32C1.5100021,32,0,30.48999,0,28.627014L0,11.502014 1.3359985,10.093018 1.336998,10.054993 8.3379974,2.697998 8.3190002,2.697998 6.4469986,4.6730347 8.4079971,2.5960083 8.435997,2.5960083 8.4980011,2.5300293 8.5039978,2.5300293z"
-                                    Fill="Black"
+                                    Fill="Gray"
                                     Stretch="Uniform" />
                                 <TextBlock VerticalAlignment="Center">Download Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
+                            Name="RemoveLibrary"
                             Margin="5"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             Click="OnClick_RemoveLibrary">
                             <StackPanel Orientation="Horizontal">
                                 <Path
+                                    Name="RemoveLibraryIcon"
                                     Width="32"
                                     Height="32"
                                     Margin="5"

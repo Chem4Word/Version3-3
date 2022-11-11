@@ -124,9 +124,7 @@ namespace Chem4Word.Helpers
                     result.SelectedLibrary = result.AvailableDatabases.FirstOrDefault()?.DisplayName;
                 }
 
-                // Write new 'Libraries.json' file
-                var text = JsonConvert.SerializeObject(result, Formatting.Indented);
-                File.WriteAllText(settingsFile, text);
+                SaveFile(result);
             }
 
             if (result != null)
@@ -153,6 +151,13 @@ namespace Chem4Word.Helpers
             return result;
         }
 
+        public void SaveFile(ListOfLibraries libraries)
+        {
+            // Write new 'Libraries.json' file
+            var settingsFile = Path.Combine(_programDataPath, "Libraries.json");
+            var text = JsonConvert.SerializeObject(libraries, Formatting.Indented);
+            File.WriteAllText(settingsFile, text);
+        }
         private void EnsureFoldersExist()
         {
             var path = Path.Combine(_programDataPath, "Libraries");
