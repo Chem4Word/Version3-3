@@ -9,7 +9,7 @@ namespace IChem4Word.Contracts.Dto
 {
     public class ChemistryNameDataObject
     {
-        public long ChemicalNameId { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public string NameSpace { get; set; }
         public string Tag { get; set; }

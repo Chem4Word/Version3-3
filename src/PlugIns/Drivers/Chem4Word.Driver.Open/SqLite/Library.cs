@@ -408,6 +408,8 @@ namespace Chem4Word.Driver.Open.SqLite
 
                     var allTaggedItems = GetAllChemistryTags(conn);
                     var allNames = GetAllChemicalNames(conn);
+                    var allFormulae = GetAllChemicalFormulae(conn);
+                    var allCaptions = GetAllChemicalCaptions(conn);
 
                     using (SQLiteDataReader chemistry = GetAllChemistry(conn))
                     {
@@ -423,10 +425,10 @@ namespace Chem4Word.Driver.Open.SqLite
                                     DataType = chemistry["datatype"] as string,
                                     Name = chemistry["name"] as string,
                                     Formula = chemistry["formula"] as string,
-                                    Tags = allTaggedItems.Where(t => t.ChemistryId == id)
-                                                         .ToList(),
-                                    Names = allNames.Where(t => t.ChemistryId == id)
-                                                         .ToList()
+                                    Tags = allTaggedItems.Where(t => t.ChemistryId == id).ToList(),
+                                    Names = allNames.Where(t => t.ChemistryId == id).ToList(),
+                                    Formulae = allFormulae.Where(t => t.ChemistryId == id).ToList(),
+                                    Captions = allCaptions.Where(t => t.ChemistryId == id).ToList()
                                 };
 
                                 // Handle new field(s) which may be null
@@ -620,6 +622,11 @@ namespace Chem4Word.Driver.Open.SqLite
 
             using (SQLiteConnection conn = LibraryConnection())
             {
+                //ToDo: Implement filtering by Id so that we get less data here ...
+                var allNames = GetAllChemicalNames(conn);
+                var allFormulae = GetAllChemicalFormulae(conn);
+                var allCaptions = GetAllChemicalCaptions(conn);
+
                 using (SQLiteDataReader chemistry = GetChemistryById(conn, id))
                 {
                     if (chemistry != null)
@@ -638,10 +645,14 @@ namespace Chem4Word.Driver.Open.SqLite
                             {
                                 result.MolWeight = double.Parse(molWeight);
                             }
+
+                            result.Names = allNames.Where(t => t.ChemistryId == id).ToList();
+                            result.Formulae = allFormulae.Where(t => t.ChemistryId == id).ToList();
+                            result.Captions = allCaptions.Where(t => t.ChemistryId == id).ToList();
+
+                            // ToDo: [V3.3] Get Tags ?
                         }
                     }
-
-                    // ToDo: [V3.3] Get Names and Tags
                 }
             }
 
@@ -924,7 +935,67 @@ namespace Chem4Word.Driver.Open.SqLite
                     while (reader.Read())
                     {
                         var dto = new ChemistryNameDataObject();
-                        dto.ChemicalNameId = (long)reader["ChemicalNameId"];
+                        dto.Id = (long)reader["ChemicalNameId"];
+                        dto.Name = reader["Name"] as string;
+                        dto.NameSpace = reader["Namespace"] as string;
+                        dto.Tag = reader["Tag"] as string;
+                        dto.ChemistryId = (long)reader["ChemistryId"];
+                        results.Add(dto);
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        private List<ChemistryNameDataObject> GetAllChemicalFormulae(SQLiteConnection conn)
+        {
+            var results = new List<ChemistryNameDataObject>();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("SELECT ChemicalFormulaId, Name, Namespace, Tag, ChemistryID");
+            sb.AppendLine("FROM ChemicalFormulae");
+
+            var command = new SQLiteCommand(sb.ToString(), conn);
+
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                if (reader != null)
+                {
+                    while (reader.Read())
+                    {
+                        var dto = new ChemistryNameDataObject();
+                        dto.Id = (long)reader["ChemicalFormulaId"];
+                        dto.Name = reader["Name"] as string;
+                        dto.NameSpace = reader["Namespace"] as string;
+                        dto.Tag = reader["Tag"] as string;
+                        dto.ChemistryId = (long)reader["ChemistryId"];
+                        results.Add(dto);
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        private List<ChemistryNameDataObject> GetAllChemicalCaptions(SQLiteConnection conn)
+        {
+            var results = new List<ChemistryNameDataObject>();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("SELECT ChemicalCaptionId, Name, Namespace, Tag, ChemistryID");
+            sb.AppendLine("FROM ChemicalCaptions");
+
+            var command = new SQLiteCommand(sb.ToString(), conn);
+
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                if (reader != null)
+                {
+                    while (reader.Read())
+                    {
+                        var dto = new ChemistryNameDataObject();
+                        dto.Id = (long)reader["ChemicalCaptionId"];
                         dto.Name = reader["Name"] as string;
                         dto.NameSpace = reader["Namespace"] as string;
                         dto.Tag = reader["Tag"] as string;
