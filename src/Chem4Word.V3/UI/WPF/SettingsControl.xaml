@@ -488,12 +488,14 @@
                             </StackPanel>
                         </Button>
                         <Button
+                            Name="EditLibrary"
                             Margin="5"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             Click="OnClick_EditLibrary">
                             <StackPanel Orientation="Horizontal">
                                 <Path
+                                    Name="EditLibraryIcon"
                                     Width="32"
                                     Height="32"
                                     Margin="5"

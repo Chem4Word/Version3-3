@@ -7,6 +7,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -19,6 +20,8 @@ using Chem4Word.ACME.Models;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
+using IChem4Word.Contracts;
+using Microsoft.Office.Interop.Word;
 
 namespace Chem4Word.Library
 {
@@ -45,8 +48,64 @@ namespace Chem4Word.Library
         public bool ShowImplicitHydrogens => _options.ShowHydrogens;
         public bool ShowAtomsInColour => _options.ColouredAtoms;
         public bool ShowMoleculeGrouping => _options.ShowMoleculeGrouping;
+        private string _selectedLibrary = string.Empty;
 
-        private void OnItemButtonClick(object sender, RoutedEventArgs e)
+        private void OnLoaded_LibraryViewControl(object sender, RoutedEventArgs e)
+        {
+            // Disable the selection changed event while loading the combo box
+            LibrarySelector.SelectionChanged -= OnSelectionChanged_LibrarySelector;
+
+            var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+            _selectedLibrary = libraries.SelectedLibrary;
+
+            LibrarySelector.Items.Clear();
+            var index = 0;
+            foreach (var database in libraries.AvailableDatabases)
+            {
+                LibrarySelector.Items.Add(database.DisplayName);
+                if (database.DisplayName.Equals(libraries.SelectedLibrary))
+                {
+                    LibrarySelector.SelectedIndex = index;
+                }
+                index++;
+            }
+
+            // Enable the selection changed event
+            LibrarySelector.SelectionChanged += OnSelectionChanged_LibrarySelector;
+        }
+
+        private void OnSelectionChanged_LibrarySelector(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                if (e.AddedItems[0] is string selected)
+                {
+                    if (!_selectedLibrary.Equals(selected))
+                    {
+                        Debug.WriteLine($"Library changed to '{selected}'");
+
+                        var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                        listOfDetectedLibraries.SelectedLibrary = selected;
+
+                        new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                            .SaveFile(listOfDetectedLibraries);
+
+                        Globals.Chem4WordV3.ListOfDetectedLibraries
+                            = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                .GetListOfLibraries();
+
+                        var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
+                        DataContext = controller;
+
+                        var doc = Globals.Chem4WordV3.Application.ActiveDocument;
+                        var sel = Globals.Chem4WordV3.Application.Selection;
+                        Globals.Chem4WordV3.SelectChemistry(doc, sel);
+                    }
+                }
+            }
+        }
+
+        private void OnClick_ItemButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -97,17 +156,17 @@ namespace Chem4Word.Library
             }
         }
 
-        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown_SearchBox(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Return)
             {
                 if (string.IsNullOrWhiteSpace(SearchBox.Text))
                 {
-                    ClearButton_OnClick(null, null);
+                    OnClick_ClearButton(null, null);
                 }
                 else
                 {
-                    SearchButton_OnClick(null, null);
+                    OnClick_SearchButton(null, null);
                 }
             }
         }
@@ -117,7 +176,7 @@ namespace Chem4Word.Library
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SearchButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_SearchButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -149,7 +208,7 @@ namespace Chem4Word.Library
             }
         }
 
-        private void ClearButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_ClearButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -171,7 +230,7 @@ namespace Chem4Word.Library
             }
         }
 
-        private void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void OnTextChanged_SearchBox(object sender, TextChangedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try

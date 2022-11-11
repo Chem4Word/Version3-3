@@ -7,16 +7,14 @@
 
 using Chem4Word.ACME.Models;
 using Chem4Word.Core.UI.Forms;
+using Chem4Word.Helpers;
 using IChem4Word.Contracts;
-using IChem4Word.Contracts.Dto;
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Reflection;
-using System.Text;
 using System.Windows;
-using Chem4Word.Helpers;
 
 namespace Chem4Word.Library
 {
@@ -36,7 +34,7 @@ namespace Chem4Word.Library
         {
             _telemetry = telemetry;
 
-            var details = Globals.Chem4WordV3.GetDatabaseDetails();
+            var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
             _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
             _driver.DatabaseDetails = details;
 
@@ -66,7 +64,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -97,7 +95,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -120,7 +118,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -144,7 +142,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }

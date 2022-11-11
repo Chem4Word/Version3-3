@@ -183,7 +183,7 @@
                 x:Name="TrashButton"
                 Grid.Column="4"
                 Click="OnClick_TrashButton"
-                IsEnabled="True"
+                IsEnabled="False"
                 Style="{StaticResource NavButtonStyle}"
                 ToolTip="Delete selected items">
                 <Button.Content>

@@ -166,8 +166,15 @@ namespace Chem4Word.Driver.Open
         {
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
-                library.DeleteChemistryById(id);
+                if (_transaction != null)
+                {
+                    _library.DeleteChemistryById(_transaction.Connection, id);
+                }
+                else
+                {
+                    var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                    library.DeleteChemistryById(id);
+                }
             }
         }
 

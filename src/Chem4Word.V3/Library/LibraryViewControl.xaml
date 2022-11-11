@@ -6,9 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Name="LibraryControl"
-    controls:ChemistryItem.ChemistryItemButtonClick="OnItemButtonClick"
+    controls:ChemistryItem.ChemistryItemButtonClick="OnClick_ItemButton"
     d:DesignHeight="400"
     d:DesignWidth="400"
+    Loaded="OnLoaded_LibraryViewControl"
     mc:Ignorable="d">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Chem4WordBlue">
@@ -64,9 +65,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid>
-            <ComboBox FontSize="16" SelectedIndex="0">
-                <ComboBoxItem>Library.db</ComboBoxItem>
-            </ComboBox>
+            <ComboBox Name="LibrarySelector" FontSize="16" />
         </Grid>
         <GroupBox
             Grid.Row="1"
@@ -90,15 +89,15 @@
                             BorderThickness="0"
                             FontSize="24"
                             Foreground="{StaticResource Chem4WordBlue}"
-                            KeyDown="SearchBox_KeyDown"
-                            TextChanged="SearchBox_OnTextChanged" />
+                            KeyDown="OnKeyDown_SearchBox"
+                            TextChanged="OnTextChanged_SearchBox" />
                         <Button
                             x:Name="ClearButton"
                             Width="24"
                             Height="24"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
-                            Click="ClearButton_OnClick"
+                            Click="OnClick_ClearButton"
                             IsEnabled="False"
                             Style="{StaticResource NavButtonStyle}"
                             ToolTip="Clear search">
@@ -125,7 +124,7 @@
                 <Button
                     x:Name="SearchButton"
                     Grid.Column="1"
-                    Click="SearchButton_OnClick"
+                    Click="OnClick_SearchButton"
                     IsEnabled="False"
                     Style="{StaticResource NavButtonStyle}"
                     ToolTip="Search for">

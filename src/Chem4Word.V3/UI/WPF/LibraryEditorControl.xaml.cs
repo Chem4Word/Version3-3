@@ -15,11 +15,11 @@ using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
+using Chem4Word.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
 using IChem4Word.Contracts;
-using IChem4Word.Contracts.Dto;
 using Newtonsoft.Json;
 using Ookii.Dialogs.WinForms;
 using System;
@@ -38,7 +38,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Chem4Word.Helpers;
 using Forms = System.Windows.Forms;
 using Size = System.Windows.Size;
 
@@ -462,22 +461,54 @@ namespace Chem4Word.UI.WPF
 
             try
             {
-                // ToDo: [V3.3] Should only delete selected structures ...
-
                 var sb = new StringBuilder();
-                sb.AppendLine("This will delete all the selected structures from the Library");
+                sb.AppendLine("This will delete the selected structures from the Library");
                 sb.AppendLine("");
                 sb.AppendLine("Do you want to proceed?");
                 sb.AppendLine("This cannot be undone.");
                 var dialogResult = UserInteractions.AskUserYesNo(sb.ToString(), Forms.MessageBoxDefaultButton.Button2);
                 if (dialogResult == Forms.DialogResult.Yes)
                 {
-                    // ToDo: [V3.3] Backup the file
-                    _driver.DeleteAllChemistry(); // ToDo: [V3.3] This is currently wrong
+                    _driver.StartTransaction();
+                    int progress = 0;
+
+                    var sw = new Stopwatch();
+                    sw.Start();
+
+                    try
+                    {
+                        if (DataContext is LibraryEditorViewModel controller)
+                        {
+                            ProgressBar.Maximum = _checkedItems;
+
+                            var items = controller.ChemistryItems.Where(i => i.IsChecked).ToList();
+                            foreach (var item in items)
+                            {
+                                progress++;
+                                ShowProgress(progress, $" [{progress}/{_checkedItems}]");
+
+                                _driver.DeleteChemistryById(item.Id);
+                            }
+                        }
+                        _driver.EndTransaction(false);
+
+                        sw.Stop();
+                        _telemetry.Write(module, "Timing", $"Delete of {progress} structures took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+
+                        _checkedItems = 0;
+                        TrashButton.IsEnabled = false;
+                        CheckedFilterButton.IsEnabled = false;
+                        ClearProgress();
+                    }
+                    catch (Exception exception)
+                    {
+                        _driver.EndTransaction(true);
+                        new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
+                    }
 
                     // Refresh the control's data
-                    var controller = new LibraryEditorViewModel(_telemetry, _driver);
-                    DataContext = controller;
+                    var newController = new LibraryEditorViewModel(_telemetry, _driver);
+                    DataContext = newController;
                     UpdateStatusBar();
                 }
             }

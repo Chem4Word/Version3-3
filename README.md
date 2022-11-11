@@ -34,7 +34,7 @@ Azure Devops Build must be set to use VS2022 build agent
 |Microsoft.Xaml.Behaviors.Wpf|1.1.39|MIT|1|
 |Microsoft_VisualStudio_QualityTools_UnitTestFramework.STW|12.0.21005.1|Microsoft|1|
 |Newtonsoft.Json|13.0.1|MIT|16|
-|Ookii.Dialogs.WinForms|4.0.0|Public Domain|2|
+|Ookii.Dialogs.WinForms|4.0.0|BSD-3-Clause|2|
 |Stub.System.Data.SQLite.Core.NetFramework|1.0.116.0|Public Domain|2|
 |System.Buffers|4.5.1|MIT|5|
 |System.Collections.Immutable|6.0.0|MIT|1|

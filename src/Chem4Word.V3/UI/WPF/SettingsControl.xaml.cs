@@ -14,6 +14,7 @@ using IChem4Word.Contracts;
 using Ookii.Dialogs.WinForms;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -485,9 +486,19 @@ namespace Chem4Word.UI.WPF
                 && e.AddedItems[0] is LibrariesSettingsGridSource source)
             {
                 _selectedLibrary = source.Name;
-                var cantRemove = source.IsDefault;
-                RemoveLibrary.IsEnabled = !cantRemove;
-                RemoveLibraryIcon.Fill = cantRemove ? new SolidColorBrush(Colors.Gray) : new SolidColorBrush(Colors.Red);
+
+                // Don't allow default database to be removed
+                RemoveLibrary.IsEnabled = !source.IsDefault;
+                RemoveLibraryIcon.Fill = source.IsDefault ? new SolidColorBrush(Colors.Gray) : new SolidColorBrush(Colors.Red);
+
+                // Don't allow System database to be edited
+                var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                var database = listOfDetectedLibraries.AvailableDatabases
+                                                      .FirstOrDefault(n => n.DisplayName.Equals(source.Name));
+                var isSystem = GetPropertyValue(database, "Owner", "User").Equals("System");
+
+                EditLibrary.IsEnabled = !isSystem;
+                EditLibraryIcon.Fill = isSystem ? new SolidColorBrush(Colors.Gray) : new SolidColorBrush(Colors.Black);
             }
         }
 

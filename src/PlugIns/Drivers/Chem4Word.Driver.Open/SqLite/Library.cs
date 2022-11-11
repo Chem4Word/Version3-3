@@ -706,7 +706,7 @@ namespace Chem4Word.Driver.Open.SqLite
             }
         }
 
-        private void DeleteChemistryById(SQLiteConnection conn, long id)
+        internal void DeleteChemistryById(SQLiteConnection conn, long id)
         {
             var sb = new StringBuilder();
 

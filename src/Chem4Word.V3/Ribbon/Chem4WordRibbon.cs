@@ -1482,7 +1482,7 @@ namespace Chem4Word
                                         Globals.Chem4WordV3.LoadNamesFromLibrary();
                                     }
 
-                                    var details = Globals.Chem4WordV3.GetDatabaseDetails();
+                                    var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
                                     var lib = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
                                     lib.DatabaseDetails = details;
 

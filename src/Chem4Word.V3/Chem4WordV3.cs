@@ -420,7 +420,7 @@ namespace Chem4Word
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                var details = GetDatabaseDetails();
+                var details = GetSelectedDatabaseDetails();
                 var lib = GetDriverPlugIn(details.Driver);
                 lib.DatabaseDetails = details;
 
@@ -881,7 +881,7 @@ namespace Chem4Word
             StartUpTimings.Add(message);
         }
 
-        public DatabaseDetails GetDatabaseDetails()
+        public DatabaseDetails GetSelectedDatabaseDetails()
         {
             return ListOfDetectedLibraries.AvailableDatabases
                           .FirstOrDefault(l => l.DisplayName.Equals(ListOfDetectedLibraries.SelectedLibrary));
@@ -1110,6 +1110,18 @@ namespace Chem4Word
             }
         }
 
+        private string GetPropertyValue(DatabaseDetails details, string key, string defaultValue)
+        {
+            string result = defaultValue;
+
+            if (details.Properties.ContainsKey(key))
+            {
+                result = details.Properties[key];
+            }
+
+            return result;
+        }
+
         private void SetButtonStates(ButtonState state)
         {
             if (Ribbon != null && _plugInsLoaded)
@@ -1152,7 +1164,9 @@ namespace Chem4Word
                         Ribbon.ShowNavigator.Enabled = true;
                         Ribbon.ShowLibrary.Enabled = true;
                         Ribbon.WebSearchMenu.Enabled = false;
-                        Ribbon.SaveToLibrary.Enabled = true;
+                        var database = GetSelectedDatabaseDetails();
+                        var canSave = !GetPropertyValue(database, "Owner", "User").Equals("System");
+                        Ribbon.SaveToLibrary.Enabled = canSave;
                         Ribbon.ArrangeMolecules.Enabled = true;
                         Ribbon.ButtonsDisabled.Enabled = false;
                         break;
