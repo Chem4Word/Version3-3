@@ -10,7 +10,6 @@ using Chem4Word.ACME.Annotations;
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Models;
 using Chem4Word.ACME.Models.Chem4Word.Controls.TagControl;
-using Chem4Word.ACME.Utils;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
@@ -36,10 +35,13 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Forms = System.Windows.Forms;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using ListBox = System.Windows.Controls.ListBox;
 using Size = System.Windows.Size;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Chem4Word.UI.WPF
 {
@@ -147,25 +149,131 @@ namespace Chem4Word.UI.WPF
                     var item = controller.ChemistryItems.FirstOrDefault(o => o.Id == id);
                     if (item != null)
                     {
-                        var topLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
-                        var result = UIUtils.ShowSketcher(_acmeOptions, _telemetry, topLeft, item.Cml);
-                        if (result.IsDirty)
-                        {
-                            var cmlConverter = new CMLConverter();
-                            var model = cmlConverter.Import(result.Cml);
+                        PerformEdit(item);
+                        UpdateStatusBar();
+                    }
+                }
+            }
+        }
 
-                            var dto = DtoHelper.CreateFromModel(model, Encoding.UTF8.GetBytes(result.Cml), "cml");
-                            dto.Id = id;
+        private void PerformEdit(ChemistryObject item)
+        {
+            var editor = Globals.Chem4WordV3.GetEditorPlugIn(Globals.Chem4WordV3.SystemOptions.SelectedEditorPlugIn);
+            if (editor != null)
+            {
+                if (editor.CanEditReactions && editor.CanEditFunctionalGroups && editor.CanEditNestedMolecules)
+                {
+                    var topLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
+                    editor.TopLeft = topLeft;
+                    editor.Cml = item.Cml;
+
+                    // Save stuff before edit
+                    var beforeCml = item.Cml;
+
+                    // Perform the edit
+                    var chemEditorResult = editor.Edit();
+                    if (chemEditorResult == DialogResult.OK)
+                    {
+                        var cmlConverter = new CMLConverter();
+
+                        var beforeModel = cmlConverter.Import(beforeCml);
+                        var afterModel = cmlConverter.Import(editor.Cml);
+                        var afterCml = editor.Cml;
+
+                        var oldMolecules = beforeModel.GetAllMolecules();
+                        var newMolecules = afterModel.GetAllMolecules();
+
+                        foreach (var molecule in newMolecules)
+                        {
+                            var mol = oldMolecules.FirstOrDefault(m => m.Path.Equals(molecule.Path));
+                            if (mol != null)
+                            {
+                                // Copy over existing Formulae and Names if Paths match
+                                foreach (var formula in mol.Formulas)
+                                {
+                                    molecule.Formulas.Add(formula);
+                                }
+                                foreach (var name in mol.Names)
+                                {
+                                    molecule.Names.Add(name);
+                                }
+                            }
+                        }
+
+                        var pc = new WebServices.PropertyCalculator(_telemetry, topLeft, Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
+                        pc.CalculateProperties(newMolecules);
+
+                        using (var editLabelsHost =
+                               new EditLabelsHost(
+                                   new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath)))
+                        {
+                            editLabelsHost.TopLeft = topLeft;
+                            editLabelsHost.Cml = cmlConverter.Export(afterModel);
+
+                            editLabelsHost.Message = "Warning: At least one formula or name has changed; Please correct or delete any which are unnecessary or irrelevant !";
+
+                            // Show Label Editor
+                            var dr = editLabelsHost.ShowDialog();
+                            if (dr == DialogResult.OK)
+                            {
+                                afterModel = cmlConverter.Import(editLabelsHost.Cml);
+                                afterCml = editLabelsHost.Cml;
+                            }
+                            editLabelsHost.Close();
+                        }
+
+                        var dto = DtoHelper.CreateFromModel(afterModel, Encoding.UTF8.GetBytes(afterCml), "cml");
+                        if (item.Id == 0)
+                        {
+                            // Add New Chemistry
+                            dto.Name = item.Name;
+                            dto.Name = afterModel.QuickName;
+                            var newId = _driver.AddChemistry(dto);
+
+                            CatalogueItems.SelectedItem = null;
+                            var newContext = new LibraryEditorViewModel(_telemetry, _driver);
+                            DataContext = newContext;
+
+                            SelectChanged(newContext, newId);
+                        }
+                        else
+                        {
+                            // Update Existing Chemistry
+                            dto.Id = item.Id;
                             dto.Name = item.Name;
                             _driver.UpdateChemistry(dto);
 
-                            item.Cml = result.Cml;
-                            item.Formula = result.Formua;
-                            item.MolecularWeight = result.MolecularWeight;
+                            item.Cml = afterCml;
+                            item.Formula = afterModel.ConciseFormula;
+                            item.MolecularWeight = afterModel.MolecularWeight;
 
-                            controller.SelectedChemistryObject = item;
+                            CatalogueItems.SelectedItem = null;
+
+                            if (DataContext is LibraryEditorViewModel context)
+                            {
+                                SelectChanged(context, dto.Id);
+                            }
                         }
                     }
+                }
+                else
+                {
+                    UserInteractions.WarnUser($"Selected Editor Plug-In '{editor.Name}' is not allowed here");
+                }
+            }
+            else
+            {
+                UserInteractions.WarnUser("Unable to find an Editor Plug-In");
+            }
+
+            // Local Function
+            void SelectChanged(LibraryEditorViewModel context, long id)
+            {
+                var selected = context.ChemistryItems.FirstOrDefault(o => o.Id == id);
+                if (selected != null)
+                {
+                    CatalogueItems.SelectedItem = selected;
+                    CatalogueItems.ScrollIntoView(selected);
                 }
             }
         }
@@ -445,8 +553,8 @@ namespace Chem4Word.UI.WPF
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                // ToDo: [V3.3] Implement
-                Debug.WriteLine($"{_class} -> Add Button Clicked");
+                PerformEdit(new ChemistryObject());
+                UpdateStatusBar();
             }
             catch (Exception exception)
             {
@@ -466,8 +574,8 @@ namespace Chem4Word.UI.WPF
                 sb.AppendLine("");
                 sb.AppendLine("Do you want to proceed?");
                 sb.AppendLine("This cannot be undone.");
-                var dialogResult = UserInteractions.AskUserYesNo(sb.ToString(), Forms.MessageBoxDefaultButton.Button2);
-                if (dialogResult == Forms.DialogResult.Yes)
+                var dialogResult = UserInteractions.AskUserYesNo(sb.ToString(), MessageBoxDefaultButton.Button2);
+                if (dialogResult == DialogResult.Yes)
                 {
                     _driver.StartTransaction();
                     int progress = 0;
@@ -477,6 +585,8 @@ namespace Chem4Word.UI.WPF
 
                     try
                     {
+                        CatalogueItems.SelectedItem = null;
+
                         if (DataContext is LibraryEditorViewModel controller)
                         {
                             ProgressBar.Maximum = _checkedItems;
@@ -527,8 +637,6 @@ namespace Chem4Word.UI.WPF
                 string importFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 if (Directory.Exists(importFolder))
                 {
-                    // Fix scrolling to selected item by using code from https://social.msdn.microsoft.com/Forums/expression/en-US/1257aebc-22a6-44f6-975b-74f5067728bc/autoposition-showfolder-dialog?forum=vbgeneral
-
                     var browser = new VistaFolderBrowserDialog();
 
                     browser.Description = "Select a folder to import cml files from";
@@ -538,7 +646,7 @@ namespace Chem4Word.UI.WPF
                     browser.SelectedPath = importFolder;
                     var dr = browser.ShowDialog();
 
-                    if (dr == Forms.DialogResult.OK)
+                    if (dr == DialogResult.OK)
                     {
                         string selectedFolder = browser.SelectedPath;
                         string doneFile = Path.Combine(selectedFolder, "library-import-done.txt");
@@ -546,20 +654,20 @@ namespace Chem4Word.UI.WPF
                         sb = new StringBuilder();
                         sb.AppendLine("Do you want to import these structures into the Library?");
                         dr = UserInteractions.AskUserYesNo(sb.ToString());
-                        if (dr == Forms.DialogResult.Yes
+                        if (dr == DialogResult.Yes
                             && File.Exists(doneFile))
                         {
                             sb = new StringBuilder();
                             sb.AppendLine($"Files have been imported already from '{selectedFolder}'");
                             sb.AppendLine("Do you want to rerun the import?");
                             dr = UserInteractions.AskUserYesNo(sb.ToString());
-                            if (dr == Forms.DialogResult.Yes)
+                            if (dr == DialogResult.Yes)
                             {
                                 File.Delete(doneFile);
                             }
                         }
 
-                        if (dr == Forms.DialogResult.Yes)
+                        if (dr == DialogResult.Yes)
                         {
                             int fileCount = 0;
 
@@ -657,8 +765,6 @@ namespace Chem4Word.UI.WPF
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                // Fix scrolling to selected item by using code from https://social.msdn.microsoft.com/Forums/expression/en-US/1257aebc-22a6-44f6-975b-74f5067728bc/autoposition-showfolder-dialog?forum=vbgeneral
-
                 string exportFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 var browser = new VistaFolderBrowserDialog();
 
@@ -668,23 +774,23 @@ namespace Chem4Word.UI.WPF
                 browser.ShowNewFolderButton = false;
                 browser.SelectedPath = exportFolder;
                 var dr = browser.ShowDialog();
-                if (dr == Forms.DialogResult.OK)
+                if (dr == DialogResult.OK)
                 {
                     exportFolder = browser.SelectedPath;
 
                     if (Directory.Exists(exportFolder))
                     {
-                        var doExport = Forms.DialogResult.Yes;
+                        var doExport = DialogResult.Yes;
                         var existingCmlFiles = Directory.GetFiles(exportFolder, "*.cml");
                         if (existingCmlFiles.Length > 0)
                         {
                             var sb = new StringBuilder();
                             sb.AppendLine($"This folder contains {existingCmlFiles.Length} cml files.");
                             sb.AppendLine("Do you wish to continue?");
-                            doExport = UserInteractions.AskUserYesNo(sb.ToString(), Forms.MessageBoxDefaultButton.Button2);
+                            doExport = UserInteractions.AskUserYesNo(sb.ToString(), MessageBoxDefaultButton.Button2);
                         }
 
-                        if (doExport == Forms.DialogResult.Yes)
+                        if (doExport == DialogResult.Yes)
                         {
                             int exported = 0;
                             int progress = 0;

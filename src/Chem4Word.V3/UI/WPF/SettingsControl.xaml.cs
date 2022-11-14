@@ -14,7 +14,6 @@ using IChem4Word.Contracts;
 using Ookii.Dialogs.WinForms;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;

@@ -437,6 +437,9 @@
     <Compile Include="UI\WPF\EditLabelsHost.Designer.cs">
       <DependentUpon>EditLabelsHost.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\WPF\LibraryNamesPanel.xaml.cs">
+      <DependentUpon>LibraryNamesPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\WPF\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
@@ -653,6 +656,10 @@
     <Page Include="UI\WPF\LibraryEditorControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\WPF\LibraryNamesPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\WPF\SettingsControl.xaml">
       <SubType>Designer</SubType>

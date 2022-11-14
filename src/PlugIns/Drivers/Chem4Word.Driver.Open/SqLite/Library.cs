@@ -242,26 +242,30 @@ namespace Chem4Word.Driver.Open.SqLite
 
                 command.ExecuteNonQuery();
 
-                // Delete old record from Properties
-                sb = new StringBuilder();
+                // Properties table only exists in 3.3.1 or greater
+                if (version >= new Version(3, 3, 1))
+                {
+                    // Delete old record
+                    sb = new StringBuilder();
 
-                sb.AppendLine("DELETE FROM Properties");
-                sb.AppendLine("WHERE Key = 'Version'");
+                    sb.AppendLine("DELETE FROM Properties");
+                    sb.AppendLine("WHERE Key = 'Version'");
 
-                command = new SQLiteCommand(sb.ToString(), conn);
-                command.ExecuteNonQuery();
+                    command = new SQLiteCommand(sb.ToString(), conn);
+                    command.ExecuteNonQuery();
 
-                // Add new record in Properties
-                sb = new StringBuilder();
+                    // Add new record in Properties
+                    sb = new StringBuilder();
 
-                sb.AppendLine("INSERT INTO Properties");
-                sb.AppendLine(" (Key, Value)");
-                sb.AppendLine("VALUES");
-                sb.AppendLine(" ('Version', @version)");
+                    sb.AppendLine("INSERT INTO Properties");
+                    sb.AppendLine(" (Key, Value)");
+                    sb.AppendLine("VALUES");
+                    sb.AppendLine(" ('Version', @version)");
 
-                command = new SQLiteCommand(sb.ToString(), conn);
-                command.Parameters.Add("@version", DbType.String, versionString.Length).Value = versionString;
-                command.ExecuteNonQuery();
+                    command = new SQLiteCommand(sb.ToString(), conn);
+                    command.Parameters.Add("@version", DbType.String, versionString.Length).Value = versionString;
+                    command.ExecuteNonQuery();
+                }
             }
             catch (Exception ex)
             {

@@ -41,7 +41,6 @@
       "ALTER TABLE Gallery ADD COLUMN DataType STRING;",
       "UPDATE Gallery SET DataType = 'cml'",
       "CREATE TABLE Properties ([Key] STRING PRIMARY KEY NOT NULL, Value STRING NOT NULL);",
-      "INSERT INTO Properties (Key, Value) VALUES ('Version', '3.3.1');",
       "INSERT INTO Properties (Key, Value) VALUES ('Owner', 'User');"
     ]
   },

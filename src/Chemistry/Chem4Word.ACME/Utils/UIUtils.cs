@@ -48,15 +48,6 @@ namespace Chem4Word.ACME.Utils
             Application.Current.ShutdownMode = mode;
         }
 
-        public static (bool IsDirty, string Cml, string Formua, double MolecularWeight) ShowSketcher(AcmeOptions options, IChem4WordTelemetry telemetry, Point topLeft, string cml)
-        {
-            var host = new SketcherHost(options, telemetry, topLeft);
-            host.Sketcher.SetProperties(cml, null, options);
-            host.ShowDialog();
-
-            return (host.Sketcher.IsDirty, host.Sketcher.Cml, host.Sketcher.EditedModel.ConciseFormula, host.Sketcher.EditedModel.MolecularWeight);
-        }
-
         public static Point GetOffScreenPoint()
         {
             int maxX = Int32.MinValue;

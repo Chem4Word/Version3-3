@@ -1,0 +1,67 @@
+﻿<UserControl
+    x:Class="Chem4Word.UI.WPF.LibraryNamesPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Chem4Word.UI.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    BorderThickness="0"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="Chem4WordBlue">
+            <SolidColorBrush.Color>#2A579A</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <Style x:Key="CatHeader" TargetType="TreeViewItem">
+            <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+        <Style
+            x:Key="CatSubHeader"
+            BasedOn="{StaticResource CatHeader}"
+            TargetType="TreeViewItem">
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style x:Key="DefaultNameNode" TargetType="TreeViewItem">
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox>
+                                <Grid>
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="M22.785004,8.4599915L13.740021,17.51001 9.2100067,12.980011 6.2000122,16 13.740021,23.545013 25.804993,11.480011z M16,0C24.834991,0 32,7.1700134 32,16 32,24.834991 24.834991,32 16,32 7.1699982,32 0,24.834991 0,16 0,7.1700134 7.1699982,0 16,0z"
+                                        Fill="Green"
+                                        Stretch="Uniform" />
+                                </Grid>
+                            </Viewbox>
+                            <TextBlock Margin="5,0" Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <TreeView
+            x:Name="NamesTreeView"
+            BorderThickness="0"
+            ItemContainerStyle="{StaticResource CatHeader}">
+            <TreeViewItem
+                x:Name="NameNode"
+                Header="Names"
+                ItemContainerStyle="{StaticResource CatSubHeader}" />
+            <TreeViewItem
+                x:Name="FormulaNode"
+                Header="Formulae"
+                ItemContainerStyle="{StaticResource CatSubHeader}" />
+            <TreeViewItem
+                x:Name="CaptionNode"
+                Header="Captions"
+                ItemContainerStyle="{StaticResource CatSubHeader}" />
+        </TreeView>
+    </Grid>
+</UserControl>

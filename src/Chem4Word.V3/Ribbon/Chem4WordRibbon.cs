@@ -22,7 +22,6 @@ using Chem4Word.Telemetry;
 using Chem4Word.UI;
 using Chem4Word.UI.WPF;
 using IChem4Word.Contracts;
-using IChem4Word.Contracts.Dto;
 using Microsoft.Office.Core;
 using Microsoft.Office.Tools.Ribbon;
 using System;
