@@ -5,17 +5,23 @@
     xmlns:controls="clr-namespace:Chem4Word.ACME.Controls;assembly=Chem4Word.ACME"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:Chem4Word.ACME.Converters;assembly=Chem4Word.ACME"
     Name="LibraryControl"
     controls:ChemistryItem.ChemistryItemButtonClick="OnClick_ItemButton"
     d:DesignHeight="400"
     d:DesignWidth="400"
-    Loaded="OnLoaded_LibraryViewControl"
+    Background="LightGray"
     FontFamily="Segoe UI"
+    Loaded="OnLoaded_LibraryViewControl"
     mc:Ignorable="d">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Chem4WordBlue">
             <SolidColorBrush.Color>#2A579A</SolidColorBrush.Color>
         </SolidColorBrush>
+        <converters:BoolToVisibilityConverter
+            x:Key="BoolToVisConverter"
+            FalseValue="Collapsed"
+            TrueValue="Visible" />
         <Style x:Key="NavButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
@@ -63,17 +69,19 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid>
-            <ComboBox Name="LibrarySelector" FontSize="16" />
-        </Grid>
-        <GroupBox
+        <ComboBox Name="LibrarySelector" FontSize="16" />
+        <Button
+            Name="EditThisLibrary"
             Grid.Row="1"
-            Background="White"
-            BorderBrush="{StaticResource Chem4WordBlue}"
-            BorderThickness="2"
-            Header="Filter">
+            Height="30"
+            Click="OnClick_EditLibrary"
+            FontSize="16">
+            Edit this Library
+        </Button>
+        <Grid Grid.Row="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -92,6 +100,13 @@
                             Foreground="{StaticResource Chem4WordBlue}"
                             KeyDown="OnKeyDown_SearchBox"
                             TextChanged="OnTextChanged_SearchBox" />
+                        <TextBlock
+                            Margin="2,2"
+                            VerticalAlignment="Center"
+                            Foreground="LightSteelBlue"
+                            IsHitTestVisible="False"
+                            Text="Filter ..."
+                            Visibility="{Binding ElementName=SearchBox, Path=Text.IsEmpty, Converter={StaticResource BoolToVisConverter}}" />
                         <Button
                             x:Name="ClearButton"
                             Width="24"
@@ -148,8 +163,8 @@
                     </Button.Content>
                 </Button>
             </Grid>
-        </GroupBox>
-        <Grid Grid.Row="2">
+        </Grid>
+        <Grid Grid.Row="3">
             <ListBox
                 x:Name="LibraryList"
                 HorizontalAlignment="Stretch"

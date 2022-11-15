@@ -227,6 +227,16 @@ namespace Chem4Word.Telemetry
 
                 #endregion Get IpAddress on Thread
 
+#if DEBUG
+                message = $"GetGitStatus started at {SafeDate.ToLongDate(DateTime.Now)}";
+                StartUpTimings.Add(message);
+                Debug.WriteLine(message);
+
+                Thread thread2 = new Thread(GetGitStatus);
+                thread2.SetApartmentState(ApartmentState.STA);
+                thread2.Start(null);
+#endif
+
                 GetDotNetVersionFromRegistry();
 
                 AllAddIns = InfoHelper.GetListOfAddIns();
@@ -243,16 +253,6 @@ namespace Chem4Word.Telemetry
                 }
 
                 GetScreens();
-
-#if DEBUG
-                message = $"GetGitStatus started at {SafeDate.ToLongDate(DateTime.Now)}";
-                StartUpTimings.Add(message);
-                Debug.WriteLine(message);
-
-                Thread thread2 = new Thread(GetGitStatus);
-                thread2.SetApartmentState(ApartmentState.STA);
-                thread2.Start(null);
-#endif
 
                 sw.Stop();
 

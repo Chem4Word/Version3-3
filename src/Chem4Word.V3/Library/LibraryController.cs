@@ -35,13 +35,16 @@ namespace Chem4Word.Library
             _telemetry = telemetry;
 
             var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
-            _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
-            _driver.DatabaseDetails = details;
+            if (details != null)
+            {
+                _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+                _driver.DatabaseDetails = details;
 
-            ChemistryItems = new ObservableCollection<ChemistryObject>();
-            ChemistryItems.CollectionChanged += ChemistryItems_CollectionChanged;
+                ChemistryItems = new ObservableCollection<ChemistryObject>();
+                ChemistryItems.CollectionChanged += ChemistryItems_CollectionChanged;
 
-            LoadChemistryItems();
+                LoadChemistryItems();
+            }
         }
 
         private void LoadChemistryItems()

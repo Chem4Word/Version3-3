@@ -10,7 +10,6 @@ using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Diagnostics;
 using System.Reflection;
 using Point = System.Windows.Point;
 
@@ -67,9 +66,7 @@ namespace Chem4Word.Driver.Open
 
             var library = new Library(Telemetry, details, TopLeft);
             // Fetch it's properties which will apply patches
-            var temp = library.GetProperties();
-            // ToDo: [V3.3] Set this database's Id (Guid)
-            Debug.WriteLine(temp.Count);
+            library.GetProperties();
         }
 
         public Dictionary<string, string> GetProperties()

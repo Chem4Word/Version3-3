@@ -421,16 +421,19 @@ namespace Chem4Word
             try
             {
                 var details = GetSelectedDatabaseDetails();
-                var lib = GetDriverPlugIn(details.Driver);
-                lib.DatabaseDetails = details;
+                if (details != null)
+                {
+                    var lib = GetDriverPlugIn(details.Driver);
+                    lib.DatabaseDetails = details;
 
-                if (lib != null)
-                {
-                    LibraryNames = lib.GetSubstanceNamesWithIds();
-                }
-                else
-                {
-                    LibraryNames = null;
+                    if (lib != null)
+                    {
+                        LibraryNames = lib.GetSubstanceNamesWithIds();
+                    }
+                    else
+                    {
+                        LibraryNames = null;
+                    }
                 }
             }
             catch (Exception exception)
@@ -883,8 +886,13 @@ namespace Chem4Word
 
         public DatabaseDetails GetSelectedDatabaseDetails()
         {
-            return ListOfDetectedLibraries.AvailableDatabases
-                          .FirstOrDefault(l => l.DisplayName.Equals(ListOfDetectedLibraries.SelectedLibrary));
+            if (ListOfDetectedLibraries == null)
+            {
+                return null;
+            }
+            return ListOfDetectedLibraries
+                   .AvailableDatabases?
+                   .FirstOrDefault(l => l.DisplayName.Equals(ListOfDetectedLibraries.SelectedLibrary));
         }
 
         public IChem4WordDriver GetDriverPlugIn(string name)
@@ -1164,8 +1172,12 @@ namespace Chem4Word
                         Ribbon.ShowNavigator.Enabled = true;
                         Ribbon.ShowLibrary.Enabled = true;
                         Ribbon.WebSearchMenu.Enabled = false;
-                        var database = GetSelectedDatabaseDetails();
-                        var canSave = !GetPropertyValue(database, "Owner", "User").Equals("System");
+                        var canSave = false;
+                        var details = GetSelectedDatabaseDetails();
+                        if (details != null)
+                        {
+                            canSave = !GetPropertyValue(details, "Owner", "User").Equals("System");
+                        }
                         Ribbon.SaveToLibrary.Enabled = canSave;
                         Ribbon.ArrangeMolecules.Enabled = true;
                         Ribbon.ButtonsDisabled.Enabled = false;

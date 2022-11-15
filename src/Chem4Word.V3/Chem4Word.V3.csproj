@@ -497,6 +497,10 @@
     <Content Include="Resources\Button Images\Office-2016\Edit-Labels.png" />
     <EmbeddedResource Include="Resources\Button Images\Office-2016\File-Open.png" />
     <Content Include="Resources\Button Images\Office-2016\File-Save.png" />
+    <Content Include="Resources\Button Images\Office-2016\Gallery-Delete.png" />
+    <Content Include="Resources\Button Images\Office-2016\Gallery-Find.png" />
+    <Content Include="Resources\Button Images\Office-2016\Gallery-Save.png" />
+    <Content Include="Resources\Button Images\Office-2016\Gallery-Toggle.png" />
     <Content Include="Resources\Button Images\Office-2016\Navigator-Toggle.png" />
     <Content Include="Resources\Button Images\Office-2016\Seperate-Molecules.png" />
     <Content Include="Resources\Button Images\Office-2016\WebSearch.png" />

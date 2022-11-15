@@ -5,6 +5,9 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
+using Chem4Word.Shared;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,9 +15,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Chem4Word.Core.Helpers;
-using Chem4Word.Shared;
-using IChem4Word.Contracts;
 
 namespace Chem4Word.Telemetry
 {
@@ -23,6 +23,7 @@ namespace Chem4Word.Telemetry
         private static int _counter;
         private static AzureServiceBusWriter _azureServiceBusWriter;
         private static bool _systemInfoSent;
+        private static bool _gitInfoSent;
 
         private static SystemHelper _helper;
         private static WmiHelper _wmiHelper;
@@ -93,46 +94,50 @@ namespace Chem4Word.Telemetry
                     && !_helper.IpAddress.Contains("0.0.0.0"))
                 {
                     WriteStartUpInfo();
+                }
 
-                    if (!string.IsNullOrEmpty(_helper.GitStatus))
+                if (!_gitInfoSent
+                    && _helper != null
+                    && !string.IsNullOrEmpty(_helper.GitStatus))
+                {
+                    var tracking = _helper.GitStatus
+                                          .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                                          .FirstOrDefault(l => l.StartsWith("##"));
+
+                    if (!string.IsNullOrEmpty(tracking))
                     {
-                        var tracking = _helper.GitStatus
-                                              .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-                                              .FirstOrDefault(l => l.StartsWith("##"));
-
-                        if (!string.IsNullOrEmpty(tracking))
+                        var idxStart = tracking.IndexOf('[');
+                        var idxEnd = tracking.IndexOf(']');
+                        if (idxStart > 0 && idxEnd > 0)
                         {
-                            var idxStart = tracking.IndexOf('[');
-                            var idxEnd = tracking.IndexOf(']');
-                            if (idxStart > 0 && idxEnd > 0)
-                            {
-                                var info = tracking.Substring(idxStart, idxEnd - idxStart + 1);
+                            var info = tracking.Substring(idxStart, idxEnd - idxStart + 1);
 
-                                if (info.Contains("behind"))
-                                {
-                                    MessageBox.Show("Your local source code is behind origin!", "WARNING",
-                                                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                                }
-                                if (info.Contains("gone"))
-                                {
-                                    MessageBox.Show("Your local source code is gone from origin!", "WARNING",
-                                                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                                }
+                            if (info.Contains("behind"))
+                            {
+                                MessageBox.Show("Your local source code is behind origin!", "WARNING",
+                                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            }
+                            if (info.Contains("gone"))
+                            {
+                                MessageBox.Show("Your local source code is gone from origin!", "WARNING",
+                                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             }
                         }
-
-                        var failedToFetch =  _helper.GitStatus
-                                                     .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-                                                     .FirstOrDefault(l => l.Contains("is not a git command"));
-                        if (!string.IsNullOrEmpty(failedToFetch))
-                        {
-                            // One of these two commands is required to be run, most likely the first one ...
-                            // git config --global --unset credential.helper
-                            // git config --global credential.helper store
-                            MessageBox.Show(@"Git fetch failed\nYou need to run 'git config --global --unset credential.helper' from a command prompt.", "WARNING");
-                        }
-
                     }
+
+                    var failedToFetch = _helper.GitStatus
+                                               .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                                               .FirstOrDefault(l => l.Contains("is not a git command"));
+                    if (!string.IsNullOrEmpty(failedToFetch))
+                    {
+                        // One of these two commands is required to be run, most likely the first one ...
+                        // git config --global --unset credential.helper
+                        // git config --global credential.helper store
+                        MessageBox.Show(@"Git fetch failed\nYou need to run 'git config --global --unset credential.helper' from a command prompt.", "WARNING");
+                    }
+
+                    WritePrivate("StartUp", "Information", _helper.GitStatus);
+                    _gitInfoSent = true;
                 }
             }
         }
@@ -171,8 +176,6 @@ namespace Chem4Word.Telemetry
                 WritePrivate("StartUp", "Information", _helper.Click2RunProductIds);
             }
             WritePrivate("StartUp", "Information", Environment.GetCommandLineArgs()[0]);
-
-            //WritePrivate("StartUp", "Information", $"Browser Version: {_helper.BrowserVersion}");
 
             if (_helper.StartUpTimings != null)
             {
@@ -289,10 +292,6 @@ namespace Chem4Word.Telemetry
                 WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, OfficeHelper.GetWinWordSearchPaths()));
             }
 
-            if (!string.IsNullOrEmpty(_helper.GitStatus))
-            {
-                WritePrivate("StartUp", "Information", _helper.GitStatus);
-            }
 #endif
 
             // Add Knime Properies again to ensure they get sent

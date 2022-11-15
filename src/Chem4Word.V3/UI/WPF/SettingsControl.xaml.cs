@@ -34,7 +34,7 @@ namespace Chem4Word.UI.WPF
     public partial class SettingsControl : UserControl
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public event EventHandler OnButtonClick;
 
@@ -56,7 +56,7 @@ namespace Chem4Word.UI.WPF
 
         private void SettingsControl_OnLoaded(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             #region Load Images
 
@@ -317,6 +317,8 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_BrowseLibraryLocation(object sender, RoutedEventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             var browser = new VistaFolderBrowserDialog();
             browser.Description = "Select a folder to set as your default location";
             browser.UseDescriptionForTitle = true;
@@ -329,6 +331,8 @@ namespace Chem4Word.UI.WPF
             {
                 if (Directory.Exists(browser.SelectedPath))
                 {
+                    Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Changed default library path to '{browser.SelectedPath}'");
+
                     DefaultLocation.Text = browser.SelectedPath;
                     var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
                     listOfDetectedLibraries.DefaultLocation = browser.SelectedPath;
@@ -341,6 +345,8 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_AddExistingLibrary(object sender, RoutedEventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             var browser = new Forms.OpenFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
             browser.AddExtension = true;
@@ -369,6 +375,7 @@ namespace Chem4Word.UI.WPF
                     // Prevent add if there is a name clash
                     if (existing == null)
                     {
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Added existing library {details.DisplayName}");
                         listOfDetectedLibraries.AvailableDatabases.Add(details);
                         new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                             .SaveFile(listOfDetectedLibraries);
@@ -385,6 +392,8 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_CreateNewLibrary(object sender, RoutedEventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             var browser = new Forms.SaveFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
             browser.AddExtension = true;
@@ -421,6 +430,8 @@ namespace Chem4Word.UI.WPF
                                 Connection = fileName,
                                 ShortFileName = fileInfo.Name
                             };
+
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Created new library {details.DisplayName}");
                             driver.CreateNewDatabase(details);
 
                             listOfDetectedLibraries.AvailableDatabases.Add(details);
@@ -445,6 +456,9 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_RemoveLibrary(object sender, RoutedEventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Removing library '{_selectedLibrary}'");
+
             var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
             var item = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(r => r.DisplayName.Equals(_selectedLibrary));
             listOfDetectedLibraries.AvailableDatabases.Remove(item);
@@ -456,6 +470,9 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_EditLibrary(object sender, RoutedEventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{_selectedLibrary}'");
+
             var editor = new LibraryEditorHost();
             editor.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
             editor.Telemetry = Globals.Chem4WordV3.Telemetry;
@@ -507,7 +524,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_SettingsFolder(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
             try
@@ -522,7 +539,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_LibraryFolder(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
             try

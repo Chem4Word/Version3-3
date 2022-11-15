@@ -63,6 +63,7 @@ namespace Chem4Word.UI.WPF
                     editor.SetOptions(Telemetry, acmeOptions, _driver);
                     editor.DataContext = controller;
                     editor.UpdateStatusBar();
+                    Text = $"Editing Library '{_driver.DatabaseDetails.DisplayName}'";
 
                     editor.OnSelectionChange -= LibraryEditorControlOnOnSelectionChange;
                     editor.OnSelectionChange += LibraryEditorControlOnOnSelectionChange;

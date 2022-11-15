@@ -5,6 +5,13 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME;
+using Chem4Word.ACME.Models;
+using Chem4Word.Core.Helpers;
+using Chem4Word.Core.UI.Forms;
+using Chem4Word.Core.UI.Wpf;
+using Chem4Word.Helpers;
+using Chem4Word.UI.WPF;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -15,13 +22,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Chem4Word.ACME;
-using Chem4Word.ACME.Models;
-using Chem4Word.Core.UI.Forms;
-using Chem4Word.Core.UI.Wpf;
-using Chem4Word.Helpers;
-using IChem4Word.Contracts;
-using Microsoft.Office.Interop.Word;
+using Point = System.Windows.Point;
 
 namespace Chem4Word.Library
 {
@@ -31,7 +32,8 @@ namespace Chem4Word.Library
     public partial class LibraryViewControl : UserControl
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
+
         private AcmeOptions _options;
 
         public LibraryViewControl()
@@ -70,19 +72,23 @@ namespace Chem4Word.Library
                 index++;
             }
 
+            EnableEditThisLibrayButton();
+
             // Enable the selection changed event
             LibrarySelector.SelectionChanged += OnSelectionChanged_LibrarySelector;
         }
 
         private void OnSelectionChanged_LibrarySelector(object sender, SelectionChangedEventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             if (e.AddedItems.Count > 0)
             {
                 if (e.AddedItems[0] is string selected)
                 {
                     if (!_selectedLibrary.Equals(selected))
                     {
-                        Debug.WriteLine($"Library changed to '{selected}'");
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Library changed to '{selected}'");
 
                         var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
                         listOfDetectedLibraries.SelectedLibrary = selected;
@@ -93,6 +99,10 @@ namespace Chem4Word.Library
                         Globals.Chem4WordV3.ListOfDetectedLibraries
                             = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                                 .GetListOfLibraries();
+
+                        EnableEditThisLibrayButton();
+
+                        _selectedLibrary = selected;
 
                         var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
                         DataContext = controller;
@@ -105,9 +115,33 @@ namespace Chem4Word.Library
             }
         }
 
+        private void EnableEditThisLibrayButton()
+        {
+            var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
+            if (details != null)
+            {
+                if (details.Properties.ContainsKey("Owner"))
+                {
+                    var owner = details.Properties["Owner"];
+                    if (owner.Equals("User"))
+                    {
+                        EditThisLibrary.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        EditThisLibrary.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else
+                {
+                    EditThisLibrary.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
         private void OnClick_ItemButton(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -171,6 +205,31 @@ namespace Chem4Word.Library
             }
         }
 
+        private void OnTextChanged_SearchBox(object sender, TextChangedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            try
+            {
+                if (string.IsNullOrWhiteSpace(SearchBox.Text))
+                {
+                    SearchButton.IsEnabled = false;
+                    ClearButton.IsEnabled = false;
+                }
+                else
+                {
+                    SearchButton.IsEnabled = true;
+                    ClearButton.IsEnabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                {
+                    form.ShowDialog();
+                }
+            }
+        }
+
         /// <summary>
         /// Handles filtering of the library list
         /// </summary>
@@ -230,35 +289,30 @@ namespace Chem4Word.Library
             }
         }
 
-        private void OnTextChanged_SearchBox(object sender, TextChangedEventArgs e)
+        private void OnClick_EditLibrary(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                if (string.IsNullOrWhiteSpace(SearchBox.Text))
-                {
-                    SearchButton.IsEnabled = false;
-                    ClearButton.IsEnabled = false;
-                }
-                else
-                {
-                    SearchButton.IsEnabled = true;
-                    ClearButton.IsEnabled = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
-                {
-                    form.ShowDialog();
-                }
-            }
-        }
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-        // https://stackoverflow.com/a/50004583/2527555
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{_selectedLibrary}'");
+
+            var editor = new LibraryEditorHost();
+            editor.TopLeft = Globals.Chem4WordV3.WordTopLeft;
+            editor.Telemetry = Globals.Chem4WordV3.Telemetry;
+            editor.SelectedDatabase = _selectedLibrary;
+            editor.ShowDialog();
+
+            var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
+            DataContext = controller;
+
+            var doc = Globals.Chem4WordV3.Application.ActiveDocument;
+            var sel = Globals.Chem4WordV3.Application.Selection;
+            Globals.Chem4WordV3.SelectChemistry(doc, sel);
+        }
 
         private DependencyObject GetScrollViewer(DependencyObject o)
         {
+            // https://stackoverflow.com/a/50004583/2527555
+
             // Return the DependencyObject if it is a ScrollViewer
             if (o is ScrollViewer)
             {
