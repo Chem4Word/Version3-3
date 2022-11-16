@@ -145,30 +145,35 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
             foreach (var name in mol.Names)
             {
-                result.Formulas.Add(name.Id, TPToPBuff(name));
+                result.Names.Add(name.Id, TPToPBuff(name));
+            }
+
+            foreach (var caption in mol.Captions)
+            {
+                result.Captions.Add(caption.Id, TPToPBuff(caption));
             }
 
             return result;
         }
 
-        private PBTextualProperty TPToPBuff(TextualProperty formula)
+        private PBTextualProperty TPToPBuff(TextualProperty property)
         {
-            PBTextualProperty result = new PBTextualProperty()
+            PBTextualProperty result = new PBTextualProperty
             {
-                Id = formula.Id,
-                TypeCode = formula.TypeCode,
-                Value = formula.Value
+                Id = property.Id,
+                FullType = property.FullType,
+                Value = property.Value
             };
             return result;
         }
 
         private PBAtom AtomToPBuff(Atom atom)
         {
-            PBAtom result = new PBAtom()
+            PBAtom result = new PBAtom
             {
                 ExplicitC = atom.ExplicitC,
                 Id = atom.Id,
-                Position = new PBPoint() { X = atom.Position.X, Y = atom.Position.Y },
+                Position = new PBPoint { X = atom.Position.X, Y = atom.Position.Y },
                 SpinMultiplicity = atom.SpinMultiplicity,
                 FormalCharge = atom.FormalCharge,
                 DoubleRadical = atom.DoubletRadical,
@@ -177,7 +182,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
             if (atom.Element is FunctionalGroup fg)
             {
-                result.FunctionalGroup = new PBFunctionalGroup()
+                result.FunctionalGroup = new PBFunctionalGroup
                 {
                     ShortCode = fg.Symbol,
                     PlacementFG = (int?)atom.ExplicitFunctionalGroupPlacement
@@ -185,7 +190,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             }
             else
             {
-                result.Element = new PBChemicalElement()
+                result.Element = new PBChemicalElement
                 {
                     Symbol = atom.Element.Symbol,
                     PlacementH = (int?)atom.ExplicitHPlacement
@@ -327,7 +332,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             var atomLookup = new Dictionary<string, Atom>();
             var molval = molecule.Value;
 
-            Molecule newMol = new Molecule()
+            Molecule newMol = new Molecule
             {
                 Id = molval.Id,
                 Count = molval.Count,
@@ -369,7 +374,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
             foreach (var bond in molval.Bonds)
             {
-                Bond newBond = new Bond()
+                Bond newBond = new Bond
                 {
                     Id = bond.Id,
                     EndAtomInternalId = atomLookup[bond.StartAtomID].InternalId,
@@ -394,6 +399,22 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 newMol.Rings.Add(newRing);
             }
 
+            // Misc stuff
+            foreach (var name in molval.Names)
+            {
+                newMol.Names.Add(MakeTextualProperty(name));
+            }
+
+            foreach (var formula in molval.Formulas)
+            {
+                newMol.Formulas.Add(MakeTextualProperty(formula));
+            }
+
+            foreach (var caption in molval.Captions)
+            {
+                newMol.Captions.Add(MakeTextualProperty(caption));
+            }
+
             parent.AddMolecule(newMol);
             moleculeLookup[molval.Id] = newMol;
 
@@ -401,6 +422,17 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             {
                 PBuffToMolecule(child, newMol, moleculeLookup);
             }
+        }
+
+        private static TextualProperty MakeTextualProperty(KeyValuePair<string, PBTextualProperty> property)
+        {
+            var tp = new TextualProperty
+            {
+                Id = property.Value.Id,
+                FullType = property.Value.FullType,
+                Value = property.Value.Value
+            };
+            return tp;
         }
     }
 }

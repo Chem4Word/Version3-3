@@ -28,6 +28,7 @@ using Chem4Word.Helpers;
 using Chem4Word.Library;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Navigator;
 using Chem4Word.Telemetry;
 using IChem4Word.Contracts;
@@ -1455,7 +1456,6 @@ namespace Chem4Word
                     {
                         var activeDocument = DocumentHelper.GetActiveDocument();
 
-                        // Generate new CustomXmlPartGuid
                         var converter = new CMLConverter();
                         Model model;
                         if (dto.DataType.Equals("cml"))
@@ -1464,9 +1464,11 @@ namespace Chem4Word
                         }
                         else
                         {
-                            Debugger.Break();
-                            model = new Model();
+                            var pbc = new ProtocolBufferConverter();
+                            model = pbc.Import(dto.Chemistry);
                         }
+
+                        // Generate new CustomXmlPartGuid
                         model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
                         model.EnsureBondLength(SystemOptions.BondLength,
                                                SystemOptions.SetBondLengthOnImportFromLibrary);

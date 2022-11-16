@@ -236,7 +236,7 @@
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch"
-                Chemistry="{Binding Path=Cml}"
+                Chemistry="{Binding Path=Chemistry}"
                 HighlightActive="False"
                 MouseDoubleClick="AcmeDisplay_OnMouseDoubleClick"
                 ShowAllCarbonAtoms="{Binding ElementName=AcmeChemistryItem, Path=ShowAllCarbonAtoms}"

@@ -374,7 +374,7 @@
         <File Id="System.Globalization.Extensions.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Globalization.Extensions.dll" />
       </Component>
       <Component Id="System.IO">
-          <File Id="System.IO.dll" Source="$(var.Chem4Word.V3.TargetDir)System.IO.dll" />
+        <File Id="System.IO.dll" Source="$(var.Chem4Word.V3.TargetDir)System.IO.dll" />
       </Component>
       <Component Id="System.IO.Compression">
         <File Id="System.IO.Compression.dll" Source="$(var.Chem4Word.V3.TargetDir)System.IO.Compression.dll" />

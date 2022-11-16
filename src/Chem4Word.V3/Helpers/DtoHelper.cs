@@ -7,6 +7,8 @@
 
 using Chem4Word.ACME.Models;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
 using IChem4Word.Contracts.Dto;
 using System.Linq;
 using System.Text;
@@ -19,19 +21,28 @@ namespace Chem4Word.Helpers
         /// Creates a ChemistryDataObject from a model
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="data"></param>
         /// <param name="dataType"></param>
         /// <returns></returns>
-        public static ChemistryDataObject CreateFromModel(Model model, byte[] data, string dataType)
+        public static ChemistryDataObject CreateFromModel(Model model, string dataType)
         {
             var dto = new ChemistryDataObject
             {
-                Chemistry = data,
                 DataType = dataType,
                 Name = model.QuickName,
                 Formula = model.ConciseFormula,
                 MolWeight = model.MolecularWeight,
             };
+
+            if (dataType.Equals("cml"))
+            {
+                var cc = new CMLConverter();
+                dto.Chemistry = Encoding.UTF8.GetBytes(cc.Export(model));
+            }
+            else
+            {
+                var pbc = new ProtocolBufferConverter();
+                dto.Chemistry = pbc.Export(model);
+            }
 
             // Lists of ChemistryNameDataObject for TreeView
             foreach (var property in model.GetAllNames())
@@ -83,7 +94,7 @@ namespace Chem4Word.Helpers
             var obj = new ChemistryObject
             {
                 Id = chemistryDto.Id,
-                Cml = Encoding.UTF8.GetString(chemistryDto.Chemistry),
+                Chemistry = chemistryDto.Chemistry,
                 Formula = chemistryDto.Formula,
                 Name = chemistryDto.Name,
                 MolecularWeight = chemistryDto.MolWeight,
@@ -97,6 +108,15 @@ namespace Chem4Word.Helpers
                 Formulae = chemistryDto.Formulae,
                 Captions = chemistryDto.Captions
             };
+
+            if (chemistryDto.DataType.Equals("cml"))
+            {
+                obj.Chemistry = Encoding.UTF8.GetString(chemistryDto.Chemistry);
+            }
+            else
+            {
+                obj.Chemistry = chemistryDto.Chemistry;
+            }
 
             obj.Initializing = false;
 

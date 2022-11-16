@@ -76,11 +76,11 @@ namespace Chem4Word.Navigator
                                 switch (source.Button)
                                 {
                                     case "Navigator|InsertCopy":
-                                        TaskPaneHelper.InsertChemistry(true, ActiveDocument.Application, clicked.Cml, false);
+                                        TaskPaneHelper.InsertChemistry(true, ActiveDocument.Application, clicked.CmlFromChemistry(), false);
                                         break;
 
                                     case "Navigator|InsertLink":
-                                        TaskPaneHelper.InsertChemistry(false, ActiveDocument.Application, clicked.Cml, false);
+                                        TaskPaneHelper.InsertChemistry(false, ActiveDocument.Application, clicked.CmlFromChemistry(), false);
                                         break;
 
                                     case "Navigator|Previous":

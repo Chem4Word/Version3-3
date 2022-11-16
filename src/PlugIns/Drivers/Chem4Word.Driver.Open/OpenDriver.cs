@@ -38,19 +38,27 @@ namespace Chem4Word.Driver.Open
             _transaction = connection.BeginTransaction();
         }
 
-        public void EndTransaction(bool rollback)
+        public void CommitTransaction()
         {
             if (_transaction != null)
             {
                 var conn = _transaction.Connection;
-                if (rollback)
-                {
-                    _transaction.Rollback();
-                }
-                else
-                {
-                    _transaction.Commit();
-                }
+                _transaction.Commit();
+
+                conn.Close();
+                conn.Dispose();
+            }
+
+            _transaction = null;
+            _library = null;
+        }
+
+        public void RollbackTransaction()
+        {
+            if (_transaction != null)
+            {
+                var conn = _transaction.Connection;
+                _transaction.Rollback();
 
                 conn.Close();
                 conn.Dispose();
@@ -132,8 +140,15 @@ namespace Chem4Word.Driver.Open
         {
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
-                library.UpdateChemistry(chemistry);
+                if (_transaction != null)
+                {
+                    _library.UpdateChemistry(_transaction.Connection, chemistry);
+                }
+                else
+                {
+                    var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                    library.UpdateChemistry(chemistry);
+                }
             }
         }
 

@@ -447,7 +447,7 @@ namespace Chem4Word.Driver.Open.SqLite
                     }
 
                     sw.Stop();
-                    _telemetry.Write(module, "Timing", $"Reading {results.Count} structures took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+                    _telemetry?.Write(module, "Timing", $"Reading {results.Count} structures took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
                 }
             }
             catch (Exception ex)
@@ -575,35 +575,14 @@ namespace Chem4Word.Driver.Open.SqLite
             using (SQLiteConnection conn = LibraryConnection())
             {
                 UpdateChemistry(conn, chemistry);
-
-                DeleteNames(conn, chemistry.Id);
-                foreach (var name in chemistry.Names)
-                {
-                    AddName(conn, name, chemistry.Id);
-                }
-
-                DeleteFormulae(conn, chemistry.Id);
-                foreach (var formula in chemistry.Formulae)
-                {
-                    AddFormula(conn, formula, chemistry.Id);
-                }
-
-                DeleteCaptions(conn, chemistry.Id);
-                foreach (var caption in chemistry.Captions)
-                {
-                    AddCaption(conn, caption, chemistry.Id);
-                }
-
-                //ToDo: [V3.3] Update/Replace :-
-                // chemistry.Tags
             }
         }
 
-        private void UpdateChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
+        internal void UpdateChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
         {
             var sb = new StringBuilder();
             sb.AppendLine("UPDATE GALLERY");
-            sb.AppendLine("SET Name = @name, Chemistry = @blob, Formula = @formula, MolWeight = @weight");
+            sb.AppendLine("SET Name = @name, Chemistry = @blob, Formula = @formula, MolWeight = @weight, DataType = @datatype");
             sb.AppendLine("WHERE ID = @id");
 
             var command = new SQLiteCommand(sb.ToString(), conn);
@@ -612,12 +591,30 @@ namespace Chem4Word.Driver.Open.SqLite
             command.Parameters.Add("@name", DbType.String, chemistry.Name.Length).Value = chemistry.Name;
             command.Parameters.Add("@formula", DbType.String, chemistry.Formula.Length).Value = chemistry.Formula;
             command.Parameters.Add("@weight", DbType.Double).Value = chemistry.MolWeight;
+            command.Parameters.Add("@datatype", DbType.String, chemistry.DataType.Length).Value = chemistry.DataType;
 
-            using (SQLiteTransaction tr = conn.BeginTransaction())
+            command.ExecuteNonQuery();
+
+            DeleteNames(conn, chemistry.Id);
+            foreach (var name in chemistry.Names)
             {
-                command.ExecuteNonQuery();
-                tr.Commit();
+                AddName(conn, name, chemistry.Id);
             }
+
+            DeleteFormulae(conn, chemistry.Id);
+            foreach (var formula in chemistry.Formulae)
+            {
+                AddFormula(conn, formula, chemistry.Id);
+            }
+
+            DeleteCaptions(conn, chemistry.Id);
+            foreach (var caption in chemistry.Captions)
+            {
+                AddCaption(conn, caption, chemistry.Id);
+            }
+
+            //ToDo: [V3.3] Update/Replace :-
+            // chemistry.Tags
         }
 
         public ChemistryDataObject GetChemistryById(long id)

@@ -165,10 +165,10 @@ namespace Chem4Word.UI.WPF
                 {
                     var topLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
                     editor.TopLeft = topLeft;
-                    editor.Cml = item.Cml;
+                    editor.Cml = item.CmlFromChemistry();
 
                     // Save stuff before edit
-                    var beforeCml = item.Cml;
+                    var beforeCml = item.CmlFromChemistry();
 
                     // Perform the edit
                     var chemEditorResult = editor.Edit();
@@ -210,8 +210,6 @@ namespace Chem4Word.UI.WPF
                             editLabelsHost.TopLeft = topLeft;
                             editLabelsHost.Cml = cmlConverter.Export(afterModel);
 
-                            editLabelsHost.Message = "Warning: At least one formula or name has changed; Please correct or delete any which are unnecessary or irrelevant !";
-
                             // Show Label Editor
                             var dr = editLabelsHost.ShowDialog();
                             if (dr == DialogResult.OK)
@@ -222,7 +220,7 @@ namespace Chem4Word.UI.WPF
                             editLabelsHost.Close();
                         }
 
-                        var dto = DtoHelper.CreateFromModel(afterModel, Encoding.UTF8.GetBytes(afterCml), "cml");
+                        var dto = DtoHelper.CreateFromModel(afterModel, Constants.DefaultSaveFormat);
                         if (item.Id == 0)
                         {
                             // Add New Chemistry
@@ -243,7 +241,7 @@ namespace Chem4Word.UI.WPF
                             dto.Name = item.Name;
                             _driver.UpdateChemistry(dto);
 
-                            item.Cml = afterCml;
+                            item.Chemistry = afterCml;
                             item.Formula = afterModel.ConciseFormula;
                             item.MolecularWeight = afterModel.MolecularWeight;
 
@@ -578,9 +576,7 @@ namespace Chem4Word.UI.WPF
                     if (CatalogueItems.SelectedItem is ChemistryObject item)
                     {
                         editLabelsHost.TopLeft = topLeft;
-                        editLabelsHost.Cml = item.Cml;
-
-                        editLabelsHost.Message = "Warning: At least one formula or name has changed; Please correct or delete any which are unnecessary or irrelevant !";
+                        editLabelsHost.Cml = item.CmlFromChemistry();
 
                         // Show Label Editor
                         var dr = editLabelsHost.ShowDialog();
@@ -589,7 +585,7 @@ namespace Chem4Word.UI.WPF
                             var cmlConverter = new CMLConverter();
                             var afterModel = cmlConverter.Import(editLabelsHost.Cml);
                             // Save to database
-                            var dto = DtoHelper.CreateFromModel(afterModel, Encoding.UTF8.GetBytes(editLabelsHost.Cml), "cml");
+                            var dto = DtoHelper.CreateFromModel(afterModel, Constants.DefaultSaveFormat);
                             dto.Id = item.Id;
                             dto.Name = item.Name;
                             _driver.UpdateChemistry(dto);
@@ -642,7 +638,7 @@ namespace Chem4Word.UI.WPF
                                 _driver.DeleteChemistryById(item.Id);
                             }
                         }
-                        _driver.EndTransaction(false);
+                        _driver.CommitTransaction();
 
                         sw.Stop();
                         _telemetry.Write(module, "Timing", $"Delete of {progress} structures from '{_driver.DatabaseDetails.DisplayName}' took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
@@ -654,7 +650,7 @@ namespace Chem4Word.UI.WPF
                     }
                     catch (Exception exception)
                     {
-                        _driver.EndTransaction(true);
+                        _driver.RollbackTransaction();
                         new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
                     }
 
@@ -752,7 +748,7 @@ namespace Chem4Word.UI.WPF
                                         }
 
                                         string cml = cmlConverter.Export(model, compressed: true);
-                                        var dto = DtoHelper.CreateFromModel(model, Encoding.UTF8.GetBytes(cml), "cml");
+                                        var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
                                         _driver.AddChemistry(dto);
                                         fileCount++;
                                     }
@@ -761,12 +757,12 @@ namespace Chem4Word.UI.WPF
                                     FileInfo fi = new FileInfo(doneFile);
                                     fi.Attributes = FileAttributes.Hidden;
                                     _telemetry.Write(module, "Information", $"Imported {fileCount} structures into '{_driver.DatabaseDetails.DisplayName}'");
-                                    _driver.EndTransaction(false);
+                                    _driver.CommitTransaction();
                                 }
                             }
                             catch (Exception exception)
                             {
-                                _driver.EndTransaction(true);
+                                _driver.RollbackTransaction();
                                 new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
                             }
 

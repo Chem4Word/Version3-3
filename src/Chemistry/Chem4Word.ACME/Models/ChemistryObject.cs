@@ -6,6 +6,8 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2.Annotations;
+using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
 using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
 using System;
@@ -47,30 +49,44 @@ namespace Chem4Word.ACME.Models
         public List<ChemistryNameDataObject> Formulae { get; set; }
         public List<ChemistryNameDataObject> Captions { get; set; }
 
-        // ToDo: Change string Cml to object Chemistry
-        private string _cml;
-
-        /// <summary>
-        /// The Cml of the structure
-        /// </summary>
-        public string Cml
+        public string CmlFromChemistry()
         {
-            get => _cml;
+            if (_chemistry is string cml)
+            {
+                return cml;
+            }
+
+            if (_chemistry is byte[] bytes)
+            {
+                var pbc = new ProtocolBufferConverter();
+                var cc = new CMLConverter();
+                return cc.Export(pbc.Import(bytes));
+            }
+
+            return null;
+        }
+
+        private object _chemistry;
+
+        public object Chemistry
+        {
+            get => _chemistry;
             set
             {
-                _cml = value;
+                _chemistry = value;
                 OnPropertyChanged();
             }
         }
 
         public ChemistryDataObject ConvertToDto()
         {
+            var isByte = _chemistry is byte[];
+
             var chem = new ChemistryDataObject
             {
                 Id = Id,
-                // ToDo [V3.3] change to protoBuffer
-                DataType = "cml",
-                Chemistry = Encoding.UTF8.GetBytes(_cml),
+                DataType = isByte ? "pbuff" : "cml",
+                Chemistry = isByte ? (byte[])_chemistry : Encoding.UTF8.GetBytes((string)_chemistry),
                 Name = Name,
                 Formula = Formula,
                 MolWeight = MolecularWeight,
@@ -78,6 +94,7 @@ namespace Chem4Word.ACME.Models
                 Formulae = Formulae,
                 Captions = Captions
             };
+
             return chem;
         }
 

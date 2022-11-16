@@ -76,7 +76,7 @@ namespace Chem4Word.Navigator
                                    select new ChemistryObject
                                    {
                                        CustomControlTag = CustomXmlPartHelper.GuidFromTag(ccs?.Tag),
-                                       Cml = part.XML,
+                                       Chemistry = part.XML,
                                        Formula = chemModel.ConciseFormula
                                    };
 
@@ -161,7 +161,7 @@ namespace Chem4Word.Navigator
                     var newNavItem = new ChemistryObject
                     {
                         CustomControlTag = matchingCC?.Tag,
-                        Cml = NewPart.XML,
+                        Chemistry = NewPart.XML,
                         Formula = chemModel.ConciseFormula
                     };
                     try

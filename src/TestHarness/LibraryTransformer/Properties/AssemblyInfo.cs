@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Chem4Word.Librarian.Dummy")]
+[assembly: AssemblyTitle("Library Transformer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Chem4Word")]
-[assembly: AssemblyProduct("Chem4Word.Librarian.Dummy")]
+[assembly: AssemblyProduct("Library Transformer")]
 [assembly: AssemblyCopyright("© Chem4Word 2022. All rights reserved.")]
 [assembly: AssemblyTrademark("Chem4Word")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("2ea15228-0b48-4e73-bb1c-84555acccf59")]
+[assembly: Guid("ba9fcf96-d95b-4d33-9e68-99c22e4c22b1")]
 
 // Version information for an assembly consists of the following four values:
 //

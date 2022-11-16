@@ -5,17 +5,17 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
+using Chem4Word.Core.Helpers;
+using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
 using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Chem4Word.Core;
-using Chem4Word.Core.Helpers;
-using Chem4Word.Model2;
-using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Converters.MDL;
 
 namespace Chem4Word.ACME
 {
@@ -160,52 +160,47 @@ namespace Chem4Word.ACME
 
         private void HandleDataContextChanged()
         {
-            Model chemistryModel = null;
+            Model chemistryModel;
 
-            if (Chemistry is string)
+            switch (Chemistry)
             {
-                var data = Chemistry as string;
-                if (!string.IsNullOrEmpty(data))
-                {
+                case string data:
                     if (data.StartsWith("<"))
                     {
-                        var conv = new CMLConverter();
-                        chemistryModel = conv.Import(data);
-                        chemistryModel.EnsureBondLength(20, false);
+                        var cmlConverter = new CMLConverter();
+                        chemistryModel = cmlConverter.Import(data);
                     }
-                    if (data.Contains("M  END"))
+                    else
                     {
-                        var conv = new SdFileConverter();
-                        chemistryModel = conv.Import(data);
-                        chemistryModel.EnsureBondLength(20, false);
+                        Debugger.Break();
+                        throw new ArgumentException($"{nameof(Chemistry)} was not recognised as Cml.");
                     }
-                }
-            }
-            else
-            {
-                if (Chemistry != null && !(Chemistry is Model))
-                {
+                    break;
+
+                case byte[] pbuff:
+                    var protocolBufferConverter = new ProtocolBufferConverter();
+                    chemistryModel = protocolBufferConverter.Import(pbuff);
+                    break;
+
+                case Model model:
+                    Debug.WriteLine("Using model as is");
+                    chemistryModel = model;
+                    break;
+
+                default:
                     Debugger.Break();
-                    throw new ArgumentException($"Object must be of type {nameof(Model)}.");
-                }
-                chemistryModel = Chemistry as Model;
-                if (chemistryModel != null)
-                {
-                    chemistryModel.EnsureBondLength(20, false);
-                }
+                    throw new ArgumentException($"{nameof(Chemistry)} object type [{Chemistry.GetType()}] not recognised.");
             }
 
             //assuming we've got this far, we should have something we can draw
             if (chemistryModel != null)
             {
-                if (chemistryModel.TotalAtomsCount > 0)
-                {
-                    chemistryModel.RescaleForXaml(true, Constants.StandardBondLength);
+                chemistryModel.RescaleForXaml(true, Constants.StandardBondLength);
 
-                    CurrentController = new Controller(chemistryModel);
-                    CurrentController.SetTextParams(chemistryModel.XamlBondLength);
-                    DrawChemistry(CurrentController);
-                }
+                CurrentController = new Controller(chemistryModel);
+                CurrentController.SetTextParams(chemistryModel.XamlBondLength);
+
+                DrawChemistry(CurrentController);
             }
         }
 

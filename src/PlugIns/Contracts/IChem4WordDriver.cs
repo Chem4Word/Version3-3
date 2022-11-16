@@ -23,7 +23,10 @@ namespace IChem4Word.Contracts
         DatabaseDetails DatabaseDetails { get; set; }
 
         void StartTransaction();
-        void EndTransaction(bool rollback);
+
+        void CommitTransaction();
+
+        void RollbackTransaction();
 
         void CreateNewDatabase(DatabaseDetails details);
 

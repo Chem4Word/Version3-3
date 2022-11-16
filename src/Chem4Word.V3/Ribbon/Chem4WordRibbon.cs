@@ -1487,7 +1487,7 @@ namespace Chem4Word
                                         var lib = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
                                         lib.DatabaseDetails = details;
 
-                                        var dto = DtoHelper.CreateFromModel(model, Encoding.UTF8.GetBytes(cml), "cml");
+                                        var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
                                         lib.AddChemistry(dto);
 
                                         // Re- Read the Library Names

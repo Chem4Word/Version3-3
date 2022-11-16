@@ -27,7 +27,12 @@ namespace Chem4Word.Driver.Dummy
             Debugger.Break();
         }
 
-        public void EndTransaction(bool rollback)
+        public void CommitTransaction()
+        {
+            Debugger.Break();
+        }
+
+        public void RollbackTransaction()
         {
             Debugger.Break();
         }

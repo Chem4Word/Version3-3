@@ -14,6 +14,6 @@ import "google/protobuf/wrappers.proto";
 message PBTextualProperty
 {
 	string Id = 1;
-	google.protobuf.StringValue TypeCode = 2;
+	google.protobuf.StringValue FullType = 2;
 	string Value = 3;
 }
