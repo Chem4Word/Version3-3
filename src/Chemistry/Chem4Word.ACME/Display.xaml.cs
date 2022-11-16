@@ -162,45 +162,48 @@ namespace Chem4Word.ACME
         {
             Model chemistryModel;
 
-            switch (Chemistry)
+            if (Chemistry != null)
             {
-                case string data:
-                    if (data.StartsWith("<"))
-                    {
-                        var cmlConverter = new CMLConverter();
-                        chemistryModel = cmlConverter.Import(data);
-                    }
-                    else
-                    {
+                switch (Chemistry)
+                {
+                    case string data:
+                        if (data.StartsWith("<"))
+                        {
+                            var cmlConverter = new CMLConverter();
+                            chemistryModel = cmlConverter.Import(data);
+                        }
+                        else
+                        {
+                            Debugger.Break();
+                            throw new ArgumentException($"{nameof(Chemistry)} was not recognised as Cml.");
+                        }
+                        break;
+
+                    case byte[] pbuff:
+                        var protocolBufferConverter = new ProtocolBufferConverter();
+                        chemistryModel = protocolBufferConverter.Import(pbuff);
+                        break;
+
+                    case Model model:
+                        Debug.WriteLine("Using model as is");
+                        chemistryModel = model;
+                        break;
+
+                    default:
                         Debugger.Break();
-                        throw new ArgumentException($"{nameof(Chemistry)} was not recognised as Cml.");
-                    }
-                    break;
+                        throw new ArgumentException($"{nameof(Chemistry)} object type [{Chemistry.GetType()}] not recognised.");
+                }
 
-                case byte[] pbuff:
-                    var protocolBufferConverter = new ProtocolBufferConverter();
-                    chemistryModel = protocolBufferConverter.Import(pbuff);
-                    break;
+                //assuming we've got this far, we should have something we can draw
+                if (chemistryModel != null)
+                {
+                    chemistryModel.RescaleForXaml(true, Constants.StandardBondLength);
 
-                case Model model:
-                    Debug.WriteLine("Using model as is");
-                    chemistryModel = model;
-                    break;
+                    CurrentController = new Controller(chemistryModel);
+                    CurrentController.SetTextParams(chemistryModel.XamlBondLength);
 
-                default:
-                    Debugger.Break();
-                    throw new ArgumentException($"{nameof(Chemistry)} object type [{Chemistry.GetType()}] not recognised.");
-            }
-
-            //assuming we've got this far, we should have something we can draw
-            if (chemistryModel != null)
-            {
-                chemistryModel.RescaleForXaml(true, Constants.StandardBondLength);
-
-                CurrentController = new Controller(chemistryModel);
-                CurrentController.SetTextParams(chemistryModel.XamlBondLength);
-
-                DrawChemistry(CurrentController);
+                    DrawChemistry(CurrentController);
+                }
             }
         }
 

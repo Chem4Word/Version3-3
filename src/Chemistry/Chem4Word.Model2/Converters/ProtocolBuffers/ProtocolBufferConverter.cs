@@ -377,8 +377,8 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 Bond newBond = new Bond
                 {
                     Id = bond.Id,
-                    EndAtomInternalId = atomLookup[bond.StartAtomID].InternalId,
-                    StartAtomInternalId = atomLookup[bond.EndAtomID].InternalId,
+                    EndAtomInternalId = atomLookup[bond.EndAtomID].InternalId,
+                    StartAtomInternalId = atomLookup[bond.StartAtomID].InternalId,
                     Order = bond.Order,
                     //need to add placement here
                     Stereo = (Enums.BondStereo)bond.Stereo,
