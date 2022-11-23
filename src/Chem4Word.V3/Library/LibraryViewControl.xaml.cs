@@ -7,14 +7,12 @@
 
 using Chem4Word.ACME;
 using Chem4Word.ACME.Models;
-using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
 using Chem4Word.UI.WPF;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -22,7 +20,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Point = System.Windows.Point;
 
 namespace Chem4Word.Library
 {
@@ -58,24 +55,31 @@ namespace Chem4Word.Library
             LibrarySelector.SelectionChanged -= OnSelectionChanged_LibrarySelector;
 
             var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-            _selectedLibrary = libraries.SelectedLibrary;
-
-            LibrarySelector.Items.Clear();
-            var index = 0;
-            foreach (var database in libraries.AvailableDatabases)
+            if (libraries != null)
             {
-                LibrarySelector.Items.Add(database.DisplayName);
-                if (database.DisplayName.Equals(libraries.SelectedLibrary))
+                _selectedLibrary = libraries.SelectedLibrary;
+
+                LibrarySelector.Items.Clear();
+                var index = 0;
+                foreach (var database in libraries.AvailableDatabases)
                 {
-                    LibrarySelector.SelectedIndex = index;
+                    LibrarySelector.Items.Add(database.DisplayName);
+                    if (database.DisplayName.Equals(libraries.SelectedLibrary))
+                    {
+                        LibrarySelector.SelectedIndex = index;
+                    }
+                    index++;
                 }
-                index++;
+
+                EnableEditThisLibrayButton();
+
+                // Enable the selection changed event
+                LibrarySelector.SelectionChanged += OnSelectionChanged_LibrarySelector;
             }
 
-            EnableEditThisLibrayButton();
-
-            // Enable the selection changed event
-            LibrarySelector.SelectionChanged += OnSelectionChanged_LibrarySelector;
+            // Sort the list of structures by lower case name
+            var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
+            view.CustomSort = new ChemistryObjectComparer();
         }
 
         private void OnSelectionChanged_LibrarySelector(object sender, SelectionChangedEventArgs e)
@@ -303,6 +307,10 @@ namespace Chem4Word.Library
 
             var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
             DataContext = controller;
+
+            // Sort the list of structures by lower case name
+            var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
+            view.CustomSort = new ChemistryObjectComparer();
 
             var doc = Globals.Chem4WordV3.Application.ActiveDocument;
             var sel = Globals.Chem4WordV3.Application.Selection;

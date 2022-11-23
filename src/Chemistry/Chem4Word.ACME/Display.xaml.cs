@@ -160,6 +160,9 @@ namespace Chem4Word.ACME
 
         private void HandleDataContextChanged()
         {
+            var sw = new Stopwatch();
+            sw.Start();
+
             Model chemistryModel;
 
             if (Chemistry != null)
@@ -171,6 +174,8 @@ namespace Chem4Word.ACME
                         {
                             var cmlConverter = new CMLConverter();
                             chemistryModel = cmlConverter.Import(data);
+                            sw.Stop();
+                            Debug.WriteLine($"Cml converter took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, {sw.ElapsedTicks} ticks");
                         }
                         else
                         {
@@ -182,6 +187,8 @@ namespace Chem4Word.ACME
                     case byte[] pbuff:
                         var protocolBufferConverter = new ProtocolBufferConverter();
                         chemistryModel = protocolBufferConverter.Import(pbuff);
+                        sw.Stop();
+                        Debug.WriteLine($"Protocol Buffer converter took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, {sw.ElapsedTicks} ticks");
                         break;
 
                     case Model model:
@@ -197,12 +204,19 @@ namespace Chem4Word.ACME
                 //assuming we've got this far, we should have something we can draw
                 if (chemistryModel != null)
                 {
+                    sw.Reset();
+                    sw.Start();
+
+                    chemistryModel.EnsureBondLength(20, false);
                     chemistryModel.RescaleForXaml(true, Constants.StandardBondLength);
 
                     CurrentController = new Controller(chemistryModel);
                     CurrentController.SetTextParams(chemistryModel.XamlBondLength);
 
                     DrawChemistry(CurrentController);
+
+                    sw.Stop();
+                    Debug.WriteLine($"Draw Chemistry took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, {sw.ElapsedTicks} ticks");
                 }
             }
         }

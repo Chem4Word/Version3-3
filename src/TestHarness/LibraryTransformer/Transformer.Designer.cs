@@ -36,6 +36,9 @@
             this.ToPb = new System.Windows.Forms.Button();
             this.progressBar1 = new Chem4Word.Core.UI.Controls.CustomProgressBar();
             this.label1 = new System.Windows.Forms.Label();
+            this.Export = new System.Windows.Forms.Button();
+            this.Import = new System.Windows.Forms.Button();
+            this.Erase = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listView1
@@ -108,11 +111,44 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "...";
             // 
+            // Export
+            // 
+            this.Export.Location = new System.Drawing.Point(175, 147);
+            this.Export.Name = "Export";
+            this.Export.Size = new System.Drawing.Size(75, 23);
+            this.Export.TabIndex = 7;
+            this.Export.Text = "Export";
+            this.Export.UseVisualStyleBackColor = true;
+            this.Export.Click += new System.EventHandler(this.Export_Click);
+            // 
+            // Import
+            // 
+            this.Import.Location = new System.Drawing.Point(256, 147);
+            this.Import.Name = "Import";
+            this.Import.Size = new System.Drawing.Size(75, 23);
+            this.Import.TabIndex = 8;
+            this.Import.Text = "Import";
+            this.Import.UseVisualStyleBackColor = true;
+            this.Import.Click += new System.EventHandler(this.Import_Click);
+            // 
+            // Erase
+            // 
+            this.Erase.Location = new System.Drawing.Point(337, 147);
+            this.Erase.Name = "Erase";
+            this.Erase.Size = new System.Drawing.Size(75, 23);
+            this.Erase.TabIndex = 10;
+            this.Erase.Text = "Erase";
+            this.Erase.UseVisualStyleBackColor = true;
+            this.Erase.Click += new System.EventHandler(this.Erase_Click);
+            // 
             // Transformer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 241);
+            this.Controls.Add(this.Erase);
+            this.Controls.Add(this.Import);
+            this.Controls.Add(this.Export);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.ToPb);
@@ -135,6 +171,9 @@
         private System.Windows.Forms.Button ToPb;
         private Chem4Word.Core.UI.Controls.CustomProgressBar progressBar1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button Export;
+        private System.Windows.Forms.Button Import;
+        private System.Windows.Forms.Button Erase;
     }
 }
 

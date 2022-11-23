@@ -45,6 +45,11 @@ namespace Chem4Word.Driver.Open
                 var conn = _transaction.Connection;
                 _transaction.Commit();
 
+#if DEBUG
+                var command = new SQLiteCommand("VACUUM", conn);
+                command.ExecuteNonQuery();
+#endif
+
                 conn.Close();
                 conn.Dispose();
             }
@@ -73,7 +78,7 @@ namespace Chem4Word.Driver.Open
             Library.CreateNewDatabase(details.Connection);
 
             var library = new Library(Telemetry, details, TopLeft);
-            // Fetch it's properties which will apply patches
+            // Fetch it's properties, which will apply patches
             library.GetProperties();
         }
 

@@ -30,7 +30,7 @@ namespace Chem4Word.Helpers
                 DataType = dataType,
                 Name = model.QuickName,
                 Formula = model.ConciseFormula,
-                MolWeight = model.MolecularWeight,
+                MolWeight = model.MolecularWeight
             };
 
             if (dataType.Equals("cml"))

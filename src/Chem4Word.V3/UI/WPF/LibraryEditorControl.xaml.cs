@@ -18,11 +18,12 @@ using Chem4Word.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
 using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using Newtonsoft.Json;
 using Ookii.Dialogs.WinForms;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -83,7 +84,6 @@ namespace Chem4Word.UI.WPF
             set { SetValue(ItemSizeProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ItemSizeProperty =
             DependencyProperty.Register("ItemSize", typeof(Size), typeof(LibraryEditorControl),
                                         new FrameworkPropertyMetadata(Size.Empty,
@@ -97,7 +97,6 @@ namespace Chem4Word.UI.WPF
             set { SetValue(DisplayWidthProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DisplayWidthProperty =
             DependencyProperty.Register("DisplayWidth", typeof(double), typeof(LibraryEditorControl),
                                         new FrameworkPropertyMetadata(double.NaN,
@@ -111,7 +110,6 @@ namespace Chem4Word.UI.WPF
             set { SetValue(DisplayHeightProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DisplayHeightProperty =
             DependencyProperty.Register("DisplayHeight", typeof(double), typeof(LibraryEditorControl),
                                         new FrameworkPropertyMetadata(double.NaN,
@@ -126,6 +124,11 @@ namespace Chem4Word.UI.WPF
             _driver = driver;
         }
 
+        private void OnLoaded_LibraryEditorControl(object sender, RoutedEventArgs e)
+        {
+            ApplySort();
+        }
+
         private void OnChemistryItem_ButtonClick(object sender, RoutedEventArgs e)
         {
             if (e.OriginalSource is WpfEventArgs source
@@ -137,7 +140,7 @@ namespace Chem4Word.UI.WPF
                 {
                     _checkedItems = controller.ChemistryItems.Count(i => i.IsChecked);
 
-                    TrashButton.IsEnabled = _checkedItems > 0;
+                    DeleteButton.IsEnabled = _checkedItems > 0;
                     CheckedFilterButton.IsEnabled = _checkedItems > 0;
 
                     UpdateStatusBar();
@@ -167,38 +170,16 @@ namespace Chem4Word.UI.WPF
                     editor.TopLeft = topLeft;
                     editor.Cml = item.CmlFromChemistry();
 
-                    // Save stuff before edit
-                    var beforeCml = item.CmlFromChemistry();
-
                     // Perform the edit
                     var chemEditorResult = editor.Edit();
                     if (chemEditorResult == DialogResult.OK)
                     {
                         var cmlConverter = new CMLConverter();
 
-                        var beforeModel = cmlConverter.Import(beforeCml);
                         var afterModel = cmlConverter.Import(editor.Cml);
                         var afterCml = editor.Cml;
 
-                        var oldMolecules = beforeModel.GetAllMolecules();
                         var newMolecules = afterModel.GetAllMolecules();
-
-                        foreach (var molecule in newMolecules)
-                        {
-                            var mol = oldMolecules.FirstOrDefault(m => m.Path.Equals(molecule.Path));
-                            if (mol != null)
-                            {
-                                // Copy over existing Formulae and Names if Paths match
-                                foreach (var formula in mol.Formulas)
-                                {
-                                    molecule.Formulas.Add(formula);
-                                }
-                                foreach (var name in mol.Names)
-                                {
-                                    molecule.Names.Add(name);
-                                }
-                            }
-                        }
 
                         var pc = new WebServices.PropertyCalculator(_telemetry, topLeft, Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
                         pc.CalculateProperties(newMolecules);
@@ -223,12 +204,15 @@ namespace Chem4Word.UI.WPF
                         var dto = DtoHelper.CreateFromModel(afterModel, Constants.DefaultSaveFormat);
                         if (item.Id == 0)
                         {
-                            // Add New Chemistry
-                            dto.Name = item.Name;
                             dto.Name = afterModel.QuickName;
+
+                            // Add New Chemistry
                             var newId = _driver.AddChemistry(dto);
 
+                            RefreshItemProperties(item, dto);
+
                             CatalogueItems.SelectedItem = null;
+
                             var newContext = new LibraryEditorViewModel(_telemetry, _driver);
                             DataContext = newContext;
 
@@ -236,14 +220,17 @@ namespace Chem4Word.UI.WPF
                         }
                         else
                         {
-                            // Update Existing Chemistry
                             dto.Id = item.Id;
                             dto.Name = item.Name;
+
+                            // Update Existing Chemistry
                             _driver.UpdateChemistry(dto);
 
                             item.Chemistry = afterCml;
                             item.Formula = afterModel.ConciseFormula;
                             item.MolecularWeight = afterModel.MolecularWeight;
+
+                            RefreshItemProperties(item, dto);
 
                             CatalogueItems.SelectedItem = null;
 
@@ -252,6 +239,8 @@ namespace Chem4Word.UI.WPF
                                 SelectChanged(context, dto.Id);
                             }
                         }
+
+                        ApplySort();
                     }
                 }
                 else
@@ -274,6 +263,15 @@ namespace Chem4Word.UI.WPF
                     CatalogueItems.ScrollIntoView(selected);
                 }
             }
+        }
+
+        private void RefreshItemProperties(ChemistryObject item, ChemistryDataObject dto)
+        {
+            // Refresh other properties of the item
+            item.ChemicalNames = dto.Names.Select(n => n.Name).Distinct().ToList();
+            item.Names = dto.Names;
+            item.Captions = dto.Captions;
+            item.Formulae = dto.Formulae;
         }
 
         public void UpdateStatusBar()
@@ -466,12 +464,6 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private class ChemistryObjectComparer : IComparer<ChemistryObject>
-        {
-            public int Compare(ChemistryObject x, ChemistryObject y)
-                => string.CompareOrdinal(x?.Name, y?.Name);
-        }
-
         private void ApplySort()
         {
             if (ComboBox.SelectedItem is ComboBoxItem selectedItem)
@@ -482,7 +474,8 @@ namespace Chem4Word.UI.WPF
                 var propertyName = selectedItem.Content.ToString();
                 if (propertyName.Equals("Name"))
                 {
-                    view.CustomSort = (IComparer)new ChemistryObjectComparer();
+                    // Sort the list of structures by lower case name
+                    view.CustomSort = new ChemistryObjectComparer();
                 }
                 else
                 {
@@ -584,11 +577,15 @@ namespace Chem4Word.UI.WPF
                         {
                             var cmlConverter = new CMLConverter();
                             var afterModel = cmlConverter.Import(editLabelsHost.Cml);
-                            // Save to database
+
                             var dto = DtoHelper.CreateFromModel(afterModel, Constants.DefaultSaveFormat);
                             dto.Id = item.Id;
                             dto.Name = item.Name;
+
+                            // Save to database
                             _driver.UpdateChemistry(dto);
+
+                            RefreshItemProperties(item, dto);
                         }
                         editLabelsHost.Close();
                     }
@@ -600,7 +597,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void OnClick_TrashButton(object sender, RoutedEventArgs e)
+        private void OnClick_DeleteButton(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
@@ -644,7 +641,7 @@ namespace Chem4Word.UI.WPF
                         _telemetry.Write(module, "Timing", $"Delete of {progress} structures from '{_driver.DatabaseDetails.DisplayName}' took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
 
                         _checkedItems = 0;
-                        TrashButton.IsEnabled = false;
+                        DeleteButton.IsEnabled = false;
                         CheckedFilterButton.IsEnabled = false;
                         ClearProgress();
                     }
@@ -747,7 +744,6 @@ namespace Chem4Word.UI.WPF
                                             model = sdfConvertor.Import(contents);
                                         }
 
-                                        string cml = cmlConverter.Export(model, compressed: true);
                                         var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
                                         _driver.AddChemistry(dto);
                                         fileCount++;
@@ -839,18 +835,28 @@ namespace Chem4Word.UI.WPF
                             {
                                 ProgressBar.Maximum = dto.Count;
 
-                                var converter = new CMLConverter();
+                                var cmlConverter = new CMLConverter();
+                                var protocolBufferConverter = new ProtocolBufferConverter();
+
                                 foreach (var obj in dto)
                                 {
                                     progress++;
                                     ShowProgress(progress, $"Structure #{obj.Id} [{progress}/{total}]");
 
                                     var filename = Path.Combine(browser.SelectedPath, $"Chem4Word-{obj.Id:000000000}.cml");
-                                    var model = converter.Import(Encoding.UTF8.GetString(obj.Chemistry));
+                                    Model model;
+                                    if (obj.DataType.Equals("cml"))
+                                    {
+                                        model = cmlConverter.Import(Encoding.UTF8.GetString(obj.Chemistry));
+                                    }
+                                    else
+                                    {
+                                        model = protocolBufferConverter.Import(obj.Chemistry);
+                                    }
                                     model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength, false);
 
                                     var contents = Constants.XmlFileHeader + Environment.NewLine
-                                                                           + converter.Export(model);
+                                                                           + cmlConverter.Export(model);
                                     File.WriteAllText(filename, contents);
                                     exported++;
                                 }

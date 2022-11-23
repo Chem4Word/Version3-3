@@ -72,16 +72,25 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ComboBox Name="LibrarySelector" FontSize="16" />
-        <Button
-            Name="EditThisLibrary"
-            Grid.Row="1"
-            Height="30"
-            HorizontalAlignment="Stretch"
-            Click="OnClick_EditLibrary"
-            FontSize="16">
-            Edit this Library
-        </Button>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ComboBox Name="LibrarySelector" FontSize="16" />
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Name="EditThisLibrary"
+                Height="30"
+                HorizontalAlignment="Stretch"
+                Click="OnClick_EditLibrary"
+                FontSize="16">
+                Edit this Library
+            </Button>
+        </Grid>
         <Grid Grid.Row="2">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -166,6 +175,9 @@
             </Grid>
         </Grid>
         <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <ListBox
                 x:Name="LibraryList"
                 HorizontalAlignment="Stretch"

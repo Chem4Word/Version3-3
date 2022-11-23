@@ -32,23 +32,18 @@
   {
     "version": "3.3.0",
     "scripts": [
-      "ALTER TABLE Gallery ADD COLUMN MolWeight DECIMAL;"
-    ]
-  },
-  {
-    "version": "3.3.1",
-    "scripts": [
+      "ALTER TABLE Gallery ADD COLUMN MolWeight DECIMAL;",
       "ALTER TABLE Gallery ADD COLUMN DataType STRING;",
       "UPDATE Gallery SET DataType = 'cml'",
       "CREATE TABLE Properties ([Key] STRING PRIMARY KEY NOT NULL, Value STRING NOT NULL);",
-      "INSERT INTO Properties (Key, Value) VALUES ('Owner', 'User');"
-    ]
-  },
-  {
-    "version": "3.3.2",
-    "scripts": [
-      "CREATE TABLE ChemicalFormulae (ChemicalFormulaId INTEGER NOT NULL, Name TEXT NOT NULL, Namespace TEXT NOT NULL, Tag TEXT NOT NULL, ChemistryID INTEGER NOT NULL, FOREIGN KEY (ChemistryID) REFERENCES Gallery (Id), CONSTRAINT PK_ChemicalNames PRIMARY KEY (ChemicalFormulaId));",
-      "CREATE TABLE ChemicalCaptions (ChemicalCaptionId INTEGER NOT NULL, Name TEXT NOT NULL, Namespace TEXT NOT NULL, Tag TEXT NOT NULL, ChemistryID INTEGER NOT NULL, FOREIGN KEY (ChemistryID) REFERENCES Gallery (Id), CONSTRAINT PK_ChemicalNames PRIMARY KEY (ChemicalCaptionId));"
+      "INSERT INTO Properties (Key, Value) VALUES ('Owner', 'User');",
+      "CREATE TABLE ChemicalFormulae (Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, Namespace TEXT NOT NULL, Tag TEXT NOT NULL, ChemistryID INTEGER NOT NULL, FOREIGN KEY (ChemistryID) REFERENCES Gallery (Id), CONSTRAINT PK_ChemicalFormulae);",
+      "CREATE TABLE ChemicalCaptions (Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, Namespace TEXT NOT NULL, Tag TEXT NOT NULL, ChemistryID INTEGER NOT NULL, FOREIGN KEY (ChemistryID) REFERENCES Gallery (Id), CONSTRAINT PK_ChemicalCaptions);",
+      "DELETE FROM ChemicalNames WHERE ChemistryId NOT IN (SELECT Id FROM Gallery)",
+      "ALTER TABLE ChemicalNames RENAME TO ChemicalNames_Temp;",
+      "CREATE TABLE ChemicalNames (Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, Namespace TEXT NOT NULL, Tag TEXT NOT NULL, ChemistryID INTEGER NOT NULL, FOREIGN KEY (ChemistryID) REFERENCES Gallery (Id), CONSTRAINT PK_ChemicalNames);",
+      "INSERT INTO ChemicalNames (Name, Namespace, Tag, ChemistryID) SELECT Name, Namespace, Tag, ChemistryID FROM ChemicalNames_Temp;",
+      "DROP TABLE ChemicalNames_Temp;"
     ]
   }
 ]

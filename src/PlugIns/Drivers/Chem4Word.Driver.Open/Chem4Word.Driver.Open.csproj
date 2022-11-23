@@ -131,14 +131,9 @@
     <EmbeddedResource Include="Resources\Patches.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Button Images\Gallery-Delete.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Notes.txt" />
-    <Content Include="Resources\Button Images\Gallery-Find.png" />
+    <None Include="Resources\Out of Bounds Patches.sql" />
     <EmbeddedResource Include="Resources\CreateV3-1Database.sql" />
-    <EmbeddedResource Include="Resources\Button Images\Gallery-Toggle.png" />
-    <EmbeddedResource Include="Resources\Button Images\Gallery-Save.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
