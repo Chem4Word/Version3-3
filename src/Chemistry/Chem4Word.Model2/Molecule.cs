@@ -27,7 +27,7 @@ namespace Chem4Word.Model2
 
         #region Collections
 
-        public readonly System.Collections.ObjectModel.ReadOnlyCollection<Ring> Rings;
+        public readonly ReadOnlyCollection<Ring> Rings;
         private readonly List<Ring> _rings;
         private List<Ring> _sortedRings;
         public readonly ReadOnlyDictionary<Guid, Atom> Atoms; //keyed by InternalId

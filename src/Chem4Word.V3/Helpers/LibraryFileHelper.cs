@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System.Diagnostics;
 using Chem4Word.Core.Helpers;
 using IChem4Word.Contracts;
 using Newtonsoft.Json;
@@ -34,6 +35,9 @@ namespace Chem4Word.Helpers
         public ListOfLibraries GetListOfLibraries()
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var sw = new Stopwatch();
+            sw.Start();
 
             var result = new ListOfLibraries();
 
@@ -136,18 +140,22 @@ namespace Chem4Word.Helpers
                 {
                     foreach (var database in result.AvailableDatabases)
                     {
+                        _telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
+
                         driver.DatabaseDetails = new DatabaseDetails
-                        {
-                            DisplayName = database.DisplayName,
-                            Connection = database.Connection,
-                            Driver = database.Driver,
-                            ShortFileName = database.ShortFileName
-                        };
+                                                 {
+                                                     DisplayName = database.DisplayName,
+                                                     Connection = database.Connection,
+                                                     Driver = database.Driver,
+                                                     ShortFileName = database.ShortFileName
+                                                 };
                         database.Properties = driver.GetProperties();
                     }
                 }
             }
 
+            sw.Stop();
+            _telemetry.Write(module, "Timing", $"Reading properties of all libraries took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
             return result;
         }
 

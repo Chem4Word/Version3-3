@@ -79,7 +79,10 @@ namespace Chem4Word.Library
 
             // Sort the list of structures by lower case name
             var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
-            view.CustomSort = new ChemistryObjectComparer();
+            if (view != null)
+            {
+                view.CustomSort = new ChemistryObjectComparer();
+            }
         }
 
         private void OnSelectionChanged_LibrarySelector(object sender, SelectionChangedEventArgs e)

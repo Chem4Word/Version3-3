@@ -22,6 +22,15 @@
             x:Key="BoolToVisConverter"
             FalseValue="Collapsed"
             TrueValue="Visible" />
+        <!--  Add this style here to prevent ACMEResources.xaml interfering with this User Control  -->
+        <Style x:Key="LibraryButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
         <Style x:Key="NavButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
@@ -84,10 +93,9 @@
             </Grid.ColumnDefinitions>
             <Button
                 Name="EditThisLibrary"
-                Height="30"
-                HorizontalAlignment="Stretch"
                 Click="OnClick_EditLibrary"
-                FontSize="16">
+                FontSize="16"
+                Style="{DynamicResource LibraryButtonStyle}">
                 Edit this Library
             </Button>
         </Grid>

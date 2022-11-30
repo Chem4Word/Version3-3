@@ -97,6 +97,26 @@ namespace Chem4Word.UI.WPF
 
         #endregion Form Load
 
+        #region TabControl
+
+        private void TabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0
+                && e.AddedItems[0] is TabItem item)
+            {
+                Debug.WriteLine($"Selected Tab is '{item.Name}'");
+                if (item.Name.Equals("Libraries"))
+                {
+                    if (LibrariesList.Items.Count == 0)
+                    {
+                        LoadLibrariesListTab();
+                    }
+                }
+            }
+        }
+
+        #endregion TabControl
+
         #region Bottom Buttons
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
@@ -662,12 +682,6 @@ namespace Chem4Word.UI.WPF
 
             #region Libraries Tab
 
-            if (Globals.Chem4WordV3.ListOfDetectedLibraries == null)
-            {
-                // Belt and braces just in case someone clicks too early
-                ReloadGlobalListOfLibraries();
-            }
-
             LoadLibrariesListTab();
 
             #endregion Libraries Tab
@@ -697,6 +711,12 @@ namespace Chem4Word.UI.WPF
 
         private void LoadLibrariesListTab()
         {
+            if (Globals.Chem4WordV3.ListOfDetectedLibraries == null)
+            {
+                // Belt and braces just in case someone clicks too early
+                ReloadGlobalListOfLibraries();
+            }
+
             var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
             var data = new List<LibrariesSettingsGridSource>();
 
