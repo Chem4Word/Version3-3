@@ -396,7 +396,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 {
                     newRing.Atoms.Add(atomLookup[ringAtom.Id]);
                 }
-                newMol.Rings.Add(newRing);
+                newMol.AddRing(newRing);
             }
 
             // Misc stuff

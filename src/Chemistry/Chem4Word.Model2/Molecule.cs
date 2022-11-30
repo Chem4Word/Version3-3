@@ -27,7 +27,9 @@ namespace Chem4Word.Model2
 
         #region Collections
 
-        public readonly List<Ring> Rings;
+        public readonly System.Collections.ObjectModel.ReadOnlyCollection<Ring> Rings;
+        private readonly List<Ring> _rings;
+        private List<Ring> _sortedRings;
         public readonly ReadOnlyDictionary<Guid, Atom> Atoms; //keyed by InternalId
         internal readonly Dictionary<Guid, Atom> _atoms;
         public readonly ReadOnlyCollection<Bond> Bonds; //this is the edge list
@@ -562,6 +564,8 @@ namespace Chem4Word.Model2
             Bonds = new ReadOnlyCollection<Bond>(_bonds);
             _molecules = new Dictionary<Guid, Molecule>();
             Molecules = new ReadOnlyDictionary<Guid, Molecule>(_molecules);
+            _rings = new List<Ring>();
+            Rings = new ReadOnlyCollection<Ring>(_rings);
 
             Formulas = new ObservableCollection<TextualProperty>();
             Names = new ObservableCollection<TextualProperty>();
@@ -569,7 +573,6 @@ namespace Chem4Word.Model2
 
             Errors = new List<string>();
             Warnings = new List<string>();
-            Rings = new List<Ring>();
         }
 
         #endregion Constructor
@@ -1420,7 +1423,7 @@ namespace Chem4Word.Model2
             // -------------- //
             void RebuildRingsFigueras()
             {
-                Rings.Clear();
+                ClearRings();
 
                 if (HasRings || force)
                 {
@@ -1439,7 +1442,7 @@ namespace Chem4Word.Model2
                         if (nextRing != null)                                         //bingo
                         {
                             //and add the ring to the atoms
-                            Rings.Add(nextRing); //add the ring to the set
+                            AddRing(nextRing); //add the ring to the set
                             foreach (Atom a in nextRing.Atoms.ToList())
                             {
                                 if (workingSet.ContainsKey(a))
@@ -1459,11 +1462,33 @@ namespace Chem4Word.Model2
             }
         }
 
+        private void ClearRings()
+        {
+            _rings.Clear();
+            _sortedRings = null;
+        }
+
+        public void AddRing(Ring ring)
+        {
+            _rings.Add(ring);
+            _sortedRings = null;
+        }
         /// <summary>
         /// Sorts rings for double bond placement
         /// using Alex Clark's rules
         /// </summary>
-        public List<Ring> SortedRings => SortRingsForDBPlacement();
+        public List<Ring> SortedRings
+        {
+            get
+            {
+                if (_sortedRings is null)
+                {
+                    _sortedRings = SortRingsForDBPlacement();
+                }
+
+                return _sortedRings;
+            }
+        }
 
         public Point Centroid => GeometryTool.GetCentroid(BoundingBox);
 
