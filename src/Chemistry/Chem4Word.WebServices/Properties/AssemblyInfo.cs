@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Chem4Word")]
 [assembly: AssemblyProduct("Chem4Word.WebServices")]
-[assembly: AssemblyCopyright("© Chem4Word 2022. All rights reserved.")]
+[assembly: AssemblyCopyright("© Chem4Word 2023. All rights reserved.")]
 [assembly: AssemblyTrademark("Chem4Word")]
 [assembly: AssemblyCulture("")]
 
@@ -28,5 +28,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("3.3.0.8340")]
-[assembly: AssemblyFileVersion("3.3.0.8340")]
+[assembly: AssemblyVersion("3.3.0.8431")]
+[assembly: AssemblyFileVersion("3.3.0.8431")]

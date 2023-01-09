@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2022, The .NET Foundation.
+//  Copyright (c) 2023, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -22,10 +22,10 @@ namespace WiX.CustomAction
     {
         private const string OfficeKey = @"Microsoft\Office";
         private const string WordAddinsKey = @"Word\Addins\Chem4Word V3";
-        private const string ProductShortName = "Chem4Word 2022";
+        private const string ProductShortName = "Chem4Word 2023";
         private const string ProductInstallFolder = "Chem4Word V3";
         private const string ProgramDataFolder = "Chem4Word.V3";
-        private const string ProductLongName = "Chemistry Add-In for Word (Chem4Word) 2022";
+        private const string ProductLongName = "Chemistry Add-In for Word (Chem4Word) 2023";
         private const string ManifestFile = "Chem4Word.V3.vsto";
 
         [CustomAction]

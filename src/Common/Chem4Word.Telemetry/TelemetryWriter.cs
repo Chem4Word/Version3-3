@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2022, The .NET Foundation.
+//  Copyright (c) 2023, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -15,6 +15,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Chem4Word.Core;
 
 namespace Chem4Word.Telemetry
 {
@@ -46,7 +47,7 @@ namespace Chem4Word.Telemetry
             {
                 _wmiHelper = new WmiHelper();
             }
-            _azureServiceBusWriter = new AzureServiceBusWriter();
+            _azureServiceBusWriter = new AzureServiceBusWriter(new AzureSettings(true));
         }
 
         public void Write(string operation, string level, string message)

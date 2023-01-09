@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2022, The .NET Foundation.
+//  Copyright (c) 2023, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -1986,11 +1986,11 @@ namespace Chem4Word
                         {
                             var temp = Globals.Chem4WordV3.ThisVersion.Root.Element("Number").Value;
                             var idx = temp.IndexOf(" ", StringComparison.InvariantCulture);
-                            ah.VersionString = $"Chem4Word 2022 {temp.Substring(idx + 1)}";
+                            ah.VersionString = $"Chem4Word 2023 {temp.Substring(idx + 1)}";
                         }
                         else
                         {
-                            ah.VersionString = $"Chem4Word 2022 {fvi.FileVersion}";
+                            ah.VersionString = $"Chem4Word 2023 {fvi.FileVersion}";
                         }
                         ah.ShowDialog();
                     }

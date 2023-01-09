@@ -5,7 +5,7 @@
     <Version>
         <Number>3.3.0 Alpha 0</Number>
         <IsBeta>true</IsBeta>
-        <Released>01-Nov-2022</Released>
+        <Released>31-Jan-2023</Released>
         <Changes>
             <Change>Added basic library manager</Change>
             <Change>Add new Plug-In type (Driver) to manage multiple libraries</Change>
