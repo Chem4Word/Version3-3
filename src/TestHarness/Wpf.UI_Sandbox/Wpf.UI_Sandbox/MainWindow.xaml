@@ -1,0 +1,151 @@
+﻿<Window
+    x:Class="Wpf.UI_Sandbox.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Wpf.UI_Sandbox"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Testing Whiteboard"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <ResourceDictionary Source="MainStyles.xaml" />
+    </Window.Resources>
+    <Grid d:IsLocked="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+
+        </Grid.ColumnDefinitions>
+        <Button
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5" d:IsLocked="True">
+            Command
+        </Button>
+        <Button
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="5" d:IsLocked="True">
+
+            <Grid d:IsLocked="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Path
+                    Width="14"
+                    Height="14"
+                    Margin="0,0,3,0"
+                    Data="M15.999998,11.100006C18.700003,11.100006 20.9,13.300003 20.9,16 20.9,18.699997 18.700003,20.899994 15.999998,20.899994 13.300001,20.899994 11.100004,18.699997 11.100004,16 11.100004,13.300003 13.300001,11.100006 15.999998,11.100006z M15.999998,8.6999971C8.6000036,8.6999971 2.5000003,16 2.5000005,16 2.5000003,16 8.4999974,23.300003 15.999998,23.300003 23.4,23.300003 29.5,16 29.5,16 29.5,16 23.4,8.6999971 15.999998,8.6999971z M15.999998,0C24.800001,1.5521641E-07 32,7.1999971 32,16 32,24.800003 24.800001,32 15.999998,32 7.2000016,32 0,24.800003 0,16 0,7.1999971 7.2000016,1.5521641E-07 15.999998,0z"
+                    Fill="Black"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform" d:IsLocked="True" />
+                <TextBlock Grid.Column="1" d:IsLocked="True">
+                    <Run Text="Command" d:IsLocked="True"/></TextBlock>
+            </Grid>
+
+        </Button>
+        <Button
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="5"
+            Padding="5"
+            Style="{StaticResource Acme.Control.Button.RoundedButton}" d:IsLocked="True">
+            <Grid d:IsLocked="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Path
+                    Width="14"
+                    Height="14"
+                    Margin="0,0,3,0"
+                    Data="M15.999998,11.100006C18.700003,11.100006 20.9,13.300003 20.9,16 20.9,18.699997 18.700003,20.899994 15.999998,20.899994 13.300001,20.899994 11.100004,18.699997 11.100004,16 11.100004,13.300003 13.300001,11.100006 15.999998,11.100006z M15.999998,8.6999971C8.6000036,8.6999971 2.5000003,16 2.5000005,16 2.5000003,16 8.4999974,23.300003 15.999998,23.300003 23.4,23.300003 29.5,16 29.5,16 29.5,16 23.4,8.6999971 15.999998,8.6999971z M15.999998,0C24.800001,1.5521641E-07 32,7.1999971 32,16 32,24.800003 24.800001,32 15.999998,32 7.2000016,32 0,24.800003 0,16 0,7.1999971 7.2000016,1.5521641E-07 15.999998,0z"
+                    Fill="Black"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform" d:IsLocked="True" />
+                <TextBlock Grid.Column="1" d:IsLocked="True">
+                    <Run Text="Command" d:IsLocked="True"/></TextBlock>
+            </Grid>
+        </Button>
+        <Button
+            Grid.Row="3"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Width="Auto"
+            Height="40"
+            Padding="0"
+            HorizontalAlignment="Left"
+            HorizontalContentAlignment="Left"
+            BorderThickness="0" d:IsLocked="True">
+            <Grid HorizontalAlignment="Left" Background="{x:Static SystemColors.ControlLightBrush}" d:IsLocked="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Height}" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Rectangle
+                    Grid.RowSpan="1"
+                    Grid.Column="0"
+                    Fill="Blue" d:IsLocked="True" />
+                <Path
+                    Grid.Column="1"
+                    Width="30"
+                    Height="30"
+                    Margin="0,0,3,0"
+                    Data="M19.587998,22.364976L21.886004,24.659981 18.438994,25.807983z M4.6250015,19.688C5.1770018,19.688 5.6250017,20.136  5.6250017,20.688 5.6250017,21.24 5.1770018,21.688 4.6250015,21.688 4.0730017,21.688 3.6250017,21.24 3.625002,20.688 3.6250017,20.136 4.0730017,19.688  4.6250015,19.688z M26.482996,15.478L28.780995,17.774001 23.034998,23.512003 20.737,21.217002z M29.930003,12.035022L32.229002,14.330008 29.930003,16.624995  27.632002,14.330008z M4.6250015,11.688C5.1770018,11.688 5.6250017,12.136 5.6250017,12.688 5.6250017,13.24 5.1770018,13.688 4.6250015,13.688 4.0730017,13.688 3.6250017,13.24 3.625002,12.688 3.6250017,12.136 4.0730017,11.688 4.6250015,11.688z M2.0000003,10L2.0000003,16 23,16 23,10z M4.6250015,3.6559896C5.1770018,3.6559892 5.6250017,4.1039889 5.6250017,4.6559892 5.6250017,5.207989 5.1770018,5.6559889 4.6250015,5.6559887 4.0730017,5.6559889 3.6250017,5.207989 3.625002,4.6559892 3.6250017,4.1039889 4.0730017,3.6559892 4.6250015,3.6559896z M2.0000003,2L2.0000003,8.0000003 23,8.0000003 23,2z M0.59400004,0L23.594,0C24.368,0,25,0.6329999,25,1.4070001L25,14.687 23.685686,16 23.066033,16.619035 23,16.685 21.682995,18 2.0000003,18 2.0000003,24 15.676,24 13.673,26 1.3129999,26C0.59100002,26,0,25.409,0,24.687L0,0.59299994C0,0.26599979,0.26600003,0,0.59400004,0z"
+                    Fill="Black"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform" d:IsLocked="True" />
+                <Rectangle
+                    Grid.RowSpan="1"
+                    Grid.Column="2"
+                    Fill="#ECECEC" d:IsLocked="True" />
+                <TextBlock
+                    Grid.Column="2"
+                    Margin="3"
+                    VerticalAlignment="Center"
+                    Background="#ECECEC"
+                    FontSize="14" d:IsLocked="True">
+                    <Run Text="Edit this Library" d:IsLocked="True"/></TextBlock>
+            </Grid>
+
+        </Button>
+        <TextBlock
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource Acme.Control.TextBlock.H1}" d:IsLocked="True">
+            <Run Text="Header" d:IsLocked="True"/></TextBlock>
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="1"
+            Style="{StaticResource Acme.Control.TextBlock.H2}" d:IsLocked="True">
+            <Run Text="SubHeader" d:IsLocked="True"/></TextBlock>
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="1"
+            Style="{StaticResource Acme.Control.TextBlock.H3}" d:IsLocked="True">
+            <Run Text="SubSubHeader" d:IsLocked="True"/></TextBlock>
+    </Grid>
+</Window>

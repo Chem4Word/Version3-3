@@ -371,7 +371,7 @@ namespace Chem4Word
 
         private void OnClick_Options(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -391,25 +391,25 @@ namespace Chem4Word
 
                     try
                     {
-                        var f = new SettingsHost(true);
-                        var options = Globals.Chem4WordV3.SystemOptions.Clone();
-                        options.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
-                        f.SystemOptions = options;
-                        f.TopLeft = Globals.Chem4WordV3.WordTopLeft;
-                        f.SystemOptions.WordTopLeft = Globals.Chem4WordV3.WordTopLeft;
+                        var settingsHost = new SettingsHost();
+                        var clonedOptions = Globals.Chem4WordV3.SystemOptions.Clone();
+                        clonedOptions.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
+                        settingsHost.SystemOptions = clonedOptions;
+                        settingsHost.TopLeft = Globals.Chem4WordV3.WordTopLeft;
+                        settingsHost.SystemOptions.WordTopLeft = Globals.Chem4WordV3.WordTopLeft;
 
-                        var dr = f.ShowDialog();
+                        var dr = settingsHost.ShowDialog();
                         if (dr == DialogResult.OK)
                         {
-                            Globals.Chem4WordV3.SystemOptions = f.SystemOptions.Clone();
+                            Globals.Chem4WordV3.SystemOptions = settingsHost.SystemOptions.Clone();
                             // Re create telemetry object as it may now be disabled
                             Globals.Chem4WordV3.Telemetry = new TelemetryWriter(
                                 Globals.Chem4WordV3.SystemOptions.TelemetryEnabled,
                                 Globals.Chem4WordV3.IsBeta,
                                 Globals.Chem4WordV3.Helper);
-                            if (f.SystemOptions.Errors.Any())
+                            if (settingsHost.SystemOptions.Errors.Any())
                             {
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", string.Join(Environment.NewLine, f.SystemOptions.Errors));
+                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", string.Join(Environment.NewLine, settingsHost.SystemOptions.Errors));
                             }
                         }
                     }
@@ -1571,9 +1571,12 @@ namespace Chem4Word
                         {
                             if (custTaskPane == null)
                             {
+                                var navigatorHost = new NavigatorHost();
                                 custTaskPane =
-                                    Globals.Chem4WordV3.CustomTaskPanes.Add(new NavigatorHost(DocumentHelper.GetActiveDocument()),
+                                    Globals.Chem4WordV3.CustomTaskPanes.Add(navigatorHost,
                                         Constants.NavigatorTaskPaneTitle, application.ActiveWindow);
+                                // Document MUST be set after control is loaded
+                                navigatorHost.SetDocument(DocumentHelper.GetActiveDocument());
 
                                 custTaskPane.Width = Globals.Chem4WordV3.WordWidth / 4;
                                 custTaskPane.VisibleChanged += OnVisibleChanged_NavigatorPane;
@@ -1723,6 +1726,9 @@ namespace Chem4Word
             }
             else
             {
+                Globals.Chem4WordV3.ListOfDetectedLibraries
+                    = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                        .GetListOfLibraries();
                 ShowLibrary.Checked = false;
             }
 

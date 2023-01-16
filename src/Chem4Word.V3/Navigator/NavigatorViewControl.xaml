@@ -13,35 +13,39 @@
     FontFamily="Segoe UI"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="Chem4WordBlue">
-            <SolidColorBrush.Color>#2A579A</SolidColorBrush.Color>
-        </SolidColorBrush>
-        <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
-            <!--
-                We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
-                https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
-            -->
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBoxItem">
-                        <Border
-                            Name="Border"
-                            Padding="3"
-                            SnapsToDevicePixels="true">
-                            <ContentPresenter />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="Border" Property="Background" Value="{StaticResource Chem4WordBlue}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
+                <!--
+                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+                -->
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border
+                                Name="Border"
+                                Padding="3"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource Chem4WordBlue}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>

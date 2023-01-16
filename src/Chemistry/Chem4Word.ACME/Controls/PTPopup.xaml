@@ -17,11 +17,13 @@
     PreviewKeyDown="PTPickerWindow_PreviewKeyDown"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    FontFamily="Segoe UI"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="../Resources/ControlStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>

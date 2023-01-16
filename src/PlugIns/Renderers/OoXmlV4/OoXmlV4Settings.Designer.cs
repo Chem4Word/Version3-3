@@ -64,10 +64,11 @@ namespace Chem4Word.Renderer.OoXmlV4
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlEx.Controls.Add(this.tabRendering);
             this.tabControlEx.Controls.Add(this.tabDebug);
-            this.tabControlEx.Location = new System.Drawing.Point(13, 13);
+            this.tabControlEx.Location = new System.Drawing.Point(16, 17);
+            this.tabControlEx.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabControlEx.Name = "tabControlEx";
             this.tabControlEx.SelectedIndex = 0;
-            this.tabControlEx.Size = new System.Drawing.Size(459, 189);
+            this.tabControlEx.Size = new System.Drawing.Size(536, 246);
             this.tabControlEx.TabIndex = 0;
             // 
             // tabRendering
@@ -80,10 +81,11 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.tabRendering.Controls.Add(this.ShowMoleculeGrouping);
             this.tabRendering.Controls.Add(this.ShowHydrogens);
             this.tabRendering.Controls.Add(this.ColouredAtoms);
-            this.tabRendering.Location = new System.Drawing.Point(0, 20);
+            this.tabRendering.Location = new System.Drawing.Point(0, 24);
+            this.tabRendering.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabRendering.Name = "tabRendering";
-            this.tabRendering.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRendering.Size = new System.Drawing.Size(459, 169);
+            this.tabRendering.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabRendering.Size = new System.Drawing.Size(536, 222);
             this.tabRendering.TabIndex = 0;
             this.tabRendering.Text = "Rendering";
             // 
@@ -92,10 +94,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ClipCrossingBonds.AutoSize = true;
             this.ClipCrossingBonds.Checked = true;
             this.ClipCrossingBonds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ClipCrossingBonds.Location = new System.Drawing.Point(12, 87);
-            this.ClipCrossingBonds.Margin = new System.Windows.Forms.Padding(4);
+            this.ClipCrossingBonds.Location = new System.Drawing.Point(14, 114);
+            this.ClipCrossingBonds.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ClipCrossingBonds.Name = "ClipCrossingBonds";
-            this.ClipCrossingBonds.Size = new System.Drawing.Size(142, 17);
+            this.ClipCrossingBonds.Size = new System.Drawing.Size(179, 23);
             this.ClipCrossingBonds.TabIndex = 26;
             this.ClipCrossingBonds.Text = "Clip Crossing Bond Lines";
             this.ClipCrossingBonds.UseVisualStyleBackColor = true;
@@ -106,10 +108,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowAllCarbonAtoms.AutoSize = true;
             this.ShowAllCarbonAtoms.Checked = true;
             this.ShowAllCarbonAtoms.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowAllCarbonAtoms.Location = new System.Drawing.Point(12, 62);
-            this.ShowAllCarbonAtoms.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowAllCarbonAtoms.Location = new System.Drawing.Point(14, 81);
+            this.ShowAllCarbonAtoms.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowAllCarbonAtoms.Name = "ShowAllCarbonAtoms";
-            this.ShowAllCarbonAtoms.Size = new System.Drawing.Size(165, 17);
+            this.ShowAllCarbonAtoms.Size = new System.Drawing.Size(209, 23);
             this.ShowAllCarbonAtoms.TabIndex = 25;
             this.ShowAllCarbonAtoms.Text = "Show All Carbon Atom Labels";
             this.ShowAllCarbonAtoms.UseVisualStyleBackColor = true;
@@ -120,10 +122,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowMoleculeCaptions.AutoSize = true;
             this.ShowMoleculeCaptions.Checked = true;
             this.ShowMoleculeCaptions.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowMoleculeCaptions.Location = new System.Drawing.Point(12, 137);
-            this.ShowMoleculeCaptions.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowMoleculeCaptions.Location = new System.Drawing.Point(14, 178);
+            this.ShowMoleculeCaptions.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowMoleculeCaptions.Name = "ShowMoleculeCaptions";
-            this.ShowMoleculeCaptions.Size = new System.Drawing.Size(143, 17);
+            this.ShowMoleculeCaptions.Size = new System.Drawing.Size(178, 23);
             this.ShowMoleculeCaptions.TabIndex = 23;
             this.ShowMoleculeCaptions.Text = "Show Molecule Captions";
             this.ShowMoleculeCaptions.UseVisualStyleBackColor = true;
@@ -134,10 +136,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowMoleculeGrouping.AutoSize = true;
             this.ShowMoleculeGrouping.Checked = true;
             this.ShowMoleculeGrouping.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowMoleculeGrouping.Location = new System.Drawing.Point(12, 112);
-            this.ShowMoleculeGrouping.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowMoleculeGrouping.Location = new System.Drawing.Point(14, 146);
+            this.ShowMoleculeGrouping.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowMoleculeGrouping.Name = "ShowMoleculeGrouping";
-            this.ShowMoleculeGrouping.Size = new System.Drawing.Size(136, 17);
+            this.ShowMoleculeGrouping.Size = new System.Drawing.Size(169, 23);
             this.ShowMoleculeGrouping.TabIndex = 24;
             this.ShowMoleculeGrouping.Text = "Show Molecule Groups";
             this.ShowMoleculeGrouping.UseVisualStyleBackColor = true;
@@ -148,10 +150,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowHydrogens.AutoSize = true;
             this.ShowHydrogens.Checked = true;
             this.ShowHydrogens.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowHydrogens.Location = new System.Drawing.Point(12, 12);
-            this.ShowHydrogens.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowHydrogens.Location = new System.Drawing.Point(14, 15);
+            this.ShowHydrogens.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowHydrogens.Name = "ShowHydrogens";
-            this.ShowHydrogens.Size = new System.Drawing.Size(142, 17);
+            this.ShowHydrogens.Size = new System.Drawing.Size(180, 23);
             this.ShowHydrogens.TabIndex = 7;
             this.ShowHydrogens.Text = "Show Implicit Hydrogens";
             this.ShowHydrogens.UseVisualStyleBackColor = true;
@@ -162,10 +164,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ColouredAtoms.AutoSize = true;
             this.ColouredAtoms.Checked = true;
             this.ColouredAtoms.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ColouredAtoms.Location = new System.Drawing.Point(12, 37);
-            this.ColouredAtoms.Margin = new System.Windows.Forms.Padding(4);
+            this.ColouredAtoms.Location = new System.Drawing.Point(14, 48);
+            this.ColouredAtoms.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ColouredAtoms.Name = "ColouredAtoms";
-            this.ColouredAtoms.Size = new System.Drawing.Size(158, 17);
+            this.ColouredAtoms.Size = new System.Drawing.Size(201, 23);
             this.ColouredAtoms.TabIndex = 8;
             this.ColouredAtoms.Text = "Show Atom Labels in Colour";
             this.ColouredAtoms.UseVisualStyleBackColor = true;
@@ -185,22 +187,23 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.tabDebug.Controls.Add(this.ShowCharacterBox);
             this.tabDebug.Controls.Add(this.ShowMoleculeBox);
             this.tabDebug.Controls.Add(this.ClipBondLines);
-            this.tabDebug.Location = new System.Drawing.Point(0, 20);
+            this.tabDebug.Location = new System.Drawing.Point(0, 27);
+            this.tabDebug.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabDebug.Name = "tabDebug";
-            this.tabDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDebug.Size = new System.Drawing.Size(459, 169);
+            this.tabDebug.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabDebug.Size = new System.Drawing.Size(536, 219);
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             // 
-            // ShowBondClippingPoints
+            // ShowBondCrossingPoints
             // 
             this.ShowBondCrossingPoints.AutoSize = true;
             this.ShowBondCrossingPoints.Checked = true;
             this.ShowBondCrossingPoints.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowBondCrossingPoints.Location = new System.Drawing.Point(246, 90);
-            this.ShowBondCrossingPoints.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowBondCrossingPoints.Location = new System.Drawing.Point(287, 117);
+            this.ShowBondCrossingPoints.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowBondCrossingPoints.Name = "ShowBondCrossingPoints";
-            this.ShowBondCrossingPoints.Size = new System.Drawing.Size(193, 17);
+            this.ShowBondCrossingPoints.Size = new System.Drawing.Size(243, 23);
             this.ShowBondCrossingPoints.TabIndex = 26;
             this.ShowBondCrossingPoints.Text = "Show crossing bond clipping Points";
             this.ShowBondCrossingPoints.UseVisualStyleBackColor = true;
@@ -211,10 +214,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowCharacterGroupsBox.AutoSize = true;
             this.ShowCharacterGroupsBox.Checked = true;
             this.ShowCharacterGroupsBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowCharacterGroupsBox.Location = new System.Drawing.Point(7, 90);
-            this.ShowCharacterGroupsBox.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowCharacterGroupsBox.Location = new System.Drawing.Point(8, 117);
+            this.ShowCharacterGroupsBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowCharacterGroupsBox.Name = "ShowCharacterGroupsBox";
-            this.ShowCharacterGroupsBox.Size = new System.Drawing.Size(214, 17);
+            this.ShowCharacterGroupsBox.Size = new System.Drawing.Size(269, 23);
             this.ShowCharacterGroupsBox.TabIndex = 25;
             this.ShowCharacterGroupsBox.Text = "Show BoundingBox of character groups";
             this.ShowCharacterGroupsBox.UseVisualStyleBackColor = true;
@@ -225,24 +228,24 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowBondDirection.AutoSize = true;
             this.ShowBondDirection.Checked = true;
             this.ShowBondDirection.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowBondDirection.Location = new System.Drawing.Point(246, 64);
-            this.ShowBondDirection.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowBondDirection.Location = new System.Drawing.Point(287, 83);
+            this.ShowBondDirection.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowBondDirection.Name = "ShowBondDirection";
-            this.ShowBondDirection.Size = new System.Drawing.Size(123, 17);
+            this.ShowBondDirection.Size = new System.Drawing.Size(154, 23);
             this.ShowBondDirection.TabIndex = 24;
             this.ShowBondDirection.Text = "Show bond direction";
             this.ShowBondDirection.UseVisualStyleBackColor = true;
             this.ShowBondDirection.CheckedChanged += new System.EventHandler(this.ShowBondDirection_CheckedChanged);
             // 
-            // ShowBondClippingLines
+            // ShowDoubleBondTrimmingLines
             // 
             this.ShowDoubleBondTrimmingLines.AutoSize = true;
             this.ShowDoubleBondTrimmingLines.Checked = true;
             this.ShowDoubleBondTrimmingLines.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowDoubleBondTrimmingLines.Location = new System.Drawing.Point(246, 38);
-            this.ShowDoubleBondTrimmingLines.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowDoubleBondTrimmingLines.Location = new System.Drawing.Point(287, 49);
+            this.ShowDoubleBondTrimmingLines.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowDoubleBondTrimmingLines.Name = "ShowDoubleBondTrimmingLines";
-            this.ShowDoubleBondTrimmingLines.Size = new System.Drawing.Size(180, 17);
+            this.ShowDoubleBondTrimmingLines.Size = new System.Drawing.Size(234, 23);
             this.ShowDoubleBondTrimmingLines.TabIndex = 23;
             this.ShowDoubleBondTrimmingLines.Text = "Show double bond trimming lines";
             this.ShowDoubleBondTrimmingLines.UseVisualStyleBackColor = true;
@@ -253,10 +256,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowConvexHulls.AutoSize = true;
             this.ShowConvexHulls.Checked = true;
             this.ShowConvexHulls.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowConvexHulls.Location = new System.Drawing.Point(7, 64);
-            this.ShowConvexHulls.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowConvexHulls.Location = new System.Drawing.Point(8, 83);
+            this.ShowConvexHulls.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowConvexHulls.Name = "ShowConvexHulls";
-            this.ShowConvexHulls.Size = new System.Drawing.Size(175, 17);
+            this.ShowConvexHulls.Size = new System.Drawing.Size(216, 23);
             this.ShowConvexHulls.TabIndex = 22;
             this.ShowConvexHulls.Text = "Show ConvexHull of characters";
             this.ShowConvexHulls.UseVisualStyleBackColor = true;
@@ -267,10 +270,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowAtomPositions.AutoSize = true;
             this.ShowAtomPositions.Checked = true;
             this.ShowAtomPositions.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowAtomPositions.Location = new System.Drawing.Point(7, 12);
-            this.ShowAtomPositions.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowAtomPositions.Location = new System.Drawing.Point(8, 15);
+            this.ShowAtomPositions.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowAtomPositions.Name = "ShowAtomPositions";
-            this.ShowAtomPositions.Size = new System.Drawing.Size(123, 17);
+            this.ShowAtomPositions.Size = new System.Drawing.Size(156, 23);
             this.ShowAtomPositions.TabIndex = 21;
             this.ShowAtomPositions.Text = "Show atom positions";
             this.ShowAtomPositions.UseVisualStyleBackColor = true;
@@ -281,10 +284,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowRingCentres.AutoSize = true;
             this.ShowRingCentres.Checked = true;
             this.ShowRingCentres.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowRingCentres.Location = new System.Drawing.Point(246, 116);
-            this.ShowRingCentres.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowRingCentres.Location = new System.Drawing.Point(287, 151);
+            this.ShowRingCentres.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowRingCentres.Name = "ShowRingCentres";
-            this.ShowRingCentres.Size = new System.Drawing.Size(168, 17);
+            this.ShowRingCentres.Size = new System.Drawing.Size(210, 23);
             this.ShowRingCentres.TabIndex = 20;
             this.ShowRingCentres.Text = "Show centre of detected rings";
             this.ShowRingCentres.UseVisualStyleBackColor = true;
@@ -295,10 +298,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowCharacterBox.AutoSize = true;
             this.ShowCharacterBox.Checked = true;
             this.ShowCharacterBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowCharacterBox.Location = new System.Drawing.Point(7, 38);
-            this.ShowCharacterBox.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowCharacterBox.Location = new System.Drawing.Point(8, 49);
+            this.ShowCharacterBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowCharacterBox.Name = "ShowCharacterBox";
-            this.ShowCharacterBox.Size = new System.Drawing.Size(184, 17);
+            this.ShowCharacterBox.Size = new System.Drawing.Size(228, 23);
             this.ShowCharacterBox.TabIndex = 19;
             this.ShowCharacterBox.Text = "Show BoundingBox of characters";
             this.ShowCharacterBox.UseVisualStyleBackColor = true;
@@ -309,10 +312,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowMoleculeBox.AutoSize = true;
             this.ShowMoleculeBox.Checked = true;
             this.ShowMoleculeBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowMoleculeBox.Location = new System.Drawing.Point(7, 116);
-            this.ShowMoleculeBox.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowMoleculeBox.Location = new System.Drawing.Point(8, 151);
+            this.ShowMoleculeBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowMoleculeBox.Name = "ShowMoleculeBox";
-            this.ShowMoleculeBox.Size = new System.Drawing.Size(187, 17);
+            this.ShowMoleculeBox.Size = new System.Drawing.Size(234, 23);
             this.ShowMoleculeBox.TabIndex = 18;
             this.ShowMoleculeBox.Text = "Show BoundingBox of molecule(s)";
             this.ShowMoleculeBox.UseVisualStyleBackColor = true;
@@ -323,10 +326,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ClipBondLines.AutoSize = true;
             this.ClipBondLines.Checked = true;
             this.ClipBondLines.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ClipBondLines.Location = new System.Drawing.Point(246, 12);
-            this.ClipBondLines.Margin = new System.Windows.Forms.Padding(4);
+            this.ClipBondLines.Location = new System.Drawing.Point(287, 15);
+            this.ClipBondLines.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ClipBondLines.Name = "ClipBondLines";
-            this.ClipBondLines.Size = new System.Drawing.Size(187, 17);
+            this.ClipBondLines.Size = new System.Drawing.Size(241, 23);
             this.ClipBondLines.TabIndex = 13;
             this.ClipBondLines.Text = "Clip bond lines [Atom Convex Hull]";
             this.ClipBondLines.UseVisualStyleBackColor = true;
@@ -335,10 +338,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             // btnSetDefaults
             // 
             this.btnSetDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSetDefaults.Location = new System.Drawing.Point(291, 209);
-            this.btnSetDefaults.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetDefaults.Location = new System.Drawing.Point(340, 274);
+            this.btnSetDefaults.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSetDefaults.Name = "btnSetDefaults";
-            this.btnSetDefaults.Size = new System.Drawing.Size(88, 28);
+            this.btnSetDefaults.Size = new System.Drawing.Size(102, 37);
             this.btnSetDefaults.TabIndex = 13;
             this.btnSetDefaults.Text = "Defaults";
             this.btnSetDefaults.UseVisualStyleBackColor = true;
@@ -347,10 +350,10 @@ namespace Chem4Word.Renderer.OoXmlV4
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(385, 209);
-            this.btnOk.Margin = new System.Windows.Forms.Padding(4);
+            this.btnOk.Location = new System.Drawing.Point(450, 274);
+            this.btnOk.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(88, 28);
+            this.btnOk.Size = new System.Drawing.Size(102, 37);
             this.btnOk.TabIndex = 12;
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
@@ -358,14 +361,16 @@ namespace Chem4Word.Renderer.OoXmlV4
             // 
             // OoXmlV4Settings
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 250);
+            this.ClientSize = new System.Drawing.Size(564, 327);
             this.Controls.Add(this.btnSetDefaults);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.tabControlEx);
+            this.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "OoXmlV4Settings";

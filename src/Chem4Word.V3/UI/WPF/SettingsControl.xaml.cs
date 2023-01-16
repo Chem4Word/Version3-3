@@ -20,7 +20,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Forms = System.Windows.Forms;
 using Point = System.Windows.Point;
@@ -57,31 +56,6 @@ namespace Chem4Word.UI.WPF
         private void SettingsControl_OnLoaded(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-
-            #region Load Images
-
-            // Tab 1 - Plug Ins
-            var imageStream = ResourceHelper.GetBinaryResource(Assembly.GetExecutingAssembly(), "Preferences.png");
-            if (imageStream != null)
-            {
-                var bitmap = CreateImageFromStream(imageStream);
-
-                EditorSettingsButtonImage.Source = bitmap;
-                RendererSettingsButtonImage.Source = bitmap;
-                SearcherSettingsButtonImage.Source = bitmap;
-            }
-
-            // Tab 5 Maintenance
-            imageStream = ResourceHelper.GetBinaryResource(Assembly.GetExecutingAssembly(), "File-Open.png");
-            if (imageStream != null)
-            {
-                var bitmap = CreateImageFromStream(imageStream);
-                LibraryFolderButtonImage.Source = bitmap;
-                SettingsFolderButtonImage.Source = bitmap;
-                PlugInsFolderButtonImage.Source = bitmap;
-            }
-
-            #endregion Load Images
 
             #region Set Current Values
 
@@ -525,7 +499,6 @@ namespace Chem4Word.UI.WPF
 
                 // Don't allow default database to be removed
                 RemoveLibrary.IsEnabled = !source.IsDefault;
-                RemoveLibraryIcon.Fill = source.IsDefault ? new SolidColorBrush(Colors.Gray) : new SolidColorBrush(Colors.Red);
 
                 // Don't allow System database to be edited
                 var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
@@ -534,7 +507,6 @@ namespace Chem4Word.UI.WPF
                 var isSystem = GetPropertyValue(database, "Owner", "User").Equals("System");
 
                 EditLibrary.IsEnabled = !isSystem;
-                EditLibraryIcon.Fill = isSystem ? new SolidColorBrush(Colors.Gray) : new SolidColorBrush(Colors.Black);
             }
         }
 

@@ -71,7 +71,7 @@ namespace Chem4Word.Library
                     index++;
                 }
 
-                EnableEditThisLibrayButton();
+                EnableEditThisLibraryButton();
 
                 // Enable the selection changed event
                 LibrarySelector.SelectionChanged += OnSelectionChanged_LibrarySelector;
@@ -106,8 +106,9 @@ namespace Chem4Word.Library
                         Globals.Chem4WordV3.ListOfDetectedLibraries
                             = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                                 .GetListOfLibraries();
+                        Globals.Chem4WordV3.LoadNamesFromLibrary();
 
-                        EnableEditThisLibrayButton();
+                        EnableEditThisLibraryButton();
 
                         _selectedLibrary = selected;
 
@@ -122,7 +123,7 @@ namespace Chem4Word.Library
             }
         }
 
-        private void EnableEditThisLibrayButton()
+        private void EnableEditThisLibraryButton()
         {
             var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
             if (details != null)
@@ -130,18 +131,11 @@ namespace Chem4Word.Library
                 if (details.Properties.ContainsKey("Owner"))
                 {
                     var owner = details.Properties["Owner"];
-                    if (owner.Equals("User"))
-                    {
-                        EditThisLibrary.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        EditThisLibrary.Visibility = Visibility.Collapsed;
-                    }
+                    EditThisLibrary.IsEnabled = owner.Equals("User");
                 }
                 else
                 {
-                    EditThisLibrary.Visibility = Visibility.Collapsed;
+                    EditThisLibrary.IsEnabled = false;
                 }
             }
         }

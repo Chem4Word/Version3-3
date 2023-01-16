@@ -43,11 +43,11 @@
             // btnSubmit
             // 
             this.btnSubmit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSubmit.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSubmit.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.btnSubmit.Location = new System.Drawing.Point(529, 519);
             this.btnSubmit.Margin = new System.Windows.Forms.Padding(4);
             this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(87, 28);
+            this.btnSubmit.Size = new System.Drawing.Size(80, 25);
             this.btnSubmit.TabIndex = 6;
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
@@ -57,7 +57,7 @@
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.textBox1.Location = new System.Drawing.Point(13, 31);
             this.textBox1.Margin = new System.Windows.Forms.Padding(4);
             this.textBox1.Multiline = true;
@@ -82,35 +82,35 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label1.Location = new System.Drawing.Point(14, 256);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(483, 32);
+            this.label1.Size = new System.Drawing.Size(455, 38);
             this.label1.TabIndex = 4;
-            this.label1.Text = "What Chem4Word operations you doing at the time? (In English please.)\r\ni.e. \"Sear" +
-    "ch Pubchem for xxx\", \"Edit Structure to change bond length\", ... ";
+            this.label1.Text = "What Chem4Word operations you doing at the time? (In English please.)\r\nE.g.: \"Sea" +
+    "rch Pubchem for xxx\", \"Edit Structure to change bond length\", ... ";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.label2.ForeColor = System.Drawing.Color.Red;
             this.label2.Location = new System.Drawing.Point(13, 6);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(188, 19);
+            this.label2.Size = new System.Drawing.Size(159, 19);
             this.label2.TabIndex = 0;
             this.label2.Text = "An error has occured !";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.label3.Location = new System.Drawing.Point(12, 200);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(465, 16);
+            this.label3.Size = new System.Drawing.Size(479, 19);
             this.label3.TabIndex = 2;
             this.label3.Text = "Please include your email address below if you wish us to contact you!";
             // 
@@ -118,11 +118,11 @@
             // 
             this.UserEmailAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.UserEmailAddress.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UserEmailAddress.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.UserEmailAddress.Location = new System.Drawing.Point(13, 220);
             this.UserEmailAddress.Margin = new System.Windows.Forms.Padding(4);
             this.UserEmailAddress.Name = "UserEmailAddress";
-            this.UserEmailAddress.Size = new System.Drawing.Size(498, 23);
+            this.UserEmailAddress.Size = new System.Drawing.Size(498, 22);
             this.UserEmailAddress.TabIndex = 3;
             this.UserEmailAddress.WordWrap = false;
             // 
@@ -131,12 +131,12 @@
             this.UserComments.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.UserComments.Font = new System.Drawing.Font("Tahoma", 9.75F);
-            this.UserComments.Location = new System.Drawing.Point(13, 291);
+            this.UserComments.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.UserComments.Location = new System.Drawing.Point(13, 297);
             this.UserComments.Multiline = true;
             this.UserComments.Name = "UserComments";
             this.UserComments.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.UserComments.Size = new System.Drawing.Size(498, 256);
+            this.UserComments.Size = new System.Drawing.Size(498, 250);
             this.UserComments.TabIndex = 7;
             this.UserComments.WordWrap = false;
             // 

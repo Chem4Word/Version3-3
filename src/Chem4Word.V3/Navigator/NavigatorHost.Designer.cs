@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.elementHost = new System.Windows.Forms.Integration.ElementHost();
-            this.navigatorView1 = new Chem4Word.Navigator.NavigatorViewControl();
             this.SuspendLayout();
             // 
             // elementHost
@@ -39,7 +38,7 @@
             this.elementHost.Name = "elementHost";
             this.elementHost.Size = new System.Drawing.Size(150, 150);
             this.elementHost.TabIndex = 0;
-            this.elementHost.Child = this.navigatorView1;
+            this.elementHost.Child = null;
             // 
             // NavigatorHost
             // 
@@ -47,13 +46,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.elementHost);
             this.Name = "NavigatorHost";
+            this.Load += new System.EventHandler(this.NavigatorHost_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Integration.ElementHost elementHost;
-        public NavigatorViewControl navigatorView1;
+        internal System.Windows.Forms.Integration.ElementHost elementHost;
     }
 }

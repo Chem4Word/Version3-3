@@ -53,15 +53,17 @@
             // 
             this.SearchFor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.SearchFor.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.SearchFor.Location = new System.Drawing.Point(14, 15);
             this.SearchFor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SearchFor.Name = "SearchFor";
-            this.SearchFor.Size = new System.Drawing.Size(895, 23);
+            this.SearchFor.Size = new System.Drawing.Size(895, 22);
             this.SearchFor.TabIndex = 2;
             // 
             // SearchButton
             // 
             this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SearchButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.SearchButton.Location = new System.Drawing.Point(915, 12);
             this.SearchButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SearchButton.Name = "SearchButton";
@@ -75,7 +77,8 @@
             // 
             this.ImportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ImportButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ImportButton.Location = new System.Drawing.Point(916, 564);
+            this.ImportButton.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.ImportButton.Location = new System.Drawing.Point(915, 564);
             this.ImportButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(87, 29);
@@ -114,9 +117,11 @@
             this.NameHeader,
             this.ScoreHeader});
             this.ResultsListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResultsListView.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.ResultsListView.FullRowSelect = true;
             this.ResultsListView.GridLines = true;
             this.ResultsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.ResultsListView.HideSelection = false;
             this.ResultsListView.Location = new System.Drawing.Point(0, 0);
             this.ResultsListView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ResultsListView.Name = "ResultsListView";
@@ -155,6 +160,7 @@
             // 
             this.elementHost1.BackColor = System.Drawing.Color.White;
             this.elementHost1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.elementHost1.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.elementHost1.Location = new System.Drawing.Point(0, 0);
             this.elementHost1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.elementHost1.Name = "elementHost1";
@@ -167,7 +173,8 @@
             // ShowMolfile
             // 
             this.ShowMolfile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShowMolfile.Location = new System.Drawing.Point(914, 527);
+            this.ShowMolfile.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.ShowMolfile.Location = new System.Drawing.Point(915, 527);
             this.ShowMolfile.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ShowMolfile.Name = "ShowMolfile";
             this.ShowMolfile.Size = new System.Drawing.Size(87, 29);
@@ -180,6 +187,7 @@
             // 
             this.ErrorsAndWarnings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.ErrorsAndWarnings.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.ErrorsAndWarnings.Location = new System.Drawing.Point(14, 513);
             this.ErrorsAndWarnings.Multiline = true;
             this.ErrorsAndWarnings.Name = "ErrorsAndWarnings";

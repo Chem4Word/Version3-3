@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Chem4Word.Core;
 
@@ -21,7 +22,6 @@ namespace Chem4Word.Telemetry
 {
     public class TelemetryWriter : IChem4WordTelemetry
     {
-        private static int _counter;
         private static AzureServiceBusWriter _azureServiceBusWriter;
         private static bool _systemInfoSent;
         private static bool _gitInfoSent;
@@ -52,8 +52,6 @@ namespace Chem4Word.Telemetry
 
         public void Write(string operation, string level, string message)
         {
-            _counter++;
-
             string unwanted = "Chem4Word.V3.";
             if (operation.StartsWith(unwanted))
             {
@@ -337,22 +335,43 @@ namespace Chem4Word.Telemetry
         private void WritePrivate(string operation, string level, string message)
         {
             Debug.WriteLine($"{operation} - {level} - {message}");
-            long utcOffset = 0;
-            var processId = 0;
-            if (_helper != null)
-            {
-                utcOffset = _helper.UtcOffset;
-                processId = _helper.ProcessId;
-            }
-            var sbm = new OutputMessage(utcOffset, processId);
-            sbm.MachineId = _helper.MachineId;
-            sbm.Operation = operation;
-            sbm.Level = level;
-            sbm.Message = message;
-            sbm.AssemblyVersionNumber = _helper.AssemblyVersionNumber;
 
-            _azureServiceBusWriter.QueueMessage(sbm);
-            //_azureServiceBusWriter.WriteMessage(sbm)
+            var processId = 666;
+            var machineId = "00000000-0000-0000-0000-000000000000";
+            var versionNumber = $"{Constants.Chem4WordVersion}.1.666";
+
+            try
+            {
+                if (_helper != null)
+                {
+                    processId = _helper.ProcessId;
+                    machineId = _helper.MachineId;
+                    if (string.IsNullOrEmpty(_helper.AssemblyVersionNumber))
+                    {
+                        var assembly = Assembly.GetExecutingAssembly();
+                        var productVersion = assembly.GetName().Version;
+                        versionNumber = productVersion.ToString();
+                    }
+                    else
+                    {
+                        versionNumber = _helper.AssemblyVersionNumber;
+                    }
+                }
+            }
+            catch
+            {
+                //
+            }
+            var outputMessage = new OutputMessage(processId)
+            {
+                MachineId = machineId,
+                Operation = operation,
+                Level = level,
+                Message = message,
+                AssemblyVersionNumber = versionNumber
+            };
+
+            _azureServiceBusWriter.QueueMessage(outputMessage);
         }
     }
 }

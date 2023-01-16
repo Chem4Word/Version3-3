@@ -26,6 +26,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="../Resources/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <conv:ValueToForegroundColorConverter x:Key="PositiveConverter" />
@@ -117,15 +118,15 @@
                         x:Name="Element"
                         Click="Element_OnClick"
                         IsChecked="{Binding IsElement, Mode=TwoWay}"
-                        Style="{StaticResource StandardRadioButton}">
-                        <TextBlock Style="{StaticResource RadioButtonTextBlock}">Element</TextBlock>
+                        Style="{StaticResource Acme.Controls.TextBlock.RadioButton.Standard}">
+                        <TextBlock Style="{StaticResource Acme.Controls.TextBlock.RadioButton}">Element</TextBlock>
                     </RadioButton>
                     <RadioButton
                         x:Name="FunctionalGroup"
                         Click="FunctionalGroup_OnClick"
                         IsChecked="{Binding IsFunctionalGroup, Mode=TwoWay}"
-                        Style="{StaticResource StandardRadioButton}">
-                        <TextBlock Style="{StaticResource RadioButtonTextBlock}">Functional Group</TextBlock>
+                        Style="{StaticResource Acme.Controls.TextBlock.RadioButton.Standard}">
+                        <TextBlock Style="{StaticResource Acme.Controls.TextBlock.RadioButton}">Functional Group</TextBlock>
                     </RadioButton>
                 </StackPanel>
             </StackPanel>
@@ -156,13 +157,15 @@
                             <TextBlock
                                 Grid.Row="1"
                                 Grid.Column="0"
-                                Style="{StaticResource LabelTextBlock}"><Run Text="Symbol" /></TextBlock>
+                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run Text="Symbol" /></TextBlock>
                             <Grid
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="0">
                                 <Grid.Resources>
                                     <Style TargetType="{x:Type ComboBox}">
+                                        <Setter Property="FontFamily" Value="Arial" />
+                                        <Setter Property="FontWeight" Value="DemiBold" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsExpanded, ElementName=PeriodicTableExpander}" Value="True">
                                                 <Setter Property="Visibility" Value="Collapsed" />
@@ -184,6 +187,7 @@
                                     Height="Auto"
                                     MinWidth="50"
                                     MinHeight="25"
+                                    MaxHeight="25"
                                     Margin="5"
                                     Background="{x:Static SystemColors.WindowBrush}"
                                     FontFamily="Arial"
@@ -193,12 +197,13 @@
                                     SelectedValue="{Binding Element}"
                                     SelectedValuePath="Element"
                                     SelectionChanged="AtomPicker_OnSelectionChanged"
+                                    Style="{StaticResource Acme.Controls.ComboBox.AtomSelector}"
                                     ToolTip="Click to choose element" />
                                 <Expander
                                     x:Name="PeriodicTableExpander"
                                     Grid.Column="1"
                                     Margin="5"
-                                    Foreground="{StaticResource Chem4WordBrush}"
+                                    Foreground="{StaticResource Chem4WordBlue}"
                                     IsExpanded="False"
                                     ToolTip="Click to display Periodic Table">
                                     <local:VisualPeriodicTable
@@ -257,14 +262,17 @@
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="0"
-                                Style="{StaticResource LabelTextBlock}"><Run Text="Charge" /></TextBlock>
+                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run Text="Charge" /></TextBlock>
                             <ComboBox
                                 x:Name="ChargeCombo"
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Width="50"
+                                Height="25"
                                 Margin="5"
                                 HorizontalAlignment="Left"
+                                FontFamily="Arial"
+                                FontWeight="DemiBold"
                                 Foreground="{Binding SelectedValue, Converter={StaticResource PositiveConverter}, ElementName=ChargeCombo}"
                                 ItemsSource="{Binding Charges}"
                                 SelectedValue="{Binding Charge}"
@@ -283,7 +291,7 @@
                                 Grid.Column="0"
                                 Margin="5,0,0,7"
                                 VerticalAlignment="Bottom"
-                                Style="{StaticResource LabelTextBlock}"
+                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                 Visibility="{Binding HasIsotopes, Converter={StaticResource VisConverter}, Mode=OneWay}"><Run Text="Isotope" /></TextBlock>
                             <ComboBox
                                 x:Name="IsotopePicker"
@@ -313,7 +321,7 @@
                                 Grid.Row="0"
                                 Margin="5,0,0,0"
                                 HorizontalAlignment="Stretch"
-                                Style="{StaticResource LabelTextBlock}"><Run FontSize="14" Text="Hydrogen Placement" /></TextBlock>
+                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run FontSize="14" Text="Hydrogen Placement" /></TextBlock>
                             <Grid Grid.Row="1" Margin="5">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="35" />
@@ -392,7 +400,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Padding="0,0" Style="{StaticResource LabelTextBlock}"><Run Text="Group" /></TextBlock>
+                    <TextBlock Padding="0,0" Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run Text="Group" /></TextBlock>
                     <ComboBox
                         x:Name="FunctionalGroupPicker"
                         Grid.Row="0"
@@ -410,6 +418,7 @@
                         SelectedValue="{Binding Element}"
                         SelectedValuePath="Element"
                         SelectionChanged="FunctionalGroupPicker_OnSelectionChanged"
+                        Style="{StaticResource Acme.Controls.ComboBox.AtomSelector}"
                         ToolTip="Click to choose Functional Group" />
                     <Grid
                         Name="FuncGroupPlacementGrid"
@@ -426,7 +435,7 @@
                             <TextBlock
                                 Grid.Row="0"
                                 Margin="5,5,0,0"
-                                Style="{StaticResource LabelTextBlock}"><Run FontSize="14" Text="Group Placement" /></TextBlock>
+                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run FontSize="14" Text="Group Placement" /></TextBlock>
                             <Grid Grid.Row="1" Margin="5">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="35" />
@@ -492,15 +501,31 @@
             </StackPanel>
 
             <!--  Finally the Save and Cancel buttons  -->
-            <StackPanel
+            <Grid
                 Grid.Row="2"
-                Grid.Column="1"
-                Width="170"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
-                <Button Click="Save_OnClick" Content="OK" />
-                <Button Click="Close_OnClick" Content="Cancel" />
-            </StackPanel>
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Width="Auto"
+                Height="Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="1"
+                    Margin="3"
+                    Click="Save_OnClick"
+                    Content="OK"
+                    Style="{StaticResource Acme.Control.Button.DialogButton}" />
+                <Button
+                    Grid.Column="2"
+                    Margin="3"
+                    Click="Close_OnClick"
+                    Content="Cancel"
+                    Style="{StaticResource Acme.Control.Button.DialogButton}" />
+            </Grid>
         </Grid>
     </Border>
 </Window>

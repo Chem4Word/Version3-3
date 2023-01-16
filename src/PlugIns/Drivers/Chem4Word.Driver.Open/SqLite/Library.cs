@@ -691,7 +691,7 @@ namespace Chem4Word.Driver.Open.SqLite
         private SQLiteDataReader GetChemistryById(SQLiteConnection conn, long id)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("SELECT Id, Chemistry, Name, Formula");
+            sb.AppendLine("SELECT Id, Chemistry, Name, Formula, MolWeight, DataType");
             sb.AppendLine("FROM Gallery");
             sb.AppendLine("WHERE ID = @id");
 

@@ -5,6 +5,8 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Controls;
+using Chem4Word.Core.UI.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,8 +15,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Chem4Word.ACME.Controls;
-using Chem4Word.Core.UI.Wpf;
 
 namespace Chem4Word.ACME.Models
 {
@@ -116,13 +116,17 @@ namespace Chem4Word.ACME.Models
 
             private void CreateAutoCompleteBox()
             {
-                var autoCompleteBox = new AutoCompleteBox();
-                autoCompleteBox.ItemsSource = AvailableTags;
-                autoCompleteBox.MinWidth = 70;
-                autoCompleteBox.Height = 25;
-                autoCompleteBox.Width = double.NaN; // Auto
-                autoCompleteBox.VerticalAlignment = VerticalAlignment.Center;
-                autoCompleteBox.Margin = new Thickness(2.0);
+                var autoCompleteBox = new AutoCompleteBox
+                {
+                    ItemsSource = AvailableTags,
+                    MinWidth = 70,
+                    Height = 25,
+                    FontSize = 14,
+                    Padding = new Thickness(3),
+                    Width = double.NaN, // Auto
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(2.0)
+                };
 
                 autoCompleteBox.KeyUp += TextBox_KeyUp;
                 autoCompleteBox.DropDownClosed += AutoCompleteBox_DropDownClosed;

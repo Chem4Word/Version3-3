@@ -37,6 +37,7 @@
             this.Information.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.Information.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.Information.Location = new System.Drawing.Point(12, 12);
             this.Information.Multiline = true;
             this.Information.Name = "Information";

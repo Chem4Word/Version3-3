@@ -23,6 +23,7 @@
             <converters:ValueToString x:Key="RadicalConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="../Resources/ControlStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -93,7 +94,7 @@
                             Click="ShowBracketsValue_OnClick"
                             IsChecked="{Binding ShowMoleculeBrackets}"
                             IsThreeState="True">
-                            <TextBlock Style="{StaticResource LabelTextBlock}">Show Brackets</TextBlock>
+                            <TextBlock Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">Show Brackets</TextBlock>
                         </CheckBox>
                         <Grid Grid.Row="0" Grid.Column="1">
                             <Grid.RowDefinitions>
@@ -110,11 +111,11 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Style="{StaticResource LabelTextBlock}" Text="Charge" />
+                                <TextBlock Style="{StaticResource Acme.Controls.TextBlock.StdLabel}" Text="Charge" />
                                 <TextBlock
                                     Grid.Row="0"
                                     Grid.Column="1"
-                                    Style="{StaticResource LabelTextBlock}"
+                                    Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                     Text="Radical" />
                                 <ComboBox
                                     x:Name="ChargeValues"
@@ -158,8 +159,8 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    Margin="0,0"
-                                    Style="{StaticResource LabelTextBlock}"
+                                    Grid.Row="0" Margin="0,0"
+                                    Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                     Text="Count" />
                                 <Grid Grid.Row="1">
                                     <Grid.ColumnDefinitions>
@@ -176,8 +177,10 @@
                                         HorizontalContentAlignment="Right"
                                         Text="{Binding Count, Mode=TwoWay}"
                                         TextChanged="CountSpinner_OnTextChanged"
-                                        ToolTip="Set count" />
-                                    <Grid Grid.Column="1" HorizontalAlignment="Left">
+                                        ToolTip="Set count"
+                                        Style="{StaticResource Acme.Controls.TextBox}"/>
+                                    <Grid Grid.Column="1" HorizontalAlignment="Left"
+                                          >
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="*" />
@@ -233,8 +236,10 @@
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
-                <Button Click="Save_OnClick" Content="OK" />
-                <Button Click="Close_OnClick" Content="Cancel" />
+                <Button Click="Save_OnClick" Content="OK" 
+                        Style="{StaticResource Acme.Control.Button.DialogButton}"  />
+                <Button Click="Close_OnClick" Content="Cancel" 
+                        Style="{StaticResource Acme.Control.Button.DialogButton}" />
             </StackPanel>
         </Grid>
     </Border>

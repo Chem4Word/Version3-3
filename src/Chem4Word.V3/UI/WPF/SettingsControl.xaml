@@ -1,11 +1,11 @@
 ﻿<UserControl
     x:Class="Chem4Word.UI.WPF.SettingsControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="600"
-    d:DesignWidth="915.315"
+    d:DesignWidth="900"
     FontFamily="Segoe UI"
     FontSize="16"
     Loaded="SettingsControl_OnLoaded"
@@ -15,18 +15,39 @@
         This site should help
         https://www.codeproject.com/Tips/485099/Styling-WPF-TabControl-Borders
     -->
+
     <UserControl.Resources>
-        <SolidColorBrush x:Key="Chem4WordBlue">
-            <SolidColorBrush.Color>#2A579A</SolidColorBrush.Color>
-        </SolidColorBrush>
-        <!--  Add this style here to prevent ACMEResources.xaml interfering with this User Control  -->
-        <Style x:Key="LibraryButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Width" Value="Auto"></Setter>
-            <Setter Property="Height" Value="Auto"></Setter>
-            <Setter Property="Margin" Value="5" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="GroupBox">
+                <Setter Property="BorderBrush" Value="{StaticResource Chem4WordBlue}" />
+                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="Padding" Value="5" />
+            </Style>
+            <Style TargetType="Path">
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                        <Setter Property="Fill" Value="Gray" />
+                        <Setter Property="Stroke" Value="Gray" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Path
+                x:Key="BrowseFolder"
+                Width="28"
+                Height="28"
+                Margin="5"
+                VerticalAlignment="Center"
+                x:Shared="False"
+                Data="M7.5160018,7.0210069L32,7.0210069 26.112001,21.280001 2.2460016,21.280001z M0,0L9.2969996,0 11.158,4.0930236 26.091997,4.0930236 26.087999,5.3469933 6.3500015,5.3469933 0.46300124,21.280001 0,21.280001z"
+                Fill="{StaticResource Chem4WordBlue}"
+                Stretch="Uniform" />
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -35,10 +56,10 @@
         </Grid.RowDefinitions>
         <TabControl
             x:Name="TabControl"
-            SelectionChanged="TabControl_OnSelectionChanged"
             Grid.Row="0"
             Margin="10,10,10,0"
-            Background="{DynamicResource {x:Static SystemColors.ControlColor}}">
+            Background="{DynamicResource {x:Static SystemColors.ControlColor}}"
+            SelectionChanged="TabControl_OnSelectionChanged">
             <TabItem Name="PlugIns" Header="Plug Ins">
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
@@ -55,15 +76,32 @@
                             <DockPanel Dock="Top">
                                 <Button
                                     Name="SelectedEditorSettings"
-                                    Width="34"
-                                    Height="34"
-                                    Margin="5"
+                                    Width="28"
+                                    Height="28"
                                     Click="SelectedEditorSettings_OnClick"
-                                    DockPanel.Dock="Right">
-                                    <Image
-                                        x:Name="EditorSettingsButtonImage"
-                                        Margin="1"
-                                        Source="/Resources/Button Images/Preferences.png" />
+                                    DockPanel.Dock="Right"
+                                    Style="{StaticResource Acme.Control.Button.DialogButton}">
+                                    <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+                                        <Grid>
+                                            <Path
+                                                Width="26"
+                                                Height="26"
+                                                Margin="0,0,0,0"
+                                                Data="M16.000015,9.6000061C12.500012,9.6000061 9.5999844,12.5 9.5999844,16 9.5999844,19.5 12.500012,22.399994 16.000015,22.399994 19.500019,22.399994 22.400015,19.5 22.400015,16 22.400015,12.5 19.500019,9.6000061 16.000015,9.6000061z M14.199995,0L17.800005,0C18.199999,0,18.599993,0.29998779,18.599993,0.79998779L18.599993,4.7999878C19.900013,5.1000061,21.000019,5.6000061,22.099997,6.2999878L25.000023,3.3999939C25.099999,3.2999878 25.300011,3.1999817 25.500025,3.1999817 25.700007,3.1999817 25.900019,3.2999878 26.000025,3.3999939L28.600033,6C28.900021,6.2999878,28.900021,6.7999878,28.600033,7.1000061L25.700007,10C26.400019,11.100006,26.900019,12.299988,27.200007,13.5L31.20001,13.5C31.600037,13.5,31.999998,13.799988,31.999998,14.299988L31.999998,17.899994C31.999998,18.299988,31.700012,18.699982,31.20001,18.699982L27.200007,18.699982C26.900019,20,26.400019,21.100006,25.700007,22.199982L28.600033,25.100006C28.700009,25.199982 28.799984,25.399994 28.799984,25.600006 28.799984,25.799988 28.700009,26 28.600033,26.100006L26.000025,28.600006C25.900019,28.699982 25.700007,28.799988 25.500025,28.799988 25.300011,28.799988 25.099999,28.699982 25.000023,28.600006L22.099997,25.699982C21.000019,26.399994,19.800007,26.899994,18.599993,27.199982L18.599993,31.199982C18.599993,31.600006,18.300005,32,17.800005,32L14.199995,32C13.8,32,13.400006,31.699982,13.400006,31.199982L13.400006,27.199982C12.099987,26.899994,11.000011,26.399994,9.9000027,25.699982L7.0000064,28.600006C6.9000003,28.699982 6.6999881,28.799988 6.5000059,28.799988 6.2999937,28.799988 6.099981,28.699982 6.0000054,28.600006L3.3999967,26C3.0999784,25.699982,3.0999784,25.199982,3.3999967,24.899994L6.2999937,22C5.5999805,20.899994,5.0999801,19.699982,4.7999923,18.5L0.79998828,18.5C0.39999409,18.5,-1.933513E-07,18.199982,0,17.699982L0,14.100006C-1.933513E-07,13.699982,0.2999879,13.299988,0.79998828,13.299988L4.7999923,13.299988C5.0999801,12,5.5999805,10.899994,6.2999937,9.7999878L3.3999967,7C3.2999908,6.8999939 3.1999845,6.6999817 3.1999845,6.5 3.1999845,6.2999878 3.2999908,6.1000061 3.3999967,6L6.0000054,3.3999939C6.099981,3.2999878 6.2999937,3.1999817 6.5000059,3.1999817 6.6999881,3.1999817 6.9000003,3.2999878 7.0000064,3.3999939L9.9000027,6.2999878C11.000011,5.6000061,12.199993,5.1000061,13.400006,4.7999878L13.400006,0.79998779C13.400006,0.29998779,13.8,0,14.199995,0z"
+                                                Fill="{StaticResource Chem4WordBlue}"
+                                                RenderTransformOrigin="0.5,0.5"
+                                                Stretch="Uniform">
+                                                <Path.RenderTransform>
+                                                    <TransformGroup>
+                                                        <TransformGroup.Children>
+                                                            <RotateTransform Angle="0" />
+                                                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                                                        </TransformGroup.Children>
+                                                    </TransformGroup>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                        </Grid>
+                                    </Viewbox>
                                 </Button>
                                 <ComboBox
                                     x:Name="SelectEditorPlugIn"
@@ -87,15 +125,32 @@
                             <DockPanel Dock="Top">
                                 <Button
                                     x:Name="SelectedRendererSettings"
-                                    Width="34"
-                                    Height="34"
-                                    Margin="5"
+                                    Width="28"
+                                    Height="28"
                                     Click="SelectedRendererSettings_OnClick"
-                                    DockPanel.Dock="Right">
-                                    <Image
-                                        x:Name="RendererSettingsButtonImage"
-                                        Margin="1"
-                                        Source="/Resources/Button Images/Preferences.png" />
+                                    DockPanel.Dock="Right"
+                                    Style="{StaticResource Acme.Control.Button.DialogButton}">
+                                    <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+                                        <Grid>
+                                            <Path
+                                                Width="26"
+                                                Height="26"
+                                                Margin="0,0,0,0"
+                                                Data="M16.000015,9.6000061C12.500012,9.6000061 9.5999844,12.5 9.5999844,16 9.5999844,19.5 12.500012,22.399994 16.000015,22.399994 19.500019,22.399994 22.400015,19.5 22.400015,16 22.400015,12.5 19.500019,9.6000061 16.000015,9.6000061z M14.199995,0L17.800005,0C18.199999,0,18.599993,0.29998779,18.599993,0.79998779L18.599993,4.7999878C19.900013,5.1000061,21.000019,5.6000061,22.099997,6.2999878L25.000023,3.3999939C25.099999,3.2999878 25.300011,3.1999817 25.500025,3.1999817 25.700007,3.1999817 25.900019,3.2999878 26.000025,3.3999939L28.600033,6C28.900021,6.2999878,28.900021,6.7999878,28.600033,7.1000061L25.700007,10C26.400019,11.100006,26.900019,12.299988,27.200007,13.5L31.20001,13.5C31.600037,13.5,31.999998,13.799988,31.999998,14.299988L31.999998,17.899994C31.999998,18.299988,31.700012,18.699982,31.20001,18.699982L27.200007,18.699982C26.900019,20,26.400019,21.100006,25.700007,22.199982L28.600033,25.100006C28.700009,25.199982 28.799984,25.399994 28.799984,25.600006 28.799984,25.799988 28.700009,26 28.600033,26.100006L26.000025,28.600006C25.900019,28.699982 25.700007,28.799988 25.500025,28.799988 25.300011,28.799988 25.099999,28.699982 25.000023,28.600006L22.099997,25.699982C21.000019,26.399994,19.800007,26.899994,18.599993,27.199982L18.599993,31.199982C18.599993,31.600006,18.300005,32,17.800005,32L14.199995,32C13.8,32,13.400006,31.699982,13.400006,31.199982L13.400006,27.199982C12.099987,26.899994,11.000011,26.399994,9.9000027,25.699982L7.0000064,28.600006C6.9000003,28.699982 6.6999881,28.799988 6.5000059,28.799988 6.2999937,28.799988 6.099981,28.699982 6.0000054,28.600006L3.3999967,26C3.0999784,25.699982,3.0999784,25.199982,3.3999967,24.899994L6.2999937,22C5.5999805,20.899994,5.0999801,19.699982,4.7999923,18.5L0.79998828,18.5C0.39999409,18.5,-1.933513E-07,18.199982,0,17.699982L0,14.100006C-1.933513E-07,13.699982,0.2999879,13.299988,0.79998828,13.299988L4.7999923,13.299988C5.0999801,12,5.5999805,10.899994,6.2999937,9.7999878L3.3999967,7C3.2999908,6.8999939 3.1999845,6.6999817 3.1999845,6.5 3.1999845,6.2999878 3.2999908,6.1000061 3.3999967,6L6.0000054,3.3999939C6.099981,3.2999878 6.2999937,3.1999817 6.5000059,3.1999817 6.6999881,3.1999817 6.9000003,3.2999878 7.0000064,3.3999939L9.9000027,6.2999878C11.000011,5.6000061,12.199993,5.1000061,13.400006,4.7999878L13.400006,0.79998779C13.400006,0.29998779,13.8,0,14.199995,0z"
+                                                Fill="{StaticResource Chem4WordBlue}"
+                                                RenderTransformOrigin="0.5,0.5"
+                                                Stretch="Uniform">
+                                                <Path.RenderTransform>
+                                                    <TransformGroup>
+                                                        <TransformGroup.Children>
+                                                            <RotateTransform Angle="0" />
+                                                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                                                        </TransformGroup.Children>
+                                                    </TransformGroup>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                        </Grid>
+                                    </Viewbox>
                                 </Button>
                                 <ComboBox
                                     x:Name="SelectRendererPlugIn"
@@ -119,15 +174,32 @@
                             <DockPanel Dock="Top">
                                 <Button
                                     x:Name="SelectedSearcherSettings"
-                                    Width="34"
-                                    Height="34"
-                                    Margin="5"
+                                    Width="28"
+                                    Height="28"
                                     Click="SelectedSearcherSettings_OnClick"
-                                    DockPanel.Dock="Right">
-                                    <Image
-                                        x:Name="SearcherSettingsButtonImage"
-                                        Margin="1"
-                                        Source="/Resources/Button Images/Preferences.png" />
+                                    DockPanel.Dock="Right"
+                                    Style="{StaticResource Acme.Control.Button.DialogButton}">
+                                    <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+                                        <Grid>
+                                            <Path
+                                                Width="26"
+                                                Height="26"
+                                                Margin="0,0,0,0"
+                                                Data="M16.000015,9.6000061C12.500012,9.6000061 9.5999844,12.5 9.5999844,16 9.5999844,19.5 12.500012,22.399994 16.000015,22.399994 19.500019,22.399994 22.400015,19.5 22.400015,16 22.400015,12.5 19.500019,9.6000061 16.000015,9.6000061z M14.199995,0L17.800005,0C18.199999,0,18.599993,0.29998779,18.599993,0.79998779L18.599993,4.7999878C19.900013,5.1000061,21.000019,5.6000061,22.099997,6.2999878L25.000023,3.3999939C25.099999,3.2999878 25.300011,3.1999817 25.500025,3.1999817 25.700007,3.1999817 25.900019,3.2999878 26.000025,3.3999939L28.600033,6C28.900021,6.2999878,28.900021,6.7999878,28.600033,7.1000061L25.700007,10C26.400019,11.100006,26.900019,12.299988,27.200007,13.5L31.20001,13.5C31.600037,13.5,31.999998,13.799988,31.999998,14.299988L31.999998,17.899994C31.999998,18.299988,31.700012,18.699982,31.20001,18.699982L27.200007,18.699982C26.900019,20,26.400019,21.100006,25.700007,22.199982L28.600033,25.100006C28.700009,25.199982 28.799984,25.399994 28.799984,25.600006 28.799984,25.799988 28.700009,26 28.600033,26.100006L26.000025,28.600006C25.900019,28.699982 25.700007,28.799988 25.500025,28.799988 25.300011,28.799988 25.099999,28.699982 25.000023,28.600006L22.099997,25.699982C21.000019,26.399994,19.800007,26.899994,18.599993,27.199982L18.599993,31.199982C18.599993,31.600006,18.300005,32,17.800005,32L14.199995,32C13.8,32,13.400006,31.699982,13.400006,31.199982L13.400006,27.199982C12.099987,26.899994,11.000011,26.399994,9.9000027,25.699982L7.0000064,28.600006C6.9000003,28.699982 6.6999881,28.799988 6.5000059,28.799988 6.2999937,28.799988 6.099981,28.699982 6.0000054,28.600006L3.3999967,26C3.0999784,25.699982,3.0999784,25.199982,3.3999967,24.899994L6.2999937,22C5.5999805,20.899994,5.0999801,19.699982,4.7999923,18.5L0.79998828,18.5C0.39999409,18.5,-1.933513E-07,18.199982,0,17.699982L0,14.100006C-1.933513E-07,13.699982,0.2999879,13.299988,0.79998828,13.299988L4.7999923,13.299988C5.0999801,12,5.5999805,10.899994,6.2999937,9.7999878L3.3999967,7C3.2999908,6.8999939 3.1999845,6.6999817 3.1999845,6.5 3.1999845,6.2999878 3.2999908,6.1000061 3.3999967,6L6.0000054,3.3999939C6.099981,3.2999878 6.2999937,3.1999817 6.5000059,3.1999817 6.6999881,3.1999817 6.9000003,3.2999878 7.0000064,3.3999939L9.9000027,6.2999878C11.000011,5.6000061,12.199993,5.1000061,13.400006,4.7999878L13.400006,0.79998779C13.400006,0.29998779,13.8,0,14.199995,0z"
+                                                Fill="{StaticResource Chem4WordBlue}"
+                                                RenderTransformOrigin="0.5,0.5"
+                                                Stretch="Uniform">
+                                                <Path.RenderTransform>
+                                                    <TransformGroup>
+                                                        <TransformGroup.Children>
+                                                            <RotateTransform Angle="0" />
+                                                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                                                        </TransformGroup.Children>
+                                                    </TransformGroup>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                        </Grid>
+                                    </Viewbox>
                                 </Button>
                                 <ComboBox
                                     x:Name="SelectSearcherPlugIn"
@@ -304,10 +376,11 @@
                             VerticalContentAlignment="Center"
                             Click="TelemetryEnabled_OnClick"
                             Content="Telemetry Enabled" />
-                        <TextBlock
-                            Margin="32,10,0,0"
-                            Text="When you check this box, you are helping to improve the quality, reliability, and performance of this software. Chem4Word automatically collects information from your computer, including error messages and hardware and software information. Any information that is sent to us is anonymous. This information isn't used in advertising or sales in any way."
-                            TextWrapping="Wrap" />
+                        <TextBlock Margin="32,10,0,0" TextWrapping="Wrap">
+                            <Run>When you check this box, you are helping to improve the quality, reliability, and performance of this software. Chem4Word automatically collects information from your computer, including error messages and hardware and software information. Any information that is sent to us is anonymous. This information isn't used in advertising or sales in any way.</Run>
+                            <LineBreak />
+                            <Run FontStyle="Italic">We do not collect any chemistry information.</Run>
+                        </TextBlock>
                         <TextBlock
                             x:Name="BetaInformation"
                             Margin="32,10,0,0"
@@ -320,8 +393,8 @@
             <TabItem Name="Libraries" Header="Libraries">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -344,17 +417,14 @@
                     <Button
                         Grid.Row="0"
                         Grid.Column="1"
-                        Style="{DynamicResource LibraryButtonStyle}"
-                        Click="OnClick_BrowseLibraryLocation">
+                        Width="Auto"
+                        Height="Auto"
+                        Margin="5"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClick_BrowseLibraryLocation"
+                        Style="{StaticResource Acme.Control.Button.DialogButton}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <Path
-                                Width="32"
-                                Height="32"
-                                Margin="5"
-                                VerticalAlignment="Center"
-                                Data="M7.5160018,7.0210069L32,7.0210069 26.112001,21.280001 2.2460016,21.280001z M0,0L9.2969996,0 11.158,4.0930236 26.091997,4.0930236 26.087999,5.3469933 6.3500015,5.3469933 0.46300124,21.280001 0,21.280001z"
-                                Fill="Black"
-                                Stretch="Uniform" />
+                            <StaticResource ResourceKey="BrowseFolder" />
                             <TextBlock VerticalAlignment="Center">Browse ...</TextBlock>
                         </StackPanel>
                     </Button>
@@ -425,114 +495,135 @@
                         Orientation="Vertical">
                         <Button
                             Name="AddButton"
-                            Style="{DynamicResource LibraryButtonStyle}"
-                            Click="OnClick_AddExistingLibrary">
+                            Width="Auto"
+                            Height="Auto"
+                            Margin="5"
+                            HorizontalContentAlignment="Left"
+                            Click="OnClick_AddExistingLibrary"
+                            Style="{StaticResource Acme.Control.Button.DialogButton}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <Path
-                                    Width="32"
-                                    Height="32"
+                                    Width="28"
+                                    Height="28"
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     Data="M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128z"
-                                    Fill="Black"
+                                    Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
                                 <TextBlock VerticalAlignment="Center">Add Existing Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
-                            Style="{DynamicResource LibraryButtonStyle}"
-                            Click="OnClick_CreateNewLibrary">
+                            Width="Auto"
+                            Height="Auto"
+                            Margin="5"
+                            HorizontalContentAlignment="Left"
+                            Click="OnClick_CreateNewLibrary"
+                            Style="{StaticResource Acme.Control.Button.DialogButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Path
-                                    Width="32"
-                                    Height="32"
+                                    Width="28"
+                                    Height="28"
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     Data="M15.046875,18.5860443115234L21.84375,18.5860443115234 21.50390625,23.8126087188721 20.765625,30.2110443115234 25.9453105926514,27.8672981262207 31.828125,25.7110443115234 33.984375,32.3672943115234 28.0898418426514,34.0079231262207 22.3125,34.9922943115234 23.8886699676514,36.4776496887207 25.7578105926514,38.4493293762207 27.9199199676514,40.9073371887207 30.375,43.8516693115234 24.75,47.8360443115234 21.78515625,43.4649505615234 18.328125,37.7579193115234 16.646484375,40.8663177490234 15.0703125,43.5821380615234 13.599609375,45.9053802490234 12.234375,47.8360443115234 6.703125,43.8516693115234 9.22851467132568,40.7842903137207 11.3671865463257,38.2852668762207 13.1191396713257,36.3546028137207 14.484375,34.9922943115234 3,32.3672943115234 5.15625,25.7110443115234 8.62792873382568,26.9796009063721 11.5898427963257,28.1602668762207 14.0419912338257,29.2530384063721 15.984375,30.2579193115234 15.5917959213257,26.3467884063721 15.3046865463257,23.0977649688721 15.1230459213257,20.5108489990234 15.046875,18.5860443115234z"
-                                    Fill="Black"
+                                    Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
                                 <TextBlock VerticalAlignment="Center">Create New Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
-                            Style="{DynamicResource LibraryButtonStyle}"
+                            Width="Auto"
+                            Height="Auto"
+                            Margin="5"
+                            HorizontalContentAlignment="Left"
                             Click="OnClick_DownloadLibrary"
-                            IsEnabled="False">
+                            IsEnabled="False"
+                            Style="{StaticResource Acme.Control.Button.DialogButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Path
-                                    Width="32"
-                                    Height="32"
+                                    Width="28"
+                                    Height="28"
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     Data="M12.360001,11.130005L15.194,11.130005 15.194,21.208008 15.455002,20.945984 20.402,16 20.402,20.290039 16.042,24.64801 16.005997,24.684998 16.024002,24.705017 13.879997,26.848999 11.734001,24.705017 7.3759995,20.346008 7.3759995,16.05603 12.320999,21.002991 12.360001,21.041992z M11.077995,2.697998L10.896996,8.5839844C10.896996,8.5839844,10.661995,12.476013,6.3730011,12.005981L2.697998,11.906006 2.697998,28.627014C2.697998,28.999023,3.0009995,29.301025,3.3730011,29.301025L22.264999,29.301025C22.636002,29.301025,22.939995,28.999023,22.939995,28.627014L22.939995,3.3729858C22.939995,3.0020142,22.636002,2.697998,22.264999,2.697998z M10.902,0L22.264999,0C24.128998,0,25.639999,1.5109863,25.639999,3.3729858L25.639999,28.627014C25.639999,30.48999,24.128998,32,22.264999,32L3.3730011,32C1.5100021,32,0,30.48999,0,28.627014L0,11.502014 1.3359985,10.093018 1.336998,10.054993 8.3379974,2.697998 8.3190002,2.697998 6.4469986,4.6730347 8.4079971,2.5960083 8.435997,2.5960083 8.4980011,2.5300293 8.5039978,2.5300293z"
-                                    Fill="Gray"
+                                    Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
                                 <TextBlock VerticalAlignment="Center">Download Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
                             Name="RemoveLibrary"
-                            Style="{DynamicResource LibraryButtonStyle}"
-                            Click="OnClick_RemoveLibrary">
+                            Width="Auto"
+                            Height="Auto"
+                            Margin="5"
+                            HorizontalContentAlignment="Left"
+                            Click="OnClick_RemoveLibrary"
+                            Style="{StaticResource Acme.Control.Button.DialogButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Path
                                     Name="RemoveLibraryIcon"
-                                    Width="32"
-                                    Height="32"
+                                    Width="28"
+                                    Height="28"
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     Data="M16,8.0000272L18,8.0000272 18,27.000028 16,27.000028z M11,8.0000272L13,8.0000272 13,27.000028 11,27.000028z M6.0000005,8.0000272L8.0000005,8.0000272 8.0000005,27.000028 6.0000005,27.000028z M2.9990063,5.0000274L2.9990063,30.000026 20.999983,30.000026 20.999006,5.0000274z M13.771989,1.9959999L10.198989,2.0000001C10.158989,2.025,9.9989892,2.241,9.9989892,2.6000001L9.9989892,3.0000258 13.998989,3.0000258 13.998989,2.6000001C13.998989,2.241,13.838988,2.025,13.771989,1.9959999z M10.198989,0L13.798988,0C15.031989,0,15.998989,1.142,15.998989,2.6000001L15.998989,3.0000258 22.999006,3.0000258 24,3.0000272 24,5.0000274 22.999006,5.0000274 22.999006,30.000026C22.999006,31.102992,22.102034,32.000026,20.999006,32.000026L2.9990063,32.000026C1.895979,32.000026,0.99900633,31.102992,0.9990066,30.000026L0.9990066,5.0000274 0,5.0000274 0,3.0000272 0.9990066,3.0000272 7.9989887,3.0000258 7.9989887,2.6000001C7.9989887,1.142,8.9659887,0,10.198989,0z"
-                                    Fill="Red"
+                                    Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
+
                                 <TextBlock VerticalAlignment="Center">Remove Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
                             Name="EditLibrary"
-                            Style="{DynamicResource LibraryButtonStyle}"
-                            Click="OnClick_EditLibrary">
+                            Width="Auto"
+                            Height="Auto"
+                            Margin="5"
+                            HorizontalContentAlignment="Left"
+                            Click="OnClick_EditLibrary"
+                            Style="{StaticResource Acme.Control.Button.DialogButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Path
                                     Name="EditLibraryIcon"
-                                    Width="32"
-                                    Height="32"
+                                    Width="28"
+                                    Height="28"
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     Data="M1.0799898,27.68001L29.161071,27.68001C29.755067,27.68001,30.240083,28.165009,30.240083,28.760008L30.240083,30.92C30.240083,31.515999,29.755067,31.999998,29.161071,31.999998L1.0799898,31.999998C0.48397969,31.999998,-8.1828603E-08,31.515999,0,30.92L0,28.760008C-8.1828603E-08,28.165009,0.48397969,27.68001,1.0799898,27.68001z M8.6480069,19.001028C8.9100309,18.992033,9.1750159,19.093031,9.3820176,19.308028L12.680032,22.745024C13.093028,23.177021,13.127024,23.905016,12.754037,24.367022L12.505013,24.677017C12.136024,25.141014,11.344029,25.521017,10.750033,25.521017L3.3190105,25.521017C2.725991,25.521017,2.5730059,25.165016,2.9809964,24.735016L6.2930188,21.215029C6.7000022,20.780024,7.3490219,20.054028,7.7310114,19.600027L7.9380126,19.354033C8.1290231,19.129027,8.3870196,19.010031,8.6480069,19.001028z M28.421077,7.5224872E-05C29.274078,0.0060756106 30.123079,0.3330745 30.775089,0.98607288 32.005073,2.2110723 32.081092,4.1410678 31.027074,5.4710629L31.057073,5.4970634 30.775089,5.7800601 15.027024,21.529023 10.23102,16.733036 25.975055,0.9900745 26.261068,0.70407568 26.288076,0.73007284C26.913078,0.23907676,27.668085,-0.0049221356,28.421077,7.5224872E-05z"
-                                    Fill="Black"
+                                    Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
-                                <TextBlock VerticalAlignment="Center">Library Editor</TextBlock>
+                                <TextBlock VerticalAlignment="Center">Edit Library</TextBlock>
                             </StackPanel>
                         </Button>
                     </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Name="Maintenance" Header="Maintenance">
+                <TabItem.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Height" Value="45" />
+                        <Setter Property="Width" Value="120" />
+                    </Style>
+                </TabItem.Resources>
                 <Grid Margin="5">
                     <StackPanel>
-                        <Label Content="You should back up the contents of these folders regularily." />
-                        <GroupBox
-                            BorderBrush="{StaticResource Chem4WordBlue}"
-                            BorderThickness="2"
-                            Header="Settings">
+                        <Label Content="You should back up the contents of these folders regularly." />
+                        <GroupBox Header="Settings">
                             <DockPanel>
                                 <Button
                                     x:Name="SettingsFolder"
-                                    Width="120"
-                                    Height="50"
-                                    Margin="5"
+                                    Width="Auto"
+                                    Height="Auto"
                                     VerticalAlignment="Center"
                                     HorizontalContentAlignment="Left"
                                     Click="OnClick_SettingsFolder"
-                                    DockPanel.Dock="Left">
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource Acme.Control.Button.DialogButton}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Image
-                                            x:Name="SettingsFolderButtonImage"
-                                            Width="32"
-                                            Height="32"
-                                            Margin="5"
-                                            Source="/Resources/Button Images/Office-2016/File-Open.png" />
-                                        <Label VerticalContentAlignment="Center" Content="Open" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <StaticResource ResourceKey="BrowseFolder" />
+                                            <Label VerticalContentAlignment="Center" Content="Browse" />
+                                        </StackPanel>
                                     </StackPanel>
                                 </Button>
                                 <TextBlock
@@ -542,28 +633,20 @@
                                     TextWrapping="Wrap" />
                             </DockPanel>
                         </GroupBox>
-                        <GroupBox
-                            BorderBrush="{StaticResource Chem4WordBlue}"
-                            BorderThickness="2"
-                            Header="Library">
+                        <GroupBox Header="Library">
                             <DockPanel>
                                 <Button
                                     x:Name="LibraryFolder"
-                                    Width="120"
-                                    Height="50"
-                                    Margin="5"
+                                    Width="Auto"
+                                    Height="Auto"
                                     VerticalAlignment="Center"
                                     HorizontalContentAlignment="Left"
                                     Click="OnClick_LibraryFolder"
-                                    DockPanel.Dock="Left">
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource Acme.Control.Button.DialogButton}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Image
-                                            x:Name="LibraryFolderButtonImage"
-                                            Width="32"
-                                            Height="32"
-                                            Margin="5"
-                                            Source="/Resources/Button Images/Office-2016/File-Open.png" />
-                                        <Label VerticalContentAlignment="Center" Content="Open" />
+                                        <StaticResource ResourceKey="BrowseFolder" />
+                                        <Label VerticalContentAlignment="Center" Content="Browse" />
                                     </StackPanel>
                                 </Button>
                                 <TextBlock
@@ -573,28 +656,22 @@
                                     TextWrapping="Wrap" />
                             </DockPanel>
                         </GroupBox>
-                        <GroupBox
-                            BorderBrush="{StaticResource Chem4WordBlue}"
-                            BorderThickness="2"
-                            Header="Plug-Ins">
+                        <GroupBox Header="Plug-Ins">
                             <DockPanel>
                                 <Button
                                     x:Name="PlugInsFolder"
-                                    Width="120"
-                                    Height="50"
-                                    Margin="5"
+                                    Width="Auto"
+                                    Height="Auto"
                                     VerticalAlignment="Center"
                                     HorizontalContentAlignment="Left"
                                     Click="OnClick_PlugInsFolder"
-                                    DockPanel.Dock="Left">
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource Acme.Control.Button.DialogButton}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Image
-                                            x:Name="PlugInsFolderButtonImage"
-                                            Width="32"
-                                            Height="32"
-                                            Margin="5"
-                                            Source="/Resources/Button Images/Office-2016/File-Open.png" />
-                                        <Label VerticalContentAlignment="Center" Content="Open" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <StaticResource ResourceKey="BrowseFolder" />
+                                            <Label VerticalContentAlignment="Center" Content="Browse" />
+                                        </StackPanel>
                                     </StackPanel>
                                 </Button>
                                 <TextBlock
@@ -608,35 +685,51 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <StackPanel
+        <Grid
             Grid.Row="1"
-            Margin="10,0,10,0"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
+            Margin="10,10,10,0"
+            HorizontalAlignment="Right">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <Button
                 x:Name="Defaults"
                 Width="80"
                 Height="32"
-                Margin="5,5,30,5"
+                Margin="0 0 40 0"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
                 Click="DefaultsButton_OnClick"
-                Content="Defaults" />
+                Content="Defaults"
+                Style="{StaticResource Acme.Control.Button.DialogButton}" />
             <Button
                 x:Name="Ok"
+                Grid.Column="1"
                 Width="80"
                 Height="32"
-                Margin="5"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
                 Click="OkButton_Click"
-                Content="OK" />
+                Content="OK"
+                Style="{StaticResource Acme.Control.Button.DialogButton}" />
             <Button
                 x:Name="Cancel"
+                Grid.Column="2"
                 Width="80"
                 Height="32"
-                Margin="5"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
                 Click="CancelButton_OnClick"
-                Content="Cancel" />
-        </StackPanel>
+                Content="Cancel"
+                Style="{StaticResource Acme.Control.Button.DialogButton}" />
+        </Grid>
     </Grid>
 </UserControl>

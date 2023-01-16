@@ -87,10 +87,11 @@
             // Save
             // 
             this.Save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Save.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.Save.Location = new System.Drawing.Point(672, 18);
             this.Save.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.Save.Name = "Save";
-            this.Save.Size = new System.Drawing.Size(75, 25);
+            this.Save.Size = new System.Drawing.Size(75, 27);
             this.Save.TabIndex = 1;
             this.Save.Text = "OK";
             this.Save.UseVisualStyleBackColor = true;
@@ -99,10 +100,11 @@
             // Cancel
             // 
             this.Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Cancel.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.Cancel.Location = new System.Drawing.Point(753, 18);
             this.Cancel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.Cancel.Name = "Cancel";
-            this.Cancel.Size = new System.Drawing.Size(75, 25);
+            this.Cancel.Size = new System.Drawing.Size(75, 27);
             this.Cancel.TabIndex = 0;
             this.Cancel.Text = "Cancel";
             this.Cancel.UseVisualStyleBackColor = true;

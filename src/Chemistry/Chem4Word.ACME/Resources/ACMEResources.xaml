@@ -12,7 +12,9 @@
     </ResourceDictionary.MergedDictionaries>
 
     <!--  standard livery for Chem4Word  -->
-    <SolidColorBrush x:Key="Chem4WordBrush" Color="#2A579A" />
+    <SolidColorBrush x:Key="Chem4WordBlue" Color="#2A579A" />
+    <SolidColorBrush x:Key="Chem4WordRed" Color="#C92626" />
+    <SolidColorBrush x:Key="Chem4WordGreen" Color="#1A6D1A" />
     <SolidColorBrush x:Key="PinkLace" Color="#FFDDF4" />
     <SolidColorBrush x:Key="ACMEToolbarBackground" Color="#F1F1F1" />
     <SolidColorBrush
@@ -32,6 +34,8 @@
     <Style TargetType="{x:Type acme:AtomOption}">
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="FontWeight" Value="DemiBold" />
     </Style>
 
     <Style x:Key="WedgeBondStyle" TargetType="Path">
@@ -83,7 +87,7 @@
 
     <Style x:Key="RingButtonGraphic" TargetType="{x:Type Path}">
         <Setter Property="Height" Value="24" />
-        <Setter Property="Stroke" Value="{StaticResource ResourceKey=Chem4WordBrush}" />
+        <Setter Property="Stroke" Value="{StaticResource ResourceKey=Chem4WordBlue}" />
         <Setter Property="Width" Value="24" />
     </Style>
     <!--  used in the main ACME toolbar  -->
@@ -408,59 +412,7 @@
         </Setter>
     </Style>
 
-    <!--  control styles  -->
-    <Style TargetType="ToolBar">
 
-        <Setter Property="Background" Value="{StaticResource ACMEToolbarBackground}" />
-    </Style>
-    <Style TargetType="ToolBarTray">
-
-        <Setter Property="Background" Value="{StaticResource ACMEToolbarBackground}" />
-    </Style>
-    <Style TargetType="ToolBarPanel">
-        <Setter Property="Background" Value="{StaticResource ACMEToolbarBackground}" />
-    </Style>
-    <Style x:Key="StandardCombo" TargetType="{x:Type ComboBox}">
-        <Setter Property="Background" Value="{x:Static SystemColors.WindowBrush}" />
-        <Setter Property="FontWeight" Value="DemiBold" />
-        <Setter Property="FontFamily" Value="Arial" />
-        <Setter Property="FontSize" Value="14" />
-    </Style>
-    <Style x:Key="LabelTextBlock" TargetType="{x:Type TextBlock}">
-        <Setter Property="FontSize" Value="16" />
-        <Setter Property="FontFamily" Value="Arial" />
-        <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Margin" Value="5" />
-    </Style>
-    <Style
-        x:Key="SmallLabelTextBlock"
-        BasedOn="{StaticResource LabelTextBlock}"
-        TargetType="{x:Type TextBlock}">
-        <Setter Property="FontSize" Value="14" />
-    </Style>
-    <Style
-        x:Key="RadioButtonTextBlock"
-        BasedOn="{StaticResource LabelTextBlock}"
-        TargetType="{x:Type TextBlock}">
-        <Setter Property="FontSize" Value="14" />
-    </Style>
-    <Style x:Key="StandardRadioButton" TargetType="{x:Type RadioButton}">
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-    </Style>
-    <Style x:Key="StandardEntryTextBox" TargetType="{x:Type TextBox}">
-        <Setter Property="FontFamily" Value="Arial" />
-        <Setter Property="FontWeight" Value="DemiBold" />
-        <Setter Property="FontSize" Value="14" />
-    </Style>
-    <Style TargetType="{x:Type Button}">
-        <Setter Property="FontFamily" Value="Arial" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Margin" Value="5" />
-        <Setter Property="Width" Value="75" />
-        <Setter Property="Height" Value="25" />
-    </Style>
     <!--  ACME toolbar 'icons'  -->
     <DrawingImage x:Key="PencilIcon">
         <DrawingImage.Drawing>

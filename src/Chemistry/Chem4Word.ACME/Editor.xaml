@@ -546,7 +546,7 @@
                                                 Data="F1 M 28.5,17.4167L 53.8333,44.3333L 43.5417,44.3333L 49.875,55.4167L 43.5417,58.5833L 37.2083,47.5L 28.5,55.4167L 28.5,17.4167 Z"
                                                 Fill="{Binding ElementName=SelectorToolbar, Path=Background}"
                                                 Stretch="Fill"
-                                                Stroke="{StaticResource Chem4WordBrush}"
+                                                Stroke="{StaticResource Chem4WordBlue}"
                                                 StrokeThickness="1" />
                                         </Viewbox>
                                     </Grid>
@@ -591,7 +591,7 @@
                                                 Data="F1 M 28.5,17.4167L 53.8333,44.3333L 43.5417,44.3333L 49.875,55.4167L 43.5417,58.5833L 37.2083,47.5L 28.5,55.4167L 28.5,17.4167 Z"
                                                 Fill="{Binding ElementName=SelectorToolbar, Path=Background}"
                                                 Stretch="Fill"
-                                                Stroke="{StaticResource Chem4WordBrush}"
+                                                Stroke="{StaticResource Chem4WordBlue}"
                                                 StrokeThickness="1" />
                                         </Viewbox>
                                     </Grid>
@@ -959,7 +959,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontFamily="Arial"
-                            Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsEnabled, Converter={StaticResource EnabledConverter}, ConverterParameter={StaticResource ResourceKey=Chem4WordBrush}}">
+                            Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsEnabled, Converter={StaticResource EnabledConverter}, ConverterParameter={StaticResource ResourceKey=Chem4WordBlue}}">
                             <Run Foreground="Black">+</Run><Run Foreground="{StaticResource HBrush}">H</Run>
                         </TextBlock>
                     </Viewbox>
@@ -977,7 +977,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontFamily="Arial"
-                            Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsEnabled, Converter={StaticResource EnabledConverter}, ConverterParameter={StaticResource ResourceKey=Chem4WordBrush}}">
+                            Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsEnabled, Converter={StaticResource EnabledConverter}, ConverterParameter={StaticResource ResourceKey=Chem4WordBlue}}">
                             <Run Foreground="Black">-</Run><Run Foreground="{StaticResource HBrush}">H</Run>
                         </TextBlock>
                     </Viewbox>
@@ -994,7 +994,7 @@
                             Height="24"
                             Margin="0,0,0,0"
                             Data="M9.8261027,14.856148C10.22809,14.856148 10.629084,14.856148 11.031085,14.957131 10.22809,17.265165 8.9231171,18.872173 8.4211259,19.474169L4.5061779,23.188221C3.8032012,23.790216,3.8032012,24.89423,4.4061885,25.497232L4.9071726,25.99922C5.5101752,26.701252,6.6141467,26.701252,7.3171391,26.099226L11.432081,22.284191C12.436063,21.481205 14.243026,20.67819 15.949009,19.875173 16.350996,21.682195 15.849004,23.690208 14.343031,25.09522L10.22809,28.910255C7.9191346,31.018276,4.3051924,31.018276,2.0972187,28.709265L1.5952277,28.207247C-0.61273084,25.898235,-0.51274154,22.385204,1.7962284,20.17617L5.9111547,16.262134C6.9151525,15.358136,8.4211259,14.856148,9.8261027,14.856148z M19.964938,10.239103C20.265944,10.239103 20.666937,10.33911 20.867924,10.640108 21.369915,11.142095 21.369915,12.046125 20.867924,12.548114L12.737053,20.076195C12.235062,20.578182 11.332077,20.578182 10.830085,20.076195 10.328094,19.574177 10.328094,18.671182 10.830085,18.169164L18.960955,10.540101C19.261961,10.33911,19.662957,10.239103,19.964938,10.239103z M25.886858,0C27.392832,2.1338451E-07,28.797808,0.60202569,29.901795,1.7060088L30.403786,2.2080271C32.611746,4.5170376,32.511755,8.0300691,30.202786,10.239103L26.087843,14.053132C24.681876,15.358136 22.674902,15.860154 20.867924,15.45915 21.168929,14.354129 21.67092,12.949118 23.276898,11.042088L27.392832,7.2270834C28.094817,6.6250579,28.094817,5.5210445,27.492821,4.9190495L26.99083,4.5170376C26.38885,3.8140287,25.284863,3.8140287,24.581871,4.4170311L20.566933,8.1310833C18.75997,9.3350732 17.253981,9.9381053 15.949009,10.33911 15.648003,8.5320871 16.249999,6.725065 17.655983,5.3200538L21.770909,1.4050113C22.975893,0.50201875,24.380869,2.1338451E-07,25.886858,0z"
-                            Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsEnabled, Converter={StaticResource EnabledConverter}, ConverterParameter={StaticResource ResourceKey=Chem4WordBrush}}"
+                            Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsEnabled, Converter={StaticResource EnabledConverter}, ConverterParameter={StaticResource ResourceKey=Chem4WordBlue}}"
                             Stretch="Uniform" />
                     </Viewbox>
                 </Button>
@@ -1160,7 +1160,7 @@
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="1"
-                                FontFamily="Arial"
+                                FontWeight="DemiBold"
                                 Style="{StaticResource MainTextStyle}">
                                 H<Run Style="{StaticResource SubscriptStyle}">2</Run>
                                 O</TextBlock>
@@ -1318,7 +1318,7 @@
                         <Grid>
                             <Path
                                 Data="M0,0 L2,0 2,32 0,32Z M8,2 L8,8 18,8 18,2Z M6,0 L20,0 20,10 6,10Z M8,16 L8,22 26,22 26,16Z M6,14 L28,14 28,24 6,24Z"
-                                Fill="{StaticResource Chem4WordBrush}"
+                                Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Uniform" />
                             <graphics:StraightArrow
                                 ArrowHeadClosed="True"
@@ -1344,7 +1344,7 @@
                             </Grid.LayoutTransform>
                             <Path
                                 Data="M20,6 L20,16 26,16 26,6Z M6,2 L6,20 12,20 12,2Z M4,0 L14,0 14,10 18,10 18,4 28,4 28,10 32,10 32,12 28,12 28,18 18,18 18,12 14,12 14,22 4,22 4,12 0,12 0,10 4,10Z"
-                                Fill="{StaticResource Chem4WordBrush}"
+                                Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Uniform" />
                         </Grid>
                     </Viewbox>
@@ -1358,7 +1358,7 @@
                         <Grid>
                             <Path
                                 Data="M26,0 L28,0 28,32 26,32Z M10,2 L10,8 20,8 20,2Z M8,0 L22,0 22,10 8,10Z M2,16 L2,22 20,22 20,16Z M0,14 L22,14 22,24 0,24Z"
-                                Fill="{StaticResource Chem4WordBrush}"
+                                Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Uniform" />
                             <graphics:StraightArrow
                                 ArrowHeadClosed="True"
@@ -1381,7 +1381,7 @@
                         <Grid>
                             <Path
                                 Data="M0,26 L32,26 32,28 0,28Z M24,10 L24,20 30,20 30,10Z M22,8 L32,8 32,22 22,22Z M10,2 L10,20 16,20 16,2Z M8,0 L18,0 18,22 8,22Z"
-                                Fill="{StaticResource Chem4WordBrush}"
+                                Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Uniform" />
                             <graphics:StraightArrow
                                 ArrowHeadClosed="True"
@@ -1404,7 +1404,7 @@
                         <Grid>
                             <Path
                                 Data="M20,6 L20,16 26,16 26,6Z M6,2 L6,20 12,20 12,2Z M4,0 L14,0 14,10 18,10 18,4 28,4 28,10 32,10 32,12 28,12 28,18 18,18 18,12 14,12 14,22 4,22 4,12 0,12 0,10 4,10Z"
-                                Fill="{StaticResource Chem4WordBrush}"
+                                Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Uniform" />
                         </Grid>
                     </Viewbox>
@@ -1418,7 +1418,7 @@
                         <Grid>
                             <Path
                                 Data="M0,0 L32,0 32,2 0,2Z M10,8 L10,26 16,26 16,8Z M8,6 L18,6 18,28 8,28Z M24,8 L24,18 30,18 30,8Z M22,6 L32,6 32,20 22,20Z"
-                                Fill="{StaticResource Chem4WordBrush}"
+                                Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Uniform" />
                             <graphics:StraightArrow
                                 ArrowHeadClosed="True"
@@ -1692,6 +1692,7 @@
                         Height="Auto"
                         xml:lang="en-GB"
                         Background="{x:Static SystemColors.WindowBrush}"
+                        FontFamily="Arial"
                         FontSize="{Binding BlockTextSize}"
                         FontWeight="Normal"
                         Language="en-GB">
@@ -1727,7 +1728,7 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Canvas="{Binding ElementName=HostingCanvas}"
-                FontFamily="Arial"
+                FontFamily="Segoe UI"
                 ScrollViewer="{Binding ElementName=DrawingArea}" />
         </Grid>
         <StatusBar

@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsHost));
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
-            this.settingsControl1 = new Chem4Word.UI.WPF.SettingsControl();
             this.SuspendLayout();
             // 
             // elementHost1
@@ -41,9 +40,9 @@
             this.elementHost1.Size = new System.Drawing.Size(884, 561);
             this.elementHost1.TabIndex = 0;
             this.elementHost1.Text = "elementHost1";
-            this.elementHost1.Child = this.settingsControl1;
+            this.elementHost1.Child = null;
             // 
-            // Chem4WordSettingsHost
+            // SettingsHost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -51,7 +50,7 @@
             this.ClientSize = new System.Drawing.Size(884, 561);
             this.Controls.Add(this.elementHost1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Chem4WordSettingsHost";
+            this.Name = "SettingsHost";
             this.Text = "Chem4Word Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsHost_FormClosing);
             this.Load += new System.EventHandler(this.SettingsHost_Load);
@@ -62,6 +61,5 @@
         #endregion
 
         private System.Windows.Forms.Integration.ElementHost elementHost1;
-        private SettingsControl settingsControl1;
     }
 }

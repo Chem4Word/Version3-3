@@ -5,10 +5,10 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Diagnostics;
 using Chem4Word.Core.Helpers;
 using IChem4Word.Contracts;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace Chem4Word.Helpers
             EnsureFoldersExist();
         }
 
-        public ListOfLibraries GetListOfLibraries()
+        public ListOfLibraries GetListOfLibraries(bool silent = false)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -122,7 +122,6 @@ namespace Chem4Word.Helpers
                     }
                 }
 
-
                 if (string.IsNullOrEmpty(result.SelectedLibrary))
                 {
                     result.SelectedLibrary = result.AvailableDatabases.FirstOrDefault()?.DisplayName;
@@ -140,22 +139,25 @@ namespace Chem4Word.Helpers
                 {
                     foreach (var database in result.AvailableDatabases)
                     {
-                        _telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
+                        //_telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
 
                         driver.DatabaseDetails = new DatabaseDetails
-                                                 {
-                                                     DisplayName = database.DisplayName,
-                                                     Connection = database.Connection,
-                                                     Driver = database.Driver,
-                                                     ShortFileName = database.ShortFileName
-                                                 };
+                        {
+                            DisplayName = database.DisplayName,
+                            Connection = database.Connection,
+                            Driver = database.Driver,
+                            ShortFileName = database.ShortFileName
+                        };
                         database.Properties = driver.GetProperties();
                     }
                 }
             }
 
             sw.Stop();
-            _telemetry.Write(module, "Timing", $"Reading properties of all libraries took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+            if (!silent)
+            {
+                _telemetry.Write(module, "Timing", $"Took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+            }
             return result;
         }
 
@@ -166,6 +168,7 @@ namespace Chem4Word.Helpers
             var text = JsonConvert.SerializeObject(libraries, Formatting.Indented);
             File.WriteAllText(settingsFile, text);
         }
+
         private void EnsureFoldersExist()
         {
             var path = Path.Combine(_programDataPath, "Libraries");

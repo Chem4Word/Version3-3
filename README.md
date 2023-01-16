@@ -19,7 +19,7 @@ Azure Devops Build must be set to use VS2022 build agent
 | Package | Version | Licence | Reference Count |
 |--|--|--|--|
 |Azure.Core.Amqp|1.2.0|MIT|2|
-|Azure.Core|1.26.0|MIT|2|
+|Azure.Core|1.27.0|MIT|2|
 |Azure.Messaging.ServiceBus|7.11.1|MIT|2|
 |DocumentFormat.OpenXml|2.19.0|MIT|2|
 |DotNetProjects.WpfToolkit.Input|6.1.94|MS-PL|1|
@@ -27,7 +27,7 @@ Azure Devops Build must be set to use VS2022 build agent
 |Google.Protobuf|3.21.12|BSD-3-Clause|1|
 |Grpc.Tools|2.51.0|Apache-2.0|1|
 |Jacobslusser.ScintillaNET|3.6.3|MIT|1|
-|Microsoft.Azure.Amqp|2.5.12|MIT|2|
+|Microsoft.Azure.Amqp|2.6.1|MIT|2|
 |Microsoft.Bcl.AsyncInterfaces|7.0.0|MIT|2|
 |Microsoft.NETCore.Platforms|7.0.0|MIT|2|
 |Microsoft.NETCore.Targets|5.0.0|MIT|2|

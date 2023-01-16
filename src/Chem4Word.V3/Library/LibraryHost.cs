@@ -37,16 +37,19 @@ namespace Chem4Word.Library
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                _editorOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
-                libraryView1.SetOptions(_editorOptions);
-
-                using (new WaitCursor())
+                if (elementHost1.Child is LibraryViewControl lvc)
                 {
-                    if (_libraryController == null)
+                    _editorOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
+                    lvc.SetOptions(_editorOptions);
+
+                    using (new WaitCursor())
                     {
-                        _libraryController = new LibraryController(Globals.Chem4WordV3.Telemetry);
+                        if (_libraryController == null)
+                        {
+                            _libraryController = new LibraryController(Globals.Chem4WordV3.Telemetry);
+                        }
+                        lvc.DataContext = _libraryController;
                     }
-                    libraryView1.DataContext = _libraryController;
                 }
             }
             catch (Exception ex)
@@ -56,6 +59,12 @@ namespace Chem4Word.Library
                     form.ShowDialog();
                 }
             }
+        }
+
+        private void LibraryHost_Load(object sender, EventArgs e)
+        {
+            var wpfChild = new LibraryViewControl();
+            elementHost1.Child = wpfChild;
         }
     }
 }

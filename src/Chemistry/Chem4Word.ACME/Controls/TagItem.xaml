@@ -10,10 +10,14 @@
     d:DesignWidth="150"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
         <!--  Brushes  -->
-        <SolidColorBrush x:Key="Chem4WordBlue">
-            <SolidColorBrush.Color>#2A579A</SolidColorBrush.Color>
-        </SolidColorBrush>
+      </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Border
@@ -22,27 +26,42 @@
             Background="White"
             BorderBrush="{StaticResource Chem4WordBlue}"
             BorderThickness="1"
-            CornerRadius="10">
+            CornerRadius="5">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Label
-                    x:Name="ItemLabel"
-                    Grid.Column="0"
-                    Margin="0,3,3,3"
-                    Padding="0"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    x:FieldModifier="public"
-                    Content="Label"
-                    Foreground="{StaticResource Chem4WordBlue}" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Viewbox Margin="0,0,5,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Width="Auto"
+                    Stretch="Uniform">
+                    <Label
+                        x:Name="ItemLabel"
+                        Grid.Column="0"
+                        Padding="0"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        x:FieldModifier="public"
+                        Content="Label"
+                        Foreground="{StaticResource Chem4WordBlue}" />
+                </Viewbox>
                 <Image
                     x:Name="Image"
                     Grid.Column="1"
-                    Width="18"
-                    Source="../Resources/RemoveTag.png" />
+                    Width="18">
+                    <Image.Source>
+                        <DrawingImage>
+                            <DrawingImage.Drawing>
+                                <GeometryDrawing Brush="{StaticResource Chem4WordBlue}" Geometry="M9.9000245,6.000003L6.0000001,9.8999988 12.100037,16.000007 6.0000001,22.100002 9.9000245,25.999997 16,19.900018 22.100037,25.999997 26,22.100002 19.900024,16.000007 26,9.8999988 22.100037,6.000003 16,12.099997z M16,0C24.799988,0 32,7.2000005 32,16.000007 32,24.800016 24.799988,32.000001 16,32.000001 7.2000123,32.000001 8.3946347E-08,24.800016 0,16.000007 8.3946347E-08,7.2000005 7.2000123,0 16,0z" />
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
             </Grid>
         </Border>
     </Grid>

@@ -27,19 +27,21 @@ namespace Chem4Word.Navigator
                 if (custTaskPane != null
                     && custTaskPane.Control is NavigatorHost navHost)
                 {
-                    var navigatorControl = navHost.navigatorView1;
-                    if (navigatorControl.DataContext is NavigatorController controller)
+                    if (navHost.elementHost.Child is NavigatorViewControl navy)
                     {
-                        int idx = 0;
-                        foreach (var item in controller.NavigatorItems)
+                        if (navy.DataContext is NavigatorController controller)
                         {
-                            if (item.CustomControlTag.Equals(guid))
+                            int idx = 0;
+                            foreach (var item in controller.NavigatorItems)
                             {
-                                navigatorControl.NavigatorList.SelectedIndex = idx;
-                                navigatorControl.NavigatorList.ScrollIntoView(navigatorControl.NavigatorList.SelectedItem);
-                                break;
+                                if (item.CustomControlTag.Equals(guid))
+                                {
+                                    navy.NavigatorList.SelectedIndex = idx;
+                                    navy.NavigatorList.ScrollIntoView(navy.NavigatorList.SelectedItem);
+                                    break;
+                                }
+                                idx++;
                             }
-                            idx++;
                         }
                     }
                 }

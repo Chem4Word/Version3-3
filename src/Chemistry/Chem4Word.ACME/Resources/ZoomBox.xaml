@@ -228,6 +228,7 @@
                                         Margin="0,0,14,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
+                                        FontFamily="Segoe UI"
                                         Text="{Binding ElementName=PART_ZoomSlider, Path=Value}" />
                                     <TextBlock
                                         Grid.Column="1"

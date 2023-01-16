@@ -102,7 +102,7 @@
             // Save
             // 
             this.Save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Save.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.Save.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.Save.Location = new System.Drawing.Point(1016, 40);
             this.Save.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.Save.Name = "Save";
@@ -115,7 +115,7 @@
             // Cancel
             // 
             this.Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Cancel.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.Cancel.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.Cancel.Location = new System.Drawing.Point(1097, 40);
             this.Cancel.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.Cancel.Name = "Cancel";

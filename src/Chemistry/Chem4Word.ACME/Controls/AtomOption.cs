@@ -5,11 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Controls;
+using Chem4Word.Model2;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Chem4Word.ACME.Controls;
-using Chem4Word.Model2;
 
 namespace Chem4Word.ACME
 {
@@ -19,22 +19,22 @@ namespace Chem4Word.ACME
             DependencyProperty.Register("Element", typeof(ElementBase), typeof(AtomOption),
                                         new PropertyMetadata(default(ElementBase)));
 
-        public static readonly DependencyProperty DisplayStyleProperty =
-            DependencyProperty.Register("DisplayStyle", typeof(Style), typeof(AtomOption),
-                                        new PropertyMetadata(default(Style)));
-
         public AtomOption()
         {
+            Width = double.NaN;
+            FontSize = 18;
+            FontWeight = FontWeights.DemiBold;
+            FontFamily = new FontFamily("Arial");
         }
 
-        public AtomOption(FunctionalGroup fg)
+        public AtomOption(FunctionalGroup fg) : this()
         {
             Element = fg;
             Foreground = new SolidColorBrush(Colors.Black);
             Content = new FunctionalGroupBlock { ParentGroup = fg };
         }
 
-        public AtomOption(Element elem)
+        public AtomOption(Element elem) : this()
         {
             Element = elem;
             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(elem.Colour));

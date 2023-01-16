@@ -1,11 +1,11 @@
 ﻿<UserControl
     x:Class="Chem4Word.Library.LibraryViewControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:Chem4Word.ACME.Controls;assembly=Chem4Word.ACME"
     xmlns:converters="clr-namespace:Chem4Word.ACME.Converters;assembly=Chem4Word.ACME"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Name="LibraryControl"
     controls:ChemistryItem.ChemistryItemButtonClick="OnClick_ItemButton"
     d:DesignHeight="400"
@@ -15,64 +15,69 @@
     Loaded="OnLoaded_LibraryViewControl"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="Chem4WordBlue">
-            <SolidColorBrush.Color>#2A579A</SolidColorBrush.Color>
-        </SolidColorBrush>
-        <converters:BoolToVisibilityConverter
-            x:Key="BoolToVisConverter"
-            FalseValue="Collapsed"
-            TrueValue="Visible" />
-        <!--  Add this style here to prevent ACMEResources.xaml interfering with this User Control  -->
-        <Style x:Key="LibraryButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Width" Value="Auto" />
-            <Setter Property="Height" Value="35" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="5" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        </Style>
-        <Style x:Key="NavButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value=".25" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
-            <!--
-                We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
-                https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
-            -->
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBoxItem">
-                        <Border
-                            Name="Border"
-                            Padding="3"
-                            SnapsToDevicePixels="true">
-                            <ContentPresenter />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="Border" Property="Background" Value="{StaticResource Chem4WordBlue}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="SearchButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="m 19.166959 4.5889625 c 3.79103 0 7.083035 2.5930028 7.482023 6.0849565 0.398988 3.690988 -2.594004 7.082967 -6.783045 7.381976 -4.190019 0.398985 -7.881011 -2.295 -8.28 -6.084956 -0.39905 -3.6909885 2.592966 -7.0829672 6.782985 -7.3819765 z M 19.266936 0 C 18.867947 -2.0158268e-7 18.368922 -2.0158268e-7 17.969933 0.10000526 10.986936 0.6979938 5.8998808 6.2849674 6.5978808 12.568927 c 0.299013 2.194995 1.197025 4.189979 2.594003 5.885953 l -8.480012 9.07795 c -1.096989 1.097009 -0.896977 2.892988 0.398988 3.789987 1.297003 0.997978 3.193005 0.798001 4.290057 -0.299009 l 8.5790112 -9.276955 c 1.995003 0.797999 4.190018 1.197014 6.58401 0.997004 C 27.546996 22.145869 32.633991 16.559901 31.93599 10.274934 31.237989 4.3889822 25.650993 -2.0158268e-7 19.266936 0 Z" />
-        </Style>
-        <Style x:Key="DelButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="F1 M 0,7.89185L 2.65756,4.4368L 0.181,1.25839L 2.38931,0L 4.49869,2.51559L 6.72134,0L 8.78256,1.25839L 6.38541,4.33398L 9.15366,7.89185L 6.92319,9.15292L 4.49869,6.31573L 2.05209,9.15292L 0,7.89185 Z" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:BoolToVisibilityConverter
+                x:Key="BoolToVisConverter"
+                FalseValue="Collapsed"
+                TrueValue="Visible" />
+            <!--  Add this style here to prevent ACMEResources.xaml interfering with this User Control  -->
+            <Style x:Key="LibraryButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Width" Value="Auto" />
+                <Setter Property="Height" Value="35" />
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="Padding" Value="5" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
+            <Style x:Key="NavButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value=".25" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
+                <!--
+                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+                -->
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border
+                                Name="Border"
+                                Padding="3"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource Chem4WordBlue}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="SearchButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="m 19.166959 4.5889625 c 3.79103 0 7.083035 2.5930028 7.482023 6.0849565 0.398988 3.690988 -2.594004 7.082967 -6.783045 7.381976 -4.190019 0.398985 -7.881011 -2.295 -8.28 -6.084956 -0.39905 -3.6909885 2.592966 -7.0829672 6.782985 -7.3819765 z M 19.266936 0 C 18.867947 -2.0158268e-7 18.368922 -2.0158268e-7 17.969933 0.10000526 10.986936 0.6979938 5.8998808 6.2849674 6.5978808 12.568927 c 0.299013 2.194995 1.197025 4.189979 2.594003 5.885953 l -8.480012 9.07795 c -1.096989 1.097009 -0.896977 2.892988 0.398988 3.789987 1.297003 0.997978 3.193005 0.798001 4.290057 -0.299009 l 8.5790112 -9.276955 c 1.995003 0.797999 4.190018 1.197014 6.58401 0.997004 C 27.546996 22.145869 32.633991 16.559901 31.93599 10.274934 31.237989 4.3889822 25.650993 -2.0158268e-7 19.266936 0 Z" />
+            </Style>
+            <Style x:Key="DelButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="F1 M 0,7.89185L 2.65756,4.4368L 0.181,1.25839L 2.38931,0L 4.49869,2.51559L 6.72134,0L 8.78256,1.25839L 6.38541,4.33398L 9.15366,7.89185L 6.92319,9.15292L 4.49869,6.31573L 2.05209,9.15292L 0,7.89185 Z" />
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -81,22 +86,40 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="35" />
             </Grid.ColumnDefinitions>
             <ComboBox Name="LibrarySelector" FontSize="16" />
-        </Grid>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+
             <Button
                 Name="EditThisLibrary"
+                Grid.Column="1"
                 Click="OnClick_EditLibrary"
-                FontSize="16"
-                Style="{DynamicResource LibraryButtonStyle}">
-                Edit this Library
+                Style="{DynamicResource LibraryButtonStyle}"
+                ToolTip="Edit Library">
+                <Viewbox Stretch="UniformToFill">
+                    <Path
+                        Name="EditLibraryIcon"
+                        Width="24"
+                        Height="24"
+                        VerticalAlignment="Center"
+                        Data="M1.0799898,27.68001L29.161071,27.68001C29.755067,27.68001,30.240083,28.165009,30.240083,28.760008L30.240083,30.92C30.240083,31.515999,29.755067,31.999998,29.161071,31.999998L1.0799898,31.999998C0.48397969,31.999998,-8.1828603E-08,31.515999,0,30.92L0,28.760008C-8.1828603E-08,28.165009,0.48397969,27.68001,1.0799898,27.68001z M8.6480069,19.001028C8.9100309,18.992033,9.1750159,19.093031,9.3820176,19.308028L12.680032,22.745024C13.093028,23.177021,13.127024,23.905016,12.754037,24.367022L12.505013,24.677017C12.136024,25.141014,11.344029,25.521017,10.750033,25.521017L3.3190105,25.521017C2.725991,25.521017,2.5730059,25.165016,2.9809964,24.735016L6.2930188,21.215029C6.7000022,20.780024,7.3490219,20.054028,7.7310114,19.600027L7.9380126,19.354033C8.1290231,19.129027,8.3870196,19.010031,8.6480069,19.001028z M28.421077,7.5224872E-05C29.274078,0.0060756106 30.123079,0.3330745 30.775089,0.98607288 32.005073,2.2110723 32.081092,4.1410678 31.027074,5.4710629L31.057073,5.4970634 30.775089,5.7800601 15.027024,21.529023 10.23102,16.733036 25.975055,0.9900745 26.261068,0.70407568 26.288076,0.73007284C26.913078,0.23907676,27.668085,-0.0049221356,28.421077,7.5224872E-05z"
+                        Fill="{StaticResource Chem4WordBlue}"
+                        Stretch="Uniform">
+                        <Path.Style>
+                            <Style TargetType="Path">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                </Viewbox>
             </Button>
         </Grid>
         <Grid Grid.Row="2">
@@ -146,7 +169,7 @@
                                             Canvas.Top="2"
                                             Width="20"
                                             Height="20"
-                                            Fill="Red"
+                                            Fill="{StaticResource Chem4WordBlue}"
                                             Stretch="Fill"
                                             Style="{StaticResource DelButtonPath}" />
                                     </Canvas>

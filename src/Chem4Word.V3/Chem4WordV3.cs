@@ -314,7 +314,6 @@ namespace Chem4Word
                 _configWatcher = new ConfigWatcher(AddInInfo.ProductAppDataPath);
 
                 Telemetry = new TelemetryWriter(true, true, Helper);
-                ListOfDetectedLibraries = new LibraryFileHelper(Telemetry, AddInInfo.ProgramDataPath).GetListOfLibraries();
 
                 sw.Stop();
                 message = $"{module} took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms";
@@ -418,23 +417,15 @@ namespace Chem4Word
 
         public void LoadNamesFromLibrary()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 var details = GetSelectedDatabaseDetails();
                 if (details != null)
                 {
-                    var lib = GetDriverPlugIn(details.Driver);
-                    lib.DatabaseDetails = details;
-
-                    if (lib != null)
-                    {
-                        LibraryNames = lib.GetSubstanceNamesWithIds();
-                    }
-                    else
-                    {
-                        LibraryNames = null;
-                    }
+                    var driver = GetDriverPlugIn(details.Driver);
+                    driver.DatabaseDetails = details;
+                    LibraryNames = driver.GetSubstanceNamesWithIds();
                 }
             }
             catch (Exception exception)
@@ -459,6 +450,19 @@ namespace Chem4Word
 
             try
             {
+                try
+                {
+                    if (ThisVersion != null)
+                    {
+                        var betaValue = ThisVersion.Root?.Element("IsBeta")?.Value;
+                        IsBeta = betaValue != null && bool.Parse(betaValue);
+                    }
+                }
+                catch
+                {
+                    // Assume isBeta
+                }
+
                 // Initialise Telemetry with send permission
                 Telemetry = new TelemetryWriter(true, true, Helper);
 
@@ -470,19 +474,6 @@ namespace Chem4Word
                     {
                         Telemetry.Write(module, "Exception", string.Join(Environment.NewLine, SystemOptions.Errors));
                         SystemOptions.Errors = new List<string>();
-                    }
-
-                    try
-                    {
-                        if (ThisVersion != null)
-                        {
-                            var betaValue = ThisVersion.Root?.Element("IsBeta")?.Value;
-                            IsBeta = betaValue != null && bool.Parse(betaValue);
-                        }
-                    }
-                    catch
-                    {
-                        // Assume isBeta
                     }
 
                     // Belt and braces ...
@@ -543,6 +534,21 @@ namespace Chem4Word
                                 Telemetry.Write(module, "Exception", string.Join(Environment.NewLine, SystemOptions.Errors));
                                 SystemOptions.Errors = new List<string>();
                             }
+                        }
+                    }
+                    catch
+                    {
+                        //
+                    }
+
+                    try
+                    {
+                        if (ListOfDetectedLibraries == null)
+                        {
+                            ListOfDetectedLibraries
+                                = new LibraryFileHelper(Telemetry, AddInInfo.ProgramDataPath)
+                                    .GetListOfLibraries(silent: true);
+                            LoadNamesFromLibrary();
                         }
                     }
                     catch
@@ -889,7 +895,9 @@ namespace Chem4Word
         {
             if (ListOfDetectedLibraries == null)
             {
-                return null;
+                ListOfDetectedLibraries
+                    = new LibraryFileHelper(Telemetry, AddInInfo.ProgramDataPath)
+                        .GetListOfLibraries(silent: true);
             }
             return ListOfDetectedLibraries
                    .AvailableDatabases?
@@ -1445,100 +1453,104 @@ namespace Chem4Word
                 {
                     var targetWord = JsonConvert.DeserializeObject<TargetWord>(ctrl.Tag);
 
-                    var library = GetDriverPlugIn("");
-                    var dto = library.GetChemistryById(targetWord.ChemistryId);
-
-                    if (dto == null)
+                    var details = GetSelectedDatabaseDetails();
+                    if (details != null)
                     {
-                        UserInteractions.WarnUser($"No match for '{targetWord.ChemicalName}' was found in your library");
-                    }
-                    else
-                    {
-                        var activeDocument = DocumentHelper.GetActiveDocument();
+                        var driver = GetDriverPlugIn(details.Driver);
+                        var dto = driver.GetChemistryById(targetWord.ChemistryId);
 
-                        var converter = new CMLConverter();
-                        Model model;
-                        if (dto.DataType.Equals("cml"))
+                        if (dto == null)
                         {
-                            model = converter.Import(Encoding.UTF8.GetString(dto.Chemistry));
+                            UserInteractions.WarnUser($"No match for '{targetWord.ChemicalName}' was found in your selected library");
                         }
                         else
                         {
-                            var pbc = new ProtocolBufferConverter();
-                            model = pbc.Import(dto.Chemistry);
-                        }
+                            var activeDocument = DocumentHelper.GetActiveDocument();
 
-                        // Generate new CustomXmlPartGuid
-                        model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
-                        model.EnsureBondLength(SystemOptions.BondLength,
-                                               SystemOptions.SetBondLengthOnImportFromLibrary);
-                        var cml = converter.Export(model);
-
-                        #region Find Id of name
-
-                        var tagPrefix = "";
-                        foreach (var mol in model.Molecules.Values)
-                        {
-                            foreach (var name in mol.Names)
+                            var converter = new CMLConverter();
+                            Model model;
+                            if (dto.DataType.Equals("cml"))
                             {
-                                if (targetWord.ChemicalName.ToLower().Equals(name.Value.ToLower()))
+                                model = converter.Import(Encoding.UTF8.GetString(dto.Chemistry));
+                            }
+                            else
+                            {
+                                var pbc = new ProtocolBufferConverter();
+                                model = pbc.Import(dto.Chemistry);
+                            }
+
+                            // Generate new CustomXmlPartGuid
+                            model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
+                            model.EnsureBondLength(SystemOptions.BondLength,
+                                                   SystemOptions.SetBondLengthOnImportFromLibrary);
+                            var cml = converter.Export(model);
+
+                            #region Find Id of name
+
+                            var tagPrefix = "";
+                            foreach (var mol in model.Molecules.Values)
+                            {
+                                foreach (var name in mol.Names)
                                 {
-                                    tagPrefix = name.Id;
+                                    if (targetWord.ChemicalName.ToLower().Equals(name.Value.ToLower()))
+                                    {
+                                        tagPrefix = name.Id;
+                                        break;
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(tagPrefix))
+                                {
                                     break;
                                 }
                             }
 
-                            if (!string.IsNullOrEmpty(tagPrefix))
+                            if (string.IsNullOrEmpty(tagPrefix))
                             {
-                                break;
+                                tagPrefix = "c0";
                             }
-                        }
 
-                        if (string.IsNullOrEmpty(tagPrefix))
-                        {
-                            tagPrefix = "c0";
-                        }
+                            #endregion Find Id of name
 
-                        #endregion Find Id of name
+                            // Test phrases (ensure benzene is in your library)
+                            // This is benzene, this is not.
+                            // This is benzene. This is not.
 
-                        // Test phrases (ensure benzene is in your library)
-                        // This is benzene, this is not.
-                        // This is benzene. This is not.
+                            Word.ContentControl contentControl = null;
+                            var wordSettings = new WordSettings(Application);
 
-                        Word.ContentControl contentControl = null;
-                        var wordSettings = new WordSettings(Application);
+                            try
+                            {
+                                Application.ScreenUpdating = false;
+                                DisableContentControlEvents();
 
-                        try
-                        {
-                            Application.ScreenUpdating = false;
-                            DisableContentControlEvents();
+                                var insertionPoint = targetWord.Start;
+                                activeDocument.Range(targetWord.Start, targetWord.Start + targetWord.ChemicalName.Length).Delete();
 
-                            var insertionPoint = targetWord.Start;
-                            activeDocument.Range(targetWord.Start, targetWord.Start + targetWord.ChemicalName.Length).Delete();
+                                Application.Selection.SetRange(insertionPoint, insertionPoint);
 
-                            Application.Selection.SetRange(insertionPoint, insertionPoint);
+                                var tag = $"{tagPrefix}:{model.CustomXmlPartGuid}";
+                                contentControl = ChemistryHelper.Insert1DChemistry(activeDocument, targetWord.ChemicalName, false, tag);
 
-                            var tag = $"{tagPrefix}:{model.CustomXmlPartGuid}";
-                            contentControl = ChemistryHelper.Insert1DChemistry(activeDocument, targetWord.ChemicalName, true, tag);
+                                Telemetry.Write(module, "Information", $"Inserted 1D version of {targetWord.ChemicalName} from library");
+                            }
+                            catch (Exception e)
+                            {
+                                Telemetry.Write(module, "Exception", e.Message);
+                                Telemetry.Write(module, "Exception", e.StackTrace);
+                            }
+                            finally
+                            {
+                                EnableContentControlEvents();
+                                Application.ScreenUpdating = true;
+                                wordSettings.RestoreSettings(Application);
+                            }
 
-                            Telemetry.Write(module, "Information", $"Inserted 1D version of {targetWord.ChemicalName} from library");
-                        }
-                        catch (Exception e)
-                        {
-                            Telemetry.Write(module, "Exception", e.Message);
-                            Telemetry.Write(module, "Exception", e.StackTrace);
-                        }
-                        finally
-                        {
-                            EnableContentControlEvents();
-                            Application.ScreenUpdating = true;
-                            wordSettings.RestoreSettings(Application);
-                        }
-
-                        if (contentControl != null)
-                        {
-                            activeDocument.CustomXMLParts.Add(cml);
-                            Application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
+                            if (contentControl != null)
+                            {
+                                activeDocument.CustomXMLParts.Add(cml);
+                                Application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
+                            }
                         }
                     }
 

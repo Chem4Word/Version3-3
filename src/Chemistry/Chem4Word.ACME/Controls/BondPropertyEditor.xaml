@@ -24,6 +24,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="../Resources/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:BoolToVisibilityConverter
                 x:Key="VisConverter"
@@ -220,8 +221,8 @@
             </Style>
         </ResourceDictionary>
     </Window.Resources>
-    <Border Margin="3">
-        <Grid>
+    <Border Margin="3" d:IsLocked="True">
+        <Grid d:IsLocked="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -242,6 +243,7 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
+                d:IsLocked="True"
                 Foreground="Black"
                 Visibility="Collapsed">
                 Bond Path
@@ -249,40 +251,48 @@
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="0"
-                Style="{StaticResource LabelTextBlock}"
+                d:IsLocked="True"
+                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                 Text="Length" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
-                Style="{StaticResource LabelTextBlock}"
+                d:IsLocked="True"
+                Style="{StaticResource Acme.Controls.TextBlock.SmallLabel}"
                 Text="{Binding Path=LengthString}" />
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="0"
+                d:IsLocked="True"
                 Foreground="{Binding Path=BondAngleChanged, Mode=OneWay, Converter={StaticResource ColorConverter}}"
-                Style="{StaticResource LabelTextBlock}"
+                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                 Text="Angle" />
             <TextBox
                 x:Name="BondAngle"
                 Grid.Row="2"
                 Grid.Column="1"
+                Height="25"
+                Margin="5,8,144,9"
                 VerticalContentAlignment="Center"
+                d:IsLocked="True"
                 Background="{Binding Path=BondAngleInvalid, Mode=OneWay, Converter={StaticResource InvalidConverter}}"
+                Style="{StaticResource Acme.Controls.TextBox}"
                 Text="{Binding Path=BondAngle, Mode=TwoWay}"
                 TextChanged="BondAngle_OnTextChanged"
                 ToolTip="Angles are measured from Screen North" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="0"
+                d:IsLocked="True"
                 Foreground="{Binding Path=BondOrderChanged, Mode=OneWay, Converter={StaticResource ColorConverter}}"
-                Style="{StaticResource LabelTextBlock}">
+                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
                 Order
             </TextBlock>
             <ComboBox
                 Grid.Row="3"
                 Grid.Column="1"
-                Margin="0,5,0,0"
-                FontSize="12"
+                Margin="5,8,144,8"
+                d:IsLocked="True"
                 ItemsSource="{Binding Source={StaticResource BondItems}}"
                 SelectedValue="{Binding Path=BondOrderValue, Mode=TwoWay}"
                 SelectedValuePath="Tag"
@@ -290,8 +300,9 @@
             <TextBlock
                 Grid.Row="4"
                 Grid.Column="0"
+                d:IsLocked="True"
                 Foreground="{Binding Path=StereoChanged, Mode=OneWay, Converter={StaticResource ColorConverter}}"
-                Style="{StaticResource LabelTextBlock}"
+                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                 Visibility="{Binding Path=IsSingle, Mode=OneWay, Converter={StaticResource VisConverter}}">
                 Stereo
             </TextBlock>
@@ -299,14 +310,19 @@
                 Grid.Row="4"
                 Grid.Column="1"
                 Margin="0,5,0,0"
+                d:IsLocked="True"
                 Visibility="{Binding Path=IsSingle, Mode=OneWay, Converter={StaticResource VisConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.None}}" ToolTip="None">
-                        <Canvas>
+                <StackPanel d:IsLocked="True" Orientation="Horizontal">
+                    <RadioButton
+                        d:IsLocked="True"
+                        IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.None}}"
+                        ToolTip="None">
+                        <Canvas d:IsLocked="True">
                             <Canvas.RenderTransform>
                                 <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                             </Canvas.RenderTransform>
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Red"
                                 StrokeDashArray="1,1"
                                 StrokeThickness="1"
@@ -318,13 +334,16 @@
                                 Width="4"
                                 Height="4"
                                 Margin="22,1,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Ellipse
                                 Width="4"
                                 Height="4"
                                 Margin="22,43,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="24"
@@ -333,12 +352,16 @@
                                 Y2="38" />
                         </Canvas>
                     </RadioButton>
-                    <RadioButton IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.Wedge}}" ToolTip="Wedge">
-                        <Canvas>
+                    <RadioButton
+                        d:IsLocked="True"
+                        IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.Wedge}}"
+                        ToolTip="Wedge">
+                        <Canvas d:IsLocked="True">
                             <Canvas.RenderTransform>
                                 <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                             </Canvas.RenderTransform>
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Red"
                                 StrokeDashArray="1,1"
                                 StrokeThickness="1"
@@ -350,27 +373,34 @@
                                 Width="4"
                                 Height="4"
                                 Margin="22,1,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Ellipse
                                 Width="4"
                                 Height="4"
                                 Margin="22,43,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Path
                                 Width="30"
                                 Height="30"
                                 Margin="9"
+                                d:IsLocked="True"
                                 Data="M15,30 10,0 20,0 Z"
                                 Fill="Black"
                                 Stretch="Uniform" />
                         </Canvas>
                     </RadioButton>
-                    <RadioButton IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.BackWedge}}" ToolTip="BackWedge">
-                        <Canvas>
+                    <RadioButton
+                        d:IsLocked="True"
+                        IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.BackWedge}}"
+                        ToolTip="BackWedge">
+                        <Canvas d:IsLocked="True">
                             <Canvas.RenderTransform>
                                 <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                             </Canvas.RenderTransform>
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Red"
                                 StrokeDashArray="1,1"
                                 StrokeThickness="1"
@@ -382,27 +412,34 @@
                                 Width="4"
                                 Height="4"
                                 Margin="22,1,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Ellipse
                                 Width="4"
                                 Height="4"
                                 Margin="22,43,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Path
                                 Width="30"
                                 Height="30"
                                 Margin="9"
+                                d:IsLocked="True"
                                 Data="M15,0 10,30 20,30 Zz"
                                 Fill="Black"
                                 Stretch="Uniform" />
                         </Canvas>
                     </RadioButton>
-                    <RadioButton IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.Hatch}}" ToolTip="Hatch">
-                        <Canvas>
+                    <RadioButton
+                        d:IsLocked="True"
+                        IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.Hatch}}"
+                        ToolTip="Hatch">
+                        <Canvas d:IsLocked="True">
                             <Canvas.RenderTransform>
                                 <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                             </Canvas.RenderTransform>
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Red"
                                 StrokeDashArray="1,1"
                                 StrokeThickness="1"
@@ -414,13 +451,16 @@
                                 Width="4"
                                 Height="4"
                                 Margin="22,1,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Ellipse
                                 Width="4"
                                 Height="4"
                                 Margin="22,43,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="20"
@@ -428,6 +468,7 @@
                                 Y1="10"
                                 Y2="10" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="21"
@@ -435,6 +476,7 @@
                                 Y1="14"
                                 Y2="14" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="21.5"
@@ -442,6 +484,7 @@
                                 Y1="18"
                                 Y2="18" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="22"
@@ -449,6 +492,7 @@
                                 Y1="22"
                                 Y2="22" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="22.5"
@@ -456,6 +500,7 @@
                                 Y1="26"
                                 Y2="26" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="23"
@@ -463,6 +508,7 @@
                                 Y1="30"
                                 Y2="30" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="23.5"
@@ -470,6 +516,7 @@
                                 Y1="34"
                                 Y2="34" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="23.75"
@@ -478,12 +525,16 @@
                                 Y2="38" />
                         </Canvas>
                     </RadioButton>
-                    <RadioButton IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.BackHatch}}" ToolTip="BackHatch">
-                        <Canvas>
+                    <RadioButton
+                        d:IsLocked="True"
+                        IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.BackHatch}}"
+                        ToolTip="BackHatch">
+                        <Canvas d:IsLocked="True">
                             <Canvas.RenderTransform>
                                 <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                             </Canvas.RenderTransform>
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Red"
                                 StrokeDashArray="1,1"
                                 StrokeThickness="1"
@@ -495,13 +546,16 @@
                                 Width="4"
                                 Height="4"
                                 Margin="22,1,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Ellipse
                                 Width="4"
                                 Height="4"
                                 Margin="22,43,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="23.75"
@@ -509,6 +563,7 @@
                                 Y1="10"
                                 Y2="10" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="23.5"
@@ -516,6 +571,7 @@
                                 Y1="14"
                                 Y2="14" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="23"
@@ -523,6 +579,7 @@
                                 Y1="18"
                                 Y2="18" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="22.5"
@@ -530,6 +587,7 @@
                                 Y1="22"
                                 Y2="22" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="22"
@@ -537,6 +595,7 @@
                                 Y1="26"
                                 Y2="26" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="21.5"
@@ -544,6 +603,7 @@
                                 Y1="30"
                                 Y2="30" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="21"
@@ -551,6 +611,7 @@
                                 Y1="34"
                                 Y2="34" />
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Black"
                                 StrokeThickness="2"
                                 X1="20"
@@ -559,12 +620,16 @@
                                 Y2="38" />
                         </Canvas>
                     </RadioButton>
-                    <RadioButton IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.Indeterminate}}" ToolTip="Indeterminate">
-                        <Canvas>
+                    <RadioButton
+                        d:IsLocked="True"
+                        IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.Indeterminate}}"
+                        ToolTip="Indeterminate">
+                        <Canvas d:IsLocked="True">
                             <Canvas.RenderTransform>
                                 <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                             </Canvas.RenderTransform>
                             <Line
+                                d:IsLocked="True"
                                 Stroke="Red"
                                 StrokeDashArray="1,1"
                                 StrokeThickness="1"
@@ -576,16 +641,19 @@
                                 Width="4"
                                 Height="4"
                                 Margin="22,1,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Ellipse
                                 Width="4"
                                 Height="4"
                                 Margin="22,43,0,0"
+                                d:IsLocked="True"
                                 Fill="Red" />
                             <Path
                                 Width="30"
                                 Height="30"
                                 Margin="9"
+                                d:IsLocked="True"
                                 Data="M15,0 Q5,5 15,10 25,15 15,20 5,25 15,30"
                                 Stroke="Black"
                                 StrokeThickness="2" />
@@ -597,8 +665,9 @@
             <TextBlock
                 Grid.Row="5"
                 Grid.Column="0"
+                d:IsLocked="True"
                 Foreground="{Binding Path=PlacementChanged, Mode=OneWay, Converter={StaticResource ColorConverter}}"
-                Style="{StaticResource LabelTextBlock}"
+                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                 Visibility="{Binding Path=IsDouble, Mode=OneWay, Converter={StaticResource VisConverter}}">
                 Placement
             </TextBlock>
@@ -606,24 +675,33 @@
                 Grid.Row="5"
                 Grid.Column="1"
                 Margin="0,5,0,0"
+                d:IsLocked="True"
                 Orientation="Horizontal"
                 Visibility="{Binding Path=IsDouble, Mode=OneWay, Converter={StaticResource VisConverter}}">
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Auto}}" ToolTip="Automatic">
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Auto}}"
+                    ToolTip="Automatic">
                     <TextBlock
                         Margin="0,0,0,5"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        d:IsLocked="True"
                         FontSize="25"
                         Foreground="Black">
                         A
                     </TextBlock>
                 </RadioButton>
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Clockwise}}" ToolTip="Clockwise">
-                    <Canvas>
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Clockwise}}"
+                    ToolTip="Clockwise">
+                    <Canvas d:IsLocked="True">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                         </Canvas.RenderTransform>
                         <Line
+                            d:IsLocked="True"
                             Stroke="Red"
                             StrokeDashArray="1,1"
                             StrokeThickness="1"
@@ -635,13 +713,16 @@
                             Width="4"
                             Height="4"
                             Margin="22,1,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Ellipse
                             Width="4"
                             Height="4"
                             Margin="22,43,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="24"
@@ -649,6 +730,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="17"
@@ -657,12 +739,16 @@
                             Y2="38" />
                     </Canvas>
                 </RadioButton>
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Anticlockwise}}" ToolTip="Anticlockwise">
-                    <Canvas>
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Anticlockwise}}"
+                    ToolTip="Anticlockwise">
+                    <Canvas d:IsLocked="True">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                         </Canvas.RenderTransform>
                         <Line
+                            d:IsLocked="True"
                             Stroke="Red"
                             StrokeDashArray="1,1"
                             StrokeThickness="1"
@@ -674,13 +760,16 @@
                             Width="4"
                             Height="4"
                             Margin="22,1,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Ellipse
                             Width="4"
                             Height="4"
                             Margin="22,43,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="24"
@@ -688,6 +777,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="31"
@@ -696,12 +786,16 @@
                             Y2="38" />
                     </Canvas>
                 </RadioButton>
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.None}}" ToolTip="None">
-                    <Canvas>
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.None}}"
+                    ToolTip="None">
+                    <Canvas d:IsLocked="True">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                         </Canvas.RenderTransform>
                         <Line
+                            d:IsLocked="True"
                             Stroke="Red"
                             StrokeDashArray="1,1"
                             StrokeThickness="1"
@@ -713,13 +807,16 @@
                             Width="4"
                             Height="4"
                             Margin="22,1,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Ellipse
                             Width="4"
                             Height="4"
                             Margin="22,43,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="20"
@@ -727,6 +824,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="28"
@@ -736,14 +834,16 @@
                     </Canvas>
                 </RadioButton>
                 <RadioButton
+                    d:IsLocked="True"
                     IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Indeterminate}}"
                     ToolTip="Indeterminate"
                     Visibility="{Binding Path=IsDouble, Mode=OneWay, Converter={StaticResource VisConverter}}">
-                    <Canvas>
+                    <Canvas d:IsLocked="True">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                         </Canvas.RenderTransform>
                         <Line
+                            d:IsLocked="True"
                             Stroke="Red"
                             StrokeDashArray="1,1"
                             StrokeThickness="1"
@@ -755,13 +855,16 @@
                             Width="4"
                             Height="4"
                             Margin="22,1,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Ellipse
                             Width="4"
                             Height="4"
                             Margin="22,43,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="20"
@@ -769,6 +872,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="28"
@@ -781,8 +885,9 @@
             <TextBlock
                 Grid.Row="6"
                 Grid.Column="0"
+                d:IsLocked="True"
                 Foreground="{Binding Path=PlacementChanged, Mode=OneWay, Converter={StaticResource ColorConverter}}"
-                Style="{StaticResource LabelTextBlock}"
+                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                 Visibility="{Binding Path=Is1Point5, Mode=OneWay, Converter={StaticResource VisConverter}}">
                 Placement
             </TextBlock>
@@ -790,24 +895,33 @@
                 Grid.Row="6"
                 Grid.Column="1"
                 Margin="0,5,0,0"
+                d:IsLocked="True"
                 Orientation="Horizontal"
                 Visibility="{Binding Path=Is1Point5, Mode=OneWay, Converter={StaticResource VisConverter}}">
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Auto}}" ToolTip="Automatic">
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Auto}}"
+                    ToolTip="Automatic">
                     <TextBlock
                         Margin="0,0,0,5"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        d:IsLocked="True"
                         FontSize="25"
                         Foreground="Black">
                         A
                     </TextBlock>
                 </RadioButton>
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Clockwise}}" ToolTip="Clockwise">
-                    <Canvas>
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Clockwise}}"
+                    ToolTip="Clockwise">
+                    <Canvas d:IsLocked="True">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                         </Canvas.RenderTransform>
                         <Line
+                            d:IsLocked="True"
                             Stroke="Red"
                             StrokeDashArray="1,1"
                             StrokeThickness="1"
@@ -819,13 +933,16 @@
                             Width="4"
                             Height="4"
                             Margin="22,1,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Ellipse
                             Width="4"
                             Height="4"
                             Margin="22,43,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="24"
@@ -833,6 +950,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeDashArray="2,1"
                             StrokeThickness="2"
@@ -842,12 +960,16 @@
                             Y2="38" />
                     </Canvas>
                 </RadioButton>
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Anticlockwise}}" ToolTip="Anticlockwise">
-                    <Canvas>
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Anticlockwise}}"
+                    ToolTip="Anticlockwise">
+                    <Canvas d:IsLocked="True">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                         </Canvas.RenderTransform>
                         <Line
+                            d:IsLocked="True"
                             Stroke="Red"
                             StrokeDashArray="1,1"
                             StrokeThickness="1"
@@ -859,13 +981,16 @@
                             Width="4"
                             Height="4"
                             Margin="22,1,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Ellipse
                             Width="4"
                             Height="4"
                             Margin="22,43,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="24"
@@ -873,6 +998,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeDashArray="2,1"
                             StrokeThickness="2"
@@ -886,8 +1012,9 @@
             <TextBlock
                 Grid.Row="7"
                 Grid.Column="0"
+                d:IsLocked="True"
                 Foreground="{Binding Path=PlacementChanged, Mode=OneWay, Converter={StaticResource ColorConverter}}"
-                Style="{StaticResource LabelTextBlock}"
+                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                 Visibility="{Binding Path=Is2Point5, Mode=OneWay, Converter={StaticResource VisConverter}}">
                 Placement
             </TextBlock>
@@ -895,24 +1022,33 @@
                 Grid.Row="7"
                 Grid.Column="1"
                 Margin="0,5,0,0"
+                d:IsLocked="True"
                 Orientation="Horizontal"
                 Visibility="{Binding Path=Is2Point5, Mode=OneWay, Converter={StaticResource VisConverter}}">
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Auto}}" ToolTip="Automatic">
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Auto}}"
+                    ToolTip="Automatic">
                     <TextBlock
                         Margin="0,0,0,5"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        d:IsLocked="True"
                         FontSize="25"
                         Foreground="Black">
                         A
                     </TextBlock>
                 </RadioButton>
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Clockwise}}" ToolTip="Clockwise">
-                    <Canvas>
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Clockwise}}"
+                    ToolTip="Clockwise">
+                    <Canvas d:IsLocked="True">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                         </Canvas.RenderTransform>
                         <Line
+                            d:IsLocked="True"
                             Stroke="Red"
                             StrokeDashArray="1,1"
                             StrokeThickness="1"
@@ -924,13 +1060,16 @@
                             Width="4"
                             Height="4"
                             Margin="22,1,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Ellipse
                             Width="4"
                             Height="4"
                             Margin="22,43,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="24"
@@ -938,6 +1077,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeDashArray="2,1"
                             StrokeThickness="2"
@@ -946,6 +1086,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="31"
@@ -954,12 +1095,16 @@
                             Y2="38" />
                     </Canvas>
                 </RadioButton>
-                <RadioButton IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Anticlockwise}}" ToolTip="Anticlockwise">
-                    <Canvas>
+                <RadioButton
+                    d:IsLocked="True"
+                    IsChecked="{Binding Path=DoubleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:DoubleBondType.Anticlockwise}}"
+                    ToolTip="Anticlockwise">
+                    <Canvas d:IsLocked="True">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
                         </Canvas.RenderTransform>
                         <Line
+                            d:IsLocked="True"
                             Stroke="Red"
                             StrokeDashArray="1,1"
                             StrokeThickness="1"
@@ -971,13 +1116,16 @@
                             Width="4"
                             Height="4"
                             Margin="22,1,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Ellipse
                             Width="4"
                             Height="4"
                             Margin="22,43,0,0"
+                            d:IsLocked="True"
                             Fill="Red" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="24"
@@ -985,6 +1133,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeDashArray="2,1"
                             StrokeThickness="2"
@@ -993,6 +1142,7 @@
                             Y1="10"
                             Y2="38" />
                         <Line
+                            d:IsLocked="True"
                             Stroke="Black"
                             StrokeThickness="2"
                             X1="17"
@@ -1002,18 +1152,32 @@
                     </Canvas>
                 </RadioButton>
             </StackPanel>
-            <StackPanel
+            <Grid
                 Grid.Row="8"
                 Grid.Column="1"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
-                <Button HorizontalAlignment="Right" Click="Save_OnClick">
+                Width="Auto"
+                d:IsLocked="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="1"
+                    d:IsLocked="True"
+                    Click="Save_OnClick"
+                    Style="{StaticResource Acme.Control.Button.DialogButton}">
                     OK
                 </Button>
-                <Button HorizontalAlignment="Right" Click="Cancel_OnClick">
+                <Button
+                    Grid.Column="2"
+                    d:IsLocked="True"
+                    Click="Cancel_OnClick"
+                    Style="{StaticResource Acme.Control.Button.DialogButton}">
                     Cancel
                 </Button>
-            </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>

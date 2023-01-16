@@ -41,16 +41,17 @@
             // 
             this.SearchFor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.SearchFor.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.SearchFor.Location = new System.Drawing.Point(17, 16);
             this.SearchFor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SearchFor.Name = "SearchFor";
-            this.SearchFor.Size = new System.Drawing.Size(444, 23);
+            this.SearchFor.Size = new System.Drawing.Size(444, 22);
             this.SearchFor.TabIndex = 0;
             // 
             // SearchButton
             // 
             this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SearchButton.Font = new System.Drawing.Font("Tahoma", 9.75F);
+            this.SearchButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.SearchButton.Location = new System.Drawing.Point(467, 13);
             this.SearchButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SearchButton.Name = "SearchButton";
@@ -63,6 +64,7 @@
             // ImportButton
             // 
             this.ImportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ImportButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.ImportButton.Location = new System.Drawing.Point(467, 444);
             this.ImportButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ImportButton.Name = "ImportButton";
@@ -78,6 +80,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.elementHost1.BackColor = System.Drawing.Color.White;
+            this.elementHost1.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.elementHost1.Location = new System.Drawing.Point(14, 54);
             this.elementHost1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.elementHost1.Name = "elementHost1";
@@ -92,7 +95,7 @@
             this.LabelInfo.AutoSize = true;
             this.LabelInfo.Location = new System.Drawing.Point(14, 450);
             this.LabelInfo.Name = "LabelInfo";
-            this.LabelInfo.Size = new System.Drawing.Size(20, 16);
+            this.LabelInfo.Size = new System.Drawing.Size(19, 16);
             this.LabelInfo.TabIndex = 9;
             this.LabelInfo.Text = "...";
             // 

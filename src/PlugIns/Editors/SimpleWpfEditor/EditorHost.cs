@@ -5,14 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Chem4Word.ACME;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Converters.CML;
+using System;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Chem4Word.Editor.SimpleWpfEditor
 {
@@ -86,34 +86,32 @@ namespace Chem4Word.Editor.SimpleWpfEditor
 
         private void EditorHost_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
+            if (DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing
+                                                && elementHost1.Child is CmlEditor editor
+                                                && editor.IsDirty)
             {
-                if (elementHost1.Child is CmlEditor editor
-                    && editor.IsDirty)
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Do you wish to save your changes?");
+                sb.AppendLine("  Click 'Yes' to save your changes and exit.");
+                sb.AppendLine("  Click 'No' to discard your changes and exit.");
+                sb.AppendLine("  Click 'Cancel' to return to the form.");
+
+                DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                switch (dr)
                 {
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine("Do you wish to save your changes?");
-                    sb.AppendLine("  Click 'Yes' to save your changes and exit.");
-                    sb.AppendLine("  Click 'No' to discard your changes and exit.");
-                    sb.AppendLine("  Click 'Cancel' to return to the form.");
+                    case DialogResult.Cancel:
+                        e.Cancel = true;
+                        break;
 
-                    DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
-                    switch (dr)
-                    {
-                        case DialogResult.Cancel:
-                            e.Cancel = true;
-                            break;
+                    case DialogResult.Yes:
+                        DialogResult = DialogResult.OK;
+                        CMLConverter cc = new CMLConverter();
+                        OutputValue = cc.Export(editor.EditedModel);
+                        Hide();
+                        break;
 
-                        case DialogResult.Yes:
-                            DialogResult = DialogResult.OK;
-                            CMLConverter cc = new CMLConverter();
-                            OutputValue = cc.Export(editor.EditedModel);
-                            Hide();
-                            break;
-
-                        case DialogResult.No:
-                            break;
-                    }
+                    case DialogResult.No:
+                        break;
                 }
             }
         }

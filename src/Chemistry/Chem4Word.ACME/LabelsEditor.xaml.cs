@@ -5,6 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Controls;
+using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,11 +19,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using Chem4Word.ACME.Controls;
-using Chem4Word.Model2;
-using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 
 namespace Chem4Word.ACME
 {
@@ -148,9 +148,9 @@ namespace Chem4Word.ACME
                 AddNodes(root, EditedModel.Molecules.Values);
             }
 
-            SetupNamesEditor(NamesGrid, "Add new Name", OnAddNameClick, "Alternative name(s) for molecule");
-            SetupNamesEditor(FormulaGrid, "Add new Formula", OnAddFormulaClick, "Alternative formula for molecule");
-            SetupNamesEditor(CaptionsGrid, "Add new Caption", OnAddLabelClick, "Molecule Caption(s)");
+            SetupNamesEditor(NamesGrid, "Add Name", OnAddNameClick, "Alternative name(s) for molecule");
+            SetupNamesEditor(FormulaGrid, "Add Formula", OnAddFormulaClick, "Alternative formula for molecule");
+            SetupNamesEditor(CaptionsGrid, "Add Caption", OnAddLabelClick, "Molecule Caption(s)");
 
             TreeView.Focus();
 
@@ -349,7 +349,7 @@ namespace Chem4Word.ACME
         // ToDo: Refactor; This is a near duplicate of $\src\Chemistry\Chem4Word.ACME\Controls\FormulaBlock.cs
         // Ought to be made into common routine
         // Refactor into common code [MAW] ...
-        private TextBlock TextBlockFromFormula(string formula, string prefix = null)
+        private static TextBlock TextBlockFromFormula(string formula, string prefix = null)
         {
             var textBlock = new TextBlock();
 

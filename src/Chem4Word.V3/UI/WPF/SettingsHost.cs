@@ -5,16 +5,16 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Drawing;
-using System.Reflection;
-using System.Text;
-using System.Windows.Forms;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
+using System;
+using System.Drawing;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Chem4Word.UI.WPF
 {
@@ -27,47 +27,11 @@ namespace Chem4Word.UI.WPF
 
         public System.Windows.Point TopLeft { get; set; }
 
-        public Chem4WordOptions SystemOptions
-        {
-            get
-            {
-                if (elementHost1.Child is SettingsControl sc)
-                {
-                    return sc.SystemOptions;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            set
-            {
-                if (elementHost1.Child is SettingsControl sc)
-                {
-                    sc.SystemOptions = value;
-                }
-            }
-        }
+        public Chem4WordOptions SystemOptions { get; set; }
 
         public SettingsHost()
         {
             InitializeComponent();
-        }
-
-        public SettingsHost(bool runtime)
-        {
-            using (new WaitCursor())
-            {
-                InitializeComponent();
-                if (runtime)
-                {
-                    if (elementHost1.Child is SettingsControl sc)
-                    {
-                        sc.TopLeft = Globals.Chem4WordV3.WordTopLeft;
-                        sc.OnButtonClick += OnWpfButtonClick;
-                    }
-                }
-            }
         }
 
         private void OnWpfButtonClick(object sender, EventArgs e)
@@ -99,6 +63,12 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
+                var sc = new SettingsControl();
+                elementHost1.Child = sc;
+                sc.TopLeft = TopLeft;
+                sc.SystemOptions = SystemOptions;
+                sc.OnButtonClick += OnWpfButtonClick;
+
                 using (new WaitCursor())
                 {
                     if (!PointHelper.PointIsEmpty(TopLeft))

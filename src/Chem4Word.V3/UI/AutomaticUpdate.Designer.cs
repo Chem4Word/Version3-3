@@ -39,9 +39,10 @@
             // btnUpdateNow
             // 
             this.btnUpdateNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateNow.Location = new System.Drawing.Point(686, 426);
+            this.btnUpdateNow.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnUpdateNow.Location = new System.Drawing.Point(672, 436);
             this.btnUpdateNow.Name = "btnUpdateNow";
-            this.btnUpdateNow.Size = new System.Drawing.Size(86, 23);
+            this.btnUpdateNow.Size = new System.Drawing.Size(100, 27);
             this.btnUpdateNow.TabIndex = 0;
             this.btnUpdateNow.Text = "Update Now";
             this.btnUpdateNow.UseVisualStyleBackColor = true;
@@ -52,10 +53,10 @@
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox1.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.richTextBox1.Location = new System.Drawing.Point(12, 36);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(760, 384);
+            this.richTextBox1.Size = new System.Drawing.Size(760, 383);
             this.richTextBox1.TabIndex = 1;
             this.richTextBox1.Text = "";
             this.richTextBox1.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnRichTextBoxLinkClicked);
@@ -63,19 +64,20 @@
             // lblInfo
             // 
             this.lblInfo.AutoSize = true;
-            this.lblInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblInfo.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblInfo.Location = new System.Drawing.Point(12, 9);
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(103, 13);
+            this.lblInfo.Size = new System.Drawing.Size(110, 19);
             this.lblInfo.TabIndex = 2;
             this.lblInfo.Text = "Update available";
             // 
             // btnUpdateLater
             // 
             this.btnUpdateLater.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateLater.Location = new System.Drawing.Point(594, 426);
+            this.btnUpdateLater.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnUpdateLater.Location = new System.Drawing.Point(566, 436);
             this.btnUpdateLater.Name = "btnUpdateLater";
-            this.btnUpdateLater.Size = new System.Drawing.Size(86, 23);
+            this.btnUpdateLater.Size = new System.Drawing.Size(100, 27);
             this.btnUpdateLater.TabIndex = 3;
             this.btnUpdateLater.Text = "Update Later";
             this.btnUpdateLater.UseVisualStyleBackColor = true;
@@ -85,9 +87,10 @@
             // 
             this.linkReleasesPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkReleasesPage.AutoSize = true;
-            this.linkReleasesPage.Location = new System.Drawing.Point(12, 431);
+            this.linkReleasesPage.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.linkReleasesPage.Location = new System.Drawing.Point(12, 445);
             this.linkReleasesPage.Name = "linkReleasesPage";
-            this.linkReleasesPage.Size = new System.Drawing.Size(375, 13);
+            this.linkReleasesPage.Size = new System.Drawing.Size(490, 19);
             this.linkReleasesPage.TabIndex = 5;
             this.linkReleasesPage.TabStop = true;
             this.linkReleasesPage.Text = "Click here to download directly from the releases page if automatic update fails";
@@ -97,7 +100,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 461);
+            this.ClientSize = new System.Drawing.Size(784, 475);
             this.Controls.Add(this.linkReleasesPage);
             this.Controls.Add(this.btnUpdateLater);
             this.Controls.Add(this.lblInfo);

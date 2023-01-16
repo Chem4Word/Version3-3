@@ -52,6 +52,7 @@
             // 
             this.elementHost1.BackColor = System.Drawing.Color.White;
             this.elementHost1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.elementHost1.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.elementHost1.Location = new System.Drawing.Point(0, 0);
             this.elementHost1.Name = "elementHost1";
             this.elementHost1.Size = new System.Drawing.Size(390, 428);
@@ -62,6 +63,7 @@
             // SearchButton
             // 
             this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SearchButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.SearchButton.Location = new System.Drawing.Point(789, 13);
             this.SearchButton.Name = "SearchButton";
             this.SearchButton.Size = new System.Drawing.Size(87, 29);
@@ -74,9 +76,10 @@
             // 
             this.SearchFor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.SearchFor.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.SearchFor.Location = new System.Drawing.Point(13, 15);
             this.SearchFor.Name = "SearchFor";
-            this.SearchFor.Size = new System.Drawing.Size(770, 23);
+            this.SearchFor.Size = new System.Drawing.Size(770, 25);
             this.SearchFor.TabIndex = 0;
             // 
             // Results
@@ -88,9 +91,11 @@
             this.columnHeader2,
             this.columnHeader3});
             this.Results.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Results.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.Results.FullRowSelect = true;
             this.Results.GridLines = true;
             this.Results.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.Results.HideSelection = false;
             this.Results.Location = new System.Drawing.Point(0, 0);
             this.Results.Name = "Results";
             this.Results.Size = new System.Drawing.Size(467, 428);
@@ -112,12 +117,13 @@
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Fomula";
+            this.columnHeader3.Text = "Formula";
             this.columnHeader3.Width = 100;
             // 
             // ImportButton
             // 
             this.ImportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ImportButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.ImportButton.Location = new System.Drawing.Point(790, 525);
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(87, 29);
@@ -129,6 +135,7 @@
             // PreviousButton
             // 
             this.PreviousButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.PreviousButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.PreviousButton.Image = global::Chem4Word.Searcher.PubChemPlugIn.Properties.Resources.ArrowLeft;
             this.PreviousButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.PreviousButton.Location = new System.Drawing.Point(12, 525);
@@ -143,6 +150,7 @@
             // NextButton
             // 
             this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.NextButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.NextButton.Image = global::Chem4Word.Searcher.PubChemPlugIn.Properties.Resources.ArrowRight;
             this.NextButton.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.NextButton.Location = new System.Drawing.Point(13, 490);

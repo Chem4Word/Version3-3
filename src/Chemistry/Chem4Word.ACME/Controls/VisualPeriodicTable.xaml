@@ -8,7 +8,7 @@
     xmlns:model2="clr-namespace:Chem4Word.Model2;assembly=Chem4Word.Model2"
     Width="511.557"
     Height="260.771"
-    FontFamily="Arial"
+    FontFamily="Segoe UI"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -16,6 +16,7 @@
             <SolidColorBrush x:Key="Chem4WordBrush" Color="#2A579A" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="../Resources/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -71,7 +72,7 @@
             </Style>
             <Style
                 x:Key="ElementText"
-                BasedOn="{StaticResource LabelTextBlock}"
+                BasedOn="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                 TargetType="TextBlock">
                 <Setter Property="Height" Value="Auto" />
                 <Setter Property="HorizontalAlignment" Value="Center" />

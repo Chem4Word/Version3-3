@@ -8,12 +8,6 @@
     d:DesignHeight="100"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <!--  Brushes  -->
-        <SolidColorBrush x:Key="Chem4WordBlue">
-            <SolidColorBrush.Color>#2A579A</SolidColorBrush.Color>
-        </SolidColorBrush>
-    </UserControl.Resources>
     <Grid x:Name="GridOfTags">
         <ItemsControl ItemsSource="{Binding Mode=OneWay, Path=CurrentTags}">
             <ItemsControl.ItemsPanel>

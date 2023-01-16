@@ -13,94 +13,98 @@
     d:DesignHeight="600"
     d:DesignWidth="800"
     FontFamily="Segoe UI"
-    Loaded="OnLoaded_LibraryEditorControl"
     FontSize="18"
+    Loaded="OnLoaded_LibraryEditorControl"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="Chem4WordBlue">
-            <SolidColorBrush.Color>#2A579A</SolidColorBrush.Color>
-        </SolidColorBrush>
-        <SolidColorBrush x:Key="FormBackground" Color="{x:Static SystemColors.ControlColor}" />
-        <Style x:Key="NavButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value=".25" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value=".25" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="AddButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128Z" />
-        </Style>
-        <Style x:Key="ImportButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="m 9.797016 24.88902 1.777001 -0.916 3.28399 6.374978 h 8.153022 l 7.211995 -14 -7.211988 -13.999987 h -8.15302 L 12.041014 7.817988 10.263013 6.901991 13.360015 0.890017 c 0.171 -0.332999 0.515001 -0.541996 0.889001 -0.541996 h 0.548005 l 8.823016 -2.3e-5 c 0.373992 0 0.717986 0.209045 0.888976 0.541992 l 7.727986 15 c 0.074 0.144043 0.111021 0.301025 0.111021 0.458008 0 0.157043 -0.03702 0.314026 -0.111021 0.458008 l -7.727986 15 c -0.17099 0.333008 -0.514984 0.541992 -0.888976 0.541992 h -0.548015 l -8.823004 2.2e-5 c -0.374 0 -0.718 -0.209 -0.889 -0.542 z m -7.777574 -8.541 4.631883 4.962893 v -2.462947 c 0 -0.552988 0.446988 -0.999979 0.999975 -0.999979 h 8.999771 V 14.848051 H 7.6513 c -0.552987 0 -0.999975 -0.446989 -0.999975 -0.999977 v -2.462948 z m -2.36744 0 c 0 -0.245244 0.0895 -0.490489 0.268494 -0.682985 L 6.920318 8.165196 C 7.200311 7.866202 7.6353 7.767205 8.01829 7.917202 8.400281 8.069199 8.651274 8.437189 8.651274 8.848181 v 3.999914 h 8.999772 c 0.552986 0 0.999975 0.446991 0.999974 0.999979 v 4.999892 c 1e-6 0.552988 -0.446988 0.999978 -0.999974 0.999978 H 8.651274 v 3.999915 c 0 0.41099 -0.250993 0.778982 -0.632984 0.930979 -0.38299 0.149997 -0.817979 0.051 -1.097972 -0.247995 l -6.999822 -7.499838 c -0.178995 -0.192496 -0.268494 -0.43774 -0.268494 -0.682985 z" />
-        </Style>
-        <Style x:Key="ExportButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="M 22.203006 7.8069983 20.426005 8.7229982 17.142015 2.3480201 H 8.988993 L 1.776998 16.34802 8.988986 30.348007 h 8.15302 l 2.817002 -5.469977 1.778001 0.915997 -3.097002 6.011974 c -0.171 0.332999 -0.515001 0.541996 -0.889001 0.541996 h -0.548005 l -8.823016 2.3e-5 c -0.373992 0 -0.717986 -0.209045 -0.888976 -0.541992 l -7.727986 -15 c -0.074003 -0.144043 -0.111021 -0.301025 -0.111021 -0.458008 0 -0.157043 0.037018 -0.314026 0.111021 -0.458008 L 7.491009 0.89001225 C 7.661999 0.55700449 8.005993 0.34802012 8.379985 0.34802041 H 8.928 l 8.823004 -2.241e-5 c 0.374 1.4e-7 0.718 0.20900014 0.889 0.54200012 z m 7.777574 8.5409997 -4.631883 -4.962893 v 2.462947 c 0 0.552988 -0.446988 0.999979 -0.999975 0.999979 h -8.999771 v 2.999936 h 8.999771 c 0.552987 0 0.999975 0.446989 0.999975 0.999977 v 2.462948 z m 2.36744 0 c 0 0.245244 -0.0895 0.490489 -0.268494 0.682985 l -6.999822 7.499839 c -0.279993 0.298994 -0.714982 0.397991 -1.097972 0.247994 -0.381991 -0.151997 -0.632984 -0.519987 -0.632984 -0.930979 v -3.999914 h -8.999772 c -0.552986 0 -0.999975 -0.446991 -0.999974 -0.999979 v -4.999892 c -1e-6 -0.552988 0.446988 -0.999978 0.999974 -0.999978 h 8.999772 V 8.8481594 c 0 -0.4109908 0.250993 -0.7789827 0.632984 -0.9309798 0.38299 -0.1499967 0.817979 -0.050999 1.097972 0.2479949 l 6.999822 7.4998385 c 0.178995 0.192496 0.268494 0.43774 0.268494 0.682985 z" />
-        </Style>
-        <Style x:Key="DeleteButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="M16,8.0000272L18,8.0000272 18,27.000028 16,27.000028z M11,8.0000272L13,8.0000272 13,27.000028 11,27.000028z M6.0000005,8.0000272L8.0000005,8.0000272 8.0000005,27.000028 6.0000005,27.000028z M2.9990063,5.0000274L2.9990063,30.000026 20.999983,30.000026 20.999006,5.0000274z M13.771989,1.9959999L10.198989,2.0000001C10.158989,2.025,9.9989892,2.241,9.9989892,2.6000001L9.9989892,3.0000258 13.998989,3.0000258 13.998989,2.6000001C13.998989,2.241,13.838988,2.025,13.771989,1.9959999z M10.198989,0L13.798988,0C15.031989,0,15.998989,1.142,15.998989,2.6000001L15.998989,3.0000258 22.999006,3.0000258 24,3.0000272 24,5.0000274 22.999006,5.0000274 22.999006,30.000026C22.999006,31.102992,22.102034,32.000026,20.999006,32.000026L2.9990063,32.000026C1.895979,32.000026,0.99900633,31.102992,0.9990066,30.000026L0.9990066,5.0000274 0,5.0000274 0,3.0000272 0.9990066,3.0000272 7.9989887,3.0000258 7.9989887,2.6000001C7.9989887,1.142,8.9659887,0,10.198989,0z" />
-        </Style>
-        <Style x:Key="MetadataButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="M12.366862,10.774799L14.893845,13.104838 11.987868,13.718797z M9.5078984,4.0927289L15.538827,4.0927289 13.340851,6.4467552 9.6628953,6.4467552 9.5039006,11.579799C9.5039006,11.579799,9.2989007,14.973814,5.5589333,14.563837L2.3529726,14.4768 2.3529726,29.05897C2.3529726,29.383986,2.6179693,29.646989,2.9429627,29.646989L19.417801,29.646989C19.740795,29.646989,20.005791,29.383986,20.005791,29.05897L20.005791,11.568813 22.360764,9.1947668 22.360764,29.05897C22.360764,30.683985,21.042784,31.999976,19.417801,31.999976L2.9429627,31.999976C1.3179796,31.999976,-1.4742E-08,30.683985,0,29.05897L0,14.124807 1.1649814,12.895791 1.1669803,12.861794 7.2719131,6.4467552 7.2549153,6.4467552 5.6229282,8.1687563 7.3339244,6.357765 7.3569194,6.357765 7.4119111,6.3007577 7.4159241,6.3007577z M18.761801,2.489686L22.867762,6.2787235 17.798813,11.773771 17.712816,10.903767 16.359833,10.443803 16.321823,9.5227735 14.971847,9.1647985 14.809846,8.1257875 13.691846,7.9827802z M21.579765,0.00070960087C21.76177,0.0076677515,21.931767,0.07071767,22.063768,0.19169036L24.973744,2.8767135C25.326737,3.2027056,25.280731,3.8277116,24.86974,4.2717464L24.312738,4.8767326 20.123787,1.0126822 20.68178,0.40769602C20.937773,0.1296782,21.275768,-0.011314364,21.579765,0.00070960087z" />
-        </Style>
-        <Style x:Key="SearchButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="M 19.166959 4.5889625 c 3.79103 0 7.083035 2.5930028 7.482023 6.0849565 0.398988 3.690988 -2.594004 7.082967 -6.783045 7.381976 -4.190019 0.398985 -7.881011 -2.295 -8.28 -6.084956 -0.39905 -3.6909885 2.592966 -7.0829672 6.782985 -7.3819765 z M 19.266936 0 C 18.867947 -2.0158268e-7 18.368922 -2.0158268e-7 17.969933 0.10000526 10.986936 0.6979938 5.8998808 6.2849674 6.5978808 12.568927 c 0.299013 2.194995 1.197025 4.189979 2.594003 5.885953 l -8.480012 9.07795 c -1.096989 1.097009 -0.896977 2.892988 0.398988 3.789987 1.297003 0.997978 3.193005 0.798001 4.290057 -0.299009 l 8.5790112 -9.276955 c 1.995003 0.797999 4.190018 1.197014 6.58401 0.997004 C 27.546996 22.145869 32.633991 16.559901 31.93599 10.274934 31.237989 4.3889822 25.650993 -2.0158268e-7 19.266936 0 Z" />
-        </Style>
-        <Style x:Key="DelButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="F1 M 0,7.89185L 2.65756,4.4368L 0.181,1.25839L 2.38931,0L 4.49869,2.51559L 6.72134,0L 8.78256,1.25839L 6.38541,4.33398L 9.15366,7.89185L 6.92319,9.15292L 4.49869,6.31573L 2.05209,9.15292L 0,7.89185 Z" />
-        </Style>
-        <Style x:Key="CheckedButtonPath" TargetType="Path">
-            <Setter Property="Data" Value="M25.085272,8.2189964C25.59701,8.2189963 26.108748,8.4142508 26.499243,8.8047599 27.280232,9.5857784 27.280232,10.852797 26.499243,11.632808L13.201567,24.926997 5.6967307,17.474881C4.9127519,16.696884 4.9087237,15.430873 5.6867214,14.646833 6.4647191,13.862824 7.7306819,13.857819 8.5146611,14.636854L13.191558,19.28091 23.671303,8.8047599C24.061797,8.4142508,24.573534,8.2189963,25.085272,8.2189964z M2,2L2,29.999999 30,29.999999 30,2z M0,0L32,0 32,31.999999 0,31.999999z" />
-        </Style>
-        <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
-            <!--
-                We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
-                https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
-            -->
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBoxItem">
-                        <Border
-                            Name="Border"
-                            Padding="3"
-                            SnapsToDevicePixels="true">
-                            <ContentPresenter />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="Border" Property="Background" Value="{StaticResource Chem4WordBlue}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <converters:BoolToVisibilityConverter
-            x:Key="BoolToVisConverter"
-            FalseValue="Collapsed"
-            TrueValue="Visible" />
-        <Style x:Key="DefaultLabelStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontWeight" Value="DemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
-            <Setter Property="Margin" Value="5" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="FormBackground" Color="{x:Static SystemColors.ControlColor}" />
+            <Style x:Key="NavButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value=".25" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value=".25" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="AddButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128Z" />
+            </Style>
+            <Style x:Key="ImportButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="m 9.797016 24.88902 1.777001 -0.916 3.28399 6.374978 h 8.153022 l 7.211995 -14 -7.211988 -13.999987 h -8.15302 L 12.041014 7.817988 10.263013 6.901991 13.360015 0.890017 c 0.171 -0.332999 0.515001 -0.541996 0.889001 -0.541996 h 0.548005 l 8.823016 -2.3e-5 c 0.373992 0 0.717986 0.209045 0.888976 0.541992 l 7.727986 15 c 0.074 0.144043 0.111021 0.301025 0.111021 0.458008 0 0.157043 -0.03702 0.314026 -0.111021 0.458008 l -7.727986 15 c -0.17099 0.333008 -0.514984 0.541992 -0.888976 0.541992 h -0.548015 l -8.823004 2.2e-5 c -0.374 0 -0.718 -0.209 -0.889 -0.542 z m -7.777574 -8.541 4.631883 4.962893 v -2.462947 c 0 -0.552988 0.446988 -0.999979 0.999975 -0.999979 h 8.999771 V 14.848051 H 7.6513 c -0.552987 0 -0.999975 -0.446989 -0.999975 -0.999977 v -2.462948 z m -2.36744 0 c 0 -0.245244 0.0895 -0.490489 0.268494 -0.682985 L 6.920318 8.165196 C 7.200311 7.866202 7.6353 7.767205 8.01829 7.917202 8.400281 8.069199 8.651274 8.437189 8.651274 8.848181 v 3.999914 h 8.999772 c 0.552986 0 0.999975 0.446991 0.999974 0.999979 v 4.999892 c 1e-6 0.552988 -0.446988 0.999978 -0.999974 0.999978 H 8.651274 v 3.999915 c 0 0.41099 -0.250993 0.778982 -0.632984 0.930979 -0.38299 0.149997 -0.817979 0.051 -1.097972 -0.247995 l -6.999822 -7.499838 c -0.178995 -0.192496 -0.268494 -0.43774 -0.268494 -0.682985 z" />
+            </Style>
+            <Style x:Key="ExportButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M 22.203006 7.8069983 20.426005 8.7229982 17.142015 2.3480201 H 8.988993 L 1.776998 16.34802 8.988986 30.348007 h 8.15302 l 2.817002 -5.469977 1.778001 0.915997 -3.097002 6.011974 c -0.171 0.332999 -0.515001 0.541996 -0.889001 0.541996 h -0.548005 l -8.823016 2.3e-5 c -0.373992 0 -0.717986 -0.209045 -0.888976 -0.541992 l -7.727986 -15 c -0.074003 -0.144043 -0.111021 -0.301025 -0.111021 -0.458008 0 -0.157043 0.037018 -0.314026 0.111021 -0.458008 L 7.491009 0.89001225 C 7.661999 0.55700449 8.005993 0.34802012 8.379985 0.34802041 H 8.928 l 8.823004 -2.241e-5 c 0.374 1.4e-7 0.718 0.20900014 0.889 0.54200012 z m 7.777574 8.5409997 -4.631883 -4.962893 v 2.462947 c 0 0.552988 -0.446988 0.999979 -0.999975 0.999979 h -8.999771 v 2.999936 h 8.999771 c 0.552987 0 0.999975 0.446989 0.999975 0.999977 v 2.462948 z m 2.36744 0 c 0 0.245244 -0.0895 0.490489 -0.268494 0.682985 l -6.999822 7.499839 c -0.279993 0.298994 -0.714982 0.397991 -1.097972 0.247994 -0.381991 -0.151997 -0.632984 -0.519987 -0.632984 -0.930979 v -3.999914 h -8.999772 c -0.552986 0 -0.999975 -0.446991 -0.999974 -0.999979 v -4.999892 c -1e-6 -0.552988 0.446988 -0.999978 0.999974 -0.999978 h 8.999772 V 8.8481594 c 0 -0.4109908 0.250993 -0.7789827 0.632984 -0.9309798 0.38299 -0.1499967 0.817979 -0.050999 1.097972 0.2479949 l 6.999822 7.4998385 c 0.178995 0.192496 0.268494 0.43774 0.268494 0.682985 z" />
+            </Style>
+            <Style x:Key="DeleteButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M16,8.0000272L18,8.0000272 18,27.000028 16,27.000028z M11,8.0000272L13,8.0000272 13,27.000028 11,27.000028z M6.0000005,8.0000272L8.0000005,8.0000272 8.0000005,27.000028 6.0000005,27.000028z M2.9990063,5.0000274L2.9990063,30.000026 20.999983,30.000026 20.999006,5.0000274z M13.771989,1.9959999L10.198989,2.0000001C10.158989,2.025,9.9989892,2.241,9.9989892,2.6000001L9.9989892,3.0000258 13.998989,3.0000258 13.998989,2.6000001C13.998989,2.241,13.838988,2.025,13.771989,1.9959999z M10.198989,0L13.798988,0C15.031989,0,15.998989,1.142,15.998989,2.6000001L15.998989,3.0000258 22.999006,3.0000258 24,3.0000272 24,5.0000274 22.999006,5.0000274 22.999006,30.000026C22.999006,31.102992,22.102034,32.000026,20.999006,32.000026L2.9990063,32.000026C1.895979,32.000026,0.99900633,31.102992,0.9990066,30.000026L0.9990066,5.0000274 0,5.0000274 0,3.0000272 0.9990066,3.0000272 7.9989887,3.0000258 7.9989887,2.6000001C7.9989887,1.142,8.9659887,0,10.198989,0z" />
+            </Style>
+            <Style x:Key="MetadataButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M12.366862,10.774799L14.893845,13.104838 11.987868,13.718797z M9.5078984,4.0927289L15.538827,4.0927289 13.340851,6.4467552 9.6628953,6.4467552 9.5039006,11.579799C9.5039006,11.579799,9.2989007,14.973814,5.5589333,14.563837L2.3529726,14.4768 2.3529726,29.05897C2.3529726,29.383986,2.6179693,29.646989,2.9429627,29.646989L19.417801,29.646989C19.740795,29.646989,20.005791,29.383986,20.005791,29.05897L20.005791,11.568813 22.360764,9.1947668 22.360764,29.05897C22.360764,30.683985,21.042784,31.999976,19.417801,31.999976L2.9429627,31.999976C1.3179796,31.999976,-1.4742E-08,30.683985,0,29.05897L0,14.124807 1.1649814,12.895791 1.1669803,12.861794 7.2719131,6.4467552 7.2549153,6.4467552 5.6229282,8.1687563 7.3339244,6.357765 7.3569194,6.357765 7.4119111,6.3007577 7.4159241,6.3007577z M18.761801,2.489686L22.867762,6.2787235 17.798813,11.773771 17.712816,10.903767 16.359833,10.443803 16.321823,9.5227735 14.971847,9.1647985 14.809846,8.1257875 13.691846,7.9827802z M21.579765,0.00070960087C21.76177,0.0076677515,21.931767,0.07071767,22.063768,0.19169036L24.973744,2.8767135C25.326737,3.2027056,25.280731,3.8277116,24.86974,4.2717464L24.312738,4.8767326 20.123787,1.0126822 20.68178,0.40769602C20.937773,0.1296782,21.275768,-0.011314364,21.579765,0.00070960087z" />
+            </Style>
+            <Style x:Key="SearchButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M 19.166959 4.5889625 c 3.79103 0 7.083035 2.5930028 7.482023 6.0849565 0.398988 3.690988 -2.594004 7.082967 -6.783045 7.381976 -4.190019 0.398985 -7.881011 -2.295 -8.28 -6.084956 -0.39905 -3.6909885 2.592966 -7.0829672 6.782985 -7.3819765 z M 19.266936 0 C 18.867947 -2.0158268e-7 18.368922 -2.0158268e-7 17.969933 0.10000526 10.986936 0.6979938 5.8998808 6.2849674 6.5978808 12.568927 c 0.299013 2.194995 1.197025 4.189979 2.594003 5.885953 l -8.480012 9.07795 c -1.096989 1.097009 -0.896977 2.892988 0.398988 3.789987 1.297003 0.997978 3.193005 0.798001 4.290057 -0.299009 l 8.5790112 -9.276955 c 1.995003 0.797999 4.190018 1.197014 6.58401 0.997004 C 27.546996 22.145869 32.633991 16.559901 31.93599 10.274934 31.237989 4.3889822 25.650993 -2.0158268e-7 19.266936 0 Z" />
+            </Style>
+            <Style x:Key="DelButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="F1 M 0,7.89185L 2.65756,4.4368L 0.181,1.25839L 2.38931,0L 4.49869,2.51559L 6.72134,0L 8.78256,1.25839L 6.38541,4.33398L 9.15366,7.89185L 6.92319,9.15292L 4.49869,6.31573L 2.05209,9.15292L 0,7.89185 Z" />
+            </Style>
+            <Style x:Key="CheckedButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M25.085272,8.2189964C25.59701,8.2189963 26.108748,8.4142508 26.499243,8.8047599 27.280232,9.5857784 27.280232,10.852797 26.499243,11.632808L13.201567,24.926997 5.6967307,17.474881C4.9127519,16.696884 4.9087237,15.430873 5.6867214,14.646833 6.4647191,13.862824 7.7306819,13.857819 8.5146611,14.636854L13.191558,19.28091 23.671303,8.8047599C24.061797,8.4142508,24.573534,8.2189963,25.085272,8.2189964z M2,2L2,29.999999 30,29.999999 30,2z M0,0L32,0 32,31.999999 0,31.999999z" />
+            </Style>
+            <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
+                <!--
+                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+                -->
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border
+                                Name="Border"
+                                Padding="3"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource Chem4WordBlue}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <converters:BoolToVisibilityConverter
+                x:Key="BoolToVisConverter"
+                FalseValue="Collapsed"
+                TrueValue="Visible" />
+            <Style x:Key="DefaultLabelStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontWeight" Value="DemiBold" />
+                <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
+                <Setter Property="Margin" Value="5" />
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid Background="{StaticResource FormBackground}">
         <Grid.RowDefinitions>
@@ -223,7 +227,7 @@
                                 Canvas.Top="4"
                                 Width="24"
                                 Height="24"
-                                Fill="Red"
+                                Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Fill"
                                 Style="{StaticResource DeleteButtonPath}" />
                         </Canvas>
@@ -235,7 +239,7 @@
                 Name="Slider"
                 Width="100"
                 Margin="5,0,5,0"
-                Foreground="{StaticResource Chem4WordBlue}"
+                Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
                 IsSnapToTickEnabled="True"
                 Maximum="500"
                 Minimum="200"
@@ -252,7 +256,7 @@
                 VerticalContentAlignment="Center"
                 Background="White"
                 BorderThickness="0"
-                Foreground="{StaticResource Chem4WordBlue}"
+                Foreground="{DynamicResource Chem4WordBlue}"
                 SelectedIndex="0"
                 SelectionChanged="OnSelectionChanged_SortBy"
                 ToolTip="Sort By">
@@ -285,7 +289,7 @@
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
                         BorderThickness="0"
-                        Foreground="{StaticResource Chem4WordBlue}"
+                        Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
                         KeyDown="OnKeyDown_SearchBox"
                         TextChanged="OnTextChanged_SearchBox"
                         ToolTip="Filter the list of structures by name" />
@@ -317,7 +321,7 @@
                                         Canvas.Top="2"
                                         Width="20"
                                         Height="20"
-                                        Fill="Red"
+                                        Fill="{StaticResource Chem4WordBlue}"
                                         Stretch="Fill"
                                         Style="{StaticResource DelButtonPath}" />
                                 </Canvas>
@@ -454,7 +458,6 @@
                 Grid.Column="1"
                 Width="5"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Stretch"
                 Background="{x:Static SystemColors.ActiveCaptionBrush}" />
             <Grid
                 Name="NamesPanelGrid"
@@ -508,6 +511,7 @@
                     <controls:FormulaBlock
                         Grid.Row="1"
                         Grid.Column="1"
+                        Foreground="Black"
                         Formula="{Binding Path=SelectedChemistryObject.Formula}"
                         Style="{StaticResource DefaultLabelStyle}" />
                     <TextBlock
@@ -519,6 +523,7 @@
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="1"
+                        Foreground="Black"
                         Style="{StaticResource DefaultLabelStyle}"
                         TargetUpdated="OnSelectedItemChanged"
                         Text="{Binding Path=SelectedChemistryObject.MolecularWeightAsString, NotifyOnTargetUpdated=True}" />
@@ -533,9 +538,11 @@
                         Name="TaggingControl"
                         Grid.Row="3"
                         Grid.Column="1"
+                        Width="Auto"
                         Height="Auto"
-                        Margin="3"
+                        Margin="3,0,0,0"
                         Padding="3"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         LostFocus="OnLostFocus_TaggingControl"
                         LostKeyboardFocus="OnLostFocus_TaggingControl" />
@@ -543,8 +550,7 @@
                 <Grid Grid.Row="2" Background="{StaticResource FormBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock Margin="5,5,5,5" Style="{StaticResource DefaultLabelStyle}">Metadata</TextBlock>
                     <wpf:LibraryNamesPanel

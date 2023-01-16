@@ -57,6 +57,7 @@
             // Errors
             // 
             this.Errors.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Errors.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.Errors.Location = new System.Drawing.Point(0, 0);
             this.Errors.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Errors.Multiline = true;
@@ -69,6 +70,7 @@
             // Warnings
             // 
             this.Warnings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Warnings.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.Warnings.Location = new System.Drawing.Point(0, 0);
             this.Warnings.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Warnings.Multiline = true;
@@ -81,6 +83,7 @@
             // Abort
             // 
             this.Abort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Abort.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.Abort.Location = new System.Drawing.Point(730, 418);
             this.Abort.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Abort.Name = "Abort";
@@ -93,6 +96,7 @@
             // Continue
             // 
             this.Continue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Continue.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.Continue.Location = new System.Drawing.Point(637, 418);
             this.Continue.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Continue.Name = "Continue";
@@ -107,7 +111,7 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(522, 291);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 16);
+            this.label4.Size = new System.Drawing.Size(52, 16);
             this.label4.TabIndex = 9;
             this.label4.Text = "Error(s)";
             // 

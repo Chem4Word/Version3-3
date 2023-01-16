@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LibraryEditorHost));
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
-            this.libraryEditorControl1 = new Chem4Word.UI.WPF.LibraryEditorControl();
             this.SuspendLayout();
             // 
             // elementHost1
@@ -41,7 +40,6 @@
             this.elementHost1.Size = new System.Drawing.Size(1184, 711);
             this.elementHost1.TabIndex = 1;
             this.elementHost1.Text = "elementHost1";
-            this.elementHost1.Child = this.libraryEditorControl1;
             // 
             // LibraryEditorHost
             // 
@@ -59,6 +57,5 @@
 
         #endregion
         private System.Windows.Forms.Integration.ElementHost elementHost1;
-        private LibraryEditorControl libraryEditorControl1;
     }
 }

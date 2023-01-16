@@ -6,17 +6,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Chem4Word.ACME.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    FontFamily="Arial"
     Loaded="AcmeSettings_OnLoaded"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="../Resources/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="TabControl">
+                <Setter Property="FontSize" Value="14" />
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid Width="Auto">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="40" />
@@ -32,72 +35,57 @@
                 <Grid>
                     <StackPanel>
                         <GroupBox BorderThickness="2" Header="Common">
-                            <Grid>
+                            <Grid Height="64">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
 
                                 <!--  Show Atoms in Colour  -->
                                 <CheckBox
-                                    Grid.Row="0"
                                     Grid.Column="0"
-                                    Margin="5"
+                                    Margin="5,0,5,0"
                                     VerticalAlignment="Center"
                                     Click="ShowAtomsInColour_OnClick"
-                                    IsChecked="{Binding Path=ShowAtomsInColour, Mode=TwoWay}" />
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Style="{StaticResource LabelTextBlock}">
+                                    IsChecked="{Binding Path=ShowAtomsInColour, Mode=TwoWay}">
                                     Show Atoms in Colour
-                                </TextBlock>
+                                </CheckBox>
 
                                 <!--  Show Implicit Hydrogens  -->
                                 <CheckBox
                                     Grid.Row="1"
                                     Grid.Column="0"
-                                    Margin="5"
+                                    Margin="5,0,5,0"
                                     VerticalAlignment="Center"
                                     Click="ShowImplicitHydrogens_OnClick"
-                                    IsChecked="{Binding Path=ShowImplicitHydrogens, Mode=TwoWay}" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Style="{StaticResource LabelTextBlock}">
+                                    IsChecked="{Binding Path=ShowImplicitHydrogens, Mode=TwoWay}">
                                     Show Implicit Hydrogens
-                                </TextBlock>
+                                </CheckBox>
 
                                 <!--  Show All Carbon Atoms  -->
                                 <CheckBox
                                     Grid.Row="2"
                                     Grid.Column="0"
-                                    Margin="5"
+                                    Margin="5,0,5,0"
                                     VerticalAlignment="Center"
                                     Click="ShowAllCarbonAtoms_OnClick"
-                                    IsChecked="{Binding Path=ShowAllCarbonAtoms, Mode=TwoWay}" />
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Grid.Column="1"
-                                    Style="{StaticResource LabelTextBlock}">
+                                    IsChecked="{Binding Path=ShowAllCarbonAtoms, Mode=TwoWay}">
                                     Show All Carbon Atoms
-                                </TextBlock>
+                                </CheckBox>
                             </Grid>
                         </GroupBox>
                         <GroupBox BorderThickness="2" Header="Display Only">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
+
                                 </Grid.RowDefinitions>
                                 <!--  Show Grouping of Molecules  -->
                                 <CheckBox
@@ -106,12 +94,9 @@
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     Click="ShowMoleculeGroups_OnClick"
-                                    IsChecked="{Binding Path=ShowMoleculeGroups, Mode=TwoWay}" />
-                                <Grid Grid.Row="0" Grid.Column="1">
-                                    <TextBlock Style="{StaticResource LabelTextBlock}">
-                                        Show grouping of molecules
-                                    </TextBlock>
-                                </Grid>
+                                    IsChecked="{Binding Path=ShowMoleculeGroups, Mode=TwoWay}">
+                                    Show grouping of molecules
+                                </CheckBox>
                             </Grid>
                         </GroupBox>
                         <GroupBox BorderThickness="2" Header="Editor Only">
@@ -122,7 +107,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
+
                                 </Grid.RowDefinitions>
                                 <!--  Bond Length (DropDown)  -->
                                 <ComboBox
@@ -138,7 +123,7 @@
                                 <TextBlock
                                     Grid.Row="0"
                                     Grid.Column="1"
-                                    Style="{StaticResource LabelTextBlock}">
+                                    VerticalAlignment="Center">
                                     Default Bond Length
                                 </TextBlock>
                             </Grid>
@@ -146,10 +131,7 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem
-                x:Name="DebugTab"
-                FontFamily="Arial"
-                Header="Debug">
+            <TabItem x:Name="DebugTab" Header="Debug">
                 <Grid>
                     <StackPanel HorizontalAlignment="Stretch">
                         <TextBlock Margin="3">
@@ -159,24 +141,47 @@
                             x:Name="SettingsPath"
                             Margin="3"
                             HorizontalAlignment="Stretch"
-                            Text="{Binding Path=SettingsPath, Mode=OneWay}" />
+                            Text="{Binding Path=SettingsPath, Mode=OneWay}"
+                            TextWrapping="Wrap" />
                     </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
 
         <!--  Buttons  -->
-        <StackPanel
+        <Grid
             Grid.Row="1"
+            Width="Auto"
+            MinWidth="250"
             Margin="0,0,0,5"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
+            HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <!--  Defaults Button  -->
-            <Button Click="Defaults_OnClick" Content="Defaults" />
-            <Button Click="Save_OnClick" Content="OK" />
+            <Button
+                Margin="5,0,40,0"
+                Click="Defaults_OnClick"
+                Content="Defaults"
+                FontSize="14"
+                Style="{StaticResource Acme.Control.Button.DialogButton}" />
+            <Button
+                Grid.Column="1"
+                Click="Save_OnClick"
+                Content="OK"
+                FontSize="14"
+                Style="{StaticResource Acme.Control.Button.DialogButton}" />
             <!--  Cancel Button  -->
-            <Button Click="Cancel_OnClick" Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Click="Cancel_OnClick"
+                Content="Cancel"
+                Margin="0,0,5,0"
+                FontSize="14"
+                Style="{StaticResource Acme.Control.Button.DialogButton}" />
             <!--  Save Button  -->
-        </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

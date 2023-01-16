@@ -20,7 +20,7 @@ namespace Chem4Word.UI.WPF
     public partial class LibraryEditorHost : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public IChem4WordTelemetry Telemetry { get; set; }
         public string SelectedDatabase { get; set; }
@@ -46,10 +46,13 @@ namespace Chem4Word.UI.WPF
                 Top = (int)sensible.Y;
             }
 
-            if (elementHost1.Child is LibraryEditorControl editor)
+            var editor = new LibraryEditorControl();
+            elementHost1.Child = editor;
+
+            var details = Globals.Chem4WordV3.ListOfDetectedLibraries.AvailableDatabases
+                                 .FirstOrDefault(l => l.DisplayName.Equals(SelectedDatabase));
+            if (details != null)
             {
-                var details = Globals.Chem4WordV3.ListOfDetectedLibraries.AvailableDatabases
-                                     .FirstOrDefault(l => l.DisplayName.Equals(SelectedDatabase));
                 _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
                 if (_driver != null)
                 {
