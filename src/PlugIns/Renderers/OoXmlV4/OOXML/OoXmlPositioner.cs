@@ -5,14 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Media;
-using System.Xml;
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
@@ -23,6 +15,14 @@ using Chem4Word.Renderer.OoXmlV4.Entities;
 using Chem4Word.Renderer.OoXmlV4.Entities.Diagnostic;
 using Chem4Word.Renderer.OoXmlV4.Enums;
 using Chem4Word.Renderer.OoXmlV4.TTF;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Media;
+using System.Xml;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 
@@ -847,48 +847,44 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
         private bool TrimLine(BondLine leftOrRight, BondLine line, bool isInRing)
         {
-            bool dummy;
-            bool intersect;
-            Point intersection;
-
             // Make a longer version of the line
             var startLonger = new Point(leftOrRight.Start.X, leftOrRight.Start.Y);
             var endLonger = new Point(leftOrRight.End.X, leftOrRight.End.Y);
             GeometryTool.AdjustLineAboutMidpoint(ref startLonger, ref endLonger, Inputs.MeanBondLength / 5);
 
             // See if they intersect at one end
-            GeometryTool.FindIntersection(startLonger, endLonger, line.Start, line.End,
-                                          out dummy, out intersect, out intersection);
+            var crossingPoint = GeometryTool.GetIntersection(startLonger, endLonger, line.Start, line.End);
 
             // If they intersect update the main line
-            if (intersect)
+            bool crosses = crossingPoint != null;
+            if (crosses)
             {
-                var l1 = GeometryTool.DistanceBetween(intersection, leftOrRight.Start);
-                var l2 = GeometryTool.DistanceBetween(intersection, leftOrRight.End);
+                var l1 = GeometryTool.DistanceBetween(crossingPoint.Value, leftOrRight.Start);
+                var l2 = GeometryTool.DistanceBetween(crossingPoint.Value, leftOrRight.End);
                 if (l1 > l2)
                 {
-                    leftOrRight.End = new Point(intersection.X, intersection.Y);
+                    leftOrRight.End = new Point(crossingPoint.Value.X, crossingPoint.Value.Y);
                 }
                 else
                 {
-                    leftOrRight.Start = new Point(intersection.X, intersection.Y);
+                    leftOrRight.Start = new Point(crossingPoint.Value.X, crossingPoint.Value.Y);
                 }
                 if (!isInRing)
                 {
-                    l1 = GeometryTool.DistanceBetween(intersection, line.Start);
-                    l2 = GeometryTool.DistanceBetween(intersection, line.End);
+                    l1 = GeometryTool.DistanceBetween(crossingPoint.Value, line.Start);
+                    l2 = GeometryTool.DistanceBetween(crossingPoint.Value, line.End);
                     if (l1 > l2)
                     {
-                        line.End = new Point(intersection.X, intersection.Y);
+                        line.End = new Point(crossingPoint.Value.X, crossingPoint.Value.Y);
                     }
                     else
                     {
-                        line.Start = new Point(intersection.X, intersection.Y);
+                        line.Start = new Point(crossingPoint.Value.X, crossingPoint.Value.Y);
                     }
                 }
             }
 
-            return intersect;
+            return crosses;
         }
 
         private void CreateElementCharacters(Atom atom)
@@ -1465,13 +1461,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
                                     if (clip)
                                     {
-                                        Point outIntersectP1;
-                                        Point outIntersectP2;
 
-                                        GeometryTool.FindIntersection(startPointa, endPointa, bondStart, centre.Value,
-                                                                      out _, out _, out outIntersectP1);
-                                        GeometryTool.FindIntersection(startPointa, endPointa, bondEnd, centre.Value,
-                                                                      out _, out _, out outIntersectP2);
+                                        var outIntersectP1 = GeometryTool.GetIntersection(startPointa, endPointa, bondStart, centre.Value);
+                                        var outIntersectP2 = GeometryTool.GetIntersection(startPointa, endPointa, bondEnd, centre.Value);
 
                                         if (Inputs.Options.ShowDoubleBondTrimmingLines)
                                         {
@@ -1480,7 +1472,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                                             Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.EndAtom.Position, centre.Value, BondLineStyle.Dotted, "ff0000"));
                                         }
 
-                                        return new BondLine(BondLineStyle.Solid, outIntersectP1, outIntersectP2, bond);
+                                        return new BondLine(BondLineStyle.Solid, outIntersectP1.Value, outIntersectP2.Value, bond);
                                     }
                                     else
                                     {
@@ -1520,20 +1512,17 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                                             Outputs.Diagnostics.Lines.Add(new DiagnosticLine(common, common + v1, BondLineStyle.Dotted, "0000ff"));
                                         }
 
-                                        bool intersect;
-                                        Point meetingPoint;
-                                        GeometryTool.FindIntersection(bondLine.Start, bondLine.End,
-                                                                      common, common + v1,
-                                                                      out _, out intersect, out meetingPoint);
-                                        if (intersect)
+                                        var meetingPoint = GeometryTool.GetIntersection(bondLine.Start, bondLine.End,
+                                                                      common, common + v1);
+                                        if (meetingPoint != null)
                                         {
                                             if (common == bondLine.Bond.StartAtom.Position)
                                             {
-                                                bondLine.Start = meetingPoint;
+                                                bondLine.Start = meetingPoint.Value;
                                             }
                                             if (common == bondLine.Bond.EndAtom.Position)
                                             {
-                                                bondLine.End = meetingPoint;
+                                                bondLine.End = meetingPoint.Value;
                                             }
                                         }
                                     }

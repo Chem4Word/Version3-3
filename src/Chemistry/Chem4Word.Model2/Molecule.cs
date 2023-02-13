@@ -1473,6 +1473,7 @@ namespace Chem4Word.Model2
             _rings.Add(ring);
             _sortedRings = null;
         }
+
         /// <summary>
         /// Sorts rings for double bond placement
         /// using Alex Clark's rules

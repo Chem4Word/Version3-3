@@ -5,13 +5,13 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using Chem4Word.Core.Enums;
 
 namespace Chem4Word.Core.Helpers
 {
@@ -278,21 +278,16 @@ namespace Chem4Word.Core.Helpers
                 var i2 = (i1 + 1) % points.Count;
 
                 // See where the edge intersects the segment.
-                bool segmentsIntersect;
-                Point intersection;
 
-                FindIntersection(point1, point2,
-                                 points[i1], points[i2],
-                                 out _, out segmentsIntersect,
-                                 out intersection);
+                var crossingPoint = GetIntersection(point1, point2, points[i1], points[i2]);
 
                 // See if the segment intersects the edge.
-                if (segmentsIntersect)
+                if (crossingPoint != null)
                 {
                     // See if we need to record this intersection.
 
                     // Record this intersection.
-                    intersections.Add(intersection);
+                    intersections.Add(crossingPoint.Value);
                 }
             }
 
@@ -471,50 +466,7 @@ namespace Chem4Word.Core.Helpers
             }
         }
 
-        /// <summary>
-        /// Find the point of intersection between the lines line1Start --> line1End and line2Start --> line2End.
-        /// </summary>
-        /// <param name="line1Start"></param>
-        /// <param name="line1End"></param>
-        /// <param name="line2Start"></param>
-        /// <param name="line2End"></param>
-        /// <param name="canIntersect">True if the lines containing the segments can intersect</param>
-        /// <param name="doIntersect">True if the segments intersect</param>
-        /// <param name="intersection">The point where the lines do or would intersect</param>
-        public static void FindIntersection(Point line1Start, Point line1End, Point line2Start, Point line2End,
-            out bool canIntersect, out bool doIntersect, out Point intersection)
-        {
-            // Source: http://csharphelper.com/blog/2014/08/determine-where-two-lines-intersect-in-c/
 
-            // Get the segments' parameters.
-            double dx12 = line1End.X - line1Start.X;
-            double dy12 = line1End.Y - line1Start.Y;
-            double dx34 = line2End.X - line2Start.X;
-            double dy34 = line2End.Y - line2Start.Y;
-
-            // Solve for t1 and t2
-            double denominator = dy12 * dx34 - dx12 * dy34;
-
-            double t1 = ((line1Start.X - line2Start.X) * dy34 + (line2Start.Y - line1Start.Y) * dx34) / denominator;
-            if (double.IsInfinity(t1))
-            {
-                // The lines are parallel (or close enough to it).
-                canIntersect = false;
-                doIntersect = false;
-                intersection = new Point(double.NaN, double.NaN);
-                return;
-            }
-
-            canIntersect = true;
-
-            double t2 = ((line2Start.X - line1Start.X) * dy12 + (line1Start.Y - line2Start.Y) * dx12) / -denominator;
-
-            // Find the point of intersection.
-            intersection = new Point(line1Start.X + dx12 * t1, line1Start.Y + dy12 * t1);
-
-            // The segments intersect if t1 and t2 are between 0 and 1.
-            doIntersect = t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1;
-        }
 
         /// <summary>
         /// AngleBetween - the angle between 2 vectors
@@ -601,10 +553,10 @@ namespace Chem4Word.Core.Helpers
         /// <param name="segment2Start">Point at which second segment starts</param>
         /// <param name="segment2End">Point at which second segment ends</param>
         /// <returns>Point at which both lines intersect, null if otherwise</returns>
-        public static Point? GetIntersection(Point segment1Start, Point segment1End, Point segment2Start, Point segment2End)
+        public static Point? GetIntersection(Point segment1Start, Point segment1End, Point segment2Start, Point segment2End, bool extrapolate = false)
         {
             IntersectLines(segment1Start, segment1End, segment2Start, segment2End, out var t, out var u);
-            if (t >= 0 && u >= 0 && t <= 1 && u <= 1) //voila, we have an intersection
+            if ((t >= 0 && u >= 0 && t <= 1 && u <= 1) || extrapolate) //voila, we have an intersection
             {
                 Vector vIntersect = (segment1End - segment1Start) * t;
                 return segment1Start + vIntersect;

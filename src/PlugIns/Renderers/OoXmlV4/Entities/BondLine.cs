@@ -5,15 +5,15 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Helpers;
 using Chem4Word.Renderer.OoXmlV4.Enums;
 using Chem4Word.Renderer.OoXmlV4.OOXML;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 
 namespace Chem4Word.Renderer.OoXmlV4.Entities
 {
@@ -33,7 +33,6 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public double Width { get; set; } = OoXmlHelper.AcsLineWidth;
 
         private Point _start;
-
         /// <summary>
         /// For a Wedge or Hatch bond this is the nose of the wedge
         /// </summary>
@@ -71,10 +70,11 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public BondLine Copy()
         {
-            var copy = new BondLine(Style, Start, End, Bond);
-
-            copy.Colour = Colour;
-            copy.Width = Width;
+            var copy = new BondLine(Style, Start, End, Bond)
+            {
+                Colour = Colour,
+                Width = Width
+            };
 
             return copy;
         }
@@ -129,12 +129,13 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public List<Point> WedgeOutline()
         {
-            var outline = new List<Point>();
-
-            outline.Add(Nose);
-            outline.Add(LeftTail);
-            outline.Add(Tail);
-            outline.Add(RightTail);
+            var outline = new List<Point>
+                          {
+                              Nose,
+                              LeftTail,
+                              Tail,
+                              RightTail
+                          };
 
             return outline;
         }
@@ -248,13 +249,10 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         private void TrimVector(Point line1Start, Point line1End, Point line2Start, Point line2End, ref Vector vector)
         {
-            bool intersect;
-            Point intersection;
-            GeometryTool.FindIntersection(line1Start, line1End, line2Start, line2End,
-                                            out _, out intersect, out intersection);
-            if (intersect)
+            var crossingPoint = GeometryTool.GetIntersection(line1Start, line1End, line2Start, line2End);
+            if (crossingPoint != null)
             {
-                Vector v = intersection - line1Start;
+                Vector v = crossingPoint.Value - line1Start;
                 if (v.Length < vector.Length)
                 {
                     vector = v;
