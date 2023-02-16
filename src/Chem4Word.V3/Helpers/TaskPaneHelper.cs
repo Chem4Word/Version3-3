@@ -25,6 +25,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
+            var activeDocument = DocumentHelper.GetActiveDocument();
             var selection = application.Selection;
             ContentControl contentControl = null;
 
@@ -104,6 +105,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
+            var activeDocument = DocumentHelper.GetActiveDocument();
             var selection = application.Selection;
             ContentControl contentControl = null;
 

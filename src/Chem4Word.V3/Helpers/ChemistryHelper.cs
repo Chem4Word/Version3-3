@@ -239,6 +239,7 @@ namespace Chem4Word.Helpers
             Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 2D structure in ContentControl {ccId} Tag {guid}");
 
             var application = Globals.Chem4WordV3.Application;
+            var activeDocument = DocumentHelper.GetActiveDocument();
             var wordSettings = new WordSettings(application);
 
             var contentControl = GetContentControl(ccId);
@@ -246,9 +247,9 @@ namespace Chem4Word.Helpers
             var bookmarkName = Constants.OoXmlBookmarkPrefix + guid;
 
             contentControl.Range.InsertFile(tempfileName, bookmarkName);
-            if (DocumentHelper.GetActiveDocument().Bookmarks.Exists(bookmarkName))
+            if (activeDocument.Bookmarks.Exists(bookmarkName))
             {
-                DocumentHelper.GetActiveDocument().Bookmarks[bookmarkName].Delete();
+                activeDocument.Bookmarks[bookmarkName].Delete();
             }
 
             wordSettings.RestoreSettings(application);
