@@ -22,11 +22,9 @@ namespace Chem4Word.Helpers
 
             var application = Globals.Chem4WordV3.Application;
 
-            var documentName = application.ActiveDocument.Name;
-
             foreach (Document document in application.Documents)
             {
-                if (document.Name.Equals(documentName))
+                if (document.Name.Equals(Globals.Chem4WordV3.CurrentDocumentName))
                 {
                     activeDocument = document;
                 }

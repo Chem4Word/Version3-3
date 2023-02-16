@@ -5,6 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
+using Chem4Word.Core.UI;
+using Chem4Word.Core.UI.Forms;
+using Chem4Word.UI;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -14,11 +19,6 @@ using System.Net.Http;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Chem4Word.Core.Helpers;
-using Chem4Word.Core.UI;
-using Chem4Word.Core.UI.Forms;
-using Chem4Word.UI;
-using Microsoft.Win32;
 
 namespace Chem4Word.Helpers
 {
@@ -185,8 +185,8 @@ namespace Chem4Word.Helpers
                     {
                         try
                         {
-                            var isBeta = key.GetValue(Constants.RegistryValueNameEndOfLife).ToString();
-                            Globals.Chem4WordV3.IsEndOfLife = bool.Parse(isBeta);
+                            var isEndOfLife = key.GetValue(Constants.RegistryValueNameEndOfLife).ToString();
+                            Globals.Chem4WordV3.IsEndOfLife = bool.Parse(isEndOfLife);
                         }
                         catch
                         {
@@ -320,14 +320,14 @@ namespace Chem4Word.Helpers
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             string primaryDomain = Constants.OurDomains.FirstOrDefault();
-            string versionsFile = $"{Constants.Chem4WordVersionFiles}/Chem4Word-Versions.xml";
-
             string versionsFileMarker = "<Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>";
+
+            string versionsFile = $"{Constants.Chem4WordVersionFiles}/Chem4Word-Versions.xml";
 
             string contents = null;
 
             var securityProtocol = ServicePointManager.SecurityProtocol;
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls12;
 
             bool foundOurXmlFile = false;
             foreach (var domain in Constants.OurDomains)

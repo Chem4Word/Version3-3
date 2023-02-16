@@ -144,7 +144,6 @@
     <EmbeddedResource Include="Resources\ChemDoodleWeb\Single.html" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\ChemDoodleWeb\ChemDoodleWeb_800.zip" />
   </ItemGroup>

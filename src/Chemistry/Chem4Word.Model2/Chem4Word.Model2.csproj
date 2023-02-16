@@ -148,7 +148,6 @@
     <EmbeddedResource Include="Resources\PeriodicTable.csv" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <Protobuf Include="Converters\ProtocolBuffers\atom.proto" />
     <Protobuf Include="Converters\ProtocolBuffers\bond.proto" />
     <Protobuf Include="Converters\ProtocolBuffers\model.proto" />

@@ -5,8 +5,12 @@
     <Version>
         <Number>3.3.0 Alpha 0</Number>
         <IsBeta>true</IsBeta>
-        <Released>31-Jan-2023</Released>
+        <Released>28-Feb-2023</Released>
         <Changes>
+            <Change>Copied changes from V3.2.*</Change>
+            <Change>Stability: Improved method to purge old V2 installations to increase system stability</Change>
+            <Change>Internal: Update NuGet packages</Change>
+            <Change>Internal: Fetch location of web services from our web site</Change>
             <Change>Added basic library manager</Change>
             <Change>Add new Plug-In type (Driver) to manage multiple libraries</Change>
             <Change>Add new converter to model which reads/writes byte[] from Google protocol buffer of model</Change>

@@ -125,9 +125,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Chemistry\Chem4Word.ACME\Chem4Word.ACME.csproj">
       <Project>{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}</Project>
       <Name>Chem4Word.ACME</Name>

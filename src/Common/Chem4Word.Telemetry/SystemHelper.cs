@@ -426,6 +426,17 @@ namespace Chem4Word.Telemetry
                 {
                     int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
 
+                    // .Net 4.8.1
+                    if (releaseKey >= 533325)
+                    {
+                        DotNetVersion = $".NET 4.8.1 [{releaseKey}]";
+                        return;
+                    }
+                    if (releaseKey >= 533320)
+                    {
+                        DotNetVersion = $".NET 4.8.1 (W11 2022) [{releaseKey}]";
+                        return;
+                    }
                     // .Net 4.8
                     if (releaseKey >= 528449)
                     {

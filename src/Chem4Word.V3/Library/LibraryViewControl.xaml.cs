@@ -117,7 +117,7 @@ namespace Chem4Word.Library
 
                         var doc = Globals.Chem4WordV3.Application.ActiveDocument;
                         var sel = Globals.Chem4WordV3.Application.Selection;
-                        Globals.Chem4WordV3.SelectChemistry(doc, sel);
+                        Globals.Chem4WordV3.SelectChemistry(sel);
                     }
                 }
             }
@@ -160,10 +160,9 @@ namespace Chem4Word.Library
                         if (clicked != null)
                         {
                             Globals.Chem4WordV3.EventsEnabled = false;
-                            var activeDocument = DocumentHelper.GetActiveDocument();
 
                             if (Globals.Chem4WordV3.Application.Documents.Count > 0
-                                && activeDocument?.ActiveWindow?.Selection != null)
+                                && DocumentHelper.GetActiveDocument()?.ActiveWindow?.Selection != null)
                             {
                                 switch (source.Button)
                                 {
@@ -311,7 +310,7 @@ namespace Chem4Word.Library
 
             var doc = Globals.Chem4WordV3.Application.ActiveDocument;
             var sel = Globals.Chem4WordV3.Application.Selection;
-            Globals.Chem4WordV3.SelectChemistry(doc, sel);
+            Globals.Chem4WordV3.SelectChemistry(sel);
         }
 
         private DependencyObject GetScrollViewer(DependencyObject o)

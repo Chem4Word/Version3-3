@@ -120,10 +120,14 @@ namespace Chem4Word.Telemetry
 
         private async Task WriteMessage(OutputMessage message)
         {
+            var securityProtocol = ServicePointManager.SecurityProtocol;
+            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls12;
+
             try
             {
                 if (_sender != null)
                 {
+
                     using (var messageBatch = await _sender.CreateMessageBatchAsync())
                     {
                         var msg = new ServiceBusMessage(message.Message);
@@ -163,6 +167,10 @@ namespace Chem4Word.Telemetry
                 {
                     // Do nothing
                 }
+            }
+            finally
+            {
+                ServicePointManager.SecurityProtocol = securityProtocol;
             }
         }
     }

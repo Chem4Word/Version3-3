@@ -1,4 +1,11 @@
-﻿using System.Reflection;
+﻿// ---------------------------------------------------------------------------
+//  Copyright (c) 2023, The .NET Foundation.
+//  This software is released under the Apache License, Version 2.0.
+//  The license and further copyright text can be found in the file LICENSE.md
+//  at the root directory of the distribution.
+// ---------------------------------------------------------------------------
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -44,5 +51,5 @@ using System.Windows;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("3.3.0.8431")]
-[assembly: AssemblyFileVersion("3.3.0.8431")]
+[assembly: AssemblyVersion("3.3.0.8459")]
+[assembly: AssemblyFileVersion("3.3.0.8459")]
