@@ -154,7 +154,7 @@ namespace Chem4Word.Telemetry
             catch (Exception exception)
             {
                 Debug.WriteLine($"Exception in WriteMessage: {exception.Message}");
-
+                Debugger.Break();
                 try
                 {
                     var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
