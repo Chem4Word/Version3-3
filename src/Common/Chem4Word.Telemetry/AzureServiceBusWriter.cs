@@ -58,6 +58,7 @@ namespace Chem4Word.Telemetry
                 catch
                 {
                     // Do nothing
+                    Debugger.Break();
                 }
             }
         }
@@ -166,6 +167,7 @@ namespace Chem4Word.Telemetry
                 catch
                 {
                     // Do nothing
+                    Debugger.Break();
                 }
             }
             finally

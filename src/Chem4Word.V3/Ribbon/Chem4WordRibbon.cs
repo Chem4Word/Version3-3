@@ -1632,8 +1632,8 @@ namespace Chem4Word
                     Word.Window window = taskPane.Window;
                     if (window != null)
                     {
-                        var taskdoc = window.Document.Name;
-                        if (taskdoc.Equals(DocumentHelper.GetActiveDocument().Name) && ShowNavigator.Checked != taskPane.Visible)
+                        var documentName = window.Document.Name;
+                        if (documentName.Equals(Globals.Chem4WordV3.CurrentDocumentName) && ShowNavigator.Checked != taskPane.Visible)
                         {
                             ShowNavigator.Checked = taskPane.Visible;
                         }
@@ -1757,7 +1757,7 @@ namespace Chem4Word
                     {
                         var documentName = window.Document.Name;
 
-                        if (documentName.Equals(DocumentHelper.GetActiveDocument().Name))
+                        if (documentName.Equals(Globals.Chem4WordV3.CurrentDocumentName))
                         {
                             if (ShowLibrary.Checked != taskPane.Visible)
                             {

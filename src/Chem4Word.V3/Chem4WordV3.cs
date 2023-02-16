@@ -1016,7 +1016,7 @@ namespace Chem4Word
                 if (Application.Documents.Count > 0)
                 {
                     // Get reference to active document
-                    var wdoc = Globals.Factory.GetVstoObject(Globals.Chem4WordV3.Application.ActiveDocument);
+                    var vstoObject = Globals.Factory.GetVstoObject(Globals.Chem4WordV3.Application.ActiveDocument);
 
                     // Hook in Content Control Events
                     // See: https://msdn.microsoft.com/en-us/library/Microsoft.Office.Interop.Word.DocumentEvents2_methods%28v=office.14%29.aspx
@@ -1027,8 +1027,8 @@ namespace Chem4Word
                     // ContentControlOnEnter Event Handler
                     try
                     {
-                        wdoc.ContentControlOnEnter -= OnContentControlOnEnter;
-                        wdoc.ContentControlOnEnter += OnContentControlOnEnter;
+                        vstoObject.ContentControlOnEnter -= OnContentControlOnEnter;
+                        vstoObject.ContentControlOnEnter += OnContentControlOnEnter;
                     }
                     catch (Exception e)
                     {
@@ -1037,8 +1037,8 @@ namespace Chem4Word
                     // ContentControlOnExit Event Handler
                     try
                     {
-                        wdoc.ContentControlOnExit -= OnContentControlOnExit;
-                        wdoc.ContentControlOnExit += OnContentControlOnExit;
+                        vstoObject.ContentControlOnExit -= OnContentControlOnExit;
+                        vstoObject.ContentControlOnExit += OnContentControlOnExit;
                     }
                     catch (Exception e)
                     {
@@ -1047,8 +1047,8 @@ namespace Chem4Word
                     // ContentControlBeforeDelete Event Handler
                     try
                     {
-                        wdoc.ContentControlBeforeDelete -= OnContentControlBeforeDelete;
-                        wdoc.ContentControlBeforeDelete += OnContentControlBeforeDelete;
+                        vstoObject.ContentControlBeforeDelete -= OnContentControlBeforeDelete;
+                        vstoObject.ContentControlBeforeDelete += OnContentControlBeforeDelete;
                     }
                     catch (Exception e)
                     {
@@ -1057,8 +1057,8 @@ namespace Chem4Word
                     // ContentControlAfterAdd Event Handler
                     try
                     {
-                        wdoc.ContentControlAfterAdd -= OnContentControlAfterAdd;
-                        wdoc.ContentControlAfterAdd += OnContentControlAfterAdd;
+                        vstoObject.ContentControlAfterAdd -= OnContentControlAfterAdd;
+                        vstoObject.ContentControlAfterAdd += OnContentControlAfterAdd;
                     }
                     catch (Exception e)
                     {
@@ -1086,7 +1086,7 @@ namespace Chem4Word
                 if (Application.Documents.Count > 0)
                 {
                     // Get reference to active document
-                    var wdoc = Globals.Factory.GetVstoObject(Globals.Chem4WordV3.Application.ActiveDocument);
+                    var vstoObject = Globals.Factory.GetVstoObject(Globals.Chem4WordV3.Application.ActiveDocument);
 
                     // Hook out Content Control Events
                     // See: https://msdn.microsoft.com/en-us/library/Microsoft.Office.Interop.Word.DocumentEvents2_methods%28v=office.14%29.aspx
@@ -1097,7 +1097,7 @@ namespace Chem4Word
                     // ContentControlOnEnter Event Handler
                     try
                     {
-                        wdoc.ContentControlOnEnter -= OnContentControlOnEnter;
+                        vstoObject.ContentControlOnEnter -= OnContentControlOnEnter;
                     }
                     catch (Exception e)
                     {
@@ -1106,7 +1106,7 @@ namespace Chem4Word
                     // ContentControlOnExit Event Handler
                     try
                     {
-                        wdoc.ContentControlOnExit -= OnContentControlOnExit;
+                        vstoObject.ContentControlOnExit -= OnContentControlOnExit;
                     }
                     catch (Exception e)
                     {
@@ -1115,7 +1115,7 @@ namespace Chem4Word
                     // ContentControlBeforeDelete Event Handler
                     try
                     {
-                        wdoc.ContentControlBeforeDelete -= OnContentControlBeforeDelete;
+                        vstoObject.ContentControlBeforeDelete -= OnContentControlBeforeDelete;
                     }
                     catch (Exception e)
                     {
@@ -1124,7 +1124,7 @@ namespace Chem4Word
                     // ContentControlAfterAdd Event Handler
                     try
                     {
-                        wdoc.ContentControlAfterAdd -= OnContentControlAfterAdd;
+                        vstoObject.ContentControlAfterAdd -= OnContentControlAfterAdd;
                     }
                     catch (Exception e)
                     {

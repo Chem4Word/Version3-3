@@ -115,7 +115,6 @@ namespace Chem4Word.Library
                         var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
                         DataContext = controller;
 
-                        var doc = Globals.Chem4WordV3.Application.ActiveDocument;
                         var sel = Globals.Chem4WordV3.Application.Selection;
                         Globals.Chem4WordV3.SelectChemistry(sel);
                     }
@@ -308,7 +307,6 @@ namespace Chem4Word.Library
             var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
             view.CustomSort = new ChemistryObjectComparer();
 
-            var doc = Globals.Chem4WordV3.Application.ActiveDocument;
             var sel = Globals.Chem4WordV3.Application.Selection;
             Globals.Chem4WordV3.SelectChemistry(sel);
         }
