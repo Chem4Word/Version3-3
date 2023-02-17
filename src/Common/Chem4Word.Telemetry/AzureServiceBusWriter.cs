@@ -57,8 +57,8 @@ namespace Chem4Word.Telemetry
                 }
                 catch
                 {
-                    // Do nothing
                     Debugger.Break();
+                    // Do nothing
                 }
             }
         }
@@ -128,7 +128,6 @@ namespace Chem4Word.Telemetry
             {
                 if (_sender != null)
                 {
-
                     using (var messageBatch = await _sender.CreateMessageBatchAsync())
                     {
                         var msg = new ServiceBusMessage(message.Message);
@@ -153,8 +152,9 @@ namespace Chem4Word.Telemetry
             }
             catch (Exception exception)
             {
-                Debug.WriteLine($"Exception in WriteMessage: {exception.Message}");
                 Debugger.Break();
+                Debug.WriteLine($"Exception in WriteMessage: {exception.Message}");
+
                 try
                 {
                     var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -167,7 +167,6 @@ namespace Chem4Word.Telemetry
                 catch
                 {
                     // Do nothing
-                    Debugger.Break();
                 }
             }
             finally

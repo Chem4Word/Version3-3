@@ -7,6 +7,10 @@
         <IsBeta>true</IsBeta>
         <Released>28-Feb-2023</Released>
         <Changes>
+            <Change>...</Change>
+            <Change>...</Change>
+            <Change>...</Change>
+            <Change>BugFix: Prevent import of structures which have duplicate bonds</Change>
             <Change>Copied changes from V3.2.*</Change>
             <Change>Stability: Improved method to purge old V2 installations to increase system stability</Change>
             <Change>Internal: Update NuGet packages</Change>

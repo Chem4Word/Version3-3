@@ -829,14 +829,15 @@ namespace Chem4Word.Model2.Converters.CML
                 {
                     molecule.Errors.AddRange(newBond.Messages);
                 }
-                //check for duplicate bond
+
+                // Check for duplicate bond
                 var duplicates = (from b in molecule.Bonds
                                   where b.StartAtomInternalId == newBond.StartAtomInternalId && b.EndAtomInternalId == newBond.EndAtomInternalId
                                       || b.EndAtomInternalId == newBond.StartAtomInternalId && b.StartAtomInternalId == newBond.EndAtomInternalId
                                   select b).Any();
                 if (duplicates)
                 {
-                    throw new ArgumentException($"Duplicate bond {newBond.Id}: atoms [{bondElement.Attribute("atomRefs2").Value}] are already connected by a bond.");
+                    molecule.Errors.Add($"Duplicate bond {newBond.Id}: atoms [{bondElement.Attribute("atomRefs2").Value}] are already connected by a bond.");
                 }
 
                 molecule.AddBond(newBond);

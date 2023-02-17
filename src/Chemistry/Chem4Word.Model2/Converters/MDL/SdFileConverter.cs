@@ -87,7 +87,9 @@ namespace Chem4Word.Model2.Converters.MDL
                                 molecule.Parent = model;
                                 if (model.Molecules.Count >= 16)
                                 {
-                                    model.GeneralErrors.Add("This file has greater than 16 structures!");
+                                    // Have to add this as a GeneralError as we are not at molecule level here.
+                                    model.GeneralErrors.Add("Warning: This file has greater than 16 structures!");
+                                    model.GeneralErrors.Add("Only the first 16 have been imported.");
                                     sr.ReadToEnd();
                                 }
 
@@ -158,7 +160,7 @@ namespace Chem4Word.Model2.Converters.MDL
                 writer.Flush();
             }
 
-            result = Encoding.UTF8.GetString(stream.ToArray());
+            result = Encoding.ASCII.GetString(stream.ToArray());
             return result;
 
             // Local Function

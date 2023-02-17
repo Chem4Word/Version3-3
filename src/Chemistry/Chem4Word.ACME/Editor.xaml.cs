@@ -114,24 +114,6 @@ namespace Chem4Word.ACME
             }
         }
 
-        public string Cml
-        {
-            get
-            {
-                if (ActiveController == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    CMLConverter cc = new CMLConverter();
-                    Model model = ActiveController.Model.Copy();
-                    model.RescaleForCml();
-                    return cc.Export(model);
-                }
-            }
-        }
-
         public Model EditedModel
         {
             get
@@ -180,7 +162,6 @@ namespace Chem4Word.ACME
                     Application.LoadComponent(
                         new Uri("Chem4Word.ACME;component/Resources/Brushes.xaml",
                                 UriKind.Relative)) as ResourceDictionary);
-
                 Application.Current.Resources.MergedDictionaries.Add(
                     Application.LoadComponent(
                         new Uri("Chem4Word.ACME;component/Resources/ControlStyles.xaml",

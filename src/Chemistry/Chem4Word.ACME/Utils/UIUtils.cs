@@ -50,8 +50,8 @@ namespace Chem4Word.ACME.Utils
 
         public static Point GetOffScreenPoint()
         {
-            int maxX = Int32.MinValue;
-            int maxY = Int32.MinValue;
+            int maxX = int.MinValue;
+            int maxY = int.MinValue;
 
             foreach (var screen in Screen.AllScreens)
             {
