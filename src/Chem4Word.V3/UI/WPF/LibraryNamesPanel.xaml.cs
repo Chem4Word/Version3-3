@@ -112,9 +112,7 @@ namespace Chem4Word.UI.WPF
             nameNode.Items.Clear();
             if (listParam != null)
             {
-                Style defaultNameStyle = (Style)nameNode.FindResource("DefaultNameNode");
                 Style catHeaderStyle = (Style)nameNode.FindResource("CatSubHeader");
-                bool firstNameNode = true;
 
                 var namesByNamespace = from name in listParam
                                        group name by name.NameSpace
@@ -157,11 +155,6 @@ namespace Chem4Word.UI.WPF
                             else
                             {
                                 tagChildNode.Items.Add(nameChildNode);
-                            }
-                            if (firstNameNode)
-                            {
-                                nameChildNode.Style = defaultNameStyle;
-                                firstNameNode = false;
                             }
                         }
                     }

@@ -25,27 +25,6 @@
                 TargetType="TreeViewItem">
                 <Setter Property="FontSize" Value="14" />
             </Style>
-            <Style x:Key="DefaultNameNode" TargetType="TreeViewItem">
-                <Setter Property="HeaderTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Viewbox>
-                                    <Grid>
-                                        <Path
-                                            Width="16"
-                                            Height="16"
-                                            Data="M22.785004,8.4599915L13.740021,17.51001 9.2100067,12.980011 6.2000122,16 13.740021,23.545013 25.804993,11.480011z M16,0C24.834991,0 32,7.1700134 32,16 32,24.834991 24.834991,32 16,32 7.1699982,32 0,24.834991 0,16 0,7.1700134 7.1699982,0 16,0z"
-                                            Fill="{StaticResource Chem4WordBlue}"
-                                            Stretch="Uniform" />
-                                    </Grid>
-                                </Viewbox>
-                                <TextBlock Margin="5,0" Text="{Binding}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
