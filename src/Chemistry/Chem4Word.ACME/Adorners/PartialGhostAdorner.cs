@@ -5,18 +5,18 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Enums;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Chem4Word.ACME.Adorners
 {
@@ -31,16 +31,31 @@ namespace Chem4Word.ACME.Adorners
         [NotNull]
         private Transform _shear;
 
+        public Transform Shear
+        {
+            get => _shear;
+            set => _shear = value;
+        }
+
         private IEnumerable<Atom> _atomList;
+
+        public IEnumerable<Atom> AtomList
+        {
+            get { return _atomList; }
+            set
+            {
+                _atomList = value;
+                InvalidateVisual();
+            }
+        }
+
         public EditorCanvas CurrentEditor { get; }
         public EditController CurrentController { get; }
 
-        public PartialGhostAdorner(EditController controller, IEnumerable<Atom> atomList, Transform shear) : base(
+        public PartialGhostAdorner(EditController controller) : base(
             controller.CurrentEditor)
         {
-            _shear = shear;
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(controller.CurrentEditor);
-            _atomList = atomList;
             myAdornerLayer.Add(this);
             PreviewMouseMove += PartialGhostAdorner_PreviewMouseMove;
             PreviewMouseUp += PartialGhostAdorner_PreviewMouseUp;
@@ -75,12 +90,12 @@ namespace Chem4Word.ACME.Adorners
 
             //compile a set of all the neighbours of the selected atoms
 
-            foreach (Atom atom in _atomList)
+            foreach (Atom atom in AtomList)
             {
                 foreach (Atom neighbour in atom.Neighbours)
                 {
                     //add in all the existing position for neigbours not in selected atoms
-                    if (!_atomList.Contains(neighbour))
+                    if (!AtomList.Contains(neighbour))
                     {
                         //neighbourSet.Add(neighbour); //don't worry about adding them twice
                         transformedPositions[neighbour] = neighbour.Position;
@@ -93,15 +108,7 @@ namespace Chem4Word.ACME.Adorners
                     bondSet.Add(bond); //don't worry about adding them twice
                 }
 
-                //if we're just getting an overlay then don't bother transforming
-                if (_shear != null)
-                {
-                    transformedPositions[atom] = _shear.Transform(atom.Position);
-                }
-                else
-                {
-                    transformedPositions[atom] = atom.Position;
-                }
+                transformedPositions[atom] = Shear.Transform(atom.Position);
             }
 
             var modelXamlBondLength = CurrentController.Model.XamlBondLength;

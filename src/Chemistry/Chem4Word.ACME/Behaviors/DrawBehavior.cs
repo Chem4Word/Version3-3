@@ -5,11 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Input;
 using Chem4Word.ACME.Adorners.Sketching;
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing.Visuals;
@@ -18,6 +13,11 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Geometry;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Input;
 using static Chem4Word.Model2.Helpers.Globals;
 
 namespace Chem4Word.ACME.Behaviors
@@ -68,11 +68,6 @@ namespace Chem4Word.ACME.Behaviors
         private void CurrentEditor_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             Bond existingBond = null;
-
-            if (_adorner != null)
-            {
-                RemoveAdorner(ref _adorner);
-            }
 
             var targetedVisual = CurrentEditor.ActiveVisual;
             string bondOrder = EditController.CurrentBondOrder;
@@ -130,14 +125,17 @@ namespace Chem4Word.ACME.Behaviors
 
                     if (lastPos != null)
                     {
-                        _adorner = new DrawBondAdorner(CurrentEditor, Common.BondThickness)
+                        if (_adorner is null)
                         {
-                            Stereo = EditController.CurrentStereo,
-                            BondOrder = bondOrder,
-                            ExistingBond = existingBond
-                        };
-                        _adorner.StartPoint = _currentAtomVisual.Position;
+                            _adorner = new DrawBondAdorner(CurrentEditor, Common.BondThickness, _currentAtomVisual.Position);
+                        }
+
+                        _adorner.Stereo = EditController.CurrentStereo;
+                        _adorner.BondOrder = bondOrder;
+                        _adorner.ExistingBond = existingBond;
+
                         _adorner.EndPoint = lastPos.Value;
+                        _adorner.InvalidateVisual();
                     }
                 }
             }

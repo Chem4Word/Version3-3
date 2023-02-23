@@ -5,21 +5,20 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
 using Chem4Word.ACME.Behaviors;
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Models;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Model2.Annotations;
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace Chem4Word.ACME.Adorners.Sketching
 {
     public class FixedRingAdorner : Adorner
     {
-        private SolidColorBrush _solidColorBrush;
         public Pen BondPen { get; }
         public List<Point> Placements { get; }
         public bool Unsaturated { get; }
@@ -29,8 +28,6 @@ namespace Chem4Word.ACME.Adorners.Sketching
         public FixedRingAdorner([NotNull] UIElement adornedElement, double bondThickness, List<Point> placements,
                                 bool unsaturated = false, bool greyedOut = false) : base(adornedElement)
         {
-            _solidColorBrush = (SolidColorBrush)FindResource(Common.AdornerFillBrush);
-
             Cursor = CursorUtils.Pencil;
             if (!greyedOut)
             {

@@ -824,8 +824,7 @@
                                 Grid.Column="1"
                                 Padding="0,2"
                                 Style="{StaticResource MainTextStyle}">
-                                H<Run Style="{StaticResource SubscriptStyle}">2</Run>
-                                O</TextBlock>
+                                H<Run Style="{StaticResource SubscriptStyle}">2</Run>O</TextBlock>
                         </Grid>
                     </Viewbox>
                     <RadioButton.Tag>
@@ -1162,8 +1161,7 @@
                                 Grid.Column="1"
                                 FontWeight="DemiBold"
                                 Style="{StaticResource MainTextStyle}">
-                                H<Run Style="{StaticResource SubscriptStyle}">2</Run>
-                                O</TextBlock>
+                                H<Run Style="{StaticResource SubscriptStyle}">2</Run>O</TextBlock>
                             <graphics:StraightArrow
                                 Grid.Row="1"
                                 Grid.Column="1"

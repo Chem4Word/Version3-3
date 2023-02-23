@@ -5,6 +5,12 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Adorners;
+using Chem4Word.ACME.Controls;
+using Chem4Word.ACME.Drawing.Visuals;
+using Chem4Word.ACME.Enums;
+using Chem4Word.ACME.Utils;
+using Chem4Word.Model2;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,12 +18,6 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using Chem4Word.ACME.Adorners;
-using Chem4Word.ACME.Controls;
-using Chem4Word.ACME.Drawing.Visuals;
-using Chem4Word.ACME.Enums;
-using Chem4Word.ACME.Utils;
-using Chem4Word.Model2;
 
 namespace Chem4Word.ACME.Behaviors
 {
@@ -331,12 +331,18 @@ namespace Chem4Word.ACME.Behaviors
                 }
                 else //we're dragging an atom
                 {
-                    RemoveGhost();
+
                     DragAtom(pos);
                 }
 
-                RemoveGhost();
-                _ghostAdorner = new PartialGhostAdorner(EditController, _atomList, _shift);
+                if (_ghostAdorner is null)
+                {
+                    _ghostAdorner = new PartialGhostAdorner(EditController);
+                    _ghostAdorner.AtomList = _atomList;
+                }
+
+                _ghostAdorner.Shear = _shift;
+                _ghostAdorner.InvalidateVisual();
             }
         }
 
@@ -421,15 +427,6 @@ namespace Chem4Word.ACME.Behaviors
                 var tt = new TranslateTransform(shift.X, shift.Y);
                 _shift = new TransformGroup();
                 _shift.Children.Add(tt);
-            }
-        }
-
-        private void RemoveGhost()
-        {
-            if (_ghostAdorner != null)
-            {
-                RemoveAdorner(_ghostAdorner);
-                _ghostAdorner = null;
             }
         }
 
