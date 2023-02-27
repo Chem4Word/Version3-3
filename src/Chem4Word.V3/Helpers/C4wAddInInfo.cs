@@ -72,10 +72,16 @@ namespace Chem4Word.Helpers
                     Directory.CreateDirectory(ProductAppDataPath);
                 }
 
-                var backupsPath = Path.Combine(ProductAppDataPath, "Backups");
-                if (!Directory.Exists(backupsPath))
+                var fileBackupsPath = Path.Combine(ProductAppDataPath, "Backups");
+                if (!Directory.Exists(fileBackupsPath))
                 {
-                    Directory.CreateDirectory(backupsPath);
+                    Directory.CreateDirectory(fileBackupsPath);
+                }
+
+                var databaseBackupsPath = Path.Combine(ProductAppDataPath, "Libraries", "Backups");
+                if (!Directory.Exists(databaseBackupsPath))
+                {
+                    Directory.CreateDirectory(databaseBackupsPath);
                 }
 
                 var telemetryPath = Path.Combine(ProductAppDataPath, "Telemetry");

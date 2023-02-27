@@ -5,8 +5,8 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace IChem4Word.Contracts
 {
@@ -25,6 +25,21 @@ namespace IChem4Word.Contracts
         [JsonProperty]
         public string Driver { get; set; }
 
+        public bool IsReadOnly { get; set; }
+        public bool IsSystem { get; set; }
+
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+
+        public string GetPropertyValue(string key, string defaultValue)
+        {
+            var result = defaultValue;
+
+            if (Properties.ContainsKey(key))
+            {
+                result = Properties[key];
+            }
+
+            return result;
+        }
     }
 }

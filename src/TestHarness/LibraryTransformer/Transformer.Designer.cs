@@ -32,32 +32,38 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ToCml = new System.Windows.Forms.Button();
             this.ToPb = new System.Windows.Forms.Button();
-            this.progressBar1 = new Chem4Word.Core.UI.Controls.CustomProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.Export = new System.Windows.Forms.Button();
             this.Import = new System.Windows.Forms.Button();
             this.Erase = new System.Windows.Forms.Button();
+            this.progressBar1 = new Chem4Word.Core.UI.Controls.CustomProgressBar();
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // listView1
             // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4});
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(12, 12);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(776, 129);
+            this.listView1.Size = new System.Drawing.Size(776, 321);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -69,9 +75,17 @@
             this.columnHeader2.Text = "File Name";
             this.columnHeader2.Width = 400;
             // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Read Only";
+            this.columnHeader3.Width = 70;
+            // 
             // ToCml
             // 
-            this.ToCml.Location = new System.Drawing.Point(13, 147);
+            this.ToCml.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ToCml.Enabled = false;
+            this.ToCml.Location = new System.Drawing.Point(13, 339);
             this.ToCml.Name = "ToCml";
             this.ToCml.Size = new System.Drawing.Size(75, 23);
             this.ToCml.TabIndex = 2;
@@ -81,7 +95,10 @@
             // 
             // ToPb
             // 
-            this.ToPb.Location = new System.Drawing.Point(94, 147);
+            this.ToPb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ToPb.Enabled = false;
+            this.ToPb.Location = new System.Drawing.Point(94, 339);
             this.ToPb.Name = "ToPb";
             this.ToPb.Size = new System.Drawing.Size(75, 23);
             this.ToPb.TabIndex = 3;
@@ -89,23 +106,11 @@
             this.ToPb.UseVisualStyleBackColor = true;
             this.ToPb.Click += new System.EventHandler(this.ToPb_Click);
             // 
-            // progressBar1
-            // 
-            this.progressBar1.BackColor = System.Drawing.Color.Transparent;
-            this.progressBar1.GradiantPosition = Chem4Word.Core.UI.Controls.CustomProgressBar.GradiantArea.None;
-            this.progressBar1.Image = null;
-            this.progressBar1.Location = new System.Drawing.Point(12, 206);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.RoundedCorners = false;
-            this.progressBar1.ShowPercentage = true;
-            this.progressBar1.Size = new System.Drawing.Size(776, 23);
-            this.progressBar1.Text = "customProgressBar1";
-            // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.Location = new System.Drawing.Point(12, 180);
+            this.label1.Location = new System.Drawing.Point(12, 372);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(776, 23);
             this.label1.TabIndex = 5;
@@ -113,7 +118,9 @@
             // 
             // Export
             // 
-            this.Export.Location = new System.Drawing.Point(175, 147);
+            this.Export.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Export.Location = new System.Drawing.Point(175, 339);
             this.Export.Name = "Export";
             this.Export.Size = new System.Drawing.Size(75, 23);
             this.Export.TabIndex = 7;
@@ -123,7 +130,10 @@
             // 
             // Import
             // 
-            this.Import.Location = new System.Drawing.Point(256, 147);
+            this.Import.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Import.Enabled = false;
+            this.Import.Location = new System.Drawing.Point(256, 339);
             this.Import.Name = "Import";
             this.Import.Size = new System.Drawing.Size(75, 23);
             this.Import.TabIndex = 8;
@@ -133,7 +143,10 @@
             // 
             // Erase
             // 
-            this.Erase.Location = new System.Drawing.Point(337, 147);
+            this.Erase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Erase.Enabled = false;
+            this.Erase.Location = new System.Drawing.Point(337, 339);
             this.Erase.Name = "Erase";
             this.Erase.Size = new System.Drawing.Size(75, 23);
             this.Erase.TabIndex = 10;
@@ -141,11 +154,30 @@
             this.Erase.UseVisualStyleBackColor = true;
             this.Erase.Click += new System.EventHandler(this.Erase_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.BackColor = System.Drawing.Color.Transparent;
+            this.progressBar1.GradiantPosition = Chem4Word.Core.UI.Controls.CustomProgressBar.GradiantArea.None;
+            this.progressBar1.Image = null;
+            this.progressBar1.Location = new System.Drawing.Point(12, 398);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.RoundedCorners = false;
+            this.progressBar1.ShowPercentage = true;
+            this.progressBar1.Size = new System.Drawing.Size(776, 23);
+            this.progressBar1.Text = "customProgressBar1";
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "System";
+            this.columnHeader4.Width = 70;
+            // 
             // Transformer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 241);
+            this.ClientSize = new System.Drawing.Size(800, 433);
             this.Controls.Add(this.Erase);
             this.Controls.Add(this.Import);
             this.Controls.Add(this.Export);
@@ -174,6 +206,8 @@
         private System.Windows.Forms.Button Export;
         private System.Windows.Forms.Button Import;
         private System.Windows.Forms.Button Erase;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
     }
 }
 

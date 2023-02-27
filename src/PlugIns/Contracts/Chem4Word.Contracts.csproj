@@ -68,6 +68,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dto\DatabaseFileProperties.cs" />
+    <Compile Include="Dto\TableColumn.cs" />
     <Compile Include="IChem4WordCommon.cs" />
     <Compile Include="IChem4WordEditor.cs" />
     <Compile Include="IChem4WordDriver.cs" />

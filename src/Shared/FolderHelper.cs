@@ -14,6 +14,11 @@ namespace Chem4Word.Shared
 {
     public static class FolderHelper
     {
+        public static bool IsFolderWritable(string folderName)
+        {
+            return true;
+        }
+
         // Source https://stackoverflow.com/questions/10667012/getting-downloads-folder-in-c
         // Full version available at https://www.codeproject.com/Articles/878605/Getting-all-Special-Folders-in-NET
 

@@ -7,14 +7,14 @@
 
 using System.Windows;
 
-namespace WPF.ShapeTester
+namespace Wpf.UI.Sandbox
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ShapesUI.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ShapesUI : Window
     {
-        public MainWindow()
+        public ShapesUI()
         {
             InitializeComponent();
         }

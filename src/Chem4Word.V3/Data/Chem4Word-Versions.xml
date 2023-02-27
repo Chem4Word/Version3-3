@@ -10,6 +10,9 @@
             <Change>...</Change>
             <Change>...</Change>
             <Change>...</Change>
+            <Change>...</Change>
+            <Change>Add detection of ReadOnly and System databases, enabling UI buttons as appropriate</Change>
+            <Change>Internal: Add better tool tips in ACME</Change>
             <Change>BugFix: Prevent import of structures which have duplicate bonds</Change>
             <Change>Copied changes from V3.2.*</Change>
             <Change>Stability: Improved method to purge old V2 installations to increase system stability</Change>

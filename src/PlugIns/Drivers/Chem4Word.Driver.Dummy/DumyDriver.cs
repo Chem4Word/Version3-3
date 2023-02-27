@@ -21,6 +21,7 @@ namespace Chem4Word.Driver.Dummy
         public Point TopLeft { get; set; }
         public IChem4WordTelemetry Telemetry { get; set; }
         public DatabaseDetails DatabaseDetails { get; set; }
+        public string BackupFolder { get; set; }
 
         public void StartTransaction()
         {
@@ -40,6 +41,16 @@ namespace Chem4Word.Driver.Dummy
         public void CreateNewDatabase(DatabaseDetails details)
         {
             Debugger.Break();
+        }
+
+        public DatabaseFileProperties GetDatabaseFileProperties(DatabaseDetails details)
+        {
+            return new DatabaseFileProperties
+            {
+                IsReadOnly = true,
+                IsChem4Word = false,
+                RequiresPatching = false
+            };
         }
 
         public Dictionary<string, string> GetProperties() => new Dictionary<string, string>();

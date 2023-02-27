@@ -26,28 +26,33 @@ namespace Chem4Word.Driver.Open.SqLite
     public class Library
     {
         private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static readonly string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static readonly string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private readonly IChem4WordTelemetry _telemetry;
         private Point _topLeft;
         private DatabaseDetails _details;
+        private string _backupFolder;
 
         private readonly List<Patch> _patches;
 
-        public Library(IChem4WordTelemetry telemetry, DatabaseDetails details, Point topLeft)
+        public Library(IChem4WordTelemetry telemetry, DatabaseDetails details, string backupFolder, Point topLeft)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             _telemetry = telemetry;
             _topLeft = topLeft;
             _details = details;
+            _backupFolder = backupFolder;
 
             // Read patches from resource
             var resource = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "Patches.json");
             _patches = JsonConvert.DeserializeObject<List<Patch>>(resource);
             if (_patches != null)
             {
-                Patch(_patches.Max(p => p.Version));
+                if (!IsReadOnly() && RequiresPatching())
+                {
+                    Patch();
+                }
             }
         }
 
@@ -73,75 +78,97 @@ namespace Chem4Word.Driver.Open.SqLite
         {
             // Source https://www.connectionstrings.com/sqlite/
             var conn = new SQLiteConnection($"Data Source={_details.Connection};Synchronous=Full");
-
             return conn.OpenAndReturn();
         }
 
-        private void Patch(Version targetVersion)
+        internal bool IsReadOnly()
         {
+            bool result;
+
             using (var conn = LibraryConnection())
             {
-                var patchTableExists = false;
+                result = conn.IsReadOnly("main");
+            }
 
-                var currentVersion = Version.Parse("0.0.0");
+            return result;
+        }
 
-                using (var tables = GetListOfTablesAndViews(conn))
+        internal bool RequiresPatching()
+        {
+            var currentVersion = Version.Parse("0.0.0");
+            var targetVersion = _patches.Max(p => p.Version);
+
+            if (TableExists("Patches"))
+            {
+                using (var conn = LibraryConnection())
                 {
-                    if (tables != null)
-                    {
-                        while (tables.Read())
-                        {
-                            if (tables["Name"] is string name)
-                            {
-                                if (name.Equals("Patches"))
-                                {
-                                    patchTableExists = true;
-                                }
-                            }
-                        }
-                    }
+                    currentVersion = GetPatchLevel(conn, currentVersion);
                 }
+            }
 
-                if (patchTableExists)
+            return currentVersion < targetVersion;
+        }
+
+        private void Patch()
+        {
+            if (!IsReadOnly())
+            {
+                var patchTableExists = TableExists("Patches");
+
+                using (var conn = LibraryConnection())
                 {
-                    // Read current patch level
-                    using (var patches = GetListOfPatches(conn))
+                    var currentVersion = Version.Parse("0.0.0");
+                    var targetVersion = _patches.Max(p => p.Version);
+
+                    if (patchTableExists)
                     {
-                        if (patches != null)
-                        {
-                            while (patches.Read())
-                            {
-                                if (patches["Version"] is string version)
-                                {
-                                    var thisVersion = Version.Parse(version);
-                                    if (thisVersion > currentVersion)
-                                    {
-                                        currentVersion = thisVersion;
-                                    }
-                                }
-                            }
-                        }
+                        currentVersion = GetPatchLevel(conn, currentVersion);
                     }
-                }
 
-                if (currentVersion < targetVersion)
-                {
-                    // Backup before patching
-                    var fileInfo = new FileInfo(_details.Connection);
-                    if (fileInfo.DirectoryName != null)
+                    if (currentVersion < targetVersion)
                     {
-                        var backup = Path.Combine(fileInfo.DirectoryName, @"..\Backups", $"{SafeDate.ToIsoFilePrefix(DateTime.Now)} {_details.ShortFileName}");
-                        File.Copy(_details.Connection, backup);
-
-                        if (!ApplyPatches(conn, currentVersion))
+                        // Backup before patching
+                        var fileInfo = new FileInfo(_details.Connection);
+                        if (fileInfo.DirectoryName != null)
                         {
-                            // If patching fails, revert to previous version
-                            File.Delete(_details.Connection);
-                            File.Copy(backup, _details.Connection);
+                            var backup = Path.Combine(_backupFolder, $"{SafeDate.ToIsoFilePrefix(DateTime.Now)} {_details.ShortFileName}");
+                            File.Copy(_details.Connection, backup);
+
+                            if (!ApplyPatches(conn, currentVersion))
+                            {
+                                // If patching fails, revert to previous version
+                                conn.Close();
+                                File.Delete(_details.Connection);
+                                File.Copy(backup, _details.Connection);
+                            }
                         }
                     }
                 }
             }
+        }
+
+        private Version GetPatchLevel(SQLiteConnection conn, Version currentVersion)
+        {
+            // Read current patch level
+            using (var patches = GetListOfPatches(conn))
+            {
+                if (patches != null)
+                {
+                    while (patches.Read())
+                    {
+                        if (patches["Version"] is string version)
+                        {
+                            var thisVersion = Version.Parse(version);
+                            if (thisVersion > currentVersion)
+                            {
+                                currentVersion = thisVersion;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return currentVersion;
         }
 
         private SQLiteDataReader GetListOfPatches(SQLiteConnection conn)
@@ -167,6 +194,58 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
+        internal static SQLiteDataReader GetTableColumns(SQLiteConnection conn, string tableName)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            SQLiteDataReader result = null;
+
+            try
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("SELECT Name, Type, [NotNull]");
+                sb.AppendLine($"FROM PRAGMA_TABLE_INFO('{tableName}')");
+
+                var command = new SQLiteCommand(sb.ToString(), conn);
+                result = command.ExecuteReader();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception {ex.Message} in {module}");
+                Debugger.Break();
+            }
+
+            return result;
+        }
+
+        public bool TableExists(string tableName)
+        {
+            bool found = false;
+
+            using (var conn = LibraryConnection())
+            {
+                using (var tables = GetListOfTablesAndViews(conn))
+                {
+                    if (tables != null)
+                    {
+                        while (tables.Read())
+                        {
+                            if (tables["Name"] is string name)
+                            {
+                                if (name.Equals(tableName))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return found;
+        }
+
         private SQLiteDataReader GetListOfTablesAndViews(SQLiteConnection conn)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
@@ -186,6 +265,7 @@ namespace Chem4Word.Driver.Open.SqLite
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception {ex.Message} in {module}");
+                Debugger.Break();
             }
 
             return result;
@@ -1095,6 +1175,89 @@ namespace Chem4Word.Driver.Open.SqLite
             var tagCommand = new SQLiteCommand(sb.ToString(), conn);
             tagCommand.Parameters.Add("@id", DbType.Int64, 20).Value = chemistryId;
             tagCommand.ExecuteNonQuery();
+        }
+
+        private List<TableColumn> GetListOfColumns(SQLiteConnection conn, string table)
+        {
+            var foundColumns = new List<TableColumn>();
+            using (var columns = Library.GetTableColumns(conn, table))
+            {
+                if (columns != null)
+                {
+                    while (columns.Read())
+                    {
+                        var column = new TableColumn
+                        {
+                            Name = columns["Name"].ToString(),
+                            Type = columns["Type"].ToString(),
+                            NotNull = columns["NotNull"].ToString()
+                        };
+                        foundColumns.Add(column);
+                    }
+                }
+            }
+
+            return foundColumns;
+        }
+
+        public bool CheckGalleryExists()
+        {
+            var expectedColumns = new List<TableColumn>
+                                  {
+                                      new TableColumn {Name = "Chemistry", Type = "BLOB", NotNull = "1"},
+                                      new TableColumn {Name = "Name", Type = "TEXT", NotNull = "1"},
+                                      new TableColumn {Name = "Formula", Type = "TEXT", NotNull = "0"}
+                                  };
+
+            var count = 0;
+            using (var conn = LibraryConnection())
+            {
+                var foundColumns = GetListOfColumns(conn, "Gallery");
+
+                foreach (var expectedColumn in expectedColumns)
+                {
+                    foreach (var foundColumn in foundColumns)
+                    {
+                        if (expectedColumn.Equals(foundColumn))
+                        {
+                            count++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return count == expectedColumns.Count;
+        }
+
+        public bool CheckChemicalNamesExists()
+        {
+            var expectedColumns = new List<TableColumn>
+                                  {
+                                      new TableColumn {Name = "Name", Type = "TEXT", NotNull = "1"},
+                                      new TableColumn {Name = "Namespace", Type = "TEXT", NotNull = "1"},
+                                      new TableColumn {Name = "Tag", Type = "TEXT", NotNull = "1"}
+                                  };
+
+            var count = 0;
+            using (var conn = LibraryConnection())
+            {
+                var foundColumns = GetListOfColumns(conn, "ChemicalNames");
+
+                foreach (var expectedColumn in expectedColumns)
+                {
+                    foreach (var foundColumn in foundColumns)
+                    {
+                        if (expectedColumn.Equals(foundColumn))
+                        {
+                            count++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return count == expectedColumns.Count;
         }
     }
 }

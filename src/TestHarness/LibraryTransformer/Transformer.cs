@@ -5,20 +5,19 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using Chem4Word.Driver.Open;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
-using Chem4Word.Model2.Helpers;
 using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Chem4Word.Core.Helpers;
-using IChem4Word.Contracts.Dto;
 
 namespace LibraryTransformer
 {
@@ -49,12 +48,17 @@ namespace LibraryTransformer
                 {
                     driver.DatabaseDetails = details;
                     details.Properties = driver.GetProperties();
+                    details.IsReadOnly = driver.GetDatabaseFileProperties(details).IsReadOnly;
+                    details.IsSystem = details.GetPropertyValue("Owner", "User").Equals("System");
                     var lvi = new ListViewItem(details.DisplayName);
                     lvi.SubItems.Add(details.Connection);
+                    lvi.SubItems.Add(details.IsReadOnly ? "Yes" : "No");
+                    lvi.SubItems.Add(details.IsSystem ? "Yes" : "No");
                     listView1.Items.Add(lvi);
                 }
             }
 
+            listView1.SelectedIndices.Add(0);
             label1.Text = "";
         }
 
@@ -255,12 +259,12 @@ namespace LibraryTransformer
             ChemistryDataObject DtoFromModel(Model model)
             {
                 var dto = new ChemistryDataObject
-                          {
-                              DataType = "pbuff",
-                              Name = model.QuickName,
-                              Formula = model.ConciseFormula,
-                              MolWeight = model.MolecularWeight
-                          };
+                {
+                    DataType = "pbuff",
+                    Name = model.QuickName,
+                    Formula = model.ConciseFormula,
+                    MolWeight = model.MolecularWeight
+                };
 
                 var protocolBufferConverter = new ProtocolBufferConverter();
                 dto.Chemistry = protocolBufferConverter.Export(model);
@@ -291,9 +295,9 @@ namespace LibraryTransformer
             ChemistryNameDataObject CreateNamesFromModel(TextualProperty textualProperty)
             {
                 var nameDataObject = new ChemistryNameDataObject
-                                     {
-                                         Name = textualProperty.Value
-                                     };
+                {
+                    Name = textualProperty.Value
+                };
 
                 if (textualProperty.FullType.Contains(":"))
                 {
@@ -323,6 +327,28 @@ namespace LibraryTransformer
                     driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
                     driver.DeleteAllChemistry();
                 }
+            }
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ToCml.Enabled = false;
+            ToPb.Enabled = false;
+            Import.Enabled = false;
+            Erase.Enabled = false;
+            Export.Enabled = false;
+
+            var lvi = GetSelectedListViewItem();
+            if (lvi != null)
+            {
+                var enabled = lvi.SubItems[2].Text.Equals("No");
+
+                ToCml.Enabled = enabled;
+                ToPb.Enabled = enabled;
+                Import.Enabled = enabled;
+                Erase.Enabled = enabled;
+
+                Export.Enabled = true;
             }
         }
     }

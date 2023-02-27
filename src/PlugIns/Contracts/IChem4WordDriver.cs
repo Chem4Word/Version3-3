@@ -21,6 +21,7 @@ namespace IChem4Word.Contracts
 
         IChem4WordTelemetry Telemetry { get; set; }
         DatabaseDetails DatabaseDetails { get; set; }
+        string BackupFolder { get; set; }
 
         void StartTransaction();
 
@@ -29,6 +30,8 @@ namespace IChem4Word.Contracts
         void RollbackTransaction();
 
         void CreateNewDatabase(DatabaseDetails details);
+
+        DatabaseFileProperties GetDatabaseFileProperties(DatabaseDetails details);
 
         // I/O
         Dictionary<string, string> GetProperties();

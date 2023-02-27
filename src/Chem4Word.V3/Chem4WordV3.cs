@@ -927,6 +927,7 @@ namespace Chem4Word
                     {
                         plugin = ice;
                         plugin.Telemetry = Telemetry;
+                        plugin.BackupFolder = $@"{AddInInfo.ProgramDataPath}\Libraries\Backups";
                         plugin.TopLeft = WordTopLeft;
 
                         break;
@@ -1138,18 +1139,6 @@ namespace Chem4Word
             }
         }
 
-        private string GetPropertyValue(DatabaseDetails details, string key, string defaultValue)
-        {
-            string result = defaultValue;
-
-            if (details.Properties.ContainsKey(key))
-            {
-                result = details.Properties[key];
-            }
-
-            return result;
-        }
-
         private void SetButtonStates(ButtonState state)
         {
             if (Ribbon != null && _plugInsLoaded)
@@ -1196,7 +1185,7 @@ namespace Chem4Word
                         var details = GetSelectedDatabaseDetails();
                         if (details != null)
                         {
-                            canSave = !GetPropertyValue(details, "Owner", "User").Equals("System");
+                            canSave = !(details.IsReadOnly || details.IsSystem);
                         }
                         Ribbon.SaveToLibrary.Enabled = canSave;
                         Ribbon.ArrangeMolecules.Enabled = true;

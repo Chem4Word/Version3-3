@@ -8,8 +8,10 @@
 using Chem4Word.Driver.Open.SqLite;
 using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.IO;
 using System.Reflection;
 using Point = System.Windows.Point;
 
@@ -27,13 +29,14 @@ namespace Chem4Word.Driver.Open
 
         public IChem4WordTelemetry Telemetry { get; set; }
         public DatabaseDetails DatabaseDetails { get; set; }
+        public string BackupFolder { get; set; }
 
         private SQLiteTransaction _transaction;
         private Library _library;
 
         public void StartTransaction()
         {
-            _library = new Library(Telemetry, DatabaseDetails, TopLeft);
+            _library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
             var connection = _library.LibraryConnection();
             _transaction = connection.BeginTransaction();
         }
@@ -77,9 +80,43 @@ namespace Chem4Word.Driver.Open
         {
             Library.CreateNewDatabase(details.Connection);
 
-            var library = new Library(Telemetry, details, TopLeft);
+            var library = new Library(Telemetry, details, BackupFolder, TopLeft);
             // Fetch it's properties, which will apply patches
             library.GetProperties();
+        }
+
+        public DatabaseFileProperties GetDatabaseFileProperties(DatabaseDetails details)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var result = new DatabaseFileProperties();
+
+            if (File.Exists(details.Connection))
+            {
+                try
+                {
+                    var library = new Library(Telemetry, details, BackupFolder, TopLeft);
+
+                    result.IsReadOnly = library.IsReadOnly();
+
+                    var foundGallery = library.TableExists("Gallery");
+                    var foundChemicalNames = library.TableExists("ChemicalNames");
+
+                    if (foundGallery && foundChemicalNames)
+                    {
+                        result.IsChem4Word = library.CheckGalleryExists() && library.CheckChemicalNamesExists();
+                    }
+
+                    result.RequiresPatching = library.RequiresPatching();
+                }
+                catch (Exception exception)
+                {
+                    Telemetry.Write(module, "Exception", exception.Message);
+                    Telemetry.Write(module, "Exception", exception.StackTrace);
+                }
+            }
+
+            return result;
         }
 
         public Dictionary<string, string> GetProperties()
@@ -88,7 +125,7 @@ namespace Chem4Word.Driver.Open
 
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                 result = library.GetProperties();
             }
 
@@ -101,7 +138,7 @@ namespace Chem4Word.Driver.Open
 
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                 result = library.GetSubstanceNamesWithIds();
             }
 
@@ -114,7 +151,7 @@ namespace Chem4Word.Driver.Open
 
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                 result = library.GetAllChemistry();
             }
 
@@ -133,7 +170,7 @@ namespace Chem4Word.Driver.Open
                 }
                 else
                 {
-                    var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                    var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                     result = library.AddChemistry(chemistry);
                 }
             }
@@ -151,7 +188,7 @@ namespace Chem4Word.Driver.Open
                 }
                 else
                 {
-                    var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                    var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                     library.UpdateChemistry(chemistry);
                 }
             }
@@ -163,7 +200,7 @@ namespace Chem4Word.Driver.Open
 
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                 result = library.GetChemistryById(id);
             }
 
@@ -174,7 +211,7 @@ namespace Chem4Word.Driver.Open
         {
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                 library.DeleteAllChemistry();
             }
         }
@@ -189,7 +226,7 @@ namespace Chem4Word.Driver.Open
                 }
                 else
                 {
-                    var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                    var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                     library.DeleteChemistryById(id);
                 }
             }
@@ -199,7 +236,7 @@ namespace Chem4Word.Driver.Open
         {
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                 library.AddTags(id, tags);
             }
         }
@@ -210,7 +247,7 @@ namespace Chem4Word.Driver.Open
 
             if (DatabaseDetails != null)
             {
-                var library = new Library(Telemetry, DatabaseDetails, TopLeft);
+                var library = new Library(Telemetry, DatabaseDetails, BackupFolder, TopLeft);
                 result = library.GetAllTags();
             }
 

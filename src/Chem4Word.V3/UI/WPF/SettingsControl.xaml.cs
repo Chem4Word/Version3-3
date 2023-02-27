@@ -86,6 +86,8 @@ namespace Chem4Word.UI.WPF
                         LoadLibrariesListTab();
                     }
                 }
+
+                SetLibraryTabButtons();
             }
         }
 
@@ -93,7 +95,7 @@ namespace Chem4Word.UI.WPF
 
         #region Bottom Buttons
 
-        private void OkButton_Click(object sender, RoutedEventArgs e)
+        private void OnClick_OkButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -105,7 +107,7 @@ namespace Chem4Word.UI.WPF
             OnButtonClick?.Invoke(this, args);
         }
 
-        private void CancelButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_CancelButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -117,7 +119,7 @@ namespace Chem4Word.UI.WPF
             OnButtonClick?.Invoke(this, args);
         }
 
-        private void DefaultsButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_DefaultsButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -144,7 +146,7 @@ namespace Chem4Word.UI.WPF
 
         #region Plug-Ins Tab Events
 
-        private void SelectedEditorSettings_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_SelectedEditorSettings(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -154,7 +156,7 @@ namespace Chem4Word.UI.WPF
             editor.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
         }
 
-        private void SelectedRendererSettings_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_SelectedRendererSettings(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -164,7 +166,7 @@ namespace Chem4Word.UI.WPF
             renderer.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
         }
 
-        private void SelectedSearcherSettings_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_SelectedSearcherSettings(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -174,7 +176,7 @@ namespace Chem4Word.UI.WPF
             searcher.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
         }
 
-        private void SelectEditorPlugIn_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_SelectEditorPlugIn(object sender, SelectionChangedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             if (!_loading)
@@ -191,7 +193,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void SelectRenderer_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_SelectRenderer(object sender, SelectionChangedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             if (!_loading)
@@ -208,7 +210,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void SelectSearcher_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_SelectSearcher(object sender, SelectionChangedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             if (!_loading)
@@ -228,7 +230,7 @@ namespace Chem4Word.UI.WPF
 
         #region General Tab Events
 
-        private void BondLength_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_BondLength(object sender, SelectionChangedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             if (!_loading)
@@ -242,7 +244,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void RemoveExplicitOnImportFile_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_RemoveExplicitOnImportFile(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -250,7 +252,7 @@ namespace Chem4Word.UI.WPF
             Dirty = true;
         }
 
-        private void RemoveExplicitOnImportSearch_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_RemoveExplicitOnImportSearch(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -258,7 +260,7 @@ namespace Chem4Word.UI.WPF
             Dirty = true;
         }
 
-        private void RemoveExplicitOnImportLibrary_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_RemoveExplicitOnImportLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -266,7 +268,7 @@ namespace Chem4Word.UI.WPF
             Dirty = true;
         }
 
-        private void ApplyDefaultOnImportFile_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_ApplyDefaultOnImportFile(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -274,7 +276,7 @@ namespace Chem4Word.UI.WPF
             Dirty = true;
         }
 
-        private void ApplyDefaultOnImportSearch_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_ApplyDefaultOnImportSearch(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -282,7 +284,7 @@ namespace Chem4Word.UI.WPF
             Dirty = true;
         }
 
-        private void ApplyDefaultOnImportLibrary_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_ApplyDefaultOnImportLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -294,7 +296,7 @@ namespace Chem4Word.UI.WPF
 
         #region Privacy Tab Events
 
-        private void TelemetryEnabled_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_EnableTelemetry(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             if (!_loading)
@@ -309,7 +311,7 @@ namespace Chem4Word.UI.WPF
 
         #region Library Tab Events
 
-        private void OnClick_BrowseLibraryLocation(object sender, RoutedEventArgs e)
+        private void OnClick_SelectDeafultLibraryLocation(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -333,8 +335,17 @@ namespace Chem4Word.UI.WPF
                     new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                         .SaveFile(listOfDetectedLibraries);
                     ReloadGlobalListOfLibraries();
+
+                    SetLibraryTabButtons();
                 }
             }
+        }
+
+        private void SetLibraryTabButtons()
+        {
+            var hasPermission = FileSystemHelper.UserHasWritePermission(Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation);
+            CreateNewLibrary.IsEnabled = hasPermission;
+            DownloadLibrary.IsEnabled = hasPermission;
         }
 
         private void OnClick_AddExistingLibrary(object sender, RoutedEventArgs e)
@@ -355,6 +366,7 @@ namespace Chem4Word.UI.WPF
                 if (Directory.Exists(fileInfo.DirectoryName)
                     && File.Exists(browser.FileName))
                 {
+                    var driver = Globals.Chem4WordV3.GetDriverPlugIn(Constants.SQLiteStandardDriver);
                     var details = new DatabaseDetails
                     {
                         Driver = Constants.SQLiteStandardDriver,
@@ -362,23 +374,39 @@ namespace Chem4Word.UI.WPF
                         Connection = browser.FileName,
                         ShortFileName = fileInfo.Name
                     };
-
-                    var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                    var existing = listOfDetectedLibraries.AvailableDatabases
-                                                          .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
-                    // Prevent add if there is a name clash
-                    if (existing == null)
+                    var info = driver.GetDatabaseFileProperties(details);
+                    if (info.IsChem4Word && !info.IsReadOnly
+                        || info.IsChem4Word && info.IsReadOnly && !info.RequiresPatching)
                     {
-                        Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Added existing library {details.DisplayName}");
-                        listOfDetectedLibraries.AvailableDatabases.Add(details);
-                        new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                            .SaveFile(listOfDetectedLibraries);
-                        ReloadGlobalListOfLibraries();
-                        LoadLibrariesListTab();
+                        var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                        var existing = listOfDetectedLibraries.AvailableDatabases
+                                                              .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
+                        // Prevent add if there is a name clash
+                        if (existing == null)
+                        {
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Added existing library {details.DisplayName}");
+                            listOfDetectedLibraries.AvailableDatabases.Add(details);
+                            new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                .SaveFile(listOfDetectedLibraries);
+                            ReloadGlobalListOfLibraries();
+                            LoadLibrariesListTab();
+                        }
+                        else
+                        {
+                            UserInteractions.WarnUser("Couldn't add this database, due to display name clash");
+                        }
                     }
                     else
                     {
-                        UserInteractions.WarnUser("Couldn't add existing database due to display name clash");
+                        if (!info.IsChem4Word)
+                        {
+                            UserInteractions.WarnUser("Couldn't add this database, as it is not a Chem4Word library");
+                        }
+
+                        if (info.IsReadOnly && info.RequiresPatching)
+                        {
+                            UserInteractions.WarnUser("Couldn't add this Chem4Word library database, because it is read only and requires patching");
+                        }
                     }
                 }
             }
@@ -445,7 +473,10 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_DownloadLibrary(object sender, RoutedEventArgs e)
         {
-            Debugger.Break();
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Clicked");
+
+            MessageBox.Show("ToDo: Start browser at ...");
         }
 
         private void OnClick_RemoveLibrary(object sender, RoutedEventArgs e)
@@ -514,7 +545,7 @@ namespace Chem4Word.UI.WPF
 
         #region Maintenance Tab Events
 
-        private void OnClick_SettingsFolder(object sender, RoutedEventArgs e)
+        private void OnClick_ExploreSettingsFolder(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -529,7 +560,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void OnClick_LibraryFolder(object sender, RoutedEventArgs e)
+        private void OnClick_ExploreCommonFolder(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -544,7 +575,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void OnClick_PlugInsFolder(object sender, RoutedEventArgs e)
+        private void OnClick_ExplorePlugInsFolder(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -562,14 +593,6 @@ namespace Chem4Word.UI.WPF
         #endregion Maintenance Tab Events
 
         #region Private methods
-
-        private void SetButtonState(bool enabled)
-        {
-            Ok.IsEnabled = enabled;
-            Cancel.IsEnabled = enabled;
-            Defaults.IsEnabled = enabled;
-            TabControl.IsEnabled = enabled;
-        }
 
         private void LoadSettings()
         {
@@ -705,10 +728,11 @@ namespace Chem4Word.UI.WPF
                         Connection = database.Connection,
                         Count = GetPropertyValue(database, "Count", "?"),
                         Dictionary = false,
-                        Locked = GetPropertyValue(database, "Owner", "User").Equals("System") ? "Yes" : "No",
                         License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required",
                         IsDefault = isDefault
                     };
+                    obj.Locked = database.IsReadOnly || database.IsSystem ? "Yes" : "No";
+
                     data.Add(obj);
                 }
                 LibrariesList.ItemsSource = data;

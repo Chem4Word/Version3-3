@@ -127,15 +127,7 @@ namespace Chem4Word.Library
             var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
             if (details != null)
             {
-                if (details.Properties.ContainsKey("Owner"))
-                {
-                    var owner = details.Properties["Owner"];
-                    EditThisLibrary.IsEnabled = owner.Equals("User");
-                }
-                else
-                {
-                    EditThisLibrary.IsEnabled = false;
-                }
+                EditThisLibrary.IsEnabled = !(details.IsReadOnly || details.IsSystem);
             }
         }
 
