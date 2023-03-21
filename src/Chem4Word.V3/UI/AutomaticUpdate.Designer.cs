@@ -40,7 +40,7 @@
             // 
             this.btnUpdateNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateNow.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnUpdateNow.Location = new System.Drawing.Point(672, 436);
+            this.btnUpdateNow.Location = new System.Drawing.Point(672, 522);
             this.btnUpdateNow.Name = "btnUpdateNow";
             this.btnUpdateNow.Size = new System.Drawing.Size(100, 27);
             this.btnUpdateNow.TabIndex = 0;
@@ -56,7 +56,7 @@
             this.richTextBox1.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.richTextBox1.Location = new System.Drawing.Point(12, 36);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(760, 383);
+            this.richTextBox1.Size = new System.Drawing.Size(760, 469);
             this.richTextBox1.TabIndex = 1;
             this.richTextBox1.Text = "";
             this.richTextBox1.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.OnRichTextBoxLinkClicked);
@@ -75,7 +75,7 @@
             // 
             this.btnUpdateLater.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateLater.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnUpdateLater.Location = new System.Drawing.Point(566, 436);
+            this.btnUpdateLater.Location = new System.Drawing.Point(566, 522);
             this.btnUpdateLater.Name = "btnUpdateLater";
             this.btnUpdateLater.Size = new System.Drawing.Size(100, 27);
             this.btnUpdateLater.TabIndex = 3;
@@ -88,7 +88,7 @@
             this.linkReleasesPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkReleasesPage.AutoSize = true;
             this.linkReleasesPage.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.linkReleasesPage.Location = new System.Drawing.Point(12, 445);
+            this.linkReleasesPage.Location = new System.Drawing.Point(12, 531);
             this.linkReleasesPage.Name = "linkReleasesPage";
             this.linkReleasesPage.Size = new System.Drawing.Size(490, 19);
             this.linkReleasesPage.TabIndex = 5;
@@ -100,7 +100,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 475);
+            this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.linkReleasesPage);
             this.Controls.Add(this.btnUpdateLater);
             this.Controls.Add(this.lblInfo);

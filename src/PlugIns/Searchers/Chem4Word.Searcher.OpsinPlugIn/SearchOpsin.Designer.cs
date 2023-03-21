@@ -45,14 +45,14 @@
             this.SearchFor.Location = new System.Drawing.Point(17, 16);
             this.SearchFor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SearchFor.Name = "SearchFor";
-            this.SearchFor.Size = new System.Drawing.Size(444, 22);
+            this.SearchFor.Size = new System.Drawing.Size(462, 22);
             this.SearchFor.TabIndex = 0;
             // 
             // SearchButton
             // 
             this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SearchButton.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.SearchButton.Location = new System.Drawing.Point(467, 13);
+            this.SearchButton.Location = new System.Drawing.Point(485, 13);
             this.SearchButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SearchButton.Name = "SearchButton";
             this.SearchButton.Size = new System.Drawing.Size(87, 29);
@@ -65,7 +65,7 @@
             // 
             this.ImportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ImportButton.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.ImportButton.Location = new System.Drawing.Point(467, 444);
+            this.ImportButton.Location = new System.Drawing.Point(485, 514);
             this.ImportButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(87, 29);
@@ -84,7 +84,7 @@
             this.elementHost1.Location = new System.Drawing.Point(14, 54);
             this.elementHost1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(540, 377);
+            this.elementHost1.Size = new System.Drawing.Size(558, 447);
             this.elementHost1.TabIndex = 0;
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.display1;
@@ -93,7 +93,7 @@
             // 
             this.LabelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.LabelInfo.AutoSize = true;
-            this.LabelInfo.Location = new System.Drawing.Point(14, 450);
+            this.LabelInfo.Location = new System.Drawing.Point(14, 520);
             this.LabelInfo.Name = "LabelInfo";
             this.LabelInfo.Size = new System.Drawing.Size(19, 16);
             this.LabelInfo.TabIndex = 9;
@@ -103,7 +103,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(566, 491);
+            this.ClientSize = new System.Drawing.Size(584, 561);
             this.Controls.Add(this.LabelInfo);
             this.Controls.Add(this.ImportButton);
             this.Controls.Add(this.SearchFor);

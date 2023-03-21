@@ -55,7 +55,7 @@
             this.elementHost1.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.elementHost1.Location = new System.Drawing.Point(0, 0);
             this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(390, 428);
+            this.elementHost1.Size = new System.Drawing.Size(388, 423);
             this.elementHost1.TabIndex = 0;
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.display1;
@@ -64,7 +64,7 @@
             // 
             this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SearchButton.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.SearchButton.Location = new System.Drawing.Point(789, 13);
+            this.SearchButton.Location = new System.Drawing.Point(784, 13);
             this.SearchButton.Name = "SearchButton";
             this.SearchButton.Size = new System.Drawing.Size(87, 29);
             this.SearchButton.TabIndex = 1;
@@ -79,7 +79,7 @@
             this.SearchFor.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.SearchFor.Location = new System.Drawing.Point(13, 15);
             this.SearchFor.Name = "SearchFor";
-            this.SearchFor.Size = new System.Drawing.Size(770, 25);
+            this.SearchFor.Size = new System.Drawing.Size(765, 25);
             this.SearchFor.TabIndex = 0;
             // 
             // Results
@@ -98,7 +98,7 @@
             this.Results.HideSelection = false;
             this.Results.Location = new System.Drawing.Point(0, 0);
             this.Results.Name = "Results";
-            this.Results.Size = new System.Drawing.Size(467, 428);
+            this.Results.Size = new System.Drawing.Size(464, 423);
             this.Results.TabIndex = 3;
             this.Results.UseCompatibleStateImageBehavior = false;
             this.Results.View = System.Windows.Forms.View.Details;
@@ -124,7 +124,7 @@
             // 
             this.ImportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ImportButton.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.ImportButton.Location = new System.Drawing.Point(790, 525);
+            this.ImportButton.Location = new System.Drawing.Point(785, 520);
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(87, 29);
             this.ImportButton.TabIndex = 4;
@@ -138,7 +138,7 @@
             this.PreviousButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.PreviousButton.Image = global::Chem4Word.Searcher.PubChemPlugIn.Properties.Resources.ArrowLeft;
             this.PreviousButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.PreviousButton.Location = new System.Drawing.Point(12, 525);
+            this.PreviousButton.Location = new System.Drawing.Point(12, 520);
             this.PreviousButton.Name = "PreviousButton";
             this.PreviousButton.Size = new System.Drawing.Size(75, 29);
             this.PreviousButton.TabIndex = 5;
@@ -153,7 +153,7 @@
             this.NextButton.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.NextButton.Image = global::Chem4Word.Searcher.PubChemPlugIn.Properties.Resources.ArrowRight;
             this.NextButton.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.NextButton.Location = new System.Drawing.Point(13, 490);
+            this.NextButton.Location = new System.Drawing.Point(13, 485);
             this.NextButton.Name = "NextButton";
             this.NextButton.Size = new System.Drawing.Size(74, 29);
             this.NextButton.TabIndex = 6;
@@ -181,20 +181,20 @@
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer1.Panel2.Controls.Add(this.elementHost1);
-            this.splitContainer1.Size = new System.Drawing.Size(865, 430);
-            this.splitContainer1.SplitterDistance = 469;
+            this.splitContainer1.Size = new System.Drawing.Size(860, 425);
+            this.splitContainer1.SplitterDistance = 466;
             this.splitContainer1.TabIndex = 7;
             // 
             // ErrorsAndWarnings
             // 
             this.ErrorsAndWarnings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ErrorsAndWarnings.Location = new System.Drawing.Point(93, 490);
+            this.ErrorsAndWarnings.Location = new System.Drawing.Point(93, 485);
             this.ErrorsAndWarnings.Multiline = true;
             this.ErrorsAndWarnings.Name = "ErrorsAndWarnings";
             this.ErrorsAndWarnings.ReadOnly = true;
             this.ErrorsAndWarnings.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ErrorsAndWarnings.Size = new System.Drawing.Size(690, 64);
+            this.ErrorsAndWarnings.Size = new System.Drawing.Size(685, 64);
             this.ErrorsAndWarnings.TabIndex = 8;
             this.ErrorsAndWarnings.WordWrap = false;
             // 
@@ -202,7 +202,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(889, 566);
+            this.ClientSize = new System.Drawing.Size(884, 561);
             this.Controls.Add(this.ErrorsAndWarnings);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.NextButton);

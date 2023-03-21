@@ -5,10 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
+using ScintillaNET;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using ScintillaNET;
 
 namespace WinForms.TestHarness
 {
@@ -77,7 +78,7 @@ namespace WinForms.TestHarness
             scintilla.Styles[Style.Xml.SingleString].ForeColor = Color.Blue;
 
             scintilla.ReadOnly = false;
-            scintilla.Text = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + Cml;
+            scintilla.Text = XmlHelper.AddHeader(Cml);
             scintilla.ReadOnly = true;
 
             timer1.Enabled = true;

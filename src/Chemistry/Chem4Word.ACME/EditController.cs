@@ -5,6 +5,31 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Adorners.Selectors;
+using Chem4Word.ACME.Behaviors;
+using Chem4Word.ACME.Commands;
+using Chem4Word.ACME.Commands.Editing;
+using Chem4Word.ACME.Commands.Grouping;
+using Chem4Word.ACME.Commands.Layout.Alignment;
+using Chem4Word.ACME.Commands.Layout.Flipping;
+using Chem4Word.ACME.Commands.Reactions;
+using Chem4Word.ACME.Commands.Sketching;
+using Chem4Word.ACME.Commands.Undo;
+using Chem4Word.ACME.Controls;
+using Chem4Word.ACME.Drawing.Visuals;
+using Chem4Word.ACME.Enums;
+using Chem4Word.ACME.Models;
+using Chem4Word.ACME.Utils;
+using Chem4Word.Core;
+using Chem4Word.Core.Enums;
+using Chem4Word.Core.Helpers;
+using Chem4Word.Core.UI.Wpf;
+using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Geometry;
+using Chem4Word.Model2.Helpers;
+using IChem4Word.Contracts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,30 +48,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Chem4Word.ACME.Adorners.Selectors;
-using Chem4Word.ACME.Behaviors;
-using Chem4Word.ACME.Commands;
-using Chem4Word.ACME.Commands.Editing;
-using Chem4Word.ACME.Commands.Grouping;
-using Chem4Word.ACME.Commands.Layout.Alignment;
-using Chem4Word.ACME.Commands.Layout.Flipping;
-using Chem4Word.ACME.Commands.Reactions;
-using Chem4Word.ACME.Commands.Sketching;
-using Chem4Word.ACME.Commands.Undo;
-using Chem4Word.ACME.Controls;
-using Chem4Word.ACME.Drawing.Visuals;
-using Chem4Word.ACME.Enums;
-using Chem4Word.ACME.Models;
-using Chem4Word.ACME.Utils;
-using Chem4Word.Core.Enums;
-using Chem4Word.Core.Helpers;
-using Chem4Word.Core.UI.Wpf;
-using Chem4Word.Model2;
-using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Geometry;
-using Chem4Word.Model2.Helpers;
-using IChem4Word.Contracts;
 using static Chem4Word.Model2.Helpers.Globals;
 using Constants = Chem4Word.ACME.Resources.Constants;
 
@@ -1986,8 +1987,7 @@ namespace Chem4Word.ACME
                     Clipboard.Clear();
                     IDataObject ido = new DataObject();
                     ido.SetData(FormatCML, export);
-                    var header = Core.Helpers.Constants.XmlFileHeader + Environment.NewLine;
-                    ido.SetData(DataFormats.Text, header + export);
+                    ido.SetData(DataFormats.Text, XmlHelper.AddHeader(export));
                     Clipboard.SetDataObject(ido, true);
                 }
             }

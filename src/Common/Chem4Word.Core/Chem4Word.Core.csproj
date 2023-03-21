@@ -133,6 +133,7 @@
     <Compile Include="UI\WaitCursor.cs" />
     <Compile Include="UI\Wpf\WpfEventArgs.cs" />
     <Compile Include="UserInteractions.cs" />
+    <Compile Include="Helpers\XmlHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

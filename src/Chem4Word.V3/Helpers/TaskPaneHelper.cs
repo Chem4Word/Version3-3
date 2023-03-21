@@ -25,6 +25,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
+            var document = application.ActiveDocument;
             var selection = application.Selection;
             ContentControl contentControl = null;
 
@@ -76,7 +77,7 @@ namespace Chem4Word.Helpers
                         }
                     }
 
-                    contentControl = ChemistryHelper.Insert2DChemistry(cmlConverter.Export(model), isCopy);
+                    contentControl = ChemistryHelper.Insert2DChemistry(document, cmlConverter.Export(model), isCopy);
                 }
                 catch (Exception ex)
                 {
@@ -104,7 +105,9 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
+            var document = application.ActiveDocument;
             var selection = application.Selection;
+
             ContentControl contentControl = null;
 
             if (Globals.Chem4WordV3.SystemOptions == null)
@@ -155,7 +158,7 @@ namespace Chem4Word.Helpers
                         }
                     }
 
-                    contentControl = ChemistryHelper.Insert2DChemistry(cmlConverter.Export(model), isCopy);
+                    contentControl = ChemistryHelper.Insert2DChemistry(document, cmlConverter.Export(model), isCopy);
                 }
                 catch (Exception ex)
                 {

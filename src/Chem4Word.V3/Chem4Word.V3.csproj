@@ -351,7 +351,6 @@
     <Compile Include="Helpers\ChemistryHelper.cs" />
     <Compile Include="Helpers\ChemistryObjectComparer.cs" />
     <Compile Include="Helpers\ConfigWatcher.cs" />
-    <Compile Include="Helpers\DocumentHelper.cs" />
     <Compile Include="Helpers\DtoHelper.cs" />
     <Compile Include="Helpers\LibraryFileHelper.cs" />
     <Compile Include="Helpers\ReferenceKeeper.cs" />

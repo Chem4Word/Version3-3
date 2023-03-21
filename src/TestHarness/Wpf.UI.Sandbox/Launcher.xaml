@@ -12,22 +12,33 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Button
             Grid.Row="0"
             Grid.Column="0"
-            Click="OnClick_Button1">
+            Click="OnClick_Button"
+            Tag="Shapes">
             Shapes
         </Button>
         <Button
             Grid.Row="0"
             Grid.Column="1"
-            Click="OnClick_Button2">
+            Click="OnClick_Button"
+            Tag="Styles">
             Styles
+        </Button>
+        <Button
+            Grid.Row="0"
+            Grid.Column="2"
+            Click="OnClick_Button"
+            Tag="Ticker">
+            Ticker
         </Button>
     </Grid>
 </Window>

@@ -57,14 +57,14 @@
             this.SearchFor.Location = new System.Drawing.Point(14, 15);
             this.SearchFor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SearchFor.Name = "SearchFor";
-            this.SearchFor.Size = new System.Drawing.Size(895, 22);
+            this.SearchFor.Size = new System.Drawing.Size(859, 22);
             this.SearchFor.TabIndex = 2;
             // 
             // SearchButton
             // 
             this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SearchButton.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.SearchButton.Location = new System.Drawing.Point(915, 12);
+            this.SearchButton.Location = new System.Drawing.Point(879, 12);
             this.SearchButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SearchButton.Name = "SearchButton";
             this.SearchButton.Size = new System.Drawing.Size(87, 29);
@@ -78,7 +78,7 @@
             this.ImportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ImportButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.ImportButton.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.ImportButton.Location = new System.Drawing.Point(915, 564);
+            this.ImportButton.Location = new System.Drawing.Point(879, 519);
             this.ImportButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(87, 29);
@@ -105,8 +105,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(989, 452);
-            this.splitContainer1.SplitterDistance = 454;
+            this.splitContainer1.Size = new System.Drawing.Size(953, 407);
+            this.splitContainer1.SplitterDistance = 437;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 13;
             // 
@@ -125,7 +125,7 @@
             this.ResultsListView.Location = new System.Drawing.Point(0, 0);
             this.ResultsListView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ResultsListView.Name = "ResultsListView";
-            this.ResultsListView.Size = new System.Drawing.Size(452, 450);
+            this.ResultsListView.Size = new System.Drawing.Size(435, 405);
             this.ResultsListView.TabIndex = 0;
             this.ResultsListView.UseCompatibleStateImageBehavior = false;
             this.ResultsListView.View = System.Windows.Forms.View.Details;
@@ -153,7 +153,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(528, 450);
+            this.panel1.Size = new System.Drawing.Size(509, 405);
             this.panel1.TabIndex = 0;
             // 
             // elementHost1
@@ -165,7 +165,7 @@
             this.elementHost1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.elementHost1.Name = "elementHost1";
             this.elementHost1.Padding = new System.Windows.Forms.Padding(12);
-            this.elementHost1.Size = new System.Drawing.Size(526, 448);
+            this.elementHost1.Size = new System.Drawing.Size(507, 403);
             this.elementHost1.TabIndex = 1;
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.display1;
@@ -174,7 +174,7 @@
             // 
             this.ShowMolfile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ShowMolfile.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.ShowMolfile.Location = new System.Drawing.Point(915, 527);
+            this.ShowMolfile.Location = new System.Drawing.Point(879, 482);
             this.ShowMolfile.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ShowMolfile.Name = "ShowMolfile";
             this.ShowMolfile.Size = new System.Drawing.Size(87, 29);
@@ -188,12 +188,12 @@
             this.ErrorsAndWarnings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ErrorsAndWarnings.Font = new System.Drawing.Font("Segoe UI", 9.75F);
-            this.ErrorsAndWarnings.Location = new System.Drawing.Point(14, 513);
+            this.ErrorsAndWarnings.Location = new System.Drawing.Point(14, 468);
             this.ErrorsAndWarnings.Multiline = true;
             this.ErrorsAndWarnings.Name = "ErrorsAndWarnings";
             this.ErrorsAndWarnings.ReadOnly = true;
             this.ErrorsAndWarnings.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ErrorsAndWarnings.Size = new System.Drawing.Size(889, 81);
+            this.ErrorsAndWarnings.Size = new System.Drawing.Size(853, 81);
             this.ErrorsAndWarnings.TabIndex = 15;
             this.ErrorsAndWarnings.WordWrap = false;
             // 
@@ -201,7 +201,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 606);
+            this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.ErrorsAndWarnings);
             this.Controls.Add(this.ShowMolfile);
             this.Controls.Add(this.splitContainer1);

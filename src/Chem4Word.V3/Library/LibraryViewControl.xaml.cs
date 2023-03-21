@@ -153,7 +153,7 @@ namespace Chem4Word.Library
                             Globals.Chem4WordV3.EventsEnabled = false;
 
                             if (Globals.Chem4WordV3.Application.Documents.Count > 0
-                                && DocumentHelper.GetActiveDocument()?.ActiveWindow?.Selection != null)
+                                && Globals.Chem4WordV3.Application.ActiveDocument?.ActiveWindow?.Selection != null)
                             {
                                 switch (source.Button)
                                 {

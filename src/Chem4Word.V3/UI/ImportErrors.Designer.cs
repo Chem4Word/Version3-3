@@ -63,7 +63,7 @@
             this.Errors.Multiline = true;
             this.Errors.Name = "Errors";
             this.Errors.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.Errors.Size = new System.Drawing.Size(428, 186);
+            this.Errors.Size = new System.Drawing.Size(458, 233);
             this.Errors.TabIndex = 0;
             this.Errors.WordWrap = false;
             // 
@@ -76,7 +76,7 @@
             this.Warnings.Multiline = true;
             this.Warnings.Name = "Warnings";
             this.Warnings.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.Warnings.Size = new System.Drawing.Size(428, 205);
+            this.Warnings.Size = new System.Drawing.Size(458, 260);
             this.Warnings.TabIndex = 0;
             this.Warnings.WordWrap = false;
             // 
@@ -84,7 +84,7 @@
             // 
             this.Abort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Abort.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.Abort.Location = new System.Drawing.Point(730, 418);
+            this.Abort.Location = new System.Drawing.Point(785, 520);
             this.Abort.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Abort.Name = "Abort";
             this.Abort.Size = new System.Drawing.Size(87, 28);
@@ -97,7 +97,7 @@
             // 
             this.Continue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Continue.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.Continue.Location = new System.Drawing.Point(637, 418);
+            this.Continue.Location = new System.Drawing.Point(692, 520);
             this.Continue.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Continue.Name = "Continue";
             this.Continue.Size = new System.Drawing.Size(87, 28);
@@ -131,8 +131,8 @@
             // OuterSplitContainer.Panel2
             // 
             this.OuterSplitContainer.Panel2.Controls.Add(this.InnerSplitContainer);
-            this.OuterSplitContainer.Size = new System.Drawing.Size(805, 396);
-            this.OuterSplitContainer.SplitterDistance = 373;
+            this.OuterSplitContainer.Size = new System.Drawing.Size(860, 498);
+            this.OuterSplitContainer.SplitterDistance = 398;
             this.OuterSplitContainer.TabIndex = 10;
             // 
             // panel1
@@ -143,7 +143,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(373, 396);
+            this.panel1.Size = new System.Drawing.Size(398, 498);
             this.panel1.TabIndex = 0;
             // 
             // elementHost2
@@ -152,7 +152,7 @@
             this.elementHost2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.elementHost2.Location = new System.Drawing.Point(0, 0);
             this.elementHost2.Name = "elementHost2";
-            this.elementHost2.Size = new System.Drawing.Size(371, 394);
+            this.elementHost2.Size = new System.Drawing.Size(396, 496);
             this.elementHost2.TabIndex = 0;
             this.elementHost2.Text = "elementHost2";
             this.elementHost2.Child = this.display1;
@@ -175,8 +175,8 @@
             // 
             this.InnerSplitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.InnerSplitContainer.Panel2.Controls.Add(this.panelNames);
-            this.InnerSplitContainer.Size = new System.Drawing.Size(428, 396);
-            this.InnerSplitContainer.SplitterDistance = 186;
+            this.InnerSplitContainer.Size = new System.Drawing.Size(458, 498);
+            this.InnerSplitContainer.SplitterDistance = 233;
             this.InnerSplitContainer.SplitterWidth = 5;
             this.InnerSplitContainer.TabIndex = 7;
             // 
@@ -188,7 +188,7 @@
             this.panelFormulae.Location = new System.Drawing.Point(0, 0);
             this.panelFormulae.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panelFormulae.Name = "panelFormulae";
-            this.panelFormulae.Size = new System.Drawing.Size(428, 186);
+            this.panelFormulae.Size = new System.Drawing.Size(458, 233);
             this.panelFormulae.TabIndex = 4;
             // 
             // panelNames
@@ -199,14 +199,14 @@
             this.panelNames.Location = new System.Drawing.Point(0, 0);
             this.panelNames.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panelNames.Name = "panelNames";
-            this.panelNames.Size = new System.Drawing.Size(428, 205);
+            this.panelNames.Size = new System.Drawing.Size(458, 260);
             this.panelNames.TabIndex = 2;
             // 
             // ImportErrors
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(829, 459);
+            this.ClientSize = new System.Drawing.Size(884, 561);
             this.Controls.Add(this.OuterSplitContainer);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.Continue);

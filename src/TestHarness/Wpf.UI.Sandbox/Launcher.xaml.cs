@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Wpf.UI.Sandbox
 {
@@ -19,16 +20,34 @@ namespace Wpf.UI.Sandbox
             InitializeComponent();
         }
 
-        private void OnClick_Button1(object sender, RoutedEventArgs e)
+        private void OnClick_Button(object sender, RoutedEventArgs e)
         {
-            var window = new ShapesUI();
-            window.ShowDialog();
-        }
+            if (sender is Button button)
+            {
+                Window window;
 
-        private void OnClick_Button2(object sender, RoutedEventArgs e)
-        {
-            var window = new StylesUI();
-            window.ShowDialog();
+                switch (button.Tag)
+                {
+                    case "Shapes":
+                        window = new ShapesUI();
+                        window.ShowDialog();
+                        break;
+
+                    case "Styles":
+                        window = new StylesUI();
+                        window.ShowDialog();
+                        break;
+
+                    case "Ticker":
+                        var top = Top + Height - 80;
+                        window = new Ticker();
+                        window.Height = 80;
+                        window.Left = Left;
+                        window.Top = top;
+                        window.ShowDialog();
+                        break;
+                }
+            }
         }
     }
 }
