@@ -32,6 +32,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
+using Chem4Word.WebServices;
 using Color = System.Drawing.Color;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -140,33 +141,44 @@ namespace WinForms.TestHarness
 
                     if (model != null)
                     {
-                        var originalBondLength = model.MeanBondLength;
-                        model.EnsureBondLength(20, false);
-
-                        if (string.IsNullOrEmpty(model.CustomXmlPartGuid))
+                        if (model.GeneralErrors.Count == 0 && model.AllErrors.Count == 0 && model.AllWarnings.Count == 0)
                         {
-                            model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
-                        }
+                            var originalBondLength = model.MeanBondLength;
+                            model.EnsureBondLength(20, false);
 
-                        if (!string.IsNullOrEmpty(_lastCml))
-                        {
-                            if (_lastCml != EmptyCml)
+                            if (string.IsNullOrEmpty(model.CustomXmlPartGuid))
                             {
-                                var clone = cmlConvertor.Import(_lastCml);
-                                Debug.WriteLine($"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength:#,##0.00} onto Stack");
-                                _undoStack.Push(clone);
+                                model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
                             }
+
+                            if (!string.IsNullOrEmpty(_lastCml))
+                            {
+                                if (_lastCml != EmptyCml)
+                                {
+                                    var clone = cmlConvertor.Import(_lastCml);
+                                    Debug.WriteLine($"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength:#,##0.00} onto Stack");
+                                    _undoStack.Push(clone);
+                                }
+                            }
+
+                            stopwatch = new Stopwatch();
+                            stopwatch.Start();
+                            _lastCml = cmlConvertor.Export(model);
+                            stopwatch.Stop();
+                            elapsed2 = stopwatch.Elapsed;
+
+                            _telemetry.Write(module, "Information", $"File: '{filename}'; Original bond length {originalBondLength:#,##0.00}");
+                            _telemetry.Write(module, "Timing", $"Import took {elapsed1}; Export took {elapsed2}");
+                            ShowChemistry(filename, model);
                         }
+                        else
+                        {
+                            var errors = model.GeneralErrors;
+                            errors.AddRange(model.AllErrors);
+                            errors.AddRange(model.AllWarnings);
 
-                        stopwatch = new Stopwatch();
-                        stopwatch.Start();
-                        _lastCml = cmlConvertor.Export(model);
-                        stopwatch.Stop();
-                        elapsed2 = stopwatch.Elapsed;
-
-                        _telemetry.Write(module, "Information", $"File: '{filename}'; Original bond length {originalBondLength:#,##0.00}");
-                        _telemetry.Write(module, "Timing", $"Import took {elapsed1}; Export took {elapsed2}");
-                        ShowChemistry(filename, model);
+                            MessageBox.Show(string.Join(Environment.NewLine, errors), "Model has errors or warnings!");
+                        }
                     }
                 }
             }
@@ -424,6 +436,7 @@ namespace WinForms.TestHarness
             EditWithAcme.Enabled = true;
             EditLabels.Enabled = true;
             EditCml.Enabled = true;
+            CalculateProperties.Enabled = true;
 
             ShowCml.Enabled = true;
             ClearChemistry.Enabled = true;
@@ -821,97 +834,6 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void LayoutUsingKoshsisImplementation()
-        {
-            var data = new LayoutResult();
-
-            var cc = new CMLConverter();
-            var sc = new SdFileConverter();
-            string molfile = sc.Export(cc.Import(_lastCml));
-
-            try
-            {
-                using (HttpClient httpClient = new HttpClient())
-                {
-                    var formData = new List<KeyValuePair<string, string>>();
-
-                    formData.Add(new KeyValuePair<string, string>("mol", molfile));
-                    formData.Add(new KeyValuePair<string, string>("machine", SystemHelper.GetMachineId()));
-                    formData.Add(new KeyValuePair<string, string>("version", "1.2.3.4"));
-#if DEBUG
-                    formData.Add(new KeyValuePair<string, string>("debug", "true"));
-#endif
-
-                    var content = new FormUrlEncodedContent(formData);
-
-                    httpClient.Timeout = TimeSpan.FromSeconds(15);
-                    httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
-
-                    try
-                    {
-                        var response = httpClient.PostAsync("https://chemicalservices-staging.azurewebsites.net/api/Layout", content).Result;
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            var jsonContent = responseContent.ReadAsStringAsync().Result;
-
-                            try
-                            {
-                                data = JsonConvert.DeserializeObject<LayoutResult>(jsonContent);
-                            }
-                            catch (Exception e3)
-                            {
-                                //Telemetry.Write(module, "Exception", e3.Message);
-                                //Telemetry.Write(module, "Exception(Data)", jsonContent);
-                                Debug.WriteLine(e3.Message);
-                            }
-
-                            if (data != null)
-                            {
-                                if (data.Messages.Any())
-                                {
-                                    //Telemetry.Write(module, "Timing", string.Join(Environment.NewLine, data.Messages));
-                                }
-
-                                if (data.Errors.Any())
-                                {
-                                    //Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, data.Errors));
-                                }
-
-                                if (!string.IsNullOrEmpty(data.Molecule))
-                                {
-                                    var model = sc.Import(data.Molecule);
-                                    model.EnsureBondLength(20, false);
-                                    if (string.IsNullOrEmpty(model.CustomXmlPartGuid))
-                                    {
-                                        model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
-                                    }
-
-                                    var clone = cc.Import(_lastCml);
-                                    _undoStack.Push(clone);
-
-                                    _lastCml = cc.Export(model);
-                                    ShowChemistry("", model);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e2)
-                    {
-                        //Telemetry.Write(module, "Exception", e2.Message);
-                        //Telemetry.Write(module, "Exception", e2.ToString());
-                        Debug.WriteLine(e2.Message);
-                    }
-                }
-            }
-            catch (Exception e1)
-            {
-                //Telemetry.Write(module, "Exception", e1.Message);
-                //Telemetry.Write(module, "Exception", e1.ToString());
-                Debug.WriteLine(e1.Message);
-            }
-        }
-
         private void RenderOoXml_Click(object sender, EventArgs e)
         {
             var renderer = new Renderer();
@@ -1003,10 +925,57 @@ namespace WinForms.TestHarness
                 _undoStack.Push(clone);
             }
 
-            Model m = cc.Import(cml);
-            m.Relabel(true);
-            m.EnsureBondLength(20, false);
-            _lastCml = cc.Export(m);
+            Model model = cc.Import(cml);
+            if (model.GeneralErrors.Count == 0 && model.AllErrors.Count == 0 && model.AllWarnings.Count == 0)
+            {
+                model.Relabel(true);
+                model.EnsureBondLength(20, false);
+                _lastCml = cc.Export(model);
+
+                // Cause re-read of settings (in case they have changed)
+                _editorOptions = new AcmeOptions(null);
+                SetDisplayOptions();
+                RedoStack.SetOptions(_editorOptions);
+                UndoStack.SetOptions(_editorOptions);
+
+                ShowChemistry($"{captionPrefix} {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
+            }
+            else
+            {
+                var errors = model.GeneralErrors;
+                errors.AddRange(model.AllErrors);
+                errors.AddRange(model.AllWarnings);
+
+                MessageBox.Show(string.Join(Environment.NewLine, errors), "Model has errors or warnings!");
+            }
+        }
+
+        private void CalculateProperties_Click(object sender, EventArgs e)
+        {
+            var cc = new CMLConverter();
+            if (_lastCml != EmptyCml)
+            {
+                var clone = cc.Import(_lastCml);
+                Debug.WriteLine(
+                    $"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength.ToString("#,##0.00")} onto Stack");
+                _undoStack.Push(clone);
+            }
+
+            Model model = cc.Import(_lastCml);
+
+            var assembly = Assembly.GetExecutingAssembly();
+            var version = assembly.GetName().Version;
+            var pc = new PropertyCalculator(_telemetry, new Point(Left, Top), version.ToString());
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            var changedProperties = pc.CalculateProperties(model);
+
+            stopwatch.Stop();
+            Debug.WriteLine($"Calulating {changedProperties} changed properties took {stopwatch.Elapsed}");
+
+            _lastCml = cc.Export(model);
 
             // Cause re-read of settings (in case they have changed)
             _editorOptions = new AcmeOptions(null);
@@ -1014,7 +983,7 @@ namespace WinForms.TestHarness
             RedoStack.SetOptions(_editorOptions);
             UndoStack.SetOptions(_editorOptions);
 
-            ShowChemistry($"{captionPrefix} {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(m.ConciseFormula))}", m);
+            ShowChemistry($"{changedProperties} changed properties; {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
         }
     }
 }

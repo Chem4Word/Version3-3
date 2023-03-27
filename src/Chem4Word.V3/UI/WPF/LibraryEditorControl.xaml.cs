@@ -179,10 +179,8 @@ namespace Chem4Word.UI.WPF
                         var afterModel = cmlConverter.Import(editor.Cml);
                         var afterCml = editor.Cml;
 
-                        var newMolecules = afterModel.GetAllMolecules();
-
                         var pc = new WebServices.PropertyCalculator(_telemetry, topLeft, Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
-                        pc.CalculateProperties(newMolecules);
+                        pc.CalculateProperties(afterModel);
 
                         using (var editLabelsHost =
                                new EditLabelsHost(

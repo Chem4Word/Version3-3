@@ -186,6 +186,10 @@
       <Project>{c69bab8f-4881-4d5f-9929-fc8470df1e48}</Project>
       <Name>Chem4Word.Model2</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Chemistry\Chem4Word.WebServices\Chem4Word.WebServices.csproj">
+      <Project>{54f9d4a6-e151-4c65-9d68-16c620b7a6bc}</Project>
+      <Name>Chem4Word.WebServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Chem4Word.Core\Chem4Word.Core.csproj">
       <Project>{2E7B1308-8149-4B03-9CB9-48E0B7151560}</Project>
       <Name>Chem4Word.Core</Name>

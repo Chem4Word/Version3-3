@@ -3,8 +3,9 @@ This project is Version 3.3 of the Chemistry for Word Add-In
 
 ## Getting Started
 1.	Installation process see $/docs/Chem4Word-Version3-3-Developer-SetUp.docx
-2.	Software dependencies Office 2010/2013/2016/2019/365 (Installed on Desktop)
-3.	Latest releases
+2.	Software dependencies Office 2010/2013/2016/2019/2021/365 (Installed on Desktop)
+3.	Recomeded screen resolution 1920x1080 (minimum 1366x768)
+4.	Git Clone of main branch
 
 ## Build and Test
 The Chemistry for Word Add-in (Chem4Word) is contained within a single Visual Studio solution located at src/Chem4Word.V3-3.sln
