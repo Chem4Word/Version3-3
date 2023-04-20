@@ -297,6 +297,9 @@
       <Component Id="Ookii.Dialogs.WinForms">
         <File Id="Ookii.Dialogs.WinForms.dll" Source="$(var.Chem4Word.V3.TargetDir)Ookii.Dialogs.WinForms.dll" />
       </Component>
+      <Component Id="Standard.Licensing">
+          <File Id="Standard.Licensing.dll" Source="$(var.Chem4Word.V3.TargetDir)Standard.Licensing.dll" />
+      </Component>
       <Component Id="System.AppContext">
         <File Id="System.AppContext.dll" Source="$(var.Chem4Word.V3.TargetDir)System.AppContext.dll" />
       </Component>

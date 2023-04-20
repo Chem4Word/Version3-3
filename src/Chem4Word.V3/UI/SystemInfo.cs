@@ -89,19 +89,37 @@ namespace Chem4Word.UI
                 sb.AppendLine($"Settings Folder: {Globals.Chem4WordV3.AddInInfo.ProductAppDataPath}");
                 sb.AppendLine($"Library Folder: {Globals.Chem4WordV3.AddInInfo.ProgramDataPath}");
 
-                sb.AppendLine("");
-                string plugInPath = Path.Combine(Globals.Chem4WordV3.AddInInfo.DeploymentPath, "PlugIns");
-                sb.AppendLine($"PlugIns Folder: {plugInPath}");
-
-                if (Directory.Exists(plugInPath))
+                var systemPluginsPath = Path.Combine(Globals.Chem4WordV3.AddInInfo.DeploymentPath, "PlugIns");
+                if (Directory.Exists(systemPluginsPath))
                 {
-                    var files = Directory.GetFiles(plugInPath, "Chem4Word*.dll");
+                    var files = Directory.GetFiles(systemPluginsPath, "Chem4Word*.dll");
                     if (files.Length > 0)
                     {
+                        sb.AppendLine("");
+                        sb.AppendLine($"System PlugIns Folder: {systemPluginsPath}");
+
                         foreach (var file in files)
                         {
                             var fileInfo = FileVersionInfo.GetVersionInfo(file);
-                            var shortName = file.Replace($@"{plugInPath}\", "");
+                            var shortName = file.Replace($@"{systemPluginsPath}\", "");
+                            sb.AppendLine($"  {shortName} - [{fileInfo.FileVersion}]");
+                        }
+                    }
+                }
+
+                var userPlugInsPath = Path.Combine(Globals.Chem4WordV3.AddInInfo.ProgramDataPath, "PlugIns");
+                if (Directory.Exists(userPlugInsPath))
+                {
+                    var files = Directory.GetFiles(userPlugInsPath, "Chem4Word*.dll");
+                    if (files.Length > 0)
+                    {
+                        sb.AppendLine("");
+                        sb.AppendLine($"User PlugIns Folder: {userPlugInsPath}");
+
+                        foreach (var file in files)
+                        {
+                            var fileInfo = FileVersionInfo.GetVersionInfo(file);
+                            var shortName = file.Replace($@"{userPlugInsPath}\", "");
                             sb.AppendLine($"  {shortName} - [{fileInfo.FileVersion}]");
                         }
                     }

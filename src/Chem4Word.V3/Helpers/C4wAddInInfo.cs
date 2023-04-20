@@ -78,12 +78,6 @@ namespace Chem4Word.Helpers
                     Directory.CreateDirectory(fileBackupsPath);
                 }
 
-                var databaseBackupsPath = Path.Combine(ProductAppDataPath, "Libraries", "Backups");
-                if (!Directory.Exists(databaseBackupsPath))
-                {
-                    Directory.CreateDirectory(databaseBackupsPath);
-                }
-
                 var telemetryPath = Path.Combine(ProductAppDataPath, "Telemetry");
                 if (!Directory.Exists(telemetryPath))
                 {
@@ -91,7 +85,7 @@ namespace Chem4Word.Helpers
                 }
 
                 // Get ProgramData Path i.e "C:\ProgramData\Chem4Word.V3" and ensure it exists
-                string programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
                 ProgramDataPath = Path.Combine(programData, ProductName);
 
                 try
@@ -102,14 +96,26 @@ namespace Chem4Word.Helpers
                     }
 
                     // Allow all users to Modify files in this folder
-                    DirectorySecurity sec = Directory.GetAccessControl(ProgramDataPath);
-                    SecurityIdentifier users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-                    sec.AddAccessRule(new FileSystemAccessRule(users, FileSystemRights.Modify | FileSystemRights.Synchronize, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow));
-                    Directory.SetAccessControl(ProgramDataPath, sec);
+                    var accessControl = Directory.GetAccessControl(ProgramDataPath);
+                    var securityIdentifier = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+                    accessControl.AddAccessRule(new FileSystemAccessRule(securityIdentifier, FileSystemRights.Modify | FileSystemRights.Synchronize, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow));
+                    Directory.SetAccessControl(ProgramDataPath, accessControl);
                 }
                 catch
                 {
                     // Do Nothing
+                }
+
+                var librariesPath = Path.Combine(ProgramDataPath, "Libraries");
+                if (!Directory.Exists(librariesPath))
+                {
+                    Directory.CreateDirectory(librariesPath);
+                }
+
+                var databaseBackupsPath = Path.Combine(ProgramDataPath, "Libraries", "Backups");
+                if (!Directory.Exists(databaseBackupsPath))
+                {
+                    Directory.CreateDirectory(databaseBackupsPath);
                 }
             }
             catch (Exception exception)
