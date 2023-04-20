@@ -24,12 +24,11 @@
                 <ResourceDictionary Source="Resources/ControlStyles.xaml" />
                 <ResourceDictionary Source="Resources/ACMEResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style x:Key="MainTextStyle" TargetType="{x:Type TextBlock}">
+            <Style x:Key="ReactionAtomStyle" TargetType="{x:Type Run}">
                 <Setter Property="FontSize" Value="7" />
                 <Setter Property="FontFamily" Value="Arial" />
-                <Setter Property="HorizontalAlignment" Value="Center" />
             </Style>
-            <Style x:Key="SubscriptStyle" TargetType="{x:Type Run}">
+            <Style x:Key="ReactionSubscriptStyle" TargetType="{x:Type Run}">
                 <Setter Property="FontSize" Value="3.5" />
                 <Setter Property="FontFamily" Value="Arial" />
                 <Setter Property="BaselineAlignment" Value="Subscript" />
@@ -771,9 +770,6 @@
                     ToolTip="Draw Chain">
                     <Viewbox>
                         <StaticResource ResourceKey="ChainPath" />
-                        <Viewbox.LayoutTransform>
-                            <RotateTransform Angle="180" />
-                        </Viewbox.LayoutTransform>
                     </Viewbox>
                     <RadioButton.Tag>
                         <behaviors:ChainBehavior EditController="{Binding ElementName=AcmeControl, Path=ActiveController}" />
@@ -792,25 +788,15 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="8" />
-                                <RowDefinition Height="0" />
-                                <RowDefinition />
+                                <RowDefinition Height="2" />
+                                <RowDefinition Height="8" />
                             </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Padding="0,0,0,1"
-                                FontFamily="Arial"
-                                Style="{StaticResource MainTextStyle}">
-                                NH<Run Style="{StaticResource SubscriptStyle}">3</Run>
+                            <TextBlock Grid.Row="0" FontSize="1">
+                                <Run Style="{StaticResource ReactionAtomStyle}">NH</Run>
+                                <Run Style="{StaticResource ReactionSubscriptStyle}">3</Run>
                             </TextBlock>
                             <graphics:StraightArrow
                                 Grid.Row="1"
-                                Grid.Column="1"
                                 ArrowHeadClosed="True"
                                 Fill="Black"
                                 HeadAngle="35"
@@ -819,12 +805,11 @@
                                 StrokeThickness="0.75"
                                 StartPoint="0, 1"
                                 EndPoint="12, 1" />
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Padding="0,2"
-                                Style="{StaticResource MainTextStyle}">
-                                H<Run Style="{StaticResource SubscriptStyle}">2</Run>O</TextBlock>
+                            <TextBlock Grid.Row="2" FontSize="1">
+                                <Run Style="{StaticResource ReactionAtomStyle}">H</Run>
+                                <Run Style="{StaticResource ReactionSubscriptStyle}">2</Run>
+                                <Run Style="{StaticResource ReactionAtomStyle}">O</Run>
+                            </TextBlock>
                         </Grid>
                     </Viewbox>
                     <RadioButton.Tag>
@@ -959,7 +944,8 @@
                             VerticalAlignment="Center"
                             FontFamily="Arial"
                             Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsEnabled, Converter={StaticResource EnabledConverter}, ConverterParameter={StaticResource ResourceKey=Chem4WordBlue}}">
-                            <Run Foreground="Black">+</Run><Run Foreground="{StaticResource HBrush}">H</Run>
+                            <Run Foreground="Black">+</Run>
+                            <Run Foreground="{StaticResource HBrush}">H</Run>
                         </TextBlock>
                     </Viewbox>
                 </Button>
@@ -977,7 +963,8 @@
                             VerticalAlignment="Center"
                             FontFamily="Arial"
                             Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsEnabled, Converter={StaticResource EnabledConverter}, ConverterParameter={StaticResource ResourceKey=Chem4WordBlue}}">
-                            <Run Foreground="Black">-</Run><Run Foreground="{StaticResource HBrush}">H</Run>
+                            <Run Foreground="Black">-</Run>
+                            <Run Foreground="{StaticResource HBrush}">H</Run>
                         </TextBlock>
                     </Viewbox>
                 </Button>
@@ -1104,23 +1091,15 @@
                                 <RowDefinition Height="2" />
                                 <RowDefinition Height="8" />
                             </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
                             <TextBlock
                                 Grid.Row="0"
-                                Grid.Column="1"
-                                Padding="0,0,0,1"
                                 HorizontalAlignment="Right"
-                                FontFamily="Arial"
-                                Style="{StaticResource MainTextStyle}">
-                                NH<Run Style="{StaticResource SubscriptStyle}">3</Run>
+                                FontSize="1">
+                                <Run Style="{StaticResource ReactionAtomStyle}">NH</Run>
+                                <Run Style="{StaticResource ReactionSubscriptStyle}">3</Run>
                             </TextBlock>
                             <graphics:StraightArrow
                                 Grid.Row="1"
-                                Grid.Column="1"
                                 ArrowHeadClosed="True"
                                 Fill="Black"
                                 HeadAngle="35"
@@ -1128,10 +1107,9 @@
                                 Stroke="Black"
                                 StrokeThickness="0.75"
                                 StartPoint="0, 1"
-                                EndPoint="13, 1" />
+                                EndPoint="12, 1" />
                             <Rectangle
                                 Grid.Row="2"
-                                Grid.Column="1"
                                 Width="6"
                                 Height="6"
                                 Margin="2"
@@ -1151,20 +1129,13 @@
                                 <RowDefinition Height="2" />
                                 <RowDefinition Height="8" />
                             </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                FontWeight="DemiBold"
-                                Style="{StaticResource MainTextStyle}">
-                                H<Run Style="{StaticResource SubscriptStyle}">2</Run>O</TextBlock>
+                            <TextBlock Grid.Row="2" FontSize="1">
+                                <Run Style="{StaticResource ReactionAtomStyle}">H</Run>
+                                <Run Style="{StaticResource ReactionSubscriptStyle}">2</Run>
+                                <Run Style="{StaticResource ReactionAtomStyle}">O</Run>
+                            </TextBlock>
                             <graphics:StraightArrow
                                 Grid.Row="1"
-                                Grid.Column="1"
                                 ArrowHeadClosed="True"
                                 Fill="Black"
                                 HeadAngle="35"
@@ -1175,7 +1146,6 @@
                                 EndPoint="12,1" />
                             <Rectangle
                                 Grid.Row="0"
-                                Grid.Column="1"
                                 Width="6"
                                 Height="6"
                                 Margin="2"
@@ -1202,10 +1172,8 @@
                             <Path
                                 Width="26"
                                 Height="26"
-                                Margin="0,0,0,0"
                                 Data="M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128z"
                                 Fill="Black"
-                                RenderTransformOrigin="0.5,0.5"
                                 Stretch="Uniform" />
                         </Grid>
                     </Viewbox>
@@ -1459,25 +1427,16 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+                    <Viewbox Stretch="Uniform">
                         <Grid Width="32" Height="32">
-                            <Path
-                                Width="15"
-                                Height="26"
-                                Margin="0,0,0,0"
-                                Data="M27.875,11.07201C29.158997,11.07201 30.162003,11.412005 30.897995,12.091998 31.625992,12.774004 31.998001,13.624986 31.998001,14.637009 31.998001,15.215011 31.888,15.764997 31.684998,16.289991 31.472,16.811994 31.140991,17.355999 30.686996,17.926983 30.384995,18.306988 29.83699,18.853006 29.057999,19.564005 28.270996,20.271006 27.772003,20.746986 27.563995,20.979988 27.354004,21.21598 27.181992,21.441994 27.054001,21.663002L32,21.663002 31.996994,21.665993 31.996994,23.952001 23.268997,23.952001C23.365997,23.088995 23.649002,22.265999 24.121002,21.495003 24.595001,20.724983 25.524994,19.700998 26.919998,18.422008 28.039993,17.388988 28.729996,16.689009 28.985992,16.322004 29.32399,15.814985 29.498993,15.310012 29.498993,14.814986 29.498993,14.264999 29.348999,13.844987 29.050995,13.551011 28.753998,13.254014 28.341003,13.108994 27.813995,13.108994 27.297989,13.108994 26.882004,13.262986 26.57399,13.571 26.270996,13.880998 26.091003,14.395004 26.043991,15.113997L23.561996,14.866988C23.709991,13.517991 24.175995,12.541002 24.955994,11.952014 25.733002,11.364001 26.707993,11.07201 27.875,11.07201z M0.32299805,0L7.2720032,0 11.07399,5.9120115 15.080002,0 21.761002,0 14.47699,10.180989 22.432999,21.484993 15.447998,21.484993 11.071991,14.831984 6.6609955,21.486977 0,21.486977 0.00099182129,21.486 7.7549896,10.421009z"
-                                Fill="Black"
-                                RenderTransformOrigin="0.5,0.5"
-                                Stretch="Uniform">
-                                <Path.RenderTransform>
-                                    <TransformGroup>
-                                        <TransformGroup.Children>
-                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
-                                            <TranslateTransform X="0" Y="2" />
-                                        </TransformGroup.Children>
-                                    </TransformGroup>
-                                </Path.RenderTransform>
-                            </Path>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="1"
+                                FontWeight="Bold">
+                                <Run FontSize="18">X</Run>
+                                <Run BaselineAlignment="Subscript" FontSize="9">2</Run>
+                            </TextBlock>
                         </Grid>
                     </Viewbox>
                 </Button>
@@ -1501,25 +1460,16 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-                        <Grid>
-                            <Path
-                                Width="12"
-                                Height="26"
-                                Margin="0,0,0,0"
-                                Data="M0.31499481,8.4949982L7.1100006,8.4949982 10.833,14.274999 14.756996,8.4949982 21.299995,8.4949982 14.162994,18.454017 21.951996,29.52 15.119995,29.52 10.834999,23.006997 6.5149994,29.52 0,29.52 7.5859985,18.691993z M27.960999,0C29.218994,-2.2532367E-07 30.198997,0.33200063 30.918999,1.0020141 31.631996,1.6700138 31.994995,2.5020149 31.994995,3.4960031 31.994995,4.0599987 31.889,4.5979936 31.686996,5.1080034 31.480995,5.6180131 31.156998,6.1520102 30.710999,6.7139914 30.417,7.0880148 29.883995,7.6220119 29.117996,8.3200104 28.349998,9.0159943 27.860001,9.4760163 27.653999,9.703006 27.449997,9.9350006 27.283997,10.160007 27.156998,10.369998L31.995995,10.369998 31.995995,12.61002 23.454994,12.61002C23.543999,11.767002 23.823997,10.963993 24.283997,10.204013 24.747993,9.4509919 25.659996,8.4440033 27.028,7.1919882 28.124001,6.1839926 28.797997,5.498018 29.043999,5.135988 29.379997,4.6390092 29.549995,4.1480114 29.549995,3.6660166 29.549995,3.126008 29.405998,2.7130134 29.110001,2.4259953 28.818001,2.1359868 28.412994,1.9920049 27.903,1.9920049 27.389999,1.9920049 26.987,2.1459966 26.686996,2.4479985 26.386993,2.7520149 26.218994,3.2550058 26.167,3.9580088L23.738998,3.7160044C23.881996,2.3900154 24.338997,1.4419864 25.101997,0.86401366 25.867996,0.28698717 26.818001,-2.2532367E-07 27.960999,0z"
-                                Fill="Black"
-                                RenderTransformOrigin="0.5,0.5"
-                                Stretch="Uniform">
-                                <Path.RenderTransform>
-                                    <TransformGroup>
-                                        <TransformGroup.Children>
-                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
-                                            <TranslateTransform X="0" Y="-.5" />
-                                        </TransformGroup.Children>
-                                    </TransformGroup>
-                                </Path.RenderTransform>
-                            </Path>
+                    <Viewbox Stretch="Uniform">
+                        <Grid Width="32" Height="32">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="1"
+                                FontWeight="Bold">
+                                <Run FontSize="18">X</Run>
+                                <Run BaselineAlignment="Superscript" FontSize="9">2</Run>
+                            </TextBlock>
                         </Grid>
                     </Viewbox>
                 </Button>

@@ -7,6 +7,7 @@
 
 using Chem4Word.ACME;
 using Chem4Word.Core.Helpers;
+using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Wpf;
 using IChem4Word.Contracts;
 using System;
@@ -46,30 +47,33 @@ namespace Chem4Word.UI.WPF
                 Top = (int)sensible.Y;
             }
 
-            var editor = new LibraryEditorControl();
-            elementHost1.Child = editor;
-
-            var details = Globals.Chem4WordV3.ListOfDetectedLibraries.AvailableDatabases
-                                 .FirstOrDefault(l => l.DisplayName.Equals(SelectedDatabase));
-            if (details != null)
+            using (new WaitCursor())
             {
-                _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
-                if (_driver != null)
+                var editor = new LibraryEditorControl();
+                elementHost1.Child = editor;
+
+                var details = Globals.Chem4WordV3.ListOfDetectedLibraries.AvailableDatabases
+                                     .FirstOrDefault(l => l.DisplayName.Equals(SelectedDatabase));
+                if (details != null)
                 {
-                    _driver.DatabaseDetails = details;
+                    _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+                    if (_driver != null)
+                    {
+                        _driver.DatabaseDetails = details;
 
-                    var controller = new LibraryEditorViewModel(Telemetry, _driver);
-                    editor.TopLeft = TopLeft;
+                        var controller = new LibraryEditorViewModel(Telemetry, _driver);
+                        editor.TopLeft = TopLeft;
 
-                    var acmeOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
+                        var acmeOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
 
-                    editor.SetOptions(Telemetry, acmeOptions, _driver);
-                    editor.DataContext = controller;
-                    editor.UpdateStatusBar();
-                    Text = $"Editing Library '{_driver.DatabaseDetails.DisplayName}'";
+                        editor.SetOptions(Telemetry, acmeOptions, _driver);
+                        editor.DataContext = controller;
+                        editor.UpdateStatusBar();
+                        Text = $"Editing Library '{_driver.DatabaseDetails.DisplayName}'";
 
-                    editor.OnSelectionChange -= LibraryEditorControlOnOnSelectionChange;
-                    editor.OnSelectionChange += LibraryEditorControlOnOnSelectionChange;
+                        editor.OnSelectionChange -= LibraryEditorControlOnOnSelectionChange;
+                        editor.OnSelectionChange += LibraryEditorControlOnOnSelectionChange;
+                    }
                 }
             }
         }

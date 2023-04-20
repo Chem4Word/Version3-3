@@ -355,8 +355,7 @@ namespace Chem4Word.UI.WPF
             var browser = new Forms.OpenFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
             browser.AddExtension = true;
-            browser.Filter = "*.db|*.db";
-            browser.FileName = "New Library.db";
+            browser.Filter = "database files (*.db)|*.db";
             browser.ShowHelp = false;
 
             var result = browser.ShowDialog();
@@ -374,39 +373,46 @@ namespace Chem4Word.UI.WPF
                         Connection = browser.FileName,
                         ShortFileName = fileInfo.Name
                     };
-                    var info = driver.GetDatabaseFileProperties(details);
-                    if (info.IsChem4Word && !info.IsReadOnly
-                        || info.IsChem4Word && info.IsReadOnly && !info.RequiresPatching)
+                    if (driver.IsSqliteDatabase(details))
                     {
-                        var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                        var existing = listOfDetectedLibraries.AvailableDatabases
-                                                              .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
-                        // Prevent add if there is a name clash
-                        if (existing == null)
+                        var info = driver.GetDatabaseFileProperties(details);
+                        if (info.IsChem4Word && !info.IsReadOnly
+                            || info.IsChem4Word && info.IsReadOnly && !info.RequiresPatching)
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Added existing library {details.DisplayName}");
-                            listOfDetectedLibraries.AvailableDatabases.Add(details);
-                            new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                                .SaveFile(listOfDetectedLibraries);
-                            ReloadGlobalListOfLibraries();
-                            LoadLibrariesListTab();
+                            var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                            var existing = listOfDetectedLibraries.AvailableDatabases
+                                                                  .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
+                            // Prevent add if there is a name clash
+                            if (existing == null)
+                            {
+                                Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Added existing library {details.DisplayName}");
+                                listOfDetectedLibraries.AvailableDatabases.Add(details);
+                                new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                    .SaveFile(listOfDetectedLibraries);
+                                ReloadGlobalListOfLibraries();
+                                LoadLibrariesListTab();
+                            }
+                            else
+                            {
+                                UserInteractions.WarnUser("Couldn't add this database, due to display name clash");
+                            }
                         }
                         else
                         {
-                            UserInteractions.WarnUser("Couldn't add this database, due to display name clash");
+                            if (!info.IsChem4Word)
+                            {
+                                UserInteractions.WarnUser("Couldn't add this database, as it is not a Chem4Word library");
+                            }
+
+                            if (info.IsReadOnly && info.RequiresPatching)
+                            {
+                                UserInteractions.WarnUser("Couldn't add this Chem4Word library database, because it is read only and requires patching");
+                            }
                         }
                     }
                     else
                     {
-                        if (!info.IsChem4Word)
-                        {
-                            UserInteractions.WarnUser("Couldn't add this database, as it is not a Chem4Word library");
-                        }
-
-                        if (info.IsReadOnly && info.RequiresPatching)
-                        {
-                            UserInteractions.WarnUser("Couldn't add this Chem4Word library database, because it is read only and requires patching");
-                        }
+                        UserInteractions.WarnUser("Couldn't add this database, as it is not a SQLite database");
                     }
                 }
             }

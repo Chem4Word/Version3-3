@@ -137,20 +137,38 @@ namespace Chem4Word.Helpers
                 var driver = Globals.Chem4WordV3.GetDriverPlugIn(Constants.SQLiteStandardDriver);
                 if (driver != null)
                 {
-                    foreach (var database in result.AvailableDatabases)
+                    foreach (var database in result.AvailableDatabases.ToList())
                     {
-                        //_telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
-
-                        driver.DatabaseDetails = new DatabaseDetails
+                        if (File.Exists(database.Connection))
                         {
-                            DisplayName = database.DisplayName,
-                            Connection = database.Connection,
-                            Driver = database.Driver,
-                            ShortFileName = database.ShortFileName
-                        };
-                        database.Properties = driver.GetProperties();
-                        database.IsReadOnly = driver.GetDatabaseFileProperties(driver.DatabaseDetails).IsReadOnly;
-                        database.IsSystem = database.GetPropertyValue("Owner", "User").Equals("System");
+                            _telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
+
+                            driver.DatabaseDetails = new DatabaseDetails
+                                                     {
+                                                         DisplayName = database.DisplayName,
+                                                         Connection = database.Connection,
+                                                         Driver = database.Driver,
+                                                         ShortFileName = database.ShortFileName
+                                                     };
+                            database.Properties = driver.GetProperties();
+                            database.IsReadOnly = driver.GetDatabaseFileProperties(driver.DatabaseDetails).IsReadOnly;
+                            database.IsSystem = database.GetPropertyValue("Owner", "User").Equals("System");
+                        }
+                        else
+                        {
+                            result.AvailableDatabases.Remove(database);
+                        }
+                    }
+                }
+
+                var selectedDatabase = result.AvailableDatabases.FirstOrDefault(d => d.DisplayName.Equals(result.SelectedLibrary));
+                if (selectedDatabase == null)
+                {
+                    var firstDatabase = result.AvailableDatabases.FirstOrDefault();
+                    if (firstDatabase != null)
+                    {
+                        result.SelectedLibrary = firstDatabase.DisplayName;
+                        SaveFile(result);
                     }
                 }
             }

@@ -379,7 +379,7 @@
                         Style="{StaticResource Acme.Control.Button.DialogButton}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <StaticResource ResourceKey="BrowseFolder" />
-                            <TextBlock VerticalAlignment="Center">Browse ...</TextBlock>
+                            <TextBlock VerticalAlignment="Center">Select Folder</TextBlock>
                         </StackPanel>
                     </Button>
                     <ListView
@@ -464,7 +464,7 @@
                                     Data="M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
-                                <TextBlock VerticalAlignment="Center">Add Existing Library</TextBlock>
+                                <TextBlock VerticalAlignment="Center">Add Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
@@ -484,7 +484,7 @@
                                     Data="M15.046875,18.5860443115234L21.84375,18.5860443115234 21.50390625,23.8126087188721 20.765625,30.2110443115234 25.9453105926514,27.8672981262207 31.828125,25.7110443115234 33.984375,32.3672943115234 28.0898418426514,34.0079231262207 22.3125,34.9922943115234 23.8886699676514,36.4776496887207 25.7578105926514,38.4493293762207 27.9199199676514,40.9073371887207 30.375,43.8516693115234 24.75,47.8360443115234 21.78515625,43.4649505615234 18.328125,37.7579193115234 16.646484375,40.8663177490234 15.0703125,43.5821380615234 13.599609375,45.9053802490234 12.234375,47.8360443115234 6.703125,43.8516693115234 9.22851467132568,40.7842903137207 11.3671865463257,38.2852668762207 13.1191396713257,36.3546028137207 14.484375,34.9922943115234 3,32.3672943115234 5.15625,25.7110443115234 8.62792873382568,26.9796009063721 11.5898427963257,28.1602668762207 14.0419912338257,29.2530384063721 15.984375,30.2579193115234 15.5917959213257,26.3467884063721 15.3046865463257,23.0977649688721 15.1230459213257,20.5108489990234 15.046875,18.5860443115234z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
-                                <TextBlock VerticalAlignment="Center">Create New Library</TextBlock>
+                                <TextBlock VerticalAlignment="Center">New Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button

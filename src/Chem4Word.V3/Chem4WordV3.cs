@@ -693,17 +693,27 @@ namespace Chem4Word
             var sw = new Stopwatch();
             sw.Start();
 
+            var files = new List<string>();
+
             var plugInPath = Path.Combine(AddInInfo.DeploymentPath, "PlugIns");
-            //Telemetry.Write(module, "Debug", $"Looking for Plug-Ins in folder {plugInPath}");
-
-            string[] files = null;
-            var filesFound = 0;
-
             if (Directory.Exists(plugInPath))
             {
-                files = Directory.GetFiles(plugInPath, "Chem4Word*.dll");
-                filesFound = files.Length;
+                files = Directory.GetFiles(plugInPath, "Chem4Word*.dll").ToList();
             }
+
+            var userPlugInPath = Path.Combine(AddInInfo.ProgramDataPath, "PlugIns");
+            if (Directory.Exists(userPlugInPath))
+            {
+                foreach (var file in Directory.GetFiles(userPlugInPath, "Chem4Word*.dll"))
+                {
+                    if (!files.Contains(file))
+                    {
+                        files.Add(file);
+                    }
+                }
+            }
+
+            var filesFound = files.Count;
 
             var plugInsFound = new List<string>();
 
@@ -724,38 +734,46 @@ namespace Chem4Word
                             {
                                 var names = new List<string>();
 
-                                #region Get Code Signing Certificate details
-
-                                var signedBy = "";
-
-                                var mod = a.GetModules().First();
-                                var certificate = mod.GetSignerCertificate();
-                                if (certificate != null)
+                                try
                                 {
-                                    signedBy = certificate.Subject;
-                                    // E=developer@chem4word.co.uk, CN="Open Source Developer, Mike Williams", O=Open Source Developer, C=GB
-                                    Debug.WriteLine(certificate.Subject);
-                                    Debug.WriteLine(certificate.Issuer);
-                                }
+                                    #region Get Code Signing Certificate details
 
-                                #endregion Get Code Signing Certificate details
+                                    var signedBy = "";
 
-                                var types = a.GetTypes();
-                                foreach (var t in types)
-                                {
-                                    if (t.IsClass && t.IsPublic && !t.IsAbstract)
+                                    var mod = a.GetModules().First();
+                                    var certificate = mod.GetSignerCertificate();
+                                    if (certificate != null)
                                     {
-                                        var ifaces = t.GetInterfaces();
-                                        foreach (var iface in ifaces)
+                                        signedBy = certificate.Subject;
+                                        // E=developer@chem4word.co.uk, CN="Open Source Developer, Mike Williams", O=Open Source Developer, C=GB
+                                        Debug.WriteLine(certificate.Subject);
+                                        Debug.WriteLine(certificate.Issuer);
+                                    }
+
+                                    #endregion Get Code Signing Certificate details
+
+                                    var types = a.GetTypes();
+                                    foreach (var t in types)
+                                    {
+                                        if (t.IsClass && t.IsPublic && !t.IsAbstract)
                                         {
-                                            if (iface.FullName.StartsWith("IChem4Word.Contracts"))
+                                            var ifaces = t.GetInterfaces();
+                                            foreach (var iface in ifaces)
                                             {
-                                                var parts = a.FullName.Split(',');
-                                                var fi = new FileInfo(t.Module.FullyQualifiedName);
-                                                names.Add($"{parts[0]}|{iface.FullName}|{fi.Name}|{signedBy}");
+                                                if (iface.FullName.StartsWith("IChem4Word.Contracts"))
+                                                {
+                                                    var parts = a.FullName.Split(',');
+                                                    var fi = new FileInfo(t.Module.FullyQualifiedName);
+                                                    names.Add($"{parts[0]}|{iface.FullName}|{fi.Name}|{signedBy}");
+                                                }
                                             }
                                         }
                                     }
+
+                                }
+                                catch (Exception exception)
+                                {
+                                    Debug.WriteLine(exception.Message);
                                 }
 
                                 return names;
@@ -768,9 +786,9 @@ namespace Chem4Word
                             plugInsFound.AddRange(results);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
-                        Debug.WriteLine(ex.Message);
+                        Debug.WriteLine(exception.Message);
                     }
                 }
             }

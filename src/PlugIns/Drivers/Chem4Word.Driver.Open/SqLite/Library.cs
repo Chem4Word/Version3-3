@@ -56,6 +56,28 @@ namespace Chem4Word.Driver.Open.SqLite
             }
         }
 
+        public static bool IsSqliteDatabase(string filename)
+        {
+            bool result;
+
+            try
+            {
+                // Source https://www.connectionstrings.com/sqlite/
+                var conn = new SQLiteConnection($"Data Source={filename};Synchronous=Full");
+                conn.Open();
+                conn.Close();
+                result = true;
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine(exception.ToString());
+                result = false;
+            }
+
+            return result;
+
+        }
+
         public static void CreateNewDatabase(string filename)
         {
             SQLiteConnection.CreateFile(filename);
@@ -285,9 +307,17 @@ namespace Chem4Word.Driver.Open.SqLite
                     {
                         foreach (var script in patch.Scripts)
                         {
-                            _telemetry.Write(module, "Information", $"Applying {patch.Version} patch '{script}' to {_details.Connection}");
-                            var command = new SQLiteCommand(script, conn);
-                            command.ExecuteNonQuery();
+                            try
+                            {
+                                _telemetry.Write(module, "Information", $"Applying {patch.Version} patch '{script}' to {_details.Connection}");
+                                var command = new SQLiteCommand(script, conn);
+                                command.ExecuteNonQuery();
+                            }
+                            catch (Exception exception)
+                            {
+                                Debug.WriteLine(exception);
+                                _telemetry.Write(module, "Exception", exception.ToString());
+                            }
                         }
                         AddPatchRecord(conn, patch.Version);
                     }
@@ -380,6 +410,7 @@ namespace Chem4Word.Driver.Open.SqLite
                 }
 
                 results.Add("Count", CountOfStructures(conn));
+                conn.Close();
             }
 
             return results;
@@ -394,7 +425,7 @@ namespace Chem4Word.Driver.Open.SqLite
             var cmd = new SQLiteCommand(sb.ToString(), conn);
 
             var count = (long)cmd.ExecuteScalar();
-            return count.ToString();
+            return count.ToString("N0");
         }
 
         private void AddProperty(SQLiteConnection conn, string key, string value)
@@ -493,11 +524,6 @@ namespace Chem4Word.Driver.Open.SqLite
                 {
                     sw.Start();
 
-                    var allTaggedItems = GetAllChemistryTags(conn);
-                    var allNames = GetAllChemicalNames(conn);
-                    var allFormulae = GetAllChemicalFormulae(conn);
-                    var allCaptions = GetAllChemicalCaptions(conn);
-
                     using (var chemistry = GetAllChemistry(conn))
                     {
                         if (chemistry != null)
@@ -512,10 +538,10 @@ namespace Chem4Word.Driver.Open.SqLite
                                     DataType = chemistry["datatype"] as string,
                                     Name = chemistry["name"] as string,
                                     Formula = chemistry["formula"] as string,
-                                    Tags = allTaggedItems.Where(t => t.ChemistryId == id).ToList(),
-                                    Names = allNames.Where(t => t.ChemistryId == id).ToList(),
-                                    Formulae = allFormulae.Where(t => t.ChemistryId == id).ToList(),
-                                    Captions = allCaptions.Where(t => t.ChemistryId == id).ToList()
+                                    Names = GetChemicalNames(conn, id),
+                                    Formulae = GetChemicalFormulae(conn, id),
+                                    Captions = GetChemicalCaptions(conn, id),
+                                    Tags = GetChemistryTags(conn, id),
                                 };
 
                                 // Handle new field(s) which may be null
@@ -528,10 +554,7 @@ namespace Chem4Word.Driver.Open.SqLite
                             }
                         }
                     }
-                    sw.Stop();
-                    var taken = sw.ElapsedMilliseconds;
 
-                    // Gather stats after we have stopped the stopwatch
                     var sb = new StringBuilder();
                     sb.AppendLine("SELECT DataType, COUNT(1) AS Frequency");
                     sb.AppendLine("FROM Gallery");
@@ -554,6 +577,9 @@ namespace Chem4Word.Driver.Open.SqLite
                             }
                         }
                     }
+
+                    sw.Stop();
+                    var taken = sw.ElapsedMilliseconds;
 
                     _telemetry?.Write(module, "Timing", $"Reading {SafeDouble.AsString0(results.Count)} structures [{sb2}] from '{_details.ShortFileName}' took {SafeDouble.AsString0(taken)}ms");
                 }
@@ -731,11 +757,6 @@ namespace Chem4Word.Driver.Open.SqLite
 
             using (var conn = LibraryConnection())
             {
-                //ToDo: Implement filtering by Id so that we get less data here ...
-                var allNames = GetAllChemicalNames(conn);
-                var allFormulae = GetAllChemicalFormulae(conn);
-                var allCaptions = GetAllChemicalCaptions(conn);
-
                 using (var chemistry = GetChemistryById(conn, id))
                 {
                     if (chemistry != null)
@@ -755,11 +776,10 @@ namespace Chem4Word.Driver.Open.SqLite
                                 result.MolWeight = double.Parse(molWeight);
                             }
 
-                            result.Names = allNames.Where(t => t.ChemistryId == id).ToList();
-                            result.Formulae = allFormulae.Where(t => t.ChemistryId == id).ToList();
-                            result.Captions = allCaptions.Where(t => t.ChemistryId == id).ToList();
-
-                            // ToDo: [V3.3] Get Tags ?
+                            result.Names = GetChemicalNames(conn, id);
+                            result.Formulae = GetChemicalFormulae(conn, id);
+                            result.Captions = GetChemicalCaptions(conn, id);
+                            result.Tags = GetChemistryTags(conn, id);
                         }
                     }
                 }
@@ -943,7 +963,7 @@ namespace Chem4Word.Driver.Open.SqLite
 
         public List<LibraryTagDataObject> GetAllTags()
         {
-            var result = new List<LibraryTagDataObject>();
+            List<LibraryTagDataObject> result;
 
             using (var conn = LibraryConnection())
             {
@@ -998,7 +1018,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return command.ExecuteReader();
         }
 
-        private List<ChemistryTagDataObject> GetAllChemistryTags(SQLiteConnection conn)
+        private List<ChemistryTagDataObject> GetChemistryTags(SQLiteConnection conn, long id)
         {
             var result = new List<ChemistryTagDataObject>();
 
@@ -1006,9 +1026,11 @@ namespace Chem4Word.Driver.Open.SqLite
             sb.AppendLine("SELECT c.ChemistryId, c.Sequence, t.Tag, t.Id");
             sb.AppendLine("FROM TaggedChemistry c");
             sb.AppendLine("JOIN Tags t ON c.TagId = t.Id");
+            sb.AppendLine("WHERE c.ChemistryId = @id");
             sb.AppendLine("ORDER BY c.ChemistryId, c.Sequence");
 
             var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@id", DbType.Int64).Value = id;
 
             using (var reader = command.ExecuteReader())
             {
@@ -1031,15 +1053,17 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        private List<ChemistryNameDataObject> GetAllChemicalNames(SQLiteConnection conn)
+        private List<ChemistryNameDataObject> GetChemicalNames(SQLiteConnection conn, long id)
         {
             var results = new List<ChemistryNameDataObject>();
 
             var sb = new StringBuilder();
             sb.AppendLine("SELECT Id, Name, Namespace, Tag, ChemistryID");
             sb.AppendLine("FROM ChemicalNames");
+            sb.AppendLine("WHERE ChemistryId = @id");
 
             var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@id", DbType.Int64).Value = id;
 
             using (var reader = command.ExecuteReader())
             {
@@ -1061,15 +1085,17 @@ namespace Chem4Word.Driver.Open.SqLite
             return results;
         }
 
-        private List<ChemistryNameDataObject> GetAllChemicalFormulae(SQLiteConnection conn)
+        private List<ChemistryNameDataObject> GetChemicalFormulae(SQLiteConnection conn, long id)
         {
             var results = new List<ChemistryNameDataObject>();
 
             var sb = new StringBuilder();
             sb.AppendLine("SELECT Id, Name, Namespace, Tag, ChemistryID");
             sb.AppendLine("FROM ChemicalFormulae");
+            sb.AppendLine("WHERE ChemistryId = @id");
 
             var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@id", DbType.Int64).Value = id;
 
             using (var reader = command.ExecuteReader())
             {
@@ -1091,15 +1117,17 @@ namespace Chem4Word.Driver.Open.SqLite
             return results;
         }
 
-        private List<ChemistryNameDataObject> GetAllChemicalCaptions(SQLiteConnection conn)
+        private List<ChemistryNameDataObject> GetChemicalCaptions(SQLiteConnection conn, long id)
         {
             var results = new List<ChemistryNameDataObject>();
 
             var sb = new StringBuilder();
             sb.AppendLine("SELECT Id, Name, Namespace, Tag, ChemistryID");
             sb.AppendLine("FROM ChemicalCaptions");
+            sb.AppendLine("WHERE ChemistryId = @id");
 
             var command = new SQLiteCommand(sb.ToString(), conn);
+            command.Parameters.Add("@id", DbType.Int64).Value = id;
 
             using (var reader = command.ExecuteReader())
             {

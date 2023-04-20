@@ -53,6 +53,8 @@ namespace Chem4Word.Driver.Dummy
             };
         }
 
+        public bool IsSqliteDatabase(DatabaseDetails details) => true;
+
         public Dictionary<string, string> GetProperties() => new Dictionary<string, string>();
 
         public Dictionary<string, int> GetSubstanceNamesWithIds() => new Dictionary<string, int>();

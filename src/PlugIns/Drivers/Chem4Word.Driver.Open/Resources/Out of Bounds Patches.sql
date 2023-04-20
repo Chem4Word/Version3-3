@@ -1,4 +1,4 @@
-﻿-- These should be run manually in SQLite Manager to fix these tables
+﻿-- This script may need to be run manually in SQLite Manager to fix these tables
 
 -- ChemicalNames
 ALTER TABLE ChemicalNames RENAME TO ChemicalNames_Temp;

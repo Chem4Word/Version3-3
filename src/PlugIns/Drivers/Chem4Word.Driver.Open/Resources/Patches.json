@@ -45,5 +45,15 @@
       "INSERT INTO ChemicalNames (Name, Namespace, Tag, ChemistryID) SELECT Name, Namespace, Tag, ChemistryID FROM ChemicalNames_Temp;",
       "DROP TABLE ChemicalNames_Temp;"
     ]
+  },
+  {
+    "version": "3.3.1",
+    "scripts": [
+      "CREATE UNIQUE INDEX Gallery_Idx1 ON Gallery (Id);",
+      "CREATE INDEX ChemicalFormulae_Idx1 ON ChemicalFormulae (ChemistryID);",
+      "CREATE INDEX ChemicalNames_Idx1 ON ChemicalNames (ChemistryID);",
+      "CREATE INDEX ChemicalCaptions_Idx1 ON ChemicalCaptions (ChemistryID);",
+      "CREATE INDEX TaggedChemistry_Idx1 ON TaggedChemistry (ChemistryID);"
+    ]
   }
 ]

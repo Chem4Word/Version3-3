@@ -119,6 +119,17 @@ namespace Chem4Word.Driver.Open
             return result;
         }
 
+        public bool IsSqliteDatabase(DatabaseDetails details)
+        {
+            var result = false;
+            if (File.Exists(details.Connection))
+            {
+                result = Library.IsSqliteDatabase(details.Connection);
+            }
+
+            return result;
+        }
+
         public Dictionary<string, string> GetProperties()
         {
             var result = new Dictionary<string, string>();

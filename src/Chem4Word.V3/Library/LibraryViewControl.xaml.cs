@@ -7,6 +7,7 @@
 
 using Chem4Word.ACME;
 using Chem4Word.ACME.Models;
+using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
@@ -95,28 +96,31 @@ namespace Chem4Word.Library
                 {
                     if (!_selectedLibrary.Equals(selected))
                     {
-                        Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Library changed to '{selected}'");
+                        using (new WaitCursor())
+                        {
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Library changed to '{selected}'");
 
-                        var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                        listOfDetectedLibraries.SelectedLibrary = selected;
+                            var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                            listOfDetectedLibraries.SelectedLibrary = selected;
 
-                        new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                            .SaveFile(listOfDetectedLibraries);
+                            new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                .SaveFile(listOfDetectedLibraries);
 
-                        Globals.Chem4WordV3.ListOfDetectedLibraries
-                            = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                                .GetListOfLibraries();
-                        Globals.Chem4WordV3.LoadNamesFromLibrary();
+                            Globals.Chem4WordV3.ListOfDetectedLibraries
+                                = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                    .GetListOfLibraries();
+                            Globals.Chem4WordV3.LoadNamesFromLibrary();
 
-                        EnableEditThisLibraryButton();
+                            EnableEditThisLibraryButton();
 
-                        _selectedLibrary = selected;
+                            _selectedLibrary = selected;
 
-                        var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
-                        DataContext = controller;
+                            var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
+                            DataContext = controller;
 
-                        var sel = Globals.Chem4WordV3.Application.Selection;
-                        Globals.Chem4WordV3.SelectChemistry(sel);
+                            var sel = Globals.Chem4WordV3.Application.Selection;
+                            Globals.Chem4WordV3.SelectChemistry(sel);
+                        }
                     }
                 }
             }

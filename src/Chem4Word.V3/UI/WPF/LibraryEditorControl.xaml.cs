@@ -12,6 +12,7 @@ using Chem4Word.ACME.Models;
 using Chem4Word.ACME.Models.Chem4Word.Controls.TagControl;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
+using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
@@ -765,10 +766,13 @@ namespace Chem4Word.UI.WPF
                             _telemetry.Write(module, "Timing", $"Import of {progress} files took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
                             ClearProgress();
 
-                            // Refresh the control's data
-                            var controller = new LibraryEditorViewModel(_telemetry, _driver);
-                            DataContext = controller;
-                            UpdateStatusBar();
+                            using (new WaitCursor())
+                            {
+                                // Refresh the control's data
+                                var controller = new LibraryEditorViewModel(_telemetry, _driver);
+                                DataContext = controller;
+                                UpdateStatusBar();
+                            }
                         }
                     }
                 }
