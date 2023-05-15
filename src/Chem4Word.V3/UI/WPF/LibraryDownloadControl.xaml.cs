@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -29,6 +30,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using Chem4Word.Core.Helpers;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace Chem4Word.UI.WPF
@@ -280,7 +282,7 @@ namespace Chem4Word.UI.WPF
                 }
                 else
                 {
-                    entry.ExtractToFile(Path.Combine(driversPath, "Updates", entry.FullName));
+                    entry.ExtractToFile(Path.Combine(driversPath, "Updates", entry.FullName), overwrite: true);
                 }
             }
 
@@ -395,6 +397,8 @@ namespace Chem4Word.UI.WPF
 
         private void DownloadLibrary(Dictionary<string, string> formData)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -415,6 +419,14 @@ namespace Chem4Word.UI.WPF
 
             stopwatch.Stop();
             Debug.WriteLine($"{stopwatch.Elapsed}");
+
+            var downloadedFile = Path.Combine(_downloadPath, $"{formData["library"]}.zip");
+            if (File.Exists(downloadedFile))
+            {
+                var fileInfo = new FileInfo(downloadedFile);
+
+                Globals.Chem4WordV3.Telemetry.Write(module, "Timing", $"Downloading of '{fileInfo.Name}' took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)}ms");
+            }
         }
 
         private void WorkDownloadLibrary(object sender, DoWorkEventArgs e)
@@ -425,6 +437,8 @@ namespace Chem4Word.UI.WPF
 
         private void DownloadDriver(Dictionary<string, string> formData)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -445,6 +459,14 @@ namespace Chem4Word.UI.WPF
 
             stopwatch.Stop();
             Debug.WriteLine($"{stopwatch.Elapsed}");
+
+            var downloadedFile = Path.Combine(_downloadPath, $"{formData["driver"]}.zip");
+            if (File.Exists(downloadedFile))
+            {
+                var fileInfo = new FileInfo(downloadedFile);
+
+                Globals.Chem4WordV3.Telemetry.Write(module, "Timing", $"Downloading of '{fileInfo.Name}' took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)}ms");
+            }
         }
 
         private void WorkDownloadDriver(object sender, DoWorkEventArgs e)
