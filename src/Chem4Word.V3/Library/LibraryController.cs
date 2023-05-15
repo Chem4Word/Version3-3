@@ -38,12 +38,15 @@ namespace Chem4Word.Library
             if (details != null)
             {
                 _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
-                _driver.DatabaseDetails = details;
+                if (_driver != null)
+                {
+                    _driver.DatabaseDetails = details;
 
-                ChemistryItems = new ObservableCollection<ChemistryObject>();
-                ChemistryItems.CollectionChanged += ChemistryItems_CollectionChanged;
+                    ChemistryItems = new ObservableCollection<ChemistryObject>();
+                    ChemistryItems.CollectionChanged += ChemistryItems_CollectionChanged;
 
-                LoadChemistryItems();
+                    LoadChemistryItems();
+                }
             }
         }
 

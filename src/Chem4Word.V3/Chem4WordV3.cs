@@ -429,8 +429,11 @@ namespace Chem4Word
                 if (details != null)
                 {
                     var driver = GetDriverPlugIn(details.Driver);
-                    driver.DatabaseDetails = details;
-                    LibraryNames = driver.GetSubstanceNamesWithIds();
+                    if (driver != null)
+                    {
+                        driver.DatabaseDetails = details;
+                        LibraryNames = driver.GetSubstanceNamesWithIds();
+                    }
                 }
             }
             catch (Exception exception)
@@ -769,7 +772,6 @@ namespace Chem4Word
                                             }
                                         }
                                     }
-
                                 }
                                 catch (Exception exception)
                                 {

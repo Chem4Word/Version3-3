@@ -106,6 +106,32 @@ namespace Chem4Word.Helpers
                     // Do Nothing
                 }
 
+                // User PlugIns
+                var userPlugInsPath = Path.Combine(ProgramDataPath, "Plugins");
+                if (!Directory.Exists(userPlugInsPath))
+                {
+                    Directory.CreateDirectory(userPlugInsPath);
+                }
+
+                var userPlugInsUpdatePath = Path.Combine(userPlugInsPath, "Updates");
+                if (!Directory.Exists(userPlugInsUpdatePath))
+                {
+                    Directory.CreateDirectory(userPlugInsUpdatePath);
+                }
+
+                var filesToUpdate = Directory.GetFiles(userPlugInsUpdatePath);
+                foreach (var file in filesToUpdate)
+                {
+                    var info = new FileInfo(file);
+                    var target = Path.Combine(userPlugInsPath, info.Name);
+                    if (File.Exists(target))
+                    {
+                        File.Delete(target);
+                    }
+                    File.Move(file, target);
+                }
+
+                // User Libraries
                 var librariesPath = Path.Combine(ProgramDataPath, "Libraries");
                 if (!Directory.Exists(librariesPath))
                 {

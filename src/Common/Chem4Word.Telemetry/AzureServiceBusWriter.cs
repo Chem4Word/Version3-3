@@ -122,7 +122,7 @@ namespace Chem4Word.Telemetry
         private async Task WriteMessage(OutputMessage message)
         {
             var securityProtocol = ServicePointManager.SecurityProtocol;
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
             try
             {

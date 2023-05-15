@@ -46,6 +46,11 @@ namespace Wpf.UI.Sandbox
                         window.Top = top;
                         window.ShowDialog();
                         break;
+
+                    case "Animation":
+                        window = new Animation();
+                        window.ShowDialog();
+                        break;
                 }
             }
         }

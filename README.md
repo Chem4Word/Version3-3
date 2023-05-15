@@ -23,23 +23,24 @@ Azure Devops Build must be set to use VS2022 build agent
 ## List of NuGet packages
 | Package | Version | Licence | Reference Count |
 |--|--|--|--|
-|Azure.Core.Amqp|1.2.0|MIT|2|
-|Azure.Core|1.28.0|MIT|2|
-|Azure.Messaging.ServiceBus|7.12.0|MIT|2|
-|DocumentFormat.OpenXml|2.19.0|MIT|2|
+|Azure.Core.Amqp|1.3.0|MIT|2|
+|Azure.Core|1.32.0|MIT|2|
+|Azure.Messaging.ServiceBus|7.14.0|MIT|2|
+|DocumentFormat.OpenXml|2.20.0|MIT|2|
 |DotNetProjects.WpfToolkit.Input|6.1.94|MS-PL|1|
 |EntityFramework|6.4.4|Apache-2.0|3|
-|Google.Protobuf|3.22.0|BSD-3-Clause|1|
-|Grpc.Tools|2.51.0|Apache-2.0|1|
+|Google.Protobuf|3.23.0|BSD-3-Clause|1|
+|Grpc.Tools|2.54.0|Apache-2.0|1|
 |Jacobslusser.ScintillaNET|3.6.3|MIT|1|
-|Microsoft.Azure.Amqp|2.6.1|MIT|2|
+|Meziantou.Framework.Win32.CredentialManager|1.4.2|MIT|1|
+|Microsoft.Azure.Amqp|2.6.2|MIT|2|
 |Microsoft.Bcl.AsyncInterfaces|7.0.0|MIT|2|
-|Microsoft.NETCore.Platforms|7.0.0|MIT|2|
-|Microsoft.NETCore.Targets|5.0.0|MIT|2|
+|Microsoft.NETCore.Platforms|7.0.2|MIT|2|
 |Microsoft.Xaml.Behaviors.Wpf|1.1.39|MIT|1|
 |Microsoft_VisualStudio_QualityTools_UnitTestFramework.STW|12.0.21005.1|Microsoft|1|
-|Newtonsoft.Json|13.0.2|MIT|18|
+|Newtonsoft.Json|13.0.3|MIT|18|
 |Ookii.Dialogs.WinForms|4.0.0|BSD-3-Clause|2|
+|Standard.Licensing|1.1.5||1|
 |Stub.System.Data.SQLite.Core.NetFramework|1.0.117.0|Public Domain|3|
 |System.Buffers|4.5.1|MIT|6|
 |System.Collections.Immutable|7.0.0|MIT|1|
@@ -47,7 +48,7 @@ Azure Devops Build must be set to use VS2022 build agent
 |System.Data.SQLite.EF6|1.0.117.0|Public Domain|3|
 |System.Data.SQLite.Linq|1.0.117.0|Public Domain|3|
 |System.Data.SQLite|1.0.117.0|Public Domain|3|
-|System.Diagnostics.DiagnosticSource|7.0.1|Public Domain|2|
+|System.Diagnostics.DiagnosticSource|7.0.2|Public Domain|2|
 |System.IO.Compression.ZipFile|4.3.0|MS-.NET-Library|3|
 |System.IO.FileSystem.Primitives|4.3.0|MS-.NET-Library|2|
 |System.IO.Packaging|7.0.0|MIT|2|
@@ -55,7 +56,6 @@ Azure Devops Build must be set to use VS2022 build agent
 |System.Memory|4.5.5|MIT|6|
 |System.Net.Http|4.3.4|MS-.NET-Library|10|
 |System.Numerics.Vectors|4.5.0|MIT|6|
-|System.Private.Uri|4.3.2|MIT|2|
 |System.Resources.Extensions|7.0.0|MIT|2|
 |System.Runtime.CompilerServices.Unsafe|6.0.0|MIT|6|
 |System.Runtime.InteropServices.RuntimeInformation|4.3.0|MS-.NET-Library|2|

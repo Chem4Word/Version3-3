@@ -10,8 +10,8 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
-using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -163,6 +163,8 @@ namespace Chem4Word.ACME
             var sw = new Stopwatch();
             sw.Start();
 
+            var cmlConverter = new CMLConverter();
+
             Model chemistryModel;
 
             if (Chemistry != null)
@@ -172,15 +174,14 @@ namespace Chem4Word.ACME
                     case string data:
                         if (data.StartsWith("<"))
                         {
-                            var cmlConverter = new CMLConverter();
                             chemistryModel = cmlConverter.Import(data);
                             sw.Stop();
                             Debug.WriteLine($"Cml converter took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, {sw.ElapsedTicks} ticks");
                         }
                         else
                         {
-                            Debugger.Break();
-                            throw new ArgumentException($"{nameof(Chemistry)} was not recognised as Cml.");
+                            var error = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "Error.xml");
+                            chemistryModel = cmlConverter.Import(error);
                         }
                         break;
 
@@ -197,8 +198,9 @@ namespace Chem4Word.ACME
                         break;
 
                     default:
-                        Debugger.Break();
-                        throw new ArgumentException($"{nameof(Chemistry)} object type [{Chemistry.GetType()}] not recognised.");
+                        var resource = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "Error.xml");
+                        chemistryModel = cmlConverter.Import(resource);
+                        break;
                 }
 
                 //assuming we've got this far, we should have something we can draw

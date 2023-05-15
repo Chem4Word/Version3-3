@@ -10,8 +10,9 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-        <ResourceDictionary Source="MainStyles.xaml" />
+        <ResourceDictionary Source="CommonStyles.xaml" />
     </Window.Resources>
+
     <Grid d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

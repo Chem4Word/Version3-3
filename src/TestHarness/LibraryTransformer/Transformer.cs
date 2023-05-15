@@ -10,12 +10,15 @@ using Chem4Word.Driver.Open;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
+using Chem4Word.Telemetry;
 using IChem4Word.Contracts;
 using IChem4Word.Contracts.Dto;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -23,11 +26,24 @@ namespace LibraryTransformer
 {
     public partial class Transformer : Form
     {
+        private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
+
         private ListOfLibraries _listOfLibraries;
+
+        private SystemHelper _helper;
+        private TelemetryWriter _telemetry;
+        private OpenDriver _driver;
 
         public Transformer()
         {
             InitializeComponent();
+
+            _helper = new SystemHelper();
+            _telemetry = new TelemetryWriter(true, true, _helper);
+            _driver = new OpenDriver();
+            _driver.Telemetry = _telemetry;
+            _driver.BackupFolder = @"C:\ProgramData\Chem4Word.V3\Libraries\Backups";
         }
 
         private string _settingsFile = @"C:\ProgramData\Chem4Word.V3\Libraries.json";
@@ -37,19 +53,28 @@ namespace LibraryTransformer
 
         private void Transformer_Load(object sender, EventArgs e)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             if (File.Exists(_settingsFile))
             {
                 listView1.Items.Clear();
 
-                var driver = new OpenDriver();
+
                 var data = File.ReadAllText(_settingsFile);
                 _listOfLibraries = JsonConvert.DeserializeObject<ListOfLibraries>(data);
                 foreach (var details in _listOfLibraries.AvailableDatabases)
                 {
-                    driver.DatabaseDetails = details;
-                    details.Properties = driver.GetProperties();
-                    details.IsReadOnly = driver.GetDatabaseFileProperties(details).IsReadOnly;
+                    _driver.DatabaseDetails = details;
+                    details.Properties = _driver.GetProperties();
+                    details.IsReadOnly = _driver.GetDatabaseFileProperties(details).IsReadOnly;
                     details.IsSystem = details.GetPropertyValue("Owner", "User").Equals("System");
+                    if (details.GetPropertyValue("Type", "Free").Equals("Paid"))
+                    {
+                        _telemetry.Write(module, "Information", $"Skipping {details.DisplayName}");
+                        continue;
+                    }
+
+                    _telemetry.Write(module, "Information", $"Adding {details.DisplayName}");
                     var lvi = new ListViewItem(details.DisplayName);
                     lvi.SubItems.Add(details.Connection);
                     lvi.SubItems.Add(details.IsReadOnly ? "Yes" : "No");
@@ -88,12 +113,28 @@ namespace LibraryTransformer
 
         private void ToCml_Click(object sender, EventArgs e)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             BulkConvert("cml");
+
+            stopwatch.Stop();
+            _telemetry.Write(module, "Timing", $"Took {stopwatch.Elapsed}");
         }
 
         private void ToPb_Click(object sender, EventArgs e)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             BulkConvert("pbuff");
+
+            stopwatch.Stop();
+            _telemetry.Write(module, "Timing", $"Took {stopwatch.Elapsed}");
         }
 
         private void BulkConvert(string target)
@@ -104,15 +145,15 @@ namespace LibraryTransformer
                 label1.Text = "Fetching data ...";
                 Application.DoEvents();
 
-                var driver = new OpenDriver();
-                driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
-                var objects = driver.GetAllChemistry();
+                _driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
+
+                var objects = _driver.GetAllChemistry();
 
                 progressBar1.Maximum = objects.Count;
                 label1.Text = $"Updating {objects.Count} objects ...";
                 Application.DoEvents();
 
-                driver.StartTransaction();
+                _driver.StartTransaction();
 
                 foreach (var chemistryDataObject in objects)
                 {
@@ -124,7 +165,7 @@ namespace LibraryTransformer
                                 case "pbuff":
                                     chemistryDataObject.Chemistry = ConvertToCml(chemistryDataObject.Chemistry);
                                     chemistryDataObject.DataType = target;
-                                    driver.UpdateChemistry(chemistryDataObject);
+                                    _driver.UpdateChemistry(chemistryDataObject);
                                     break;
                             }
                             break;
@@ -135,7 +176,7 @@ namespace LibraryTransformer
                                 case "cml":
                                     chemistryDataObject.Chemistry = ConvertToPbuff(chemistryDataObject.Chemistry);
                                     chemistryDataObject.DataType = target;
-                                    driver.UpdateChemistry(chemistryDataObject);
+                                    _driver.UpdateChemistry(chemistryDataObject);
                                     break;
                             }
                             break;
@@ -145,7 +186,7 @@ namespace LibraryTransformer
                     Application.DoEvents();
                 }
 
-                driver.CommitTransaction();
+                _driver.CommitTransaction();
 
                 progressBar1.Value = 0;
                 progressBar1.Maximum = 0;
@@ -155,6 +196,8 @@ namespace LibraryTransformer
 
         private void Export_Click(object sender, EventArgs e)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             var lvi = GetSelectedListViewItem();
             if (lvi != null)
             {
@@ -164,16 +207,18 @@ namespace LibraryTransformer
                 var dr = folder.ShowDialog();
                 if (dr == DialogResult.OK)
                 {
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
                     var cmlConverter = new CMLConverter();
                     var protocolBufferConverter = new ProtocolBufferConverter();
 
                     label1.Text = "Fetching data ...";
                     Application.DoEvents();
 
-                    var driver = new OpenDriver();
-                    driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
+                    _driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
 
-                    var objects = driver.GetAllChemistry();
+                    var objects = _driver.GetAllChemistry();
 
                     progressBar1.Maximum = objects.Count;
                     label1.Text = $"Exporting {objects.Count} objects ...";
@@ -204,12 +249,17 @@ namespace LibraryTransformer
                     progressBar1.Value = 0;
                     progressBar1.Maximum = 0;
                     label1.Text = "Done";
+
+                    stopwatch.Stop();
+                    _telemetry.Write(module, "Timing", $"Took {stopwatch.Elapsed}");
                 }
             }
         }
 
         private void Import_Click(object sender, EventArgs e)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             var lvi = GetSelectedListViewItem();
             if (lvi != null)
             {
@@ -219,8 +269,10 @@ namespace LibraryTransformer
                 var dr = folder.ShowDialog();
                 if (dr == DialogResult.OK)
                 {
-                    var driver = new OpenDriver();
-                    driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
+                    _driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
 
                     var files = Directory.GetFiles(folder.SelectedPath, "*.cml").ToList();
                     if (files.Count > 0)
@@ -229,7 +281,7 @@ namespace LibraryTransformer
                         Application.DoEvents();
 
                         progressBar1.Maximum = files.Count;
-                        driver.StartTransaction();
+                        _driver.StartTransaction();
 
                         var cmlConverter = new CMLConverter();
 
@@ -240,18 +292,21 @@ namespace LibraryTransformer
 
                             var dto = DtoFromModel(model);
 
-                            driver.AddChemistry(dto);
+                            _driver.AddChemistry(dto);
 
                             progressBar1.Value++;
                             Application.DoEvents();
                         }
 
-                        driver.CommitTransaction();
+                        _driver.CommitTransaction();
 
                         progressBar1.Value = 0;
                         progressBar1.Maximum = 0;
                         label1.Text = "Done";
                     }
+
+                    stopwatch.Stop();
+                    _telemetry.Write(module, "Timing", $"Took {stopwatch.Elapsed}");
                 }
             }
 
@@ -317,15 +372,22 @@ namespace LibraryTransformer
 
         private void Erase_Click(object sender, EventArgs e)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             var lvi = GetSelectedListViewItem();
             if (lvi != null)
             {
                 var result = MessageBox.Show($"Delete All structures from '{lvi.Text}'", "Library Transformer", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    var driver = new OpenDriver();
-                    driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
-                    driver.DeleteAllChemistry();
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
+                    _driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
+                    _driver.DeleteAllChemistry();
+
+                    stopwatch.Stop();
+                    _telemetry.Write(module, "Timing", $"Took {stopwatch.Elapsed}");
                 }
             }
         }

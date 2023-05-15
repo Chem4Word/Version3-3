@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<cml:cml xmlns:conventions="http://www.xml-cml.org/convention/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:c4w="http://www.chem4word.com/cml" conventions="convention:molecular">
+  <cml:molecule id="m1">
+    <cml:atomArray>
+      <cml:atom id="a1" elementType="C" x2="602.3685" y2="575.4224" />
+      <cml:atom id="a2" elementType="C" x2="614.0273" y2="587.0812" />
+      <cml:atom id="a3" elementType="C" x2="614.0273" y2="603.5691" />
+      <cml:atom id="a4" elementType="C" x2="602.3685" y2="615.2278" />
+      <cml:atom id="a5" elementType="C" x2="585.8806" y2="615.2278" />
+      <cml:atom id="a6" elementType="C" x2="574.2219" y2="603.5691" />
+      <cml:atom id="a7" elementType="C" x2="574.2219" y2="587.0812" />
+      <cml:atom id="a8" elementType="C" x2="585.8806" y2="575.4224" />
+    </cml:atomArray>
+    <cml:bondArray>
+      <cml:bond id="b1" atomRefs2="a1 a2" order="S" />
+      <cml:bond id="b2" atomRefs2="a2 a3" order="S" />
+      <cml:bond id="b3" atomRefs2="a3 a4" order="S" />
+      <cml:bond id="b4" atomRefs2="a4 a5" order="S" />
+      <cml:bond id="b5" atomRefs2="a5 a6" order="S" />
+      <cml:bond id="b6" atomRefs2="a6 a7" order="S" />
+      <cml:bond id="b7" atomRefs2="a7 a8" order="S" />
+      <cml:bond id="b8" atomRefs2="a8 a1" order="S" />
+      <cml:bond id="b9" atomRefs2="a8 a4" order="S" />
+    </cml:bondArray>
+  </cml:molecule>
+  <cml:molecule id="m2">
+    <cml:atomArray>
+      <cml:atom id="a9" elementType="C" x2="604.4379" y2="570.4268" />
+      <cml:atom id="a10" elementType="C" x2="619.023" y2="585.0119" />
+      <cml:atom id="a11" elementType="C" x2="619.023" y2="605.6383" />
+      <cml:atom id="a12" elementType="C" x2="604.4379" y2="620.2234" />
+      <cml:atom id="a13" elementType="C" x2="583.8114" y2="620.2234" />
+      <cml:atom id="a14" elementType="C" x2="569.2263" y2="605.6383" />
+      <cml:atom id="a15" elementType="C" x2="569.2263" y2="585.0119" />
+      <cml:atom id="a16" elementType="C" x2="583.8114" y2="570.4268" />
+    </cml:atomArray>
+    <cml:bondArray>
+      <cml:bond id="b10" atomRefs2="a9 a10" order="S" />
+      <cml:bond id="b11" atomRefs2="a10 a11" order="S" />
+      <cml:bond id="b12" atomRefs2="a11 a12" order="S" />
+      <cml:bond id="b13" atomRefs2="a12 a13" order="S" />
+      <cml:bond id="b14" atomRefs2="a13 a14" order="S" />
+      <cml:bond id="b15" atomRefs2="a14 a15" order="S" />
+      <cml:bond id="b16" atomRefs2="a15 a16" order="S" />
+      <cml:bond id="b17" atomRefs2="a16 a9" order="S" />
+    </cml:bondArray>
+  </cml:molecule>
+  <c4w:annotation id="t1" x2="582.5507" y2="624.5732" isEditable="true">
+    <FlowDocument mc:Ignorable="c4w" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:c4w="http://www.chem4word.com/cml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+      <Paragraph>
+        <Run>Error</Run>
+      </Paragraph>
+    </FlowDocument>
+  </c4w:annotation>
+</cml:cml>

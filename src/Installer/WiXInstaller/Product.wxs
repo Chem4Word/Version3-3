@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <!-- For automatic upgrade to work only first three parts of version number are used -->
-  <Product Id="*" Name="Chemistry Add-In for Microsoft Word 2023 Alpha 0" Manufacturer="Chem4Word" Version="3.3.0.8459" UpgradeCode="865226e7-d29d-49aa-a390-dda49979b102" Language="1033">
+  <Product Id="*" Name="Chemistry Add-In for Microsoft Word 2023 Alpha 0" Manufacturer="Chem4Word" Version="3.3.0.8469" UpgradeCode="865226e7-d29d-49aa-a390-dda49979b102" Language="1033">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of Chem4Word is already installed." />
     <Media Id="1" Cabinet="product.cab" EmbedCab="yes" CompressionLevel="high" />
@@ -279,6 +279,9 @@
       <Component Id="DotNetProjects.Input.Toolkit">
         <File Id="DotNetProjects.Input.Toolkit.dll" Source="$(var.Chem4Word.V3.TargetDir)DotNetProjects.Input.Toolkit.dll" />
       </Component>
+      <Component Id="Meziantou.Framework.Win32.CredentialManager">
+        <File Id="Meziantou.Framework.Win32.CredentialManager.dll" Source="$(var.Chem4Word.V3.TargetDir)Meziantou.Framework.Win32.CredentialManager.dll" />
+      </Component>
       <Component Id="Microsoft.Bcl.AsyncInterfaces">
         <File Id="Microsoft.Bcl.AsyncInterfaces.dll" Source="$(var.Chem4Word.V3.TargetDir)Microsoft.Bcl.AsyncInterfaces.dll" />
       </Component>
@@ -298,7 +301,7 @@
         <File Id="Ookii.Dialogs.WinForms.dll" Source="$(var.Chem4Word.V3.TargetDir)Ookii.Dialogs.WinForms.dll" />
       </Component>
       <Component Id="Standard.Licensing">
-          <File Id="Standard.Licensing.dll" Source="$(var.Chem4Word.V3.TargetDir)Standard.Licensing.dll" />
+        <File Id="Standard.Licensing.dll" Source="$(var.Chem4Word.V3.TargetDir)Standard.Licensing.dll" />
       </Component>
       <Component Id="System.AppContext">
         <File Id="System.AppContext.dll" Source="$(var.Chem4Word.V3.TargetDir)System.AppContext.dll" />

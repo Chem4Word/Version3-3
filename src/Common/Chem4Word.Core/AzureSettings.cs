@@ -23,30 +23,36 @@ namespace Chem4Word.Core
         /// Used in ChemicalServices.cs; ServicePointManager.FindServicePoint(...)
         /// </summary>
         [JsonProperty]
-        public string ChemicalServicesUri { get; set; }
+        public string ChemicalServicesUri { get; private set; }
 
         /// <summary>
         /// Used in AzureServiceBusWriter.cs to construct ServiceBusClient
         /// </summary>
         [JsonProperty]
-        public string ServiceBusEndPoint { get; set; }
+        public string ServiceBusEndPoint { get; private set; }
 
         /// <summary>
         /// Used in AzureServiceBusWriter.cs to construct ServiceBusClient
         /// </summary>
         [JsonProperty]
-        public string ServiceBusToken { get; set; }
+        public string ServiceBusToken { get; private set; }
 
         /// <summary>
         /// Used in AzureServiceBusWriter.cs; CreateSender
         /// </summary>
         [JsonProperty]
-        public string ServiceBusQueue { get; set; }
+        public string ServiceBusQueue { get; private set; }
+
+        /// <summary>
+        /// Where the Libraries API is deployed to
+        /// </summary>
+        [JsonProperty]
+        public string LibrariesUri { get; private set; }
 
         /// <summary>
         /// Stores when last checked
         /// </summary>
-        public string LastChecked { get; set; }
+        public string LastChecked { get; private set; }
 
         private bool _dirty;
 
@@ -114,6 +120,12 @@ namespace Chem4Word.Core
                     ServiceBusQueue = serviceBusQueue;
                 }
 
+                if (names.Contains(nameof(LibrariesUri)))
+                {
+                    var librariesUri = key.GetValue(nameof(LibrariesUri)).ToString();
+                    LibrariesUri = librariesUri;
+                }
+
                 if (names.Contains(nameof(LastChecked)))
                 {
                     var lastChecked = key.GetValue(nameof(LastChecked)).ToString();
@@ -127,7 +139,7 @@ namespace Chem4Word.Core
             var file = $"{Constants.Chem4WordVersionFiles}/AzureSettings.json";
 
             var securityProtocol = ServicePointManager.SecurityProtocol;
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
             var found = false;
             var temp = string.Empty;
@@ -169,6 +181,7 @@ namespace Chem4Word.Core
                 ServiceBusEndPoint = settings.ServiceBusEndPoint;
                 ServiceBusToken = settings.ServiceBusToken;
                 ServiceBusQueue = settings.ServiceBusQueue;
+                LibrariesUri = settings.LibrariesUri;
                 LastChecked = today;
                 _dirty = true;
             }
@@ -183,6 +196,7 @@ namespace Chem4Word.Core
                 key.SetValue(nameof(ServiceBusEndPoint), ServiceBusEndPoint);
                 key.SetValue(nameof(ServiceBusToken), ServiceBusToken);
                 key.SetValue(nameof(ServiceBusQueue), ServiceBusQueue);
+                key.SetValue(nameof(LibrariesUri), LibrariesUri);
                 key.SetValue(nameof(LastChecked), today);
             }
         }

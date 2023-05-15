@@ -5,12 +5,12 @@
     <Version>
         <Number>3.3.0 Alpha 0</Number>
         <IsBeta>true</IsBeta>
-        <Released>28-Feb-2023</Released>
+        <Released>10-Mar-2023</Released>
         <Changes>
             <Change>...</Change>
             <Change>...</Change>
             <Change>...</Change>
-            <Change>...</Change>
+            <Change>Users can download extra libraries</Change>
             <Change>Add detection of ReadOnly and System databases, enabling UI buttons as appropriate</Change>
             <Change>Internal: Add better tool tips in ACME</Change>
             <Change>BugFix: Prevent import of structures which have duplicate bonds</Change>

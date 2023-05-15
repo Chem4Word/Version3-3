@@ -1,4 +1,4 @@
 ﻿# Set Build Numbers
 
-.\SetAssemblyVersion.ps1 -version 3.3.0 -name "Alpha 0" -released "28-Feb-2023" -path ..
+.\Set-Assembly-Version.ps1 -version 3.3.0 -name "Alpha 0" -released "10-Mar-2023" -path ..
 

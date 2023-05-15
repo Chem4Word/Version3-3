@@ -10,6 +10,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
+using Chem4Word.Models;
 using IChem4Word.Contracts;
 using Ookii.Dialogs.WinForms;
 using System;
@@ -311,7 +312,7 @@ namespace Chem4Word.UI.WPF
 
         #region Library Tab Events
 
-        private void OnClick_SelectDeafultLibraryLocation(object sender, RoutedEventArgs e)
+        private void OnClick_SelectDefaultLibraryLocation(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -482,7 +483,12 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Clicked");
 
-            MessageBox.Show("ToDo: Start browser at ...");
+            var host = new LibraryDownloadHost();
+            host.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
+            host.ShowDialog();
+
+            ReloadGlobalListOfLibraries();
+            LoadLibrariesListTab();
         }
 
         private void OnClick_RemoveLibrary(object sender, RoutedEventArgs e)

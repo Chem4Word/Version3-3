@@ -40,5 +40,12 @@
             Tag="Ticker">
             Ticker
         </Button>
+        <Button
+            Grid.Row="1"
+            Grid.Column="0"
+            Click="OnClick_Button"
+            Tag="Animation">
+            Animation
+        </Button>
     </Grid>
 </Window>

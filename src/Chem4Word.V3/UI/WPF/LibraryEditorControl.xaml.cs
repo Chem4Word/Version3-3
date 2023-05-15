@@ -53,7 +53,7 @@ namespace Chem4Word.UI.WPF
     public partial class LibraryEditorControl : UserControl
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private IChem4WordTelemetry _telemetry;
         private IChem4WordDriver _driver;

@@ -71,14 +71,14 @@ namespace Chem4Word.UI.WPF
                         editor.UpdateStatusBar();
                         Text = $"Editing Library '{_driver.DatabaseDetails.DisplayName}'";
 
-                        editor.OnSelectionChange -= LibraryEditorControlOnOnSelectionChange;
-                        editor.OnSelectionChange += LibraryEditorControlOnOnSelectionChange;
+                        editor.OnSelectionChange -= OnSelectionChangeLibraryEditorControl;
+                        editor.OnSelectionChange += OnSelectionChangeLibraryEditorControl;
                     }
                 }
             }
         }
 
-        private void LibraryEditorControlOnOnSelectionChange(object sender, WpfEventArgs e)
+        private void OnSelectionChangeLibraryEditorControl(object sender, WpfEventArgs e)
         {
             Debug.WriteLine($"{e.Button} {e.OutputValue}");
         }

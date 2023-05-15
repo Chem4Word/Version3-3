@@ -177,7 +177,7 @@ namespace Chem4Word.Driver.Open
             {
                 if (_transaction != null)
                 {
-                    result = _library.AddChemistry(_transaction.Connection, chemistry);
+                    result = _library.AddChemistryCommand(_transaction.Connection, chemistry);
                 }
                 else
                 {
@@ -195,7 +195,7 @@ namespace Chem4Word.Driver.Open
             {
                 if (_transaction != null)
                 {
-                    _library.UpdateChemistry(_transaction.Connection, chemistry);
+                    _library.UpdateChemistryCommand(_transaction.Connection, chemistry);
                 }
                 else
                 {
@@ -233,7 +233,7 @@ namespace Chem4Word.Driver.Open
             {
                 if (_transaction != null)
                 {
-                    _library.DeleteChemistryById(_transaction.Connection, id);
+                    _library.DeleteChemistryByIdCommand(_transaction.Connection, id);
                 }
                 else
                 {

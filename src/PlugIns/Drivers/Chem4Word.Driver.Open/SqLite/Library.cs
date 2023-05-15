@@ -75,7 +75,6 @@ namespace Chem4Word.Driver.Open.SqLite
             }
 
             return result;
-
         }
 
         public static void CreateNewDatabase(string filename)
@@ -172,7 +171,7 @@ namespace Chem4Word.Driver.Open.SqLite
         private Version GetPatchLevel(SQLiteConnection conn, Version currentVersion)
         {
             // Read current patch level
-            using (var patches = GetListOfPatches(conn))
+            using (var patches = GetListOfPatchesCommand(conn))
             {
                 if (patches != null)
                 {
@@ -193,7 +192,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return currentVersion;
         }
 
-        private SQLiteDataReader GetListOfPatches(SQLiteConnection conn)
+        private SQLiteDataReader GetListOfPatchesCommand(SQLiteConnection conn)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -246,7 +245,7 @@ namespace Chem4Word.Driver.Open.SqLite
 
             using (var conn = LibraryConnection())
             {
-                using (var tables = GetListOfTablesAndViews(conn))
+                using (var tables = GetListOfTablesAndViewsCommand(conn))
                 {
                     if (tables != null)
                     {
@@ -268,7 +267,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return found;
         }
 
-        private SQLiteDataReader GetListOfTablesAndViews(SQLiteConnection conn)
+        private SQLiteDataReader GetListOfTablesAndViewsCommand(SQLiteConnection conn)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -319,7 +318,7 @@ namespace Chem4Word.Driver.Open.SqLite
                                 _telemetry.Write(module, "Exception", exception.ToString());
                             }
                         }
-                        AddPatchRecord(conn, patch.Version);
+                        AddPatchRecordCommand(conn, patch.Version);
                     }
                 }
             }
@@ -332,7 +331,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        private void AddPatchRecord(SQLiteConnection conn, Version version)
+        private void AddPatchRecordCommand(SQLiteConnection conn, Version version)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -405,7 +404,7 @@ namespace Chem4Word.Driver.Open.SqLite
                 if (!results.ContainsKey("Id"))
                 {
                     var guid = Guid.NewGuid().ToString("D");
-                    AddProperty(conn, "Id", guid);
+                    AddPropertyCommand(conn, "Id", guid);
                     results.Add("Id", guid);
                 }
 
@@ -428,7 +427,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return count.ToString("N0");
         }
 
-        private void AddProperty(SQLiteConnection conn, string key, string value)
+        private void AddPropertyCommand(SQLiteConnection conn, string key, string value)
         {
             var sb = new StringBuilder();
             sb.AppendLine("INSERT INTO Properties");
@@ -469,7 +468,7 @@ namespace Chem4Word.Driver.Open.SqLite
 
                 using (var conn = LibraryConnection())
                 {
-                    using (var names = GetDistinctNames(conn))
+                    using (var names = GetDistinctNamesCommand(conn))
                     {
                         if (names != null)
                         {
@@ -524,7 +523,7 @@ namespace Chem4Word.Driver.Open.SqLite
                 {
                     sw.Start();
 
-                    using (var chemistry = GetAllChemistry(conn))
+                    using (var chemistry = GetAllChemistryCommand(conn))
                     {
                         if (chemistry != null)
                         {
@@ -538,10 +537,10 @@ namespace Chem4Word.Driver.Open.SqLite
                                     DataType = chemistry["datatype"] as string,
                                     Name = chemistry["name"] as string,
                                     Formula = chemistry["formula"] as string,
-                                    Names = GetChemicalNames(conn, id),
-                                    Formulae = GetChemicalFormulae(conn, id),
-                                    Captions = GetChemicalCaptions(conn, id),
-                                    Tags = GetChemistryTags(conn, id),
+                                    Names = GetChemicalNamesCommand(conn, id),
+                                    Formulae = GetChemicalFormulaeCommand(conn, id),
+                                    Captions = GetChemicalCaptionsCommand(conn, id),
+                                    Tags = GetChemistryTagsCommand(conn, id),
                                 };
 
                                 // Handle new field(s) which may be null
@@ -603,13 +602,13 @@ namespace Chem4Word.Driver.Open.SqLite
 
             using (var conn = LibraryConnection())
             {
-                result = AddChemistry(conn, chemistry);
+                result = AddChemistryCommand(conn, chemistry);
             }
 
             return result;
         }
 
-        private void AddName(SQLiteConnection conn, ChemistryNameDataObject name, long id)
+        private void AddNameCommand(SQLiteConnection conn, ChemistryNameDataObject name, long id)
         {
             var sb = new StringBuilder();
 
@@ -627,7 +626,7 @@ namespace Chem4Word.Driver.Open.SqLite
             command.ExecuteNonQuery();
         }
 
-        private void AddFormula(SQLiteConnection conn, ChemistryNameDataObject formula, long id)
+        private void AddFormulaCommand(SQLiteConnection conn, ChemistryNameDataObject formula, long id)
         {
             var sb = new StringBuilder();
 
@@ -645,7 +644,7 @@ namespace Chem4Word.Driver.Open.SqLite
             command.ExecuteNonQuery();
         }
 
-        private void AddCaption(SQLiteConnection conn, ChemistryNameDataObject caption, long id)
+        private void AddCaptionCommand(SQLiteConnection conn, ChemistryNameDataObject caption, long id)
         {
             var sb = new StringBuilder();
 
@@ -663,7 +662,7 @@ namespace Chem4Word.Driver.Open.SqLite
             command.ExecuteNonQuery();
         }
 
-        internal long AddChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
+        internal long AddChemistryCommand(SQLiteConnection conn, ChemistryDataObject chemistry)
         {
             var sb = new StringBuilder();
 
@@ -687,15 +686,15 @@ namespace Chem4Word.Driver.Open.SqLite
 
             foreach (var name in chemistry.Names)
             {
-                AddName(conn, name, id);
+                AddNameCommand(conn, name, id);
             }
             foreach (var formula in chemistry.Formulae)
             {
-                AddFormula(conn, formula, id);
+                AddFormulaCommand(conn, formula, id);
             }
             foreach (var caption in chemistry.Captions)
             {
-                AddCaption(conn, caption, id);
+                AddCaptionCommand(conn, caption, id);
             }
 
             //ToDo: [V3.3] Insert :-
@@ -708,11 +707,11 @@ namespace Chem4Word.Driver.Open.SqLite
         {
             using (var conn = LibraryConnection())
             {
-                UpdateChemistry(conn, chemistry);
+                UpdateChemistryCommand(conn, chemistry);
             }
         }
 
-        internal void UpdateChemistry(SQLiteConnection conn, ChemistryDataObject chemistry)
+        internal void UpdateChemistryCommand(SQLiteConnection conn, ChemistryDataObject chemistry)
         {
             var sb = new StringBuilder();
             sb.AppendLine("UPDATE GALLERY");
@@ -729,22 +728,22 @@ namespace Chem4Word.Driver.Open.SqLite
 
             command.ExecuteNonQuery();
 
-            DeleteNames(conn, chemistry.Id);
+            DeleteNamesCommand(conn, chemistry.Id);
             foreach (var name in chemistry.Names)
             {
-                AddName(conn, name, chemistry.Id);
+                AddNameCommand(conn, name, chemistry.Id);
             }
 
-            DeleteFormulae(conn, chemistry.Id);
+            DeleteFormulaeCommand(conn, chemistry.Id);
             foreach (var formula in chemistry.Formulae)
             {
-                AddFormula(conn, formula, chemistry.Id);
+                AddFormulaCommand(conn, formula, chemistry.Id);
             }
 
-            DeleteCaptions(conn, chemistry.Id);
+            DeleteCaptionsCommand(conn, chemistry.Id);
             foreach (var caption in chemistry.Captions)
             {
-                AddCaption(conn, caption, chemistry.Id);
+                AddCaptionCommand(conn, caption, chemistry.Id);
             }
 
             //ToDo: [V3.3] Update/Replace :-
@@ -757,7 +756,7 @@ namespace Chem4Word.Driver.Open.SqLite
 
             using (var conn = LibraryConnection())
             {
-                using (var chemistry = GetChemistryById(conn, id))
+                using (var chemistry = GetChemistryByIdCommand(conn, id))
                 {
                     if (chemistry != null)
                     {
@@ -776,10 +775,10 @@ namespace Chem4Word.Driver.Open.SqLite
                                 result.MolWeight = double.Parse(molWeight);
                             }
 
-                            result.Names = GetChemicalNames(conn, id);
-                            result.Formulae = GetChemicalFormulae(conn, id);
-                            result.Captions = GetChemicalCaptions(conn, id);
-                            result.Tags = GetChemistryTags(conn, id);
+                            result.Names = GetChemicalNamesCommand(conn, id);
+                            result.Formulae = GetChemicalFormulaeCommand(conn, id);
+                            result.Captions = GetChemicalCaptionsCommand(conn, id);
+                            result.Tags = GetChemistryTagsCommand(conn, id);
                         }
                     }
                 }
@@ -788,7 +787,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        private SQLiteDataReader GetChemistryById(SQLiteConnection conn, long id)
+        private SQLiteDataReader GetChemistryByIdCommand(SQLiteConnection conn, long id)
         {
             var sb = new StringBuilder();
             sb.AppendLine("SELECT Id, Chemistry, Name, Formula, MolWeight, DataType");
@@ -805,11 +804,11 @@ namespace Chem4Word.Driver.Open.SqLite
         {
             using (var conn = LibraryConnection())
             {
-                DeleteAllChemistry(conn);
+                DeleteAllChemistryCommand(conn);
             }
         }
 
-        private void DeleteAllChemistry(SQLiteConnection conn)
+        private void DeleteAllChemistryCommand(SQLiteConnection conn)
         {
             var commands = new List<SQLiteCommand>();
 
@@ -846,21 +845,21 @@ namespace Chem4Word.Driver.Open.SqLite
         {
             using (var conn = LibraryConnection())
             {
-                DeleteChemistryById(conn, id);
+                DeleteChemistryByIdCommand(conn, id);
             }
         }
 
-        internal void DeleteChemistryById(SQLiteConnection conn, long id)
+        internal void DeleteChemistryByIdCommand(SQLiteConnection conn, long id)
         {
             var sb = new StringBuilder();
 
             using (var tr = conn.BeginTransaction())
             {
-                DeleteNames(conn, id);
-                DeleteFormulae(conn, id);
-                DeleteCaptions(conn, id);
+                DeleteNamesCommand(conn, id);
+                DeleteFormulaeCommand(conn, id);
+                DeleteCaptionsCommand(conn, id);
 
-                DeleteTags(conn, id);
+                DeleteTagsCommand(conn, id);
 
                 sb.AppendLine("DELETE FROM Gallery");
                 sb.AppendLine("WHERE ID = @id");
@@ -877,11 +876,11 @@ namespace Chem4Word.Driver.Open.SqLite
         {
             using (var conn = LibraryConnection())
             {
-                AddTags(conn, id, tags);
+                AddTagsCommand(conn, id, tags);
             }
         }
 
-        private void AddTags(SQLiteConnection conn, long id, List<string> tags)
+        private void AddTagsCommand(SQLiteConnection conn, long id, List<string> tags)
         {
             var sb = new StringBuilder();
             sb.AppendLine("INSERT INTO TaggedChemistry");
@@ -893,15 +892,15 @@ namespace Chem4Word.Driver.Open.SqLite
 
             using (var tr = conn.BeginTransaction())
             {
-                DeleteTags(conn, id);
+                DeleteTagsCommand(conn, id);
 
                 var sequence = 0;
                 foreach (var tag in tags)
                 {
-                    var tagId = GetTag(conn, tag);
+                    var tagId = GetTagCommand(conn, tag);
                     if (tagId == -1)
                     {
-                        tagId = AddTag(conn, tag);
+                        tagId = AddTagCommand(conn, tag);
                     }
 
                     if (tagId > 0)
@@ -917,7 +916,7 @@ namespace Chem4Word.Driver.Open.SqLite
             }
         }
 
-        private long GetTag(SQLiteConnection conn, string tag)
+        private long GetTagCommand(SQLiteConnection conn, string tag)
         {
             long result = -1;
 
@@ -943,7 +942,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        private long AddTag(SQLiteConnection conn, string tag)
+        private long AddTagCommand(SQLiteConnection conn, string tag)
         {
             var sb = new StringBuilder();
             sb.AppendLine("INSERT INTO Tags");
@@ -967,13 +966,13 @@ namespace Chem4Word.Driver.Open.SqLite
 
             using (var conn = LibraryConnection())
             {
-                result = GetAllTags(conn);
+                result = GetAllTagsCommand(conn);
             }
 
             return result;
         }
 
-        private List<LibraryTagDataObject> GetAllTags(SQLiteConnection conn)
+        private List<LibraryTagDataObject> GetAllTagsCommand(SQLiteConnection conn)
         {
             var result = new List<LibraryTagDataObject>();
 
@@ -1002,7 +1001,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        private SQLiteDataReader GetDistinctNames(SQLiteConnection conn)
+        private SQLiteDataReader GetDistinctNamesCommand(SQLiteConnection conn)
         {
             var sb = new StringBuilder();
             sb.AppendLine("SELECT DISTINCT Name, ChemistryId");
@@ -1018,7 +1017,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return command.ExecuteReader();
         }
 
-        private List<ChemistryTagDataObject> GetChemistryTags(SQLiteConnection conn, long id)
+        private List<ChemistryTagDataObject> GetChemistryTagsCommand(SQLiteConnection conn, long id)
         {
             var result = new List<ChemistryTagDataObject>();
 
@@ -1053,7 +1052,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return result;
         }
 
-        private List<ChemistryNameDataObject> GetChemicalNames(SQLiteConnection conn, long id)
+        private List<ChemistryNameDataObject> GetChemicalNamesCommand(SQLiteConnection conn, long id)
         {
             var results = new List<ChemistryNameDataObject>();
 
@@ -1085,7 +1084,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return results;
         }
 
-        private List<ChemistryNameDataObject> GetChemicalFormulae(SQLiteConnection conn, long id)
+        private List<ChemistryNameDataObject> GetChemicalFormulaeCommand(SQLiteConnection conn, long id)
         {
             var results = new List<ChemistryNameDataObject>();
 
@@ -1117,7 +1116,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return results;
         }
 
-        private List<ChemistryNameDataObject> GetChemicalCaptions(SQLiteConnection conn, long id)
+        private List<ChemistryNameDataObject> GetChemicalCaptionsCommand(SQLiteConnection conn, long id)
         {
             var results = new List<ChemistryNameDataObject>();
 
@@ -1149,7 +1148,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return results;
         }
 
-        private SQLiteDataReader GetAllChemistry(SQLiteConnection conn)
+        private SQLiteDataReader GetAllChemistryCommand(SQLiteConnection conn)
         {
             var sb = new StringBuilder();
 
@@ -1161,7 +1160,7 @@ namespace Chem4Word.Driver.Open.SqLite
             return command.ExecuteReader();
         }
 
-        private void DeleteNames(SQLiteConnection conn, long chemistryId)
+        private void DeleteNamesCommand(SQLiteConnection conn, long chemistryId)
         {
             var sb = new StringBuilder();
             sb.AppendLine("DELETE FROM ChemicalNames");
@@ -1172,7 +1171,7 @@ namespace Chem4Word.Driver.Open.SqLite
             nameCommand.ExecuteNonQuery();
         }
 
-        private void DeleteFormulae(SQLiteConnection conn, long chemistryId)
+        private void DeleteFormulaeCommand(SQLiteConnection conn, long chemistryId)
         {
             var sb = new StringBuilder();
             sb.AppendLine("DELETE FROM ChemicalFormulae");
@@ -1183,7 +1182,7 @@ namespace Chem4Word.Driver.Open.SqLite
             nameCommand.ExecuteNonQuery();
         }
 
-        private void DeleteCaptions(SQLiteConnection conn, long chemistryId)
+        private void DeleteCaptionsCommand(SQLiteConnection conn, long chemistryId)
         {
             var sb = new StringBuilder();
             sb.AppendLine("DELETE FROM ChemicalCaptions");
@@ -1194,7 +1193,7 @@ namespace Chem4Word.Driver.Open.SqLite
             nameCommand.ExecuteNonQuery();
         }
 
-        private void DeleteTags(SQLiteConnection conn, long chemistryId)
+        private void DeleteTagsCommand(SQLiteConnection conn, long chemistryId)
         {
             var sb = new StringBuilder();
             sb.AppendLine("DELETE FROM TaggedChemistry");
