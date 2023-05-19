@@ -5,12 +5,12 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Reflection;
-using System.Windows.Forms;
 using Chem4Word.ACME;
 using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Forms;
+using System;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace Chem4Word.Library
 {
@@ -37,19 +37,16 @@ namespace Chem4Word.Library
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                if (elementHost1.Child is LibraryViewControl lvc)
+                using (new WaitCursor())
                 {
-                    _editorOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
-                    lvc.SetOptions(_editorOptions);
+                    var libraryViewControl = new LibraryViewControl();
+                    elementHost1.Child = libraryViewControl;
 
-                    using (new WaitCursor())
-                    {
-                        if (_libraryController == null)
-                        {
-                            _libraryController = new LibraryController(Globals.Chem4WordV3.Telemetry);
-                        }
-                        lvc.DataContext = _libraryController;
-                    }
+                    _editorOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
+                    libraryViewControl.SetOptions(_editorOptions);
+
+                    _libraryController = new LibraryController(Globals.Chem4WordV3.Telemetry);
+                    libraryViewControl.DataContext = _libraryController;
                 }
             }
             catch (Exception ex)

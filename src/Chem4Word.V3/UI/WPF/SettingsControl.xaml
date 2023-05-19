@@ -565,7 +565,7 @@
                 <Grid Margin="5">
                     <StackPanel>
                         <Label Content="You should back up the contents of these folders regularly." />
-                        <GroupBox Header="User Settings">
+                        <GroupBox Header="User Settings and Backups">
                             <DockPanel>
                                 <Button
                                     Width="Auto"
@@ -585,11 +585,11 @@
                                 <TextBlock
                                     Margin="5"
                                     VerticalAlignment="Center"
-                                    Text="This folder is where Chem4Word stores your personal settings."
+                                    Text="This folder is where Chem4Word stores your personal settings and backups of any orphaned structures."
                                     TextWrapping="Wrap" />
                             </DockPanel>
                         </GroupBox>
-                        <GroupBox Header="Common Settings and Backups">
+                        <GroupBox Header="Common Settings">
                             <DockPanel>
                                 <Button
                                     Width="Auto"
@@ -607,31 +607,7 @@
                                 <TextBlock
                                     Margin="5"
                                     VerticalAlignment="Center"
-                                    Text="This folder is where Chem4Word stores common settings and backups of documents or libraries."
-                                    TextWrapping="Wrap" />
-                            </DockPanel>
-                        </GroupBox>
-                        <GroupBox Header="Plug-Ins">
-                            <DockPanel>
-                                <Button
-                                    Width="Auto"
-                                    Height="Auto"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    Click="OnClick_ExplorePlugInsFolder"
-                                    DockPanel.Dock="Left"
-                                    Style="{StaticResource Acme.Control.Button.DialogButton}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <StackPanel Orientation="Horizontal">
-                                            <StaticResource ResourceKey="BrowseFolder" />
-                                            <Label VerticalContentAlignment="Center" Content="Browse" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Button>
-                                <TextBlock
-                                    Margin="5"
-                                    VerticalAlignment="Center"
-                                    Text="This folder is where the Chem4Word Plug-Ins are installed."
+                                    Text="This folder is where Chem4Word stores common settings for all users."
                                     TextWrapping="Wrap" />
                             </DockPanel>
                         </GroupBox>

@@ -196,11 +196,6 @@ namespace Chem4Word.Helpers
             {
                 Directory.CreateDirectory(path);
             }
-            path = Path.Combine(_programDataPath, "Backups");
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
         }
     }
 }

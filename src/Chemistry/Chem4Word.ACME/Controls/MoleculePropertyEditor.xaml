@@ -23,7 +23,7 @@
             <converters:ValueToString x:Key="RadicalConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
-                <ResourceDictionary Source="../Resources/ControlStyles.xaml"/>
+                <ResourceDictionary Source="../Resources/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -159,7 +159,8 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    Grid.Row="0" Margin="0,0"
+                                    Grid.Row="0"
+                                    Margin="0,0"
                                     Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                     Text="Count" />
                                 <Grid Grid.Row="1">
@@ -175,12 +176,11 @@
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Right"
+                                        Style="{StaticResource Acme.Controls.TextBox}"
                                         Text="{Binding Count, Mode=TwoWay}"
                                         TextChanged="CountSpinner_OnTextChanged"
-                                        ToolTip="Set count"
-                                        Style="{StaticResource Acme.Controls.TextBox}"/>
-                                    <Grid Grid.Column="1" HorizontalAlignment="Left"
-                                          >
+                                        ToolTip="Set count" />
+                                    <Grid Grid.Column="1" HorizontalAlignment="Left">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="*" />
@@ -236,10 +236,14 @@
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
-                <Button Click="Save_OnClick" Content="OK" 
-                        Style="{StaticResource Acme.Control.Button.DialogButton}"  />
-                <Button Click="Close_OnClick" Content="Cancel" 
-                        Style="{StaticResource Acme.Control.Button.DialogButton}" />
+                <Button
+                    Click="Save_OnClick"
+                    Content="OK"
+                    Style="{StaticResource Acme.Control.Button.DialogButton}" />
+                <Button
+                    Click="Close_OnClick"
+                    Content="Cancel"
+                    Style="{StaticResource Acme.Control.Button.DialogButton}" />
             </StackPanel>
         </Grid>
     </Border>

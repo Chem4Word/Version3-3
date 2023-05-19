@@ -385,6 +385,23 @@ namespace Chem4Word
 
             using (var cursor = new WaitCursor())
             {
+                if (ShowLibrary.Checked)
+                {
+                    var app = Globals.Chem4WordV3.Application;
+
+                    foreach (var taskPane in Globals.Chem4WordV3.CustomTaskPanes)
+                    {
+                        if (app.ActiveWindow == taskPane.Window && taskPane.Title == Constants.LibraryTaskPaneTitle)
+                        {
+                            ShowLibrary.Label = "Open";
+                            ShowLibrary.Checked = false;
+                            Globals.Chem4WordV3.LibraryState = false;
+
+                            taskPane.Visible = false;
+                        }
+                    }
+                }
+
                 if (Globals.Chem4WordV3.EventsEnabled)
                 {
                     Globals.Chem4WordV3.EventsEnabled = false;
@@ -1700,7 +1717,7 @@ namespace Chem4Word
                                 }
 
                                 Globals.Chem4WordV3.LibraryState = ShowLibrary.Checked;
-                                ShowLibrary.Label = ShowLibrary.Checked ? "Close" : "Open ";
+                                ShowLibrary.Label = ShowLibrary.Checked ? "Close" : "Open";
 
                                 if (ShowLibrary.Checked)
                                 {

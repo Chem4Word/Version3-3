@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
@@ -17,7 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -30,7 +30,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using Chem4Word.Core.Helpers;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace Chem4Word.UI.WPF
@@ -45,13 +44,14 @@ namespace Chem4Word.UI.WPF
 
         private const string Chem4WordUser = "Chem4Word-User";
 
-        public Point TopLeft { get; set; }
+        public System.Windows.Point TopLeft { get; set; }
 
         public event EventHandler OnButtonClick;
 
         private AzureSettings _settings;
 
         private List<CatalogueEntry> _catalogue;
+        private List<string> _paidFor;
 
         private string _downloadPath;
 
@@ -82,14 +82,14 @@ namespace Chem4Word.UI.WPF
                         if (parts.Length == 2)
                         {
                             UserName.Text = parts[0];
-                            UserEmail.Text = parts[1];
+                            UserEmail.Text = parts[1].ToLower();
                         }
                     }
 
                     var formData = new Dictionary<string, string>
                                {
-                                   { "version", Globals.Chem4WordV3.Helper.AddInVersion },
-                                   { "machineid", Globals.Chem4WordV3.Helper.MachineId }
+                                   { "Version", Globals.Chem4WordV3.Helper.AddInVersion.Replace("Chem4Word V", "") },
+                                   { "MachineId", Globals.Chem4WordV3.Helper.MachineId }
                                };
 
                     var helper = new ApiHelper(_settings.LibrariesUri);
@@ -112,7 +112,8 @@ namespace Chem4Word.UI.WPF
                             var obj = new LibraryDownloadGridSource
                             {
                                 Name = entry.Name,
-                                Description = entry.Description
+                                Description = entry.Description,
+                                RequiresPayment = !entry.Driver.Equals(Constants.SQLiteStandardDriver)
                             };
                             data.Add(obj);
                         }
@@ -126,11 +127,36 @@ namespace Chem4Word.UI.WPF
                         Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"HasException {result.HasException}");
                         Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"HttpStatusCode {result.HttpStatusCode}");
                     }
+
+                    UpdatePaidFor();
                 }
                 catch (Exception exception)
                 {
                     Globals.Chem4WordV3.Telemetry.Write(module, "Exception", exception.Message);
                     Globals.Chem4WordV3.Telemetry.Write(module, "Exception", exception.StackTrace);
+                }
+            }
+        }
+
+        private void UpdatePaidFor()
+        {
+            _paidFor = new List<string>();
+
+            var email = UserEmail.Text.Trim();
+            if (!string.IsNullOrEmpty(email))
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    { "Version", Globals.Chem4WordV3.Helper.AddInVersion.Replace("Chem4Word V", "") },
+                    { "MachineId", Globals.Chem4WordV3.Helper.MachineId },
+                    { "Email", email}
+                };
+
+                var helper = new ApiHelper(_settings.LibrariesUri);
+                var result = helper.GetPaidFor(formData, 10);
+                if (result.Success)
+                {
+                    _paidFor = result.Catalogue.Select(c => c.Id).ToList();
                 }
             }
         }
@@ -177,7 +203,7 @@ namespace Chem4Word.UI.WPF
             {
                 UserErrorMessage.Visibility = Visibility.Collapsed;
             }
-            if (UserEmail.Text.Trim().Length == 0 || !IsValidEmail(UserEmail.Text))
+            if (UserEmail.Text.Trim().Length == 0 || !IsValidEmail(UserEmail.Text.Trim()))
             {
                 EmailErrorMessage.Visibility = Visibility.Visible;
                 EmailErrorMessage.Text = "Please enter a valid email address.";
@@ -211,15 +237,15 @@ namespace Chem4Word.UI.WPF
                     {
                         var formData = new Dictionary<string, string>
                                        {
-                                           { "version", Globals.Chem4WordV3.Helper.AddInVersion },
-                                           { "machineid", Globals.Chem4WordV3.Helper.MachineId },
-                                           { "machinename", Environment.MachineName},
-                                           { "customer", UserName.Text },
-                                           { "email", UserEmail.Text },
-                                           { "ipaddress", Globals.Chem4WordV3.Helper.IpAddress },
-                                           { "library", library.Id },
-                                           { "libraryname", library.Name },
-                                           { "driver", library.Driver }
+                                           { "Version", Globals.Chem4WordV3.Helper.AddInVersion.Replace("Chem4Word V", "") },
+                                           { "MachineId", Globals.Chem4WordV3.Helper.MachineId },
+                                           { "MachineName", Environment.MachineName},
+                                           { "Customer", UserName.Text },
+                                           { "Email", UserEmail.Text.ToLower() },
+                                           { "IpAddress", Globals.Chem4WordV3.Helper.IpAddress.Replace("IpAddress ", "") },
+                                           { "Library", library.Id },
+                                           { "LibraryName", library.Name },
+                                           { "Driver", library.Driver }
                                        };
                         var helper = new ApiHelper(_settings.LibrariesUri);
 
@@ -236,7 +262,7 @@ namespace Chem4Word.UI.WPF
                                 {
                                     InstallLibrary(library, _downloadPath);
                                 }
-                                if (!library.Driver.Equals("SQLite Standard"))
+                                if (!library.Driver.Equals(Constants.SQLiteStandardDriver))
                                 {
                                     DownloadDriver(formData);
                                     if (File.Exists(Path.Combine(_downloadPath, $"{library.Driver}.zip")))
@@ -247,7 +273,7 @@ namespace Chem4Word.UI.WPF
 
                                 // Once library and driver have been installed add/replace user details in credential store
                                 // Common values required for licence verification by the driver.
-                                CredentialManager.WriteCredential(Chem4WordUser, $"{UserName.Text}<{UserEmail.Text}>", Globals.Chem4WordV3.Helper.MachineId, CredentialPersistence.LocalMachine);
+                                CredentialManager.WriteCredential(Chem4WordUser, $"{UserName.Text}<{UserEmail.Text.ToLower()}>", Globals.Chem4WordV3.Helper.MachineId, CredentialPersistence.LocalMachine);
                             }
                             else
                             {
@@ -488,6 +514,12 @@ namespace Chem4Word.UI.WPF
             Dispatcher.PushFrame(frame);
         }
 
+        private void OnClick_BuyButton(object sender, RoutedEventArgs e)
+        {
+            // ToDo: Fire up web site to buy library
+            UserInteractions.AlertUser("Please buy this library ...");
+        }
+
         private void OnClick_FinishedButton(object sender, RoutedEventArgs e)
         {
             var args = new WpfEventArgs
@@ -501,7 +533,26 @@ namespace Chem4Word.UI.WPF
 
         private void OnSelectionChanged_ListOfLibraries(object sender, SelectionChangedEventArgs e)
         {
-            Download.IsEnabled = Libraries.SelectedItems.Count > 0;
+            Download.IsEnabled = false;
+            Buy.IsEnabled = false;
+
+            if (Libraries.SelectedItems.Count > 0)
+            {
+                if (Libraries.SelectedItem is LibraryDownloadGridSource data)
+                {
+                    var library = _catalogue.FirstOrDefault(l => l.Name.Equals(data.Name));
+                    if (library != null)
+                    {
+                        UpdatePaidFor();
+                        Download.IsEnabled = true;
+                        if (!library.Driver.Equals(Constants.SQLiteStandardDriver))
+                        {
+                            Buy.IsEnabled = !_paidFor.Contains(library.Id);
+                            Download.IsEnabled = _paidFor.Contains(library.Id);
+                        }
+                    }
+                }
+            }
         }
     }
 }

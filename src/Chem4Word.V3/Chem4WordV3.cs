@@ -290,7 +290,7 @@ namespace Chem4Word
 
         private void SlowOperations()
         {
-            var module = $"{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -310,7 +310,7 @@ namespace Chem4Word
                 ServicePointManager.UseNagleAlgorithm = false;
                 ServicePointManager.Expect100Continue = false;
 
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
                 _configWatcher = new ConfigWatcher(AddInInfo.ProductAppDataPath);
 
@@ -329,7 +329,7 @@ namespace Chem4Word
 
         private void PerformStartUpActions()
         {
-            var module = $"{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -1205,7 +1205,7 @@ namespace Chem4Word
                         var details = GetSelectedDatabaseDetails();
                         if (details != null)
                         {
-                            canSave = !(details.IsReadOnly || details.IsSystem);
+                            canSave = !details.IsLocked();
                         }
                         Ribbon.SaveToLibrary.Enabled = canSave;
                         Ribbon.ArrangeMolecules.Enabled = true;

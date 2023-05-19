@@ -587,21 +587,6 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void OnClick_ExplorePlugInsFolder(object sender, RoutedEventArgs e)
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
-
-            try
-            {
-                Process.Start(Path.Combine(Globals.Chem4WordV3.AddInInfo.DeploymentPath, "PlugIns"));
-            }
-            catch (Exception ex)
-            {
-                new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, ex).ShowDialog();
-            }
-        }
-
         #endregion Maintenance Tab Events
 
         #region Private methods
@@ -743,7 +728,7 @@ namespace Chem4Word.UI.WPF
                         License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required",
                         IsDefault = isDefault
                     };
-                    obj.Locked = database.IsReadOnly || database.IsSystem ? "Yes" : "No";
+                    obj.Locked = database.IsLocked() ? "Yes" : "No";
 
                     data.Add(obj);
                 }

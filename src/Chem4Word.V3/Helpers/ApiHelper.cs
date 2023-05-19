@@ -91,6 +91,72 @@ namespace Chem4Word.Helpers
             return result;
         }
 
+        public ApiResult GetPaidFor(Dictionary<string, string> formData, int timeout)
+        {
+            var result = new ApiResult
+                         {
+                             Catalogue = new List<CatalogueEntry>(),
+                         };
+
+            var securityProtocol = ServicePointManager.SecurityProtocol;
+
+            try
+            {
+                ServicePointManager.Expect100Continue = true;
+
+                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
+                var content = new FormUrlEncodedContent(formData);
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
+                    httpClient.Timeout = TimeSpan.FromSeconds(timeout);
+
+                    var response = httpClient.PostAsync($"{_url}/PaidFor", content).Result;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        if (response.Content != null)
+                        {
+                            var responseContent = response.Content;
+                            var jsonContent = responseContent.ReadAsStringAsync().Result;
+
+                            result.Catalogue = JsonConvert.DeserializeObject<List<CatalogueEntry>>(jsonContent);
+                            result.Success = true;
+                        }
+                        else
+                        {
+                            result.HttpStatusCode = 204;
+                            result.Message = "Content is missing";
+                        }
+                    }
+                    else
+                    {
+                        var responseBody = string.Empty;
+                        if (response.Content != null)
+                        {
+                            var responseContent = response.Content;
+                            responseBody = responseContent.ReadAsStringAsync().Result;
+                        }
+                        result.HttpStatusCode = (int)response.StatusCode;
+                        result.Message = (response.ReasonPhrase + " " + responseBody).Trim();
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                result.Message = NestedExceptionMessages(exception);
+                result.HasException = true;
+                Debug.WriteLine(exception.Message);
+                Debug.WriteLine(exception.StackTrace);
+            }
+            finally
+            {
+                ServicePointManager.SecurityProtocol = securityProtocol;
+            }
+
+            return result;
+        }
+
         public ApiResult RequestLibraryDetails(Dictionary<string, string> formData, int timeout)
         {
             var result = new ApiResult

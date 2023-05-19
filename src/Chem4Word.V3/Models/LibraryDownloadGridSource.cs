@@ -9,6 +9,7 @@ namespace Chem4Word.Models
 {
     public class LibraryDownloadGridSource
     {
+        public bool RequiresPayment { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }

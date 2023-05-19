@@ -41,5 +41,7 @@ namespace IChem4Word.Contracts
 
             return result;
         }
+
+        public bool IsLocked() => IsSystem || IsReadOnly || !Driver.Equals("SQLite Standard");
     }
 }
