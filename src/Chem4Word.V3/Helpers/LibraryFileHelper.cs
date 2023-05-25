@@ -59,7 +59,7 @@ namespace Chem4Word.Helpers
                     {
                         _telemetry.Write(module, "Information", $"Moving {fileInfo.Name} to Backups folder");
                         // if any files '20*.db' exist, move them to backups folder
-                        File.Move(file, Path.Combine(_programDataPath, "Backups", fileInfo.Name));
+                        File.Move(file, Path.Combine(_programDataPath, "Libraries", "Backups", fileInfo.Name));
                     }
                     else
                     {

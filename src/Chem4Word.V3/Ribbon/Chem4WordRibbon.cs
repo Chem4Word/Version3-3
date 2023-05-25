@@ -617,6 +617,13 @@ namespace Chem4Word
             }
 
             Globals.Chem4WordV3.EvaluateChemistryAllowed();
+
+            if (Globals.Chem4WordV3.ListOfDetectedLibraries == null)
+            {
+                Globals.Chem4WordV3.ListOfDetectedLibraries
+                    = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                        .GetListOfLibraries();
+            }
         }
 
         private void AfterButtonChecks(RibbonButton button)
