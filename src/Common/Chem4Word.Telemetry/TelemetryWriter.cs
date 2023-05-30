@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Shared;
 using IChem4Word.Contracts;
@@ -16,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using Chem4Word.Core;
 
 namespace Chem4Word.Telemetry
 {
@@ -50,22 +50,22 @@ namespace Chem4Word.Telemetry
             _azureServiceBusWriter = new AzureServiceBusWriter(new AzureSettings(true));
         }
 
-        public void Write(string operation, string level, string message)
+        public void Write(string source, string level, string message)
         {
             string unwanted = "Chem4Word.V3.";
-            if (operation.StartsWith(unwanted))
+            if (source.StartsWith(unwanted))
             {
-                operation = operation.Remove(0, unwanted.Length);
+                source = source.Remove(0, unwanted.Length);
             }
             unwanted = "Chem4WordV3.";
-            if (operation.StartsWith(unwanted))
+            if (source.StartsWith(unwanted))
             {
-                operation = operation.Remove(0, unwanted.Length);
+                source = source.Remove(0, unwanted.Length);
             }
             unwanted = "Chem4Word.";
-            if (operation.StartsWith(unwanted))
+            if (source.StartsWith(unwanted))
             {
-                operation = operation.Remove(0, unwanted.Length);
+                source = source.Remove(0, unwanted.Length);
             }
 
             try
@@ -74,69 +74,69 @@ namespace Chem4Word.Telemetry
                     $@"Chem4Word.V3\Telemetry\{SafeDate.ToIsoShortDate(DateTime.Now)}.log");
                 using (StreamWriter w = File.AppendText(fileName))
                 {
-                    string logMessage = $"[{SafeDate.ToShortTime(DateTime.Now)}] {operation} - {level} - {message}";
+                    string logMessage = $"[{SafeDate.ToShortTime(DateTime.Now)}] {source} - {level} - {message}";
                     w.WriteLine(logMessage);
                 }
             }
             catch
             {
-                //
+                // Do nothing
             }
 
             if (_permissionGranted)
             {
-                WritePrivate(operation, level, message);
+                WritePrivate(source, level, message);
 
-                if (!_systemInfoSent
-                    && _helper != null
+                if (_helper != null
                     && _helper?.IpAddress != null
                     && !_helper.IpAddress.Contains("0.0.0.0"))
                 {
-                    WriteStartUpInfo();
-                }
-
-                if (!_gitInfoSent
-                    && _helper != null
-                    && !string.IsNullOrEmpty(_helper.GitStatus))
-                {
-                    var tracking = _helper.GitStatus
-                                          .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-                                          .FirstOrDefault(l => l.StartsWith("##"));
-
-                    if (!string.IsNullOrEmpty(tracking))
+                    if (!_systemInfoSent)
                     {
-                        var idxStart = tracking.IndexOf('[');
-                        var idxEnd = tracking.IndexOf(']');
-                        if (idxStart > 0 && idxEnd > 0)
-                        {
-                            var info = tracking.Substring(idxStart, idxEnd - idxStart + 1);
+                        WriteStartUpInfo();
+                    }
 
-                            if (info.Contains("behind"))
+                    if (!_gitInfoSent && !string.IsNullOrEmpty(_helper.GitStatus))
+                    {
+                        var tracking = _helper.GitStatus
+                                              .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                                              .FirstOrDefault(l => l.StartsWith("##"));
+
+                        if (!string.IsNullOrEmpty(tracking))
+                        {
+                            var idxStart = tracking.IndexOf('[');
+                            var idxEnd = tracking.IndexOf(']');
+                            if (idxStart > 0 && idxEnd > 0)
                             {
-                                MessageBox.Show("Your local source code is behind origin!", "WARNING",
-                                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                            }
-                            if (info.Contains("gone"))
-                            {
-                                MessageBox.Show("Your local source code is gone from origin!", "WARNING",
-                                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                var info = tracking.Substring(idxStart, idxEnd - idxStart + 1);
+
+                                if (info.Contains("behind"))
+                                {
+                                    MessageBox.Show("Your local source code is behind origin!", "WARNING",
+                                                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                }
+                                if (info.Contains("gone"))
+                                {
+                                    MessageBox.Show("Your local source code is gone from origin!", "WARNING",
+                                                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                }
                             }
                         }
-                    }
 
-                    var failedToFetch = _helper.GitStatus
-                                               .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-                                               .FirstOrDefault(l => l.Contains("is not a git command"));
-                    if (!string.IsNullOrEmpty(failedToFetch))
-                    {
-                        // One of these two commands is required to be run, most likely the first one ...
-                        // git config --global --unset credential.helper
-                        // git config --global credential.helper store
-                        MessageBox.Show(@"Git fetch failed\nYou need to run 'git config --global --unset credential.helper' from a command prompt.", "WARNING");
-                    }
+                        var failedToFetch = _helper.GitStatus
+                                                   .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                                                   .FirstOrDefault(l => l.Contains("is not a git command"));
+                        if (!string.IsNullOrEmpty(failedToFetch))
+                        {
+                            // One of these two commands is required to be run, most likely the first one ...
+                            // git config --global --unset credential.helper
+                            // git config --global credential.helper store
+                            MessageBox.Show(@"Git fetch failed\nYou need to run 'git config --global --unset credential.helper' from a command prompt.", "WARNING");
+                        }
 
-                    WritePrivate("StartUp", "Information", _helper.GitStatus);
-                    _gitInfoSent = true;
+                        WritePrivate("StartUp", "Information", _helper.GitStatus);
+                        _gitInfoSent = true;
+                    }
                 }
             }
         }

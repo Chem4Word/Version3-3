@@ -21,7 +21,7 @@ All unit tests are written with XUnit
 Azure Devops Build must be set to use VS2022 build agent
 
 ## List of NuGet packages
-| Package | Version | Licence | Reference Count |
+| Package | Version | License | Reference Count |
 |--|--|--|--|
 |Azure.Core.Amqp|1.3.0|MIT|2|
 |Azure.Core|1.32.0|MIT|2|

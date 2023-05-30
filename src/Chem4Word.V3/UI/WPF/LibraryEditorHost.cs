@@ -12,6 +12,7 @@ using Chem4Word.Core.UI.Wpf;
 using IChem4Word.Contracts;
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -75,6 +76,8 @@ namespace Chem4Word.UI.WPF
                         editor.OnSelectionChange += OnSelectionChangeLibraryEditorControl;
                     }
                 }
+
+                MinimumSize = new Size(1000, 600);
             }
         }
 

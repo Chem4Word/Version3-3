@@ -8,6 +8,7 @@
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
+using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
 using Chem4Word.Models;
@@ -189,7 +190,8 @@ namespace Chem4Word.UI.WPF
         private void OnClick_DownloadButton(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Clicked");
+
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
             var validated = true;
 
@@ -258,7 +260,7 @@ namespace Chem4Word.UI.WPF
 
                                 DisableControls();
                                 DownloadLibrary(formData);
-                                if (File.Exists(Path.Combine(_downloadPath, $"{library.Id}.zip")))
+                                if (File.Exists(Path.Combine(_downloadPath, $"{library.Name}.zip")))
                                 {
                                     InstallLibrary(library, _downloadPath);
                                 }
@@ -268,11 +270,12 @@ namespace Chem4Word.UI.WPF
                                     if (File.Exists(Path.Combine(_downloadPath, $"{library.Driver}.zip")))
                                     {
                                         InstallDriver(library.Driver, _downloadPath);
+                                        UserInteractions.InformUser("Microsoft Word needs to be restarted to activate the downloaded driver.");
                                     }
                                 }
 
                                 // Once library and driver have been installed add/replace user details in credential store
-                                // Common values required for licence verification by the driver.
+                                // Common values required for license verification by the driver.
                                 CredentialManager.WriteCredential(Chem4WordUser, $"{UserName.Text}<{UserEmail.Text.ToLower()}>", Globals.Chem4WordV3.Helper.MachineId, CredentialPersistence.LocalMachine);
                             }
                             else
@@ -320,13 +323,13 @@ namespace Chem4Word.UI.WPF
         {
             var librariesPath = Path.Combine(Globals.Chem4WordV3.AddInInfo.ProgramDataPath, "Libraries");
 
-            var zipFileName = Path.Combine(downloadPath, $"{library.Id}.zip");
+            var zipFileName = Path.Combine(downloadPath, $"{library.Name}.zip");
             var zipStream = File.OpenRead(zipFileName);
             var archive = new ZipArchive(zipStream);
             archive.ExtractToDirectory(librariesPath);
 
             var librarySource = Path.Combine(librariesPath, $"{library.Id}.db");
-            var libraryDestination = Path.Combine(librariesPath, library.OriginalFileName);
+            var libraryDestination = Path.Combine(librariesPath, $"{library.Name}.db");
 
             // Delete target if it exists
             if (File.Exists(libraryDestination))
@@ -337,7 +340,7 @@ namespace Chem4Word.UI.WPF
             File.Move(librarySource, libraryDestination);
 
             var licenseSource = Path.Combine(librariesPath, $"{library.Id}.lic");
-            var licenseDestination = Path.Combine(librariesPath, library.OriginalFileName).Replace(".db", ".lic");
+            var licenseDestination = Path.Combine(librariesPath, $"{library.Name}.lic");
 
             if (File.Exists(licenseSource))
             {
@@ -347,7 +350,7 @@ namespace Chem4Word.UI.WPF
                     File.Delete(licenseDestination);
                 }
 
-                // Rename licence file
+                // Rename license file
                 File.Move(licenseSource, licenseDestination);
             }
 
@@ -362,8 +365,8 @@ namespace Chem4Word.UI.WPF
                 {
                     Driver = library.Driver,
                     DisplayName = library.Name,
-                    Connection = Path.Combine(librariesPath, library.OriginalFileName),
-                    ShortFileName = library.OriginalFileName
+                    Connection = Path.Combine(librariesPath, $"{library.Name}.db"),
+                    ShortFileName = $"{library.Name}.db"
                 };
                 listOfDetectedLibraries.AvailableDatabases.Add(details);
                 new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
@@ -446,7 +449,7 @@ namespace Chem4Word.UI.WPF
             stopwatch.Stop();
             Debug.WriteLine($"{stopwatch.Elapsed}");
 
-            var downloadedFile = Path.Combine(_downloadPath, $"{formData["library"]}.zip");
+            var downloadedFile = Path.Combine(_downloadPath, $"{formData["LibraryName"]}.zip");
             if (File.Exists(downloadedFile))
             {
                 var fileInfo = new FileInfo(downloadedFile);
@@ -486,7 +489,7 @@ namespace Chem4Word.UI.WPF
             stopwatch.Stop();
             Debug.WriteLine($"{stopwatch.Elapsed}");
 
-            var downloadedFile = Path.Combine(_downloadPath, $"{formData["driver"]}.zip");
+            var downloadedFile = Path.Combine(_downloadPath, $"{formData["Driver"]}.zip");
             if (File.Exists(downloadedFile))
             {
                 var fileInfo = new FileInfo(downloadedFile);
@@ -516,8 +519,21 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_BuyButton(object sender, RoutedEventArgs e)
         {
-            // ToDo: Fire up web site to buy library
-            UserInteractions.AlertUser("Please buy this library ...");
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            try
+            {
+                Process.Start("https://www.chem4word.co.uk/libraries/");
+            }
+            catch (Exception ex)
+            {
+                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                {
+                    form.ShowDialog();
+                }
+            }
         }
 
         private void OnClick_FinishedButton(object sender, RoutedEventArgs e)

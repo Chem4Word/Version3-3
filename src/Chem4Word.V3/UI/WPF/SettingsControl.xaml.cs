@@ -22,6 +22,8 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using Forms = System.Windows.Forms;
 using Point = System.Windows.Point;
 using UserControl = System.Windows.Controls.UserControl;
@@ -54,7 +56,7 @@ namespace Chem4Word.UI.WPF
 
         #region Form Load
 
-        private void SettingsControl_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_SettingsControl(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -74,7 +76,7 @@ namespace Chem4Word.UI.WPF
 
         #region TabControl
 
-        private void TabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_TabControl(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0
                 && e.AddedItems[0] is TabItem item)
@@ -316,6 +318,8 @@ namespace Chem4Word.UI.WPF
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
             var browser = new VistaFolderBrowserDialog();
             browser.Description = "Select a folder to set as your default location";
             browser.UseDescriptionForTitle = true;
@@ -324,34 +328,112 @@ namespace Chem4Word.UI.WPF
             browser.SelectedPath = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
 
             var result = browser.ShowDialog();
-            if (result == Forms.DialogResult.OK)
+            if (result == Forms.DialogResult.OK
+                && Directory.Exists(browser.SelectedPath))
             {
-                if (Directory.Exists(browser.SelectedPath))
-                {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Changed default library path to '{browser.SelectedPath}'");
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Changing default library path to '{browser.SelectedPath}'");
 
-                    DefaultLocation.Text = browser.SelectedPath;
-                    var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                    listOfDetectedLibraries.DefaultLocation = browser.SelectedPath;
-                    new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                        .SaveFile(listOfDetectedLibraries);
-                    ReloadGlobalListOfLibraries();
+                DefaultLocation.Text = browser.SelectedPath;
+                var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                listOfDetectedLibraries.DefaultLocation = browser.SelectedPath;
+                new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                    .SaveFile(listOfDetectedLibraries);
+                ReloadGlobalListOfLibraries();
 
-                    SetLibraryTabButtons();
-                }
+                SetLibraryTabButtons();
             }
         }
 
-        private void SetLibraryTabButtons()
+        private void OnGotFocus_LibraryName(object sender, RoutedEventArgs e)
         {
-            var hasPermission = FileSystemHelper.UserHasWritePermission(Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation);
-            CreateNewLibrary.IsEnabled = hasPermission;
-            DownloadLibrary.IsEnabled = hasPermission;
+            if (sender is TextBox textBox)
+            {
+                SetSelectedLibrary(textBox.Text);
+            }
+        }
+
+        private void OnLostFocus_LibraryName(object sender, RoutedEventArgs e)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            try
+            {
+                if (sender is TextBox textBox)
+                {
+                    var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                    if (listOfDetectedLibraries != null)
+                    {
+                        DatabaseDetails database = null;
+
+                        var oldFileName = string.Empty;
+                        var newFileName = $"{textBox.Text.Trim()}.db";
+
+                        if (textBox.DataContext is LibrariesSettingsGridSource source)
+                        {
+                            database = listOfDetectedLibraries.AvailableDatabases
+                                                              .FirstOrDefault(n => n.ShortFileName.Equals(source.FileName));
+                            if (database != null)
+                            {
+                                oldFileName = database.ShortFileName;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(oldFileName)
+                            && !string.IsNullOrEmpty(newFileName)
+                            && !newFileName.Equals(oldFileName)
+                            && database != null)
+                        {
+                            var fileInfo = new FileInfo(database.Connection);
+
+                            var canRename = !File.Exists(Path.Combine(fileInfo.DirectoryName, newFileName));
+                            var isUnique = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(newFileName.Replace(".db", "")));
+
+                            if (canRename && isUnique == null)
+                            {
+                                File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName), Path.Combine(fileInfo.DirectoryName, newFileName));
+                                if (File.Exists(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic"))))
+                                {
+                                    File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic")), Path.Combine(fileInfo.DirectoryName, newFileName.Replace(".db", ".lic")));
+                                }
+
+                                var selected = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(_selectedLibrary));
+                                if (selected != null && selected.ShortFileName.Equals(oldFileName))
+                                {
+                                    listOfDetectedLibraries.SelectedLibrary = newFileName.Replace(".db", "");
+                                }
+
+                                database.ShortFileName = newFileName;
+                                database.DisplayName = newFileName.Replace(".db", "");
+                                database.Connection = Path.Combine(fileInfo.DirectoryName, newFileName);
+
+                                new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                    .SaveFile(listOfDetectedLibraries);
+                            }
+                            else
+                            {
+                                var message = $"Name clash; Can't rename '{oldFileName}' to '{newFileName}' in '{fileInfo.DirectoryName}'";
+                                Globals.Chem4WordV3.Telemetry.Write(module, "Warning", message);
+                                UserInteractions.WarnUser(message);
+                            }
+
+                            ReloadGlobalListOfLibraries();
+                            LoadLibrariesListTab();
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", exception.Message);
+                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", exception.StackTrace);
+            }
         }
 
         private void OnClick_AddExistingLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
             var browser = new Forms.OpenFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
@@ -380,14 +462,18 @@ namespace Chem4Word.UI.WPF
                         if (info.IsChem4Word && !info.IsReadOnly
                             || info.IsChem4Word && info.IsReadOnly && !info.RequiresPatching)
                         {
+                            details.Driver = GetDriverFromLicense(browser.FileName);
+
                             var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                            var existing = listOfDetectedLibraries.AvailableDatabases
-                                                                  .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
+                            var unique = listOfDetectedLibraries.AvailableDatabases
+                                                                .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
+
                             // Prevent add if there is a name clash
-                            if (existing == null)
+                            if (unique == null)
                             {
                                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Added existing library {details.DisplayName}");
                                 listOfDetectedLibraries.AvailableDatabases.Add(details);
+
                                 new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                                     .SaveFile(listOfDetectedLibraries);
                                 ReloadGlobalListOfLibraries();
@@ -422,6 +508,8 @@ namespace Chem4Word.UI.WPF
         private void OnClick_CreateNewLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
             var browser = new Forms.SaveFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
@@ -481,7 +569,8 @@ namespace Chem4Word.UI.WPF
         private void OnClick_DownloadLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Clicked");
+
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
             var host = new LibraryDownloadHost();
             host.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
@@ -494,30 +583,108 @@ namespace Chem4Word.UI.WPF
         private void OnClick_RemoveLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Removing library '{_selectedLibrary}'");
 
-            var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-            var item = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(r => r.DisplayName.Equals(_selectedLibrary));
-            listOfDetectedLibraries.AvailableDatabases.Remove(item);
-            new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                .SaveFile(listOfDetectedLibraries);
-            ReloadGlobalListOfLibraries();
-            LoadLibrariesListTab();
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            if (LibrariesList.SelectedItem is LibrariesSettingsGridSource library
+                && !library.Name.Equals(_selectedLibrary))
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Removing library '{library.Name}'");
+
+                var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                var item = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(r => r.DisplayName.Equals(library.Name));
+                listOfDetectedLibraries.AvailableDatabases.Remove(item);
+                new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                    .SaveFile(listOfDetectedLibraries);
+                ReloadGlobalListOfLibraries();
+                LoadLibrariesListTab();
+            }
         }
 
         private void OnClick_EditLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{_selectedLibrary}'");
 
-            var editor = new LibraryEditorHost();
-            editor.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
-            editor.Telemetry = Globals.Chem4WordV3.Telemetry;
-            editor.SelectedDatabase = _selectedLibrary;
-            editor.ShowDialog();
+            if (LibrariesList.SelectedItem is LibrariesSettingsGridSource library
+                && !library.Locked.Equals("Yes"))
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{library.Name}'");
 
-            ReloadGlobalListOfLibraries();
-            LoadLibrariesListTab();
+                var editor = new LibraryEditorHost();
+                editor.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
+                editor.Telemetry = Globals.Chem4WordV3.Telemetry;
+                editor.SelectedDatabase = library.Name;
+                editor.ShowDialog();
+
+                ReloadGlobalListOfLibraries();
+                LoadLibrariesListTab();
+            }
+        }
+
+        private string GetUserFromLicense(string filename)
+        {
+            // http://xpather.com/
+            var result = "Required";
+
+            var customerName = string.Empty;
+            var customerEmail = string.Empty;
+
+            // Read driver name from license file if present
+            var licenseFile = filename.Replace(".db", ".lic");
+            if (File.Exists(licenseFile))
+            {
+                var xDocument = XDocument.Parse(File.ReadAllText(licenseFile));
+                var nameElement = xDocument.XPathSelectElements("//Customer/Name").FirstOrDefault();
+                if (nameElement != null)
+                {
+                    customerName = nameElement.Value.Trim();
+                }
+                var emailElement = xDocument.XPathSelectElements("//Customer/Email").FirstOrDefault();
+                if (emailElement != null)
+                {
+                    customerEmail = emailElement.Value.Trim();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(customerName) && !string.IsNullOrEmpty(customerEmail))
+            {
+                result = $"{customerName} <{customerEmail}>";
+            }
+            return result;
+        }
+
+        private string GetDriverFromLicense(string filename)
+        {
+            // // http://xpather.com/
+            var result = Constants.SQLiteStandardDriver;
+
+            // Read driver name from license file if present
+            var licenseFile = filename.Replace(".db", ".lic");
+            if (File.Exists(licenseFile))
+            {
+                var xDocument = XDocument.Parse(File.ReadAllText(licenseFile));
+                var attributes = xDocument.XPathSelectElements("//Attribute").ToList();
+                if (attributes.Any())
+                {
+                    foreach (var element in attributes)
+                    {
+                        if (element.FirstAttribute.Value.Equals("Driver"))
+                        {
+                            result = element.Value.Trim();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private void SetLibraryTabButtons()
+        {
+            var hasPermission = FileSystemHelper.UserHasWritePermission(Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation);
+            CreateNewLibrary.IsEnabled = hasPermission;
+            DownloadLibrary.IsEnabled = hasPermission;
         }
 
         private void SetSelectedLibrary(string selectedLibrary)
@@ -538,18 +705,11 @@ namespace Chem4Word.UI.WPF
             if (e.AddedItems.Count > 0
                 && e.AddedItems[0] is LibrariesSettingsGridSource source)
             {
-                _selectedLibrary = source.Name;
-
                 // Don't allow default database to be removed
                 RemoveLibrary.IsEnabled = !source.IsDefault;
 
-                // Don't allow System database to be edited
-                var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                var database = listOfDetectedLibraries.AvailableDatabases
-                                                      .FirstOrDefault(n => n.DisplayName.Equals(source.Name));
-                var isSystem = GetPropertyValue(database, "Owner", "User").Equals("System");
-
-                EditLibrary.IsEnabled = !isSystem;
+                // Don't allow locked database to be edited
+                EditLibrary.IsEnabled = source.Locked.Equals("No");
             }
         }
 
@@ -725,7 +885,7 @@ namespace Chem4Word.UI.WPF
                         Connection = database.Connection,
                         Count = GetPropertyValue(database, "Count", "?"),
                         Dictionary = false,
-                        License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : "Required",
+                        License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : GetUserFromLicense(database.Connection),
                         IsDefault = isDefault
                     };
                     obj.Locked = database.IsLocked() ? "Yes" : "No";
@@ -761,13 +921,16 @@ namespace Chem4Word.UI.WPF
             return bitmap;
         }
 
-        private string GetPropertyValue(DatabaseDetails details, string key, string defaultValue)
+        private string GetPropertyValue(DatabaseDetails database, string key, string defaultValue)
         {
             string result = defaultValue;
 
-            if (details.Properties.ContainsKey(key))
+            if (database != null)
             {
-                result = details.Properties[key];
+                if (database.Properties.ContainsKey(key))
+                {
+                    result = database.Properties[key];
+                }
             }
 
             return result;

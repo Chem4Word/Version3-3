@@ -252,7 +252,7 @@ namespace Chem4Word.Helpers
                         {
                             var bytes = response.Content.ReadAsByteArrayAsync().Result;
 
-                            using (var writer = new BinaryWriter(File.OpenWrite(Path.Combine(path, $"{formData["library"]}.zip"))))
+                            using (var writer = new BinaryWriter(File.OpenWrite(Path.Combine(path, $"{formData["LibraryName"]}.zip"))))
                             {
                                 writer.Write(bytes);
                                 result.Success = true;
@@ -318,7 +318,7 @@ namespace Chem4Word.Helpers
                         {
                             var bytes = response.Content.ReadAsByteArrayAsync().Result;
 
-                            using (var writer = new BinaryWriter(File.OpenWrite(Path.Combine(path, $"{formData["driver"]}.zip"))))
+                            using (var writer = new BinaryWriter(File.OpenWrite(Path.Combine(path, $"{formData["Driver"]}.zip"))))
                             {
                                 writer.Write(bytes);
                                 result.Success = true;
