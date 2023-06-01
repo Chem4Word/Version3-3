@@ -19,6 +19,8 @@ namespace Chem4Word.Model2.Converters.MDL
     {
         private List<PropertyType> _propertyTypes = null;
 
+        private const int MaximumMolecules = 32;
+
         public SdFileConverter()
         {
             var resource = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "PropertyTypes.json");
@@ -85,11 +87,13 @@ namespace Chem4Word.Model2.Converters.MDL
                                 //Ensure we add the molecule after it's populated
                                 model.AddMolecule(molecule);
                                 molecule.Parent = model;
-                                if (model.Molecules.Count >= 16)
+                                if (model.Molecules.Count > MaximumMolecules)
                                 {
-                                    // Have to add this as a GeneralError as we are not at molecule level here.
-                                    model.GeneralErrors.Add("Warning: This file has greater than 16 structures!");
-                                    model.GeneralErrors.Add("Only the first 16 have been imported.");
+                                    // Have to add this as a GeneralWarnings as we are not at molecule level here.
+                                    model.GeneralWarnings.Add($"Warning: This file has greater than {MaximumMolecules} structures!");
+                                    model.GeneralWarnings.Add($"Only the first {MaximumMolecules} have been imported.");
+
+                                    model.RemoveMolecule(molecule);
                                     sr.ReadToEnd();
                                 }
 

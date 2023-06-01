@@ -46,9 +46,7 @@ namespace Chem4Word.UI
                 }
 
                 display1.Chemistry = Model;
-                var errors = Model.GeneralErrors;
-                errors.AddRange(Model.AllErrors);
-                Errors.Text = String.Join(Environment.NewLine, errors);
+                Errors.Text = String.Join(Environment.NewLine, Model.AllErrors);
                 Warnings.Text = String.Join(Environment.NewLine, Model.AllWarnings);
                 if (Model.AllErrors.Count > 0)
                 {

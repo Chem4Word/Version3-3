@@ -82,7 +82,7 @@ namespace Chem4Word.UI.WPF
                         var parts = temp.Split('|');
                         if (parts.Length == 2)
                         {
-                            UserName.Text = parts[0];
+                            UserName.Text = parts[0].Trim();
                             UserEmail.Text = parts[1].ToLower();
                         }
                     }

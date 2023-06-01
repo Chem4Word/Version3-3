@@ -509,15 +509,11 @@ namespace Chem4Word
                             if (model != null)
                             {
                                 dialogResult = DialogResult.OK;
-                                if (model.GeneralErrors.Count > 0 || model.AllErrors.Count > 0 || model.AllWarnings.Count > 0)
+                                if (model.AllErrors.Count > 0 || model.AllWarnings.Count > 0)
                                 {
                                     if (model.AllErrors.Count > 0)
                                     {
                                         Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.AllErrors));
-                                    }
-                                    if (model.GeneralErrors.Count > 0)
-                                    {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.GeneralErrors));
                                     }
                                     if (model.AllWarnings.Count > 0)
                                     {
@@ -814,7 +810,7 @@ namespace Chem4Word
 
                                         var afterModel = cmlConverter.Import(editor.Cml, used1D);
 
-                                        if (afterModel.GeneralErrors.Count == 0 && afterModel.AllErrors.Count == 0 && afterModel.AllWarnings.Count == 0)
+                                        if (afterModel.AllErrors.Count == 0 && afterModel.AllWarnings.Count == 0)
                                         {
                                             var pc = new WebServices.PropertyCalculator(Globals.Chem4WordV3.Telemetry,
                                                                                         Globals.Chem4WordV3.WordTopLeft,
@@ -966,10 +962,6 @@ namespace Chem4Word
                                         else
                                         {
                                             // Editing aborted due to errors
-                                            if (afterModel.GeneralErrors.Count > 0)
-                                            {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, afterModel.GeneralErrors));
-                                            }
                                             if (afterModel.AllErrors.Count > 0)
                                             {
                                                 Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, afterModel.AllErrors));

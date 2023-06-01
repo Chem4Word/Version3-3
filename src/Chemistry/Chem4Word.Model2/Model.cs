@@ -21,6 +21,17 @@ namespace Chem4Word.Model2
 {
     public class Model : IChemistryContainer, INotifyPropertyChanged
     {
+        private readonly Dictionary<Guid, Molecule> _molecules;
+        public ReadOnlyDictionary<Guid, Molecule> Molecules;
+
+        private readonly Dictionary<Guid, ReactionScheme> _reactionSchemes;
+        public ReadOnlyDictionary<Guid, ReactionScheme> ReactionSchemes;
+
+        private readonly Dictionary<Guid, Annotation> _annotations;
+        public ReadOnlyDictionary<Guid, Annotation> Annotations;
+
+        public string CustomXmlPartGuid { get; set; }
+
         #region Fields
 
         public event NotifyCollectionChangedEventHandler AtomsChanged;
@@ -177,6 +188,9 @@ namespace Chem4Word.Model2
         #region Properties
 
         public bool InhibitEvents { get; set; }
+
+        internal List<string> GeneralErrors { get; }
+        internal List<string> GeneralWarnings { get; }
 
         public Dictionary<string, CrossedBonds> CrossedBonds { get; set; } = new Dictionary<string, CrossedBonds>();
 
@@ -552,20 +566,6 @@ namespace Chem4Word.Model2
             }
         }
 
-        private readonly Dictionary<Guid, Molecule> _molecules;
-
-        //wraps up the above Molecules collection
-        public ReadOnlyDictionary<Guid, Molecule> Molecules;
-
-        private readonly Dictionary<Guid, ReactionScheme> _reactionSchemes;
-        public ReadOnlyDictionary<Guid, ReactionScheme> ReactionSchemes;
-
-        private readonly Dictionary<Guid, Annotation> _annotations;
-        public ReadOnlyDictionary<Guid, Annotation> Annotations;
-        public string CustomXmlPartGuid { get; set; }
-
-        public List<string> GeneralErrors { get; set; }
-
         public void SetXamlBondLength(int bondLength)
         {
             XamlBondLength = bondLength;
@@ -579,6 +579,8 @@ namespace Chem4Word.Model2
             get
             {
                 var list = new List<string>();
+                list.AddRange(GeneralWarnings);
+
                 foreach (var molecule in Molecules.Values)
                 {
                     list.AddRange(molecule.Warnings);
@@ -596,6 +598,8 @@ namespace Chem4Word.Model2
             get
             {
                 var list = new List<string>();
+                list.AddRange(GeneralErrors);
+
                 foreach (var molecule in Molecules.Values)
                 {
                     list.AddRange(molecule.Errors);
@@ -729,6 +733,7 @@ namespace Chem4Word.Model2
             Annotations = new ReadOnlyDictionary<Guid, Annotation>(_annotations);
 
             GeneralErrors = new List<string>();
+            GeneralWarnings = new List<string>();
         }
 
         #endregion Constructors

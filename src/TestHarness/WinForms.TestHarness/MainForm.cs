@@ -141,7 +141,12 @@ namespace WinForms.TestHarness
 
                     if (model != null)
                     {
-                        if (model.GeneralErrors.Count == 0 && model.AllErrors.Count == 0 && model.AllWarnings.Count == 0)
+                        if (model.AllWarnings.Count > 0)
+                        {
+                            MessageBox.Show(string.Join(Environment.NewLine, model.AllWarnings), "Model has warnings!");
+                        }
+
+                        if (model.AllErrors.Count == 0)
                         {
                             var originalBondLength = model.MeanBondLength;
                             model.EnsureBondLength(20, false);
@@ -173,11 +178,7 @@ namespace WinForms.TestHarness
                         }
                         else
                         {
-                            var errors = model.GeneralErrors;
-                            errors.AddRange(model.AllErrors);
-                            errors.AddRange(model.AllWarnings);
-
-                            MessageBox.Show(string.Join(Environment.NewLine, errors), "Model has errors or warnings!");
+                            MessageBox.Show(string.Join(Environment.NewLine, model.AllErrors), "Model has errors!");
                         }
                     }
                 }
@@ -394,19 +395,13 @@ namespace WinForms.TestHarness
 
             if (model != null)
             {
-                if (model.AllErrors.Any() || model.AllWarnings.Any())
+                if (model.AllErrors.Any())
                 {
-                    List<string> lines = new List<string>();
+                    var lines = new List<string>();
                     if (model.AllErrors.Any())
                     {
                         lines.Add("Error(s)");
                         lines.AddRange(model.AllErrors);
-                    }
-
-                    if (model.AllWarnings.Any())
-                    {
-                        lines.Add("Warnings(s)");
-                        lines.AddRange(model.AllWarnings);
                     }
 
                     MessageBox.Show(string.Join(Environment.NewLine, lines));
@@ -926,7 +921,7 @@ namespace WinForms.TestHarness
             }
 
             Model model = cc.Import(cml);
-            if (model.GeneralErrors.Count == 0 && model.AllErrors.Count == 0 && model.AllWarnings.Count == 0)
+            if (model.AllErrors.Count == 0 && model.AllWarnings.Count == 0)
             {
                 model.Relabel(true);
                 model.EnsureBondLength(20, false);
@@ -942,9 +937,8 @@ namespace WinForms.TestHarness
             }
             else
             {
-                var errors = model.GeneralErrors;
+                var errors = model.AllWarnings;
                 errors.AddRange(model.AllErrors);
-                errors.AddRange(model.AllWarnings);
 
                 MessageBox.Show(string.Join(Environment.NewLine, errors), "Model has errors or warnings!");
             }

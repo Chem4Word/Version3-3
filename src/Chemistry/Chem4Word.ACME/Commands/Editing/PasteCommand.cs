@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Windows;
 using Chem4Word.Model2;
@@ -55,14 +56,14 @@ namespace Chem4Word.ACME.Commands.Editing
                 if (failedCML)
                 {
                     buffer = sdfConverter.Import(pastedText);
-                    failedSDF = buffer.GeneralErrors.Any();
+                    failedSDF = buffer.AllErrors.Any();
                 }
 
-                if (failedCML & failedSDF)
+                if (failedCML && failedSDF)
                 {
-                    if (buffer.GeneralErrors.Any())
+                    if (buffer.AllErrors.Any())
                     {
-                        Chem4Word.Core.UserInteractions.InformUser("Unable to paste text as chemistry: " + buffer.GeneralErrors[0]);
+                        Chem4Word.Core.UserInteractions.InformUser("Unable to paste text as chemistry: " + Environment.NewLine + string.Join(Environment.NewLine, buffer.AllErrors));
                     }
                     else
                     {
