@@ -482,8 +482,19 @@ namespace Chem4Word.UI.WPF
             }
         }
 
+        private void ClearSelectedChemistryItem()
+        {
+            CatalogueItems.SelectedItem = null;
+            if (CatalogueItems.DataContext is LibraryEditorViewModel lvm)
+            {
+                lvm.SelectedChemistryObject = null;
+            }
+        }
+
         private void ClearFilter()
         {
+            ClearSelectedChemistryItem();
+
             //get the view from the listbox's source
             var view = (ListCollectionView)CollectionViewSource.GetDefaultView(CatalogueItems.ItemsSource);
 
@@ -493,6 +504,8 @@ namespace Chem4Word.UI.WPF
 
         private void FilterByText()
         {
+            ClearSelectedChemistryItem();
+
             //get the view from the listbox's source
             var view = (ListCollectionView)CollectionViewSource.GetDefaultView(CatalogueItems.ItemsSource);
 
@@ -518,6 +531,8 @@ namespace Chem4Word.UI.WPF
 
         private void FilterByChecked()
         {
+            ClearSelectedChemistryItem();
+
             //get the view from the listbox's source
             var view = (ListCollectionView)CollectionViewSource.GetDefaultView(CatalogueItems.ItemsSource);
 
