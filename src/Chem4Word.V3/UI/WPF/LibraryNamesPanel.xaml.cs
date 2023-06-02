@@ -75,9 +75,12 @@ namespace Chem4Word.UI.WPF
         {
             TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
 
-            var captionNode = namesTree.Items[2] as TreeViewItem;
+            if (namesTree.Items.Count > 3)
+            {
+                var captionNode = namesTree.Items[2] as TreeViewItem;
 
-            LoadNames(captionNode, listParam);
+                LoadNames(captionNode, listParam);
+            }
         }
 
         private static void FormulaeListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -89,9 +92,12 @@ namespace Chem4Word.UI.WPF
         private static void ReloadFormulaeList(List<ChemistryNameDataObject> listParam, DependencyObject d)
         {
             TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
-            var formulaNode = namesTree.Items[1] as TreeViewItem;
+            if (namesTree.Items.Count > 2)
+            {
+                var formulaNode = namesTree.Items[1] as TreeViewItem;
 
-            LoadNames(formulaNode, listParam);
+                LoadNames(formulaNode, listParam);
+            }
         }
 
         private static void NamesListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -103,8 +109,11 @@ namespace Chem4Word.UI.WPF
         private static void ReloadNamesList(List<ChemistryNameDataObject> listParam, DependencyObject d)
         {
             TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
-            TreeViewItem nameNode = namesTree.Items[0] as TreeViewItem;
-            LoadNames(nameNode, listParam);
+            if (namesTree.Items.Count > 1)
+            {
+                TreeViewItem nameNode = namesTree.Items[0] as TreeViewItem;
+                LoadNames(nameNode, listParam);
+            }
         }
 
         private static void LoadNames(TreeViewItem nameNode, List<ChemistryNameDataObject> listParam)
@@ -200,7 +209,6 @@ namespace Chem4Word.UI.WPF
                             subscript.FontSize -= 2;
                             textBlock.Inlines.Add(subscript);
                         }
-
                         break;
 
                     case FormulaPartType.Charge:

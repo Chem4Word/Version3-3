@@ -35,14 +35,19 @@ namespace Chem4Word.WebServices
             _version = version;
         }
 
-        public int CalculateProperties(Model inputModel)
+        public int CalculateProperties(Model inputModel, bool showProgress = true)
         {
             string module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Progress pb = new Progress();
-            pb.TopLeft = _parentTopLeft;
-            pb.Value = 0;
-            pb.Maximum = 1;
+            Progress pb = null;
+
+            if (showProgress)
+            {
+                pb = new Progress();
+                pb.TopLeft = _parentTopLeft;
+                pb.Value = 0;
+                pb.Maximum = 1;
+            }
 
             int changed = 0;
 
@@ -101,9 +106,12 @@ namespace Chem4Word.WebServices
                 }
             }
 
-            pb.Show();
-            pb.Increment(1);
-            pb.Message = $"Calculating InChiKey and Resolving Names using Chem4Word Web Service for {tempModel.Molecules.Count} molecules";
+            if (showProgress)
+            {
+                pb.Show();
+                pb.Increment(1);
+                pb.Message = $"Calculating InChiKey and Resolving Names using Chem4Word Web Service for {tempModel.Molecules.Count} molecules";
+            }
 
             var molConverter = new SdFileConverter();
             var sdfile = molConverter.Export(tempModel);
@@ -152,9 +160,12 @@ namespace Chem4Word.WebServices
                 }
             }
 
-            pb.Value = 0;
-            pb.Hide();
-            pb.Close();
+            if (showProgress)
+            {
+                pb.Value = 0;
+                pb.Hide();
+                pb.Close();
+            }
 
             return changed;
         }

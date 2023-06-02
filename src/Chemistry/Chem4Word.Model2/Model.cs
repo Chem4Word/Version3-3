@@ -440,7 +440,8 @@ namespace Chem4Word.Model2
                     // not numeric
                     if (!long.TryParse(name.Value, out _))
                     {
-                        if (!name.Value.Contains("-"))
+                        if (!name.Value.ToLower().Equals("not found")
+                            && !name.Value.Contains("-"))
                         {
                             result = name.Value;
                             break;

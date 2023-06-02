@@ -380,9 +380,9 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     EndAtomInternalId = atomLookup[bond.EndAtomID].InternalId,
                     StartAtomInternalId = atomLookup[bond.StartAtomID].InternalId,
                     Order = bond.Order,
-                    //need to add placement here
                     Stereo = (Enums.BondStereo)bond.Stereo,
                     Parent = newMol,
+                    // ToDo: Need to add placement here
                     ExplicitPlacement = (Enums.BondDirection?)bond.Placement
                 };
 

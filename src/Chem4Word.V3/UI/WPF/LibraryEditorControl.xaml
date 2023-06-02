@@ -9,7 +9,7 @@
     xmlns:wpf="clr-namespace:Chem4Word.UI.WPF"
     xmlns:wpfToolkit="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
     Name="EditorControl"
-    controls:ChemistryItem.ChemistryItemButtonClick="OnChemistryItem_ButtonClick"
+    controls:ChemistryItem.ChemistryItemButtonClick="OnClick_ChemistryItem"
     d:DesignHeight="600"
     d:DesignWidth="800"
     FontFamily="Segoe UI"
@@ -45,28 +45,31 @@
                 </Style.Triggers>
             </Style>
             <Style x:Key="AddButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128Z" />
-            </Style>
-            <Style x:Key="ImportButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="m 9.797016 24.88902 1.777001 -0.916 3.28399 6.374978 h 8.153022 l 7.211995 -14 -7.211988 -13.999987 h -8.15302 L 12.041014 7.817988 10.263013 6.901991 13.360015 0.890017 c 0.171 -0.332999 0.515001 -0.541996 0.889001 -0.541996 h 0.548005 l 8.823016 -2.3e-5 c 0.373992 0 0.717986 0.209045 0.888976 0.541992 l 7.727986 15 c 0.074 0.144043 0.111021 0.301025 0.111021 0.458008 0 0.157043 -0.03702 0.314026 -0.111021 0.458008 l -7.727986 15 c -0.17099 0.333008 -0.514984 0.541992 -0.888976 0.541992 h -0.548015 l -8.823004 2.2e-5 c -0.374 0 -0.718 -0.209 -0.889 -0.542 z m -7.777574 -8.541 4.631883 4.962893 v -2.462947 c 0 -0.552988 0.446988 -0.999979 0.999975 -0.999979 h 8.999771 V 14.848051 H 7.6513 c -0.552987 0 -0.999975 -0.446989 -0.999975 -0.999977 v -2.462948 z m -2.36744 0 c 0 -0.245244 0.0895 -0.490489 0.268494 -0.682985 L 6.920318 8.165196 C 7.200311 7.866202 7.6353 7.767205 8.01829 7.917202 8.400281 8.069199 8.651274 8.437189 8.651274 8.848181 v 3.999914 h 8.999772 c 0.552986 0 0.999975 0.446991 0.999974 0.999979 v 4.999892 c 1e-6 0.552988 -0.446988 0.999978 -0.999974 0.999978 H 8.651274 v 3.999915 c 0 0.41099 -0.250993 0.778982 -0.632984 0.930979 -0.38299 0.149997 -0.817979 0.051 -1.097972 -0.247995 l -6.999822 -7.499838 c -0.178995 -0.192496 -0.268494 -0.43774 -0.268494 -0.682985 z" />
-            </Style>
-            <Style x:Key="ExportButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M 22.203006 7.8069983 20.426005 8.7229982 17.142015 2.3480201 H 8.988993 L 1.776998 16.34802 8.988986 30.348007 h 8.15302 l 2.817002 -5.469977 1.778001 0.915997 -3.097002 6.011974 c -0.171 0.332999 -0.515001 0.541996 -0.889001 0.541996 h -0.548005 l -8.823016 2.3e-5 c -0.373992 0 -0.717986 -0.209045 -0.888976 -0.541992 l -7.727986 -15 c -0.074003 -0.144043 -0.111021 -0.301025 -0.111021 -0.458008 0 -0.157043 0.037018 -0.314026 0.111021 -0.458008 L 7.491009 0.89001225 C 7.661999 0.55700449 8.005993 0.34802012 8.379985 0.34802041 H 8.928 l 8.823004 -2.241e-5 c 0.374 1.4e-7 0.718 0.20900014 0.889 0.54200012 z m 7.777574 8.5409997 -4.631883 -4.962893 v 2.462947 c 0 0.552988 -0.446988 0.999979 -0.999975 0.999979 h -8.999771 v 2.999936 h 8.999771 c 0.552987 0 0.999975 0.446989 0.999975 0.999977 v 2.462948 z m 2.36744 0 c 0 0.245244 -0.0895 0.490489 -0.268494 0.682985 l -6.999822 7.499839 c -0.279993 0.298994 -0.714982 0.397991 -1.097972 0.247994 -0.381991 -0.151997 -0.632984 -0.519987 -0.632984 -0.930979 v -3.999914 h -8.999772 c -0.552986 0 -0.999975 -0.446991 -0.999974 -0.999979 v -4.999892 c -1e-6 -0.552988 0.446988 -0.999978 0.999974 -0.999978 h 8.999772 V 8.8481594 c 0 -0.4109908 0.250993 -0.7789827 0.632984 -0.9309798 0.38299 -0.1499967 0.817979 -0.050999 1.097972 0.2479949 l 6.999822 7.4998385 c 0.178995 0.192496 0.268494 0.43774 0.268494 0.682985 z" />
-            </Style>
-            <Style x:Key="DeleteButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M16,8.0000272L18,8.0000272 18,27.000028 16,27.000028z M11,8.0000272L13,8.0000272 13,27.000028 11,27.000028z M6.0000005,8.0000272L8.0000005,8.0000272 8.0000005,27.000028 6.0000005,27.000028z M2.9990063,5.0000274L2.9990063,30.000026 20.999983,30.000026 20.999006,5.0000274z M13.771989,1.9959999L10.198989,2.0000001C10.158989,2.025,9.9989892,2.241,9.9989892,2.6000001L9.9989892,3.0000258 13.998989,3.0000258 13.998989,2.6000001C13.998989,2.241,13.838988,2.025,13.771989,1.9959999z M10.198989,0L13.798988,0C15.031989,0,15.998989,1.142,15.998989,2.6000001L15.998989,3.0000258 22.999006,3.0000258 24,3.0000272 24,5.0000274 22.999006,5.0000274 22.999006,30.000026C22.999006,31.102992,22.102034,32.000026,20.999006,32.000026L2.9990063,32.000026C1.895979,32.000026,0.99900633,31.102992,0.9990066,30.000026L0.9990066,5.0000274 0,5.0000274 0,3.0000272 0.9990066,3.0000272 7.9989887,3.0000258 7.9989887,2.6000001C7.9989887,1.142,8.9659887,0,10.198989,0z" />
+                <Setter Property="Data" Value="M20.7,7C21.1,6.6 21.1,6 20.7,5.6L18.4,3.3C18,2.9 17.4,2.9 17,3.3L15.2,5.1L19,8.9M3,17.2V21H6.8L17.8,9.9L14.1,6.1L3,17.2M7,2V5H10V7H7V10H5V7H2V5H5V2H7Z" />
             </Style>
             <Style x:Key="MetadataButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M12.366862,10.774799L14.893845,13.104838 11.987868,13.718797z M9.5078984,4.0927289L15.538827,4.0927289 13.340851,6.4467552 9.6628953,6.4467552 9.5039006,11.579799C9.5039006,11.579799,9.2989007,14.973814,5.5589333,14.563837L2.3529726,14.4768 2.3529726,29.05897C2.3529726,29.383986,2.6179693,29.646989,2.9429627,29.646989L19.417801,29.646989C19.740795,29.646989,20.005791,29.383986,20.005791,29.05897L20.005791,11.568813 22.360764,9.1947668 22.360764,29.05897C22.360764,30.683985,21.042784,31.999976,19.417801,31.999976L2.9429627,31.999976C1.3179796,31.999976,-1.4742E-08,30.683985,0,29.05897L0,14.124807 1.1649814,12.895791 1.1669803,12.861794 7.2719131,6.4467552 7.2549153,6.4467552 5.6229282,8.1687563 7.3339244,6.357765 7.3569194,6.357765 7.4119111,6.3007577 7.4159241,6.3007577z M18.761801,2.489686L22.867762,6.2787235 17.798813,11.773771 17.712816,10.903767 16.359833,10.443803 16.321823,9.5227735 14.971847,9.1647985 14.809846,8.1257875 13.691846,7.9827802z M21.579765,0.00070960087C21.76177,0.0076677515,21.931767,0.07071767,22.063768,0.19169036L24.973744,2.8767135C25.326737,3.2027056,25.280731,3.8277116,24.86974,4.2717464L24.312738,4.8767326 20.123787,1.0126822 20.68178,0.40769602C20.937773,0.1296782,21.275768,-0.011314364,21.579765,0.00070960087z" />
+                <Setter Property="Data" Value="M6.5 10C7.3 10 8 9.3 8 8.5S7.3 7 6.5 7 5 7.7 5 8.5 5.7 10 6.5 10M9 6L16 13L11 18L4 11V6H9M9 4H4C2.9 4 2 4.9 2 6V11C2 11.6 2.2 12.1 2.6 12.4L9.6 19.4C9.9 19.8 10.4 20 11 20S12.1 19.8 12.4 19.4L17.4 14.4C17.8 14 18 13.5 18 13C18 12.4 17.8 11.9 17.4 11.6L10.4 4.6C10.1 4.2 9.6 4 9 4M13.5 5.7L14.5 4.7L21.4 11.6C21.8 12 22 12.5 22 13S21.8 14.1 21.4 14.4L16 19.8L15 18.8L20.7 13L13.5 5.7Z" />
+            </Style>
+            <Style x:Key="ImportButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M14,12L10,8V11H2V13H10V16M20,18V6C20,4.89 19.1,4 18,4H6A2,2 0 0,0 4,6V9H6V6H18V18H6V15H4V18A2,2 0 0,0 6,20H18A2,2 0 0,0 20,18Z" />
+            </Style>
+            <Style x:Key="ExportButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M23,12L19,8V11H10V13H19V16M1,18V6C1,4.89 1.9,4 3,4H15A2,2 0 0,1 17,6V9H15V6H3V18H15V15H17V18A2,2 0 0,1 15,20H3A2,2 0 0,1 1,18Z" />
+            </Style>
+            <Style x:Key="CalculatorButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M7,2H17A2,2 0 0,1 19,4V20A2,2 0 0,1 17,22H7A2,2 0 0,1 5,20V4A2,2 0 0,1 7,2M7,4V8H17V4H7M7,10V12H9V10H7M11,10V12H13V10H11M15,10V12H17V10H15M7,14V16H9V14H7M11,14V16H13V14H11M15,14V16H17V14H15M7,18V20H9V18H7M11,18V20H13V18H11M15,18V20H17V18H15Z" />
+            </Style>
+            <Style x:Key="DeleteButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
             </Style>
             <Style x:Key="SearchButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M 19.166959 4.5889625 c 3.79103 0 7.083035 2.5930028 7.482023 6.0849565 0.398988 3.690988 -2.594004 7.082967 -6.783045 7.381976 -4.190019 0.398985 -7.881011 -2.295 -8.28 -6.084956 -0.39905 -3.6909885 2.592966 -7.0829672 6.782985 -7.3819765 z M 19.266936 0 C 18.867947 -2.0158268e-7 18.368922 -2.0158268e-7 17.969933 0.10000526 10.986936 0.6979938 5.8998808 6.2849674 6.5978808 12.568927 c 0.299013 2.194995 1.197025 4.189979 2.594003 5.885953 l -8.480012 9.07795 c -1.096989 1.097009 -0.896977 2.892988 0.398988 3.789987 1.297003 0.997978 3.193005 0.798001 4.290057 -0.299009 l 8.5790112 -9.276955 c 1.995003 0.797999 4.190018 1.197014 6.58401 0.997004 C 27.546996 22.145869 32.633991 16.559901 31.93599 10.274934 31.237989 4.3889822 25.650993 -2.0158268e-7 19.266936 0 Z" />
+                <Setter Property="Data" Value="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
             </Style>
-            <Style x:Key="DelButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="F1 M 0,7.89185L 2.65756,4.4368L 0.181,1.25839L 2.38931,0L 4.49869,2.51559L 6.72134,0L 8.78256,1.25839L 6.38541,4.33398L 9.15366,7.89185L 6.92319,9.15292L 4.49869,6.31573L 2.05209,9.15292L 0,7.89185 Z" />
+            <Style x:Key="ClearSearchButtonPath" TargetType="Path">
+                <Setter Property="Data" Value="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" />
             </Style>
             <Style x:Key="CheckedButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M25.085272,8.2189964C25.59701,8.2189963 26.108748,8.4142508 26.499243,8.8047599 27.280232,9.5857784 27.280232,10.852797 26.499243,11.632808L13.201567,24.926997 5.6967307,17.474881C4.9127519,16.696884 4.9087237,15.430873 5.6867214,14.646833 6.4647191,13.862824 7.7306819,13.857819 8.5146611,14.636854L13.191558,19.28091 23.671303,8.8047599C24.061797,8.4142508,24.573534,8.2189963,25.085272,8.2189964z M2,2L2,29.999999 30,29.999999 30,2z M0,0L32,0 32,31.999999 0,31.999999z" />
+                <Setter Property="Data" Value="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,5V19H5V5H19M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9" />
             </Style>
             <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
                 <!--
@@ -106,7 +109,7 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Background="{StaticResource FormBackground}">
+    <Grid d:IsLocked="True" Background="{StaticResource FormBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -115,25 +118,29 @@
         <ToolBar
             Height="40"
             HorizontalContentAlignment="Stretch"
+            d:IsLocked="True"
             Background="{StaticResource FormBackground}"
             OverflowMode="Never">
             <Button
                 x:Name="AddButton"
                 Grid.Column="0"
+                d:IsLocked="True"
                 Click="OnClick_AddNewButton"
                 Style="{StaticResource NavButtonStyle}"
                 ToolTip="Add new structure">
                 <Button.Content>
-                    <Viewbox Stretch="Uniform">
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
                         <Canvas
                             Width="32"
                             Height="32"
+                            d:IsLocked="True"
                             ClipToBounds="True">
                             <Path
                                 Canvas.Left="4"
                                 Canvas.Top="4"
                                 Width="24"
                                 Height="24"
+                                d:IsLocked="True"
                                 Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Fill"
                                 Style="{StaticResource AddButtonPath}" />
@@ -143,20 +150,23 @@
             </Button>
             <Button
                 x:Name="MetadataButton"
+                d:IsLocked="True"
                 Click="OnClick_MetadataButton"
                 Style="{StaticResource NavButtonStyle}"
                 ToolTip="Edit metadata">
                 <Button.Content>
-                    <Viewbox Stretch="Uniform">
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
                         <Canvas
                             Width="32"
                             Height="32"
+                            d:IsLocked="True"
                             ClipToBounds="True">
                             <Path
                                 Canvas.Left="4"
                                 Canvas.Top="4"
                                 Width="24"
                                 Height="24"
+                                d:IsLocked="True"
                                 Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Fill"
                                 Style="{StaticResource MetadataButtonPath}" />
@@ -165,44 +175,24 @@
                 </Button.Content>
             </Button>
             <Button
-                x:Name="ExportButton"
-                Click="OnClick_ExportButton"
-                Style="{StaticResource NavButtonStyle}"
-                ToolTip="Export structures">
-                <Button.Content>
-                    <Viewbox Stretch="Uniform">
-                        <Canvas
-                            Width="32"
-                            Height="32"
-                            ClipToBounds="True">
-                            <Path
-                                Canvas.Left="4"
-                                Canvas.Top="4"
-                                Width="24"
-                                Height="24"
-                                Fill="{StaticResource Chem4WordBlue}"
-                                Stretch="Fill"
-                                Style="{StaticResource ExportButtonPath}" />
-                        </Canvas>
-                    </Viewbox>
-                </Button.Content>
-            </Button>
-            <Button
                 x:Name="ImportButton"
+                d:IsLocked="True"
                 Click="OnClick_ImportButton"
                 Style="{StaticResource NavButtonStyle}"
                 ToolTip="Import structures">
                 <Button.Content>
-                    <Viewbox Stretch="Uniform">
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
                         <Canvas
                             Width="32"
                             Height="32"
+                            d:IsLocked="True"
                             ClipToBounds="True">
                             <Path
                                 Canvas.Left="4"
                                 Canvas.Top="4"
                                 Width="24"
                                 Height="24"
+                                d:IsLocked="True"
                                 Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Fill"
                                 Style="{StaticResource ImportButtonPath}" />
@@ -211,22 +201,77 @@
                 </Button.Content>
             </Button>
             <Button
-                x:Name="DeleteButton"
-                Click="OnClick_DeleteButton"
-                IsEnabled="False"
+                x:Name="ExportButton"
+                d:IsLocked="True"
+                Click="OnClick_ExportButton"
                 Style="{StaticResource NavButtonStyle}"
-                ToolTip="Delete selected items">
+                ToolTip="Export structures">
                 <Button.Content>
-                    <Viewbox Stretch="Uniform">
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
                         <Canvas
                             Width="32"
                             Height="32"
+                            d:IsLocked="True"
                             ClipToBounds="True">
                             <Path
                                 Canvas.Left="4"
                                 Canvas.Top="4"
                                 Width="24"
                                 Height="24"
+                                d:IsLocked="True"
+                                Fill="{StaticResource Chem4WordBlue}"
+                                Stretch="Fill"
+                                Style="{StaticResource ExportButtonPath}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+            <Button
+                x:Name="CalculateButton"
+                d:IsLocked="True"
+                Click="OnClick_CalculateButton"
+                Style="{StaticResource NavButtonStyle}"
+                ToolTip="Calculate properties">
+                <Button.Content>
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
+                        <Canvas
+                            Width="32"
+                            Height="32"
+                            d:IsLocked="True"
+                            ClipToBounds="True">
+                            <Path
+                                Canvas.Left="4"
+                                Canvas.Top="4"
+                                Width="24"
+                                Height="24"
+                                d:IsLocked="True"
+                                Fill="{StaticResource Chem4WordBlue}"
+                                Stretch="Fill"
+                                Style="{StaticResource CalculatorButtonPath}" />
+                        </Canvas>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+            <Button
+                x:Name="DeleteButton"
+                d:IsLocked="True"
+                Click="OnClick_DeleteButton"
+                IsEnabled="False"
+                Style="{StaticResource NavButtonStyle}"
+                ToolTip="Delete selected items">
+                <Button.Content>
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
+                        <Canvas
+                            Width="32"
+                            Height="32"
+                            d:IsLocked="True"
+                            ClipToBounds="True">
+                            <Path
+                                Canvas.Left="4"
+                                Canvas.Top="4"
+                                Width="24"
+                                Height="24"
+                                d:IsLocked="True"
                                 Fill="{StaticResource Chem4WordBlue}"
                                 Stretch="Fill"
                                 Style="{StaticResource DeleteButtonPath}" />
@@ -234,11 +279,12 @@
                     </Viewbox>
                 </Button.Content>
             </Button>
-            <Separator />
+            <Separator d:IsLocked="True" />
             <Slider
                 Name="Slider"
                 Width="100"
                 Margin="5,0,5,0"
+                d:IsLocked="True"
                 Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
                 IsSnapToTickEnabled="True"
                 Maximum="500"
@@ -247,13 +293,14 @@
                 TickPlacement="BottomRight"
                 ValueChanged="OnValueChanged_Slider"
                 Value="200" />
-            <Separator />
+            <Separator d:IsLocked="True" />
             <ComboBox
                 Name="ComboBox"
                 Width="Auto"
                 Margin="5,0,5,0"
                 HorizontalAlignment="Left"
                 VerticalContentAlignment="Center"
+                d:IsLocked="True"
                 Background="White"
                 BorderThickness="0"
                 Foreground="{DynamicResource Chem4WordBlue}"
@@ -268,26 +315,27 @@
                     <!--  selected text  -->
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White" />
                 </ComboBox.Resources>
-                <ComboBoxItem>Name</ComboBoxItem>
-                <ComboBoxItem>MolecularWeight</ComboBoxItem>
-                <ComboBoxItem>Id</ComboBoxItem>
+                <ComboBoxItem d:IsLocked="True">Name</ComboBoxItem>
+                <ComboBoxItem d:IsLocked="True">MolecularWeight</ComboBoxItem>
+                <ComboBoxItem d:IsLocked="True">Id</ComboBoxItem>
             </ComboBox>
-            <Separator />
+            <Separator d:IsLocked="True" />
             <!--  The width of this next grid out to fill the rest of the toolbar  -->
-            <Grid Width="300">
+            <Grid Width="300" d:IsLocked="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Grid>
+                <Grid d:IsLocked="True">
                     <TextBox
                         Name="SearchBox"
                         Grid.Column="0"
                         Margin="0,0,24,0"
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
+                        d:IsLocked="True"
                         BorderThickness="0"
                         Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
                         KeyDown="OnKeyDown_SearchBox"
@@ -296,6 +344,7 @@
                     <TextBlock
                         Margin="2,2"
                         VerticalAlignment="Center"
+                        d:IsLocked="True"
                         Foreground="LightSteelBlue"
                         IsHitTestVisible="False"
                         Text="Filter ..."
@@ -306,24 +355,27 @@
                         Height="24"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
+                        d:IsLocked="True"
                         Click="OnClick_ClearButton"
                         IsEnabled="False"
                         Style="{StaticResource NavButtonStyle}"
                         ToolTip="Clear filter">
                         <Button.Content>
-                            <Viewbox Stretch="Uniform">
+                            <Viewbox d:IsLocked="True" Stretch="Uniform">
                                 <Canvas
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     ClipToBounds="True">
                                     <Path
                                         Canvas.Left="2"
                                         Canvas.Top="2"
                                         Width="20"
                                         Height="20"
+                                        d:IsLocked="True"
                                         Fill="{StaticResource Chem4WordBlue}"
                                         Stretch="Fill"
-                                        Style="{StaticResource DelButtonPath}" />
+                                        Style="{StaticResource ClearSearchButtonPath}" />
                                 </Canvas>
                             </Viewbox>
                         </Button.Content>
@@ -332,21 +384,24 @@
                 <Button
                     x:Name="SearchButton"
                     Grid.Column="2"
+                    d:IsLocked="True"
                     Click="OnClick_SearchButton"
                     IsEnabled="False"
                     Style="{StaticResource NavButtonStyle}"
                     ToolTip="Apply filter">
                     <Button.Content>
-                        <Viewbox Stretch="Uniform">
+                        <Viewbox d:IsLocked="True" Stretch="Uniform">
                             <Canvas
                                 Width="32"
                                 Height="32"
+                                d:IsLocked="True"
                                 ClipToBounds="True">
                                 <Path
                                     Canvas.Left="4"
                                     Canvas.Top="4"
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Fill"
                                     Style="{StaticResource SearchButtonPath}" />
@@ -360,21 +415,24 @@
                     Width="32"
                     Height="32"
                     Margin="0,1"
+                    d:IsLocked="True"
                     Click="OnClick_CheckedFilterButton"
                     IsEnabled="False"
                     Style="{StaticResource ToggleButtonStyle}"
                     ToolTip="Show Checked Items">
                     <ToggleButton.Content>
-                        <Viewbox Stretch="Uniform">
+                        <Viewbox d:IsLocked="True" Stretch="Uniform">
                             <Canvas
                                 Width="32"
                                 Height="32"
+                                d:IsLocked="True"
                                 ClipToBounds="True">
                                 <Path
                                     Canvas.Left="4"
                                     Canvas.Top="4"
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Fill"
                                     Style="{StaticResource CheckedButtonPath}" />
@@ -384,7 +442,10 @@
                 </ToggleButton>
             </Grid>
         </ToolBar>
-        <Grid Name="MainDisplayArea" Grid.Row="1">
+        <Grid
+            Name="MainDisplayArea"
+            Grid.Row="1"
+            d:IsLocked="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" MinWidth="200" />
                 <ColumnDefinition Width="5" />
@@ -394,6 +455,7 @@
                 Name="CatalogueItems"
                 Grid.Column="0"
                 MinWidth="225"
+                d:IsLocked="True"
                 Grid.IsSharedSizeScope="True"
                 ItemContainerStyle="{StaticResource SimpleListBoxItem}"
                 ItemsSource="{Binding Mode=OneWay, Path=ChemistryItems}"
@@ -458,17 +520,19 @@
                 Grid.Column="1"
                 Width="5"
                 HorizontalAlignment="Center"
+                d:IsLocked="True"
                 Background="{x:Static SystemColors.ActiveCaptionBrush}" />
             <Grid
                 Name="NamesPanelGrid"
                 Grid.Column="2"
-                Width="Auto">
+                Width="Auto"
+                d:IsLocked="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
+                <Grid Grid.Row="0" d:IsLocked="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -476,6 +540,7 @@
                 </Grid>
                 <Grid
                     Grid.Row="1"
+                    d:IsLocked="True"
                     Background="{StaticResource FormBackground}"
                     IsSharedSizeScope="True">
                     <Grid.ColumnDefinitions>
@@ -494,35 +559,44 @@
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
+                        d:IsLocked="True"
                         Style="{StaticResource DefaultLabelStyle}">
                         Name
                     </TextBlock>
                     <TextBox
+                        x:Name="NameTextBox"
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="5"
+                        d:IsLocked="True"
                         Text="{Binding Mode=TwoWay, Path=SelectedChemistryObject.Name}" />
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
+                        d:IsLocked="True"
                         Style="{StaticResource DefaultLabelStyle}">
                         Formula
                     </TextBlock>
                     <controls:FormulaBlock
+                        x:Name="FormulaBlock"
                         Grid.Row="1"
                         Grid.Column="1"
+                        d:IsLocked="True"
                         Foreground="Black"
                         Formula="{Binding Path=SelectedChemistryObject.Formula}"
                         Style="{StaticResource DefaultLabelStyle}" />
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="0"
+                        d:IsLocked="True"
                         Style="{StaticResource DefaultLabelStyle}">
                         Mol. Weight
                     </TextBlock>
                     <TextBlock
+                        x:Name="MolWeight"
                         Grid.Row="2"
                         Grid.Column="1"
+                        d:IsLocked="True"
                         Foreground="Black"
                         Style="{StaticResource DefaultLabelStyle}"
                         TargetUpdated="OnSelectedItemChanged"
@@ -530,6 +604,7 @@
                     <TextBlock
                         Grid.Row="3"
                         Grid.Column="0"
+                        d:IsLocked="True"
                         Style="{StaticResource DefaultLabelStyle}">
                         Tags
                     </TextBlock>
@@ -544,20 +619,30 @@
                         Padding="3"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
+                        d:IsLocked="True"
                         LostFocus="OnLostFocus_TaggingControl"
                         LostKeyboardFocus="OnLostFocus_TaggingControl" />
                 </Grid>
-                <Grid Grid.Row="2" Background="{StaticResource FormBackground}">
+                <Grid
+                    Grid.Row="2"
+                    d:IsLocked="True"
+                    Background="{StaticResource FormBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Margin="5,5,5,5" Style="{StaticResource DefaultLabelStyle}">Metadata</TextBlock>
+                    <TextBlock
+                        Margin="5,5,5,5"
+                        d:IsLocked="True"
+                        Style="{StaticResource DefaultLabelStyle}">
+                        Metadata
+                    </TextBlock>
                     <wpf:LibraryNamesPanel
                         x:Name="NamesPanel"
                         Grid.Row="1"
                         Margin="5,5,5,5"
                         Padding="1,0,1,0"
+                        d:IsLocked="True"
                         BorderThickness="1"
                         CaptionsList="{Binding Path=SelectedChemistryObject.Captions}"
                         FormulaeList="{Binding Path=SelectedChemistryObject.Formulae}"
@@ -565,7 +650,10 @@
                 </Grid>
             </Grid>
         </Grid>
-        <Grid Grid.Row="2" Background="{StaticResource FormBackground}">
+        <Grid
+            Grid.Row="2"
+            d:IsLocked="True"
+            Background="{StaticResource FormBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -574,13 +662,15 @@
                 Name="StatusBar"
                 Grid.Column="0"
                 Margin="5"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                d:IsLocked="True">
                 ...
             </TextBlock>
             <ProgressBar
                 x:Name="ProgressBar"
                 Grid.Column="1"
                 Margin="5"
+                d:IsLocked="True"
                 Background="{StaticResource FormBackground}"
                 Value="0" />
             <TextBlock
@@ -589,6 +679,7 @@
                 Margin="5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                d:IsLocked="True"
                 Text="" />
         </Grid>
     </Grid>

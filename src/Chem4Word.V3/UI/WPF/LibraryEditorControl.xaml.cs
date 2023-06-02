@@ -130,7 +130,7 @@ namespace Chem4Word.UI.WPF
             ApplySort();
         }
 
-        private void OnChemistryItem_ButtonClick(object sender, RoutedEventArgs e)
+        private void OnClick_ChemistryItem(object sender, RoutedEventArgs e)
         {
             if (e.OriginalSource is WpfEventArgs source
                 && DataContext is LibraryEditorViewModel controller)
@@ -141,8 +141,7 @@ namespace Chem4Word.UI.WPF
                 {
                     _checkedItems = controller.ChemistryItems.Count(i => i.IsChecked);
 
-                    DeleteButton.IsEnabled = _checkedItems > 0;
-                    CheckedFilterButton.IsEnabled = _checkedItems > 0;
+                    SetButtonStates(true);
 
                     UpdateStatusBar();
                 }
@@ -386,7 +385,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_SearchButton(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 CheckedFilterButton.IsChecked = false;
@@ -501,16 +500,16 @@ namespace Chem4Word.UI.WPF
             _filteredItems = 0;
             view.Filter = ci =>
                           {
-                              var item = ci as ChemistryObject;
-                              var queryString = SearchBox.Text.ToUpper();
-                              if (item != null
-                                  && (item.Name.ToUpper().Contains(queryString)
+                              if (ci is ChemistryObject item)
+                              {
+                                  var queryString = SearchBox.Text.ToUpper();
+                                  if (item.Name.ToUpper().Contains(queryString)
                                       || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString))
                                       || item.Tags.Any(n => n.ToUpper().Contains(queryString)))
-                              )
-                              {
-                                  _filteredItems++;
-                                  return true;
+                                  {
+                                      _filteredItems++;
+                                      return true;
+                                  }
                               }
 
                               return false;
@@ -526,8 +525,7 @@ namespace Chem4Word.UI.WPF
             _filteredItems = 0;
             view.Filter = ci =>
                           {
-                              var item = ci as ChemistryObject;
-                              if (item != null
+                              if (ci is ChemistryObject item
                                   && item.IsChecked)
                               {
                                   _filteredItems++;
@@ -545,7 +543,7 @@ namespace Chem4Word.UI.WPF
             try
             {
                 PerformEdit(new ChemistryObject());
-                UpdateStatusBar();
+                RefreshGrid();
             }
             catch (Exception exception)
             {
@@ -603,6 +601,8 @@ namespace Chem4Word.UI.WPF
 
             try
             {
+                SetButtonStates(false);
+
                 var sb = new StringBuilder();
                 sb.AppendLine("This will delete the selected structures from the Library");
                 sb.AppendLine("");
@@ -634,6 +634,7 @@ namespace Chem4Word.UI.WPF
                                 _driver.DeleteChemistryById(item.Id);
                             }
                         }
+
                         _driver.CommitTransaction();
 
                         sw.Stop();
@@ -642,23 +643,23 @@ namespace Chem4Word.UI.WPF
                         _checkedItems = 0;
                         DeleteButton.IsEnabled = false;
                         CheckedFilterButton.IsEnabled = false;
-                        ClearProgress();
                     }
                     catch (Exception exception)
                     {
                         _driver.RollbackTransaction();
                         new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
                     }
-
-                    // Refresh the control's data
-                    var newController = new LibraryEditorViewModel(_telemetry, _driver);
-                    DataContext = newController;
-                    UpdateStatusBar();
                 }
             }
             catch (Exception exception)
             {
                 new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
+            }
+            finally
+            {
+                ClearProgress();
+                RefreshGrid();
+                SetButtonStates(true);
             }
         }
 
@@ -667,6 +668,8 @@ namespace Chem4Word.UI.WPF
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
+                SetButtonStates(false);
+
                 StringBuilder sb;
                 string importFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 if (Directory.Exists(importFolder))
@@ -743,8 +746,23 @@ namespace Chem4Word.UI.WPF
                                             model = sdfConvertor.Import(contents);
                                         }
 
-                                        var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
-                                        _driver.AddChemistry(dto);
+                                        if (model.TotalAtomsCount > 0)
+                                        {
+                                            // Tidy Up the structures
+                                            if (Globals.Chem4WordV3.SystemOptions.RemoveExplicitHydrogensOnImportFromFile)
+                                            {
+                                                model.RemoveExplicitHydrogens();
+                                            }
+
+                                            model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength,
+                                                                   Globals.Chem4WordV3.SystemOptions.SetBondLengthOnImportFromFile);
+
+                                            model.Relabel(true);
+
+                                            var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
+                                            _driver.AddChemistry(dto);
+                                        }
+
                                         fileCount++;
                                     }
 
@@ -764,15 +782,6 @@ namespace Chem4Word.UI.WPF
                             sw.Stop();
 
                             _telemetry.Write(module, "Timing", $"Import of {progress} files took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
-                            ClearProgress();
-
-                            using (new WaitCursor())
-                            {
-                                // Refresh the control's data
-                                var controller = new LibraryEditorViewModel(_telemetry, _driver);
-                                DataContext = controller;
-                                UpdateStatusBar();
-                            }
                         }
                     }
                 }
@@ -780,6 +789,12 @@ namespace Chem4Word.UI.WPF
             catch (Exception exception)
             {
                 new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
+            }
+            finally
+            {
+                ClearProgress();
+                RefreshGrid();
+                SetButtonStates(true);
             }
         }
 
@@ -796,11 +811,143 @@ namespace Chem4Word.UI.WPF
             ProgressBarMessage.Text = "";
         }
 
+        private void SetButtonStates(bool state)
+        {
+            AddButton.IsEnabled = state;
+            MetadataButton.IsEnabled = state;
+            ImportButton.IsEnabled = state;
+            ExportButton.IsEnabled = state;
+            CalculateButton.IsEnabled = state;
+            Slider.IsEnabled = state;
+            ComboBox.IsEnabled = state;
+
+            SearchBox.IsEnabled = state;
+            SearchButton.IsEnabled = state;
+            ClearButton.IsEnabled = state;
+
+            NameTextBox.IsEnabled = state;
+            TaggingControl.IsEnabled = state;
+            NamesPanel.IsEnabled = state;
+
+            if (state)
+            {
+                DeleteButton.IsEnabled = _checkedItems > 0;
+                CheckedFilterButton.IsEnabled = _checkedItems > 0;
+            }
+            else
+            {
+                DeleteButton.IsEnabled = false;
+                CheckedFilterButton.IsEnabled = false;
+            }
+        }
+
+        private void OnClick_CalculateButton(object sender, RoutedEventArgs e)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
+
+            int updated = 0;
+            int progress = 0;
+
+            try
+            {
+                SetButtonStates(false);
+
+                var dto = _driver.GetAllChemistry();
+                int total = dto.Count;
+                if (total > 0)
+                {
+                    ProgressBar.Maximum = dto.Count;
+
+                    var cmlConverter = new CMLConverter();
+                    var pc = new WebServices.PropertyCalculator(Globals.Chem4WordV3.Telemetry,
+                                                                Globals.Chem4WordV3.WordTopLeft,
+                                                                Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
+
+                    var protocolBufferConverter = new ProtocolBufferConverter();
+                    _driver.StartTransaction();
+
+                    foreach (var obj in dto)
+                    {
+                        progress++;
+                        ShowProgress(progress, $"Structure #{obj.Id} [{progress}/{total}]");
+
+                        Model model;
+                        if (obj.DataType.Equals("cml"))
+                        {
+                            model = cmlConverter.Import(Encoding.UTF8.GetString(obj.Chemistry));
+                        }
+                        else
+                        {
+                            model = protocolBufferConverter.Import(obj.Chemistry);
+                        }
+
+                        var changed = pc.CalculateProperties(model, showProgress: false);
+                        if (changed > 0)
+                        {
+                            model.Relabel(true);
+
+                            var chemistryDataObject = DtoHelper.CreateFromModel(model, obj.DataType);
+                            chemistryDataObject.Id = obj.Id;
+
+                            foreach (var formula in chemistryDataObject.Formulae)
+                            {
+                                formula.ChemistryId = obj.Id;
+                            }
+
+                            foreach (var name in chemistryDataObject.Names)
+                            {
+                                name.ChemistryId = obj.Id;
+                            }
+
+                            foreach (var caption in chemistryDataObject.Captions)
+                            {
+                                caption.ChemistryId = obj.Id;
+                            }
+
+                            _driver.UpdateChemistry(chemistryDataObject);
+
+                            updated++;
+                        }
+                    }
+
+                    _driver.CommitTransaction();
+
+                    _telemetry.Write(module, "Information", $"Updated properties for {updated}/{total} structures");
+                }
+            }
+            catch (Exception exception)
+            {
+                _driver.RollbackTransaction();
+                new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
+            }
+            finally
+            {
+                ClearProgress();
+                RefreshGrid();
+                SetButtonStates(true);
+            }
+        }
+
+        private void RefreshGrid()
+        {
+            using (new WaitCursor())
+            {
+                // Refresh the control's data
+                var controller = new LibraryEditorViewModel(_telemetry, _driver);
+                DataContext = controller;
+                ApplySort();
+                UpdateStatusBar();
+            }
+        }
+
         private void OnClick_ExportButton(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
+                SetButtonStates(false);
+
                 string exportFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 var browser = new VistaFolderBrowserDialog();
 
@@ -855,6 +1002,7 @@ namespace Chem4Word.UI.WPF
                                     {
                                         model = protocolBufferConverter.Import(obj.Chemistry);
                                     }
+
                                     model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength, false);
 
                                     var contents = Constants.XmlFileHeader + Environment.NewLine
@@ -862,8 +1010,6 @@ namespace Chem4Word.UI.WPF
                                     File.WriteAllText(filename, contents);
                                     exported++;
                                 }
-
-                                ClearProgress();
                             }
 
                             if (exported > 0)
@@ -878,6 +1024,11 @@ namespace Chem4Word.UI.WPF
             catch (Exception exception)
             {
                 new ReportError(_telemetry, TopLeft, module, exception).ShowDialog();
+            }
+            finally
+            {
+                ClearProgress();
+                SetButtonStates(true);
             }
         }
 

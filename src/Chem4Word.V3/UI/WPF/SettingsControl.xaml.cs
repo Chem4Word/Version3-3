@@ -527,8 +527,7 @@ namespace Chem4Word.UI.WPF
                     fileName += ".db";
                 }
                 var fileInfo = new FileInfo(fileName);
-                if (Directory.Exists(fileInfo.DirectoryName)
-                    && !File.Exists(browser.FileName))
+                if (Directory.Exists(fileInfo.DirectoryName))
                 {
                     var displayName = fileInfo.Name.Replace(fileInfo.Extension, "");
                     var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
