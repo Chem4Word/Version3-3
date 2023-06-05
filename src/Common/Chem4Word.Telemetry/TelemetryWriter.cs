@@ -372,6 +372,13 @@ namespace Chem4Word.Telemetry
                         versionNumber = _helper.AssemblyVersionNumber;
                     }
                 }
+                else
+                {
+                    // This is what _helper would have done had it been initialised ...
+                    versionNumber = GetVersionNumber();
+                    processId = Process.GetCurrentProcess().Id;
+                    machineId = SystemHelper.GetMachineId();
+                }
             }
             catch
             {
