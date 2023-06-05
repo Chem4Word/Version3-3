@@ -174,6 +174,7 @@ namespace Chem4Word.Telemetry
             {
                 WritePrivate("StartUp", "Information", _helper.Click2RunProductIds);
             }
+
             WritePrivate("StartUp", "Information", Environment.GetCommandLineArgs()[0]);
 
             if (_helper.StartUpTimings != null)
@@ -332,25 +333,39 @@ namespace Chem4Word.Telemetry
             }
         }
 
+        private string GetVersionNumber()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var productVersion = assembly.GetName().Version;
+            return productVersion.ToString();
+        }
+
         private void WritePrivate(string operation, string level, string message)
         {
             Debug.WriteLine($"{operation} - {level} - {message}");
 
+            Debug.WriteLine($"{operation} - {level} - {message}");
+
             var processId = 666;
-            var machineId = "00000000-0000-0000-0000-000000000000";
-            var versionNumber = $"{Constants.Chem4WordVersion}.1.666";
+            var machineId = Guid.Empty.ToString("D");
+            var versionNumber = Constants.Chem4WordVersion;
 
             try
             {
                 if (_helper != null)
                 {
                     processId = _helper.ProcessId;
-                    machineId = _helper.MachineId;
+                    if (string.IsNullOrEmpty(_helper.MachineId) || _helper.MachineId.Equals(Guid.Empty.ToString("D")))
+                    {
+                        SystemHelper.GetMachineId();
+                    }
+                    else
+                    {
+                        machineId = _helper.MachineId;
+                    }
                     if (string.IsNullOrEmpty(_helper.AssemblyVersionNumber))
                     {
-                        var assembly = Assembly.GetExecutingAssembly();
-                        var productVersion = assembly.GetName().Version;
-                        versionNumber = productVersion.ToString();
+                        versionNumber = GetVersionNumber();
                     }
                     else
                     {
@@ -360,8 +375,19 @@ namespace Chem4Word.Telemetry
             }
             catch
             {
-                //
+                try
+                {
+                    // This is what _helper would have done had it been initialised ...
+                    versionNumber = GetVersionNumber();
+                    processId = Process.GetCurrentProcess().Id;
+                    machineId = SystemHelper.GetMachineId();
+                }
+                catch
+                {
+                    // Do nothing
+                }
             }
+
             var outputMessage = new OutputMessage(processId)
             {
                 MachineId = machineId,

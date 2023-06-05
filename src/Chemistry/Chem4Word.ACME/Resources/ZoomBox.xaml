@@ -3,9 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Chem4Word.ACME.Controls">
     <Style TargetType="{x:Type controls:ZoomBox}">
-
         <Style.Resources>
-
             <VisualBrush
                 x:Key="AlphaBrush"
                 Stretch="None"

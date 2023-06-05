@@ -47,5 +47,12 @@
             Tag="Animation">
             Animation
         </Button>
+        <Button
+            Grid.Row="1"
+            Grid.Column="1"
+            Click="OnClick_Button"
+            Tag="DropDownStyle">
+            DropDownStyle
+        </Button>
     </Grid>
 </Window>

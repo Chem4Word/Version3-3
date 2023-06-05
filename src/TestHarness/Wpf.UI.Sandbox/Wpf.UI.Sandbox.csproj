@@ -55,6 +55,9 @@
     <Compile Include="Animation.xaml.cs">
       <DependentUpon>Animation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DropDownStyle.xaml.cs">
+      <DependentUpon>DropDownStyle.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Marquee.xaml.cs">
       <DependentUpon>Marquee.xaml</DependentUpon>
     </Compile>
@@ -63,6 +66,10 @@
     </Compile>
     <Compile Include="TickerItem.cs" />
     <Page Include="Animation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DropDownStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

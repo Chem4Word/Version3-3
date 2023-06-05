@@ -1,0 +1,199 @@
+﻿<Window
+    x:Class="Wpf.UI.Sandbox.DropDownStyle"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Wpf.UI.Sandbox"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="DropDownStyle"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <!--  Toggle Button Template  -->
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+            <Grid x:Name="gd">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="25" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    x:Name="Border"
+                    Grid.ColumnSpan="2"
+                    Background="White"
+                    BorderBrush="Black"
+                    BorderThickness="0.5"
+                    SnapsToDevicePixels="True" />
+                <Border
+                    x:Name="Border1"
+                    Grid.Column="1"
+                    Margin="1"
+                    Background="White"
+                    BorderBrush="Black"
+                    BorderThickness="0"
+                    SnapsToDevicePixels="True" />
+                <Path
+                    x:Name="Arrow"
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="M 0 0 L 6 6 L 12 0 Z"
+                    Fill="Black"
+                    SnapsToDevicePixels="True" />
+                <ContentPresenter Grid.Column="0" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="ToggleButton.IsMouseOver" Value="True">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+                    <Setter TargetName="Border1" Property="BorderBrush" Value="Black" />
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <Setter TargetName="Arrow" Property="Data" Value="M 0 0 L 5 5 L 10 0" />
+                    <Setter TargetName="Arrow" Property="Fill" Value="Black" />
+                    <Setter TargetName="Arrow" Property="Stroke" Value="Black" />
+                    <Setter TargetName="Arrow" Property="StrokeThickness" Value="1.5" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="gd" Property="Visibility" Value="Visible" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!--  TextBox Template  -->
+        <ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" />
+        </ControlTemplate>
+
+        <!--  BetterComboBox  -->
+        <Style x:Key="BetterComboBox" TargetType="ComboBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton
+                                Name="ToggleButton"
+                                ClickMode="Press"
+                                Focusable="false"
+                                Foreground="Black"
+                                IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                Template="{StaticResource ComboBoxToggleButton}" />
+                            <ContentPresenter
+                                Name="ContentSite"
+                                Margin="3,3,23,3"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding SelectionBoxItem}"
+                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                IsHitTestVisible="False" />
+                            <TextBox
+                                x:Name="PART_EditableTextBox"
+                                Margin="0,0,30,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                CaretBrush="Black"
+                                Focusable="True"
+                                FontSize="15"
+                                Foreground="Black"
+                                IsReadOnly="{TemplateBinding IsReadOnly}"
+                                OverridesDefaultStyle="True"
+                                SelectionBrush="Gray"
+                                Style="{x:Null}"
+                                Template="{StaticResource ComboBoxTextBox}"
+                                TextWrapping="NoWrap"
+                                Visibility="Hidden" />
+                            <Popup
+                                Name="Popup"
+                                Grid.ColumnSpan="2"
+                                AllowsTransparency="False"
+                                Focusable="False"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                Placement="Bottom"
+                                PopupAnimation="Slide">
+                                <Grid
+                                    Name="DropDown"
+                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                    SnapsToDevicePixels="True">
+                                    <Border
+                                        x:Name="DropDownBorder"
+                                        Grid.RowSpan="2"
+                                        Grid.ColumnSpan="2"
+                                        MaxWidth="{TemplateBinding ActualWidth}"
+                                        Background="White"
+                                        BorderBrush="Black"
+                                        BorderThickness="1"
+                                        SnapsToDevicePixels="True" />
+                                    <ScrollViewer
+                                        Grid.ColumnSpan="2"
+                                        ScrollViewer.CanContentScroll="False"
+                                        SnapsToDevicePixels="True">
+                                        <StackPanel Background="White" IsItemsHost="True" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEditable" Value="true">
+                                <Setter Property="IsTabStop" Value="false" />
+                                <Setter TargetName="PART_EditableTextBox" Property="Background" Value="White" />
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="PART_EditableTextBox" Property="Foreground" Value="Black" />
+                                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden" />
+                            </Trigger>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="IsTabStop" Value="false" />
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="PART_EditableTextBox" Property="Foreground" Value="Black" />
+                                <Setter TargetName="PART_EditableTextBox" Property="IsEnabled" Value="False" />
+                                <Setter TargetName="PART_EditableTextBox" Property="Background" Value="White" />
+                                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden" />
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+                            </Trigger>
+                            <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                                <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ComboBox
+            Name="LibrarySelector1"
+            Grid.Row="0"
+            Grid.Column="0"
+            FontSize="16">
+            <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
+            <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
+        </ComboBox>
+        <ComboBox
+            Name="LibrarySelector2"
+            Grid.Row="0"
+            Grid.Column="1"
+            FontSize="16"
+            Style="{StaticResource BetterComboBox}">
+            <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
+            <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
+        </ComboBox>
+    </Grid>
+
+</Window>

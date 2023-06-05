@@ -634,6 +634,29 @@
     ]
   },
   {
+    "Name": "CO2CH3",
+    "Symbol": "CO2CH3",
+    "Flippable": true,
+    "Components": [
+      {
+        "Component": "C",
+        "Count": 1
+      },
+      {
+        "Component": "O",
+        "Count": 2
+      },
+      {
+        "Component": "C",
+        "Count": 1
+      },
+      {
+        "Component": "H",
+        "Count": 3
+      }
+    ]
+  },
+  {
     "Name": "NO2",
     "Symbol": "NO2",
     "Flippable": true,

@@ -51,6 +51,11 @@ namespace Wpf.UI.Sandbox
                         window = new Animation();
                         window.ShowDialog();
                         break;
+
+                    case "DropDownStyle":
+                        window = new DropDownStyle();
+                        window.ShowDialog();
+                        break;
                 }
             }
         }
