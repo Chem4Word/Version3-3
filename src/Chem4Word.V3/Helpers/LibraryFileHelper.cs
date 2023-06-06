@@ -152,7 +152,6 @@ namespace Chem4Word.Helpers
                                                      };
                             database.Properties = driver.GetProperties();
                             database.IsReadOnly = driver.GetDatabaseFileProperties(driver.DatabaseDetails).IsReadOnly;
-                            database.IsSystem = database.GetPropertyValue("Owner", "User").Equals("System");
                         }
                         else
                         {

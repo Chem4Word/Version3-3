@@ -25,10 +25,12 @@ namespace IChem4Word.Contracts
         [JsonProperty]
         public string Driver { get; set; }
 
-        public bool IsReadOnly { get; set; }
-        public bool IsSystem { get; set; }
-
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+
+        public bool IsReadOnly { get; set; }
+        public bool IsSystem => GetPropertyValue("Owner", "User").Equals("System");
+
+        public bool IsLocked() => IsSystem || IsReadOnly || !Driver.Equals("SQLite Standard");
 
         public string GetPropertyValue(string key, string defaultValue)
         {
@@ -41,7 +43,5 @@ namespace IChem4Word.Contracts
 
             return result;
         }
-
-        public bool IsLocked() => IsSystem || IsReadOnly || !Driver.Equals("SQLite Standard");
     }
 }

@@ -67,7 +67,6 @@ namespace LibraryTransformer
                     _driver.DatabaseDetails = details;
                     details.Properties = _driver.GetProperties();
                     details.IsReadOnly = _driver.GetDatabaseFileProperties(details).IsReadOnly;
-                    details.IsSystem = details.GetPropertyValue("Owner", "User").Equals("System");
                     if (details.GetPropertyValue("Type", "Free").Equals("Paid"))
                     {
                         _telemetry.Write(module, "Information", $"Skipping {details.DisplayName}");

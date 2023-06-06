@@ -82,6 +82,7 @@
                                 <Canvas
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     ClipToBounds="True"
                                     Visibility="{Binding RequiresPayment, Converter={StaticResource BoolToVisConverter}}">
                                     <Path
@@ -89,8 +90,9 @@
                                         Canvas.Top="2"
                                         Width="20"
                                         Height="20"
+                                        d:IsLocked="True"
                                         Fill="{StaticResource Chem4WordBlue}"
-                                        Stretch="Fill"
+                                        Stretch="Uniform"
                                         Style="{StaticResource Padlock}" />
                                 </Canvas>
                             </DataTemplate>

@@ -131,7 +131,7 @@ namespace Chem4Word.Library
             var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
             if (details != null)
             {
-                EditThisLibrary.IsEnabled = !(details.IsReadOnly || details.IsSystem);
+                EditThisLibrary.IsEnabled = !details.IsLocked();
             }
         }
 
