@@ -525,7 +525,7 @@ namespace Chem4Word.UI.WPF
 
             try
             {
-                Process.Start("https://www.chem4word.co.uk/libraries/");
+                Process.Start("https://www.chem4word.co.uk/shop/");
             }
             catch (Exception ex)
             {

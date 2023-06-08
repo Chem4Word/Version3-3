@@ -71,7 +71,7 @@ namespace Chem4Word.UI.WPF
             ReloadCaptionsList(dataObjects, d);
         }
 
-        private static void ReloadCaptionsList(List<ChemistryNameDataObject> listParam, DependencyObject d)
+        private static void ReloadCaptionsList(List<ChemistryNameDataObject> captions, DependencyObject d)
         {
             TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
 
@@ -79,7 +79,7 @@ namespace Chem4Word.UI.WPF
             {
                 var captionNode = namesTree.Items[2] as TreeViewItem;
 
-                LoadNames(captionNode, listParam);
+                LoadNames(captionNode, captions);
             }
         }
 
@@ -89,14 +89,14 @@ namespace Chem4Word.UI.WPF
             ReloadFormulaeList(dataObjects, d);
         }
 
-        private static void ReloadFormulaeList(List<ChemistryNameDataObject> listParam, DependencyObject d)
+        private static void ReloadFormulaeList(List<ChemistryNameDataObject> formulae, DependencyObject d)
         {
             TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
             if (namesTree.Items.Count > 2)
             {
                 var formulaNode = namesTree.Items[1] as TreeViewItem;
 
-                LoadNames(formulaNode, listParam);
+                LoadNames(formulaNode, formulae);
             }
         }
 
@@ -106,13 +106,13 @@ namespace Chem4Word.UI.WPF
             ReloadNamesList(dataObjects, d);
         }
 
-        private static void ReloadNamesList(List<ChemistryNameDataObject> listParam, DependencyObject d)
+        private static void ReloadNamesList(List<ChemistryNameDataObject> names, DependencyObject d)
         {
             TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
             if (namesTree.Items.Count > 1)
             {
                 TreeViewItem nameNode = namesTree.Items[0] as TreeViewItem;
-                LoadNames(nameNode, listParam);
+                LoadNames(nameNode, names);
             }
         }
 
@@ -152,12 +152,15 @@ namespace Chem4Word.UI.WPF
                         nsNode.Items.Add(tagChildNode);
                         tagChildNode.Style = catHeaderStyle;
 
-                        foreach (var name in tag.Names)
+                        foreach (var dataObject in tag.Names)
                         {
-                            var nameChildNode = new TreeViewItem { Header = name.Name, Tag = name.Name };
-                            if (tagChildNode.Tag.ToString().Contains("Formula"))
+                            var nameChildNode = new TreeViewItem { Header = dataObject.Name, Tag = dataObject.Name };
+                            if (tagChildNode.Tag.ToString().Contains("Formula")
+                                && !dataObject.Name.ToLower().Equals("not found")
+                                && !dataObject.Name.ToLower().Equals("not requested")
+                                && !dataObject.Name.ToLower().Equals("unable to calculate"))
                             {
-                                var tb = TextBlockFromFormula(name.Name);
+                                var tb = TextBlockFromFormula(dataObject.Name);
                                 tb.Foreground = new SolidColorBrush(Colors.Black);
                                 tagChildNode.Items.Add(tb);
                             }

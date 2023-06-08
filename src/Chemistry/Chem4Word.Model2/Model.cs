@@ -437,14 +437,21 @@ namespace Chem4Word.Model2
                 var names = Molecules.Values.First().Names.ToList();
                 foreach (var name in names)
                 {
-                    // not numeric
-                    if (!long.TryParse(name.Value, out _))
+                    // Not special names
+                    if (!name.FullType.ToLower().Contains("inchi"))
                     {
-                        if (!name.Value.ToLower().Equals("not found")
+                        // Not special values
+                        if (!name.Value.ToLower().Equals("unable to calculate")
+                            && !name.Value.ToLower().Equals("not found")
+                            && !name.Value.ToLower().Equals("not requested")
                             && !name.Value.Contains("-"))
                         {
-                            result = name.Value;
-                            break;
+                            // Not numeric
+                            if (!long.TryParse(name.Value, out _))
+                            {
+                                result = name.Value;
+                                break;
+                            }
                         }
                     }
                 }
