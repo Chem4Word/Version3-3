@@ -55,6 +55,7 @@ namespace Chem4Word.UI.WPF
         private List<string> _paidFor;
 
         private string _downloadPath;
+        private bool _userIsDirty;
 
         public LibraryDownloadControl()
         {
@@ -84,6 +85,7 @@ namespace Chem4Word.UI.WPF
                         {
                             UserName.Text = parts[0].Trim();
                             UserEmail.Text = parts[1].ToLower();
+                            _userIsDirty = false;
                         }
                     }
 
@@ -129,7 +131,7 @@ namespace Chem4Word.UI.WPF
                         Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"HttpStatusCode {result.HttpStatusCode}");
                     }
 
-                    UpdatePaidFor();
+                    RefreshPaidFor();
                 }
                 catch (Exception exception)
                 {
@@ -139,7 +141,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void UpdatePaidFor()
+        private void RefreshPaidFor()
         {
             _paidFor = new List<string>();
 
@@ -276,7 +278,11 @@ namespace Chem4Word.UI.WPF
 
                                 // Once library and driver have been installed add/replace user details in credential store
                                 // Common values required for license verification by the driver.
-                                CredentialManager.WriteCredential(Chem4WordUser, $"{UserName.Text}<{UserEmail.Text.ToLower()}>", Globals.Chem4WordV3.Helper.MachineId, CredentialPersistence.LocalMachine);
+                                if (_userIsDirty)
+                                {
+                                    CredentialManager.WriteCredential(Chem4WordUser, $"{UserName.Text}<{UserEmail.Text.ToLower()}>", Globals.Chem4WordV3.Helper.MachineId, CredentialPersistence.LocalMachine);
+                                    _userIsDirty = false;
+                                }
                             }
                             else
                             {
@@ -538,37 +544,47 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_FinishedButton(object sender, RoutedEventArgs e)
         {
-            var args = new WpfEventArgs
+            var eventArgs = new WpfEventArgs
             {
                 Button = "Finished",
                 OutputValue = ""
             };
 
-            OnButtonClick?.Invoke(this, args);
+            if (_userIsDirty)
+            {
+                CredentialManager.WriteCredential(Chem4WordUser, $"{UserName.Text}<{UserEmail.Text.ToLower()}>", Globals.Chem4WordV3.Helper.MachineId, CredentialPersistence.LocalMachine);
+                _userIsDirty = false;
+            }
+
+            OnButtonClick?.Invoke(this, eventArgs);
         }
 
         private void OnSelectionChanged_ListOfLibraries(object sender, SelectionChangedEventArgs e)
         {
-            Download.IsEnabled = false;
-            Buy.IsEnabled = false;
-
-            if (Libraries.SelectedItems.Count > 0)
+            if (Libraries.SelectedItems.Count > 0
+                && Libraries.SelectedItem is LibraryDownloadGridSource data)
             {
-                if (Libraries.SelectedItem is LibraryDownloadGridSource data)
+                StatusMessage.Text = string.Empty;
+                Download.IsEnabled = false;
+                Buy.IsEnabled = false;
+
+                var library = _catalogue.FirstOrDefault(l => l.Name.Equals(data.Name));
+                if (library != null)
                 {
-                    var library = _catalogue.FirstOrDefault(l => l.Name.Equals(data.Name));
-                    if (library != null)
+                    RefreshPaidFor();
+                    Download.IsEnabled = true;
+                    if (!library.Driver.Equals(Constants.SQLiteStandardDriver))
                     {
-                        UpdatePaidFor();
-                        Download.IsEnabled = true;
-                        if (!library.Driver.Equals(Constants.SQLiteStandardDriver))
-                        {
-                            Buy.IsEnabled = !_paidFor.Contains(library.Id);
-                            Download.IsEnabled = _paidFor.Contains(library.Id);
-                        }
+                        Buy.IsEnabled = true;
+                        Download.IsEnabled = _paidFor.Contains(library.Id);
                     }
                 }
             }
+        }
+
+        private void OnTextChanged_UserNameOrEmail(object sender, TextChangedEventArgs e)
+        {
+            _userIsDirty = true;
         }
     }
 }

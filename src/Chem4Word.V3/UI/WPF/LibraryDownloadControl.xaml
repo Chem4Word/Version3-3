@@ -149,6 +149,7 @@
                     Height="30"
                     Margin="5"
                     d:IsLocked="True"
+                    TextChanged="OnTextChanged_UserNameOrEmail"
                     ToolTip="Please enter the name that you wish us to use" />
                 <TextBlock
                     x:Name="UserErrorMessage"
@@ -175,6 +176,7 @@
                     Margin="5"
                     VerticalAlignment="Top"
                     d:IsLocked="True"
+                    TextChanged="OnTextChanged_UserNameOrEmail"
                     ToolTip="Please ensure that you enter a valid real email address, so that we can keep you informed if there are any changes to libraries that you have downloaded" />
                 <TextBlock
                     x:Name="EmailErrorMessage"
