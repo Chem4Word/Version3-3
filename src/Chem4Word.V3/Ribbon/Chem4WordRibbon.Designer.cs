@@ -240,10 +240,10 @@ namespace Chem4Word
             // 
             this.ChangeOptions.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.ChangeOptions.Enabled = false;
-            this.ChangeOptions.Image = global::Chem4Word.Properties.Resources.Options;
-            this.ChangeOptions.Label = "Options";
+            this.ChangeOptions.Image = global::Chem4Word.Properties.Resources.Settings;
+            this.ChangeOptions.Label = "Settings";
             this.ChangeOptions.Name = "ChangeOptions";
-            this.ChangeOptions.ScreenTip = "Set Chem4Word system options";
+            this.ChangeOptions.ScreenTip = "Change Chem4Word settings";
             this.ChangeOptions.ShowImage = true;
             this.ChangeOptions.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_Options);
             // 

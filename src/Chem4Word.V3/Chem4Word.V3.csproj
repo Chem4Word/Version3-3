@@ -525,6 +525,7 @@
     <Content Include="Resources\Button Images\Office-2016\Navigator-Toggle.png" />
     <Content Include="Resources\Button Images\Office-2016\Seperate-Molecules.png" />
     <Content Include="Resources\Button Images\Office-2016\WebSearch.png" />
+    <Content Include="Resources\Button Images\Settings.png" />
     <Content Include="Resources\Button Images\Shield-Danger.png" />
     <Content Include="Resources\Button Images\Shield-Good.png" />
     <Content Include="Resources\Button Images\Shield-Warning.png" />

@@ -19,7 +19,7 @@ namespace Chem4Word.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -172,8 +172,6 @@ namespace Chem4Word.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;cml:cml convention=&quot;conventions:molecular&quot; xmlns:conventions=&quot;http://www.xml-cml.org/convention/&quot; xmlns:cml=&quot;http://www.xml-cml.org/schema&quot; xmlns:cmlDict=&quot;http://www.xml-cml.org/dictionary/cml/&quot; xmlns:nameDict=&quot;http://www.xml-cml.org/dictionary/cml/name/&quot;&gt;
-        ///  &lt;cml:molecule id=&quot;m1&quot;&gt;
-        ///  &lt;/cml:molecule&gt;
         ///&lt;/cml:cml&gt;.
         /// </summary>
         internal static string EmptyStructure_cml {
@@ -458,6 +456,16 @@ namespace Chem4Word.Properties {
         internal static System.Drawing.Bitmap Seperate_Molecules {
             get {
                 object obj = ResourceManager.GetObject("Seperate_Molecules", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Settings {
+            get {
+                object obj = ResourceManager.GetObject("Settings", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

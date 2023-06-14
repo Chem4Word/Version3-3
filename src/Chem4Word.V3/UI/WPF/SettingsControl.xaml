@@ -513,6 +513,7 @@
                                     Width="80"
                                     DisplayMemberBinding="{Binding Count}"
                                     Header="Structures" />
+                                <!--
                                 <GridViewColumn Width="80" Header="Dictionary">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
@@ -520,6 +521,7 @@
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
+                                -->
                                 <GridViewColumn
                                     Width="60"
                                     DisplayMemberBinding="{Binding Locked}"

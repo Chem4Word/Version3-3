@@ -81,13 +81,10 @@ namespace Chem4Word.UI.WPF
             if (e.AddedItems.Count > 0
                 && e.AddedItems[0] is TabItem item)
             {
-                Debug.WriteLine($"Selected Tab is '{item.Name}'");
-                if (item.Name.Equals("Libraries"))
+                if (item.Name.Equals("Libraries")
+                    && LibrariesList.Items.Count == 0)
                 {
-                    if (LibrariesList.Items.Count == 0)
-                    {
-                        LoadLibrariesListTab();
-                    }
+                    LoadLibrariesListTab();
                 }
 
                 SetLibraryTabButtons();
