@@ -12,6 +12,7 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
+using Chem4Word.Model2.Converters.SketchEl;
 using Chem4Word.Model2.Helpers;
 using Chem4Word.Renderer.OoXmlV4;
 using Chem4Word.Searcher.ChEBIPlugin;
@@ -19,6 +20,7 @@ using Chem4Word.Searcher.OpsinPlugIn;
 using Chem4Word.Searcher.PubChemPlugIn;
 using Chem4Word.Shared;
 using Chem4Word.Telemetry;
+using Chem4Word.WebServices;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -32,13 +34,12 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
-using Chem4Word.WebServices;
 using Color = System.Drawing.Color;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace WinForms.TestHarness
 {
-    public partial class FlexForm : Form
+    public partial class MainForm : Form
     {
         private Stack<Model> _undoStack = new Stack<Model>();
         private Stack<Model> _redoStack = new Stack<Model>();
@@ -56,7 +57,7 @@ namespace WinForms.TestHarness
         private OoXmlV4Options _renderOptions;
         private ConfigWatcher _configWatcher;
 
-        public FlexForm()
+        public MainForm()
         {
             InitializeComponent();
 
@@ -79,9 +80,10 @@ namespace WinForms.TestHarness
                 Model model = null;
 
                 StringBuilder sb = new StringBuilder();
-                sb.Append("All molecule files (*.mol, *.sdf, *.cml, *.xml)|*.mol;*.sdf;*.cml;*.xml");
+                sb.Append("All molecule files (*.mol, *.sdf, *.cml, *.xml, *.el)|*.mol;*.sdf;*.cml;*.xml;*.el");
                 sb.Append("|CML molecule files (*.cml, *.xml)|*.cml;*.xml");
                 sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
+                sb.Append("|SketchEl molecule files (*.el)|*.el");
                 sb.Append("|Protocol Buffer (*.pbuff)|*.pbuff");
 
                 openFileDialog1.Title = "Open Structure";
@@ -98,8 +100,8 @@ namespace WinForms.TestHarness
                     string filename = Path.GetFileName(openFileDialog1.FileName);
                     string mol = File.ReadAllText(openFileDialog1.FileName);
 
-                    CMLConverter cmlConvertor = new CMLConverter();
-                    SdFileConverter sdFileConverter = new SdFileConverter();
+                    var cmlConverter = new CMLConverter();
+                    var fileConverter = new SdFileConverter();
 
                     Stopwatch stopwatch;
                     TimeSpan elapsed1 = default;
@@ -111,7 +113,7 @@ namespace WinForms.TestHarness
                         case ".sdf":
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
-                            model = sdFileConverter.Import(mol);
+                            model = fileConverter.Import(mol);
                             stopwatch.Stop();
                             elapsed1 = stopwatch.Elapsed;
                             break;
@@ -120,19 +122,28 @@ namespace WinForms.TestHarness
                         case ".xml":
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
-                            model = cmlConvertor.Import(mol);
+                            model = cmlConverter.Import(mol);
+                            stopwatch.Stop();
+                            elapsed1 = stopwatch.Elapsed;
+                            break;
+
+                        case ".el":
+                            stopwatch = new Stopwatch();
+                            stopwatch.Start();
+                            var sketchElConverter = new SketchElConverter();
+                            model = sketchElConverter.Import(mol);
                             stopwatch.Stop();
                             elapsed1 = stopwatch.Elapsed;
                             break;
 
                         case ".pbuff":
-                            var pbc = new ProtocolBufferConverter();
+                            var protocolBufferConverter = new ProtocolBufferConverter();
 
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
 
                             var inputBytes = File.ReadAllBytes(openFileDialog1.FileName);
-                            model = pbc.Import(inputBytes);
+                            model = protocolBufferConverter.Import(inputBytes);
 
                             stopwatch.Stop();
                             elapsed1 = stopwatch.Elapsed;
@@ -160,7 +171,7 @@ namespace WinForms.TestHarness
                             {
                                 if (_lastCml != EmptyCml)
                                 {
-                                    var clone = cmlConvertor.Import(_lastCml);
+                                    var clone = cmlConverter.Import(_lastCml);
                                     Debug.WriteLine($"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength:#,##0.00} onto Stack");
                                     _undoStack.Push(clone);
                                 }
@@ -168,7 +179,7 @@ namespace WinForms.TestHarness
 
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
-                            _lastCml = cmlConvertor.Export(model);
+                            _lastCml = cmlConverter.Export(model);
                             stopwatch.Stop();
                             elapsed2 = stopwatch.Elapsed;
 
@@ -604,7 +615,7 @@ namespace WinForms.TestHarness
                 Model m = cmlConverter.Import(_lastCml);
                 m.CustomXmlPartGuid = "";
 
-                string filter = "CML molecule files (*.cml, *.xml)|*.cml;*.xml|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf| Protocol Buffers (*.pbuff)|*.pbuff";
+                string filter = "CML molecule files (*.cml, *.xml)|*.cml;*.xml|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf|Protocol Buffers (*.pbuff)|*.pbuff|SketchEl (*.el)|*.el";
                 using (SaveFileDialog sfd = new SaveFileDialog { Filter = filter })
                 {
                     DialogResult dr = sfd.ShowDialog();
@@ -628,8 +639,13 @@ namespace WinForms.TestHarness
                                 m.ScaleToAverageBondLength(1.54);
                                 double after = m.MeanBondLength;
                                 _telemetry.Write(module, "Information", $"Structure rescaled from {before.ToString("#0.00")} to {after.ToString("#0.00")}");
-                                SdFileConverter converter = new SdFileConverter();
-                                File.WriteAllText(sfd.FileName, converter.Export(m));
+                                var sdFileConverter = new SdFileConverter();
+                                File.WriteAllText(sfd.FileName, sdFileConverter.Export(m));
+                                break;
+
+                            case ".el":
+                                var sketchElConverter = new SketchElConverter();
+                                File.WriteAllText(sfd.FileName, sketchElConverter.Export(m));
                                 break;
 
                             case ".pbuff":

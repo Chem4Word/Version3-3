@@ -447,6 +447,7 @@ namespace Chem4Word.Model2.Converters.MDL
             // x,y,z
             double x = atom.Position.X;
             sb.Append(OutputMDLFloat(x));
+            // Invert Y as MOLFile is upside down
             double y = 0 - atom.Position.Y;
             sb.Append(OutputMDLFloat(y));
             double z = 0;

@@ -376,6 +376,10 @@ namespace Chem4Word.Model2
                                 hPart.Count += part.Value;
                                 break;
 
+                            case "R":
+                                // Ignore pseudo Element(s)
+                                break;
+
                             default:
                                 if (otherParts.ContainsKey(part.Key))
                                 {

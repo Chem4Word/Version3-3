@@ -12,7 +12,13 @@ namespace Chem4Word.Model2.Converters.CML
     public enum CmlFormat
     {
         Default,
+        /// <summary>
+        /// Makes molecule the root node
+        /// </summary>
         ChemDraw,
+        /// <summary>
+        /// Custom for MarvinJS
+        /// </summary>
         MarvinJs
     }
 }

@@ -5,13 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Linq;
-using System.Windows;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
+using Chem4Word.Model2.Converters.SketchEl;
 using Chem4Word.Model2.Helpers;
+using System;
+using System.Linq;
+using System.Windows;
 
 namespace Chem4Word.ACME.Commands.Editing
 {
@@ -29,8 +30,9 @@ namespace Chem4Word.ACME.Commands.Editing
 
         public override void Execute(object parameter)
         {
-            CMLConverter cmlConverter = new CMLConverter();
-            SdFileConverter sdfConverter = new SdFileConverter();
+            var cmlConverter = new CMLConverter();
+            var sdfConverter = new SdFileConverter();
+            var sketchElConverter = new SketchElConverter();
 
             if (Clipboard.ContainsData(Globals.FormatCML))
             {
@@ -40,7 +42,7 @@ namespace Chem4Word.ACME.Commands.Editing
             else if (Clipboard.ContainsText())
             {
                 bool failedCML = false;
-                bool failedSDF = false;
+                bool failedOther = false;
                 string pastedText = Clipboard.GetText();
                 Model buffer = null;
                 //try to convert the pasted text with the CML converter first
@@ -55,13 +57,25 @@ namespace Chem4Word.ACME.Commands.Editing
 
                 if (failedCML)
                 {
-                    buffer = sdfConverter.Import(pastedText);
-                    failedSDF = buffer.AllErrors.Any();
+                    if (pastedText.Contains(MDLConstants.M_END))
+                    {
+                        buffer = sdfConverter.Import(pastedText);
+                        failedOther = buffer.AllErrors.Any();
+                    }
+                    else if (pastedText.StartsWith("SketchEl!"))
+                    {
+                        buffer = sketchElConverter.Import(pastedText);
+                        failedOther = buffer.AllErrors.Any();
+                    }
+                    else
+                    {
+                        failedOther = true;
+                    }
                 }
 
-                if (failedCML && failedSDF)
+                if (failedCML && failedOther)
                 {
-                    if (buffer.AllErrors.Any())
+                    if (buffer != null && buffer.AllErrors.Any())
                     {
                         Chem4Word.Core.UserInteractions.InformUser("Unable to paste text as chemistry: " + Environment.NewLine + string.Join(Environment.NewLine, buffer.AllErrors));
                     }

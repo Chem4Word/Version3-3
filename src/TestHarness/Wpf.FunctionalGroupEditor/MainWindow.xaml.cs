@@ -5,17 +5,16 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME;
+using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Helpers;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Chem4Word.ACME;
-using Chem4Word.Model2;
-using Chem4Word.Model2.Converters.JSON;
-using Chem4Word.Model2.Helpers;
-using Newtonsoft.Json;
+using Chem4Word.Core.Helpers;
 
 namespace Wpf.FunctionalGroupEditor
 {
@@ -25,7 +24,6 @@ namespace Wpf.FunctionalGroupEditor
     public partial class MainWindow : Window
     {
         private string _lastFunctionalGroup;
-        private List<FunctionalGroup> _functionalGroups = Globals.FunctionalGroupsList;
 
         public MainWindow()
         {
@@ -37,10 +35,12 @@ namespace Wpf.FunctionalGroupEditor
             Editor.EditorOptions = new AcmeOptions(null);
 
             Groups.Items.Clear();
-            foreach (var functionalGroup in Globals.FunctionalGroupsList.Where(i => i.Internal == false))
+            foreach (var functionalGroup in Globals.FunctionalGroupsList.Where(i => i.IsSuperAtom))
             {
                 Groups.Items.Add(functionalGroup);
             }
+
+            Groups.SelectedIndex = 0;
         }
 
         private void MainWindow_OnContentRendered(object sender, EventArgs e)
@@ -55,33 +55,43 @@ namespace Wpf.FunctionalGroupEditor
 
         private void Groups_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var jsonConvertor = new JSONConverter();
-
             if (Groups.SelectedItem is FunctionalGroup fg)
             {
+                var cmlConverter = new CMLConverter();
+
                 if (!string.IsNullOrEmpty(_lastFunctionalGroup))
                 {
                     if (Editor.IsDirty)
                     {
-                        var temp = Editor.ActiveController.Model.Copy();
-                        temp.RescaleForCml();
-                        string expansion = jsonConvertor.Export(temp, true);
-                        var fge = _functionalGroups.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
-                        fge.Expansion = expansion;
+                        var fge = Globals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
+                        if (fge != null)
+                        {
+                            var temp = Editor.ActiveController.Model.Copy();
+                            if (temp.TotalAtomsCount > 0)
+                            {
+                                temp.RescaleForCml();
+                                temp.Relabel(true);
+                                var cml = cmlConverter.Export(temp, compressed: true, format: CmlFormat.ChemDraw);
+                                fge.Expansion = cml;
+                            }
+                            else
+                            {
+                                fge.Expansion = string.Empty;
+                            }
+                        }
                     }
                 }
 
-                _lastFunctionalGroup = fg.ToString();
+                _lastFunctionalGroup = fg.Name;
 
-                if (fg.Expansion == null)
+                if (string.IsNullOrEmpty(fg.Expansion))
                 {
-                    var model = jsonConvertor.Import("{'a':[{'l':'" + fg.Name + "','x':0,'y':0}]}");
+                    var model = new Model();
                     Editor.SetModel(model);
                 }
                 else
                 {
-                    string groupJson = JsonConvert.SerializeObject(fg.Expansion);
-                    var model = jsonConvertor.Import(groupJson);
+                    var model = cmlConverter.Import(fg.Expansion);
                     Editor.SetModel(model);
                 }
             }
@@ -91,32 +101,28 @@ namespace Wpf.FunctionalGroupEditor
         {
             if (Editor.IsDirty)
             {
-                var jsonConvertor = new JSONConverter();
-                var temp = Editor.ActiveController.Model.Copy();
-                temp.RescaleForCml();
-                string jsonString = jsonConvertor.Export(temp);
-                var jc = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
-                var fg = _functionalGroups.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
+                var fg = Globals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
                 if (fg != null)
                 {
-                    fg.Expansion = jc;
+                    var temp = Editor.ActiveController.Model.Copy();
+                    if (temp.TotalAtomsCount > 0)
+                    {
+                        temp.RescaleForCml();
+                        temp.Relabel(true);
+                        var cmlConverter = new CMLConverter();
+                        var cml = cmlConverter.Export(temp, compressed: true, format: CmlFormat.ChemDraw);
+                        fg.Expansion = cml;
+                    }
+                    else
+                    {
+                        fg.Expansion = string.Empty;
+                    }
                 }
             }
 
-            List<FunctionalGroup> listOfGroups = new List<FunctionalGroup>();
-            foreach (var group in _functionalGroups)
-            {
-                listOfGroups.Add(group);
-            }
-
-            string json = JsonConvert.SerializeObject(listOfGroups,
-                                                        Formatting.Indented,
-                                                        new JsonSerializerSettings
-                                                        {
-                                                            DefaultValueHandling = DefaultValueHandling.Ignore
-                                                        });
-            Clipboard.SetText(json);
-            MessageBox.Show("Results on Clipboard !");
+            var xml = FunctionalGroups.ExportAsXml();
+            Clipboard.SetText(XmlHelper.AddHeader(xml));
+            MessageBox.Show($@"Please replace $\src\Chemistry\Chem4Word.Model2\Resources\FunctionalGroups.xml{Environment.NewLine}with the results on the clipboard!", "Data on Clipboard");
         }
     }
 }

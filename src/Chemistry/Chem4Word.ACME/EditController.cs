@@ -20,7 +20,6 @@ using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Models;
 using Chem4Word.ACME.Utils;
-using Chem4Word.Core;
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Wpf;

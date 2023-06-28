@@ -15,6 +15,7 @@ using Chem4Word.Library;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
+using Chem4Word.Model2.Converters.SketchEl;
 using Chem4Word.Model2.Geometry;
 using Chem4Word.Model2.Helpers;
 using Chem4Word.Navigator;
@@ -465,6 +466,7 @@ namespace Chem4Word
                     sb.Append("All molecule files (*.cml, *.mol, *.sdf)|*.cml;*.mol;*.sdf");
                     sb.Append("|CML molecule files (*.cml)|*.cml");
                     sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
+                    sb.Append("|SketchEl molecule files (*.el)|*.el");
 
                     var ofd = new OpenFileDialog();
                     ofd.Filter = sb.ToString();
@@ -499,6 +501,11 @@ namespace Chem4Word
                                 case ".sdf":
                                     var sdFileConverter = new SdFileConverter();
                                     model = sdFileConverter.Import(mol);
+                                    break;
+
+                                case ".el":
+                                    var sketchElConverter = new SketchElConverter();
+                                    model = sketchElConverter.Import(mol);
                                     break;
 
                                 default:
@@ -1167,12 +1174,19 @@ namespace Chem4Word
                             var model = cmlConverter.Import(customXmlPart.XML);
                             model.CustomXmlPartGuid = "";
 
+                            var sb = new StringBuilder();
+                            sb.Append("CML molecule files (*.cml)|*.cml");
+                            sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
+                            sb.Append("|SketchEl molecule files (*.el)|*.el");
+
                             var sfd = new SaveFileDialog();
-                            sfd.Filter = "CML molecule files (*.cml)|*.cml|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf";
+                            sfd.Filter = sb.ToString();
                             var dr = sfd.ShowDialog();
                             if (dr == DialogResult.OK)
                             {
                                 var fi = new FileInfo(sfd.FileName);
+                                var before = model.MeanBondLength;
+                                double after;
                                 Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Exporting to '{fi.Name}'");
                                 var fileType = Path.GetExtension(sfd.FileName).ToLower();
                                 switch (fileType)
@@ -1185,13 +1199,21 @@ namespace Chem4Word
                                     case ".mol":
                                     case ".sdf":
                                         // https://www.chemaxon.com/marvin-archive/6.0.2/marvin/help/formats/mol-csmol-doc.html
-                                        var before = model.MeanBondLength;
                                         // Set bond length to 1.54 angstroms (Å)
                                         model.ScaleToAverageBondLength(1.54);
-                                        var after = model.MeanBondLength;
+                                        after = model.MeanBondLength;
                                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
-                                        var converter = new SdFileConverter();
-                                        File.WriteAllText(sfd.FileName, converter.Export(model));
+                                        var sdFileConverter = new SdFileConverter();
+                                        File.WriteAllText(sfd.FileName, sdFileConverter.Export(model));
+                                        break;
+
+                                    case ".el":
+                                        // Set bond length to 1.5 angstroms (Å)
+                                        model.ScaleToAverageBondLength(1.5);
+                                        after = model.MeanBondLength;
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
+                                        var sketchElConverter = new SketchElConverter();
+                                        File.WriteAllText(sfd.FileName, sketchElConverter.Export(model));
                                         break;
                                 }
                             }

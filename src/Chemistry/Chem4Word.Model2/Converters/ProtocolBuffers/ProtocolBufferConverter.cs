@@ -184,7 +184,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             {
                 result.FunctionalGroup = new PBFunctionalGroup
                 {
-                    ShortCode = fg.Symbol,
+                    ShortCode = fg.Name,
                     PlacementFG = (int?)atom.ExplicitFunctionalGroupPlacement
                 };
             }

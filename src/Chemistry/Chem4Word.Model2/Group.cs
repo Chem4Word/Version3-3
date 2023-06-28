@@ -5,19 +5,15 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Chem4Word.Model2.Helpers;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Chem4Word.Model2
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class Group
     {
-        [JsonProperty]
         public string Component { get; set; }
 
-        [JsonProperty]
         public int Count { get; set; }
 
         public Group(string e, int c)
@@ -39,15 +35,15 @@ namespace Chem4Word.Model2
             get
             {
                 double atomicWeight = 0;
-                ElementBase eb;
-                if (AtomHelpers.TryParse(Component, out eb))
+                ElementBase elementBase;
+                if (AtomHelpers.TryParse(Component, out elementBase))
                 {
-                    if (eb is Element e)
+                    if (elementBase is Element e)
                     {
                         atomicWeight = e.AtomicWeight;
                     }
 
-                    if (eb is FunctionalGroup fg)
+                    if (elementBase is FunctionalGroup fg)
                     {
                         atomicWeight = fg.AtomicWeight;
                     }
@@ -61,17 +57,17 @@ namespace Chem4Word.Model2
         {
             get
             {
-                Dictionary<string, int> parts = new Dictionary<string, int>();
+                var parts = new Dictionary<string, int>();
 
-                ElementBase eb;
-                if (AtomHelpers.TryParse(Component, out eb))
+                ElementBase elementBase;
+                if (AtomHelpers.TryParse(Component, out elementBase))
                 {
-                    if (eb is Element e)
+                    if (elementBase is Element e)
                     {
                         parts.Add(e.Symbol, 1);
                     }
 
-                    if (eb is FunctionalGroup fg)
+                    if (elementBase is FunctionalGroup fg)
                     {
                         foreach (var component in fg.Components)
                         {

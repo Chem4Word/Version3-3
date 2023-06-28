@@ -5,10 +5,10 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Helpers;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -44,8 +44,6 @@ namespace Chem4WordTests
         }
 
         [Theory]
-        [InlineData("R1", "R 1")]
-        [InlineData("R9", "R 1")]
         [InlineData("CH2", "C 1 H 2")]
         [InlineData("CH3", "C 1 H 3")]
         [InlineData("CO2H", "C 1 O 2 H 1")]
@@ -85,6 +83,7 @@ namespace Chem4WordTests
             Assert.Equal(expectedAtomicWeight, actualAtomicWeight, 2);
         }
 
+        // Be sure to pick a mixture of FGs which have showAsSymbol true/false
         [Theory]
         [InlineData("R1", false, "[R{1}]")]
         [InlineData("R9", false, "[R{9}]")]

@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 namespace Chem4Word.Model2.Converters.JSON
 {
     /// <summary>
-    /// Converts a Model from and to JSON
+    /// Converts a Model from and to ChemDoodle Web JSON
     /// </summary>
     // ReSharper disable once InconsistentNaming
     public class JSONConverter
