@@ -245,7 +245,8 @@ namespace Chem4Word.Model2.Converters.SketchEl
                 // Process first 5 required parts
                 var atom = new Atom();
                 var element = UnEscape(parts[0]);
-                var ok = AtomHelpers.TryParse(element, out var eb);
+                var lookup = element.Replace("|", "").Replace("{", "").Replace("}", "");
+                var ok = AtomHelpers.TryParse(lookup, out var eb);
                 if (ok)
                 {
                     if (eb is Element || eb is FunctionalGroup)
@@ -365,73 +366,93 @@ namespace Chem4Word.Model2.Converters.SketchEl
             }
             else
             {
-                var startAtomInternalId = _atomsLookupDictionary[int.Parse(parts[0])];
-                var endAtomInternalId = _atomsLookupDictionary[int.Parse(parts[1])];
-                var bond = new Bond
-                {
-                    StartAtomInternalId = startAtomInternalId,
-                    EndAtomInternalId = endAtomInternalId
-                };
+                var startAtomInternalId = Guid.Empty;
+                var endAtomInternalId = Guid.Empty;
 
-                // Force bond order of 4 to zero bond
-                if (parts[2].Equals("4"))
+                var startAtomFound = int.TryParse(parts[0], out var start)
+                                     && _atomsLookupDictionary.TryGetValue(start, out startAtomInternalId);
+                var endAtomFound = int.TryParse(parts[1], out var end)
+                                   && _atomsLookupDictionary.TryGetValue(end, out endAtomInternalId);
+
+                if (startAtomFound && endAtomFound)
                 {
-                    bond.Order = "0";
-                    molecule.Warnings.Add($"Bond line #{index} - Order set to zero - was {parts[2]}");
+                    var bond = new Bond
+                    {
+                        StartAtomInternalId = startAtomInternalId,
+                        EndAtomInternalId = endAtomInternalId
+                    };
+
+                    // Force bond order of 4 to zero bond
+                    if (parts[2].Equals("4"))
+                    {
+                        bond.Order = "0";
+                        molecule.Warnings.Add($"Bond line #{index} - Order set to zero - was {parts[2]}");
+                    }
+                    else
+                    {
+                        // Numeric value is automatically converted to S, D or T by the model
+                        bond.Order = parts[2];
+                    }
+
+                    switch (parts[3])
+                    {
+                        case "0":
+                            bond.Stereo = BondStereo.None;
+                            break;
+
+                        case "1":
+                            bond.Stereo = BondStereo.Wedge;
+                            if (!bond.Order.Equals("S"))
+                            {
+                                bond.Order = "S";
+                                molecule.Warnings.Add($"Bond line #{index} - Order set to Single - BondStereo.Wedge does not support Order of {parts[2]}");
+                            }
+                            break;
+
+                        case "2":
+                            bond.Stereo = BondStereo.Hatch;
+                            if (!bond.Order.Equals("S"))
+                            {
+                                bond.Order = "S";
+                                molecule.Warnings.Add($"Bond line #{index} - Order set to Single - BondStereo.Hatch does not support Order of {parts[2]}");
+                            }
+                            break;
+
+                        case "3":
+                            bond.Stereo = BondStereo.Indeterminate;
+                            if (!bond.Order.Equals("S"))
+                            {
+                                bond.Order = "S";
+                                molecule.Warnings.Add($"Bond line #{index} - Order set to Single - BondStereo.Indeterminate does not support Order of {parts[2]}");
+                            }
+                            break;
+                    }
+
+                    for (var i = 3; i < parts.Length; i++)
+                    {
+                        switch (parts[i].Substring(0, 1).ToLower())
+                        {
+                            default:
+                                // We don't need to implement "x" "y"
+                                Debug.WriteLine(parts[i]);
+                                break;
+                        }
+                    }
+
+                    molecule.AddBond(bond);
+                    bond.Parent = molecule;
                 }
                 else
                 {
-                    // Numeric value is automatically converted to S, D or T by the model
-                    bond.Order = parts[2];
-                }
-
-                switch (parts[3])
-                {
-                    case "0":
-                        bond.Stereo = BondStereo.None;
-                        break;
-
-                    case "1":
-                        bond.Stereo = BondStereo.Wedge;
-                        if (!bond.Order.Equals("S"))
-                        {
-                            bond.Order = "S";
-                            molecule.Warnings.Add($"Bond line #{index} - Order set to Single - BondStereo.Wedge does not support Order of {parts[2]}");
-                        }
-                        break;
-
-                    case "2":
-                        bond.Stereo = BondStereo.Hatch;
-                        if (!bond.Order.Equals("S"))
-                        {
-                            bond.Order = "S";
-                            molecule.Warnings.Add($"Bond line #{index} - Order set to Single - BondStereo.Hatch does not support Order of {parts[2]}");
-                        }
-                        break;
-
-                    case "3":
-                        bond.Stereo = BondStereo.Indeterminate;
-                        if (!bond.Order.Equals("S"))
-                        {
-                            bond.Order = "S";
-                            molecule.Warnings.Add($"Bond line #{index} - Order set to Single - BondStereo.Indeterminate does not support Order of {parts[2]}");
-                        }
-                        break;
-                }
-
-                for (var i = 3; i < parts.Length; i++)
-                {
-                    switch (parts[i].Substring(0, 1).ToLower())
+                    if (!startAtomFound)
                     {
-                        default:
-                            // We don't need to implement "x" "y"
-                            Debug.WriteLine(parts[i]);
-                            break;
+                        molecule.Errors.Add($"Bond line #{index} - Start atom {parts[0]} was not found");
+                    }
+                    if (!endAtomFound)
+                    {
+                        molecule.Errors.Add($"Bond line #{index} - End atom {parts[1]} was not found");
                     }
                 }
-
-                molecule.AddBond(bond);
-                bond.Parent = molecule;
             }
         }
     }

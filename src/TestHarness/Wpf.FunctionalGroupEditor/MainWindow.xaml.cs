@@ -35,7 +35,11 @@ namespace Wpf.FunctionalGroupEditor
             Editor.EditorOptions = new AcmeOptions(null);
 
             Groups.Items.Clear();
-            foreach (var functionalGroup in Globals.FunctionalGroupsList.Where(i => i.IsSuperAtom))
+            var groupsToShow = Globals.FunctionalGroupsList
+                                      .Where(g => g.IsSuperAtom)
+                                      .OrderBy(g => g.Components.First().Component)
+                                      .ThenBy(g => g.Name);
+            foreach (var functionalGroup in groupsToShow)
             {
                 Groups.Items.Add(functionalGroup);
             }

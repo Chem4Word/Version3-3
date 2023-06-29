@@ -18,6 +18,22 @@ namespace Chem4Word.Model2
     {
         private static List<FunctionalGroup> _shortcutList;
 
+        private const string ElementNameRoot = "functionalGroups";
+        private const string ElementNameFunctionalGroup = "functionalGroup";
+        private const string ElementNameComment = "comment";
+        private const string ElementNameName = "name";
+        private const string ElementNameSymbol = "symbol";
+        private const string ElementNameShowAsSymbol = "showAsSymbol";
+        private const string ElementNameIsSuperAtom = "isSuperAtom";
+        private const string ElementNameFlippable = "flippable";
+        private const string ElementNameInternal = "internal";
+        private const string ElementNameColour = "colour";
+        private const string ElementNameComponents = "components";
+        private const string ElementNameComponent = "component";
+        private const string ElementNameGroup = "group";
+        private const string ElementNameCount = "count";
+        private const string ElementNameExpansion = "expansion";
+
         /// <summary>
         /// ShortcutList represent text as a user might type in a superatom,
         /// actual values control how they are rendered
@@ -42,28 +58,28 @@ namespace Chem4Word.Model2
             if (!string.IsNullOrEmpty(xml))
             {
                 var groupsDoc = XDocument.Parse(xml);
-                foreach (var groupElement in groupsDoc.Descendants().Where(x => x.Name.LocalName == "functionalGroup"))
+                foreach (var groupElement in groupsDoc.Descendants().Where(x => x.Name.LocalName == ElementNameFunctionalGroup))
                 {
                     // Copy the values one by one to prevent recursive issue found during unit tests
 
                     var newGroup = new FunctionalGroup
                     {
-                        Comment = groupElement.Element("comment")?.Value,
-                        Name = groupElement.Element("name")?.Value,
-                        Symbol = groupElement.Element("symbol")?.Value,
-                        Colour = groupElement.Element("colour")?.Value,
-                        ShowAsSymbol = bool.Parse((string)groupElement.Element("showAsSymbol") ?? "false"),
-                        IsSuperAtom = bool.Parse((string)groupElement.Element("isSuperAtom") ?? "false"),
-                        Flippable = bool.Parse((string)groupElement.Element("flippable") ?? "false"),
-                        Internal = bool.Parse((string)groupElement.Element("internal") ?? "false"),
-                        Expansion = groupElement.Element("expansion")?.Value,
+                        Comment = groupElement.Element(ElementNameComment)?.Value,
+                        Name = groupElement.Element(ElementNameName)?.Value,
+                        Symbol = groupElement.Element(ElementNameSymbol)?.Value,
+                        Colour = groupElement.Element(ElementNameColour)?.Value,
+                        ShowAsSymbol = bool.Parse((string)groupElement.Element(ElementNameShowAsSymbol) ?? "false"),
+                        IsSuperAtom = bool.Parse((string)groupElement.Element(ElementNameIsSuperAtom) ?? "false"),
+                        Flippable = bool.Parse((string)groupElement.Element(ElementNameFlippable) ?? "false"),
+                        Internal = bool.Parse((string)groupElement.Element(ElementNameInternal) ?? "false"),
+                        Expansion = groupElement.Element(ElementNameExpansion)?.Value,
                         Components = new List<Group>()
                     };
 
-                    foreach (var compElement in groupElement.Descendants().Where(x => x.Name.LocalName == "component"))
+                    foreach (var compElement in groupElement.Descendants().Where(x => x.Name.LocalName.Equals(ElementNameComponent)))
                     {
-                        var groupValue = compElement.Element("group")?.Value;
-                        var groupCount = compElement.Element("count")?.Value;
+                        var groupValue = compElement.Element(ElementNameGroup)?.Value;
+                        var groupCount = compElement.Element(ElementNameCount)?.Value;
                         if (!string.IsNullOrEmpty(groupValue) && !string.IsNullOrEmpty(groupCount))
                         {
                             newGroup.Components.Add(new Group(groupValue, int.Parse(groupCount)));
@@ -79,58 +95,58 @@ namespace Chem4Word.Model2
         {
             var xDocument = new XDocument();
 
-            var root = new XElement("functionalGroups");
+            var root = new XElement(ElementNameRoot);
             root.Add(new XAttribute(XNamespace.Xmlns + CMLConstants.TagCml, CMLNamespaces.cml));
             xDocument.Add(root);
 
             foreach (var functionalGroup in ShortcutList)
             {
-                var functionalGroupElement = new XElement("functionalGroup");
+                var functionalGroupElement = new XElement(ElementNameFunctionalGroup);
 
                 if (!string.IsNullOrEmpty(functionalGroup.Comment))
                 {
-                    functionalGroupElement.Add(new XElement("comment", functionalGroup.Comment));
+                    functionalGroupElement.Add(new XElement(ElementNameComment, functionalGroup.Comment));
                 }
 
-                functionalGroupElement.Add(new XElement("name", functionalGroup.Name));
-                functionalGroupElement.Add(new XElement("symbol", functionalGroup.Symbol));
+                functionalGroupElement.Add(new XElement(ElementNameName, functionalGroup.Name));
+                functionalGroupElement.Add(new XElement(ElementNameSymbol, functionalGroup.Symbol));
 
                 if (functionalGroup.ShowAsSymbol)
                 {
-                    functionalGroupElement.Add(new XElement("showAsSymbol", functionalGroup.ShowAsSymbol));
+                    functionalGroupElement.Add(new XElement(ElementNameShowAsSymbol, functionalGroup.ShowAsSymbol));
                 }
                 if (!string.IsNullOrEmpty(functionalGroup.Colour))
                 {
-                    functionalGroupElement.Add(new XElement("colour", functionalGroup.Colour));
+                    functionalGroupElement.Add(new XElement(ElementNameColour, functionalGroup.Colour));
                 }
                 if (functionalGroup.Internal)
                 {
-                    functionalGroupElement.Add(new XElement("internal", functionalGroup.Internal));
+                    functionalGroupElement.Add(new XElement(ElementNameInternal, functionalGroup.Internal));
                 }
                 if (functionalGroup.Flippable)
                 {
-                    functionalGroupElement.Add(new XElement("flippable", functionalGroup.Flippable));
+                    functionalGroupElement.Add(new XElement(ElementNameFlippable, functionalGroup.Flippable));
                 }
                 if (functionalGroup.IsSuperAtom)
                 {
-                    functionalGroupElement.Add(new XElement("canBeExpanded", functionalGroup.IsSuperAtom));
+                    functionalGroupElement.Add(new XElement(ElementNameIsSuperAtom, functionalGroup.IsSuperAtom));
                 }
 
-                var componentsElement = new XElement("components");
+                var componentsElement = new XElement(ElementNameComponents);
                 functionalGroupElement.Add(componentsElement);
 
                 foreach (var component in functionalGroup.Components)
                 {
-                    var componentElement = new XElement("component");
+                    var componentElement = new XElement(ElementNameComponent);
                     componentsElement.Add(componentElement);
 
-                    componentElement.Add(new XElement("group", component.Component));
-                    componentElement.Add(new XElement("count", component.Count));
+                    componentElement.Add(new XElement(ElementNameGroup, component.Component));
+                    componentElement.Add(new XElement(ElementNameCount, component.Count));
                 }
 
                 if (!string.IsNullOrEmpty(functionalGroup.Expansion))
                 {
-                    functionalGroupElement.Add(new XElement("expansion", functionalGroup.Expansion));
+                    functionalGroupElement.Add(new XElement(ElementNameExpansion, functionalGroup.Expansion));
                 }
 
                 root.Add(functionalGroupElement);
