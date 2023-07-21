@@ -6,6 +6,21 @@
     <symbol>✱</symbol>
     <showAsSymbol>true</showAsSymbol>
     <colour>#ff0000</colour>
+    <groupType>AttachmentPoint</groupType>
+    <components>
+      <component>
+        <group>R</group>
+        <count>0</count>
+      </component>
+    </components>
+  </functionalGroup>
+  <functionalGroup>
+    <comment>This functional group is a placeholder used for any unknown atom</comment>
+    <name>??</name>
+    <symbol>??</symbol>
+    <showAsSymbol>true</showAsSymbol>
+    <colour>#ff0000</colour>
+    <groupType>Unknown</groupType>
     <components>
       <component>
         <group>R</group>
@@ -17,6 +32,7 @@
     <name>R#</name>
     <symbol>R{#}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -28,6 +44,7 @@
     <name>R′</name>
     <symbol>R′</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -39,6 +56,7 @@
     <name>R″</name>
     <symbol>R″</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -50,6 +68,7 @@
     <name>R1</name>
     <symbol>R{1}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -61,6 +80,7 @@
     <name>R2</name>
     <symbol>R{2}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -72,6 +92,7 @@
     <name>R3</name>
     <symbol>R{3}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -83,6 +104,7 @@
     <name>R4</name>
     <symbol>R{4}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -94,6 +116,7 @@
     <name>R5</name>
     <symbol>R{5}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -105,6 +128,7 @@
     <name>R6</name>
     <symbol>R{6}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -116,6 +140,7 @@
     <name>R7</name>
     <symbol>R{7}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -127,6 +152,7 @@
     <name>R8</name>
     <symbol>R{8}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -138,6 +164,7 @@
     <name>R9</name>
     <symbol>R{9}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -149,6 +176,7 @@
     <name>R10</name>
     <symbol>R{10}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -160,6 +188,7 @@
     <name>R11</name>
     <symbol>R{11}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -171,6 +200,7 @@
     <name>R12</name>
     <symbol>R{12}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -182,6 +212,7 @@
     <name>R13</name>
     <symbol>R{13}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -193,6 +224,7 @@
     <name>R14</name>
     <symbol>R{14}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -204,6 +236,7 @@
     <name>R15</name>
     <symbol>R{15}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -215,6 +248,7 @@
     <name>R16</name>
     <symbol>R{16}</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Residue</groupType>
     <components>
       <component>
         <group>R</group>
@@ -226,6 +260,7 @@
     <name>Uut</name>
     <symbol>Uut</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Legacy</groupType>
     <components>
       <component>
         <group>Nh</group>
@@ -237,6 +272,7 @@
     <name>Uuq</name>
     <symbol>Uuq</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Legacy</groupType>
     <components>
       <component>
         <group>Fl</group>
@@ -248,6 +284,7 @@
     <name>Uup</name>
     <symbol>Uup</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Legacy</groupType>
     <components>
       <component>
         <group>Mc</group>
@@ -259,6 +296,7 @@
     <name>Uuh</name>
     <symbol>Uuh</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Legacy</groupType>
     <components>
       <component>
         <group>Lv</group>
@@ -270,6 +308,7 @@
     <name>Uus</name>
     <symbol>Uus</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Legacy</groupType>
     <components>
       <component>
         <group>Ts</group>
@@ -281,6 +320,7 @@
     <name>Uuo</name>
     <symbol>Uuo</symbol>
     <showAsSymbol>true</showAsSymbol>
+    <groupType>Legacy</groupType>
     <components>
       <component>
         <group>Og</group>
@@ -291,7 +331,7 @@
   <functionalGroup>
     <name>OH</name>
     <symbol>OH</symbol>
-    <internal>true</internal>
+    <groupType>Internal</groupType>
     <flippable>true</flippable>
     <components>
       <component>
@@ -307,7 +347,7 @@
   <functionalGroup>
     <name>CH2</name>
     <symbol>CH2</symbol>
-    <internal>true</internal>
+    <groupType>Internal</groupType>
     <flippable>true</flippable>
     <components>
       <component>
@@ -323,7 +363,7 @@
   <functionalGroup>
     <name>CH3</name>
     <symbol>CH3</symbol>
-    <internal>true</internal>
+    <groupType>Internal</groupType>
     <flippable>true</flippable>
     <components>
       <component>
@@ -339,7 +379,7 @@
   <functionalGroup>
     <name>C2H5</name>
     <symbol>C2H5</symbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -350,13 +390,13 @@
         <count>5</count>
       </component>
     </components>
-    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="612.5" y2="600.0" /&gt;&lt;atom id="a2" elementType="H" x2="612.5" y2="580.0" /&gt;&lt;atom id="a3" elementType="C" x2="592.5" y2="600.0" /&gt;&lt;atom id="a4" elementType="H" x2="612.5" y2="620.0" /&gt;&lt;atom id="a5" elementType="H" x2="632.5" y2="600.0" /&gt;&lt;atom id="a6" elementType="H" x2="592.5" y2="580.0" /&gt;&lt;atom id="a7" elementType="*" x2="572.5" y2="600.0" /&gt;&lt;atom id="a8" elementType="H" x2="592.5" y2="620.0" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a1 a4" order="1" /&gt;&lt;bond id="b4" atomRefs2="a1 a5" order="1" /&gt;&lt;bond id="b5" atomRefs2="a3 a6" order="1" /&gt;&lt;bond id="b6" atomRefs2="a3 a7" order="1" /&gt;&lt;bond id="b7" atomRefs2="a3 a8" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="582.929" y2="607.0711" /&gt;&lt;atom id="a2" elementType="C" x2="602.929" y2="607.0711" p3:hydrogenPlacement="East" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="C" x2="612.9289" y2="589.7506" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a2 a3" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>Me</name>
     <symbol>Me</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -367,12 +407,13 @@
         <count>2</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="585.0" y2="600.0" /&gt;&lt;atom id="a2" elementType="C" x2="605.0" y2="600.0" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>Et</name>
     <symbol>Et</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -383,12 +424,13 @@
         <count>5</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="582.929" y2="607.0711" /&gt;&lt;atom id="a2" elementType="C" x2="602.929" y2="607.0711" p3:hydrogenPlacement="East" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="C" x2="612.9289" y2="589.7506" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a2 a3" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>n-Pr</name>
     <symbol>n-Pr</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -399,12 +441,13 @@
         <count>7</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="605.0001" y2="600.0" /&gt;&lt;atom id="a2" elementType="*" x2="585.0" y2="600.0" /&gt;&lt;atom id="a3" elementType="C" x2="615.0" y2="582.6795" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a4" elementType="C" x2="615.0" y2="617.3205" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a1 a4" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>i-Pr</name>
     <symbol>i-Pr</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -415,12 +458,13 @@
         <count>7</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="605.0001" y2="600.0" /&gt;&lt;atom id="a2" elementType="*" x2="585.0" y2="600.0" /&gt;&lt;atom id="a3" elementType="C" x2="615.0" y2="582.6795" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a4" elementType="C" x2="615.0" y2="617.3205" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a1 a4" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>iPr</name>
     <symbol>{i}Pr</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -431,12 +475,13 @@
         <count>7</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="602.929" y2="600.0" /&gt;&lt;atom id="a2" elementType="*" x2="582.929" y2="600.0" /&gt;&lt;atom id="a3" elementType="C" x2="612.9289" y2="582.6795" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a4" elementType="C" x2="612.9289" y2="617.3205" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a1 a4" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>nBu</name>
     <symbol>{n}Bu</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -447,12 +492,13 @@
         <count>9</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="604.5369" y2="592.8845" /&gt;&lt;atom id="a2" elementType="C" x2="644.5369" y2="558.2435" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="C" x2="614.5369" y2="575.564" /&gt;&lt;atom id="a4" elementType="C" x2="634.5369" y2="575.564" /&gt;&lt;atom id="a5" elementType="*" x2="584.5369" y2="592.8845" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a5" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a3 a4" order="1" /&gt;&lt;bond id="b4" atomRefs2="a4 a2" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>n-Bu</name>
     <symbol>n-Bu</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -463,12 +509,13 @@
         <count>9</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="590.0" y2="617.3205" /&gt;&lt;atom id="a2" elementType="C" x2="630.0" y2="582.6795" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="C" x2="600.0" y2="600.0" /&gt;&lt;atom id="a4" elementType="C" x2="620.0" y2="600.0" /&gt;&lt;atom id="a5" elementType="*" x2="570.0" y2="617.3205" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a5" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a3 a4" order="1" /&gt;&lt;bond id="b4" atomRefs2="a4 a2" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>tBu</name>
     <symbol>{t}Bu</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -479,12 +526,13 @@
         <count>3</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="545.5" y2="593.25" /&gt;&lt;atom id="a2" elementType="C" x2="545.5" y2="573.25" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="C" x2="565.5" y2="593.25" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a4" elementType="C" x2="545.5" y2="613.25" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a5" elementType="*" x2="525.5" y2="593.25" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a1 a4" order="1" /&gt;&lt;bond id="b4" atomRefs2="a1 a5" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>t-Bu</name>
     <symbol>t-Bu</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>C</group>
@@ -495,12 +543,30 @@
         <count>3</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="600.0" y2="600.0" /&gt;&lt;atom id="a2" elementType="C" x2="600.0" y2="580.0" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="C" x2="620.0" y2="600.0" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a4" elementType="C" x2="600.0" y2="620.0" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a5" elementType="*" x2="580.0" y2="600.0" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a1 a4" order="1" /&gt;&lt;bond id="b4" atomRefs2="a1 a5" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
+  </functionalGroup>
+  <functionalGroup>
+    <name>Cy</name>
+    <symbol>Cy</symbol>
+    <showAsSymbol>true</showAsSymbol>
+    <groupType>SuperAtom</groupType>
+    <components>
+      <component>
+        <group>C</group>
+        <count>6</count>
+      </component>
+      <component>
+        <group>H</group>
+        <count>12</count>
+      </component>
+    </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="569.9996" y2="600.0" /&gt;&lt;atom id="a2" elementType="C" x2="589.9999" y2="600.0" /&gt;&lt;atom id="a3" elementType="C" x2="600.0" y2="582.6798" /&gt;&lt;atom id="a4" elementType="C" x2="620.0003" y2="582.6798" /&gt;&lt;atom id="a5" elementType="C" x2="600.0" y2="617.3202" /&gt;&lt;atom id="a6" elementType="C" x2="620.0003" y2="617.3202" /&gt;&lt;atom id="a7" elementType="C" x2="630.0004" y2="600.0" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a3 a2" order="1" /&gt;&lt;bond id="b3" atomRefs2="a3 a4" order="1" /&gt;&lt;bond id="b4" atomRefs2="a2 a5" order="1" /&gt;&lt;bond id="b5" atomRefs2="a5 a6" order="1" /&gt;&lt;bond id="b6" atomRefs2="a6 a7" order="1" /&gt;&lt;bond id="b7" atomRefs2="a7 a4" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>Ph</name>
     <symbol>Ph</symbol>
     <showAsSymbol>true</showAsSymbol>
-    <isSuperAtom>true</isSuperAtom>
+    <groupType>SuperAtom</groupType>
     <components>
       <component>
         <group>C</group>
@@ -516,8 +582,8 @@
   <functionalGroup>
     <name>OCF3</name>
     <symbol>OCF3</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>O</group>
@@ -537,8 +603,8 @@
   <functionalGroup>
     <name>CF3</name>
     <symbol>CF3</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>C</group>
@@ -554,8 +620,8 @@
   <functionalGroup>
     <name>CCl3</name>
     <symbol>CCl3</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>C</group>
@@ -571,8 +637,8 @@
   <functionalGroup>
     <name>C2F5</name>
     <symbol>C2F5</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>C</group>
@@ -588,8 +654,8 @@
   <functionalGroup>
     <name>TMS</name>
     <symbol>TMS</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>Si</group>
@@ -605,8 +671,8 @@
   <functionalGroup>
     <name>COOH</name>
     <symbol>COOH</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>C</group>
@@ -625,12 +691,13 @@
         <count>1</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="562.1209" y2="584.0904" /&gt;&lt;atom id="a2" elementType="C" x2="582.1209" y2="584.0904" /&gt;&lt;atom id="a3" elementType="O" x2="592.1209" y2="601.4109" /&gt;&lt;atom id="a4" elementType="O" x2="592.1209" y2="566.7698" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a2 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a2 a4" order="2" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>CO2H</name>
     <symbol>CO2H</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>C</group>
@@ -645,12 +712,13 @@
         <count>1</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="585.0" y2="600.0" /&gt;&lt;atom id="a2" elementType="C" x2="605.0" y2="600.0" /&gt;&lt;atom id="a3" elementType="O" x2="615.0" y2="617.3205" /&gt;&lt;atom id="a4" elementType="O" x2="615.0" y2="582.6795" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a2 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a2 a4" order="2" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>CO2CH3</name>
     <symbol>CO2CH3</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>C</group>
@@ -665,12 +733,13 @@
         <count>1</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="595.0" y2="608.6603" /&gt;&lt;atom id="a2" elementType="O" x2="605.0" y2="591.3397" /&gt;&lt;atom id="a3" elementType="*" x2="575.0" y2="608.6603" /&gt;&lt;atom id="a4" elementType="C" x2="625.0" y2="591.3397" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a2 a4" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>NO2</name>
     <symbol>NO2</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>N</group>
@@ -686,9 +755,8 @@
   <functionalGroup>
     <name>NH2</name>
     <symbol>NH2</symbol>
-    <internal>true</internal>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>N</group>
@@ -699,12 +767,13 @@
         <count>2</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="590.0" y2="600.0001" /&gt;&lt;atom id="a2" elementType="N" x2="610.0" y2="600.0001" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>CH2OH</name>
     <symbol>CH2OH</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>CH2</group>
@@ -719,12 +788,13 @@
         <count>1</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="575.0" y2="595.0" /&gt;&lt;atom id="a2" elementType="C" x2="595.0" y2="595.0" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="O" x2="605.0" y2="577.6795" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a2 a3" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>CH2CH2OH</name>
     <symbol>CH2CH2OH</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>CH2</group>
@@ -743,12 +813,13 @@
         <count>1</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="590.0" y2="608.6603" /&gt;&lt;atom id="a2" elementType="C" x2="600.0" y2="591.3397" /&gt;&lt;atom id="a3" elementType="*" x2="570.0" y2="608.6603" /&gt;&lt;atom id="a4" elementType="O" x2="620.0" y2="591.3397" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a2 a4" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>CH2CH2CH2OH</name>
     <symbol>CH2CH2CH2OH</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>CH2</group>
@@ -763,12 +834,13 @@
         <count>1</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="C" x2="497.0" y2="545.4295" /&gt;&lt;atom id="a2" elementType="C" x2="487.0" y2="562.75" p3:hydrogenPlacement="East" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="*" x2="467.0" y2="562.75" /&gt;&lt;atom id="a4" elementType="C" x2="517.0" y2="545.4295" /&gt;&lt;atom id="a5" elementType="O" x2="527.0" y2="528.109" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a2 a1" order="1" /&gt;&lt;bond id="b2" atomRefs2="a2 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a1 a4" order="1" /&gt;&lt;bond id="b4" atomRefs2="a4 a5" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>OMe</name>
     <symbol>OMe</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>O</group>
@@ -779,12 +851,13 @@
         <count>1</count>
       </component>
     </components>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="O" x2="602.929" y2="607.0711" /&gt;&lt;atom id="a2" elementType="C" x2="612.9289" y2="589.7506" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;atom id="a3" elementType="*" x2="582.929" y2="607.0711" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a1 a3" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>OEt</name>
     <symbol>OEt</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
         <group>O</group>
@@ -795,20 +868,20 @@
         <count>1</count>
       </component>
     </components>
-    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="575.0" y2="591.3398" /&gt;&lt;atom id="a2" elementType="O" x2="594.9996" y2="591.3395" /&gt;&lt;atom id="a3" elementType="C" x2="605.0003" y2="608.6605" /&gt;&lt;atom id="a4" elementType="C" x2="625.0" y2="608.6602" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a2 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a3 a4" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
+    <expansion>&lt;molecule id="m1" xmlns="http://www.xml-cml.org/schema"&gt;&lt;atomArray&gt;&lt;atom id="a1" elementType="*" x2="575.0" y2="608.6602" /&gt;&lt;atom id="a2" elementType="O" x2="594.9996" y2="608.6605" /&gt;&lt;atom id="a3" elementType="C" x2="605.0003" y2="591.3395" /&gt;&lt;atom id="a4" elementType="C" x2="625.0" y2="591.3398" p3:explicit="false" xmlns:p3="http://www.chem4word.com/cml" /&gt;&lt;/atomArray&gt;&lt;bondArray&gt;&lt;bond id="b1" atomRefs2="a1 a2" order="1" /&gt;&lt;bond id="b2" atomRefs2="a2 a3" order="1" /&gt;&lt;bond id="b3" atomRefs2="a3 a4" order="1" /&gt;&lt;/bondArray&gt;&lt;/molecule&gt;</expansion>
   </functionalGroup>
   <functionalGroup>
     <name>Bz</name>
     <symbol>Bz</symbol>
+    <groupType>SuperAtom</groupType>
     <flippable>true</flippable>
-    <isSuperAtom>true</isSuperAtom>
     <components>
       <component>
-        <group>Ph</group>
+        <group>CH2</group>
         <count>1</count>
       </component>
       <component>
-        <group>CH2</group>
+        <group>Ph</group>
         <count>1</count>
       </component>
     </components>
@@ -819,19 +892,7 @@
     <symbol>Z</symbol>
     <showAsSymbol>true</showAsSymbol>
     <colour>#808080</colour>
-    <components>
-      <component>
-        <group>R</group>
-        <count>0</count>
-      </component>
-    </components>
-  </functionalGroup>
-  <functionalGroup>
-    <comment>This functional group is a placeholder used for any unknown atom</comment>
-    <name>??</name>
-    <symbol>??</symbol>
-    <showAsSymbol>true</showAsSymbol>
-    <colour>#ff0000</colour>
+    <groupType>Placeholder</groupType>
     <components>
       <component>
         <group>R</group>

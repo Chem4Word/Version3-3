@@ -291,16 +291,16 @@ namespace Chem4Word.ACME
                 BindControls(ActiveController);
 
                 ActiveController.OnFeedbackChange += ActiveControllerOnFeedbackChange;
+
+                //refresh the ring button
+                SetCurrentRing(BenzeneButton);
+                //refresh the selection button
+                SetSelectionMode(LassoButton);
+
+                //HACK: [DCD] Need to do this to put the editor into the right mode after refreshing the ring button
+                DrawButton.IsChecked = true;
+                ModeButton_OnChecked(DrawButton, new RoutedEventArgs());
             }
-
-            //refresh the ring button
-            SetCurrentRing(BenzeneButton);
-            //refresh the selection button
-            SetSelectionMode(LassoButton);
-
-            //HACK: [DCD] Need to do this to put the editor into the right mode after refreshing the ring button
-            DrawButton.IsChecked = true;
-            ModeButton_OnChecked(DrawButton, new RoutedEventArgs());
         }
 
         private void ACMEControl_Loaded(object sender, RoutedEventArgs e)

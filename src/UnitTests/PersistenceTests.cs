@@ -134,6 +134,31 @@ namespace Chem4WordTests
         }
 
         [Fact]
+        public void CheckAtomTransforms()
+        {
+            CMLConverter mc = new CMLConverter();
+            Model model = mc.Import(ResourceHelper.GetStringResource("Transformed.xml"));
+
+            // Basic Sanity Checks
+            Assert.True(model.Molecules.Count == 1, $"Expected 1 Molecule; Got {model.Molecules.Count}");
+
+            Molecule molecule = model.Molecules.Values.First();
+            Assert.True(molecule.Atoms.Count == 6, $"Expected 6 Atoms; Got {molecule.Atoms.Count}");
+
+            var atoms = molecule.Atoms.Values.ToArray();
+
+            // Transformed
+            Assert.True(atoms[0].Element.Symbol.Equals("Nh"), $"Expected 'Nh'; Got '{atoms[0].Element.Symbol}'");
+            Assert.True(atoms[1].Element.Symbol.Equals("C"), $"Expected 'C'; Got '{atoms[1].Element.Symbol}'");
+            Assert.True(atoms[2].Element.Symbol.Equals("O"), $"Expected 'O'; Got '{atoms[2].Element.Symbol}'");
+
+            // Not Transformed
+            Assert.True(atoms[3].Element.Symbol.Equals("X"), $"Expected 'X'; Got '{atoms[3].Element.Symbol}'");
+            Assert.True(atoms[4].Element.Symbol.Equals("Y"), $"Expected 'Y'; Got '{atoms[4].Element.Symbol}'");
+            Assert.True(atoms[5].Element.Symbol.Equals("C2H5"), $"Expected 'C2H5'; Got '{atoms[5].Element.Symbol}'");
+        }
+
+        [Fact]
         public void CmlImportNested()
         {
             CMLConverter mc = new CMLConverter();

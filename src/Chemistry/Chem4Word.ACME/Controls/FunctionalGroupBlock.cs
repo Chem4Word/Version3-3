@@ -47,6 +47,8 @@ namespace Chem4Word.ACME.Controls
 
         private void BuildTextBlock(FunctionalGroup functionalGroup)
         {
+            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(functionalGroup.Colour ?? "#000000"));
+
             foreach (var term in functionalGroup.ExpandIntoTerms())
             {
                 foreach (var part in term.Parts)

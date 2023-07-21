@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,8 +22,6 @@ namespace Chem4Word.Model2
         public override string Colour { get; set; }
 
         public override string Name { get; set; }
-
-        public bool Internal { get; set; }
 
         /// <summary>
         /// Determines whether the functional group can be flipped about the pivot
@@ -42,10 +41,11 @@ namespace Chem4Word.Model2
         /// </summary>
         public bool ShowAsSymbol { get; set; }
 
-        /// <summary>
-        /// Indicates whether a functional group is a "SuperAtom"
-        /// </summary>
-        public bool IsSuperAtom { get; set; }
+        public GroupType GroupType { get; set; } = GroupType.SuperAtom;
+
+        public bool ShowInDropDown => GroupType != GroupType.Legacy
+                                      && GroupType != GroupType.Internal
+                                      && GroupType != GroupType.Unknown;
 
         /// <summary>
         /// Defines the constituents of the "SuperAtom"
@@ -257,7 +257,7 @@ namespace Chem4Word.Model2
                 var expanded = new List<FunctionalGroupPart>();
 
                 ElementBase elementBase;
-                if (AtomHelpers.TryParse(componentGroup.Component, out elementBase))
+                if (AtomHelpers.TryParse(componentGroup.Component, false, out elementBase))
                 {
                     if (elementBase is Element element)
                     {

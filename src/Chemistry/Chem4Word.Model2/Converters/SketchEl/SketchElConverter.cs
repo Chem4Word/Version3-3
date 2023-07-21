@@ -245,8 +245,9 @@ namespace Chem4Word.Model2.Converters.SketchEl
                 // Process first 5 required parts
                 var atom = new Atom();
                 var element = UnEscape(parts[0]);
+                // Remove formatting
                 var lookup = element.Replace("|", "").Replace("{", "").Replace("}", "");
-                var ok = AtomHelpers.TryParse(lookup, out var eb);
+                var ok = AtomHelpers.TryParse(lookup, true, out var eb);
                 if (ok)
                 {
                     if (eb is Element || eb is FunctionalGroup)

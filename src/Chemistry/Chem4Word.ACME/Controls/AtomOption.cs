@@ -30,7 +30,7 @@ namespace Chem4Word.ACME
         public AtomOption(FunctionalGroup fg) : this()
         {
             Element = fg;
-            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(fg.Colour ?? "#000000"));
+            // Foreground is now set within FunctionalGroupBlock.cs code
             Content = new FunctionalGroupBlock { ParentGroup = fg };
         }
 

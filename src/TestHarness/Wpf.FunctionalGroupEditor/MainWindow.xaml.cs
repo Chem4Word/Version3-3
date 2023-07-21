@@ -6,15 +6,19 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Chem4Word.Core.Helpers;
+using Wpf.FunctionalGroupEditor.Models;
 
 namespace Wpf.FunctionalGroupEditor
 {
@@ -34,15 +38,24 @@ namespace Wpf.FunctionalGroupEditor
         {
             Editor.EditorOptions = new AcmeOptions(null);
 
-            Groups.Items.Clear();
+            var model = new List<FgItem>();
+
             var groupsToShow = Globals.FunctionalGroupsList
-                                      .Where(g => g.IsSuperAtom)
-                                      .OrderBy(g => g.Components.First().Component)
+                                      .Where(g => g.GroupType == GroupType.SuperAtom)
+                                      .OrderBy(g => g.AtomicWeight)
                                       .ThenBy(g => g.Name);
+
             foreach (var functionalGroup in groupsToShow)
             {
-                Groups.Items.Add(functionalGroup);
+                var item = new FgItem
+                {
+                    Name = functionalGroup.Name,
+                    Group = functionalGroup
+                };
+                model.Add(item);
             }
+
+            Groups.ItemsSource = model;
 
             Groups.SelectedIndex = 0;
         }
@@ -59,7 +72,7 @@ namespace Wpf.FunctionalGroupEditor
 
         private void Groups_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Groups.SelectedItem is FunctionalGroup fg)
+            if (Groups.SelectedItem is FgItem item)
             {
                 var cmlConverter = new CMLConverter();
 
@@ -86,9 +99,11 @@ namespace Wpf.FunctionalGroupEditor
                     }
                 }
 
-                _lastFunctionalGroup = fg.Name;
+                _lastFunctionalGroup = item.Name;
 
-                if (string.IsNullOrEmpty(fg.Expansion))
+                var fg = Globals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(item.Name));
+
+                if (fg == null || string.IsNullOrEmpty(fg.Expansion))
                 {
                     var model = new Model();
                     Editor.SetModel(model);
@@ -96,8 +111,13 @@ namespace Wpf.FunctionalGroupEditor
                 else
                 {
                     var model = cmlConverter.Import(fg.Expansion);
+                    Debug.WriteLine($"Formula for '{fg.Name}' is {model.ConciseFormula}");
                     Editor.SetModel(model);
                 }
+
+                Title = $"Functional Group Expansion Editor - {item.Name}";
+
+                Groups.Focus();
             }
         }
 

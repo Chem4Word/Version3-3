@@ -5,14 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Enums;
+using Chem4Word.Model2.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
-using Chem4Word.Core.Enums;
-using Chem4Word.Model2.Helpers;
 
 namespace Chem4Word.Model2.Converters.CML
 {
@@ -36,30 +36,15 @@ namespace Chem4Word.Model2.Converters.CML
         internal static ElementBase GetElementOrFunctionalGroup(XElement cmlElement, out string message)
         {
             message = "";
-            XAttribute xa = cmlElement.Attribute(CMLConstants.AttributeElementType);
+            var xa = cmlElement.Attribute(CMLConstants.AttributeElementType);
             if (xa != null)
             {
-                string symbol = xa.Value;
-                ElementBase eb;
-                AtomHelpers.TryParse(symbol, out eb);
+                var symbol = xa.Value;
+                AtomHelpers.TryParse(symbol, true, out var eb);
 
-                if (eb is Element element)
+                if (eb is Element || eb is FunctionalGroup)
                 {
-                    return element;
-                }
-
-                if (eb is FunctionalGroup functionalGroup)
-                {
-                    // Fix Invalid data; Force internal FG to prime Element
-                    if (functionalGroup.Internal)
-                    {
-                        AtomHelpers.TryParse(functionalGroup.Components[0].Component, out eb);
-                        if (eb is Element chemicalElement)
-                        {
-                            return chemicalElement;
-                        }
-                    }
-                    return functionalGroup;
+                    return eb;
                 }
 
                 //if we got here then it went very wrong

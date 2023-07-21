@@ -5,13 +5,13 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
-using Newtonsoft.Json;
 
 namespace Chem4Word.Model2.Converters.JSON
 {
@@ -201,18 +201,12 @@ namespace Chem4Word.Model2.Converters.JSON
                 {
                     if (!string.IsNullOrEmpty(a.l))
                     {
-                        ElementBase eb;
-                        var ok = AtomHelpers.TryParse(a.l, out eb);
+                        var ok = AtomHelpers.TryParse(a.l, true, out var eb);
                         if (ok)
                         {
-                            if (eb is Element element)
+                            if (eb is Element || eb is FunctionalGroup)
                             {
-                                ce = element;
-                            }
-
-                            if (eb is FunctionalGroup functionalGroup)
-                            {
-                                ce = functionalGroup;
+                                ce = eb;
                             }
                         }
                     }

@@ -73,6 +73,33 @@ namespace Chem4Word.Model2
         }
 
         /// <summary>
+        /// True if this molecule contains only functional groups which can be expanded
+        /// </summary>
+        public bool AllFunctionalGroupsAreExpandable
+        {
+            get
+            {
+                var functionalGroups = 0;
+                var canBeExpanded = 0;
+
+                foreach (var atom in Atoms.Values)
+                {
+                    if (atom.Element is FunctionalGroup functionalGroup)
+                    {
+                        functionalGroups++;
+                        if (functionalGroup.GroupType == GroupType.SuperAtom
+                            && !string.IsNullOrEmpty(functionalGroup.Expansion))
+                        {
+                            canBeExpanded++;
+                        }
+                    }
+                }
+
+                return functionalGroups == canBeExpanded;
+            }
+        }
+
+        /// <summary>
         /// Count of atoms in this and nested molecules
         /// </summary>
         public int AtomCount

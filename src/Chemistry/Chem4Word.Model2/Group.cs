@@ -35,8 +35,7 @@ namespace Chem4Word.Model2
             get
             {
                 double atomicWeight = 0;
-                ElementBase elementBase;
-                if (AtomHelpers.TryParse(Component, out elementBase))
+                if (AtomHelpers.TryParse(Component, false, out var elementBase))
                 {
                     if (elementBase is Element e)
                     {
@@ -59,8 +58,7 @@ namespace Chem4Word.Model2
             {
                 var parts = new Dictionary<string, int>();
 
-                ElementBase elementBase;
-                if (AtomHelpers.TryParse(Component, out elementBase))
+                if (AtomHelpers.TryParse(Component, false, out var elementBase))
                 {
                     if (elementBase is Element e)
                     {

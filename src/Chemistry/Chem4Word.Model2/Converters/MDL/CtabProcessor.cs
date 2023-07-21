@@ -191,37 +191,21 @@ namespace Chem4Word.Model2.Converters.MDL
                     // create atom
                     Atom thisAtom = new Atom();
 
-                    double x = Double.Parse(GetSubString(line, 0, 9), CultureInfo.InvariantCulture);
-                    double y = Double.Parse(GetSubString(line, 10, 9), CultureInfo.InvariantCulture);
-                    double z = Double.Parse(GetSubString(line, 20, 9), CultureInfo.InvariantCulture);
+                    double x = double.Parse(GetSubString(line, 0, 9), CultureInfo.InvariantCulture);
+                    double y = double.Parse(GetSubString(line, 10, 9), CultureInfo.InvariantCulture);
+                    double z = double.Parse(GetSubString(line, 20, 9), CultureInfo.InvariantCulture);
 
                     // Inverting Y co-ordinate to make it the right way up.
                     thisAtom.Position = new Point(x, 0 - y);
 
                     // element type
                     string elType = GetSubString(line, 31, 3);
-                    ElementBase eb;
-                    var ok = AtomHelpers.TryParse(elType, out eb);
+                    var ok = AtomHelpers.TryParse(elType, true, out var eb);
                     if (ok)
                     {
-                        if (eb is Element element)
+                        if (eb is Element || eb is FunctionalGroup)
                         {
-                            thisAtom.Element = element;
-                        }
-
-                        if (eb is FunctionalGroup functionalGroup)
-                        {
-                            thisAtom.Element = functionalGroup;
-
-                            // Fix Invalid data; Force internal FG to prime Element
-                            if (functionalGroup.Internal)
-                            {
-                                AtomHelpers.TryParse(functionalGroup.Components[0].Component, out eb);
-                                if (eb is Element chemicalElement)
-                                {
-                                    thisAtom.Element = chemicalElement;
-                                }
-                            }
+                            thisAtom.Element = eb;
                         }
                     }
                     else

@@ -111,6 +111,7 @@
     <Compile Include="Enums\BondStereo.cs" />
     <Compile Include="Enums\ClockDirections.cs" />
     <Compile Include="Enums\FormulaPartType.cs" />
+    <Compile Include="Enums\GroupType.cs" />
     <Compile Include="FunctionalGroup.cs" />
     <Compile Include="FunctionalGroupPart.cs" />
     <Compile Include="FunctionalGroupPartType.cs" />

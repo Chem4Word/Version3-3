@@ -234,13 +234,14 @@ namespace Chem4Word.ACME.Controls
             FunctionalGroupPicker.Items.Clear();
             foreach (var item in Globals.FunctionalGroupsList)
             {
-                if (!item.Internal)
+                if (item.ShowInDropDown)
                 {
                     FunctionalGroupPicker.Items.Add(new AtomOption(item));
                 }
             }
 
-            if (AtomPropertiesModel.Element is FunctionalGroup functionalGroup && !functionalGroup.Internal)
+            if (AtomPropertiesModel.Element is FunctionalGroup functionalGroup
+                && functionalGroup.ShowInDropDown)
             {
                 FunctionalGroupPicker.SelectedItem = new AtomOption(functionalGroup);
             }

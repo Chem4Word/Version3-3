@@ -7,6 +7,8 @@
 
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,9 +26,8 @@ namespace Chem4Word.Model2
         private const string ElementNameName = "name";
         private const string ElementNameSymbol = "symbol";
         private const string ElementNameShowAsSymbol = "showAsSymbol";
-        private const string ElementNameIsSuperAtom = "isSuperAtom";
         private const string ElementNameFlippable = "flippable";
-        private const string ElementNameInternal = "internal";
+        private const string ElementNameGroupType = "groupType";
         private const string ElementNameColour = "colour";
         private const string ElementNameComponents = "components";
         private const string ElementNameComponent = "component";
@@ -69,12 +70,16 @@ namespace Chem4Word.Model2
                         Symbol = groupElement.Element(ElementNameSymbol)?.Value,
                         Colour = groupElement.Element(ElementNameColour)?.Value,
                         ShowAsSymbol = bool.Parse((string)groupElement.Element(ElementNameShowAsSymbol) ?? "false"),
-                        IsSuperAtom = bool.Parse((string)groupElement.Element(ElementNameIsSuperAtom) ?? "false"),
                         Flippable = bool.Parse((string)groupElement.Element(ElementNameFlippable) ?? "false"),
-                        Internal = bool.Parse((string)groupElement.Element(ElementNameInternal) ?? "false"),
                         Expansion = groupElement.Element(ElementNameExpansion)?.Value,
                         Components = new List<Group>()
                     };
+
+                    GroupType groupType;
+                    if (Enum.TryParse((string)groupElement.Element(ElementNameGroupType) ?? "SuperAtom", out groupType))
+                    {
+                        newGroup.GroupType = groupType;
+                    }
 
                     foreach (var compElement in groupElement.Descendants().Where(x => x.Name.LocalName.Equals(ElementNameComponent)))
                     {
@@ -110,26 +115,21 @@ namespace Chem4Word.Model2
 
                 functionalGroupElement.Add(new XElement(ElementNameName, functionalGroup.Name));
                 functionalGroupElement.Add(new XElement(ElementNameSymbol, functionalGroup.Symbol));
-
                 if (functionalGroup.ShowAsSymbol)
                 {
                     functionalGroupElement.Add(new XElement(ElementNameShowAsSymbol, functionalGroup.ShowAsSymbol));
                 }
+
                 if (!string.IsNullOrEmpty(functionalGroup.Colour))
                 {
                     functionalGroupElement.Add(new XElement(ElementNameColour, functionalGroup.Colour));
                 }
-                if (functionalGroup.Internal)
-                {
-                    functionalGroupElement.Add(new XElement(ElementNameInternal, functionalGroup.Internal));
-                }
+
+                functionalGroupElement.Add(new XElement(ElementNameGroupType, functionalGroup.GroupType));
+
                 if (functionalGroup.Flippable)
                 {
                     functionalGroupElement.Add(new XElement(ElementNameFlippable, functionalGroup.Flippable));
-                }
-                if (functionalGroup.IsSuperAtom)
-                {
-                    functionalGroupElement.Add(new XElement(ElementNameIsSuperAtom, functionalGroup.IsSuperAtom));
                 }
 
                 var componentsElement = new XElement(ElementNameComponents);
