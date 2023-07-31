@@ -21,7 +21,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+using System.Windows.Media;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Forms = System.Windows.Forms;
@@ -349,6 +349,67 @@ namespace Chem4Word.UI.WPF
             }
         }
 
+        private bool IsValidFileName(string suggestedName)
+        {
+            var result = true;
+
+            // Check for reserved characters
+            var invalidFileNameChars = Path.GetInvalidFileNameChars();
+            foreach (var c in invalidFileNameChars)
+            {
+                if (suggestedName.Contains(c))
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            if (result)
+            {
+                // Check for reserved words
+                switch (suggestedName.ToUpper())
+                {
+                    case "CON":
+                    case "PRN":
+                    case "AUX":
+                    case "NUL":
+                    case "COM1":
+                    case "COM2":
+                    case "COM3":
+                    case "COM4":
+                    case "COM5":
+                    case "COM6":
+                    case "COM7":
+                    case "COM8":
+                    case "COM9":
+                    case "LPT1":
+                    case "LPT2":
+                    case "LPT3":
+                    case "LPT4":
+                    case "LPT5":
+                    case "LPT6":
+                    case "LPT7":
+                    case "LPT8":
+                    case "LPT9":
+                        result = false;
+                        break;
+                }
+            }
+
+            if (result)
+            {
+                // Must not end with a dot, '.db' or '.lic'
+                if (suggestedName.EndsWith(".")
+                    || suggestedName.EndsWith(".db")
+                    || suggestedName.EndsWith(".lic"))
+                {
+                    result = false;
+                }
+            }
+
+            return result;
+        }
+
         private void OnLostFocus_LibraryName(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
@@ -357,65 +418,78 @@ namespace Chem4Word.UI.WPF
             {
                 if (sender is TextBox textBox)
                 {
-                    var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                    if (listOfDetectedLibraries != null)
+                    textBox.Background = SystemColors.WindowBrush;
+                    var trimmed = textBox.Text.Trim();
+                    if (IsValidFileName(trimmed))
                     {
-                        DatabaseDetails database = null;
-
-                        var oldFileName = string.Empty;
-                        var newFileName = $"{textBox.Text.Trim()}.db";
-
-                        if (textBox.DataContext is LibrariesSettingsGridSource source)
+                        var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                        if (listOfDetectedLibraries != null)
                         {
-                            database = listOfDetectedLibraries.AvailableDatabases
-                                                              .FirstOrDefault(n => n.ShortFileName.Equals(source.FileName));
-                            if (database != null)
+                            DatabaseDetails database = null;
+
+                            var oldFileName = string.Empty;
+                            var newFileName = $"{trimmed}.db";
+
+                            if (textBox.DataContext is LibrariesSettingsGridSource source)
                             {
-                                oldFileName = database.ShortFileName;
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(oldFileName)
-                            && !string.IsNullOrEmpty(newFileName)
-                            && !newFileName.Equals(oldFileName)
-                            && database != null)
-                        {
-                            var fileInfo = new FileInfo(database.Connection);
-
-                            var canRename = !File.Exists(Path.Combine(fileInfo.DirectoryName, newFileName));
-                            var isUnique = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(newFileName.Replace(".db", "")));
-
-                            if (canRename && isUnique == null)
-                            {
-                                File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName), Path.Combine(fileInfo.DirectoryName, newFileName));
-                                if (File.Exists(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic"))))
+                                database = listOfDetectedLibraries.AvailableDatabases
+                                                                  .FirstOrDefault(n => n.ShortFileName.Equals(source.FileName));
+                                if (database != null)
                                 {
-                                    File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic")), Path.Combine(fileInfo.DirectoryName, newFileName.Replace(".db", ".lic")));
+                                    oldFileName = database.ShortFileName;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(oldFileName)
+                                && !string.IsNullOrEmpty(newFileName)
+                                && !newFileName.Equals(oldFileName)
+                                && database != null)
+                            {
+                                var fileInfo = new FileInfo(database.Connection);
+
+                                var canRename = !File.Exists(Path.Combine(fileInfo.DirectoryName, newFileName));
+                                var isUnique = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(newFileName.Replace(".db", "")));
+
+                                if (canRename && isUnique == null)
+                                {
+                                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Renaming {oldFileName} to {newFileName}");
+
+                                    File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName), Path.Combine(fileInfo.DirectoryName, newFileName));
+                                    if (File.Exists(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic"))))
+                                    {
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Renaming {oldFileName.Replace(".db", ".lic")} to {newFileName.Replace(".db", ".lic")}");
+                                        File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic")), Path.Combine(fileInfo.DirectoryName, newFileName.Replace(".db", ".lic")));
+                                    }
+
+                                    var selected = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(_selectedLibrary));
+                                    if (selected != null && selected.ShortFileName.Equals(oldFileName))
+                                    {
+                                        listOfDetectedLibraries.SelectedLibrary = newFileName.Replace(".db", "");
+                                    }
+
+                                    database.ShortFileName = newFileName;
+                                    database.DisplayName = newFileName.Replace(".db", "");
+                                    database.Connection = Path.Combine(fileInfo.DirectoryName, newFileName);
+
+                                    new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                        .SaveFile(listOfDetectedLibraries);
+                                }
+                                else
+                                {
+                                    var message = $"Name clash; Can't rename '{oldFileName}' to '{newFileName}' in '{fileInfo.DirectoryName}'";
+                                    Globals.Chem4WordV3.Telemetry.Write(module, "Warning", message);
+                                    UserInteractions.WarnUser(message);
                                 }
 
-                                var selected = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(_selectedLibrary));
-                                if (selected != null && selected.ShortFileName.Equals(oldFileName))
-                                {
-                                    listOfDetectedLibraries.SelectedLibrary = newFileName.Replace(".db", "");
-                                }
-
-                                database.ShortFileName = newFileName;
-                                database.DisplayName = newFileName.Replace(".db", "");
-                                database.Connection = Path.Combine(fileInfo.DirectoryName, newFileName);
-
-                                new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                                    .SaveFile(listOfDetectedLibraries);
+                                ReloadGlobalListOfLibraries();
+                                LoadLibrariesListTab();
                             }
-                            else
-                            {
-                                var message = $"Name clash; Can't rename '{oldFileName}' to '{newFileName}' in '{fileInfo.DirectoryName}'";
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Warning", message);
-                                UserInteractions.WarnUser(message);
-                            }
-
-                            ReloadGlobalListOfLibraries();
-                            LoadLibrariesListTab();
                         }
+                    }
+                    else
+                    {
+                        textBox.Background = Brushes.Salmon;
+                        UserInteractions.WarnUser($"{textBox.Text} is an invalid library name!");
                     }
                 }
             }
@@ -900,21 +974,6 @@ namespace Chem4Word.UI.WPF
             Globals.Chem4WordV3.ListOfDetectedLibraries
                 = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                     .GetListOfLibraries();
-        }
-
-        private BitmapImage CreateImageFromStream(Stream stream)
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            var bitmap = new BitmapImage();
-
-            bitmap.BeginInit();
-            bitmap.StreamSource = stream;
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            bitmap.Freeze();
-
-            return bitmap;
         }
 
         private string GetPropertyValue(DatabaseDetails database, string key, string defaultValue)

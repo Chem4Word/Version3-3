@@ -5,15 +5,13 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
+using Chem4Word.ACME.Controls;
 using IChem4Word.Contracts.Dto;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Chem4Word.UI.WPF
@@ -38,8 +36,7 @@ namespace Chem4Word.UI.WPF
 
         // Using a DependencyProperty as the backing store for NamesList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty NamesListProperty =
-            DependencyProperty.Register("NamesList", typeof(List<ChemistryNameDataObject>),
-                                        typeof(LibraryNamesPanel),
+            DependencyProperty.Register("NamesList", typeof(List<ChemistryNameDataObject>), typeof(LibraryNamesPanel),
                                         new PropertyMetadata(null, new PropertyChangedCallback(NamesListChanged)));
 
         public List<ChemistryNameDataObject> FormulaeList
@@ -61,19 +58,44 @@ namespace Chem4Word.UI.WPF
 
         // Using a DependencyProperty as the backing store for CaptionsList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CaptionsListProperty =
-            DependencyProperty.Register("CaptionsList", typeof(List<ChemistryNameDataObject>), typeof(LibraryNamesPanel), new PropertyMetadata(null, new PropertyChangedCallback(CaptionsListChanged)));
+            DependencyProperty.Register("CaptionsList", typeof(List<ChemistryNameDataObject>), typeof(LibraryNamesPanel),
+                                        new PropertyMetadata(null, new PropertyChangedCallback(CaptionsListChanged)));
 
         #endregion Properties
 
+        private void OnTreeViewCanCopy(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void OnTreeViewCopy(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (sender is TreeView treeView)
+            {
+                if (treeView.SelectedItem is TreeViewItem item)
+                {
+                    if (!item.HasItems)
+                    {
+                        Clipboard.SetText(item.Header.ToString());
+                    }
+                }
+
+                if (treeView.SelectedItem is TextBlock block)
+                {
+                    Clipboard.SetText(block.Tag.ToString());
+                }
+            }
+        }
+
         private static void CaptionsListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            List<ChemistryNameDataObject> dataObjects = (List<ChemistryNameDataObject>)e.NewValue;
+            var dataObjects = (List<ChemistryNameDataObject>)e.NewValue;
             ReloadCaptionsList(dataObjects, d);
         }
 
         private static void ReloadCaptionsList(List<ChemistryNameDataObject> captions, DependencyObject d)
         {
-            TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
+            var namesTree = ((LibraryNamesPanel)d).NamesTreeView;
 
             if (namesTree.Items.Count > 3)
             {
@@ -85,13 +107,13 @@ namespace Chem4Word.UI.WPF
 
         private static void FormulaeListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            List<ChemistryNameDataObject> dataObjects = (List<ChemistryNameDataObject>)e.NewValue;
+            var dataObjects = (List<ChemistryNameDataObject>)e.NewValue;
             ReloadFormulaeList(dataObjects, d);
         }
 
         private static void ReloadFormulaeList(List<ChemistryNameDataObject> formulae, DependencyObject d)
         {
-            TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
+            var namesTree = ((LibraryNamesPanel)d).NamesTreeView;
             if (namesTree.Items.Count > 2)
             {
                 var formulaNode = namesTree.Items[1] as TreeViewItem;
@@ -102,16 +124,16 @@ namespace Chem4Word.UI.WPF
 
         private static void NamesListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            List<ChemistryNameDataObject> dataObjects = (List<ChemistryNameDataObject>)e.NewValue;
+            var dataObjects = (List<ChemistryNameDataObject>)e.NewValue;
             ReloadNamesList(dataObjects, d);
         }
 
         private static void ReloadNamesList(List<ChemistryNameDataObject> names, DependencyObject d)
         {
-            TreeView namesTree = ((LibraryNamesPanel)d).NamesTreeView;
+            var namesTree = ((LibraryNamesPanel)d).NamesTreeView;
             if (namesTree.Items.Count > 1)
             {
-                TreeViewItem nameNode = namesTree.Items[0] as TreeViewItem;
+                var nameNode = namesTree.Items[0] as TreeViewItem;
                 LoadNames(nameNode, names);
             }
         }
@@ -121,7 +143,7 @@ namespace Chem4Word.UI.WPF
             nameNode.Items.Clear();
             if (listParam != null)
             {
-                Style catHeaderStyle = (Style)nameNode.FindResource("CatSubHeader");
+                var catHeaderStyle = (Style)nameNode.FindResource("CatSubHeader");
 
                 var namesByNamespace = from name in listParam
                                        group name by name.NameSpace
@@ -154,91 +176,26 @@ namespace Chem4Word.UI.WPF
 
                         foreach (var dataObject in tag.Names)
                         {
-                            var nameChildNode = new TreeViewItem { Header = dataObject.Name, Tag = dataObject.Name };
                             if (tagChildNode.Tag.ToString().Contains("Formula")
                                 && !dataObject.Name.ToLower().Equals("not found")
                                 && !dataObject.Name.ToLower().Equals("not requested")
                                 && !dataObject.Name.ToLower().Equals("unable to calculate"))
                             {
-                                var tb = TextBlockFromFormula(dataObject.Name);
+                                var tb = TextBlockHelper.FromFormula(dataObject.Name);
                                 tb.Foreground = new SolidColorBrush(Colors.Black);
+                                tb.Tag = dataObject.Name;
                                 tagChildNode.Items.Add(tb);
                             }
                             else
                             {
+                                var nameChildNode = new TreeViewItem { Header = dataObject.Name, Tag = dataObject.Name };
                                 tagChildNode.Items.Add(nameChildNode);
+                                nameChildNode.Style = catHeaderStyle;
                             }
                         }
                     }
                 }
             }
-        }
-
-        // ToDo: Refactor; This is a near duplicate of $\src\Chemistry\Chem4Word.ACME\Controls\FormulaBlock.cs
-        // Ought to be made into common routine
-        // Refactor into common code [MAW] ...
-        private static TextBlock TextBlockFromFormula(string formula, string prefix = null)
-        {
-            var textBlock = new TextBlock();
-
-            if (!string.IsNullOrEmpty(prefix))
-            {
-                // Add in the new element
-                var run = new Run($"{prefix} ");
-                textBlock.Inlines.Add(run);
-            }
-
-            var parts = FormulaHelper.ParseFormulaIntoParts(formula);
-            foreach (var formulaPart in parts)
-            {
-                // Add in the new element
-                switch (formulaPart.PartType)
-                {
-                    case FormulaPartType.Multiplier:
-                    case FormulaPartType.Separator:
-                        var run1 = new Run(formulaPart.Text);
-                        textBlock.Inlines.Add(run1);
-                        break;
-
-                    case FormulaPartType.Element:
-                        var run2 = new Run(formulaPart.Text);
-                        textBlock.Inlines.Add(run2);
-                        if (formulaPart.Count > 1)
-                        {
-                            var subscript = new Run($"{formulaPart.Count}")
-                            {
-                                BaselineAlignment = BaselineAlignment.Subscript
-                            };
-                            subscript.FontSize -= 2;
-                            textBlock.Inlines.Add(subscript);
-                        }
-                        break;
-
-                    case FormulaPartType.Charge:
-                        var absCharge = Math.Abs(formulaPart.Count);
-                        if (absCharge > 1)
-                        {
-                            var superscript1 = new Run($"{absCharge}{formulaPart.Text}")
-                            {
-                                BaselineAlignment = BaselineAlignment.Top
-                            };
-                            superscript1.FontSize -= 3;
-                            textBlock.Inlines.Add(superscript1);
-                        }
-                        else
-                        {
-                            var superscript2 = new Run($"{formulaPart.Text}")
-                            {
-                                BaselineAlignment = BaselineAlignment.Top
-                            };
-                            superscript2.FontSize -= 3;
-                            textBlock.Inlines.Add(superscript2);
-                        }
-                        break;
-                }
-            }
-
-            return textBlock;
         }
     }
 }

@@ -47,7 +47,7 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -62,7 +62,7 @@
             PreviewMouseWheel="HandleScrollSpeed"
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            VirtualizingStackPanel.IsVirtualizing="True">
+            VirtualizingStackPanel.IsVirtualizing="True" d:IsLocked="True">
             <ListBox.Resources>
                 <Style TargetType="ListBoxItem">
                     <!--

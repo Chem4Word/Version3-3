@@ -118,6 +118,13 @@ namespace Chem4Word.Library
                             var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
                             DataContext = controller;
 
+                            // Sort the list of structures by lower case name
+                            var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
+                            if (view != null)
+                            {
+                                view.CustomSort = new ChemistryObjectComparer();
+                            }
+
                             var sel = Globals.Chem4WordV3.Application.Selection;
                             Globals.Chem4WordV3.SelectChemistry(sel);
                         }

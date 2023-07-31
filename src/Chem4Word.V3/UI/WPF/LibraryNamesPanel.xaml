@@ -24,26 +24,37 @@
                 BasedOn="{StaticResource CatHeader}"
                 TargetType="TreeViewItem">
                 <Setter Property="FontSize" Value="14" />
+                <!--
+                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+                -->
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid d:IsLocked="True">
         <TreeView
             x:Name="NamesTreeView"
             BorderThickness="0"
-            ItemContainerStyle="{StaticResource CatHeader}">
+            ItemContainerStyle="{StaticResource CatHeader}" d:IsLocked="True">
+            <TreeView.CommandBindings>
+                <CommandBinding Command="ApplicationCommands.Copy"
+                                Executed="OnTreeViewCopy"
+                                CanExecute="OnTreeViewCanCopy"></CommandBinding>
+            </TreeView.CommandBindings>
             <TreeViewItem
                 x:Name="NameNode"
                 Header="Names"
-                ItemContainerStyle="{StaticResource CatSubHeader}" />
+                ItemContainerStyle="{StaticResource CatSubHeader}" d:IsLocked="True" />
             <TreeViewItem
                 x:Name="FormulaNode"
                 Header="Formulae"
-                ItemContainerStyle="{StaticResource CatSubHeader}" />
+                ItemContainerStyle="{StaticResource CatSubHeader}" d:IsLocked="True" />
             <TreeViewItem
                 x:Name="CaptionNode"
                 Header="Captions"
-                ItemContainerStyle="{StaticResource CatSubHeader}" />
+                ItemContainerStyle="{StaticResource CatSubHeader}" d:IsLocked="True" />
         </TreeView>
     </Grid>
 </UserControl>

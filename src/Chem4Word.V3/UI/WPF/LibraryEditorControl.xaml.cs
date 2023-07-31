@@ -34,6 +34,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -840,7 +841,7 @@ namespace Chem4Word.UI.WPF
             SearchButton.IsEnabled = state;
             ClearButton.IsEnabled = state;
 
-            NameTextBox.IsEnabled = state;
+            SubstanceName.IsEnabled = state;
             TaggingControl.IsEnabled = state;
             NamesPanel.IsEnabled = state;
 
@@ -1061,6 +1062,14 @@ namespace Chem4Word.UI.WPF
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void OnPreviewTextInput_SubstanceName(object sender, TextCompositionEventArgs e)
+        {
+            if (!Regex.IsMatch(e.Text, @"^[\s'a-zA-Z0-9()\[\]/+-.,]*$"))
+            {
+                e.Handled = true;
+            }
         }
 
         private void OnSelectedItemChanged(object sender, DataTransferEventArgs e)

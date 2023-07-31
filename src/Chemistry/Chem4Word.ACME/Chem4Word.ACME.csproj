@@ -123,6 +123,7 @@
     <Compile Include="Controls\AnnotationEditorEventArgs.cs" />
     <Compile Include="Controls\AnnotationEditorExitArgsType.cs" />
     <Compile Include="Controls\DragHandle.cs" />
+    <Compile Include="Controls\TextBlockHelper.cs" />
     <Compile Include="Controls\ReactionOption.cs" />
     <Compile Include="Controls\ChemistryItem.xaml.cs">
       <DependentUpon>ChemistryItem.xaml</DependentUpon>

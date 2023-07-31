@@ -130,12 +130,17 @@ namespace Chem4Word.ACME.Models
             get => _name;
             set
             {
-                _name = value;
-                if (!Initializing)
+                // Ensure that only strings are accepted here
+                var type = value.GetType().ToString();
+                if (type.Equals("System.String"))
                 {
-                    Save();
+                    _name = value;
+                    if (!Initializing)
+                    {
+                        Save();
+                    }
+                    OnPropertyChanged();
                 }
-                OnPropertyChanged();
             }
         }
 

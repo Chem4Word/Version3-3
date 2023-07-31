@@ -705,6 +705,10 @@ namespace Chem4Word.Driver.Open.SqLite
 
         public void UpdateChemistry(ChemistryDataObject chemistry)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            _telemetry.Write(module, "Information", $"Updating Id:{chemistry.Id} Formula: {chemistry.Formula}; Name {chemistry.Name}");
+
             using (var conn = LibraryConnection())
             {
                 UpdateChemistryCommand(conn, chemistry);

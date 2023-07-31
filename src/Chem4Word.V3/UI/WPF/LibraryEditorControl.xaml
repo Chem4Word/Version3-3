@@ -555,11 +555,12 @@
                         Name
                     </TextBlock>
                     <TextBox
-                        x:Name="NameTextBox"
+                        x:Name="SubstanceName"
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="5"
                         d:IsLocked="True"
+                        PreviewTextInput="OnPreviewTextInput_SubstanceName"
                         Text="{Binding Mode=TwoWay, Path=SelectedChemistryObject.Name}" />
                     <TextBlock
                         Grid.Row="1"
