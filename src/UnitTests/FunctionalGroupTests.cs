@@ -6,8 +6,10 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Xunit;
 
@@ -106,6 +108,24 @@ namespace Chem4WordTests
             var item = Flatten(terms);
 
             Assert.Equal(expected, item);
+        }
+
+        [Fact]
+        public void RotatingAFunctionalGroup()
+        {
+            var cmlConverter = new CMLConverter();
+            var model = cmlConverter.Import(ResourceHelper.GetStringResource("FG-C2H5.xml"));
+
+            var molecule = model.Molecules.Values.First();
+
+            var angleBefore = molecule.Bonds.First().Angle;
+            molecule.RotateAbout(molecule.Atoms.Values.First().Position, 45);
+            var angleAfter = molecule.Bonds.First().Angle;
+
+            Debug.WriteLine($"Angle Before:{angleBefore} After:{angleAfter} [{angleAfter-angleBefore}]");
+
+            Assert.Equal(90, angleBefore, 4);
+            Assert.Equal(135, angleAfter, 4);
         }
 
         private string Flatten(List<FunctionalGroupTerm> terms)

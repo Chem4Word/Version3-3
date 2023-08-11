@@ -7,7 +7,7 @@
 
 using Chem4Word.Model2;
 
-namespace Wpf.FunctionalGroupEditor.Models
+namespace Wpf.UI.Sandbox.Models
 {
     public class FgItem
     {

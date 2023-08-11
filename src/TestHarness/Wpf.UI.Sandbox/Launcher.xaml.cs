@@ -56,6 +56,17 @@ namespace Wpf.UI.Sandbox
                         window = new DropDownStyle();
                         window.ShowDialog();
                         break;
+
+
+                    case "FunctionalGroupEditor":
+                        window = new FunctionalGroupExpansionEditor();
+                        window.ShowDialog();
+                        break;
+
+                    case "FunctionalGroupExpansion":
+                        window = new FunctionalGroupExpansion();
+                        window.ShowDialog();
+                        break;
                 }
             }
         }

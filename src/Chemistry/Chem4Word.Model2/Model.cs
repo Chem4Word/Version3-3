@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Helpers;
+using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using Chem4Word.Model2.Interfaces;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 
@@ -198,6 +200,29 @@ namespace Chem4Word.Model2
         /// True if this model has any reactions
         /// </summary>
         public bool HasReactions => ReactionSchemes.Count > 0;
+
+        /// <summary>
+        /// Count of functional groups in this model
+        /// </summary>
+        public int FunctionalGroupsCount
+        {
+            get
+            {
+                var result = 0;
+
+                var allAtoms = GetAllAtoms();
+
+                foreach (var atom in allAtoms)
+                {
+                    if (atom.Element is FunctionalGroup)
+                    {
+                        result++;
+                    }
+                }
+
+                return result;
+            }
+        }
 
         /// <summary>
         /// True if this model has functional groups
@@ -1522,6 +1547,162 @@ namespace Chem4Word.Model2
         private bool PointIsAtEndOfALine(Point point, ClippingTarget line1, ClippingTarget line2)
         {
             return point.Equals(line1.Start) || point.Equals(line1.End) || point.Equals(line2.Start) || point.Equals(line2.End);
+        }
+
+        private int ExpandFunctionalGroup(Atom atom, string expansion)
+        {
+            var result = 0;
+
+            // Expansion must be defined
+            if (!string.IsNullOrEmpty(expansion))
+            {
+                var converter = new CMLConverter();
+                var donorModel = converter.Import(expansion);
+
+                // Expansion must be valid CML
+                if (donorModel != null)
+                {
+                    var stars = donorModel.GetAllAtoms().Where(a => a.Element.Name.Equals("*")).ToList();
+                    // Expansion must have only one star atom
+                    if (stars.Count == 1)
+                    {
+                        Debug.WriteLine($"Expanding {atom.Element.Name} in molecule {atom.Parent.Id}");
+
+                        var recipientMolecule = atom.Parent;
+
+                        // Match FG Expansion scale to that of Model
+                        donorModel.ScaleToAverageBondLength(MeanBondLength);
+
+                        var donorMolecule = donorModel.Molecules.First().Value;
+                        donorMolecule.Id = "donor";
+
+                        // ReLabel to ensure there are no clashes when joining the two molecules
+                        var atomCount = recipientMolecule.MaxAtomId() + 100;
+                        var bondCount = recipientMolecule.MaxBondId() + 100;
+                        var molCount = 100;
+                        donorMolecule.ReLabel(ref molCount, ref atomCount, ref bondCount, true);
+
+                        Debug.WriteLine($"  Adding donor molecule {donorMolecule.Id}");
+                        recipientMolecule.AddMolecule(donorMolecule);
+                        donorMolecule.Parent = recipientMolecule.Parent;
+
+                        var donorAtoms = donorMolecule.Atoms.Values.ToList();
+                        // star atom may be anywhere in the model
+                        var starAtom = donorAtoms.First(a => a.Element.Name.Equals("*"));
+
+                        var recipientBond = atom.Bonds.First();
+                        var donorBond = starAtom.Bonds.First();
+
+                        // Move the expansion into place
+                        var recipientPosition = atom.Bonds.First().OtherAtom(atom).Position;
+                        var donorAttachmentPoint = starAtom.Position;
+
+                        var offsetX = recipientPosition.X - donorAttachmentPoint.X;
+                        var offsetY = recipientPosition.Y - donorAttachmentPoint.Y;
+                        donorMolecule.RepositionAll(-offsetX, -offsetY);
+
+                        // Rotate the expansion
+                        var recipientBondAngle = recipientBond.AngleStartingAt(atom);
+                        var donorBondAngle = donorBond.AngleStartingAt(donorBond.OtherAtom(starAtom));
+                        donorMolecule.RotateAbout(starAtom.Position, recipientBondAngle - donorBondAngle);
+
+                        // Get the atoms which determine the fusing points
+                        var donorAtom = donorBond.GetAtoms().First(a => !a.Element.Name.Equals("*"));
+                        var recipientAtom = recipientBond.OtherAtom(atom);
+
+                        // -----------------------------------------------------------------
+                        // Order of removing molecules should preserve ordering of molecules
+                        // -----------------------------------------------------------------
+
+                        // Remove FG Atom
+                        Debug.WriteLine($"  Removing recipient bond {recipientBond.Id}");
+                        recipientMolecule.RemoveBond(recipientBond);
+                        Debug.WriteLine($"  Removing recipient atom {atom.Id}");
+                        recipientMolecule.RemoveAtom(atom);
+
+                        // Remove star Atom in FG expansion
+                        Debug.WriteLine($"  Removing star bond {donorBond.Id}");
+                        donorMolecule.RemoveBond(donorBond);
+                        Debug.WriteLine($"  Removing star atom {starAtom.Id}");
+                        donorMolecule.RemoveAtom(starAtom);
+
+                        // Join the two molecules via a new bond
+                        var joiningBond = new Bond(recipientAtom, donorAtom)
+                        {
+                            Order = recipientBond.Order,
+                            Stereo = recipientBond.Stereo,
+                            Id = $"b{++bondCount}"
+                        };
+
+                        var parentOfFunctionalGroupMolecule = recipientMolecule.Parent;
+                        var parentId = string.Empty;
+                        if (parentOfFunctionalGroupMolecule is Model)
+                        {
+                            parentId = "model";
+                        }
+                        if (parentOfFunctionalGroupMolecule is Molecule molecule)
+                        {
+                            parentId = $"molecule {molecule.Id}";
+                        }
+
+                        // Create new combined molecule
+                        Debug.WriteLine($"  Joining molecules {recipientMolecule.Id} and {donorMolecule.Id} by new bond {joiningBond.Id}");
+                        var newMolecule = Molecule.Join(recipientMolecule, donorMolecule, joiningBond);
+                        Debug.WriteLine($"  New molecule is {newMolecule.Id}");
+
+                        Debug.WriteLine($"  Removing recipient molecule {recipientMolecule.Id}");
+                        parentOfFunctionalGroupMolecule.RemoveMolecule(recipientMolecule);
+                        recipientMolecule.Parent = null;
+
+                        Debug.WriteLine($"  Removing donor molecule {donorMolecule.Id}");
+                        parentOfFunctionalGroupMolecule.RemoveMolecule(donorMolecule);
+                        donorMolecule.Parent = null;
+
+                        Debug.WriteLine($"  Adding molecule {newMolecule.Id} to {parentId}");
+                        parentOfFunctionalGroupMolecule.AddMolecule(newMolecule);
+                        newMolecule.Parent = parentOfFunctionalGroupMolecule;
+
+                        Debug.WriteLine($"  Re-labelling molecule {newMolecule.Id}");
+                        atomCount = 0;
+                        bondCount = 0;
+                        molCount = 100;
+                        newMolecule.ReLabel(ref molCount, ref atomCount, ref bondCount, true);
+
+                        // Restore previous Id
+                        Debug.WriteLine($"  Renaming molecule {newMolecule.Id} to {recipientMolecule.Id}");
+                        newMolecule.Id = recipientMolecule.Id;
+
+                        result++;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public int ExpandAllFunctionalGroups()
+        {
+            var result = 0;
+
+            var allMolecules = GetAllMolecules();
+            foreach (var molecule in allMolecules)
+            {
+                var allAtoms = molecule.Atoms.Values.ToList();
+
+                foreach (var atom in allAtoms)
+                {
+                    if (atom.Bonds.Count() == 1
+                        && atom.Element is FunctionalGroup fg)
+                    {
+                        result += ExpandFunctionalGroup(atom, fg.Expansion);
+                    }
+                }
+            }
+
+            // Do not be tempted to re-label here as this will corrupt molecule id's
+            // These are required to be preserved to allow matching of molecules after silent expansion (for fetching properties from property calculator)
+
+            return result;
         }
 
         #endregion Methods

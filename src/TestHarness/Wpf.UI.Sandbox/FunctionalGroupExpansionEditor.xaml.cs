@@ -18,18 +18,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Wpf.FunctionalGroupEditor.Models;
+using Wpf.UI.Sandbox.Models;
 
-namespace Wpf.FunctionalGroupEditor
+namespace Wpf.UI.Sandbox
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class FunctionalGroupExpansionEditor : Window
     {
         private string _lastFunctionalGroup;
 
-        public MainWindow()
+        public FunctionalGroupExpansionEditor()
         {
             InitializeComponent();
         }

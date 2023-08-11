@@ -8,6 +8,14 @@
     Width="800"
     Height="450"
     mc:Ignorable="d">
+    <Window.Resources>
+        <Style x:Key="LauncherButtons" TargetType="Button">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -23,6 +31,7 @@
             Grid.Row="0"
             Grid.Column="0"
             Click="OnClick_Button"
+            Style="{StaticResource LauncherButtons}"
             Tag="Shapes">
             Shapes
         </Button>
@@ -30,6 +39,7 @@
             Grid.Row="0"
             Grid.Column="1"
             Click="OnClick_Button"
+            Style="{StaticResource LauncherButtons}"
             Tag="Styles">
             Styles
         </Button>
@@ -37,6 +47,7 @@
             Grid.Row="0"
             Grid.Column="2"
             Click="OnClick_Button"
+            Style="{StaticResource LauncherButtons}"
             Tag="Ticker">
             Ticker
         </Button>
@@ -44,6 +55,7 @@
             Grid.Row="1"
             Grid.Column="0"
             Click="OnClick_Button"
+            Style="{StaticResource LauncherButtons}"
             Tag="Animation">
             Animation
         </Button>
@@ -51,8 +63,25 @@
             Grid.Row="1"
             Grid.Column="1"
             Click="OnClick_Button"
+            Style="{StaticResource LauncherButtons}"
             Tag="DropDownStyle">
-            DropDownStyle
+            DropDown Style
+        </Button>
+        <Button
+            Grid.Row="2"
+            Grid.Column="0"
+            Click="OnClick_Button"
+            Style="{StaticResource LauncherButtons}"
+            Tag="FunctionalGroupEditor">
+            Functional Group Editor
+        </Button>
+        <Button
+            Grid.Row="2"
+            Grid.Column="1"
+            Click="OnClick_Button"
+            Style="{StaticResource LauncherButtons}"
+            Tag="FunctionalGroupExpansion">
+            Functional Group Expansion
         </Button>
     </Grid>
 </Window>

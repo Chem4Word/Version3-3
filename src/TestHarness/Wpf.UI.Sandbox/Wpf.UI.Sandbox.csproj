@@ -58,9 +58,16 @@
     <Compile Include="DropDownStyle.xaml.cs">
       <DependentUpon>DropDownStyle.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FunctionalGroupExpansion.xaml.cs">
+      <DependentUpon>FunctionalGroupExpansion.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FunctionalGroupExpansionEditor.xaml.cs">
+      <DependentUpon>FunctionalGroupExpansionEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Marquee.xaml.cs">
       <DependentUpon>Marquee.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\FgItem.cs" />
     <Compile Include="Ticker.xaml.cs">
       <DependentUpon>Ticker.xaml</DependentUpon>
     </Compile>
@@ -73,6 +80,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="FunctionalGroupExpansion.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Launcher.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -80,6 +91,10 @@
     <Page Include="CommonStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FunctionalGroupExpansionEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Marquee.xaml">
       <SubType>Designer</SubType>
@@ -141,10 +156,15 @@
       <Project>{1e3fc1f1-06cc-44bd-8004-3ef0ce7eeaa7}</Project>
       <Name>Chem4Word.ACME</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Chemistry\Chem4Word.Model2\Chem4Word.Model2.csproj">
+      <Project>{C69BAB8F-4881-4D5F-9929-FC8470DF1E48}</Project>
+      <Name>Chem4Word.Model2</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Chem4Word.Core\Chem4Word.Core.csproj">
       <Project>{2e7b1308-8149-4b03-9cb9-48e0b7151560}</Project>
       <Name>Chem4Word.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

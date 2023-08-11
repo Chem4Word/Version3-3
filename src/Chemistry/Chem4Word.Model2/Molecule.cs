@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Point = System.Windows.Point;
 
 namespace Chem4Word.Model2
 {
@@ -1739,6 +1740,32 @@ namespace Chem4Word.Model2
             }
         }
 
+        public void RotateAbout(Point pivot, double angle)
+        {
+            var radians = angle * Math.PI / 180;
+            var sin = Math.Sin(radians);
+            var cos = Math.Cos(radians);
+
+            foreach (var a in Atoms.Values)
+            {
+                a.Position = Rotate(a.Position);
+            }
+
+            Point Rotate(Point input)
+            {
+                // translate point back to origin:
+                input.X -= pivot.X;
+                input.Y -= pivot.Y;
+
+                // rotate point
+                var x = input.X * cos - input.Y * sin;
+                var y = input.X * sin + input.Y * cos;
+
+                // translate point back:
+                return new Point(x + pivot.X, y + pivot.Y);
+            }
+        }
+
         /// <summary>
         /// Moves all atoms of molecule by inverse of x and y
         /// </summary>
@@ -1998,6 +2025,36 @@ namespace Chem4Word.Model2
         public string GetGroupKey()
         {
             return "G" + InternalId;
+        }
+
+        public int MaxAtomId()
+        {
+            var result = 0;
+
+            foreach (var atom in Atoms.Values)
+            {
+                if (int.TryParse(atom.Id.Substring(1), out var a))
+                {
+                    result = Math.Max(result, a);
+                }
+            }
+
+            return result;
+        }
+
+        public int MaxBondId()
+        {
+            var result = 0;
+
+            foreach (var bond in Bonds)
+            {
+                if (int.TryParse(bond.Id.Substring(1), out var b))
+                {
+                    result = Math.Max(result, b);
+                }
+            }
+
+            return result;
         }
     }
 }

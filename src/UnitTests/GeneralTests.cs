@@ -5,13 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
+using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Helpers;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using Chem4Word.Model2;
-using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Helpers;
 using Xunit;
 
 namespace Chem4WordTests
@@ -96,6 +97,28 @@ namespace Chem4WordTests
 
             Assert.True(atom.RingCount == ringCount, $"Expected RingCount: {ringCount}; Got {atom.RingCount}");
             Assert.True(atom.IsInRing == isInRing, $"Expected IsInRing: {isInRing}; Got {atom.IsInRing}");
+        }
+
+        [Theory]
+        [InlineData("BalancingVectorCheckTwoBonds.xml")]
+        [InlineData("BalancingVectorCheckThreeBonds.xml")]
+        public void BalancingVectorIsCorrect(string cmlFile)
+        {
+            var cmlConverter = new CMLConverter();
+            var model = cmlConverter.Import(ResourceHelper.GetStringResource(cmlFile));
+
+            for (var i = 5; i < 200; i += 5)
+            {
+                model.ScaleToAverageBondLength(i);
+
+                var molecule = model.Molecules.Values.First();
+                Assert.Equal(60, molecule.Bonds[0].Angle, 4);
+                Assert.Equal(0, molecule.Bonds[1].Angle, 4);
+
+                var atom = molecule.Atoms.Values.First(a => a.Id.Equals("a2"));
+                var angle = Vector.AngleBetween(GeometryTool.ScreenNorth, atom.BalancingVector());
+                Assert.Equal(120.0, angle, 4);
+            }
         }
 
         [Fact]
