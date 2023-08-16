@@ -34,13 +34,13 @@ namespace Chem4Word.Helpers
 
         private static object _missing = Type.Missing;
 
-        public static DialogResult UpgradeIsRequired(Word.Document doc)
+        public static DialogResult UpgradeIsRequired(Word.Document document)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             DialogResult result = DialogResult.Cancel;
 
-            int count = LegacyChemistryCount(doc);
+            int count = LegacyChemistryCount(document);
 
             if (count > 0)
             {
@@ -121,13 +121,13 @@ namespace Chem4Word.Helpers
             return result;
         }
 
-        public static int LegacyChemistryCount(Word.Document doc)
+        public static int LegacyChemistryCount(Word.Document document)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             int count = 0;
 
-            foreach (Word.ContentControl cc in doc.ContentControls)
+            foreach (Word.ContentControl cc in document.ContentControls)
             {
                 Word.WdContentControlType? contentControlType = cc.Type;
                 try
@@ -222,7 +222,7 @@ namespace Chem4Word.Helpers
 
                                     document.CustomXMLParts.Add(XmlHelper.AddHeader(cmlConverter.Export(model)));
 
-                                    Word.ContentControl ccn = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
+                                    var ccn = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
                                     ChemistryHelper.Insert1D(document, ccn.ID, cci.Text, false, $"m1.n1:{model.CustomXmlPartGuid}");
                                     ccn.LockContents = true;
                                     break;
@@ -236,7 +236,7 @@ namespace Chem4Word.Helpers
                                     Globals.Chem4WordV3.Application.Selection.SetRange(start - 1, start - 1);
                                     isFormula = false;
                                     text = ChemistryHelper.GetInlineText(target.Model, cci.Type, ref isFormula, out _);
-                                    Word.ContentControl ccr = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
+                                    var ccr = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
                                     ChemistryHelper.Insert1D(document, ccr.ID, text, isFormula, $"{cci.Type}:{target.Model.CustomXmlPartGuid}");
                                     ccr.LockContents = true;
                                     break;
@@ -323,7 +323,7 @@ namespace Chem4Word.Helpers
             return result;
         }
 
-        private static List<UpgradeTarget> CollectData(Word.Document doc)
+        private static List<UpgradeTarget> CollectData(Word.Document document)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -337,9 +337,9 @@ namespace Chem4Word.Helpers
 
             List<ContentControlInfo> listOfContentControls = new List<ContentControlInfo>();
 
-            for (int i = 1; i <= doc.ContentControls.Count; i++)
+            for (int i = 1; i <= document.ContentControls.Count; i++)
             {
-                Word.ContentControl cc = doc.ContentControls[i];
+                Word.ContentControl cc = document.ContentControls[i];
                 if (cc.Title != null && cc.Title.Equals(Constants.LegacyContentControlTitle))
                 {
                     ContentControlInfo cci = new ContentControlInfo();
@@ -350,7 +350,7 @@ namespace Chem4Word.Helpers
                 }
             }
 
-            foreach (CustomXMLPart xmlPart in doc.CustomXMLParts)
+            foreach (CustomXMLPart xmlPart in document.CustomXMLParts)
             {
                 string xml = xmlPart.XML;
                 if (xml.Contains("<cml"))
@@ -365,7 +365,7 @@ namespace Chem4Word.Helpers
                 }
             }
 
-            foreach (CustomXMLPart xmlPart in doc.CustomXMLParts)
+            foreach (CustomXMLPart xmlPart in document.CustomXMLParts)
             {
                 string xml = xmlPart.XML;
 

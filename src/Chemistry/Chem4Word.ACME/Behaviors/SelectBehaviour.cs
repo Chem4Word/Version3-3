@@ -331,7 +331,6 @@ namespace Chem4Word.ACME.Behaviors
                 }
                 else //we're dragging an atom
                 {
-
                     DragAtom(pos);
                 }
 

@@ -32,6 +32,7 @@ namespace IChem4Word.Contracts
         void CreateNewDatabase(DatabaseDetails details);
 
         DatabaseFileProperties GetDatabaseFileProperties(DatabaseDetails details);
+
         bool IsSqliteDatabase(DatabaseDetails details);
 
         // I/O

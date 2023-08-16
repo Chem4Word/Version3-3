@@ -1461,7 +1461,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
                                     if (clip)
                                     {
-
                                         var outIntersectP1 = GeometryTool.GetIntersection(startPointa, endPointa, bondStart, centre.Value);
                                         var outIntersectP2 = GeometryTool.GetIntersection(startPointa, endPointa, bondEnd, centre.Value);
 

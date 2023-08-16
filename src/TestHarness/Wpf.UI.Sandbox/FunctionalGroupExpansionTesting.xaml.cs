@@ -1,20 +1,20 @@
-﻿using System.Diagnostics;
-using Chem4Word.ACME;
+﻿using Chem4Word.ACME;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
 namespace Wpf.UI.Sandbox
 {
     /// <summary>
-    /// Interaction logic for FunctionalGroupExpansion.xaml
+    /// Interaction logic for FunctionalGroupExpansionTesting.xaml
     /// </summary>
-    public partial class FunctionalGroupExpansion : Window
+    public partial class FunctionalGroupExpansionTesting : Window
     {
-        public FunctionalGroupExpansion()
+        public FunctionalGroupExpansionTesting()
         {
             InitializeComponent();
         }

@@ -56,13 +56,14 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
+            d:IsLocked="True"
             Grid.IsSharedSizeScope="True"
             ItemContainerStyle="{StaticResource SimpleListBoxItem}"
             ItemsSource="{Binding Path=NavigatorItems}"
             PreviewMouseWheel="HandleScrollSpeed"
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            VirtualizingStackPanel.IsVirtualizing="True" d:IsLocked="True">
+            VirtualizingStackPanel.IsVirtualizing="True">
             <ListBox.Resources>
                 <Style TargetType="ListBoxItem">
                     <!--

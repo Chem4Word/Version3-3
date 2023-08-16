@@ -36,25 +36,30 @@
     <Grid d:IsLocked="True">
         <TreeView
             x:Name="NamesTreeView"
+            d:IsLocked="True"
             BorderThickness="0"
-            ItemContainerStyle="{StaticResource CatHeader}" d:IsLocked="True">
+            ItemContainerStyle="{StaticResource CatHeader}">
             <TreeView.CommandBindings>
-                <CommandBinding Command="ApplicationCommands.Copy"
-                                Executed="OnTreeViewCopy"
-                                CanExecute="OnTreeViewCanCopy"></CommandBinding>
+                <CommandBinding
+                    CanExecute="OnTreeViewCanCopy"
+                    Command="ApplicationCommands.Copy"
+                    Executed="OnTreeViewCopy" />
             </TreeView.CommandBindings>
             <TreeViewItem
                 x:Name="NameNode"
+                d:IsLocked="True"
                 Header="Names"
-                ItemContainerStyle="{StaticResource CatSubHeader}" d:IsLocked="True" />
+                ItemContainerStyle="{StaticResource CatSubHeader}" />
             <TreeViewItem
                 x:Name="FormulaNode"
+                d:IsLocked="True"
                 Header="Formulae"
-                ItemContainerStyle="{StaticResource CatSubHeader}" d:IsLocked="True" />
+                ItemContainerStyle="{StaticResource CatSubHeader}" />
             <TreeViewItem
                 x:Name="CaptionNode"
+                d:IsLocked="True"
                 Header="Captions"
-                ItemContainerStyle="{StaticResource CatSubHeader}" d:IsLocked="True" />
+                ItemContainerStyle="{StaticResource CatSubHeader}" />
         </TreeView>
     </Grid>
 </UserControl>

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using Wpf.UI.Sandbox.Models;
 
 namespace Wpf.UI.Sandbox
 {

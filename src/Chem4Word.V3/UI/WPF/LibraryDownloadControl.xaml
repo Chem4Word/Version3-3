@@ -46,7 +46,6 @@
                     Description="This is another free Library"
                     RequiresPayment="False" />
             </x:Array>
-
         </ResourceDictionary>
     </UserControl.Resources>
 

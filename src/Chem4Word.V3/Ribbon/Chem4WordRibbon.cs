@@ -1687,7 +1687,9 @@ namespace Chem4Word
                     if (window != null)
                     {
                         var documentName = window.Document.Name;
-                        if (documentName.Equals(Globals.Chem4WordV3.CurrentDocumentName) && ShowNavigator.Checked != taskPane.Visible)
+                        var activeDocument = Globals.Chem4WordV3.Application.ActiveDocument;
+
+                        if (documentName.Equals(activeDocument.Name) && ShowNavigator.Checked != taskPane.Visible)
                         {
                             ShowNavigator.Checked = taskPane.Visible;
                         }

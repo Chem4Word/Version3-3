@@ -94,9 +94,9 @@ namespace Chem4Word.Helpers
         public ApiResult GetPaidFor(Dictionary<string, string> formData, int timeout)
         {
             var result = new ApiResult
-                         {
-                             Catalogue = new List<CatalogueEntry>(),
-                         };
+            {
+                Catalogue = new List<CatalogueEntry>(),
+            };
 
             var securityProtocol = ServicePointManager.SecurityProtocol;
 

@@ -59,7 +59,6 @@ namespace LibraryTransformer
             {
                 listView1.Items.Clear();
 
-
                 var data = File.ReadAllText(_settingsFile);
                 _listOfLibraries = JsonConvert.DeserializeObject<ListOfLibraries>(data);
                 foreach (var details in _listOfLibraries.AvailableDatabases)

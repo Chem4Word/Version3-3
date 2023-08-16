@@ -5,6 +5,9 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
+using Chem4Word.Shared;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,9 +20,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Chem4Word.Core.Helpers;
-using Chem4Word.Shared;
-using Microsoft.Win32;
 
 namespace Chem4Word.Telemetry
 {
@@ -34,7 +34,7 @@ namespace Chem4Word.Telemetry
 
         public string SystemOs { get; set; }
 
-        public string WordProduct { get; set; }
+        public string WordProduct { get; set; } = "Unknown";
 
         public string Click2RunProductIds { get; set; }
 
@@ -227,16 +227,6 @@ namespace Chem4Word.Telemetry
 
                 #endregion Get IpAddress on Thread
 
-#if DEBUG
-                message = $"GetGitStatus started at {SafeDate.ToLongDate(DateTime.Now)}";
-                StartUpTimings.Add(message);
-                Debug.WriteLine(message);
-
-                Thread thread2 = new Thread(GetGitStatus);
-                thread2.SetApartmentState(ApartmentState.STA);
-                thread2.Start(null);
-#endif
-
                 GetDotNetVersionFromRegistry();
 
                 AllAddIns = InfoHelper.GetListOfAddIns();
@@ -253,6 +243,16 @@ namespace Chem4Word.Telemetry
                 }
 
                 GetScreens();
+
+#if DEBUG
+                message = $"GetGitStatus started at {SafeDate.ToLongDate(DateTime.Now)}";
+                StartUpTimings.Add(message);
+                Debug.WriteLine(message);
+
+                Thread thread2 = new Thread(GetGitStatus);
+                thread2.SetApartmentState(ApartmentState.STA);
+                thread2.Start(null);
+#endif
 
                 sw.Stop();
 

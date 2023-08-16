@@ -144,6 +144,66 @@ namespace Wpf.UI.Sandbox
                 }
             }
 
+            // Seems a bit of an overkill, but allows the exported list to be sorted by a) GroupType, b) AtomicWeight, c) Comment, d) Name
+
+            Globals.FunctionalGroupsList.Sort(delegate (FunctionalGroup x, FunctionalGroup y)
+                                              {
+                                                  var xType = (int)x.GroupType;
+                                                  var yType = (int)y.GroupType;
+
+                                                  if (xType != yType)
+                                                  {
+                                                      return xType.CompareTo(yType);
+                                                  }
+
+                                                  var xWeight = x.AtomicWeight;
+                                                  var yWeight = y.AtomicWeight;
+                                                  if (xWeight != yWeight)
+                                                  {
+                                                      return xWeight.CompareTo(yWeight);
+                                                  }
+
+                                                  var xComment = $"{x.Comment}";
+                                                  var yComment = $"{y.Comment}";
+                                                  if (xComment != yComment)
+                                                  {
+                                                      return string.Compare(xComment, yComment, StringComparison.InvariantCultureIgnoreCase);
+                                                  }
+
+                                                  var xName = x.Name;
+                                                  var yName = y.Name;
+
+                                                  if (xName.StartsWith("R"))
+                                                  {
+                                                      xName = ConvertToJustNumber(xName);
+                                                  }
+                                                  if (yName.StartsWith("R"))
+                                                  {
+                                                      yName = ConvertToJustNumber(yName);
+                                                  }
+
+                                                  string ConvertToJustNumber(string name)
+                                                  {
+                                                      if (name.EndsWith("#"))
+                                                      {
+                                                          return "R000";
+                                                      }
+                                                      if (name.EndsWith("′"))
+                                                      {
+                                                          return "R001";
+                                                      }
+                                                      if (name.EndsWith("″"))
+                                                      {
+                                                          return "R002";
+                                                      }
+
+                                                      var number = int.Parse(name.Substring(1)) + 100;
+                                                      return $"R{number:000}";
+                                                  }
+
+                                                  return string.Compare(xName, yName, StringComparison.InvariantCultureIgnoreCase);
+                                              });
+
             var xml = FunctionalGroups.ExportAsXml();
             Clipboard.SetText(XmlHelper.AddHeader(xml));
             MessageBox.Show($@"Please replace $\src\Chemistry\Chem4Word.Model2\Resources\FunctionalGroups.xml{Environment.NewLine}with the results on the clipboard!", "Data on Clipboard");

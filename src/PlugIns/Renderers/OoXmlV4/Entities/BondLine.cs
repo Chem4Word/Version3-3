@@ -33,6 +33,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public double Width { get; set; } = OoXmlHelper.AcsLineWidth;
 
         private Point _start;
+
         /// <summary>
         /// For a Wedge or Hatch bond this is the nose of the wedge
         /// </summary>

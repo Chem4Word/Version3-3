@@ -17,7 +17,7 @@
             x:Key="VisConverter"
             FalseValue="Collapsed"
             TrueValue="Visible" />
-        <SolidColorBrush x:Key="Chem4WordBrush" Color="#2A579A" />
+        <SolidColorBrush x:Key="Chem4WordBlue" Color="#2A579A" />
         <SolidColorBrush x:Key="SplitterBackground" Color="{x:Static SystemColors.ActiveCaptionColor}" />
     </UserControl.Resources>
 
@@ -36,7 +36,7 @@
             Visibility="{Binding Path=ShowTopPanel, Mode=TwoWay, Converter={StaticResource VisConverter}}" />
         <Border
             Grid.Row="1"
-            BorderBrush="{StaticResource Chem4WordBrush}"
+            BorderBrush="{StaticResource Chem4WordBlue}"
             BorderThickness="2">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -62,7 +62,6 @@
                     <Border
                         Grid.Row="2"
                         Grid.Column="0"
-                        
                         CornerRadius="5">
                         <acme:Display
                             x:Name="Display"

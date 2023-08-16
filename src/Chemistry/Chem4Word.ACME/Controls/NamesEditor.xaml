@@ -28,7 +28,7 @@
     </UserControl.Resources>
 
     <!--
-    <Border BorderBrush="{StaticResource Chem4WordBrush}" BorderThickness="2">
+    <Border BorderBrush="{StaticResource Chem4WordBlue}" BorderThickness="2">
     -->
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
         <Grid.RowDefinitions>
@@ -82,23 +82,21 @@
                             <TextBox
                                 Grid.Column="1"
                                 Margin="3,0,0,0"
+                                Padding="3"
                                 VerticalContentAlignment="Center"
                                 BorderThickness="0"
-                                Padding="3"
                                 IsReadOnly="True"
-                                Text="{Binding Path=FullType}">
-                            </TextBox>
+                                Text="{Binding Path=FullType}" />
 
                             <TextBox
                                 Grid.Column="2"
                                 Margin="3,0,3,0"
+                                Padding="5,0,5,0"
                                 VerticalContentAlignment="Center"
+                                Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
                                 BorderThickness="0"
                                 IsReadOnly="{Binding IsReadOnly}"
-                                Padding="5,0,5,0"
-                                Text="{Binding Path=Value, Mode=TwoWay}" 
-                                Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">                           
-                            </TextBox>
+                                Text="{Binding Path=Value, Mode=TwoWay}" />
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -135,5 +133,5 @@
         </Button>
     </Grid>
     <!--
-    </Border>    -->
+    </Border>-->
 </UserControl>

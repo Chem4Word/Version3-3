@@ -36,6 +36,26 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Vso-Ci|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Vso-Ci\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Setup|AnyCPU'">
+    <OutputPath>bin\Setup\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -58,20 +78,20 @@
     <Compile Include="DropDownStyle.xaml.cs">
       <DependentUpon>DropDownStyle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FunctionalGroupExpansion.xaml.cs">
-      <DependentUpon>FunctionalGroupExpansion.xaml</DependentUpon>
+    <Compile Include="FunctionalGroupExpansionTesting.xaml.cs">
+      <DependentUpon>FunctionalGroupExpansionTesting.xaml</DependentUpon>
     </Compile>
     <Compile Include="FunctionalGroupExpansionEditor.xaml.cs">
       <DependentUpon>FunctionalGroupExpansionEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Marquee.xaml.cs">
+    <Compile Include="Controls\Marquee.xaml.cs">
       <DependentUpon>Marquee.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\FgItem.cs" />
     <Compile Include="Ticker.xaml.cs">
       <DependentUpon>Ticker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TickerItem.cs" />
+    <Compile Include="Models\TickerItem.cs" />
     <Page Include="Animation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -80,7 +100,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="FunctionalGroupExpansion.xaml">
+    <Page Include="FunctionalGroupExpansionTesting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,7 +116,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Marquee.xaml">
+    <Page Include="Controls\Marquee.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

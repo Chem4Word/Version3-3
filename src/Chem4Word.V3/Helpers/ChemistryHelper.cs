@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
@@ -24,13 +23,13 @@ namespace Chem4Word.Helpers
     public static class ChemistryHelper
     {
         private static readonly string Product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static readonly string Class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static readonly string Class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private static object _missing = Type.Missing;
 
         public static Word.ContentControl Insert2DChemistry(Word.Document document, string cml, bool isCopy)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (Globals.Chem4WordV3.SystemOptions == null)
             {
@@ -40,7 +39,7 @@ namespace Chem4Word.Helpers
             // Calling routine should check that Globals.Chem4WordV3.ChemistryAllowed = true
 
             Word.ContentControl cc = null;
-            var app = Globals.Chem4WordV3.Application;
+            var app = document.Application;
 
             var wordSettings = new WordSettings(app);
 
@@ -124,7 +123,7 @@ namespace Chem4Word.Helpers
 
         public static Word.ContentControl Insert1DChemistry(Word.Document document, string text, bool isFormula, string tag)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (Globals.Chem4WordV3.SystemOptions == null)
             {
@@ -152,7 +151,7 @@ namespace Chem4Word.Helpers
 
         public static void RefreshAllStructures(Word.Document document)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (Globals.Chem4WordV3.SystemOptions == null)
             {
@@ -188,7 +187,7 @@ namespace Chem4Word.Helpers
 
         public static void UpdateThisStructure(Word.Document document, Model model, string cxmlId, string tempFilename)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             // Use LINQ to get a list of all our ContentControls
             // Using $"{}" to coerce null to empty string
@@ -235,11 +234,12 @@ namespace Chem4Word.Helpers
 
         public static void Insert2D(Word.Document document, string ccId, string tempfileName, string guid)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 2D structure in ContentControl {ccId} Tag {guid}");
 
             var application = Globals.Chem4WordV3.Application;
+
             var wordSettings = new WordSettings(application);
 
             var contentControl = GetContentControl(document, ccId);
@@ -261,7 +261,7 @@ namespace Chem4Word.Helpers
 
         private static void Update2D(Word.Document document, string ccId, string tempfileName, string guid)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 2D structure in ContentControl {ccId} Tag {guid}");
 
@@ -309,7 +309,7 @@ namespace Chem4Word.Helpers
 
         public static void Insert1D(Word.Document document, string ccId, string text, bool isFormula, string tag)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 1D label in ContentControl {ccId} Tag {tag}");
 
@@ -333,7 +333,7 @@ namespace Chem4Word.Helpers
 
         private static void Update1D(Word.Document document, string ccId, string text, bool isFormula, string tag)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 1D label in ContentControl {ccId} Tag {tag}");
 
@@ -360,7 +360,7 @@ namespace Chem4Word.Helpers
 
         public static string GetInlineText(Model model, string prefix, ref bool isFormula, out string source)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             source = null;
             string text;
@@ -389,13 +389,13 @@ namespace Chem4Word.Helpers
             return text;
         }
 
-        public static Word.ContentControl GetContentControl(Word.Document document, string Id)
+        public static Word.ContentControl GetContentControl(Word.Document document, string id)
         {
             Word.ContentControl result = null;
 
             foreach (Word.ContentControl contentControl in document.ContentControls)
             {
-                if (contentControl.ID.Equals(Id))
+                if (contentControl.ID.Equals(id))
                 {
                     result = contentControl;
                     break;
@@ -407,7 +407,7 @@ namespace Chem4Word.Helpers
 
         private static void SetRichText(Word.Document document, string ccId, string text, bool isFormula)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var cc = GetContentControl(document, ccId);
             if (cc != null)
@@ -493,7 +493,7 @@ namespace Chem4Word.Helpers
 
         public static List<string> GetUsed1D(Word.Document document, string guidString)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             // Using $"{}" to coerce null to empty string
             var targets = (from Word.ContentControl ccs in document.ContentControls
@@ -508,7 +508,7 @@ namespace Chem4Word.Helpers
 
         public static List<string> GetUsed2D(Word.Document document, string guidString)
         {
-            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             // Using $"{}" to coerce null to empty string
             var targets = (from Word.ContentControl ccs in document.ContentControls

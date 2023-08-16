@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //  Copyright (c) 2023, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
@@ -344,11 +344,11 @@ namespace Chem4Word.Telemetry
         {
             Debug.WriteLine($"{operation} - {level} - {message}");
 
-            Debug.WriteLine($"{operation} - {level} - {message}");
-
+            // Default values to ensure we have something to log
             var processId = 666;
             var machineId = Guid.Empty.ToString("D");
-            var versionNumber = Constants.Chem4WordVersion;
+            // This is updated automatically by Set-Assembly-Version.ps1
+            var versionNumber = "3.3.0.666";
 
             try
             {
@@ -363,6 +363,7 @@ namespace Chem4Word.Telemetry
                     {
                         machineId = _helper.MachineId;
                     }
+
                     if (string.IsNullOrEmpty(_helper.AssemblyVersionNumber))
                     {
                         versionNumber = GetVersionNumber();

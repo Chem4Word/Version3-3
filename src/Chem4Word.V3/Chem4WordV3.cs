@@ -91,7 +91,6 @@ namespace Chem4Word
 
         public Dictionary<string, int> LibraryNames;
         public ListOfLibraries ListOfDetectedLibraries;
-        public string CurrentDocumentName;
 
         private static readonly string[] ContextMenusTargets = { "Text", "Table Text", "Spelling", "Grammar", "Grammar (2)", "Lists", "Table Lists" };
         private const string ContextMenuTag = "2829AECC-061C-4DC5-8CC0-CAEC821B9127";
@@ -1816,8 +1815,6 @@ namespace Chem4Word
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            CurrentDocumentName = document.Name;
-
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
                 try
@@ -1889,9 +1886,6 @@ namespace Chem4Word
 
                         if (document != null)
                         {
-                            CurrentDocumentName = Globals.Chem4WordV3.Application.ActiveDocument.Name;
-                            Debug.WriteLine($"{module} - Current Document is {CurrentDocumentName}");
-
                             var docxMode = document.CompatibilityMode >= (int)Word.WdCompatibilityMode.wdWord2010;
 
                             if (Ribbon != null)
@@ -2069,8 +2063,6 @@ namespace Chem4Word
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            CurrentDocumentName = document.Name;
-
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
                 try
@@ -2112,8 +2104,6 @@ namespace Chem4Word
         private void OnDocumentBeforeSave(Word.Document document, ref bool saveAsUi, ref bool cancel)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            CurrentDocumentName = document.Name;
 
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
@@ -2192,8 +2182,6 @@ namespace Chem4Word
         private void OnDocumentBeforeClose(Word.Document document, ref bool cancel)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            CurrentDocumentName = document.Name;
 
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
@@ -2905,7 +2893,7 @@ namespace Chem4Word
                             {
                                 if (Globals.Chem4WordV3.Application.Documents.Count > 1)
                                 {
-                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(ccTag);
+                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(ccTag, thisDocument.Name);
                                     if (cxml != null)
                                     {
                                         Telemetry.Write(module, "Information", "Found copy of " + ccTag + " in other document, adding it into this.");

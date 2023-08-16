@@ -16,8 +16,8 @@
                 <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        <!--  Brushes  -->
-      </ResourceDictionary>
+            <!--  Brushes  -->
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Border
@@ -35,10 +35,11 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Viewbox Margin="0,0,5,0"
+                <Viewbox
+                    Width="Auto"
+                    Margin="0,0,5,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    Width="Auto"
                     Stretch="Uniform">
                     <Label
                         x:Name="ItemLabel"

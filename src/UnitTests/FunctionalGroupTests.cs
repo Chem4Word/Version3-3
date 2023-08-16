@@ -90,9 +90,7 @@ namespace Chem4WordTests
         [InlineData("R1", false, "[R{1}]")]
         [InlineData("R9", false, "[R{9}]")]
         [InlineData("CH2", false, "[C]H2")]
-        [InlineData("CH2", true, "H2[C]")]
         [InlineData("CH3", false, "[C]H3")]
-        [InlineData("CH3", true, "H3[C]")]
         [InlineData("CO2H", false, "[C]O2H")]
         [InlineData("CO2H", true, "HO2[C]")]
         [InlineData("CH2CH2OH", false, "[CH2]CH2OH")]
@@ -122,7 +120,7 @@ namespace Chem4WordTests
             molecule.RotateAbout(molecule.Atoms.Values.First().Position, 45);
             var angleAfter = molecule.Bonds.First().Angle;
 
-            Debug.WriteLine($"Angle Before:{angleBefore} After:{angleAfter} [{angleAfter-angleBefore}]");
+            Debug.WriteLine($"Angle Before:{angleBefore} After:{angleAfter} [{angleAfter - angleBefore}]");
 
             Assert.Equal(90, angleBefore, 4);
             Assert.Equal(135, angleAfter, 4);

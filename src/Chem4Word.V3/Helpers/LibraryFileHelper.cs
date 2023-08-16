@@ -144,12 +144,12 @@ namespace Chem4Word.Helpers
                             _telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
 
                             driver.DatabaseDetails = new DatabaseDetails
-                                                     {
-                                                         DisplayName = database.DisplayName,
-                                                         Connection = database.Connection,
-                                                         Driver = database.Driver,
-                                                         ShortFileName = database.ShortFileName
-                                                     };
+                            {
+                                DisplayName = database.DisplayName,
+                                Connection = database.Connection,
+                                Driver = database.Driver,
+                                ShortFileName = database.ShortFileName
+                            };
                             database.Properties = driver.GetProperties();
                             database.IsReadOnly = driver.GetDatabaseFileProperties(driver.DatabaseDetails).IsReadOnly;
                         }

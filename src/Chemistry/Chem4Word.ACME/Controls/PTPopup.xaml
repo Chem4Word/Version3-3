@@ -11,19 +11,19 @@
     Height="255"
     d:DesignWidth="362.337"
     ContentRendered="PTPopup_OnContentRendered"
+    FontFamily="Segoe UI"
     FontSize="12"
     Icon="/Chem4Word.ACME;component/Resources/ms-word-16.ico"
     Loaded="PTPickerWindow_Loaded"
     PreviewKeyDown="PTPickerWindow_PreviewKeyDown"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
-    FontFamily="Segoe UI"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
-                <ResourceDictionary Source="../Resources/ControlStyles.xaml"/>
+                <ResourceDictionary Source="../Resources/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>

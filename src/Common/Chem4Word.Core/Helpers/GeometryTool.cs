@@ -466,8 +466,6 @@ namespace Chem4Word.Core.Helpers
             }
         }
 
-
-
         /// <summary>
         /// AngleBetween - the angle between 2 vectors
         /// </summary>

@@ -5,9 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-namespace Chem4Word.Core.Helpers
+namespace Wpf.UI.Sandbox.Models
 {
-    public class AngleMethods
+    internal class TickerItem
     {
+        public string Text { get; set; }
+        public string Url { get; set; }
     }
 }

@@ -72,16 +72,16 @@
             Grid.Column="0"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
-            Tag="FunctionalGroupEditor">
-            Functional Group Editor
+            Tag="FunctionalGroupExpansionEditor">
+            Functional Group Expansion Editor
         </Button>
         <Button
             Grid.Row="2"
             Grid.Column="1"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
-            Tag="FunctionalGroupExpansion">
-            Functional Group Expansion
+            Tag="FunctionalGroupExpansionTesting">
+            Functional Group Expansion Testing
         </Button>
     </Grid>
 </Window>

@@ -195,5 +195,4 @@
             <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
         </ComboBox>
     </Grid>
-
 </Window>

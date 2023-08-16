@@ -7,14 +7,15 @@
 
 namespace Chem4Word.Model2.Enums
 {
+    // When the Functional Group Expansion Editor is run the result which is copied to the clipboard is sorted by this enum
     public enum GroupType
     {
         AttachmentPoint = 0,
-        Legacy,
         Residue,
-        Placeholder,
+        Legacy,
         Internal,
         SuperAtom,
+        Placeholder,
         Unknown
     }
 }

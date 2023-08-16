@@ -11,6 +11,9 @@ namespace Chem4Word.Core.Helpers
 {
     public static class SafeDouble
     {
+        public static string Duration(double duration)
+            => AsString(duration);
+
         /// <summary>
         /// Formats a double as "#,##0.00" without any culture.
         /// </summary>

@@ -69,6 +69,11 @@ namespace Chem4Word.ACME.Behaviors
         {
             Bond existingBond = null;
 
+            if (_adorner != null)
+            {
+                RemoveAdorner(ref _adorner);
+            }
+
             var targetedVisual = CurrentEditor.ActiveVisual;
             string bondOrder = EditController.CurrentBondOrder;
             //check to see if we have already got an atom remembered

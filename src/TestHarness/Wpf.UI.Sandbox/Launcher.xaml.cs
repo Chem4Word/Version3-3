@@ -57,14 +57,13 @@ namespace Wpf.UI.Sandbox
                         window.ShowDialog();
                         break;
 
-
-                    case "FunctionalGroupEditor":
+                    case "FunctionalGroupExpansionEditor":
                         window = new FunctionalGroupExpansionEditor();
                         window.ShowDialog();
                         break;
 
-                    case "FunctionalGroupExpansion":
-                        window = new FunctionalGroupExpansion();
+                    case "FunctionalGroupExpansionTesting":
+                        window = new FunctionalGroupExpansionTesting();
                         window.ShowDialog();
                         break;
                 }

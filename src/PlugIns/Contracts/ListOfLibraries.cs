@@ -5,8 +5,8 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace IChem4Word.Contracts
 {
@@ -21,6 +21,5 @@ namespace IChem4Word.Contracts
 
         [JsonProperty]
         public List<DatabaseDetails> AvailableDatabases { get; set; } = new List<DatabaseDetails>();
-
     }
 }
