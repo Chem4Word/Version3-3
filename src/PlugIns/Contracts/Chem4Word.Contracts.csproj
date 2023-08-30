@@ -72,7 +72,9 @@
     <Compile Include="Dto\TableColumn.cs" />
     <Compile Include="IChem4WordCommon.cs" />
     <Compile Include="IChem4WordEditor.cs" />
-    <Compile Include="IChem4WordDriver.cs" />
+    <Compile Include="IChem4WordLibraryBase.cs" />
+    <Compile Include="IChem4WordLibraryReader.cs" />
+    <Compile Include="IChem4WordLibraryWriter.cs" />
     <Compile Include="IChem4WordRenderer.cs" />
     <Compile Include="IChem4WordSearcher.cs" />
     <Compile Include="IChem4WordTelemetry.cs" />

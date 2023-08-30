@@ -12,7 +12,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Chem4Word.UI.WPF
 {
@@ -97,7 +96,7 @@ namespace Chem4Word.UI.WPF
         {
             var namesTree = ((LibraryNamesPanel)d).NamesTreeView;
 
-            if (namesTree.Items.Count > 3)
+            if (namesTree.Items.Count > 2)
             {
                 var captionNode = namesTree.Items[2] as TreeViewItem;
 
@@ -114,7 +113,7 @@ namespace Chem4Word.UI.WPF
         private static void ReloadFormulaeList(List<ChemistryNameDataObject> formulae, DependencyObject d)
         {
             var namesTree = ((LibraryNamesPanel)d).NamesTreeView;
-            if (namesTree.Items.Count > 2)
+            if (namesTree.Items.Count > 1)
             {
                 var formulaNode = namesTree.Items[1] as TreeViewItem;
 
@@ -131,7 +130,7 @@ namespace Chem4Word.UI.WPF
         private static void ReloadNamesList(List<ChemistryNameDataObject> names, DependencyObject d)
         {
             var namesTree = ((LibraryNamesPanel)d).NamesTreeView;
-            if (namesTree.Items.Count > 1)
+            if (namesTree.Items.Count > 0)
             {
                 var nameNode = namesTree.Items[0] as TreeViewItem;
                 LoadNames(nameNode, names);
@@ -143,8 +142,6 @@ namespace Chem4Word.UI.WPF
             nameNode.Items.Clear();
             if (listParam != null)
             {
-                var catHeaderStyle = (Style)nameNode.FindResource("CatSubHeader");
-
                 var namesByNamespace = from name in listParam
                                        group name by name.NameSpace
                                        into ns
@@ -165,33 +162,47 @@ namespace Chem4Word.UI.WPF
                 //load the main name headings
                 foreach (var grouping in namesByNamespace)
                 {
-                    var nsNode = new TreeViewItem { Header = grouping.NS, Tag = grouping };
+                    var nsNode = new TreeViewItem
+                    {
+                        Header = grouping.NS,
+                        Tag = grouping,
+                        Template = nameNode.Template,
+                        Style = nameNode.Style
+                    };
                     nameNode.Items.Add(nsNode);
 
                     foreach (var tag in grouping.Tags)
                     {
-                        var tagChildNode = new TreeViewItem { Header = tag.Tag, Tag = tag };
+                        var tagChildNode = new TreeViewItem
+                        {
+                            Header = tag.Tag,
+                            Tag = tag,
+                            Template = nsNode.Template,
+                            Style = nsNode.Style
+                        };
                         nsNode.Items.Add(tagChildNode);
-                        tagChildNode.Style = catHeaderStyle;
 
                         foreach (var dataObject in tag.Names)
                         {
+                            var node = new TreeViewItem
+                            {
+                                Tag = dataObject.Name,
+                                Template = tagChildNode.Template,
+                                FontSize = tagChildNode.FontSize
+                            };
+
                             if (tagChildNode.Tag.ToString().Contains("Formula")
                                 && !dataObject.Name.ToLower().Equals("not found")
                                 && !dataObject.Name.ToLower().Equals("not requested")
                                 && !dataObject.Name.ToLower().Equals("unable to calculate"))
                             {
-                                var tb = TextBlockHelper.FromFormula(dataObject.Name);
-                                tb.Foreground = new SolidColorBrush(Colors.Black);
-                                tb.Tag = dataObject.Name;
-                                tagChildNode.Items.Add(tb);
+                                node.Header = TextBlockHelper.FromFormula(dataObject.Name);
                             }
                             else
                             {
-                                var nameChildNode = new TreeViewItem { Header = dataObject.Name, Tag = dataObject.Name };
-                                tagChildNode.Items.Add(nameChildNode);
-                                nameChildNode.Style = catHeaderStyle;
+                                node.Header = dataObject.Name;
                             }
+                            tagChildNode.Items.Add(node);
                         }
                     }
                 }

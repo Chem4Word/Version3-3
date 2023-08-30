@@ -28,12 +28,6 @@
                 TrueValue="Visible" />
 
             <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
-                <!--
-                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
-                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
-                -->
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                <Setter Property="VerticalContentAlignment" Value="Top" />
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Setter Property="Template">
                     <Setter.Value>
@@ -52,6 +46,12 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+                <!--
+                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+                -->
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
             </Style>
 
             <Style x:Key="NavButtonStyle" TargetType="{x:Type Button}">
@@ -66,13 +66,13 @@
             </Style>
 
             <Style x:Key="EditButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M16.84,2.73C16.45,2.73 16.07,2.88 15.77,3.17L13.65,5.29L18.95,10.6L21.07,8.5C21.67,7.89 21.67,6.94 21.07,6.36L17.9,3.17C17.6,2.88 17.22,2.73 16.84,2.73M12.94,6L4.84,14.11L7.4,14.39L7.58,16.68L9.86,16.85L10.15,19.41L18.25,11.3M4.25,15.04L2.5,21.73L9.2,19.94L8.96,17.78L6.65,17.61L6.47,15.29" />
+                <Setter Property="Data" Value="M 16.84 2.73 C 16.45 2.73 16.07 2.88 15.77 3.17 L 13.65 5.29 L 18.95 10.6 L 21.07 8.5 C 21.67 7.89 21.67 6.94 21.07 6.36 L 17.9 3.17 C 17.6 2.88 17.22 2.73 16.84 2.73 M 12.94 6 L 4.84 14.11 L 7.4 14.39 L 7.58 16.68 L 9.86 16.85 L 10.15 19.41 L 18.25 11.3 M 4.25 15.04 L 2.5 21.73 L 9.2 19.94 L 8.96 17.78 L 6.65 17.61 L 6.47 15.29" />
             </Style>
             <Style x:Key="SearchButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                <Setter Property="Data" Value="M 9.5 3 A 6.5 6.5 0 0 1 16 9.5 C 16 11.11 15.41 12.59 14.44 13.73 L 14.71 14 H 15.5 L 20.5 19 L 19 20.5 L 14 15.5 V 14.71 L 13.73 14.44 C 12.59 15.41 11.11 16 9.5 16 A 6.5 6.5 0 0 1 3 9.5 A 6.5 6.5 0 0 1 9.5 3 M 9.5 5 C 7 5 5 7 5 9.5 C 5 12 7 14 9.5 14 C 12 14 14 12 14 9.5 C 14 7 12 5 9.5 5 Z" />
             </Style>
             <Style x:Key="DelButtonPath" TargetType="Path">
-                <Setter Property="Data" Value="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" />
+                <Setter Property="Data" Value="M 20 6.91 L 17.09 4 L 12 9.09 L 6.91 4 L 4 6.91 L 9.09 12 L 4 17.09 L 6.91 20 L 12 14.91 L 17.09 20 L 20 17.09 L 14.91 12 L 20 6.91 Z" />
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>

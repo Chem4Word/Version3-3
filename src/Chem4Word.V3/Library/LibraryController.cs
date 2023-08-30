@@ -10,9 +10,7 @@ using Chem4Word.Core.UI.Forms;
 using Chem4Word.Helpers;
 using IChem4Word.Contracts;
 using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Reflection;
 using System.Windows;
 
@@ -26,9 +24,8 @@ namespace Chem4Word.Library
         //used for XAML data binding
         public ObservableCollection<ChemistryObject> ChemistryItems { get; }
 
-        private bool _initializing;
         private readonly IChem4WordTelemetry _telemetry;
-        private IChem4WordDriver _driver;
+        private IChem4WordLibraryReader _driver;
 
         public LibraryController(IChem4WordTelemetry telemetry)
         {
@@ -37,13 +34,12 @@ namespace Chem4Word.Library
             var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
             if (details != null)
             {
-                _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+                _driver = (IChem4WordLibraryReader)Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
                 if (_driver != null)
                 {
-                    _driver.DatabaseDetails = details;
+                    _driver.FileName = details.Connection;
 
                     ChemistryItems = new ObservableCollection<ChemistryObject>();
-                    ChemistryItems.CollectionChanged += ChemistryItems_CollectionChanged;
 
                     LoadChemistryItems();
                 }
@@ -55,7 +51,6 @@ namespace Chem4Word.Library
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                _initializing = true;
                 ChemistryItems.Clear();
 
                 var dataObjects = _driver.GetAllChemistry();
@@ -64,86 +59,6 @@ namespace Chem4Word.Library
                 {
                     var obj = DtoHelper.CreateFromDto(dto);
                     ChemistryItems.Add(obj);
-                }
-
-                _initializing = false;
-            }
-            catch (Exception ex)
-            {
-                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
-                {
-                    form.ShowDialog();
-                }
-            }
-        }
-
-        private void ChemistryItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                switch (e.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        if (!_initializing)
-                        {
-                            AddNewChemistry(e.NewItems);
-                        }
-                        break;
-
-                    case NotifyCollectionChangedAction.Remove:
-                        if (!_initializing)
-                        {
-                            DeleteChemistry(e.OldItems);
-                        }
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
-                {
-                    form.ShowDialog();
-                }
-            }
-        }
-
-        private void DeleteChemistry(IList eOldItems)
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                if (!_initializing)
-                {
-                    foreach (ChemistryObject chemistry in eOldItems)
-                    {
-                        _driver.DeleteChemistryById(chemistry.Id);
-                        _telemetry.Write(module, "Information", $"Structure {chemistry.Id} deleted from {_driver.DatabaseDetails.DisplayName}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
-                {
-                    form.ShowDialog();
-                }
-            }
-        }
-
-        private void AddNewChemistry(IList eNewItems)
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                if (!_initializing)
-                {
-                    foreach (ChemistryObject chemistry in eNewItems)
-                    {
-                        var dto = chemistry.ConvertToDto();
-                        chemistry.Id = _driver.AddChemistry(dto);
-                        _telemetry.Write(module, "Information", $"Structure {chemistry.Id} added to {_driver.DatabaseDetails.DisplayName}");
-                    }
                 }
             }
             catch (Exception ex)

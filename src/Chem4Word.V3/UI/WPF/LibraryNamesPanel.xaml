@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="200"
+    d:DesignWidth="400"
     BorderThickness="0"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -14,31 +14,16 @@
                 <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Chem4WordTreeViewItem.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style x:Key="CatHeader" TargetType="TreeViewItem">
-                <Setter Property="Foreground" Value="{StaticResource Chem4WordBlue}" />
-                <Setter Property="FontSize" Value="16" />
-            </Style>
-            <Style
-                x:Key="CatSubHeader"
-                BasedOn="{StaticResource CatHeader}"
-                TargetType="TreeViewItem">
-                <Setter Property="FontSize" Value="14" />
-                <!--
-                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
-                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
-                -->
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                <Setter Property="VerticalContentAlignment" Value="Top" />
-            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
+
     <Grid d:IsLocked="True">
         <TreeView
             x:Name="NamesTreeView"
             d:IsLocked="True"
-            BorderThickness="0"
-            ItemContainerStyle="{StaticResource CatHeader}">
+            BorderThickness="0">
             <TreeView.CommandBindings>
                 <CommandBinding
                     CanExecute="OnTreeViewCanCopy"
@@ -49,17 +34,20 @@
                 x:Name="NameNode"
                 d:IsLocked="True"
                 Header="Names"
-                ItemContainerStyle="{StaticResource CatSubHeader}" />
+                Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
             <TreeViewItem
                 x:Name="FormulaNode"
                 d:IsLocked="True"
                 Header="Formulae"
-                ItemContainerStyle="{StaticResource CatSubHeader}" />
+                Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
             <TreeViewItem
                 x:Name="CaptionNode"
                 d:IsLocked="True"
                 Header="Captions"
-                ItemContainerStyle="{StaticResource CatSubHeader}" />
+                Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
         </TreeView>
     </Grid>
 </UserControl>

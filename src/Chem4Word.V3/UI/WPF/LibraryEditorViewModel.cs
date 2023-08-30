@@ -30,9 +30,9 @@ namespace Chem4Word.UI.WPF
         private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private readonly IChem4WordTelemetry _telemetry;
-        private readonly IChem4WordDriver _driver;
+        private readonly IChem4WordLibraryWriter _driver;
 
-        public LibraryEditorViewModel(IChem4WordTelemetry telemetry, IChem4WordDriver driver)
+        public LibraryEditorViewModel(IChem4WordTelemetry telemetry, IChem4WordLibraryWriter driver)
         {
             _telemetry = telemetry;
             _driver = driver;

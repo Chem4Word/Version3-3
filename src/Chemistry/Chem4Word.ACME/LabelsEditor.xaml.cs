@@ -89,35 +89,32 @@ namespace Chem4Word.ACME
             LoadNamesEditor(FormulaGrid, null);
             LoadNamesEditor(CaptionsGrid, null);
 
-            var model = new Model();
-
             if (TreeView.SelectedItem is TreeViewItem item)
             {
                 switch (item.Tag)
                 {
-                    case Model m:
-                        Display.Chemistry = m.Copy();
+                    case Model rootModel:
+                        Display.Chemistry = rootModel.Copy();
                         break;
 
                     case Molecule thisMolecule:
-                        {
-                            model = new Model();
-                            var copy = thisMolecule.Copy();
-                            model.AddMolecule(copy);
-                            copy.Parent = model;
+                        var model = new Model();
+                        var copy = thisMolecule.Copy();
+                        model.AddMolecule(copy);
+                        copy.Parent = model;
 
-                            if (thisMolecule.Molecules.Count == 0)
-                            {
-                                LoadNamesEditor(NamesGrid, thisMolecule.Names);
-                                LoadNamesEditor(FormulaGrid, thisMolecule.Formulas);
-                            }
-                            LoadNamesEditor(CaptionsGrid, thisMolecule.Captions);
-                            break;
+                        if (thisMolecule.Molecules.Count == 0)
+                        {
+                            LoadNamesEditor(NamesGrid, thisMolecule.Names);
+                            LoadNamesEditor(FormulaGrid, thisMolecule.Formulas);
                         }
+
+                        LoadNamesEditor(CaptionsGrid, thisMolecule.Captions);
+
+                        Display.Chemistry = model.Copy();
+                        break;
                 }
             }
-
-            Display.Chemistry = model;
         }
 
         public void PopulateTreeView(string cml)
@@ -128,6 +125,9 @@ namespace Chem4Word.ACME
             TreeView.Items.Clear();
             bool initialSelectionMade = false;
 
+            var style = (Style)TreeView.FindResource("Chem4WordTreeViewItemStyle");
+            var template = (ControlTemplate)TreeView.FindResource("Chem4WordTreeViewItemTemplate");
+
             if (EditedModel != null)
             {
                 OverallConciseFormulaPanel.Children.Clear();
@@ -136,7 +136,9 @@ namespace Chem4Word.ACME
                 var root = new TreeViewItem
                 {
                     Header = "Structure",
-                    Tag = EditedModel
+                    Tag = EditedModel,
+                    Template = template,
+                    Style = style
                 };
                 TreeView.Items.Add(root);
                 root.IsExpanded = true;
@@ -157,7 +159,11 @@ namespace Chem4Word.ACME
             {
                 foreach (var molecule in molecules)
                 {
-                    var tvi = new TreeViewItem();
+                    var tvi = new TreeViewItem
+                    {
+                        Template = template,
+                        Style = style
+                    };
 
                     if (molecule.Atoms.Count == 0)
                     {
@@ -165,8 +171,8 @@ namespace Chem4Word.ACME
                         {
                             Orientation = Orientation.Horizontal
                         };
-
                         stackPanel.Children.Add(TextBlockHelper.FromFormula(molecule.CalculatedFormulaOfChildren, "Group:"));
+
                         tvi.Header = stackPanel;
                         tvi.Tag = molecule;
                     }
@@ -177,6 +183,7 @@ namespace Chem4Word.ACME
                             Orientation = Orientation.Horizontal
                         };
                         stackPanel.Children.Add(TextBlockHelper.FromFormula(molecule.ConciseFormula));
+
                         tvi.Header = stackPanel;
                         tvi.Tag = molecule;
                     }
@@ -198,11 +205,13 @@ namespace Chem4Word.ACME
                     {
                         property.PropertyChanged += OnTextualPropertyChanged;
                     }
+
                     molecule.Formulas.CollectionChanged += OnCollectionChanged;
                     foreach (var property in molecule.Formulas)
                     {
                         property.PropertyChanged += OnTextualPropertyChanged;
                     }
+
                     molecule.Names.CollectionChanged += OnCollectionChanged;
                     foreach (var property in molecule.Names)
                     {

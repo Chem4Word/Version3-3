@@ -104,7 +104,7 @@ namespace Chem4Word.Library
                             listOfDetectedLibraries.SelectedLibrary = selected;
 
                             new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                                .SaveFile(listOfDetectedLibraries);
+                                .SaveSettingsFile(listOfDetectedLibraries);
 
                             Globals.Chem4WordV3.ListOfDetectedLibraries
                                 = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)

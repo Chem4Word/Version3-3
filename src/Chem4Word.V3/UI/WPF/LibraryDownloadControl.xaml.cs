@@ -97,12 +97,22 @@ namespace Chem4Word.UI.WPF
 
                     var helper = new ApiHelper(_settings.LibrariesUri);
 
-                    // Dummy call to wake up API
-                    var dummy = helper.GetCatalogue(formData, 15);
+#if DEBUG
+
+                    // Dummy call to wake up API in debug mode
+
+                    var dummy = helper.GetCatalogue(formData, 5);
+                    if (dummy.HasException)
+                    {
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception", dummy.Message);
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"HttpStatusCode {dummy.HttpStatusCode}");
+                    }
                     if (!dummy.Success)
                     {
                         Thread.Sleep(500);
                     }
+
+#endif
 
                     var result = helper.GetCatalogue(formData, 15);
                     if (result.Success)
@@ -376,7 +386,7 @@ namespace Chem4Word.UI.WPF
                 };
                 listOfDetectedLibraries.AvailableDatabases.Add(details);
                 new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                    .SaveFile(listOfDetectedLibraries);
+                    .SaveSettingsFile(listOfDetectedLibraries);
             }
         }
 

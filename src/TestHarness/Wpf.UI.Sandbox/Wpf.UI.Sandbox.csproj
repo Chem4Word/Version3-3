@@ -75,8 +75,8 @@
     <Compile Include="Animation.xaml.cs">
       <DependentUpon>Animation.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DropDownStyle.xaml.cs">
-      <DependentUpon>DropDownStyle.xaml</DependentUpon>
+    <Compile Include="ComboBoxAndTreeViewStyles.xaml.cs">
+      <DependentUpon>ComboBoxAndTreeViewStyles.xaml</DependentUpon>
     </Compile>
     <Compile Include="FunctionalGroupExpansionTesting.xaml.cs">
       <DependentUpon>FunctionalGroupExpansionTesting.xaml</DependentUpon>
@@ -96,9 +96,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DropDownStyle.xaml">
+    <Page Include="Chem4WordComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ComboBoxAndTreeViewStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Chem4WordTreeViewItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="FunctionalGroupExpansionTesting.xaml">
       <SubType>Designer</SubType>

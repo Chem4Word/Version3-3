@@ -65,7 +65,7 @@
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
             Tag="DropDownStyle">
-            DropDown Style
+            ComboBox and TreeView Styles
         </Button>
         <Button
             Grid.Row="2"

@@ -72,12 +72,6 @@
                 <Setter Property="Data" Value="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,5V19H5V5H19M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9" />
             </Style>
             <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
-                <!--
-                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
-                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
-                -->
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                <Setter Property="VerticalContentAlignment" Value="Top" />
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Setter Property="Template">
                     <Setter.Value>
@@ -96,6 +90,12 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+                <!--
+                    We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+                    https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+                -->
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
             </Style>
             <converters:BoolToVisibilityConverter
                 x:Key="BoolToVisConverter"

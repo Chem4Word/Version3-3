@@ -53,7 +53,7 @@ namespace Wpf.UI.Sandbox
                         break;
 
                     case "DropDownStyle":
-                        window = new DropDownStyle();
+                        window = new ComboBoxAndTreeViewStyles();
                         window.ShowDialog();
                         break;
 

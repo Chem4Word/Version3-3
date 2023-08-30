@@ -40,6 +40,8 @@ namespace Chem4Word.Helpers
             sw.Start();
 
             var result = new ListOfLibraries();
+            var backupDirectory = new DirectoryInfo(Path.Combine(_programDataPath, "Libraries", "Backups"));
+            var librariesDirectory = new DirectoryInfo(Path.Combine(_programDataPath, "Libraries"));
 
             var settingsFile = Path.Combine(_programDataPath, "Libraries.json");
             if (File.Exists(settingsFile))
@@ -50,25 +52,28 @@ namespace Chem4Word.Helpers
             else
             {
                 // Move V3.2 Libraries
-                result.DefaultLocation = Path.Combine(_programDataPath, "Libraries");
+                result.DefaultLocation = librariesDirectory.FullName;
                 var librariesPath = result.DefaultLocation;
+
                 foreach (var file in Directory.GetFiles(_programDataPath, "*.db"))
                 {
                     var fileInfo = new FileInfo(file);
                     if (fileInfo.Name.StartsWith("20"))
                     {
+                        // Move files '20*.db' to backups folder
                         _telemetry.Write(module, "Information", $"Moving {fileInfo.Name} to Backups folder");
-                        // if any files '20*.db' exist, move them to backups folder
-                        File.Move(file, Path.Combine(_programDataPath, "Libraries", "Backups", fileInfo.Name));
+                        FileHelper.BackupFile(fileInfo, backupDirectory, false, true);
                     }
                     else
                     {
-                        // if file 'Library.db' exists, move it
+                        // Move other files to Libraries folder
                         _telemetry.Write(module, "Information", $"Moving {fileInfo.Name} to Libraries folder");
-                        File.Move(file, Path.Combine(_programDataPath, "Libraries", fileInfo.Name));
+                        var library = FileHelper.BackupFile(fileInfo, librariesDirectory, false, true);
+
+                        // Add it's details
                         var details = new DatabaseDetails
                         {
-                            Connection = Path.Combine(_programDataPath, "Libraries", fileInfo.Name),
+                            Connection = library,
                             DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
                             Driver = Constants.SQLiteStandardDriver,
                             ShortFileName = fileInfo.Name
@@ -79,8 +84,8 @@ namespace Chem4Word.Helpers
                 }
 
                 // if not file exists 'Starter Library.db', then create it
-                var path1 = Path.Combine(librariesPath, "Starter Library.db");
-                if (!File.Exists(path1))
+                var starterPath = Path.Combine(librariesPath, "Starter Library.db");
+                if (!File.Exists(starterPath))
                 {
                     _telemetry.Write(module, "Information", "Creating 'Starter Library'");
 
@@ -89,20 +94,22 @@ namespace Chem4Word.Helpers
                     {
                         var archive = new ZipArchive(stream);
                         archive.ExtractToDirectory(librariesPath);
-                        var details = new DatabaseDetails
-                        {
-                            Connection = path1,
-                            DisplayName = "Starter Library",
-                            Driver = Constants.SQLiteStandardDriver,
-                            ShortFileName = "Starter Library.db"
-                        };
-                        result.AvailableDatabases.Add(details);
                     }
                 }
 
+                // Add it into the list
+                var starterDetails = new DatabaseDetails
+                {
+                    Connection = starterPath,
+                    DisplayName = "Starter Library",
+                    Driver = Constants.SQLiteStandardDriver,
+                    ShortFileName = "Starter Library.db"
+                };
+                result.AvailableDatabases.Add(starterDetails);
+
                 // if not file exists 'Plant Essential Oils.db', then create it
-                var path2 = Path.Combine(librariesPath, "Plant Essential Oils.db");
-                if (!File.Exists(path2))
+                var essentialOilsPath = Path.Combine(librariesPath, "Plant Essential Oils.db");
+                if (!File.Exists(essentialOilsPath))
                 {
                     _telemetry.Write(module, "Information", "Creating 'Plant Essential Oils'");
 
@@ -111,64 +118,61 @@ namespace Chem4Word.Helpers
                     {
                         var archive = new ZipArchive(stream);
                         archive.ExtractToDirectory(librariesPath);
-                        var details = new DatabaseDetails
-                        {
-                            Connection = path2,
-                            DisplayName = "Plant Essential Oils",
-                            Driver = Constants.SQLiteStandardDriver,
-                            ShortFileName = "Plant Essential Oils.db"
-                        };
-                        result.AvailableDatabases.Add(details);
                     }
                 }
+
+                // Add it into the list
+                var essentialOilsDetails = new DatabaseDetails
+                {
+                    Connection = essentialOilsPath,
+                    DisplayName = "Plant Essential Oils",
+                    Driver = Constants.SQLiteStandardDriver,
+                    ShortFileName = "Plant Essential Oils.db"
+                };
+                result.AvailableDatabases.Add(essentialOilsDetails);
 
                 if (string.IsNullOrEmpty(result.SelectedLibrary))
                 {
                     result.SelectedLibrary = result.AvailableDatabases.FirstOrDefault()?.DisplayName;
                 }
 
-                SaveFile(result);
+                SaveSettingsFile(result);
             }
 
             if (result != null)
             {
-                // Read in all Properties for each database
-                // We should be able to always use the standard driver if the database is one of our SQLite ones.
-                var driver = Globals.Chem4WordV3.GetDriverPlugIn(Constants.SQLiteStandardDriver);
-                if (driver != null)
+                foreach (var database in result.AvailableDatabases.ToList())
                 {
-                    foreach (var database in result.AvailableDatabases.ToList())
+                    _telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
+                    var library = new Core.SqLite.Library(_telemetry, database.Connection, backupDirectory.FullName, Globals.Chem4WordV3.WordTopLeft);
+                    if (library.Database.FileExists && library.Database.IsSqliteDatabase && library.Database.IsChem4Word)
                     {
-                        if (File.Exists(database.Connection))
-                        {
-                            _telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
-
-                            driver.DatabaseDetails = new DatabaseDetails
-                            {
-                                DisplayName = database.DisplayName,
-                                Connection = database.Connection,
-                                Driver = database.Driver,
-                                ShortFileName = database.ShortFileName
-                            };
-                            database.Properties = driver.GetProperties();
-                            database.IsReadOnly = driver.GetDatabaseFileProperties(driver.DatabaseDetails).IsReadOnly;
-                        }
-                        else
-                        {
-                            result.AvailableDatabases.Remove(database);
-                        }
+                        database.Properties = library.Database.Properties;
+                        database.IsReadOnly = library.Database.IsReadOnly;
+                    }
+                    else
+                    {
+                        result.AvailableDatabases.Remove(database);
                     }
                 }
 
-                var selectedDatabase = result.AvailableDatabases.FirstOrDefault(d => d.DisplayName.Equals(result.SelectedLibrary));
-                if (selectedDatabase == null)
+                if (result.AvailableDatabases.Any())
                 {
-                    var firstDatabase = result.AvailableDatabases.FirstOrDefault();
-                    if (firstDatabase != null)
+                    var selectedDatabase = result.AvailableDatabases.FirstOrDefault(d => d.DisplayName.Equals(result.SelectedLibrary));
+                    if (selectedDatabase == null)
                     {
-                        result.SelectedLibrary = firstDatabase.DisplayName;
-                        SaveFile(result);
+                        var firstDatabase = result.AvailableDatabases.FirstOrDefault();
+                        if (firstDatabase != null)
+                        {
+                            result.SelectedLibrary = firstDatabase.DisplayName;
+                            SaveSettingsFile(result);
+                        }
                     }
+                }
+                else
+                {
+                    DeleteSettingsFile();
+                    result = null;
                 }
             }
 
@@ -177,12 +181,18 @@ namespace Chem4Word.Helpers
             {
                 _telemetry.Write(module, "Timing", $"Took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
             }
+
             return result;
         }
 
-        public void SaveFile(ListOfLibraries libraries)
+        private void DeleteSettingsFile()
         {
-            // Write new 'Libraries.json' file
+            var settingsFile = Path.Combine(_programDataPath, "Libraries.json");
+            File.Delete(settingsFile);
+        }
+
+        public void SaveSettingsFile(ListOfLibraries libraries)
+        {
             var settingsFile = Path.Combine(_programDataPath, "Libraries.json");
             var text = JsonConvert.SerializeObject(libraries, Formatting.Indented);
             File.WriteAllText(settingsFile, text);

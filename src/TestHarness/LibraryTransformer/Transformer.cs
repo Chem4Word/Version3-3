@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Helpers;
+using Chem4Word.Core.SqLite;
 using Chem4Word.Driver.Open;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
@@ -20,7 +21,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Windows;
 using System.Windows.Forms;
+using Application = System.Windows.Forms.Application;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace LibraryTransformer
 {
@@ -63,9 +67,9 @@ namespace LibraryTransformer
                 _listOfLibraries = JsonConvert.DeserializeObject<ListOfLibraries>(data);
                 foreach (var details in _listOfLibraries.AvailableDatabases)
                 {
-                    _driver.DatabaseDetails = details;
-                    details.Properties = _driver.GetProperties();
-                    details.IsReadOnly = _driver.GetDatabaseFileProperties(details).IsReadOnly;
+                    var library = new Library(_telemetry, details.Connection, @"C:\ProgramData\Chem4Word.V3\Libraries\Backups", new Point(0, 0));
+                    details.Properties = library.Database.Properties;
+                    details.IsReadOnly = library.Database.IsReadOnly;
                     if (details.GetPropertyValue("Type", "Free").Equals("Paid"))
                     {
                         _telemetry.Write(module, "Information", $"Skipping {details.DisplayName}");
@@ -143,7 +147,7 @@ namespace LibraryTransformer
                 label1.Text = "Fetching data ...";
                 Application.DoEvents();
 
-                _driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
+                _driver.FileName = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text)).Connection;
 
                 var objects = _driver.GetAllChemistry();
 
@@ -214,7 +218,7 @@ namespace LibraryTransformer
                     label1.Text = "Fetching data ...";
                     Application.DoEvents();
 
-                    _driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
+                    _driver.FileName = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text)).Connection;
 
                     var objects = _driver.GetAllChemistry();
 
@@ -270,7 +274,7 @@ namespace LibraryTransformer
                     var stopwatch = new Stopwatch();
                     stopwatch.Start();
 
-                    _driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
+                    _driver.FileName = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text)).Connection;
 
                     var files = Directory.GetFiles(folder.SelectedPath, "*.cml").ToList();
                     if (files.Count > 0)
@@ -323,19 +327,19 @@ namespace LibraryTransformer
                 dto.Chemistry = protocolBufferConverter.Export(model);
 
                 // Lists of ChemistryNameDataObject for TreeView
-                foreach (var property in model.GetAllNames())
+                foreach (var property in model.GetUniqueNames())
                 {
                     var chemistryNameDataObject = CreateNamesFromModel(property);
                     dto.Names.Add(chemistryNameDataObject);
                 }
 
-                foreach (var property in model.GetAllFormulae())
+                foreach (var property in model.GetUniqueFormulae())
                 {
                     var chemistryNameDataObject = CreateNamesFromModel(property);
                     dto.Formulae.Add(chemistryNameDataObject);
                 }
 
-                foreach (var property in model.GetAllCaptions())
+                foreach (var property in model.GetUniqueCaptions())
                 {
                     var chemistryNameDataObject = CreateNamesFromModel(property);
                     dto.Captions.Add(chemistryNameDataObject);
@@ -381,7 +385,7 @@ namespace LibraryTransformer
                     var stopwatch = new Stopwatch();
                     stopwatch.Start();
 
-                    _driver.DatabaseDetails = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text));
+                    _driver.FileName = _listOfLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(lvi.Text)).Connection;
                     _driver.DeleteAllChemistry();
 
                     stopwatch.Stop();

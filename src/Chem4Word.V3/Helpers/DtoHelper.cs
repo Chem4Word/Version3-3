@@ -45,19 +45,19 @@ namespace Chem4Word.Helpers
             }
 
             // Lists of ChemistryNameDataObject for TreeView
-            foreach (var property in model.GetAllNames())
+            foreach (var property in model.GetUniqueNames())
             {
                 var chemistryNameDataObject = CreateNamesFromModel(property);
                 dto.Names.Add(chemistryNameDataObject);
             }
 
-            foreach (var property in model.GetAllFormulae())
+            foreach (var property in model.GetUniqueFormulae())
             {
                 var chemistryNameDataObject = CreateNamesFromModel(property);
                 dto.Formulae.Add(chemistryNameDataObject);
             }
 
-            foreach (var property in model.GetAllCaptions())
+            foreach (var property in model.GetUniqueCaptions())
             {
                 var chemistryNameDataObject = CreateNamesFromModel(property);
                 dto.Captions.Add(chemistryNameDataObject);

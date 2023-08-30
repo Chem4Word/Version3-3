@@ -87,7 +87,7 @@ namespace Chem4Word
         public List<IChem4WordEditor> Editors = new List<IChem4WordEditor>();
         public List<IChem4WordRenderer> Renderers = new List<IChem4WordRenderer>();
         public List<IChem4WordSearcher> Searchers = new List<IChem4WordSearcher>();
-        public List<IChem4WordDriver> Drivers = new List<IChem4WordDriver>();
+        public List<IChem4WordLibraryBase> Drivers = new List<IChem4WordLibraryBase>();
 
         public Dictionary<string, int> LibraryNames;
         public ListOfLibraries ListOfDetectedLibraries;
@@ -429,10 +429,10 @@ namespace Chem4Word
                 var details = GetSelectedDatabaseDetails();
                 if (details != null)
                 {
-                    var driver = GetDriverPlugIn(details.Driver);
+                    var driver = (IChem4WordLibraryReader)GetDriverPlugIn(details.Driver);
                     if (driver != null)
                     {
-                        driver.DatabaseDetails = details;
+                        driver.FileName = details.Connection;
                         LibraryNames = driver.GetSubstanceNamesWithIds();
                     }
                 }
@@ -803,7 +803,7 @@ namespace Chem4Word
             var editorType = typeof(IChem4WordEditor);
             var rendererType = typeof(IChem4WordRenderer);
             var searcherType = typeof(IChem4WordSearcher);
-            var driverType = typeof(IChem4WordDriver);
+            var driverType = typeof(IChem4WordLibraryBase);
 
             foreach (var plugIn in plugInsFound)
             {
@@ -897,7 +897,7 @@ namespace Chem4Word
 
                         #region Load Driver(s)
 
-                        if (parts[1].Contains("IChem4WordDriver"))
+                        if (parts[1].Contains("IChem4WordLibraryBase"))
                         {
                             var asm = Assembly.LoadFile(sourceFile);
                             var types = asm.GetTypes();
@@ -905,7 +905,7 @@ namespace Chem4Word
                             {
                                 if (type.GetInterface(driverType.FullName) != null)
                                 {
-                                    var plugin = (IChem4WordDriver)Activator.CreateInstance(type);
+                                    var plugin = (IChem4WordLibraryBase)Activator.CreateInstance(type);
                                     Drivers.Add(plugin);
 
                                     break;
@@ -935,14 +935,20 @@ namespace Chem4Word
                     = new LibraryFileHelper(Telemetry, AddInInfo.ProgramDataPath)
                         .GetListOfLibraries(silent: true);
             }
-            return ListOfDetectedLibraries
-                   .AvailableDatabases?
-                   .FirstOrDefault(l => l.DisplayName.Equals(ListOfDetectedLibraries.SelectedLibrary));
+
+            if (ListOfDetectedLibraries != null)
+            {
+                return ListOfDetectedLibraries
+                       .AvailableDatabases?
+                       .FirstOrDefault(l => l.DisplayName.Equals(ListOfDetectedLibraries.SelectedLibrary));
+            }
+
+            return null;
         }
 
-        public IChem4WordDriver GetDriverPlugIn(string name)
+        public IChem4WordLibraryBase GetDriverPlugIn(string name)
         {
-            IChem4WordDriver plugin = null;
+            IChem4WordLibraryBase plugin = null;
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -952,7 +958,7 @@ namespace Chem4Word
                     {
                         plugin = ice;
                         plugin.Telemetry = Telemetry;
-                        plugin.BackupFolder = $@"{AddInInfo.ProgramDataPath}\Libraries\Backups";
+                        plugin.BackupFolder = Path.Combine(AddInInfo.ProgramDataPath, "Libraries", "Backups");
                         plugin.TopLeft = WordTopLeft;
 
                         break;
@@ -1488,7 +1494,7 @@ namespace Chem4Word
                     var details = GetSelectedDatabaseDetails();
                     if (details != null)
                     {
-                        var driver = GetDriverPlugIn(details.Driver);
+                        var driver = (IChem4WordLibraryReader)GetDriverPlugIn(details.Driver);
                         var dto = driver.GetChemistryById(targetWord.ChemistryId);
 
                         if (dto == null)

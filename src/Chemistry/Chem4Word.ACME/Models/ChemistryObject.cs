@@ -25,7 +25,7 @@ namespace Chem4Word.ACME.Models
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        private IChem4WordDriver _driver;
+        private IChem4WordLibraryWriter _driver;
 
         public bool Initializing { get; set; }
 
@@ -35,7 +35,7 @@ namespace Chem4Word.ACME.Models
             Initializing = true;
         }
 
-        public void SetDriver(IChem4WordDriver driver)
+        public void SetDriver(IChem4WordLibraryWriter driver)
         {
             _driver = driver;
         }
@@ -174,6 +174,9 @@ namespace Chem4Word.ACME.Models
         /// </summary>
         public double MolecularWeight { get; set; }
 
+        /// <summary>
+        /// Used in LibraryEditorControl.xaml
+        /// </summary>
         public string MolecularWeightAsString => $"{MolecularWeight:N3}";
 
         private List<string> _tags = new List<string>();

@@ -91,6 +91,12 @@
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="Height" Value="Auto" />
         <Setter Property="FontSize" Value="14" />
+        <!--
+            We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+            https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+        -->
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
     </Style>
 
     <Style

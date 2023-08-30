@@ -1,0 +1,159 @@
+﻿<Window
+    x:Class="Wpf.UI.Sandbox.ComboBoxAndTreeViewStyles"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="ComboBox &amp; TreeView Styles"
+    Width="800"
+    Height="450"
+    FontFamily="Segoe UI"
+    FontSize="16"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary Source="CommonStyles.xaml" />
+    </Window.Resources>
+
+    <Grid Background="Beige">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  OOTB controls  -->
+
+        <ComboBox
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5">
+            <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
+            <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
+            <ComboBoxItem>ComboBox Item #4</ComboBoxItem>
+            <ComboBoxItem>ComboBox Item #5</ComboBoxItem>
+        </ComboBox>
+
+        <TreeView
+            x:Name="Ootb"
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="5">
+            <TreeViewItem Header="Level 1" IsExpanded="True">
+                <TreeViewItem Header="Level 2.1" />
+                <TreeViewItem Header="Level 2.2">
+                    <TreeViewItem Header="Level 3.1" />
+                    <TreeViewItem Header="Level 3.2" />
+                </TreeViewItem>
+                <TreeViewItem Header="Level 2.3" IsExpanded="True">
+                    <TreeViewItem Header="Level 4.1" />
+                    <TreeViewItem Header="Level 4.2" />
+                </TreeViewItem>
+            </TreeViewItem>
+            <TreeViewItem Header="Another Level" />
+        </TreeView>
+
+        <!--  Chem4Word styled controls  -->
+
+        <ComboBox
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="5"
+            Style="{StaticResource Chem4WordComboBoxStyle}">
+            <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
+            <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
+            <ComboBoxItem>ComboBox Item #4</ComboBoxItem>
+            <ComboBoxItem>ComboBox Item #5</ComboBoxItem>
+        </ComboBox>
+
+        <!--  Template and Style must be declared at EVERY level  -->
+        <TreeView
+            x:Name="Chem4Word"
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="5">
+            <TreeViewItem
+                Header="Level 1"
+                IsExpanded="True"
+                Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                Template="{StaticResource Chem4WordTreeViewItemTemplate}">
+                <TreeViewItem
+                    Header="Level 2.1"
+                    Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                    Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
+                <TreeViewItem
+                    Header="Level 2.2"
+                    Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                    Template="{StaticResource Chem4WordTreeViewItemTemplate}">
+                    <TreeViewItem
+                        Header="Level 3.1"
+                        Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                        Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
+                    <TreeViewItem
+                        Header="Level 3.2"
+                        Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                        Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
+                </TreeViewItem>
+                <TreeViewItem
+                    Header="Level 2.3"
+                    IsExpanded="True"
+                    Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                    Template="{StaticResource Chem4WordTreeViewItemTemplate}">
+                    <TreeViewItem
+                        Header="Level 4.1"
+                        Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                        Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
+                    <TreeViewItem
+                        Header="Level 4.2"
+                        Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                        Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
+                </TreeViewItem>
+            </TreeViewItem>
+            <TreeViewItem
+                Header="Another Level"
+                Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
+        </TreeView>
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="0"
+            Orientation="Horizontal">
+            <Button
+                Width="100"
+                Click="ButtonBase_OnClick"
+                Tag="Ootb">
+                + Child Node
+            </Button>
+            <Button
+                Width="100"
+                Click="ButtonBase_OnClick"
+                Tag="OotbTop">
+                + TopLevel Node
+            </Button>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            Orientation="Horizontal">
+            <Button
+                Width="100"
+                Click="ButtonBase_OnClick"
+                Tag="Chem4Word">
+                + Child Node
+            </Button>
+            <Button
+                Width="100"
+                Click="ButtonBase_OnClick"
+                Tag="Chem4WordTop">
+                + TopLevel Node
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

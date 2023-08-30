@@ -1545,8 +1545,8 @@ namespace Chem4Word
                                     var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
                                     if (details != null)
                                     {
-                                        var lib = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
-                                        lib.DatabaseDetails = details;
+                                        var lib = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+                                        lib.FileName = details.Connection;
 
                                         var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
                                         lib.AddChemistry(dto);

@@ -5,18 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 
-namespace IChem4Word.Contracts.Dto
+namespace Chem4Word.Core.SqLite
 {
-    public class DatabaseFileProperties
+    public class Patch
     {
-        public bool FileExists { get; set; }
-        public bool IsSqliteDatabase { get; set; }
-        public bool IsReadOnly { get; set; }
-        public bool IsChem4Word { get; set; }
-        public bool RequiresPatching { get; set; }
-
-        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+        public Version Version { get; set; }
+        public List<string> Scripts { get; set; } = new List<string>();
     }
 }

@@ -34,6 +34,7 @@
             this.lblInfo = new System.Windows.Forms.Label();
             this.btnUpdateLater = new System.Windows.Forms.Button();
             this.linkReleasesPage = new System.Windows.Forms.LinkLabel();
+            this.lblAntiVirus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnUpdateNow
@@ -96,11 +97,22 @@
             this.linkReleasesPage.Text = "Click here to download directly from the releases page if automatic update fails";
             this.linkReleasesPage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnReleasesPageLinkClicked);
             // 
+            // lblAntiVirus
+            // 
+            this.lblAntiVirus.AutoSize = true;
+            this.lblAntiVirus.Location = new System.Drawing.Point(16, 514);
+            this.lblAntiVirus.Name = "lblAntiVirus";
+            this.lblAntiVirus.Size = new System.Drawing.Size(469, 13);
+            this.lblAntiVirus.TabIndex = 6;
+            this.lblAntiVirus.Text = "NB: If you encounter any permission errors, please temporarily disable your Anti-" +
+    "Virus and try again.";
+            // 
             // AutomaticUpdate
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.lblAntiVirus);
             this.Controls.Add(this.linkReleasesPage);
             this.Controls.Add(this.btnUpdateLater);
             this.Controls.Add(this.lblInfo);
@@ -123,5 +135,6 @@
         private System.Windows.Forms.Label lblInfo;
         private System.Windows.Forms.Button btnUpdateLater;
         private System.Windows.Forms.LinkLabel linkReleasesPage;
+        private System.Windows.Forms.Label lblAntiVirus;
     }
 }

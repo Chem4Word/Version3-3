@@ -66,7 +66,7 @@ namespace Chem4Word.UI
 
             try
             {
-                Process.Start("https://github.com/Chem4Word/Version3/releases/latest");
+                Process.Start("https://github.com/Chem4Word/Version3-3/releases/latest");
                 DialogResult = DialogResult.Cancel;
             }
             catch (Exception ex)

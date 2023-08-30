@@ -18,6 +18,7 @@
     <SolidColorBrush x:Key="RBrush" Color="Black" />
     <SolidColorBrush x:Key="NobleBrush" Color="Cyan" />
     <SolidColorBrush x:Key="AlkaliBrush" Color="BlueViolet" />
+
     <Brush x:Key="PTNonMetalBrush">#EEA5EE</Brush>
     <Brush x:Key="PTNobleGasBrush">#87FFFF</Brush>
     <Brush x:Key="PTHalogenBrush">#704FC0</Brush>

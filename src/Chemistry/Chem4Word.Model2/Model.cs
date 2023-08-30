@@ -1151,40 +1151,58 @@ namespace Chem4Word.Model2
             }
         }
 
-        public List<TextualProperty> GetAllNames()
+        public List<TextualProperty> GetUniqueNames()
         {
-            var result = new List<TextualProperty>();
+            var result = new Dictionary<string, TextualProperty>();
 
             foreach (var mol in GetAllMolecules())
             {
-                result.AddRange(mol.AllTextualProperties.Where(x => x.TypeCode.Equals("N")));
+                foreach (var property in mol.AllTextualProperties.Where(x => x.TypeCode.Equals("N")))
+                {
+                    if (!result.ContainsKey(property.Id))
+                    {
+                        result.Add(property.Id, property);
+                    }
+                }
             }
 
-            return result;
+            return result.Values.ToList();
         }
 
-        public List<TextualProperty> GetAllFormulae()
+        public List<TextualProperty> GetUniqueFormulae()
         {
-            var result = new List<TextualProperty>();
+            var result = new Dictionary<string, TextualProperty>();
 
             foreach (var mol in GetAllMolecules())
             {
-                result.AddRange(mol.AllTextualProperties.Where(x => x.TypeCode.Equals("F")));
+                foreach (var property in mol.AllTextualProperties.Where(x => x.TypeCode.Equals("F")))
+                {
+                    if (!result.ContainsKey(property.Id))
+                    {
+                        result.Add(property.Id, property);
+                    }
+                }
             }
 
-            return result;
+            return result.Values.ToList();
         }
 
-        public List<TextualProperty> GetAllCaptions()
+        public List<TextualProperty> GetUniqueCaptions()
         {
-            var result = new List<TextualProperty>();
+            var result = new Dictionary<string, TextualProperty>();
 
             foreach (var mol in GetAllMolecules())
             {
-                result.AddRange(mol.Captions);
+                foreach (var property in mol.Captions)
+                {
+                    if (!result.ContainsKey(property.Id))
+                    {
+                        result.Add(property.Id, property);
+                    }
+                }
             }
 
-            return result;
+            return result.Values.ToList();
         }
 
         public List<Atom> GetAllAtoms()

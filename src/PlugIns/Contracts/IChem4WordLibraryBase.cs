@@ -5,14 +5,22 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
+using System.Windows;
 
-namespace Chem4Word.Driver.Open.SqLite
+namespace IChem4Word.Contracts
 {
-    public class Patch
+    public interface IChem4WordLibraryBase
     {
-        public Version Version { get; set; }
-        public List<string> Scripts { get; set; }
+        string Name { get; }
+
+        string Description { get; }
+
+        string FileName { get; set; }
+
+        string BackupFolder { get; set; }
+
+        Point TopLeft { get; set; }
+
+        IChem4WordTelemetry Telemetry { get; set; }
     }
 }

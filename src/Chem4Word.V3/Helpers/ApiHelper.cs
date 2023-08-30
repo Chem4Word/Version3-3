@@ -36,9 +36,7 @@ namespace Chem4Word.Helpers
 
             try
             {
-                ServicePointManager.Expect100Continue = true;
-
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                SetServicePointManagerProperties(securityProtocol);
 
                 var content = new FormUrlEncodedContent(formData);
                 using (var httpClient = new HttpClient())
@@ -78,7 +76,7 @@ namespace Chem4Word.Helpers
             }
             catch (Exception exception)
             {
-                result.Message = NestedExceptionMessages(exception);
+                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
                 result.HasException = true;
                 Debug.WriteLine(exception.Message);
                 Debug.WriteLine(exception.StackTrace);
@@ -102,9 +100,7 @@ namespace Chem4Word.Helpers
 
             try
             {
-                ServicePointManager.Expect100Continue = true;
-
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                SetServicePointManagerProperties(securityProtocol);
 
                 var content = new FormUrlEncodedContent(formData);
                 using (var httpClient = new HttpClient())
@@ -144,7 +140,7 @@ namespace Chem4Word.Helpers
             }
             catch (Exception exception)
             {
-                result.Message = NestedExceptionMessages(exception);
+                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
                 result.HasException = true;
                 Debug.WriteLine(exception.Message);
                 Debug.WriteLine(exception.StackTrace);
@@ -168,9 +164,7 @@ namespace Chem4Word.Helpers
 
             try
             {
-                ServicePointManager.Expect100Continue = true;
-
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                SetServicePointManagerProperties(securityProtocol);
 
                 var content = new FormUrlEncodedContent(formData);
                 using (var httpClient = new HttpClient())
@@ -210,11 +204,10 @@ namespace Chem4Word.Helpers
             }
             catch (Exception exception)
             {
-                result.Message = NestedExceptionMessages(exception);
+                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
                 result.HasException = true;
                 Debug.WriteLine(exception.Message);
                 Debug.WriteLine(exception.StackTrace);
-                Debugger.Break();
             }
             finally
             {
@@ -235,9 +228,7 @@ namespace Chem4Word.Helpers
 
             try
             {
-                ServicePointManager.Expect100Continue = true;
-
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                SetServicePointManagerProperties(securityProtocol);
 
                 var content = new FormUrlEncodedContent(formData);
                 using (var httpClient = new HttpClient())
@@ -279,11 +270,10 @@ namespace Chem4Word.Helpers
             }
             catch (Exception exception)
             {
-                result.Message = NestedExceptionMessages(exception);
+                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
                 result.HasException = true;
                 Debug.WriteLine(exception.Message);
                 Debug.WriteLine(exception.StackTrace);
-                Debugger.Break();
             }
             finally
             {
@@ -301,9 +291,7 @@ namespace Chem4Word.Helpers
 
             try
             {
-                ServicePointManager.Expect100Continue = true;
-
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                SetServicePointManagerProperties(securityProtocol);
 
                 var content = new FormUrlEncodedContent(formData);
                 using (var httpClient = new HttpClient())
@@ -345,11 +333,10 @@ namespace Chem4Word.Helpers
             }
             catch (Exception exception)
             {
-                result.Message = NestedExceptionMessages(exception);
+                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
                 result.HasException = true;
                 Debug.WriteLine(exception.Message);
                 Debug.WriteLine(exception.StackTrace);
-                Debugger.Break();
             }
             finally
             {
@@ -357,6 +344,15 @@ namespace Chem4Word.Helpers
             }
 
             return result;
+        }
+
+        private void SetServicePointManagerProperties(SecurityProtocolType securityProtocol)
+        {
+            ServicePointManager.DefaultConnectionLimit = 100;
+            ServicePointManager.UseNagleAlgorithm = false;
+            ServicePointManager.Expect100Continue = false;
+
+            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
         }
 
         private string NestedExceptionMessages(Exception exception)

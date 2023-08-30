@@ -29,7 +29,7 @@ namespace Chem4Word.UI.WPF
 
         public System.Windows.Point TopLeft { get; set; }
 
-        private IChem4WordDriver _driver;
+        private IChem4WordLibraryWriter _driver;
 
         public LibraryEditorHost()
         {
@@ -57,10 +57,10 @@ namespace Chem4Word.UI.WPF
                                      .FirstOrDefault(l => l.DisplayName.Equals(SelectedDatabase));
                 if (details != null)
                 {
-                    _driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+                    _driver = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
                     if (_driver != null)
                     {
-                        _driver.DatabaseDetails = details;
+                        _driver.FileName = details.Connection;
 
                         var controller = new LibraryEditorViewModel(Telemetry, _driver);
                         editor.TopLeft = TopLeft;
@@ -70,7 +70,7 @@ namespace Chem4Word.UI.WPF
                         editor.SetOptions(Telemetry, acmeOptions, _driver);
                         editor.DataContext = controller;
                         editor.UpdateStatusBar();
-                        Text = $"Editing Library '{_driver.DatabaseDetails.DisplayName}'";
+                        Text = $"Editing Library '{_driver.FileName}'";
 
                         editor.OnSelectionChange -= OnSelectionChangeLibraryEditorControl;
                         editor.OnSelectionChange += OnSelectionChangeLibraryEditorControl;

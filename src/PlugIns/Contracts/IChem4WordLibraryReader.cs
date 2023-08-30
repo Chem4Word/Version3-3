@@ -5,18 +5,21 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using IChem4Word.Contracts.Dto;
 using System.Collections.Generic;
 
-namespace IChem4Word.Contracts.Dto
+namespace IChem4Word.Contracts
 {
-    public class DatabaseFileProperties
+    public interface IChem4WordLibraryReader : IChem4WordLibraryBase
     {
-        public bool FileExists { get; set; }
-        public bool IsSqliteDatabase { get; set; }
-        public bool IsReadOnly { get; set; }
-        public bool IsChem4Word { get; set; }
-        public bool RequiresPatching { get; set; }
+        DatabaseFileProperties GetDatabaseFileProperties(string fileName);
 
-        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+        Dictionary<string, int> GetSubstanceNamesWithIds();
+
+        List<ChemistryDataObject> GetAllChemistry();
+
+        ChemistryDataObject GetChemistryById(long id);
+
+        List<LibraryTagDataObject> GetAllTags();
     }
 }

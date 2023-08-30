@@ -13,15 +13,16 @@ using System.Windows;
 
 namespace Chem4Word.Driver.Dummy
 {
-    public class DummyDriver : IChem4WordDriver
+    public class DummyDriver : IChem4WordLibraryWriter
     {
-        public string Name => "Dummy Librarian";
-        public string Description => "Dummy Librarian";
+        public string Name => "Dummy Library Driver";
+        public string Description => "Dummy Library Driver Writer implementing IChem4WordLibraryWriter";
 
         public Point TopLeft { get; set; }
         public IChem4WordTelemetry Telemetry { get; set; }
         public DatabaseDetails DatabaseDetails { get; set; }
         public string BackupFolder { get; set; }
+        public string FileName { get; set; }
 
         public void StartTransaction()
         {
@@ -38,24 +39,20 @@ namespace Chem4Word.Driver.Dummy
             Debugger.Break();
         }
 
-        public void CreateNewDatabase(DatabaseDetails details)
+        public void CreateNewDatabase(string filename)
         {
             Debugger.Break();
         }
 
-        public DatabaseFileProperties GetDatabaseFileProperties(DatabaseDetails details)
-        {
-            return new DatabaseFileProperties
-            {
-                IsReadOnly = true,
-                IsChem4Word = false,
-                RequiresPatching = false
-            };
-        }
-
-        public bool IsSqliteDatabase(DatabaseDetails details) => true;
-
         public Dictionary<string, string> GetProperties() => new Dictionary<string, string>();
+
+        public DatabaseFileProperties GetDatabaseFileProperties(string fileName) =>
+            new DatabaseFileProperties
+            {
+                IsSqliteDatabase = true,
+                IsChem4Word = true,
+                Properties = new Dictionary<string, string>()
+            };
 
         public Dictionary<string, int> GetSubstanceNamesWithIds() => new Dictionary<string, int>();
 

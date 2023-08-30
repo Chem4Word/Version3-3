@@ -57,7 +57,7 @@ namespace Chem4Word.UI.WPF
         private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private IChem4WordTelemetry _telemetry;
-        private IChem4WordDriver _driver;
+        private IChem4WordLibraryWriter _driver;
         private AcmeOptions _acmeOptions;
 
         private int _filteredItems;
@@ -119,7 +119,7 @@ namespace Chem4Word.UI.WPF
                                                                       | FrameworkPropertyMetadataOptions.AffectsArrange
                                                                       | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
-        public void SetOptions(IChem4WordTelemetry telemetry, AcmeOptions acmeOptions, IChem4WordDriver driver)
+        public void SetOptions(IChem4WordTelemetry telemetry, AcmeOptions acmeOptions, IChem4WordLibraryWriter driver)
         {
             _acmeOptions = acmeOptions;
             _telemetry = telemetry;
@@ -267,10 +267,11 @@ namespace Chem4Word.UI.WPF
         private void RefreshItemProperties(ChemistryObject item, ChemistryDataObject dto)
         {
             // Refresh other properties of the item
+            item.Chemistry = dto.Chemistry;
             item.ChemicalNames = dto.Names.Select(n => n.Name).Distinct().ToList();
             item.Names = dto.Names;
-            item.Captions = dto.Captions;
             item.Formulae = dto.Formulae;
+            item.Captions = dto.Captions;
         }
 
         public void UpdateStatusBar()
@@ -468,17 +469,20 @@ namespace Chem4Word.UI.WPF
             if (ComboBox.SelectedItem is ComboBoxItem selectedItem)
             {
                 var view = (ListCollectionView)CollectionViewSource.GetDefaultView(CatalogueItems.ItemsSource);
-                view.SortDescriptions.Clear();
+                if (view != null)
+                {
+                    view.SortDescriptions.Clear();
 
-                var propertyName = selectedItem.Content.ToString();
-                if (propertyName.Equals("Name"))
-                {
-                    // Sort the list of structures by lower case name
-                    view.CustomSort = new ChemistryObjectComparer();
-                }
-                else
-                {
-                    view.SortDescriptions.Add(new SortDescription(propertyName, ListSortDirection.Ascending));
+                    var propertyName = selectedItem.Content.ToString();
+                    if (propertyName.Equals("Name"))
+                    {
+                        // Sort the list of structures by lower case name
+                        view.CustomSort = new ChemistryObjectComparer();
+                    }
+                    else
+                    {
+                        view.SortDescriptions.Add(new SortDescription(propertyName, ListSortDirection.Ascending));
+                    }
                 }
             }
         }
@@ -598,6 +602,9 @@ namespace Chem4Word.UI.WPF
                             // Save to database
                             _driver.UpdateChemistry(dto);
 
+                            // Fetch the item we have just written so that Id's are correct
+                            dto = _driver.GetChemistryById(dto.Id);
+
                             RefreshItemProperties(item, dto);
                         }
                         editLabelsHost.Close();
@@ -654,7 +661,7 @@ namespace Chem4Word.UI.WPF
                         _driver.CommitTransaction();
 
                         sw.Stop();
-                        _telemetry.Write(module, "Timing", $"Delete of {progress} structures from '{_driver.DatabaseDetails.DisplayName}' took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+                        _telemetry.Write(module, "Timing", $"Delete of {progress} structures from '{_driver.FileName}' took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
 
                         _checkedItems = 0;
                         DeleteButton.IsEnabled = false;
@@ -785,7 +792,7 @@ namespace Chem4Word.UI.WPF
                                     File.WriteAllText(doneFile, $"{fileCount} cml files imported into library");
                                     FileInfo fi = new FileInfo(doneFile);
                                     fi.Attributes = FileAttributes.Hidden;
-                                    _telemetry.Write(module, "Information", $"Imported {fileCount} structures into '{_driver.DatabaseDetails.DisplayName}'");
+                                    _telemetry.Write(module, "Information", $"Imported {fileCount} structures into '{_driver.FileName}'");
                                     _driver.CommitTransaction();
                                 }
                             }
@@ -1031,7 +1038,7 @@ namespace Chem4Word.UI.WPF
                             if (exported > 0)
                             {
                                 UserInteractions.InformUser($"Exported {exported} structures to {browser.SelectedPath}");
-                                _telemetry.Write(module, "Information", $"Exported {exported} structures from '{_driver.DatabaseDetails.DisplayName}'");
+                                _telemetry.Write(module, "Information", $"Exported {exported} structures from '{_driver.FileName}'");
                             }
                         }
                     }

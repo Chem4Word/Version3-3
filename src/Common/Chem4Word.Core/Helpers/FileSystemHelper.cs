@@ -16,7 +16,7 @@ namespace Chem4Word.Core.Helpers
     {
         public static bool UserHasWritePermission(string path)
         {
-            string tempFile = Path.Combine(path, Guid.NewGuid().ToString("N")) + ".tmp";
+            var tempFile = Path.Combine(path, Guid.NewGuid().ToString("N")) + ".tmp";
 
             try
             {
@@ -41,8 +41,8 @@ namespace Chem4Word.Core.Helpers
             }
 
             // 2. Executable path
-            Assembly assemblyInfo = Assembly.GetExecutingAssembly();
-            Uri uriCodeBase = new Uri(assemblyInfo.CodeBase);
+            var assemblyInfo = Assembly.GetExecutingAssembly();
+            var uriCodeBase = new Uri(assemblyInfo.CodeBase);
             path = Path.GetDirectoryName(uriCodeBase.LocalPath);
             if (UserHasWritePermission(path))
             {
@@ -51,12 +51,7 @@ namespace Chem4Word.Core.Helpers
 
             // 3. Local AppData Path i.e. "C:\Users\{User}\AppData\Local\"
             path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            if (UserHasWritePermission(path))
-            {
-                return path;
-            }
-
-            return null;
+            return UserHasWritePermission(path) ? path : null;
         }
     }
 }

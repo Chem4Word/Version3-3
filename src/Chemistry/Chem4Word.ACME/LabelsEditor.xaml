@@ -13,12 +13,17 @@
     Loaded="LabelsEditor_OnLoaded"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <converters:BoolToVisibilityConverter
-            x:Key="VisConverter"
-            FalseValue="Collapsed"
-            TrueValue="Visible" />
-        <SolidColorBrush x:Key="Chem4WordBlue" Color="#2A579A" />
-        <SolidColorBrush x:Key="SplitterBackground" Color="{x:Static SystemColors.ActiveCaptionColor}" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Chem4WordTreeViewItem.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BoolToVisibilityConverter
+                x:Key="VisConverter"
+                FalseValue="Collapsed"
+                TrueValue="Visible" />
+            <SolidColorBrush x:Key="Chem4WordBlue" Color="#2A579A" />
+            <SolidColorBrush x:Key="SplitterBackground" Color="{x:Static SystemColors.ActiveCaptionColor}" />
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
