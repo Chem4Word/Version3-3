@@ -370,7 +370,6 @@
       <DependentUpon>LibraryViewControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Library\LibraryController.cs" />
-    <Compile Include="Models\ApiResult.cs" />
     <Compile Include="Models\CatalogueEntry.cs" />
     <Compile Include="Models\LibraryDetails.cs" />
     <Compile Include="Models\LibraryDownloadGridSource.cs" />

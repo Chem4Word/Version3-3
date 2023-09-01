@@ -68,6 +68,12 @@ namespace Chem4Word.Telemetry
                 source = source.Remove(0, unwanted.Length);
             }
 
+            if (string.IsNullOrEmpty(message))
+            {
+                Debug.WriteLine("message should not be empty");
+                Debugger.Break();
+            }
+
             try
             {
                 string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

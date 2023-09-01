@@ -5,19 +5,26 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
+using System;
 
-namespace Chem4Word.Models
+namespace Chem4Word.Core.Helpers
 {
-    public class ApiResult
+    public class RestApiResult
     {
-        public bool Success { get; set; }
+        // The Result
+        public string Json { get; set; }
 
-        public List<CatalogueEntry> Catalogue { get; set; }
-        public LibraryDetails Details { get; set; }
+        public byte[] Bytes { get; set; }
 
+        // Information
         public int HttpStatusCode { get; set; }
+
+        public bool Success { get; set; }
+        public TimeSpan Duration { get; set; }
+
+        // Exception details
         public bool HasException { get; set; }
+
         public string Message { get; set; }
     }
 }

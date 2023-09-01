@@ -10,11 +10,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Telemetry;
 using IChem4Word.Contracts;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
 
 namespace Chem4Word.WebServices
@@ -32,100 +28,35 @@ namespace Chem4Word.WebServices
         {
             Telemetry = telemetry;
             _version = version;
-
-            // http://byterot.blogspot.com/2016/07/singleton-httpclient-dns.html
-            if (!string.IsNullOrEmpty(_settings.ChemicalServicesUri))
-            {
-                var sp = ServicePointManager.FindServicePoint(new Uri($"{_settings.ChemicalServicesUri}Resolve"));
-                sp.ConnectionLeaseTimeout = 60 * 1000; // 1 minute
-            }
         }
 
         public ChemicalServicesResult GetChemicalServicesResult(string molfile)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            DateTime started = DateTime.Now;
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             ChemicalServicesResult data = null;
-            var securityProtocol = ServicePointManager.SecurityProtocol;
 
-            try
-            {
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            var formData = new Dictionary<string, string>
+                           {
+                               { "mol", molfile },
+                               { "machine", SystemHelper.GetMachineId() },
+                               { "version", _version }
+                           };
 
-                using (HttpClient httpClient = new HttpClient())
-                {
-                    var formData = new List<KeyValuePair<string, string>>();
-
-                    formData.Add(new KeyValuePair<string, string>("mol", molfile));
-                    formData.Add(new KeyValuePair<string, string>("machine", SystemHelper.GetMachineId()));
-                    formData.Add(new KeyValuePair<string, string>("version", _version));
 #if DEBUG
-                    formData.Add(new KeyValuePair<string, string>("debug", "true"));
+            formData.Add("debug", "true");
 #endif
 
-                    var content = new FormUrlEncodedContent(formData);
-
-                    httpClient.Timeout = TimeSpan.FromSeconds(15);
-                    httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
-
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(_settings.ChemicalServicesUri))
-                        {
-                            var response = httpClient.PostAsync($"{_settings.ChemicalServicesUri}Resolve", content).Result;
-                            if (response.Content != null)
-                            {
-                                var responseContent = response.Content;
-                                var jsonContent = responseContent.ReadAsStringAsync().Result;
-
-                                try
-                                {
-                                    data = JsonConvert.DeserializeObject<ChemicalServicesResult>(jsonContent);
-                                }
-                                catch (Exception e3)
-                                {
-                                    Telemetry.Write(module, "Exception", e3.Message);
-                                    Telemetry.Write(module, "Exception(Data)", jsonContent);
-                                }
-
-                                if (data != null)
-                                {
-                                    if (data.Messages.Any())
-                                    {
-                                        Telemetry.Write(module, "Timing", string.Join(Environment.NewLine, data.Messages));
-                                    }
-
-                                    if (data.Errors.Any())
-                                    {
-                                        Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, data.Errors));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e2)
-                    {
-                        Telemetry.Write(module, "Exception", e2.Message);
-                        Telemetry.Write(module, "Exception", e2.ToString());
-                    }
-                }
-            }
-            catch (Exception e1)
+            var apiResult = AzureRestApi.GetResultAsJson($"{_settings.ChemicalServicesUri}Resolve", formData, 15);
+            if (apiResult.Success)
             {
-                Telemetry.Write(module, "Exception", e1.Message);
-                Telemetry.Write(module, "Exception", e1.ToString());
+                data = JsonConvert.DeserializeObject<ChemicalServicesResult>(apiResult.Json);
             }
-            finally
+            else
             {
-                ServicePointManager.SecurityProtocol = securityProtocol;
+                Telemetry.Write(module, "Exception", apiResult.Message);
             }
-
-            DateTime ended = DateTime.Now;
-            TimeSpan duration = ended - started;
-
-            Telemetry.Write(module, "Timing", $"Calling Azure http Function Took {SafeDouble.AsString0(duration.TotalMilliseconds)}ms");
+            Telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
 
             return data;
         }

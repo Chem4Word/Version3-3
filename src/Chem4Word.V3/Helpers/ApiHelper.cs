@@ -5,366 +5,127 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using Chem4Word.Models;
+using IChem4Word.Contracts;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Http;
+using System.Reflection;
 
 namespace Chem4Word.Helpers
 {
     public class ApiHelper
     {
-        private readonly string _url;
+        private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
+        private static readonly string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
-        public ApiHelper(string url)
+        private readonly string _url;
+        private readonly IChem4WordTelemetry _telemetry;
+
+        public ApiHelper(string url, IChem4WordTelemetry telemetry)
         {
             _url = url;
+            _telemetry = telemetry;
         }
 
-        public ApiResult GetCatalogue(Dictionary<string, string> formData, int timeout)
+        public List<CatalogueEntry> GetCatalogue(Dictionary<string, string> formData, int timeout)
         {
-            var result = new ApiResult
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var result = new List<CatalogueEntry>();
+
+            var apiResult = AzureRestApi.GetResultAsJson($"{_url}/Catalogue", formData, timeout);
+
+            if (apiResult.Success)
             {
-                Catalogue = new List<CatalogueEntry>()
-            };
-
-            var securityProtocol = ServicePointManager.SecurityProtocol;
-
-            try
-            {
-                SetServicePointManagerProperties(securityProtocol);
-
-                var content = new FormUrlEncodedContent(formData);
-                using (var httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
-                    httpClient.Timeout = TimeSpan.FromSeconds(timeout);
-
-                    var response = httpClient.PostAsync($"{_url}/Catalogue", content).Result;
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            var jsonContent = responseContent.ReadAsStringAsync().Result;
-
-                            result.Catalogue = JsonConvert.DeserializeObject<List<CatalogueEntry>>(jsonContent);
-                            result.Success = true;
-                        }
-                        else
-                        {
-                            result.HttpStatusCode = 204;
-                            result.Message = "Content is missing";
-                        }
-                    }
-                    else
-                    {
-                        var responseBody = string.Empty;
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            responseBody = responseContent.ReadAsStringAsync().Result;
-                        }
-                        result.HttpStatusCode = (int)response.StatusCode;
-                        result.Message = (response.ReasonPhrase + " " + responseBody).Trim();
-                    }
-                }
+                result = JsonConvert.DeserializeObject<List<CatalogueEntry>>(apiResult.Json);
             }
-            catch (Exception exception)
+            else
             {
-                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
-                result.HasException = true;
-                Debug.WriteLine(exception.Message);
-                Debug.WriteLine(exception.StackTrace);
+                _telemetry.Write(module, "Exception", apiResult.Message);
             }
-            finally
-            {
-                ServicePointManager.SecurityProtocol = securityProtocol;
-            }
+            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
 
             return result;
         }
 
-        public ApiResult GetPaidFor(Dictionary<string, string> formData, int timeout)
+        public List<CatalogueEntry> GetPaidFor(Dictionary<string, string> formData, int timeout)
         {
-            var result = new ApiResult
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var result = new List<CatalogueEntry>();
+
+            var apiResult = AzureRestApi.GetResultAsJson($"{_url}/PaidFor", formData, timeout);
+            if (apiResult.Success)
             {
-                Catalogue = new List<CatalogueEntry>(),
-            };
-
-            var securityProtocol = ServicePointManager.SecurityProtocol;
-
-            try
-            {
-                SetServicePointManagerProperties(securityProtocol);
-
-                var content = new FormUrlEncodedContent(formData);
-                using (var httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
-                    httpClient.Timeout = TimeSpan.FromSeconds(timeout);
-
-                    var response = httpClient.PostAsync($"{_url}/PaidFor", content).Result;
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            var jsonContent = responseContent.ReadAsStringAsync().Result;
-
-                            result.Catalogue = JsonConvert.DeserializeObject<List<CatalogueEntry>>(jsonContent);
-                            result.Success = true;
-                        }
-                        else
-                        {
-                            result.HttpStatusCode = 204;
-                            result.Message = "Content is missing";
-                        }
-                    }
-                    else
-                    {
-                        var responseBody = string.Empty;
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            responseBody = responseContent.ReadAsStringAsync().Result;
-                        }
-                        result.HttpStatusCode = (int)response.StatusCode;
-                        result.Message = (response.ReasonPhrase + " " + responseBody).Trim();
-                    }
-                }
+                result = JsonConvert.DeserializeObject<List<CatalogueEntry>>(apiResult.Json);
             }
-            catch (Exception exception)
+            else
             {
-                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
-                result.HasException = true;
-                Debug.WriteLine(exception.Message);
-                Debug.WriteLine(exception.StackTrace);
+                _telemetry.Write(module, "Exception", apiResult.Message);
             }
-            finally
-            {
-                ServicePointManager.SecurityProtocol = securityProtocol;
-            }
+            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
 
             return result;
         }
 
-        public ApiResult RequestLibraryDetails(Dictionary<string, string> formData, int timeout)
+        public LibraryDetails RequestLibraryDetails(Dictionary<string, string> formData, int timeout)
         {
-            var result = new ApiResult
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var result = new LibraryDetails();
+
+            var apiResult = AzureRestApi.GetResultAsJson($"{_url}/Request", formData, timeout);
+            if (apiResult.Success)
             {
-                Details = new LibraryDetails()
-            };
-
-            var securityProtocol = ServicePointManager.SecurityProtocol;
-
-            try
-            {
-                SetServicePointManagerProperties(securityProtocol);
-
-                var content = new FormUrlEncodedContent(formData);
-                using (var httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
-                    httpClient.Timeout = TimeSpan.FromSeconds(timeout);
-
-                    var response = httpClient.PostAsync($"{_url}/Request", content).Result;
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            var jsonContent = responseContent.ReadAsStringAsync().Result;
-
-                            result.Details = JsonConvert.DeserializeObject<LibraryDetails>(jsonContent);
-                            result.Success = true;
-                        }
-                        else
-                        {
-                            result.HttpStatusCode = 204;
-                            result.Message = "Content is missing";
-                        }
-                    }
-                    else
-                    {
-                        var responseBody = string.Empty;
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            responseBody = responseContent.ReadAsStringAsync().Result;
-                        }
-                        result.HttpStatusCode = (int)response.StatusCode;
-                        result.Message = (response.ReasonPhrase + " " + responseBody).Trim();
-                    }
-                }
+                result = JsonConvert.DeserializeObject<LibraryDetails>(apiResult.Json);
             }
-            catch (Exception exception)
+            else
             {
-                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
-                result.HasException = true;
-                Debug.WriteLine(exception.Message);
-                Debug.WriteLine(exception.StackTrace);
+                _telemetry.Write(module, "Exception", apiResult.Message);
             }
-            finally
-            {
-                ServicePointManager.SecurityProtocol = securityProtocol;
-            }
+            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
 
             return result;
         }
 
-        public ApiResult DownloadLibrary(Dictionary<string, string> formData, string path, int timeout)
+        public void DownloadLibrary(Dictionary<string, string> formData, string path, int timeout)
         {
-            var result = new ApiResult();
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            var securityProtocol = ServicePointManager.SecurityProtocol;
-
-            try
+            var apiResult = AzureRestApi.GetResultAsBytes($"{_url}/Library", formData, timeout);
+            if (apiResult.Success)
             {
-                SetServicePointManagerProperties(securityProtocol);
-
-                var content = new FormUrlEncodedContent(formData);
-                using (var httpClient = new HttpClient())
+                using (var writer = new BinaryWriter(File.OpenWrite(Path.Combine(path, $"{formData["LibraryName"]}.zip"))))
                 {
-                    httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
-                    httpClient.Timeout = TimeSpan.FromSeconds(timeout);
-
-                    var response = httpClient.PostAsync($"{_url}/Library", content).Result;
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        if (response.Content != null)
-                        {
-                            var bytes = response.Content.ReadAsByteArrayAsync().Result;
-
-                            using (var writer = new BinaryWriter(File.OpenWrite(Path.Combine(path, $"{formData["LibraryName"]}.zip"))))
-                            {
-                                writer.Write(bytes);
-                                result.Success = true;
-                            }
-                        }
-                        else
-                        {
-                            result.HttpStatusCode = 204;
-                            result.Message = "Content is missing";
-                        }
-                    }
-                    else
-                    {
-                        var responseBody = string.Empty;
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            responseBody = responseContent.ReadAsStringAsync().Result;
-                        }
-                        result.HttpStatusCode = (int)response.StatusCode;
-                        result.Message = (response.ReasonPhrase + " " + responseBody).Trim();
-                    }
+                    writer.Write(apiResult.Bytes);
                 }
             }
-            catch (Exception exception)
+            else
             {
-                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
-                result.HasException = true;
-                Debug.WriteLine(exception.Message);
-                Debug.WriteLine(exception.StackTrace);
+                _telemetry.Write(module, "Exception", apiResult.Message);
             }
-            finally
-            {
-                ServicePointManager.SecurityProtocol = securityProtocol;
-            }
-
-            return result;
+            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
         }
 
-        public ApiResult DownloadDriver(Dictionary<string, string> formData, string path, int timeout)
+        public void DownloadDriver(Dictionary<string, string> formData, string path, int timeout)
         {
-            var result = new ApiResult();
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            var securityProtocol = ServicePointManager.SecurityProtocol;
-
-            try
+            var apiResult = AzureRestApi.GetResultAsBytes($"{_url}/Driver", formData, timeout);
+            if (apiResult.Success)
             {
-                SetServicePointManagerProperties(securityProtocol);
-
-                var content = new FormUrlEncodedContent(formData);
-                using (var httpClient = new HttpClient())
+                using (var writer = new BinaryWriter(File.OpenWrite(Path.Combine(path, $"{formData["Driver"]}.zip"))))
                 {
-                    httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
-                    httpClient.Timeout = TimeSpan.FromSeconds(timeout);
-
-                    var response = httpClient.PostAsync($"{_url}/Driver", content).Result;
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        if (response.Content != null)
-                        {
-                            var bytes = response.Content.ReadAsByteArrayAsync().Result;
-
-                            using (var writer = new BinaryWriter(File.OpenWrite(Path.Combine(path, $"{formData["Driver"]}.zip"))))
-                            {
-                                writer.Write(bytes);
-                                result.Success = true;
-                            }
-                        }
-                        else
-                        {
-                            result.HttpStatusCode = 204;
-                            result.Message = "Content is missing";
-                        }
-                    }
-                    else
-                    {
-                        var responseBody = string.Empty;
-                        if (response.Content != null)
-                        {
-                            var responseContent = response.Content;
-                            responseBody = responseContent.ReadAsStringAsync().Result;
-                        }
-                        result.HttpStatusCode = (int)response.StatusCode;
-                        result.Message = (response.ReasonPhrase + " " + responseBody).Trim();
-                    }
+                    writer.Write(apiResult.Bytes);
                 }
             }
-            catch (Exception exception)
+            else
             {
-                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
-                result.HasException = true;
-                Debug.WriteLine(exception.Message);
-                Debug.WriteLine(exception.StackTrace);
+                _telemetry.Write(module, "Exception", apiResult.Message);
             }
-            finally
-            {
-                ServicePointManager.SecurityProtocol = securityProtocol;
-            }
-
-            return result;
-        }
-
-        private void SetServicePointManagerProperties(SecurityProtocolType securityProtocol)
-        {
-            ServicePointManager.DefaultConnectionLimit = 100;
-            ServicePointManager.UseNagleAlgorithm = false;
-            ServicePointManager.Expect100Continue = false;
-
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-        }
-
-        private string NestedExceptionMessages(Exception exception)
-        {
-            if (exception.InnerException == null)
-            {
-                return exception.Message + " [" + exception.GetType() + "]";
-            }
-
-            return exception.Message + " [" + exception.GetType() + "]"
-                   + Environment.NewLine
-                   + NestedExceptionMessages(exception.InnerException);
+            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
         }
     }
 }

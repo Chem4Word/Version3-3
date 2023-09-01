@@ -502,9 +502,11 @@ namespace Chem4Word.UI.WPF
 
             //get the view from the listbox's source
             var view = (ListCollectionView)CollectionViewSource.GetDefaultView(CatalogueItems.ItemsSource);
-
-            _filteredItems = 0;
-            view.Filter = null;
+            if (view != null)
+            {
+                _filteredItems = 0;
+                view.Filter = null;
+            }
         }
 
         private void FilterByText()
@@ -513,25 +515,27 @@ namespace Chem4Word.UI.WPF
 
             //get the view from the listbox's source
             var view = (ListCollectionView)CollectionViewSource.GetDefaultView(CatalogueItems.ItemsSource);
-
-            //then try to match part of either its name or an alternative name to the string typed in
-            _filteredItems = 0;
-            view.Filter = ci =>
-                          {
-                              if (ci is ChemistryObject item)
+            if (view != null)
+            {
+                //then try to match part of either its name or an alternative name to the string typed in
+                _filteredItems = 0;
+                view.Filter = ci =>
                               {
-                                  var queryString = SearchBox.Text.ToUpper();
-                                  if (item.Name.ToUpper().Contains(queryString)
-                                      || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString))
-                                      || item.Tags.Any(n => n.ToUpper().Contains(queryString)))
+                                  if (ci is ChemistryObject item)
                                   {
-                                      _filteredItems++;
-                                      return true;
+                                      var queryString = SearchBox.Text.ToUpper();
+                                      if (item.Name.ToUpper().Contains(queryString)
+                                          || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString))
+                                          || item.Tags.Any(n => n.ToUpper().Contains(queryString)))
+                                      {
+                                          _filteredItems++;
+                                          return true;
+                                      }
                                   }
-                              }
 
-                              return false;
-                          };
+                                  return false;
+                              };
+            }
         }
 
         private void FilterByChecked()

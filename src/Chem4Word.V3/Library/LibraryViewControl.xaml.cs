@@ -249,15 +249,18 @@ namespace Chem4Word.Library
 
                     //get the view from the listbox's source
                     ICollectionView view = CollectionViewSource.GetDefaultView(((LibraryController)DataContext).ChemistryItems);
-                    //then try to match part of either its name or an alternative name to the string typed in
-                    view.Filter = ci =>
-                                  {
-                                      var item = ci as ChemistryObject;
-                                      var queryString = SearchBox.Text.ToUpper();
-                                      return item != null
-                                             && (item.Name.ToUpper().Contains(queryString)
-                                                 || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString)));
-                                  };
+                    if (view != null)
+                    {
+                        //then try to match part of either its name or an alternative name to the string typed in
+                        view.Filter = ci =>
+                                      {
+                                          var item = ci as ChemistryObject;
+                                          var queryString = SearchBox.Text.ToUpper();
+                                          return item != null
+                                                 && (item.Name.ToUpper().Contains(queryString)
+                                                     || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString)));
+                                      };
+                    }
                 }
             }
             catch (Exception ex)
@@ -279,7 +282,10 @@ namespace Chem4Word.Library
                 if (DataContext != null)
                 {
                     ICollectionView view = CollectionViewSource.GetDefaultView(((LibraryController)DataContext).ChemistryItems);
-                    view.Filter = null;
+                    if (view != null)
+                    {
+                        view.Filter = null;
+                    }
                 }
             }
             catch (Exception ex)
@@ -308,7 +314,10 @@ namespace Chem4Word.Library
 
             // Sort the list of structures by lower case name
             var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
-            view.CustomSort = new ChemistryObjectComparer();
+            if (view != null)
+            {
+                view.CustomSort = new ChemistryObjectComparer();
+            }
 
             var sel = Globals.Chem4WordV3.Application.Selection;
             Globals.Chem4WordV3.SelectChemistry(sel);

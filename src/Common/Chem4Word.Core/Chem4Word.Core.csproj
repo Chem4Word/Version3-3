@@ -105,6 +105,8 @@
   <ItemGroup>
     <Compile Include="AzureSettings.cs" />
     <Compile Include="Enums\CompassPoints.cs" />
+    <Compile Include="Helpers\RestApiResult.cs" />
+    <Compile Include="Helpers\AzureRestApi.cs" />
     <Compile Include="Helpers\CohenSutherland.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\DebugHelper.cs" />
