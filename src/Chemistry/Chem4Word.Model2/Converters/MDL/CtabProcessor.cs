@@ -621,6 +621,11 @@ namespace Chem4Word.Model2.Converters.MDL
                 }
             }
 
+            if (string.IsNullOrEmpty(elementType))
+            {
+                Debugger.Break();
+            }
+
             // Add three spaces the trim back to three characters
             return $"{elementType}   ".Substring(0, 3);
         }

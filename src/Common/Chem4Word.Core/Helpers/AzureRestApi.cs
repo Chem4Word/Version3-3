@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Text;
 
 namespace Chem4Word.Core.Helpers
 {
@@ -36,19 +37,25 @@ namespace Chem4Word.Core.Helpers
                 SetConnectionLeaseTimeout(uri);
                 SetServicePointManagerProperties(securityProtocol);
 
-                var content = new FormUrlEncodedContent(properties);
-
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
+                SetCommonHeaders();
 
                 var request = new HttpRequestMessage(HttpMethod.Post, uri);
                 request.Properties["RequestTimeout"] = TimeSpan.FromSeconds(timeout);
+
+                var content = new FormUrlEncodedContent(properties);
                 request.Content = content;
 
                 var response = _httpClient.SendAsync(request).Result;
                 result.HttpStatusCode = (int)response.StatusCode;
                 result.Success = response.IsSuccessStatusCode;
-                result.Json = response.Content.ReadAsStringAsync().Result;
+                if (result.Success)
+                {
+                    result.Json = response.Content.ReadAsStringAsync().Result;
+                }
+                else
+                {
+                    result.Message = $"Error: HttpStatusCode: {result.HttpStatusCode}{Environment.NewLine}{response.Content.ReadAsStringAsync().Result}";
+                }
             }
             catch (Exception exception)
             {
@@ -81,19 +88,25 @@ namespace Chem4Word.Core.Helpers
                 SetConnectionLeaseTimeout(uri);
                 SetServicePointManagerProperties(securityProtocol);
 
-                var content = new FormUrlEncodedContent(properties);
-
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
+                SetCommonHeaders();
 
                 var request = new HttpRequestMessage(HttpMethod.Post, uri);
                 request.Properties["RequestTimeout"] = TimeSpan.FromSeconds(timeout);
+
+                var content = new FormUrlEncodedContent(properties);
                 request.Content = content;
 
                 var response = _httpClient.SendAsync(request).Result;
                 result.HttpStatusCode = (int)response.StatusCode;
                 result.Success = response.IsSuccessStatusCode;
-                result.Bytes = response.Content.ReadAsByteArrayAsync().Result;
+                if (result.Success)
+                {
+                    result.Bytes = response.Content.ReadAsByteArrayAsync().Result;
+                }
+                else
+                {
+                    result.Message = $"Error: HttpStatusCode: {result.HttpStatusCode}{Environment.NewLine}{response.Content.ReadAsStringAsync().Result}";
+                }
             }
             catch (Exception exception)
             {
@@ -121,6 +134,16 @@ namespace Chem4Word.Core.Helpers
             return exception.Message + " [" + exception.GetType() + "]"
                    + Environment.NewLine
                    + NestedExceptionMessages(exception.InnerException);
+        }
+
+        private static void SetCommonHeaders()
+        {
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
+
+            // Send dummy credentials to avoid sending Windows credentials
+            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes("chem4word:chem4word"));
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
         }
 
         private static void SetServicePointManagerProperties(SecurityProtocolType securityProtocol)

@@ -358,10 +358,9 @@ namespace Chem4Word.Model2
             }
         }
 
-        public bool IsCyclic()
-        {
-            return Rings.Any();
-        }
+        public bool IsCyclic() => Rings.Any();
+
+        public bool IsHBond() => (Element)StartAtom.Element == Globals.PeriodicTable.H || (Element)EndAtom.Element == Globals.PeriodicTable.H;
 
         public Vector? GetPrettyCyclicDoubleBondVector()
         {

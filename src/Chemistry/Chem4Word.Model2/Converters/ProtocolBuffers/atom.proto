@@ -37,5 +37,5 @@ message PBAtom
 	google.protobuf.Int32Value SpinMultiplicity = 6;
 	google.protobuf.Int32Value FormalCharge = 7;
 	PBPoint Position = 8;
-	bool DoubleRadical = 9;
+	bool DoubletRadical = 9;
 }

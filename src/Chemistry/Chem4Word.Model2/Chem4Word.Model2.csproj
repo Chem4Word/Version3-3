@@ -89,6 +89,7 @@
     <Compile Include="AtomData.cs" />
     <Compile Include="Bond.cs" />
     <Compile Include="BaseObject.cs" />
+    <Compile Include="BondLengthStatistics.cs" />
     <Compile Include="Converters\CML\CMLConstants.cs" />
     <Compile Include="Converters\CML\CmlFormat.cs" />
     <Compile Include="Converters\CML\CMLNamespaces.cs" />

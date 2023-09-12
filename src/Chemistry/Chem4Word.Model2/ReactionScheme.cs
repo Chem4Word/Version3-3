@@ -146,6 +146,7 @@ namespace Chem4Word.Model2
         public ReactionScheme Copy(Model modelCopy = null)
         {
             ReactionScheme copy = new ReactionScheme();
+            copy.Id = Id;
 
             foreach (var reaction in Reactions.Values)
             {

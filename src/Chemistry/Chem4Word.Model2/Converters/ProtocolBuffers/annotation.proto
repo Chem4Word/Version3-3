@@ -17,4 +17,5 @@ message PBAnnotation
 	bool IsEditable = 2;
 	string Xaml = 3;
 	PBPoint Position = 4;
+	double SymbolSize = 5;
 }

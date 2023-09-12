@@ -708,8 +708,8 @@ namespace Chem4Word.Model2.Converters.CML
                     result.Add(flowDocElement);
                 }
                 result.Add(new XAttribute(CMLConstants.AttributeId, annotation.Id));
-                result.Add(new XAttribute(CMLConstants.AttributeX2, annotation.Position.X.ToString("0.0###", CultureInfo.InvariantCulture)));
-                result.Add(new XAttribute(CMLConstants.AttributeY2, annotation.Position.Y.ToString("0.0###", CultureInfo.InvariantCulture)));
+                result.Add(new XAttribute(CMLConstants.AttributeX2, SafeDouble.AsCMLString(annotation.Position.X)));
+                result.Add(new XAttribute(CMLConstants.AttributeY2, SafeDouble.AsCMLString(annotation.Position.Y)));
                 result.Add(new XAttribute(CMLConstants.AttributeIsEditable, annotation.IsEditable));
                 if (annotation.SymbolSize != null)
                 {

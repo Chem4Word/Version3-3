@@ -407,6 +407,28 @@ namespace Chem4Word.Model2
             }
         }
 
+        public BondLengthStatistics GetBondLengthStatistics(bool includeHBonds = true)
+        {
+            List<Bond> bonds;
+
+            if (includeHBonds)
+            {
+                bonds = GetAllBonds();
+            }
+            else
+            {
+                bonds = GetAllBonds().Where(b => !b.IsHBond()).ToList();
+            }
+
+            var lengths = new List<double>(bonds.Count);
+            foreach (var bond in bonds)
+            {
+                lengths.Add(bond.BondLength);
+            }
+
+            return new BondLengthStatistics(lengths);
+        }
+
         /// <summary>
         /// Average bond length of all molecules
         /// </summary>
@@ -415,11 +437,12 @@ namespace Chem4Word.Model2
             get
             {
                 double result = 0.0;
-                List<double> lengths = new List<double>(GetAllBonds().Count);
+                var bonds = GetAllBonds();
+                var lengths = new List<double>(bonds.Count);
 
-                foreach (var mol in Molecules.Values)
+                foreach (var bond in bonds)
                 {
-                    lengths.AddRange(mol.BondLengths);
+                    lengths.Add(bond.BondLength);
                 }
 
                 if (lengths.Any())

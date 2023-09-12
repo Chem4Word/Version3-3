@@ -176,7 +176,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 Position = new PBPoint { X = atom.Position.X, Y = atom.Position.Y },
                 SpinMultiplicity = atom.SpinMultiplicity,
                 FormalCharge = atom.FormalCharge,
-                DoubleRadical = atom.DoubletRadical,
+                DoubletRadical = atom.DoubletRadical,
                 IsotopeNumber = atom.IsotopeNumber,
             };
 
@@ -220,7 +220,8 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 Id = annValue.Id,
                 IsEditable = annValue.IsEditable,
                 Position = new PBPoint { X = annValue.Position.X, Y = annValue.Position.Y },
-                Xaml = annValue.Xaml
+                Xaml = annValue.Xaml,
+                SymbolSize = annValue.SymbolSize.Value
             };
 
         /// <summary>
@@ -256,6 +257,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                         Xaml = annValue.Xaml,
                         Position = new System.Windows.Point(annValue.Position.X, annValue.Position.Y),
                         IsEditable = annValue.IsEditable,
+                        SymbolSize = annValue.SymbolSize,
                         Parent = result1
                     };
                     result1.AddAnnotation(newAnnotation);
@@ -283,8 +285,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     Parent = rs,
                     ReactionType = (ReactionType)reactionVal.ReactionType,
                     ReagentText = reactionVal.ReagentText,
-                    TailPoint = new System.Windows.Point(
-                                          reactionVal.TailPoint.X, reactionVal.TailPoint.Y)
+                    TailPoint = new System.Windows.Point(reactionVal.TailPoint.X, reactionVal.TailPoint.Y)
                 };
 
                 foreach (string reactantId in reactionVal.Reactants)
@@ -347,7 +348,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             {
                 Atom newAtom = new Atom
                 {
-                    DoubletRadical = atom.DoubleRadical,
+                    DoubletRadical = atom.DoubletRadical,
                     ExplicitC = atom.ExplicitC,
                     FormalCharge = atom.FormalCharge,
                     Id = atom.Id,

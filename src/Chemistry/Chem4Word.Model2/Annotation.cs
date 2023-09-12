@@ -139,6 +139,7 @@ namespace Chem4Word.Model2
                 Id = Id,
                 IsEditable = IsEditable,
                 Position = Position,
+                SymbolSize = SymbolSize,
                 Xaml = Xaml
             };
             return copy;

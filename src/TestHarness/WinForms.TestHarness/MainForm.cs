@@ -424,8 +424,22 @@ namespace WinForms.TestHarness
                         Text = filename;
                     }
 
-                    Information.Text =
-                        $"Formula: {model.ConciseFormula} BondLength: {model.MeanBondLength.ToString("#,##0.00")}";
+                    var statistics1 = model.GetBondLengthStatistics();
+                    var statistics2 = model.GetBondLengthStatistics(false);
+
+                    var stringBuilder = new StringBuilder();
+
+                    stringBuilder.Append($"Formula: {model.ConciseFormula} ");
+
+                    stringBuilder.Append($"BL+H: Mean {SafeDouble.AsString(statistics1.Mean)} ");
+                    stringBuilder.Append($"Mode {SafeDouble.AsString(statistics1.Mode)} ");
+                    stringBuilder.Append($"Median {SafeDouble.AsString(statistics1.Median)} ");
+
+                    stringBuilder.Append($"BL-H: Mean {SafeDouble.AsString(statistics2.Mean)} ");
+                    stringBuilder.Append($"Mode {SafeDouble.AsString(statistics2.Mode)} ");
+                    stringBuilder.Append($"Median {SafeDouble.AsString(statistics2.Median)} ");
+
+                    Information.Text = stringBuilder.ToString();
 
                     Display.Chemistry = model;
 
@@ -480,7 +494,7 @@ namespace WinForms.TestHarness
             {
                 Model m = _undoStack.Pop();
                 Debug.WriteLine(
-                    $"Popped F: {m.ConciseFormula} BL: {m.MeanBondLength.ToString("#,##0.00")} from Undo Stack");
+                    $"Popped F: {m.ConciseFormula} BL: {SafeDouble.AsString0(m.MeanBondLength)} from Undo Stack");
 
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
@@ -489,7 +503,7 @@ namespace WinForms.TestHarness
                     _lastCml = cc.Export(m);
 
                     Debug.WriteLine(
-                        $"Pushing F: {copy.ConciseFormula} BL: {copy.MeanBondLength.ToString("#,##0.00")} onto Redo Stack");
+                        $"Pushing F: {copy.ConciseFormula} BL: {SafeDouble.AsString0(copy.MeanBondLength)} onto Redo Stack");
                     _redoStack.Push(copy);
                 }
 
@@ -510,7 +524,7 @@ namespace WinForms.TestHarness
             {
                 Model m = _redoStack.Pop();
                 Debug.WriteLine(
-                    $"Popped F: {m.ConciseFormula} BL: {m.MeanBondLength.ToString("#,##0.00")} from Redo Stack");
+                    $"Popped F: {m.ConciseFormula} BL: {SafeDouble.AsString0(m.MeanBondLength)} from Redo Stack");
 
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
@@ -519,7 +533,7 @@ namespace WinForms.TestHarness
                     _lastCml = cc.Export(m);
 
                     Debug.WriteLine(
-                        $"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength.ToString("#,##0.00")} onto Undo Stack");
+                        $"Pushing F: {clone.ConciseFormula} BL: {SafeDouble.AsString0(clone.MeanBondLength)} onto Undo Stack");
                     _undoStack.Push(clone);
                 }
 
@@ -932,7 +946,7 @@ namespace WinForms.TestHarness
             {
                 var clone = cc.Import(_lastCml);
                 Debug.WriteLine(
-                    $"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength.ToString("#,##0.00")} onto Stack");
+                    $"Pushing F: {clone.ConciseFormula} BL: {SafeDouble.AsString0(clone.MeanBondLength)} onto Stack");
                 _undoStack.Push(clone);
             }
 
