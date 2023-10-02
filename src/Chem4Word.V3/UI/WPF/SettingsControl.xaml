@@ -2,6 +2,7 @@
     x:Class="Chem4Word.UI.WPF.SettingsControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Chem4Word.ACME.Converters;assembly=Chem4Word.ACME"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Chem4Word.Models"
@@ -18,11 +19,18 @@
                 <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <converters:BoolToVisibilityConverter
+                x:Key="BoolToVisConverter"
+                FalseValue="Hidden"
+                TrueValue="Visible" />
+
             <Style TargetType="GroupBox">
                 <Setter Property="BorderBrush" Value="{StaticResource Chem4WordBlue}" />
                 <Setter Property="BorderThickness" Value="2" />
                 <Setter Property="Padding" Value="5" />
             </Style>
+
             <Style TargetType="Path">
                 <Style.Triggers>
                     <Trigger Property="IsEnabled" Value="False">
@@ -39,7 +47,7 @@
                 Margin="5"
                 VerticalAlignment="Center"
                 x:Shared="False"
-                Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
+                Data="M 19 20 H 4 C 2.89 20 2 19.1 2 18 V 6 C 2 4.89 2.89 4 4 4 H 10 L 12 6 H 19 A 2 2 0 0 1 21 8 H 21 L 4 8 V 18 L 6.14 10 H 23.21 L 20.93 18.5 C 20.7 19.37 19.92 20 19 20 Z"
                 Fill="{StaticResource Chem4WordBlue}"
                 Stretch="Uniform" />
             <Path
@@ -50,11 +58,18 @@
                 Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"
                 Fill="{StaticResource Chem4WordBlue}"
                 Stretch="Uniform" />
+
+            <!--  https://pictogrammers.com/library/mdi/icon/check/  -->
+            <Style x:Key="LibraryIsSelected" TargetType="Path">
+                <Setter Property="Data" Value="M 9 20.42 L 2.79 14.21 L 5.62 11.38 L 9 14.77 L 18.88 4.88 L 21.71 7.71 L 9 20.42 Z" />
+            </Style>
+
             <x:Array x:Key="SampleData" Type="models:LibrariesSettingsGridSource">
                 <models:LibrariesSettingsGridSource
                     Name="Sample 1"
                     Count="123"
                     Dictionary="False"
+                    IsDefault="True"
                     License="N/A"
                     Locked="No" />
                 <models:LibrariesSettingsGridSource
@@ -72,6 +87,7 @@
             </x:Array>
         </ResourceDictionary>
     </UserControl.Resources>
+
     <Grid d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -461,7 +477,8 @@
                         HorizontalContentAlignment="Left"
                         d:IsLocked="True"
                         Click="OnClick_SelectDefaultLibraryLocation"
-                        Style="{StaticResource Acme.Control.Button.DialogButton}">
+                        Style="{StaticResource Acme.Control.Button.DialogButton}"
+                        ToolTip="Change the default location where libraries are created">
                         <StackPanel
                             HorizontalAlignment="Left"
                             d:IsLocked="True"
@@ -496,7 +513,29 @@
                         </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
-                                <!--  This allows name to be edited, saving this just in case it's ever needed  -->
+                                <GridViewColumn Width="32" Header="✱">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Canvas
+                                                Width="24"
+                                                Height="24"
+                                                d:IsLocked="True"
+                                                ClipToBounds="True"
+                                                Visibility="{Binding IsDefault, Converter={StaticResource BoolToVisConverter}}">
+                                                <Path
+                                                    Canvas.Left="2"
+                                                    Canvas.Top="2"
+                                                    Width="20"
+                                                    Height="20"
+                                                    d:IsLocked="True"
+                                                    Fill="{StaticResource Chem4WordBlue}"
+                                                    Stretch="Uniform"
+                                                    Style="{StaticResource LibraryIsSelected}" />
+                                            </Canvas>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <!-- This allows name to be edited -->
                                 <GridViewColumn Width="250" Header="Name">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
@@ -513,7 +552,7 @@
                                     Width="80"
                                     DisplayMemberBinding="{Binding Count}"
                                     Header="Structures" />
-                                <!--
+                                <!-- Reserved for future use
                                 <GridViewColumn Width="80" Header="Dictionary">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
@@ -546,7 +585,8 @@
                             HorizontalContentAlignment="Left"
                             d:IsLocked="True"
                             Click="OnClick_AddExistingLibrary"
-                            Style="{StaticResource Acme.Control.Button.DialogButton}">
+                            Style="{StaticResource Acme.Control.Button.DialogButton}"
+                            ToolTip="Add an existing library">
                             <StackPanel
                                 HorizontalAlignment="Left"
                                 d:IsLocked="True"
@@ -557,7 +597,7 @@
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     d:IsLocked="True"
-                                    Data="M20 14H14V20H10V14H4V10H10V4H14V10H20V14Z"
+                                    Data="M 20 14 H 14 V 20 H 10 V 14 H 4 V 10 H 10 V 4 H 14 V 10 H 20 V 14 Z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
                                 <TextBlock VerticalAlignment="Center" d:IsLocked="True">Add Library</TextBlock>
@@ -571,7 +611,8 @@
                             HorizontalContentAlignment="Left"
                             d:IsLocked="True"
                             Click="OnClick_CreateNewLibrary"
-                            Style="{StaticResource Acme.Control.Button.DialogButton}">
+                            Style="{StaticResource Acme.Control.Button.DialogButton}"
+                            ToolTip="Create a new empty library">
                             <StackPanel d:IsLocked="True" Orientation="Horizontal">
                                 <Path
                                     Width="28"
@@ -579,7 +620,7 @@
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     d:IsLocked="True"
-                                    Data="M15.046875,18.5860443115234L21.84375,18.5860443115234 21.50390625,23.8126087188721 20.765625,30.2110443115234 25.9453105926514,27.8672981262207 31.828125,25.7110443115234 33.984375,32.3672943115234 28.0898418426514,34.0079231262207 22.3125,34.9922943115234 23.8886699676514,36.4776496887207 25.7578105926514,38.4493293762207 27.9199199676514,40.9073371887207 30.375,43.8516693115234 24.75,47.8360443115234 21.78515625,43.4649505615234 18.328125,37.7579193115234 16.646484375,40.8663177490234 15.0703125,43.5821380615234 13.599609375,45.9053802490234 12.234375,47.8360443115234 6.703125,43.8516693115234 9.22851467132568,40.7842903137207 11.3671865463257,38.2852668762207 13.1191396713257,36.3546028137207 14.484375,34.9922943115234 3,32.3672943115234 5.15625,25.7110443115234 8.62792873382568,26.9796009063721 11.5898427963257,28.1602668762207 14.0419912338257,29.2530384063721 15.984375,30.2579193115234 15.5917959213257,26.3467884063721 15.3046865463257,23.0977649688721 15.1230459213257,20.5108489990234 15.046875,18.5860443115234z"
+                                    Data="M 15.05 18.59 L 21.84 18.59 L 21.5 23.81 L 20.77 30.21 L 25.95 27.87 L 31.83 25.71 L 33.98 32.37 L 28.09 34.01 L 22.31 34.99 L 23.89 36.48 L 25.76 38.45 L 27.92 40.91 L 30.38 43.85 L 24.75 47.84 L 21.79 43.46 L 18.33 37.76 L 16.65 40.87 L 15.07 43.58 L 13.6 45.91 L 12.23 47.84 L 6.7 43.85 L 9.23 40.78 L 11.37 38.29 L 13.12 36.35 L 14.48 34.99 L 3 32.37 L 5.16 25.71 L 8.63 26.98 L 11.59 28.16 L 14.04 29.25 L 15.98 30.26 L 15.59 26.35 L 15.3 23.1 L 15.12 20.51 L 15.05 18.59 Z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
                                 <TextBlock VerticalAlignment="Center" d:IsLocked="True">New Library</TextBlock>
@@ -593,7 +634,8 @@
                             HorizontalContentAlignment="Left"
                             d:IsLocked="True"
                             Click="OnClick_DownloadLibrary"
-                            Style="{StaticResource Acme.Control.Button.DialogButton}">
+                            Style="{StaticResource Acme.Control.Button.DialogButton}"
+                            ToolTip="Download a library from www.chem4word.co.uk">
                             <StackPanel d:IsLocked="True" Orientation="Horizontal">
                                 <Path
                                     Width="28"
@@ -601,7 +643,7 @@
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     d:IsLocked="True"
-                                    Data="M14,2L20,8V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2H14M18,20V9H13V4H6V20H18M12,19L8,15H10.5V12H13.5V15H16L12,19Z"
+                                    Data="M 14 2 L 20 8 V 20 A 2 2 0 0 1 18 22 H 6 A 2 2 0 0 1 4 20 V 4 A 2 2 0 0 1 6 2 H 14 M 18 20 V 9 H 13 V 4 H 6 V 20 H 18 M 12 19 L 8 15 H 10.5 V 12 H 13.5 V 15 H 16 L 12 19 Z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
                                 <TextBlock VerticalAlignment="Center" d:IsLocked="True">Download a Library</TextBlock>
@@ -615,7 +657,8 @@
                             HorizontalContentAlignment="Left"
                             d:IsLocked="True"
                             Click="OnClick_RemoveLibrary"
-                            Style="{StaticResource Acme.Control.Button.DialogButton}">
+                            Style="{StaticResource Acme.Control.Button.DialogButton}"
+                            ToolTip="Remove the selected library">
                             <StackPanel d:IsLocked="True" Orientation="Horizontal">
                                 <Path
                                     Name="RemoveLibraryIcon"
@@ -624,10 +667,9 @@
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     d:IsLocked="True"
-                                    Data="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"
+                                    Data="M 9 3 V 4 H 4 V 6 H 5 V 19 A 2 2 0 0 0 7 21 H 17 A 2 2 0 0 0 19 19 V 6 H 20 V 4 H 15 V 3 H 9 M 7 6 H 17 V 19 H 7 V 6 M 9 8 V 17 H 11 V 8 H 9 M 13 8 V 17 H 15 V 8 H 13 Z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
-
                                 <TextBlock VerticalAlignment="Center" d:IsLocked="True">Remove Library</TextBlock>
                             </StackPanel>
                         </Button>
@@ -639,7 +681,8 @@
                             HorizontalContentAlignment="Left"
                             d:IsLocked="True"
                             Click="OnClick_EditLibrary"
-                            Style="{StaticResource Acme.Control.Button.DialogButton}">
+                            Style="{StaticResource Acme.Control.Button.DialogButton}"
+                            ToolTip="Edit the selected library">
                             <StackPanel d:IsLocked="True" Orientation="Horizontal">
                                 <Path
                                     Name="EditLibraryIcon"
@@ -648,7 +691,7 @@
                                     Margin="5"
                                     VerticalAlignment="Center"
                                     d:IsLocked="True"
-                                    Data="M16.84,2.73C16.45,2.73 16.07,2.88 15.77,3.17L13.65,5.29L18.95,10.6L21.07,8.5C21.67,7.89 21.67,6.94 21.07,6.36L17.9,3.17C17.6,2.88 17.22,2.73 16.84,2.73M12.94,6L4.84,14.11L7.4,14.39L7.58,16.68L9.86,16.85L10.15,19.41L18.25,11.3M4.25,15.04L2.5,21.73L9.2,19.94L8.96,17.78L6.65,17.61L6.47,15.29"
+                                    Data="M 16.84 2.73 C 16.45 2.73 16.07 2.88 15.77 3.17 L 13.65 5.29 L 18.95 10.6 L 21.07 8.5 C 21.67 7.89 21.67 6.94 21.07 6.36 L 17.9 3.17 C 17.6 2.88 17.22 2.73 16.84 2.73 M 12.94 6 L 4.84 14.11 L 7.4 14.39 L 7.58 16.68 L 9.86 16.85 L 10.15 19.41 L 18.25 11.3 M 4.25 15.04 L 2.5 21.73 L 9.2 19.94 L 8.96 17.78 L 6.65 17.61 L 6.47 15.29"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
                                 <TextBlock VerticalAlignment="Center" d:IsLocked="True">Edit Library</TextBlock>

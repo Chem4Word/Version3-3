@@ -43,9 +43,12 @@ namespace Chem4Word.UI.WPF
                     DialogResult = DialogResult.OK;
                     if (elementHost1.Child is SettingsControl sc)
                     {
-                        SystemOptions = sc.SystemOptions;
-                        SystemOptions.Save();
-                        sc.Dirty = false;
+                        if (sc.Dirty)
+                        {
+                            SystemOptions = sc.SystemOptions;
+                            SystemOptions.Save();
+                            sc.Dirty = false;
+                        }
                         Hide();
                     }
                     break;

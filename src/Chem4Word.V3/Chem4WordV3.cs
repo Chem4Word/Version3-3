@@ -71,7 +71,7 @@ namespace Chem4Word
         private bool _markAsChemistryHandled;
 
         public bool OptionsReloadRequired = false;
-        private int _rightClickEvents;
+
         private ConfigWatcher _configWatcher;
 
         public bool LibraryState;
@@ -639,8 +639,10 @@ namespace Chem4Word
                     }
                 }
 
-                GC.WaitForPendingFinalizers();
+                _configWatcher.Dispose();
+
                 GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
             finally
             {
@@ -1484,9 +1486,6 @@ namespace Chem4Word
                     LoadOptions();
                 }
 
-                _rightClickEvents++;
-
-                ClearChemistryContextMenus();
                 if (!_markAsChemistryHandled)
                 {
                     var targetWord = JsonConvert.DeserializeObject<TargetWord>(ctrl.Tag);
@@ -1550,9 +1549,9 @@ namespace Chem4Word
 
                             #endregion Find Id of name
 
-                            // Test phrases (ensure benzene is in your library)
+                            // Test phrases (ensure benzene and cyclopropane are in your library)
                             // This is benzene, this is not.
-                            // This is benzene. This is not.
+                            // This is cyclopropane. This is not.
 
                             Word.ContentControl contentControl = null;
                             var wordSettings = new WordSettings(Application);
@@ -1568,7 +1567,7 @@ namespace Chem4Word
                                 Application.Selection.SetRange(insertionPoint, insertionPoint);
 
                                 var tag = $"{tagPrefix}:{model.CustomXmlPartGuid}";
-                                contentControl = ChemistryHelper.Insert1DChemistry(document, targetWord.ChemicalName, true, tag);
+                                contentControl = ChemistryHelper.Insert1DChemistry(document, targetWord.ChemicalName, false, tag);
 
                                 Telemetry.Write(module, "Information", $"Inserted 1D version of {targetWord.ChemicalName} from library");
                             }
@@ -1591,6 +1590,7 @@ namespace Chem4Word
                             }
                         }
 
+                        ClearChemistryContextMenus();
                         _markAsChemistryHandled = true;
                     }
                 }
@@ -1621,7 +1621,6 @@ namespace Chem4Word
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             _markAsChemistryHandled = false;
-            _rightClickEvents = 0;
 
             var selectedWords = new List<TargetWord>();
 
@@ -1732,8 +1731,6 @@ namespace Chem4Word
 
             try
             {
-                ClearChemistryContextMenus();
-
                 if (Application.Documents.Count > 0)
                 {
                     var vstoObject = WordExtensions.DocumentExtensions.GetVstoObject(Application.ActiveDocument, Globals.Factory);
@@ -1810,6 +1807,11 @@ namespace Chem4Word
             catch (Exception exception)
             {
                 RegistryHelper.StoreException(module, exception);
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
         }
 

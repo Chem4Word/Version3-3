@@ -3,13 +3,23 @@
 <ChangeLog>
     <Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>
     <Version>
+        <Number>3.3.1 Beta 1</Number>
+        <IsBeta>true</IsBeta>
+        <Released>04-Oct-2023</Released>
+        <Changes>
+            <Change>Add AV Warning</Change>
+            <Change>Add missing file to installer</Change>
+            <Change>Fix Right Click Convert to chemistry issues</Change>
+            <Change>Fix Windows 11 detection issue</Change>
+            <Change>Update user manual</Change>
+        </Changes>
+        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.1.Beta.1.msi</Url>
+    </Version>
+    <Version>
         <Number>3.3.0 Alpha 0</Number>
         <IsBeta>true</IsBeta>
         <Released>31-Aug-2023</Released>
         <Changes>
-            <Change>...</Change>
-            <Change>...</Change>
-            <Change>...</Change>
             <Change>Users can download extra libraries</Change>
             <Change>Add detection of ReadOnly and System databases, enabling UI buttons as appropriate</Change>
             <Change>Internal: Add better tool tips in ACME</Change>
@@ -24,7 +34,6 @@
             <Change>Private Alpha of Chem4Word 2023 (V3.3)</Change>
             <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
         </Changes>
-        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.0.Alpha.0.msi</Url>
     </Version>
     <EndOfLife>31-Dec-2345</EndOfLife>
 </ChangeLog>

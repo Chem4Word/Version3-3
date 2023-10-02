@@ -32,7 +32,7 @@ namespace Chem4WordSetup
         private const string DetectV2AddIn = @"Chemistry Add-in for Word\Chem4Word.AddIn.vsto";
         private const string DetectV3AddIn = @"Chem4Word V3\Chem4Word.V3.vsto";
 
-        private const string DefaultMsiFile = "https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.0.Alpha.0.msi";
+        private const string DefaultMsiFile = "https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.1.Beta.1.msi";
         private const string VstoInstaller = "https://www.chem4word.co.uk/files3-3/vstor_redist.exe";
 
         private WebClient _webClient;
@@ -68,7 +68,8 @@ namespace Chem4WordSetup
 
             OperatingSystem osVer = Environment.OSVersion;
             // Check that OsVerion is greater or equal to 6.1
-            if (osVer.Version.Major >= 6 && osVer.Version.Minor >= 1)
+            if (osVer.Version.Major >= 6 && osVer.Version.Minor >= 1
+                || osVer.Version.Major >= 10)
             {
                 // Running Windows 7 or Windows 2008 R2
                 isOperatingSystemWindows7Plus = true;

@@ -11,15 +11,16 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="../Resources/Brushes.xaml" />
                 <ResourceDictionary Source="../Resources/ControlStyles.xaml" />
+                <ResourceDictionary Source="../Resources/ACMEResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="TabControl">
                 <Setter Property="FontSize" Value="14" />
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Width="Auto">
+    <Grid Width="Auto" d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="40" />
@@ -30,12 +31,16 @@
         <TabControl
             Grid.Row="0"
             Margin="5"
+            d:IsLocked="True"
             Background="{DynamicResource {x:Static SystemColors.ControlColor}}">
-            <TabItem Header="General">
-                <Grid>
-                    <StackPanel>
-                        <GroupBox BorderThickness="2" Header="Common">
-                            <Grid Height="64">
+            <TabItem d:IsLocked="True" Header="General">
+                <Grid d:IsLocked="True">
+                    <StackPanel d:IsLocked="True">
+                        <GroupBox
+                            d:IsLocked="True"
+                            BorderThickness="2"
+                            Header="Common">
+                            <Grid Height="64" d:IsLocked="True">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
@@ -50,6 +55,7 @@
                                     Grid.Column="0"
                                     Margin="5,0,5,0"
                                     VerticalAlignment="Center"
+                                    d:IsLocked="True"
                                     Click="ShowAtomsInColour_OnClick"
                                     IsChecked="{Binding Path=ShowAtomsInColour, Mode=TwoWay}">
                                     Show Atoms in Colour
@@ -61,6 +67,7 @@
                                     Grid.Column="0"
                                     Margin="5,0,5,0"
                                     VerticalAlignment="Center"
+                                    d:IsLocked="True"
                                     Click="ShowImplicitHydrogens_OnClick"
                                     IsChecked="{Binding Path=ShowImplicitHydrogens, Mode=TwoWay}">
                                     Show Implicit Hydrogens
@@ -72,14 +79,18 @@
                                     Grid.Column="0"
                                     Margin="5,0,5,0"
                                     VerticalAlignment="Center"
+                                    d:IsLocked="True"
                                     Click="ShowAllCarbonAtoms_OnClick"
                                     IsChecked="{Binding Path=ShowAllCarbonAtoms, Mode=TwoWay}">
                                     Show All Carbon Atoms
                                 </CheckBox>
                             </Grid>
                         </GroupBox>
-                        <GroupBox BorderThickness="2" Header="Display Only">
-                            <Grid>
+                        <GroupBox
+                            d:IsLocked="True"
+                            BorderThickness="2"
+                            Header="Display Only">
+                            <Grid d:IsLocked="True">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
@@ -92,14 +103,18 @@
                                     Grid.Column="0"
                                     Margin="5"
                                     VerticalAlignment="Center"
+                                    d:IsLocked="True"
                                     Click="ShowMoleculeGroups_OnClick"
                                     IsChecked="{Binding Path=ShowMoleculeGroups, Mode=TwoWay}">
                                     Show grouping of molecules
                                 </CheckBox>
                             </Grid>
                         </GroupBox>
-                        <GroupBox BorderThickness="2" Header="Editor Only">
-                            <Grid>
+                        <GroupBox
+                            d:IsLocked="True"
+                            BorderThickness="2"
+                            Header="Editor Only">
+                            <Grid d:IsLocked="True">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
@@ -113,15 +128,36 @@
                                     Grid.Column="0"
                                     Width="50"
                                     Margin="5"
-                                    ItemsSource="{StaticResource AllowedBondLengths}"
+                                    d:IsLocked="True"
                                     SelectedValue="{Binding Path=CurrentBondLength, Mode=TwoWay}"
                                     SelectedValuePath="Content"
                                     SelectionChanged="DefaultBondLength_OnSelectionChanged"
-                                    ToolTip="Set Default Bond Length" />
+                                    ToolTip="Set Default Bond Length">
+                                    <ComboBoxItem d:IsLocked="True">5</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">10</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">15</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">20</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">25</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">30</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">35</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">40</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">45</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">50</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">55</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">60</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">65</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">70</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">75</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">80</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">85</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">90</ComboBoxItem>
+                                    <ComboBoxItem d:IsLocked="True">95</ComboBoxItem>
+                                </ComboBox>
                                 <TextBlock
                                     Grid.Row="0"
                                     Grid.Column="1"
-                                    VerticalAlignment="Center">
+                                    VerticalAlignment="Center"
+                                    d:IsLocked="True">
                                     Default Bond Length
                                 </TextBlock>
                             </Grid>
@@ -129,16 +165,20 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="DebugTab" Header="Debug">
-                <Grid>
-                    <StackPanel HorizontalAlignment="Stretch">
-                        <TextBlock Margin="3">
+            <TabItem
+                x:Name="DebugTab"
+                d:IsLocked="True"
+                Header="Debug">
+                <Grid d:IsLocked="True">
+                    <StackPanel HorizontalAlignment="Stretch" d:IsLocked="True">
+                        <TextBlock Margin="3" d:IsLocked="True">
                             Settings Path:
                         </TextBlock>
                         <TextBlock
                             x:Name="SettingsPath"
                             Margin="3"
                             HorizontalAlignment="Stretch"
+                            d:IsLocked="True"
                             Text="{Binding Path=SettingsPath, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </StackPanel>
@@ -152,7 +192,8 @@
             Width="Auto"
             MinWidth="250"
             Margin="0,0,0,5"
-            HorizontalAlignment="Center">
+            HorizontalAlignment="Center"
+            d:IsLocked="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -161,12 +202,14 @@
             <!--  Defaults Button  -->
             <Button
                 Margin="5,0,40,0"
+                d:IsLocked="True"
                 Click="Defaults_OnClick"
                 Content="Defaults"
                 FontSize="14"
                 Style="{StaticResource Acme.Control.Button.DialogButton}" />
             <Button
                 Grid.Column="1"
+                d:IsLocked="True"
                 Click="Save_OnClick"
                 Content="OK"
                 FontSize="14"
@@ -175,6 +218,7 @@
             <Button
                 Grid.Column="2"
                 Margin="0,0,5,0"
+                d:IsLocked="True"
                 Click="Cancel_OnClick"
                 Content="Cancel"
                 FontSize="14"
