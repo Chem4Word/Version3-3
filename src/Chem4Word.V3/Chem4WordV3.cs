@@ -73,6 +73,7 @@ namespace Chem4Word
         public bool OptionsReloadRequired = false;
 
         private ConfigWatcher _configWatcher;
+        private ReferenceKeeper _keeper;
 
         public bool LibraryState;
 
@@ -198,8 +199,6 @@ namespace Chem4Word
             Ribbon = ribbon;
         }
 
-        private ReferenceKeeper _keeper;
-
         private void C4WAddIn_Startup(object sender, EventArgs e)
         {
             var module = $"{MethodBase.GetCurrentMethod().Name}()";
@@ -213,7 +212,7 @@ namespace Chem4Word
                 var cmd = Environment.CommandLine.ToLower();
                 if (Ribbon != null && !cmd.Contains("-embedding"))
                 {
-                    var message = $"{module} started at {SafeDate.ToLongDate(DateTime.Now)}";
+                    var message = $"{module} started at {SafeDate.ToLongDate(DateTime.UtcNow)}";
                     Debug.WriteLine(message);
                     StartUpTimings.Add(message);
 
@@ -293,7 +292,7 @@ namespace Chem4Word
 
             try
             {
-                var message = $"{module} started at {SafeDate.ToLongDate(DateTime.Now)}";
+                var message = $"{module} started at {SafeDate.ToLongDate(DateTime.UtcNow)}";
 
                 Debug.WriteLine(message);
                 StartUpTimings.Add(message);
@@ -639,7 +638,8 @@ namespace Chem4Word
                     }
                 }
 
-                _configWatcher.Dispose();
+                _configWatcher?.Dispose();
+                _keeper?.Dispose();
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -694,7 +694,7 @@ namespace Chem4Word
         {
             var module = $"{MethodBase.GetCurrentMethod().Name}()";
             // http://www.codeproject.com/Articles/453778/Loading-Assemblies-from-Anywhere-into-a-New-AppDom
-            var message = $"{module} started at {SafeDate.ToLongDate(DateTime.Now)}";
+            var message = $"{module} started at {SafeDate.ToLongDate(DateTime.UtcNow)}";
             StartUpTimings.Add(message);
             Debug.WriteLine(message);
 

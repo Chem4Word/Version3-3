@@ -52,7 +52,7 @@ namespace Wpf.UI.Sandbox
             var template = (ControlTemplate)treeView.FindResource("Chem4WordTreeViewItemTemplate");
             var node = new TreeViewItem
             {
-                Header = $"{DateTime.Now:HH:mm:ss.fff}",
+                Header = $"{DateTime.UtcNow:HH:mm:ss.fff}",
                 Template = template,
                 // Don't add style if Black Item is required
                 Style = style,
@@ -67,7 +67,7 @@ namespace Wpf.UI.Sandbox
             {
                 var node = new TreeViewItem
                 {
-                    Header = $"{DateTime.Now:HH:mm:ss.fff}",
+                    Header = $"{DateTime.UtcNow:HH:mm:ss.fff}",
                     Template = item.Template,
                     // Don't add style if Black Item is required
                     Style = item.Style,

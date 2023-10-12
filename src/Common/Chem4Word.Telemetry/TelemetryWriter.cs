@@ -77,10 +77,10 @@ namespace Chem4Word.Telemetry
             try
             {
                 string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    $@"Chem4Word.V3\Telemetry\{SafeDate.ToIsoShortDate(DateTime.Now)}.log");
+                    $@"Chem4Word.V3\Telemetry\{SafeDate.ToIsoShortDate(DateTime.UtcNow)}.log");
                 using (StreamWriter w = File.AppendText(fileName))
                 {
-                    string logMessage = $"[{SafeDate.ToShortTime(DateTime.Now)}] {source} - {level} - {message}";
+                    string logMessage = $"[{SafeDate.ToShortTime(DateTime.UtcNow)}] {source} - {level} - {message}";
                     w.WriteLine(logMessage);
                 }
             }
@@ -354,7 +354,7 @@ namespace Chem4Word.Telemetry
             var processId = 666;
             var machineId = Guid.Empty.ToString("D");
             // This is updated automatically by Set-Assembly-Version.ps1
-            var versionNumber = "3.3.1.666";
+            var versionNumber = "3.3.2.666";
 
             try
             {

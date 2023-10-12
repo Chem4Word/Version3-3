@@ -292,7 +292,7 @@ namespace WinForms.TestHarness
                     var allAtoms = model.GetAllAtoms();
                     if (allAtoms.Any())
                     {
-                        var rnd = new Random(DateTime.Now.Millisecond);
+                        var rnd = new Random(DateTime.UtcNow.Millisecond);
 
                         var maxAtoms = allAtoms.Count;
                         int targetAtom = rnd.Next(0, maxAtoms);

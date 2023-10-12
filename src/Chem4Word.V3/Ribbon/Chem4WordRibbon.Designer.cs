@@ -250,7 +250,6 @@ namespace Chem4Word
             // HelpMenu
             // 
             this.HelpMenu.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.HelpMenu.Enabled = false;
             this.HelpMenu.Image = global::Chem4Word.Properties.Resources.Help;
             this.HelpMenu.Items.Add(this.ShowAbout);
             this.HelpMenu.Items.Add(this.ShowHome);
@@ -328,7 +327,7 @@ namespace Chem4Word
             this.Update.Image = global::Chem4Word.Properties.Resources.Shield_Good;
             this.Update.Label = "Update";
             this.Update.Name = "Update";
-            this.Update.ScreenTip = "About Chem4Word";
+            this.Update.ScreenTip = "Update Chem4Word";
             this.Update.ShowImage = true;
             this.Update.Visible = false;
             this.Update.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_Update);

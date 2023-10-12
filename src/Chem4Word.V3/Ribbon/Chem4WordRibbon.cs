@@ -2143,20 +2143,27 @@ namespace Chem4Word
                     Globals.Chem4WordV3.LoadOptions();
                 }
 
-                var behind = UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency);
-                if (Globals.Chem4WordV3.IsEndOfLife)
+                if (Globals.Chem4WordV3.SystemOptions != null)
                 {
-                    UserInteractions.InformUser("This version of Chem4Word is no longer supported");
-                }
-                else
-                {
-                    if (behind == 0)
+                    var behind = UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency);
+                    if (Globals.Chem4WordV3.IsEndOfLife)
                     {
-                        UserInteractions.InformUser("Your version of Chem4Word is the latest");
+                        UserInteractions.InformUser("This version of Chem4Word is no longer supported");
+                    }
+                    else
+                    {
+                        if (behind == 0)
+                        {
+                            UserInteractions.InformUser("Your version of Chem4Word is the latest");
+                        }
                     }
                 }
 
                 Globals.Chem4WordV3.EventsEnabled = true;
+            }
+            else
+            {
+                UserInteractions.InformUser("Unable to check for updates because Chem4Word has not been initialised.");
             }
 
             AfterButtonChecks(sender as RibbonButton);
@@ -2209,6 +2216,10 @@ namespace Chem4Word
 
                 Globals.Chem4WordV3.EventsEnabled = true;
             }
+            else
+            {
+                UserInteractions.InformUser("Unable to locate user manual because Chem4Word has not been initialised.");
+            }
 
             AfterButtonChecks(sender as RibbonButton);
         }
@@ -2251,7 +2262,9 @@ namespace Chem4Word
         private void OnClick_ButtonsDisabled(object sender, RibbonControlEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
             BeforeButtonChecks();
+
             if (Globals.Chem4WordV3.Telemetry != null)
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
@@ -2308,7 +2321,7 @@ namespace Chem4Word
                 }
                 else
                 {
-                    UserInteractions.InformUser("Chem4Word is disabled because no plug Ins were found.");
+                    UserInteractions.InformUser("System Info is unavailable because Chem4Word has not been initialised.");
                 }
             }
             catch (Exception ex)

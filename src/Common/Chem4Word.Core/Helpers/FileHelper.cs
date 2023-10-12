@@ -19,7 +19,7 @@ namespace Chem4Word.Core.Helpers
 
             if (addPrefix)
             {
-                destination = Path.Combine(directory.FullName, $"{SafeDate.ToIsoFilePrefix(DateTime.Now)} - {file.Name}");
+                destination = Path.Combine(directory.FullName, $"{SafeDate.ToIsoFilePrefix(DateTime.UtcNow)} - {file.Name}");
             }
 
             if (!File.Exists(destination))

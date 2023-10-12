@@ -370,7 +370,7 @@ namespace Chem4Word.Model2.Converters.MDL
             // Ss == scaling factors
             // E == Energy
             // R == registry number
-            writer.WriteLine($"  Chem4Wrd{SafeDate.ToMdlHeaderTime(DateTime.Now)}");
+            writer.WriteLine($"  Chem4Wrd{SafeDate.ToMdlHeaderTime(DateTime.UtcNow)}");
 
             // Line 3 - Comments (80)
             writer.WriteLine("");

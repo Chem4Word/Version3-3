@@ -3,6 +3,16 @@
 <ChangeLog>
     <Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>
     <Version>
+        <Number>3.3.2 Beta 2</Number>
+        <IsBeta>true</IsBeta>
+        <Released>12-Oct-2023</Released>
+        <Changes>
+            <Change>Ensure Help button is never disabled.</Change>
+            <Change>Add SketchEl file format support.</Change>
+        </Changes>
+        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.2.Beta.2.msi</Url>
+    </Version>
+    <Version>
         <Number>3.3.1 Beta 1</Number>
         <IsBeta>true</IsBeta>
         <Released>04-Oct-2023</Released>
@@ -12,8 +22,8 @@
             <Change>Fix Right Click Convert to chemistry issues</Change>
             <Change>Fix Windows 11 detection issue</Change>
             <Change>Update user manual</Change>
+            <Change>Private Beta of Chem4Word 2023 (V3.3)</Change>
         </Changes>
-        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.1.Beta.1.msi</Url>
     </Version>
     <Version>
         <Number>3.3.0 Alpha 0</Number>
@@ -32,7 +42,6 @@
             <Change>Add new Plug-In type (Driver) to manage multiple libraries</Change>
             <Change>Add new converter to model which reads/writes byte[] from Google protocol buffer of model</Change>
             <Change>Private Alpha of Chem4Word 2023 (V3.3)</Change>
-            <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
         </Changes>
     </Version>
     <EndOfLife>31-Dec-2345</EndOfLife>

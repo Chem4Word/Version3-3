@@ -120,12 +120,12 @@ namespace Chem4Word.Helpers
                         }
                         catch
                         {
-                            Globals.Chem4WordV3.VersionLastChecked = DateTime.Now.AddDays(-30);
+                            Globals.Chem4WordV3.VersionLastChecked = DateTime.UtcNow.AddDays(-30);
                         }
                     }
                     else
                     {
-                        Globals.Chem4WordV3.VersionLastChecked = DateTime.Now.AddDays(-30);
+                        Globals.Chem4WordV3.VersionLastChecked = DateTime.UtcNow.AddDays(-30);
                     }
 
                     if (names.Contains(Constants.RegistryValueNameVersionsBehind))
@@ -200,7 +200,7 @@ namespace Chem4Word.Helpers
                 }
                 else
                 {
-                    Globals.Chem4WordV3.VersionLastChecked = DateTime.Now.AddDays(-30);
+                    Globals.Chem4WordV3.VersionLastChecked = DateTime.UtcNow.AddDays(-30);
                     Globals.Chem4WordV3.VersionsBehind = 0;
                 }
             }
@@ -252,7 +252,7 @@ namespace Chem4Word.Helpers
                     if (expires != null)
                     {
                         var expiryDate = SafeDate.Parse(expires.Value);
-                        if (DateTime.Now.ToUniversalTime() > expiryDate)
+                        if (DateTime.UtcNow > expiryDate)
                         {
                             Globals.Chem4WordV3.IsEndOfLife = true;
                             registryKey?.SetValue(Constants.RegistryValueNameEndOfLife, "true");
