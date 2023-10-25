@@ -417,7 +417,7 @@ namespace Chem4Word.Model2
             }
             else
             {
-                bonds = GetAllBonds().Where(b => !b.IsHBond()).ToList();
+                bonds = GetAllBonds().Where(b => !b.IsBondToH()).ToList();
             }
 
             var lengths = new List<double>(bonds.Count);

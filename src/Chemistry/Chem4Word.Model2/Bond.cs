@@ -360,7 +360,20 @@ namespace Chem4Word.Model2
 
         public bool IsCyclic() => Rings.Any();
 
-        public bool IsHBond() => (Element)StartAtom.Element == Globals.PeriodicTable.H || (Element)EndAtom.Element == Globals.PeriodicTable.H;
+        public bool IsBondToH()
+        {
+            bool startAtomIsH = false;
+            bool endAtomIsH = false;
+            if (StartAtom.Element is Element e1)
+            {
+                startAtomIsH = e1 == Globals.PeriodicTable.H;
+            }
+            if (EndAtom.Element is Element e2)
+            {
+                endAtomIsH = e2 == Globals.PeriodicTable.H;
+            }
+            return startAtomIsH || endAtomIsH;
+        }
 
         public Vector? GetPrettyCyclicDoubleBondVector()
         {
