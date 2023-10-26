@@ -10,7 +10,9 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Telemetry;
 using IChem4Word.Contracts;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Chem4Word.WebServices
@@ -51,6 +53,18 @@ namespace Chem4Word.WebServices
             if (apiResult.Success)
             {
                 data = JsonConvert.DeserializeObject<ChemicalServicesResult>(apiResult.Json);
+                if (data != null)
+                {
+                    if (data.Messages.Any())
+                    {
+                        Telemetry.Write(module, "Timing", string.Join(Environment.NewLine, data.Messages));
+                    }
+
+                    if (data.Errors.Any())
+                    {
+                        Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, data.Errors));
+                    }
+                }
             }
             else
             {
