@@ -181,6 +181,7 @@ namespace Chem4Word.UI.WPF
                         var afterCml = editor.Cml;
 
                         var pc = new WebServices.PropertyCalculator(_telemetry, topLeft, Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
+                        afterModel.CreatorGuid = Globals.Chem4WordV3.Helper.MachineId;
                         pc.CalculateProperties(afterModel);
 
                         using (var editLabelsHost =
@@ -909,6 +910,7 @@ namespace Chem4Word.UI.WPF
                             model = protocolBufferConverter.Import(obj.Chemistry);
                         }
 
+                        model.CreatorGuid = Globals.Chem4WordV3.Helper.MachineId;
                         var changed = pc.CalculateProperties(model, showProgress: false);
                         if (changed > 0)
                         {

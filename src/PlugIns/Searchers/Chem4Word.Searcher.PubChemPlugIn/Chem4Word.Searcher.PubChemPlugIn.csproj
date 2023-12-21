@@ -142,9 +142,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Images\ArrowLeft.png" />
-    <Content Include="Resources\Images\ArrowRight.png" />
-    <Content Include="Resources\Images\PubChem-Logo.png" />
+    <None Include="Resources\Images\ArrowLeft.png" />
+    <None Include="Resources\Images\ArrowRight.png" />
+    <None Include="Resources\Images\PubChem-Logo.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -89,6 +89,11 @@
   <ItemGroup>
     <Compile Include="ExampleOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Searcher.cs" />
     <Compile Include="ExampleSettings.cs">
       <SubType>Form</SubType>
@@ -104,6 +109,10 @@
     <EmbeddedResource Include="ExampleSettings.resx">
       <DependentUpon>ExampleSettings.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Chem4Word.Core\Chem4Word.Core.csproj">
@@ -114,6 +123,9 @@
       <Project>{bdfee6c1-3f34-4200-9100-c543bf4c3783}</Project>
       <Name>Chem4Word.Contracts</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Images\Search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

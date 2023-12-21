@@ -994,6 +994,7 @@ namespace WinForms.TestHarness
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            model.CreatorGuid = $"TH:{Guid.NewGuid():D}";
             var changedProperties = pc.CalculateProperties(model);
 
             stopwatch.Stop();

@@ -142,7 +142,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Images\Opsin-Logo.png" />
+    <None Include="Resources\Images\Opsin-Logo.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

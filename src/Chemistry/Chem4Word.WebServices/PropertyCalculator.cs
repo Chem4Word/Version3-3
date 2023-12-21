@@ -54,6 +54,7 @@ namespace Chem4Word.WebServices
             var paths = new Dictionary<string, string>();
 
             var tempModel = new Model();
+            tempModel.CreatorGuid = inputModel.CreatorGuid;
 
             var inputMolecules = inputModel.GetAllMolecules();
 

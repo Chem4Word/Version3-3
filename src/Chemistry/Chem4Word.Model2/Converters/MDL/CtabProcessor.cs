@@ -76,13 +76,13 @@ namespace Chem4Word.Model2.Converters.MDL
             return result;
         }
 
-        public void ExportToStream(List<Atom> atoms, List<Bond> bonds, StreamWriter writer)
+        public void ExportToStream(StreamWriter writer, List<Atom> atoms, List<Bond> bonds, string creator)
         {
             atomByNumber = new Dictionary<int, Atom>();
             bondByNumber = new Dictionary<int, Bond>();
             numberByAtom = new Dictionary<Atom, int>();
 
-            WriteHeader(writer, atoms.Count, bonds.Count);
+            WriteHeader(writer, atoms.Count, bonds.Count, creator);
             WriteAtoms(writer, atoms);
             WriteBonds(writer, bonds);
             WriteProperties(writer, atoms);
@@ -344,16 +344,7 @@ namespace Chem4Word.Model2.Converters.MDL
 
         #region Exporting From Model
 
-        //private void WriteCtab(StreamWriter writer)
-        //{
-        //    WriteHeader(writer);
-        //    WriteAtoms(writer);
-        //    WriteBonds(writer);
-        //    WriteProperties(writer);
-        //    writer.WriteLine(MDLConstants.M_END);
-        //}
-
-        private void WriteHeader(StreamWriter writer, int atoms, int bonds)
+        private void WriteHeader(StreamWriter writer, int atoms, int bonds, string creator)
         {
             // Line 1 - Molecule Name (80)
             writer.WriteLine("");
@@ -373,7 +364,7 @@ namespace Chem4Word.Model2.Converters.MDL
             writer.WriteLine($"  Chem4Wrd{SafeDate.ToMdlHeaderTime(DateTime.UtcNow)}");
 
             // Line 3 - Comments (80)
-            writer.WriteLine("");
+            writer.WriteLine(Truncate80(creator));
 
             // Counts line
             // 01234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -387,6 +378,20 @@ namespace Chem4Word.Model2.Converters.MDL
             // m == number of additional properties
             // v == version number
             writer.WriteLine($"{OutputMDLInt(atoms)}{OutputMDLInt(bonds)}  0     0  0              0 V2000");
+        }
+
+        private string Truncate80(string info)
+        {
+            string result = string.Empty;
+
+            if (!string.IsNullOrEmpty(info))
+            {
+                result = info.Length > 80
+                    ? info.Substring(0, 80)
+                    : info;
+            }
+
+            return result;
         }
 
         private void WriteAtoms(StreamWriter writer, List<Atom> atoms)
@@ -649,25 +654,6 @@ namespace Chem4Word.Model2.Converters.MDL
             }
         }
 
-        //private void WriteProperties(StreamWriter writer)
-        //{
-        //    string p = CreateAtomPropertyLine(MDLConstants.M_CHG);
-        //    if (!string.IsNullOrEmpty(p))
-        //    {
-        //        writer.WriteLine(p);
-        //    }
-        //    p = CreateAtomPropertyLine(MDLConstants.M_ISO);
-        //    if (!string.IsNullOrEmpty(p))
-        //    {
-        //        writer.WriteLine(p);
-        //    }
-        //    p = CreateAtomPropertyLine(MDLConstants.M_RAD);
-        //    if (!string.IsNullOrEmpty(p))
-        //    {
-        //        writer.WriteLine(p);
-        //    }
-        //}
-
         #endregion Exporting From Model
 
         private string CreateAtomPropertyLines(string propertyType, List<Atom> atoms)
@@ -695,17 +681,17 @@ namespace Chem4Word.Model2.Converters.MDL
                     spin = atom.SpinMultiplicity.Value;
                 }
 
-                if (propertyType == MDLConstants.M_CHG & fCharge != 0)
+                if (propertyType == MDLConstants.M_CHG && fCharge != 0)
                 {
                     values.Add(atom.FormalCharge.Value);
                     atomNumbers.Add(atomNumber);
                 }
-                else if (propertyType == MDLConstants.M_ISO & isotope > 0.0001)
+                else if (propertyType == MDLConstants.M_ISO && isotope > 0.0001)
                 {
                     values.Add(atom.IsotopeNumber.Value);
                     atomNumbers.Add(atomNumber);
                 }
-                else if (propertyType == MDLConstants.M_RAD & spin > 0.0001)
+                else if (propertyType == MDLConstants.M_RAD && spin > 0.0001)
                 {
                     values.Add(atom.SpinMultiplicity.Value);
                     atomNumbers.Add(atomNumber);
@@ -716,9 +702,15 @@ namespace Chem4Word.Model2.Converters.MDL
 
             StringBuilder output = new StringBuilder();
 
+            var lineFeedRequired = false;
+
             for (int i = 0; i < (float)count / 8f; i++)
             {
                 int thisLineCount = (count - i * 8) > 8 ? 8 : count - i * 8;
+                if (lineFeedRequired)
+                {
+                    output.AppendLine("");
+                }
                 output.Append(propertyType + "  " + thisLineCount);
                 for (int j = 0; j < thisLineCount; j++)
                 {
@@ -726,6 +718,8 @@ namespace Chem4Word.Model2.Converters.MDL
                     string value = OutputMDLInt(values[j + i * 8]);
                     output.Append(" " + atomNumber + " " + value);
                 }
+
+                lineFeedRequired = true;
             }
 
             return output.ToString().TrimEnd();

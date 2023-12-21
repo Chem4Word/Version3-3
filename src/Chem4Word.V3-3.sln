@@ -42,6 +42,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Searcher.ChEBIPlugin", "PlugIns\Searchers\Chem4Word.Searcher.ChEBIPlugin\Chem4Word.Searcher.ChEBIPlugin.csproj", "{0EB3EFF1-FA71-4E65-8B4F-4C6FC632817B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Searcher.ExamplePlugIn", "PlugIns\Searchers\Chem4Word.Searcher.ExamplePlugIn\Chem4Word.Searcher.ExamplePlugIn.csproj", "{9CD3871B-9A42-497B-9004-77C42C856889}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7} = {1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}
+		{C69BAB8F-4881-4D5F-9929-FC8470DF1E48} = {C69BAB8F-4881-4D5F-9929-FC8470DF1E48}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Searcher.OpsinPlugIn", "PlugIns\Searchers\Chem4Word.Searcher.OpsinPlugIn\Chem4Word.Searcher.OpsinPlugIn.csproj", "{061F7B7B-89AE-4095-B3BB-B297F015A038}"
 EndProject

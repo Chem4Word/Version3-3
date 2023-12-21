@@ -822,6 +822,7 @@ namespace Chem4Word
                                             var pc = new WebServices.PropertyCalculator(Globals.Chem4WordV3.Telemetry,
                                                                                         Globals.Chem4WordV3.WordTopLeft,
                                                                                         Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
+                                            afterModel.CreatorGuid = Globals.Chem4WordV3.Helper.MachineId;
                                             var changedProperties = pc.CalculateProperties(afterModel);
 
                                             if (isNewDrawing)
@@ -1403,15 +1404,18 @@ namespace Chem4Word
                     {
                         foreach (var searcher in Globals.Chem4WordV3.Searchers.OrderBy(s => s.DisplayOrder))
                         {
-                            var ribbonButton = this.Factory.CreateRibbonButton();
+                            if (searcher.DisplayOrder >= 0)
+                            {
+                                var ribbonButton = this.Factory.CreateRibbonButton();
 
-                            ribbonButton.Label = searcher.ShortName;
-                            ribbonButton.Tag = searcher.Name;
-                            ribbonButton.SuperTip = searcher.Description;
-                            ribbonButton.Image = searcher.Image;
-                            ribbonButton.Click += OnClick_Searcher;
+                                ribbonButton.Label = searcher.ShortName;
+                                ribbonButton.Tag = searcher.Name;
+                                ribbonButton.SuperTip = searcher.Description;
+                                ribbonButton.Image = searcher.Image;
+                                ribbonButton.Click += OnClick_Searcher;
 
-                            WebSearchMenu.Items.Add(ribbonButton);
+                                WebSearchMenu.Items.Add(ribbonButton);
+                            }
                         }
                     }
                 }

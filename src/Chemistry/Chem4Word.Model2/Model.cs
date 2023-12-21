@@ -622,6 +622,7 @@ namespace Chem4Word.Model2
             }
         }
 
+        public string CreatorGuid { get; set; }
         public void SetXamlBondLength(int bondLength)
         {
             XamlBondLength = bondLength;

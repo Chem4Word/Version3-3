@@ -309,10 +309,6 @@ namespace Chem4Word.Telemetry
                             {
                                 result = thisTime;
                             }
-                            else
-                            {
-                                Debugger.Break();
-                            }
                         }
 
                         eventInstance = elReader.ReadEvent();
