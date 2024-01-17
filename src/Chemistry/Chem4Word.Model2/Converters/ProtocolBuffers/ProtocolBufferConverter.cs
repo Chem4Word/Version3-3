@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2023, The .NET Foundation.
+//  Copyright (c) 2024, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -383,11 +383,17 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     Order = bond.Order,
                     Stereo = (Enums.BondStereo)bond.Stereo,
                     Parent = newMol,
-                    // ToDo: Need to add placement here
                     ExplicitPlacement = (Enums.BondDirection?)bond.Placement
                 };
 
-                newMol.AddBond(newBond);
+                if (!newBond.StartAtomInternalId.Equals(newBond.EndAtomInternalId))
+                {
+                    newMol.AddBond(newBond);
+                }
+                else
+                {
+                    newMol.Warnings.Add($"Bond line {newBond.Id} - Skipped as StartAtom == EndAtom");
+                }
             }
 
             foreach (var ring in molval.Rings)

@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2023, The .NET Foundation.
+//  Copyright (c) 2024, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -10,6 +10,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Editor.ACME;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Converters.JSON;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Model2.Converters.SketchEl;
@@ -80,11 +81,12 @@ namespace WinForms.TestHarness
                 Model model = null;
 
                 StringBuilder sb = new StringBuilder();
-                sb.Append("All molecule files (*.mol, *.sdf, *.cml, *.xml, *.el)|*.mol;*.sdf;*.cml;*.xml;*.el");
+                sb.Append("All molecule files (*.cml, *.xml, *.mol, *.sdf, *.json, *.pbuff, *.el)|*.cml;*.xml;*.mol;*.sdf;*.json;*.pbuff;*.el");
                 sb.Append("|CML molecule files (*.cml, *.xml)|*.cml;*.xml");
                 sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
-                sb.Append("|SketchEl molecule files (*.el)|*.el");
+                sb.Append("|ChemDoodle Web json files (*.json)|*.json");
                 sb.Append("|Protocol Buffer (*.pbuff)|*.pbuff");
+                sb.Append("|SketchEl molecule files (*.el)|*.el");
 
                 openFileDialog1.Title = "Open Structure";
                 openFileDialog1.InitialDirectory = Environment.SpecialFolder.MyDocuments.ToString();
@@ -127,6 +129,15 @@ namespace WinForms.TestHarness
                             elapsed1 = stopwatch.Elapsed;
                             break;
 
+                        case ".json":
+                            stopwatch = new Stopwatch();
+                            stopwatch.Start();
+                            var jsonConvertor = new JSONConverter();
+                            model = jsonConvertor.Import(mol);
+                            stopwatch.Stop();
+                            elapsed1 = stopwatch.Elapsed;
+                            break;
+
                         case ".el":
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
@@ -154,6 +165,7 @@ namespace WinForms.TestHarness
                     {
                         if (model.AllWarnings.Count > 0)
                         {
+                            _telemetry.Write(module, "Warnings", string.Join(Environment.NewLine, model.AllWarnings));
                             MessageBox.Show(string.Join(Environment.NewLine, model.AllWarnings), "Model has warnings!");
                         }
 
@@ -189,7 +201,8 @@ namespace WinForms.TestHarness
                         }
                         else
                         {
-                            MessageBox.Show(string.Join(Environment.NewLine, model.AllErrors), "Model has errors!");
+                            _telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.AllErrors));
+                            MessageBox.Show(string.Join(Environment.NewLine, model.AllErrors), "Model has Errors!");
                         }
                     }
                 }
@@ -408,10 +421,11 @@ namespace WinForms.TestHarness
             {
                 if (model.AllErrors.Any())
                 {
-                    var lines = new List<string>();
+                    List<string> lines = new List<string>();
+
                     if (model.AllErrors.Any())
                     {
-                        lines.Add("Error(s)");
+                        lines.Add("All Error(s)");
                         lines.AddRange(model.AllErrors);
                     }
 
@@ -629,9 +643,16 @@ namespace WinForms.TestHarness
                 Model m = cmlConverter.Import(_lastCml);
                 m.CustomXmlPartGuid = "";
 
-                string filter = "CML molecule files (*.cml, *.xml)|*.cml;*.xml|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf|Protocol Buffers (*.pbuff)|*.pbuff|SketchEl (*.el)|*.el";
-                using (SaveFileDialog sfd = new SaveFileDialog { Filter = filter })
+                StringBuilder sb = new StringBuilder();
+                sb.Append("CML molecule files (*.cml, *.xml)|*.cml;*.xml");
+                sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
+                sb.Append("|ChemDoodle Web json files (*.json)|*.json");
+                sb.Append("|Protocol Buffers (*.pbuff)|*.pbuff");
+                sb.Append("|SketchEl (*.el)|*.el");
+
+                using (SaveFileDialog sfd = new SaveFileDialog { Filter = sb.ToString() })
                 {
+                    sfd.AddExtension = true;
                     DialogResult dr = sfd.ShowDialog();
                     if (dr == DialogResult.OK)
                     {
@@ -660,6 +681,11 @@ namespace WinForms.TestHarness
                             case ".el":
                                 var sketchElConverter = new SketchElConverter();
                                 File.WriteAllText(sfd.FileName, sketchElConverter.Export(m));
+                                break;
+
+                            case ".json":
+                                var jsonConverter = new JSONConverter();
+                                File.WriteAllText(sfd.FileName, jsonConverter.Export(m));
                                 break;
 
                             case ".pbuff":

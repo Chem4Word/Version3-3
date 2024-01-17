@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2023, The .NET Foundation.
+//  Copyright (c) 2024, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -440,8 +440,15 @@ namespace Chem4Word.Model2.Converters.SketchEl
                         }
                     }
 
-                    molecule.AddBond(bond);
-                    bond.Parent = molecule;
+                    if (!bond.StartAtomInternalId.Equals(bond.EndAtomInternalId))
+                    {
+                        molecule.AddBond(bond);
+                        bond.Parent = molecule;
+                    }
+                    else
+                    {
+                        molecule.Warnings.Add($"Bond line #{index} - Skipped as StartAtom == EndAtom");
+                    }
                 }
                 else
                 {
