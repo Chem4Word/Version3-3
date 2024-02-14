@@ -3,15 +3,17 @@
 <ChangeLog>
     <Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>
     <Version>
-        <Number>3.3.3 Beta 3</Number>
-        <IsBeta>true</IsBeta>
-        <Released>10-Jan-2024</Released>
+        <Number>3.3.3 Release 1</Number>
+        <IsBeta>false</IsBeta>
+        <Released>14-Feb-2024</Released>
         <Changes>
+            <Change>UX: Add better instructions regarding purchase and download of a library</Change>
+            <Change>UX: Allow user to cancel bulk calculate properties of a library</Change>
             <Change>Internal: Replace seed libraries with patched versions</Change>
             <Change>I/O: Remove invalid bond(s) which have the same start and end atoms on import</Change>
             <Change>ACME: Prevent creation of new invalid bond(s) which have the same start and end atoms</Change>
         </Changes>
-        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.3.Beta.3.msi</Url>
+        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.3.Release.1.msi</Url>
     </Version>
     <Version>
         <Number>3.3.2 Beta 2</Number>

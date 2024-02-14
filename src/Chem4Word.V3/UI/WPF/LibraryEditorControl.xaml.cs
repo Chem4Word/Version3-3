@@ -880,6 +880,7 @@ namespace Chem4Word.UI.WPF
             try
             {
                 SetButtonStates(false);
+                Cancel.IsEnabled = true;
 
                 var dto = _driver.GetAllChemistry();
                 int total = dto.Count;
@@ -938,9 +939,17 @@ namespace Chem4Word.UI.WPF
 
                             updated++;
                         }
+
+                        if (_cancelRequested)
+                        {
+                            break;
+                        }
                     }
 
                     _driver.CommitTransaction();
+
+                    Cancel.IsEnabled = false;
+                    _cancelRequested = false;
 
                     _telemetry.Write(module, "Information", $"Updated properties for {updated}/{total} structures");
                 }
@@ -1172,6 +1181,13 @@ namespace Chem4Word.UI.WPF
 
                 _lastTags = tags;
             }
+        }
+
+        private bool _cancelRequested = false;
+
+        private void OnClick_CancelButton(object sender, RoutedEventArgs e)
+        {
+            _cancelRequested = true;
         }
     }
 }

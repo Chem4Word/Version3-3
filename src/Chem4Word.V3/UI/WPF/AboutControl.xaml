@@ -56,27 +56,29 @@
                 TextWrapping="Wrap"><Run Text="The Chemistry Add-In for Word " /><Run Text="originated from" /><Run Text=" Microsoft Research and the University of Cambridge" /><Run Text=", to" /><Run Text=" " /><Run Text="add chemistry to " /><Run Text="Word documents.  " /><LineBreak /><Run /><LineBreak /><Run Text="The Add-In is now being further developed by a small, independent project team " /><Run Text="based in the UK" /><Run Text=" (Andy Wright, Clyde Davies &amp; Mike Williams)" /><Run Text=".  " /><LineBreak /><Run /><LineBreak /><Run Text="The Chem4Word Project" /><Run Text=" " /><Run Text="accurately " /><Run Text="capture" /><Run Text="s" /><Run Text=" and retain" /><Run Text="s semantic chemistry" /><Run Text=" " /><Run Text="as you author a document. This" /><Run Text=" simplifies" /><Run Text=" pre-publication and " /><Run Text="rich " /><Run Text="information discovery scenarios, " /><Run Text="and " /><Run Text="preserve" /><Run Text="s" /><Run Text=" " /><Run Text="chemistry" /><Run Text=" for archival" /><Run Text="." /><LineBreak /><Run /><LineBreak /><Run Text="Chem4Word uses " /><Run Text="Chemical Markup Language" /><Run Language="en-gb" Text=" (CML)" /><Run Text=" - an open standard." /></TextBlock>
             <DockPanel Margin="5" LastChildFill="True" />
             <TextBlock Margin="5,0,0,0">
-                <Hyperlink Click="OnTeamsiteLinkClicked">Visit the Project web site</Hyperlink>
+                <Hyperlink Click="OnClick_MainWebsite">Visit the project's website</Hyperlink>
             </TextBlock>
             <TextBlock Margin="5,0,0,0">
-                <Hyperlink Click="OnSourceCodeLinkClicked">Visit our GitHub repository to view the source code</Hyperlink>
+                <Hyperlink Click="OnClick_SourceCode">Visit the project's GitHub repository to view the source code</Hyperlink>
             </TextBlock>
             <TextBlock Margin="5,0,0,0">
-                <Hyperlink Click="OnYouTubeLinkClicked">See our tutorials on YouTube</Hyperlink>
+                <Hyperlink Click="OnClick_YouTube">See our tutorials on YouTube</Hyperlink>
             </TextBlock>
             <TextBlock Margin="5,0,0,0">
-                <Hyperlink Click="OnSponsorLinkClicked">Visit our page on our sponsor's web site (The .NET Foundation)</Hyperlink>
+                <Hyperlink Click="OnClick_Sponsor">Visit our page on our sponsor's web site (The .NET Foundation)</Hyperlink>
             </TextBlock>
             <TextBlock Margin="5,0,0,0">
-                <Hyperlink Click="OnCambridgeLinkClicked">Visit the University of Cambridge Chemistry Department</Hyperlink>
+                <Hyperlink Click="OnClick_Cambridge">Visit the University of Cambridge Chemistry Department</Hyperlink>
             </TextBlock>
             <TextBlock
                 Margin="5"
                 Foreground="Black"
                 TextAlignment="Justify"
-                TextWrapping="Wrap"><Run Text="The Chemistry Add-In for Microsoft Word is " /><Run FontWeight="Bold" Text="free" /><Run Text=".  Your feedback is important to us" /><Run Language="en-gb" Text="!" /><Run Text=" Join our Facebook group to let us know if you have any suggestions or problems using it." /></TextBlock>
+                TextWrapping="Wrap">
+                <Run Text="The Chemistry Add-In for Microsoft Word is " /><Run FontWeight="Bold" Text="free" /><Run Text=". Your feedback is important to us!" /><Run Text=" Join our Facebook group and let us know if you have any suggestions or problems using it." />
+            </TextBlock>
             <TextBlock Margin="5,0,0,0">
-                <Hyperlink Click="OnFacebookLinkClicked">Join our Facebook Group</Hyperlink>
+                <Hyperlink Click="OnClick_Facebook">Join our Facebook Group</Hyperlink>
             </TextBlock>
         </StackPanel>
     </Grid>

@@ -649,6 +649,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock
                 Name="StatusBar"
@@ -668,11 +669,21 @@
             <TextBlock
                 x:Name="ProgressBarMessage"
                 Grid.Column="1"
-                Margin="5"
+                Margin="0, 5, 5, 5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 d:IsLocked="True"
                 Text="" />
+            <Button
+                x:Name="Cancel"
+                Grid.Column="2"
+                Width="45"
+                Margin="0, 5, 5, 5"
+                d:IsLocked="True"
+                Click="OnClick_CancelButton"
+                IsEnabled="False">
+                Cancel
+            </Button>
         </Grid>
     </Grid>
 </UserControl>
