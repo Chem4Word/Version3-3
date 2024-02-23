@@ -5233,11 +5233,14 @@ namespace Chem4Word.ACME
 
             try
             {
-                WriteTelemetry(module, "Debug", "Adding Annotation");
+                WriteTelemetry(module, "Debug", $"Adding Annotation '{text}'");
 
-                var newSymbol = new Annotation();
-                newSymbol.Position = pos;
-                newSymbol.IsEditable = isEditable;
+                var newSymbol = new Annotation
+                                {
+                                    Position = pos,
+                                    IsEditable = isEditable,
+                                    SymbolSize = Model.XamlBondLength * Globals.FontSizePercentageBond
+                                };
                 var docElement = new XElement(CMLNamespaces.xaml + "FlowDocument",
                                               new XElement(CMLNamespaces.xaml + "Paragraph",
                                                            new XElement(CMLNamespaces.xaml + "Run",

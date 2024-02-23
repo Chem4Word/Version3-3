@@ -272,6 +272,11 @@ namespace Chem4Word
         private void C4WAddIn_Shutdown(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
+            Debug.WriteLine("Starting Shutdown ...");
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             try
             {
                 if (Ribbon != null)
@@ -284,6 +289,9 @@ namespace Chem4Word
                 Debug.WriteLine($"{module} {exception.Message}");
                 RegistryHelper.StoreException(module, exception);
             }
+
+            stopwatch.Stop();
+            Debug.WriteLine($"Shutdown took {stopwatch.ElapsedMilliseconds:N0}ms");
         }
 
         private void SlowOperations()
@@ -593,8 +601,10 @@ namespace Chem4Word
 
             try
             {
+                Debug.WriteLine("Checking if Slow Operations thread is alive");
                 if (_slowOperationsThread != null)
                 {
+                    Debug.WriteLine("Joining Slow Operations thread");
                     _slowOperationsThread.Join();
                     if (_slowOperationsThread.IsAlive)
                     {
@@ -602,45 +612,56 @@ namespace Chem4Word
                     }
                 }
 
+                Debug.WriteLine("Shutting down Editor Plug Ins");
                 if (Editors != null)
                 {
                     for (var i = 0; i < Editors.Count; i++)
                     {
+                        Debug.WriteLine($" Shutting down {Editors[i].Name} Plug In");
                         Editors[i].Telemetry = null;
                         Editors[i] = null;
                     }
                 }
 
+                Debug.WriteLine("Shutting down Renderer Plug Ins");
                 if (Renderers != null)
                 {
                     for (var i = 0; i < Renderers.Count; i++)
                     {
+                        Debug.WriteLine($" Shutting down {Renderers[i].Name} Plug In");
                         Renderers[i].Telemetry = null;
                         Renderers[i] = null;
                     }
                 }
 
+                Debug.WriteLine("Shutting down Searcher Plug Ins");
                 if (Searchers != null)
                 {
                     for (var i = 0; i < Searchers.Count; i++)
                     {
+                        Debug.WriteLine($" Shutting down {Searchers[i].Name} Plug In");
                         Searchers[i].Telemetry = null;
                         Searchers[i] = null;
                     }
                 }
 
+                Debug.WriteLine("Shutting down Driver Plug Ins");
                 if (Drivers != null)
                 {
                     for (var i = 0; i < Drivers.Count; i++)
                     {
+                        Debug.WriteLine($" Shutting down {Drivers[i].Name} Plug In");
                         Drivers[i].Telemetry = null;
                         Drivers[i] = null;
                     }
                 }
 
+                Debug.WriteLine("Disposing of Config Watcher");
                 _configWatcher?.Dispose();
+                Debug.WriteLine("Disposing of Reference Keeper");
                 _keeper?.Dispose();
 
+                Debug.WriteLine("Waiting for garbage collection");
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
@@ -1860,19 +1881,11 @@ namespace Chem4Word
             }
         }
 
-        public void CloseLibrary()
-        {
-            LibraryState = false;
-            Ribbon.ShowLibrary.Checked = LibraryState;
-            if (Application.Documents.Count > 0)
-            {
-                HandleLibraryPane(Application.ActiveDocument, false, true);
-            }
-        }
-
         private void OnDocumentChange()
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
+            Debug.WriteLine("OnDocumentChange()");
 
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
@@ -2112,6 +2125,7 @@ namespace Chem4Word
         private void OnDocumentBeforeSave(Word.Document document, ref bool saveAsUi, ref bool cancel)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Debug.WriteLine($"OnDocumentBeforeSave({document.Name})");
 
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
@@ -2191,6 +2205,7 @@ namespace Chem4Word
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
+            Debug.WriteLine($"OnDocumentBeforeClose({document.Name})");
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
                 try
