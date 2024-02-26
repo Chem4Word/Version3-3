@@ -32,9 +32,12 @@ namespace Chem4Word.Model2
 
         public BondLengthStatistics(List<double> lengths)
         {
-            Mean = lengths.Average();
-            Mode = CalculateMode(lengths);
-            Median = CalculateMedian(lengths);
+            if (lengths.Count > 0)
+            {
+                Mean = lengths.Average();
+                Mode = CalculateMode(lengths);
+                Median = CalculateMedian(lengths);
+            }
         }
 
         private double CalculateMode(List<double> numbers)

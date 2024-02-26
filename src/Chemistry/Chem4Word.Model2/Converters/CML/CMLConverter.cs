@@ -97,6 +97,20 @@ namespace Chem4Word.Model2.Converters.CML
 
                 #endregion Handle 1D Labels
 
+                #region Fix any annotations without SymbolSize set
+
+                var symbolSize = Math.Round(newModel.MeanBondLength / 5.0) * 5;
+
+                foreach (var annotation in newModel.Annotations.Values)
+                {
+                    if (annotation.SymbolSize == 0)
+                    {
+                        annotation.SymbolSize = symbolSize;
+                    }
+                }
+
+                #endregion Fix any annotations without Symbol Size
+
                 // Calculate dynamic properties
                 newModel.Refresh();
             }
@@ -137,6 +151,18 @@ namespace Chem4Word.Model2.Converters.CML
             if (!string.IsNullOrEmpty(symbolSize))
             {
                 newAnnotation.SymbolSize = double.Parse(symbolSize);
+            }
+
+            string isEditable = cmlElement.Attribute(name: CMLConstants.AttributeIsEditable)?.Value;
+            if (!string.IsNullOrEmpty(isEditable))
+            {
+                newAnnotation.IsEditable = bool.Parse(isEditable);
+            }
+
+            // Bug found while fixing 1130, correct any imported '+' annotations to be not editable
+            if (newAnnotation.Xaml.Contains("<Run>+</Run>"))
+            {
+                newAnnotation.IsEditable = false;
             }
 
             return newAnnotation;

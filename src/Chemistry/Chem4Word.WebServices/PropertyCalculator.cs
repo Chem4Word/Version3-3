@@ -60,34 +60,38 @@ namespace Chem4Word.WebServices
 
             foreach (var molecule in inputMolecules)
             {
-                var invalidBonds = new List<Bond>();
-                if (molecule.Bonds.Any())
-                {
-                    invalidBonds = molecule.Bonds.Where(b => b.OrderValue != null && (CtabProcessor.MdlBondType(b.Order) < 1 || CtabProcessor.MdlBondType(b.Order) > 4)).ToList();
-                }
-
-                var maxAtomicNumber = 0;
-                var minAtomicNumber = 999;
-
-                foreach (var atom in molecule.Atoms.Values)
-                {
-                    if (atom.Element is Element element)
-                    {
-                        maxAtomicNumber = Math.Max(maxAtomicNumber, element.AtomicNumber);
-                        minAtomicNumber = Math.Min(minAtomicNumber, element.AtomicNumber);
-                    }
-                }
-
-                // If Count Atoms > 0 - can add
-                // If Molecule has Functional Groups - don't add
-                // If Molecule only has CtabProcessor.MdlBondType(b.Order) between 1 and 4 - can add
-                // If Molecule has Atomic Numbers between 1 and 118 - can add
-
+                // Only consider molecules with at least one atom
                 if (molecule.Atoms.Count > 0)
                 {
+                    var invalidBonds = new List<Bond>();
+                    if (molecule.Bonds.Any())
+                    {
+                        invalidBonds = molecule.Bonds.Where(b => b.OrderValue != null && (CtabProcessor.MdlBondType(b.Order) < 1 || CtabProcessor.MdlBondType(b.Order) > 4)).ToList();
+                    }
+
+                    var maxAtomicNumber = 0;
+                    var minAtomicNumber = 999;
+                    var maxBonds = 0;
+
+                    foreach (var atom in molecule.Atoms.Values)
+                    {
+                        if (atom.Element is Element element)
+                        {
+                            maxAtomicNumber = Math.Max(maxAtomicNumber, element.AtomicNumber);
+                            minAtomicNumber = Math.Min(minAtomicNumber, element.AtomicNumber);
+                        }
+
+                        maxBonds = Math.Max(maxBonds, atom.Bonds.Count());
+                    }
+
+                    // If Molecule has any Functional Groups - don't add
+                    // If Molecule only has CtabProcessor.MdlBondType(b.Order) between 1 and 4 - can add
+                    // If all the Molecule's atoms are elements that have Atomic Numbers between 1 and 118 - can add
+                    // If all the Molecule's atoms have <= 20 bonds - can add
                     if (!molecule.HasFunctionalGroups
                         && invalidBonds.Count == 0
-                        && minAtomicNumber > 0 && maxAtomicNumber < 118)
+                        && minAtomicNumber > 0 && maxAtomicNumber <= 118
+                        && maxBonds <= 20)
                     {
                         var temp = molecule.Copy();
                         tempModel.AddMolecule(temp);

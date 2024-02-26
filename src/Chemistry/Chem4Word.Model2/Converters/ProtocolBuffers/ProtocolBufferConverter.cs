@@ -221,7 +221,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 IsEditable = annValue.IsEditable,
                 Position = new PBPoint { X = annValue.Position.X, Y = annValue.Position.Y },
                 Xaml = annValue.Xaml,
-                SymbolSize = annValue.SymbolSize.Value
+                SymbolSize = annValue.SymbolSize
             };
 
         /// <summary>

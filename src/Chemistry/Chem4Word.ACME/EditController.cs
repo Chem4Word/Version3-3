@@ -1853,31 +1853,35 @@ namespace Chem4Word.ACME
                 var centre = new Point(Model.BoundingBoxWithFontSize.Left + Model.BoundingBoxWithFontSize.Width / 2,
                                        Model.BoundingBoxWithFontSize.Top + Model.BoundingBoxWithFontSize.Height / 2);
 
-                Action redoAction = () =>
+                Action redo = () =>
                                     {
                                         Model.ScaleToAverageBondLength(newLength, centre);
                                         SetTextParams(newLength);
+                                        Model.SetAnnotationSize(newLength / ScaleFactorForXaml);
                                         RefreshMolecules(Model.Molecules.Values.ToList());
                                         RefreshReactions(Model.DefaultReactionScheme.Reactions.Values.ToList());
+                                        RefreshAnnotations(Model.Annotations.Values.ToList());
                                         Loading = true;
                                         CurrentBondLength = newLength / ScaleFactorForXaml;
                                         Loading = false;
                                     };
-                Action undoAction = () =>
+                Action undo = () =>
                                     {
                                         Model.ScaleToAverageBondLength(currentLength, centre);
                                         SetTextParams(currentSelection);
+                                        Model.SetAnnotationSize(currentSelection / ScaleFactorForXaml);
                                         RefreshMolecules(Model.Molecules.Values.ToList());
                                         RefreshReactions(Model.DefaultReactionScheme.Reactions.Values.ToList());
+                                        RefreshAnnotations(Model.Annotations.Values.ToList());
                                         Loading = true;
                                         CurrentBondLength = currentSelection / ScaleFactorForXaml;
                                         Loading = false;
                                     };
 
                 UndoManager.BeginUndoBlock();
-                UndoManager.RecordAction(undoAction, redoAction);
+                UndoManager.RecordAction(undo, redo);
                 UndoManager.EndUndoBlock();
-                redoAction();
+                redo();
             }
             catch (Exception exception)
             {
@@ -2755,6 +2759,14 @@ namespace Chem4Word.ACME
             }
 
             CheckModelIntegrity(module);
+        }
+
+        private void RefreshAnnotations(List<Annotation> annotations)
+        {
+            foreach (var annotation in annotations)
+            {
+                annotation.UpdateVisual();
+            }
         }
 
         private void RefreshMolecules(List<Molecule> mols)
@@ -5218,7 +5230,6 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Adding floating symbol '{symbolText}'");
                 AddAnnotation(pos, symbolText, false);
             }
             catch (Exception exception)
@@ -5239,18 +5250,18 @@ namespace Chem4Word.ACME
                                 {
                                     Position = pos,
                                     IsEditable = isEditable,
-                                    SymbolSize = Model.XamlBondLength * Globals.FontSizePercentageBond
-                                };
+                                    SymbolSize = BlockTextSize
+                };
                 var docElement = new XElement(CMLNamespaces.xaml + "FlowDocument",
                                               new XElement(CMLNamespaces.xaml + "Paragraph",
                                                            new XElement(CMLNamespaces.xaml + "Run",
                                                                         text)));
                 newSymbol.Xaml = docElement.CreateNavigator().OuterXml;
+
                 Action redo = () =>
                               {
                                   Model.AddAnnotation(newSymbol);
                               };
-
                 Action undo = () =>
                               {
                                   Model.RemoveAnnotation(newSymbol);

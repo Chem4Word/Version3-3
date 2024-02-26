@@ -334,53 +334,6 @@ namespace Chem4Word.Model2
             }
         }
 
-        /// <summary>
-        /// Lowest atomic number of any atom (if element) in all molecules
-        /// </summary>
-        public int MinAtomicNumber
-        {
-            get
-            {
-                // This number is used because it is higher than the Maximum value in the periodic table
-                int min = 255;
-
-                var allAtoms = GetAllAtoms();
-
-                foreach (var atom in allAtoms)
-                {
-                    if (atom.Element is Element e)
-                    {
-                        min = Math.Min(min, e.AtomicNumber);
-                    }
-                }
-
-                return min;
-            }
-        }
-
-        /// <summary>
-        /// Highest atomic number of any atom (if element) in all molecules
-        /// </summary>
-        public int MaxAtomicNumber
-        {
-            get
-            {
-                int max = 0;
-
-                var allAtoms = GetAllAtoms();
-
-                foreach (var atom in allAtoms)
-                {
-                    if (atom.Element is Element e)
-                    {
-                        max = Math.Max(max, e.AtomicNumber);
-                    }
-                }
-
-                return max;
-            }
-        }
-
         public int TotalMoleculesCount
         {
             get
@@ -1125,6 +1078,14 @@ namespace Chem4Word.Model2
             }
 
             return result;
+        }
+
+        public void SetAnnotationSize(double newSize)
+        {
+            foreach (var annotation in Annotations)
+            {
+                annotation.Value.SymbolSize = newSize;
+            }
         }
 
         public void ScaleToAverageBondLength(double newLength, Point centre)

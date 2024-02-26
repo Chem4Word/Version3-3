@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media.TextFormatting;
 using System.Xml.Linq;
@@ -80,12 +81,14 @@ namespace Chem4Word.ACME.Drawing.Text
 
         public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit)
         {
-            throw new System.NotImplementedException();
+            Debugger.Break();
+            return null;
         }
 
         public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex)
         {
-            throw new System.NotImplementedException();
+            Debugger.Break();
+            return 0;
         }
 
         public override TextRun GetTextRun(int textSourceCharacterIndex)

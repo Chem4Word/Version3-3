@@ -691,7 +691,7 @@ namespace Chem4Word.ACME.Controls
             }
             ChemicalVisuals[annotation] = new AnnotationVisual(annotation)
             {
-                TextSize = annotation.SymbolSize ?? Controller.BlockTextSize,
+                TextSize = annotation.SymbolSize,
                 ScriptSize = TextSize * Controller.ScriptScalingFactor
             };
             av = (AnnotationVisual)ChemicalVisuals[annotation];

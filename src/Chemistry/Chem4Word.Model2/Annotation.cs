@@ -82,7 +82,7 @@ namespace Chem4Word.Model2
         }
 
         private int EstLength { get; set; }
-        public double? SymbolSize { get; set; }
+        public double SymbolSize { get; set; }
 
         #endregion Properties
 
@@ -92,7 +92,6 @@ namespace Chem4Word.Model2
         {
             InternalId = Guid.NewGuid();
             Id = InternalId.ToString("D");
-            IsEditable = true;
         }
 
         #endregion Constructors

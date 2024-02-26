@@ -10,7 +10,7 @@
             <Change>...</Change>
             <Change>...</Change>
             <Change>...</Change>
-            <Change>BugFix: NPE during save to library if structure has '+' annotation</Change>
+            <Change>BugFix: Prevent Exception during save to library if structure has '+' annotation</Change>
             <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
             <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
         </Changes>

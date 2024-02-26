@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Model2.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,7 +24,6 @@ namespace Chem4Word.Model2
         public string Id { get; set; }
         public Guid InternalId { get; internal set; }
         public Model Parent { get; set; }
-        public IChemistryContainer Root => throw new NotImplementedException();
 
         public string Path
         {
@@ -125,12 +123,12 @@ namespace Chem4Word.Model2
 
         private void Reaction_ProductsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            //don't do anything for now
+            // Don't do anything for now
         }
 
         private void Reaction_ReactantsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            //don't do anything for now
+            // Don't do anything for now
         }
 
         public void ReLabel(ref int schemeCount, ref int reactionCount)
@@ -184,7 +182,7 @@ namespace Chem4Word.Model2
             {
                 if (string.IsNullOrEmpty(reaction.Id))
                 {
-                    //reaction.Id = GetNextId(Reactions, "r");
+                    // Don't do anything for now
                 }
             }
         }

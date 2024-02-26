@@ -7,7 +7,7 @@
 
 using Chem4Word.ACME.Adorners.Sketching;
 using Chem4Word.ACME.Controls;
-using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -51,8 +51,7 @@ namespace Chem4Word.ACME.Behaviors
 
         public bool Clashing
         {
-            get
-            { return _clashing; }
+            get => _clashing;
             private set
             {
                 _clashing = value;
@@ -103,7 +102,7 @@ namespace Chem4Word.ACME.Behaviors
 
         public override void Abort()
         {
-            throw new NotImplementedException();
+            Debugger.Break();
         }
 
         protected override void OnAttached()

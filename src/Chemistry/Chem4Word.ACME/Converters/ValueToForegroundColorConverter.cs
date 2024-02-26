@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -41,7 +42,8 @@ namespace Chem4Word.ACME.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
+            Debugger.Break();
+            return null;
         }
 
         #endregion IValueConverter Members
