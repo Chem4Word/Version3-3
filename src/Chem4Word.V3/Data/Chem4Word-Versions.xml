@@ -5,16 +5,14 @@
     <Version>
         <Number>3.3.4 Release 2</Number>
         <IsBeta>false</IsBeta>
-        <Released>28-Feb-2024</Released>
+        <Released>29-Feb-2024</Released>
         <Changes>
-            <Change>...</Change>
-            <Change>...</Change>
-            <Change>...</Change>
-            <Change>BugFix: Prevent Exception during save to library if structure has '+' annotation</Change>
+            <Change>Internal: Update NuGet Packages</Change>
+            <Change>BugFix: Prevent exception during save to library if structure has '+' annotation</Change>
             <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
             <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
         </Changes>
-        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.3.Release.1.msi</Url>
+        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.4.Release.2.msi</Url>
     </Version>
     <Version>
         <Number>3.3.3 Release 1</Number>
@@ -27,7 +25,6 @@
             <Change>I/O: Remove invalid bond(s) which have the same start and end atoms on import</Change>
             <Change>ACME: Prevent creation of new invalid bond(s) which have the same start and end atoms</Change>
         </Changes>
-        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.3.Release.1.msi</Url>
     </Version>
     <Version>
         <Number>3.3.2 Beta 2</Number>

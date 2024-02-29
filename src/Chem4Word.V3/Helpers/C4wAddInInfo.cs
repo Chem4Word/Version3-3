@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security.AccessControl;
@@ -106,29 +107,32 @@ namespace Chem4Word.Helpers
                     // Do Nothing
                 }
 
-                // User PlugIns
-                var userPlugInsPath = Path.Combine(ProgramDataPath, "Plugins");
-                if (!Directory.Exists(userPlugInsPath))
-                {
-                    Directory.CreateDirectory(userPlugInsPath);
-                }
+                // User PlugIns - Remove old folders and files used to host previous closed driver
 
-                var userPlugInsUpdatePath = Path.Combine(userPlugInsPath, "Updates");
-                if (!Directory.Exists(userPlugInsUpdatePath))
-                {
-                    Directory.CreateDirectory(userPlugInsUpdatePath);
-                }
+                ClearFolder(Path.Combine(ProgramDataPath, "Plugins", "Updates"));
+                ClearFolder(Path.Combine(ProgramDataPath, "Plugins"));
 
-                var filesToUpdate = Directory.GetFiles(userPlugInsUpdatePath);
-                foreach (var file in filesToUpdate)
+                // Local Function
+                void ClearFolder(string folderPath)
                 {
-                    var info = new FileInfo(file);
-                    var target = Path.Combine(userPlugInsPath, info.Name);
-                    if (File.Exists(target))
+                    try
                     {
-                        File.Delete(target);
+                        if (Directory.Exists(folderPath))
+                        {
+                            var files = Directory.GetFiles(folderPath);
+                            foreach (var file in files)
+                            {
+                                Debug.WriteLine($"Deleting file {file}");
+                                File.Delete(file);
+                            }
+                            Debug.WriteLine($"Deleting folder {folderPath}");
+                            Directory.Delete(folderPath);
+                        }
                     }
-                    File.Move(file, target);
+                    catch
+                    {
+                        // Do Nothing
+                    }
                 }
 
                 // User Libraries

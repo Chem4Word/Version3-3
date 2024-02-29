@@ -192,18 +192,19 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <local:FormulaBlock
+                    <CheckBox
+                        Name="CheckBox"
                         Grid.Column="0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Margin="0,0,2,0"
+                        Click="CheckBox_OnClick"
+                        IsChecked="{Binding Path=IsChecked}" />
+                    <local:FormulaBlock
+                        Grid.Column="1"
                         FontFamily="Segoe UI"
                         Foreground="{StaticResource Chem4WordBlue}"
                         Formula="{Binding Path=Formula}" />
-                    <CheckBox
-                        Name="CheckBox"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Click="CheckBox_OnClick"
-                        IsChecked="{Binding Path=IsChecked}" />
                 </Grid>
                 <Expander
                     Grid.Row="1"

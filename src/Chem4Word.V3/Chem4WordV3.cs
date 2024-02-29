@@ -730,18 +730,6 @@ namespace Chem4Word
                 files = Directory.GetFiles(plugInPath, "Chem4Word*.dll").ToList();
             }
 
-            var userPlugInPath = Path.Combine(AddInInfo.ProgramDataPath, "PlugIns");
-            if (Directory.Exists(userPlugInPath))
-            {
-                foreach (var file in Directory.GetFiles(userPlugInPath, "Chem4Word*.dll"))
-                {
-                    if (!files.Contains(file))
-                    {
-                        files.Add(file);
-                    }
-                }
-            }
-
             var filesFound = files.Count;
 
             var plugInsFound = new List<string>();
@@ -1220,6 +1208,8 @@ namespace Chem4Word
                             Ribbon.ShowAsMenu.Enabled = false;
                             Ribbon.ShowNavigator.Enabled = false;
                             Ribbon.ShowLibrary.Enabled = false;
+                            Ribbon.BuyLibrary.Enabled = false;
+                            Ribbon.ManageLibraries.Enabled = false;
                             Ribbon.WebSearchMenu.Enabled = false;
                             Ribbon.SaveToLibrary.Enabled = false;
                             Ribbon.ArrangeMolecules.Enabled = false;
@@ -1236,6 +1226,8 @@ namespace Chem4Word
                             Ribbon.ShowAsMenu.Enabled = true;
                             Ribbon.ShowNavigator.Enabled = true;
                             Ribbon.ShowLibrary.Enabled = true;
+                            Ribbon.BuyLibrary.Enabled = true;
+                            Ribbon.ManageLibraries.Enabled = true;
                             Ribbon.WebSearchMenu.Enabled = false;
                             var canSave = false;
                             var details = GetSelectedDatabaseDetails();
@@ -1258,8 +1250,10 @@ namespace Chem4Word
                             Ribbon.ShowAsMenu.Enabled = false;
                             Ribbon.ShowNavigator.Enabled = true;
                             Ribbon.ShowLibrary.Enabled = true;
-                            Ribbon.WebSearchMenu.Enabled = plugInsLoaded && Searchers.Count > 0;
+                            Ribbon.BuyLibrary.Enabled = true;
+                            Ribbon.ManageLibraries.Enabled = true;
                             Ribbon.SaveToLibrary.Enabled = false;
+                            Ribbon.WebSearchMenu.Enabled = plugInsLoaded && Searchers.Count > 0;
                             Ribbon.ArrangeMolecules.Enabled = false;
                             Ribbon.ButtonsDisabled.Enabled = false;
                             break;
@@ -1279,8 +1273,10 @@ namespace Chem4Word
                         Ribbon.ShowAsMenu.Enabled = false;
                         Ribbon.ShowNavigator.Enabled = false;
                         Ribbon.ShowLibrary.Enabled = false;
-                        Ribbon.WebSearchMenu.Enabled = false;
                         Ribbon.SaveToLibrary.Enabled = false;
+                        Ribbon.BuyLibrary.Enabled = false;
+                        Ribbon.ManageLibraries.Enabled = false;
+                        Ribbon.WebSearchMenu.Enabled = false;
                         Ribbon.ArrangeMolecules.Enabled = false;
                         Ribbon.ButtonsDisabled.Enabled = true;
 
@@ -1913,7 +1909,7 @@ namespace Chem4Word
                             {
                                 Ribbon.ShowNavigator.Checked = false;
                                 Ribbon.ShowLibrary.Checked = LibraryState;
-                                Ribbon.ShowLibrary.Label = Ribbon.ShowLibrary.Checked ? "Close" : "Open ";
+                                Ribbon.ShowLibrary.Label = Ribbon.ShowLibrary.Checked ? "Hide" : "Show";
                             }
 
                             var answer = Upgrader.UpgradeIsRequired(document);
@@ -2009,7 +2005,7 @@ namespace Chem4Word
                                     }
 
                                     taskPane.Visible = Ribbon.ShowLibrary.Checked;
-                                    Ribbon.ShowLibrary.Label = Ribbon.ShowLibrary.Checked ? "Close" : "Open";
+                                    Ribbon.ShowLibrary.Label = Ribbon.ShowLibrary.Checked ? "Hide" : "Show";
                                 }
 
                                 libraryFound = true;

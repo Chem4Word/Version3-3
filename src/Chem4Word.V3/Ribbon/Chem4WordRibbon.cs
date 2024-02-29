@@ -371,18 +371,9 @@ namespace Chem4Word
             AfterButtonChecks(sender as RibbonButton);
         }
 
-        private void OnClick_Options(object sender, RibbonControlEventArgs e)
+        private void LoadSettingsForm(string tabName = null)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            BeforeButtonChecks();
-            if (Globals.Chem4WordV3.Telemetry != null)
-            {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
-            }
-            else
-            {
-                RegistryHelper.StoreMessage(module, "Triggered");
-            }
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             using (var cursor = new WaitCursor())
             {
@@ -394,7 +385,7 @@ namespace Chem4Word
                     {
                         if (app.ActiveWindow == taskPane.Window && taskPane.Title == Constants.LibraryTaskPaneTitle)
                         {
-                            ShowLibrary.Label = "Open";
+                            ShowLibrary.Label = "Show";
                             ShowLibrary.Checked = false;
                             Globals.Chem4WordV3.LibraryState = false;
 
@@ -416,6 +407,7 @@ namespace Chem4Word
                         settingsHost.SystemOptions = clonedOptions;
                         settingsHost.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                         settingsHost.SystemOptions.WordTopLeft = Globals.Chem4WordV3.WordTopLeft;
+                        settingsHost.ActiveTab = tabName;
 
                         var dr = settingsHost.ShowDialog();
                         if (dr == DialogResult.OK)
@@ -446,6 +438,84 @@ namespace Chem4Word
                     app.Activate();
                 }
             }
+        }
+
+        private void OnClick_ManageLibraries(object sender, RibbonControlEventArgs e)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            BeforeButtonChecks();
+            if (Globals.Chem4WordV3.Telemetry != null)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            }
+            else
+            {
+                RegistryHelper.StoreMessage(module, "Triggered");
+            }
+
+            try
+            {
+                LoadSettingsForm("Libraries");
+            }
+            catch (Exception ex)
+            {
+                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                {
+                    form.ShowDialog();
+                }
+            }
+
+            AfterButtonChecks(sender as RibbonButton);
+        }
+
+        private void OnClick_BuyLibrary(object sender, RibbonControlEventArgs e)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            BeforeButtonChecks();
+            if (Globals.Chem4WordV3.Telemetry != null)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            }
+            else
+            {
+                RegistryHelper.StoreMessage(module, "Triggered");
+            }
+
+            try
+            {
+                var host = new LibraryDownloadHost();
+                host.TopLeft = Globals.Chem4WordV3.WordTopLeft;
+                host.ShowDialog();
+
+                Globals.Chem4WordV3.ListOfDetectedLibraries
+                    = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                        .GetListOfLibraries();
+            }
+            catch (Exception ex)
+            {
+                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                {
+                    form.ShowDialog();
+                }
+            }
+
+            AfterButtonChecks(sender as RibbonButton);
+        }
+
+        private void OnClick_Options(object sender, RibbonControlEventArgs e)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            BeforeButtonChecks();
+            if (Globals.Chem4WordV3.Telemetry != null)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            }
+            else
+            {
+                RegistryHelper.StoreMessage(module, "Triggered");
+            }
+
+            LoadSettingsForm();
 
             AfterButtonChecks(sender as RibbonButton);
         }
@@ -1757,7 +1827,7 @@ namespace Chem4Word
                                 }
 
                                 Globals.Chem4WordV3.LibraryState = ShowLibrary.Checked;
-                                ShowLibrary.Label = ShowLibrary.Checked ? "Close" : "Open";
+                                ShowLibrary.Label = ShowLibrary.Checked ? "Hide" : "Show";
 
                                 if (ShowLibrary.Checked)
                                 {
@@ -1839,7 +1909,7 @@ namespace Chem4Word
                             {
                                 (taskPane.Control as LibraryHost)?.Refresh();
                             }
-                            ShowLibrary.Label = ShowLibrary.Checked ? "Close" : "Open";
+                            ShowLibrary.Label = ShowLibrary.Checked ? "Hide" : "Show";
                         }
                     }
                 }
@@ -2327,10 +2397,10 @@ namespace Chem4Word
             {
                 if (Globals.Chem4WordV3.PlugInsHaveBeenLoaded)
                 {
-                    var fa = new SystemInfo();
-                    fa.TopLeft = Globals.Chem4WordV3.WordTopLeft;
+                    var form = new SystemInfo();
+                    form.TopLeft = Globals.Chem4WordV3.WordTopLeft;
 
-                    fa.ShowDialog();
+                    form.ShowDialog();
                 }
                 else
                 {

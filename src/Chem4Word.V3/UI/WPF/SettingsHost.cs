@@ -29,6 +29,8 @@ namespace Chem4Word.UI.WPF
 
         public Chem4WordOptions SystemOptions { get; set; }
 
+        public string ActiveTab { get; set; }
+
         public SettingsHost()
         {
             InitializeComponent();
@@ -70,6 +72,7 @@ namespace Chem4Word.UI.WPF
                 elementHost1.Child = sc;
                 sc.TopLeft = TopLeft;
                 sc.SystemOptions = SystemOptions;
+                sc.ActiveTab = ActiveTab;
                 sc.OnButtonClick += OnWpfButtonClick;
 
                 using (new WaitCursor())

@@ -62,7 +62,8 @@ function Update-AllAssemblyInfoFiles ($version)
    #Write-Host "Searching '$path'"
    foreach ($file in "AssemblyInfo.cs", "AssemblyInfo.vb" ) 
    {
-		get-childitem $path -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version ;
+		Get-ChildItem $path -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version ;
+        Get-ChildItem "..\..\..\Secure-Libraries\Chem4Word.Driver.Closed"  -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version ;
    }
 }
 

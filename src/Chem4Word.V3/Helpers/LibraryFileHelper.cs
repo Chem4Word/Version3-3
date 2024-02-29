@@ -5,9 +5,12 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using Chem4Word.Core.Helpers;
 using IChem4Word.Contracts;
 using Newtonsoft.Json;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -70,7 +73,7 @@ namespace Chem4Word.Helpers
                         _telemetry.Write(module, "Information", $"Moving {fileInfo.Name} to Libraries folder");
                         var library = FileHelper.BackupFile(fileInfo, librariesDirectory, false, true);
 
-                        // Add it's details
+                        // Add its details
                         var details = new DatabaseDetails
                         {
                             Connection = library,
@@ -143,7 +146,6 @@ namespace Chem4Word.Helpers
             {
                 foreach (var database in result.AvailableDatabases.ToList())
                 {
-                    _telemetry.Write(module, "Information", $"Reading properties of '{database.DisplayName}'");
                     var library = new Core.SqLite.Library(_telemetry, database.Connection, backupDirectory.FullName, Globals.Chem4WordV3.WordTopLeft);
                     if (library.Database.FileExists && library.Database.IsSqliteDatabase && library.Database.IsChem4Word)
                     {
@@ -168,9 +170,14 @@ namespace Chem4Word.Helpers
                             SaveSettingsFile(result);
                         }
                     }
+
+                    var usableLibraries = new List<string> { $"Libraries [{result.AvailableDatabases.Count}]:" };
+                    usableLibraries.AddRange(result.AvailableDatabases.Select(l => $"  '{l.DisplayName}' [{l.Properties["Count"]}]"));
+                    _telemetry.Write(module, "Information", string.Join(Environment.NewLine, usableLibraries));
                 }
                 else
                 {
+                    _telemetry.Write(module, "Warning", "No usable databases found!");
                     DeleteSettingsFile();
                     result = null;
                 }

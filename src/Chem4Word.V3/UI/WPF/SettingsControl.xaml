@@ -324,6 +324,7 @@
                             Grid.Row="0"
                             Grid.Column="0"
                             Margin="5"
+                            VerticalContentAlignment="Center"
                             d:IsLocked="True"
                             Click="OnClick_RemoveExplicitOnImportFile">
                             from file
@@ -333,6 +334,7 @@
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="5"
+                            VerticalContentAlignment="Center"
                             d:IsLocked="True"
                             Click="OnClick_RemoveExplicitOnImportSearch">
                             from search
@@ -342,6 +344,7 @@
                             Grid.Row="2"
                             Grid.Column="0"
                             Margin="5"
+                            VerticalContentAlignment="Center"
                             d:IsLocked="True"
                             Click="OnClick_RemoveExplicitOnImportLibrary">
                             from library (also includes save to library)
@@ -368,6 +371,7 @@
                             Grid.Row="0"
                             Grid.Column="0"
                             Margin="5"
+                            VerticalContentAlignment="Center"
                             d:IsLocked="True"
                             Click="OnClick_ApplyDefaultOnImportFile">
                             from file
@@ -377,6 +381,7 @@
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="5"
+                            VerticalContentAlignment="Center"
                             d:IsLocked="True"
                             Click="OnClick_ApplyDefaultOnImportSearch">
                             from search
@@ -386,6 +391,7 @@
                             Grid.Row="2"
                             Grid.Column="0"
                             Margin="5"
+                            VerticalContentAlignment="Center"
                             d:IsLocked="True"
                             Click="OnClick_ApplyDefaultOnImportLibrary">
                             from library
@@ -535,7 +541,7 @@
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <!-- This allows name to be edited -->
+                                <!--  This allows name to be edited  -->
                                 <GridViewColumn Width="250" Header="Name">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>

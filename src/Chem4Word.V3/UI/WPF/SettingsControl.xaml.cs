@@ -21,11 +21,13 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Forms = System.Windows.Forms;
 using Point = System.Windows.Point;
+using TextBox = System.Windows.Controls.TextBox;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace Chem4Word.UI.WPF
@@ -42,6 +44,7 @@ namespace Chem4Word.UI.WPF
 
         public Chem4WordOptions SystemOptions { get; set; }
         public Point TopLeft { get; set; }
+        public string ActiveTab { get; set; }
         public bool Dirty { get; set; }
 
         private bool _loading;
@@ -65,6 +68,17 @@ namespace Chem4Word.UI.WPF
             if (SystemOptions != null)
             {
                 LoadSettings();
+            }
+
+            if (!string.IsNullOrEmpty(ActiveTab))
+            {
+                var tab = TabControl.Items
+                                    .Cast<TabItem>()
+                                    .FirstOrDefault(i => i.Name.Equals(ActiveTab));
+                if (tab != null)
+                {
+                    tab.IsSelected = true;
+                }
             }
 
             #endregion Set Current Values

@@ -43,6 +43,8 @@ namespace Chem4Word
             this.ExportToFile = this.Factory.CreateRibbonButton();
             this.GroupLibrary = this.Factory.CreateRibbonGroup();
             this.ShowLibrary = this.Factory.CreateRibbonToggleButton();
+            this.ManageLibraries = this.Factory.CreateRibbonButton();
+            this.BuyLibrary = this.Factory.CreateRibbonButton();
             this.SaveToLibrary = this.Factory.CreateRibbonButton();
             this.GroupStructure = this.Factory.CreateRibbonGroup();
             this.EditStructure = this.Factory.CreateRibbonButton();
@@ -123,29 +125,53 @@ namespace Chem4Word
             // GroupLibrary
             // 
             this.GroupLibrary.Items.Add(this.ShowLibrary);
+            this.GroupLibrary.Items.Add(this.ManageLibraries);
+            this.GroupLibrary.Items.Add(this.BuyLibrary);
             this.GroupLibrary.Items.Add(this.SaveToLibrary);
-            this.GroupLibrary.Label = "Library";
+            this.GroupLibrary.Label = "Libraries";
             this.GroupLibrary.Name = "GroupLibrary";
             // 
             // ShowLibrary
             // 
             this.ShowLibrary.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.ShowLibrary.Enabled = false;
-            this.ShowLibrary.Image = global::Chem4Word.Properties.Resources.Gallery_Find;
-            this.ShowLibrary.Label = "Open";
+            this.ShowLibrary.Image = global::Chem4Word.Properties.Resources.Library_Find;
+            this.ShowLibrary.Label = "Show";
             this.ShowLibrary.Name = "ShowLibrary";
-            this.ShowLibrary.ScreenTip = "Import a structure from the Library";
+            this.ShowLibrary.ScreenTip = "Show current library to import a structure from";
             this.ShowLibrary.ShowImage = true;
             this.ShowLibrary.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_ShowLibrary);
+            // 
+            // ManageLibraries
+            // 
+            this.ManageLibraries.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.ManageLibraries.Enabled = false;
+            this.ManageLibraries.Image = global::Chem4Word.Properties.Resources.Library_Toggle;
+            this.ManageLibraries.Label = "Manage";
+            this.ManageLibraries.Name = "ManageLibraries";
+            this.ManageLibraries.ScreenTip = "Manage your libraries";
+            this.ManageLibraries.ShowImage = true;
+            this.ManageLibraries.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_ManageLibraries);
+            // 
+            // BuyLibrary
+            // 
+            this.BuyLibrary.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.BuyLibrary.Enabled = false;
+            this.BuyLibrary.Image = global::Chem4Word.Properties.Resources.Library_Buy;
+            this.BuyLibrary.Label = "Download or Buy";
+            this.BuyLibrary.Name = "BuyLibrary";
+            this.BuyLibrary.ScreenTip = "Download or buy a library (Most are free!)";
+            this.BuyLibrary.ShowImage = true;
+            this.BuyLibrary.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_BuyLibrary);
             // 
             // SaveToLibrary
             // 
             this.SaveToLibrary.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.SaveToLibrary.Enabled = false;
-            this.SaveToLibrary.Image = global::Chem4Word.Properties.Resources.Gallery_Save;
-            this.SaveToLibrary.Label = "Add";
+            this.SaveToLibrary.Image = global::Chem4Word.Properties.Resources.Library_Save;
+            this.SaveToLibrary.Label = "Save";
             this.SaveToLibrary.Name = "SaveToLibrary";
-            this.SaveToLibrary.ScreenTip = "Add the selected structure to the Library";
+            this.SaveToLibrary.ScreenTip = "Save the selected structure to the selected Library";
             this.SaveToLibrary.ShowImage = true;
             this.SaveToLibrary.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_SaveToLibrary);
             // 
@@ -380,6 +406,8 @@ namespace Chem4Word
         internal Microsoft.Office.Tools.Ribbon.RibbonButton YouTube;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ButtonsDisabled;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ShowSystemInfo;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ManageLibraries;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton BuyLibrary;
     }
 
     partial class ThisRibbonCollection

@@ -76,7 +76,7 @@ namespace Chem4Word.UI.WPF
                 {
                     _settings = new AzureSettings(true);
 
-                    // Restore User Name and Email from Credential Store
+                    // Restore UserName and Email from Credential Store
                     var lastUser = CredentialManager.ReadCredential(Chem4WordUser);
                     if (lastUser != null
                         && lastUser.UserName != null)
@@ -258,18 +258,7 @@ namespace Chem4Word.UI.WPF
                                 InstallLibrary(library, _downloadPath);
                             }
 
-                            if (!library.Driver.Equals(Constants.SQLiteStandardDriver))
-                            {
-                                DownloadDriver(formData);
-                                if (File.Exists(Path.Combine(_downloadPath, $"{library.Driver}.zip")))
-                                {
-                                    InstallDriver(library.Driver, _downloadPath);
-                                    UserInteractions.InformUser(
-                                        "Microsoft Word needs to be restarted to activate the downloaded driver.");
-                                }
-                            }
-
-                            // Once library and driver have been installed add/replace user details in credential store
+                            // Once library and driver have been installed add/update user details in the Windows credential store
                             // Common values required for license verification by the driver.
                             if (_userIsDirty)
                             {
