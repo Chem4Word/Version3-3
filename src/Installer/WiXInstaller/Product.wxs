@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <!-- For automatic upgrade to work only first three parts of version number are used -->
-  <Product Id="*" Name="Chemistry Add-In for Microsoft Word 2024 Release 2" Manufacturer="Chem4Word" Version="3.3.4.8825" UpgradeCode="865226e7-d29d-49aa-a390-dda49979b102" Language="1033">
+  <Product Id="*" Name="Chemistry Add-In for Microsoft Word 2024 Release 3" Manufacturer="Chem4Word" Version="3.3.5.8856" UpgradeCode="865226e7-d29d-49aa-a390-dda49979b102" Language="1033">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of Chem4Word is already installed." />
     <Media Id="1" Cabinet="product.cab" EmbedCab="yes" CompressionLevel="high" />
@@ -241,7 +241,7 @@
         <File Id="DocumentFormat.OpenXml.dll" Source="$(var.Chem4Word.V3.TargetDir)DocumentFormat.OpenXml.dll" />
       </Component>
       <Component Id="DocumentFormat.OpenXml.Framework">
-          <File Id="DocumentFormat.OpenXml.Framework.dll" Source="$(var.Chem4Word.V3.TargetDir)DocumentFormat.OpenXml.Framework.dll" />
+        <File Id="DocumentFormat.OpenXml.Framework.dll" Source="$(var.Chem4Word.V3.TargetDir)DocumentFormat.OpenXml.Framework.dll" />
       </Component>
       <Component Id="OpenXML.SDK.Dependency">
         <File Id="WindowsBase.dll" Source="$(var.Chem4Word.V3.TargetDir)WindowsBase.dll" />
@@ -277,29 +277,29 @@
         <File Id="Meziantou.Framework.Win32.CredentialManager.dll" Source="$(var.Chem4Word.V3.TargetDir)Meziantou.Framework.Win32.CredentialManager.dll" />
       </Component>
       <Component Id="Newtonsoft.Json">
-          <File Id="Newtonsoft.Json.dll" Source="$(var.Chem4Word.V3.TargetDir)Newtonsoft.Json.dll" />
+        <File Id="Newtonsoft.Json.dll" Source="$(var.Chem4Word.V3.TargetDir)Newtonsoft.Json.dll" />
       </Component>
       <Component Id="Ookii.Dialogs.WinForms">
-          <File Id="Ookii.Dialogs.WinForms.dll" Source="$(var.Chem4Word.V3.TargetDir)Ookii.Dialogs.WinForms.dll" />
+        <File Id="Ookii.Dialogs.WinForms.dll" Source="$(var.Chem4Word.V3.TargetDir)Ookii.Dialogs.WinForms.dll" />
       </Component>
       <Component Id="Standard.Licensing">
-          <File Id="Standard.Licensing.dll" Source="$(var.Chem4Word.V3.TargetDir)Standard.Licensing.dll" />
+        <File Id="Standard.Licensing.dll" Source="$(var.Chem4Word.V3.TargetDir)Standard.Licensing.dll" />
       </Component>
       <Component Id="VirtualizingWrapPanel">
-          <File Id="VirtualizingWrapPanel.dll" Source="$(var.Chem4Word.V3.TargetDir)VirtualizingWrapPanel.dll" />
+        <File Id="VirtualizingWrapPanel.dll" Source="$(var.Chem4Word.V3.TargetDir)VirtualizingWrapPanel.dll" />
       </Component>
       <!-- Azure Service Bus Nuget packages -->
       <Component Id="Azure.Core">
-          <File Id="Azure.Core.dll" Source="$(var.Chem4Word.V3.TargetDir)Azure.Core.dll" />
+        <File Id="Azure.Core.dll" Source="$(var.Chem4Word.V3.TargetDir)Azure.Core.dll" />
       </Component>
       <Component Id="Azure.Core.Amqp">
-          <File Id="Azure.Core.Amqp.dll" Source="$(var.Chem4Word.V3.TargetDir)Azure.Core.Amqp.dll" />
+        <File Id="Azure.Core.Amqp.dll" Source="$(var.Chem4Word.V3.TargetDir)Azure.Core.Amqp.dll" />
       </Component>
       <Component Id="Microsoft.Azure.Amqp">
-          <File Id="Microsoft.Azure.Amqp.dll" Source="$(var.Chem4Word.V3.TargetDir)Microsoft.Azure.Amqp.dll" />
+        <File Id="Microsoft.Azure.Amqp.dll" Source="$(var.Chem4Word.V3.TargetDir)Microsoft.Azure.Amqp.dll" />
       </Component>
       <Component Id="Azure.Messaging.ServiceBus">
-          <File Id="Azure.Messaging.ServiceBus.dll" Source="$(var.Chem4Word.V3.TargetDir)Azure.Messaging.ServiceBus.dll" />
+        <File Id="Azure.Messaging.ServiceBus.dll" Source="$(var.Chem4Word.V3.TargetDir)Azure.Messaging.ServiceBus.dll" />
       </Component>
       <!-- System (Microsoft) NuGet packages -->
       <Component Id="Microsoft.Bcl.AsyncInterfaces">
