@@ -28,6 +28,7 @@ namespace Chem4Word.Telemetry
 
         private static SystemHelper _helper;
         private static WmiHelper _wmiHelper;
+        private static bool _machineIdWritten;
 
         private readonly bool _permissionGranted;
         private readonly bool _isBeta;
@@ -80,6 +81,14 @@ namespace Chem4Word.Telemetry
                     $@"Chem4Word.V3\Telemetry\{SafeDate.ToIsoShortDate(DateTime.UtcNow)}.log");
                 using (StreamWriter w = File.AppendText(fileName))
                 {
+                    if (!_machineIdWritten)
+                    {
+                        if (_helper != null && _helper.MachineId != Guid.Empty.ToString("D"))
+                        {
+                            w.WriteLine($"[{SafeDate.ToShortTime(DateTime.UtcNow)}] * InstallationId: {_helper.MachineId}");
+                            _machineIdWritten = true;
+                        }
+                    }
                     string logMessage = $"[{SafeDate.ToShortTime(DateTime.UtcNow)}] {source} - {level} - {message}";
                     w.WriteLine(logMessage);
                 }
@@ -217,10 +226,11 @@ namespace Chem4Word.Telemetry
             // Log Wmi Gathered Data
             lines = new List<string>();
 
+            lines.Add($"SYS: {_wmiHelper.Manufacturer} - {_wmiHelper.Model} - {_wmiHelper.SystemFamily}");
             lines.Add($"CPU: {_wmiHelper.CpuName}");
             lines.Add($"CPU Cores: {_wmiHelper.LogicalProcessors}");
             lines.Add($"CPU Speed: {_wmiHelper.CpuSpeed}");
-            lines.Add($"Physical Memory: {_wmiHelper.PhysicalMemory}");
+            lines.Add($"Memory: {_wmiHelper.TotalPhysicalMemory}");
             lines.Add($"Booted Up: {_helper.LastBootUpTime}");
             lines.Add($"Logged In: {_helper.LastLoginTime}");
 

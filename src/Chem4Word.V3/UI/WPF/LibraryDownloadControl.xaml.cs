@@ -515,16 +515,21 @@ namespace Chem4Word.UI.WPF
                 if (Libraries.SelectedItem is LibraryDownloadGridSource data)
                 {
                     var stringBuilder = new StringBuilder();
-                    stringBuilder.AppendLine($"Please purchase the library '{data.Name}' from our shop,");
-                    stringBuilder.AppendLine(" then return to here to download it when you receive an email confirming your purchase");
-                    stringBuilder.AppendLine($"Clicking OK will open your default browser with '{data.Name}' selected");
+                    stringBuilder.AppendLine($"Please purchase the library '{data.Name}' from our shop.");
+                    stringBuilder.AppendLine("NB: Some libraries are FREE!");
+                    stringBuilder.AppendLine($"Clicking OK will open your default browser with library '{data.Name}' selected.");
+                    stringBuilder.AppendLine("After you receive an email confirming your purchase, return here to download it.");
                     var answer = UserInteractions.AskUserOkCancel(stringBuilder.ToString());
                     if (answer == DialogResult.OK)
                     {
                         // With the help of https://stackoverflow.com/questions/64086598/redirect-product-sku-from-url-to-the-related-product-in-woocommerce
                         //  we now have a redirect from SKU to product name
                         // e.g. https://www.chem4word.co.uk/product/d91e2e64-95dd-4652-ac23-5c07a261a1b4 ==> https://www.chem4word.co.uk/product/simple-heterocycles
-                        Process.Start($"https://www.chem4word.co.uk/product/{data.Sku}");
+
+                        var productPage = $"https://www.chem4word.co.uk/product/{data.Sku}";
+
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Opening {productPage}");
+                        Process.Start(productPage);
                     }
                 }
             }

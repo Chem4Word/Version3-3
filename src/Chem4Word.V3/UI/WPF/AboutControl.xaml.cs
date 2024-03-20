@@ -173,7 +173,7 @@ namespace Chem4Word.UI.WPF
 
             try
             {
-                Process.Start("https://www.youtube.com/channel/UCKX2kG9kZ3zoX0nCen5lfpQ");
+                Process.Start("https://www.youtube.com/@chem4word");
             }
             catch (Exception ex)
             {
