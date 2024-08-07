@@ -959,6 +959,8 @@ namespace Chem4Word
 
         public IChem4WordLibraryBase GetDriverPlugIn(string name)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
             IChem4WordLibraryBase plugin = null;
 
             if (!string.IsNullOrEmpty(name))
@@ -977,11 +979,20 @@ namespace Chem4Word
                 }
             }
 
+            if (plugin == null)
+            {
+                Telemetry.Write(module, "Warning", $"Could not find driver plug in {name}");
+                Debug.WriteLine($"Could not find driver plug in {name}");
+                Debugger.Break();
+            }
+
             return plugin;
         }
 
         public IChem4WordEditor GetEditorPlugIn(string name)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
             IChem4WordEditor plugin = null;
 
             if (!string.IsNullOrEmpty(name))
@@ -1000,11 +1011,20 @@ namespace Chem4Word
                 }
             }
 
+            if (plugin == null)
+            {
+                Telemetry.Write(module, "Warning", $"Could not find editor plug in {name}");
+                Debug.WriteLine($"Could not find editor plug in {name}");
+                Debugger.Break();
+            }
+
             return plugin;
         }
 
         public IChem4WordRenderer GetRendererPlugIn(string name)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
             IChem4WordRenderer plugin = null;
 
             if (!string.IsNullOrEmpty(name))
@@ -1022,12 +1042,21 @@ namespace Chem4Word
                     }
                 }
             }
+            
+            if (plugin == null)
+            {
+                Telemetry.Write(module, "Warning", $"Could not find renderer plug in {name}");
+                Debug.WriteLine($"Could not find renderer plug in {name}");
+                Debugger.Break();
+            }
 
             return plugin;
         }
 
         public IChem4WordSearcher GetSearcherPlugIn(string name)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
             IChem4WordSearcher plugin = null;
 
             if (!string.IsNullOrEmpty(name))
@@ -1044,6 +1073,13 @@ namespace Chem4Word
                         break;
                     }
                 }
+            }
+
+            if (plugin == null)
+            {
+                Telemetry.Write(module, "Warning", $"Could not find searcher plug in {name}");
+                Debug.WriteLine($"Could not find searcher plug in {name}");
+                Debugger.Break();
             }
 
             return plugin;

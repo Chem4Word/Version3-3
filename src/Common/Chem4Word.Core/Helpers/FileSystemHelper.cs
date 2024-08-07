@@ -53,5 +53,72 @@ namespace Chem4Word.Core.Helpers
             path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             return UserHasWritePermission(path) ? path : null;
         }
+
+        /// <summary>
+        /// Check to see if file is binary by checking if the first 8k characters contains at least n null characters
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="requiredConsecutiveNul"></param>
+        /// <returns></returns>
+        public static bool IsBinary(string filePath, int requiredConsecutiveNul = 1)
+        {
+            const int charsToCheck = 8096;
+            const char nulChar = '\0';
+
+            var nulCount = 0;
+
+            using (var streamReader = new StreamReader(filePath))
+            {
+                for (var i = 0; i < charsToCheck; i++)
+                {
+                    if (streamReader.EndOfStream)
+                    {
+                        return false;
+                    }
+
+                    if ((char)streamReader.Read() == nulChar)
+                    {
+                        nulCount++;
+
+                        if (nulCount >= requiredConsecutiveNul)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        nulCount = 0;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static string DetectFileType(string filePath)
+        {
+            var result = string.Empty;
+
+            var contents = File.ReadAllText(filePath);
+
+            if (contents.Contains("M  END"))
+            {
+                result = ".mol";
+            }
+
+            if (contents.StartsWith("<")
+                && contents.Contains("<cml")
+                && contents.Contains("</cml"))
+            {
+                result = ".cml";
+            }
+
+            if (contents.StartsWith("SketchEl"))
+            {
+                result = ".el";
+            }
+
+            return result;
+        }
     }
 }

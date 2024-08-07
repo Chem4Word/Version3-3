@@ -88,21 +88,23 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             }
         }
 
+        private void SearchFor_TextChanged(object sender, EventArgs e)
+        {
+            SearchButton.Enabled = TextHelper.IsValidSearchString(SearchFor.Text);
+        }
+
         private void SearchButton_Click(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                if (!string.IsNullOrEmpty(SearchFor.Text))
-                {
-                    Telemetry.Write(module, "Information", $"User searched for '{SearchFor.Text}'");
+                Telemetry.Write(module, "Information", $"User searched for '{SearchFor.Text}'");
 
-                    ErrorsAndWarnings.Text = "";
-                    display1.Chemistry = null;
-                    display1.Clear();
+                ErrorsAndWarnings.Text = "";
+                display1.Chemistry = null;
+                display1.Clear();
 
-                    ExecuteSearch(0);
-                }
+                ExecuteSearch(0);
             }
             catch (Exception ex)
             {
@@ -182,7 +184,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            if (!string.IsNullOrEmpty(SearchFor.Text))
+            if (TextHelper.IsValidSearchString(SearchFor.Text))
             {
                 Cursor = Cursors.WaitCursor;
 
@@ -190,8 +192,8 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                 if (direction == 0)
                 {
                     webCall = string.Format(CultureInfo.InvariantCulture,
-                            "{0}entrez/eutils/esearch.fcgi?db=pccompound&term={1}&retmode=xml&relevanceorder=on&usehistory=y&retmax={2}",
-                            UserOptions.PubChemWebServiceUri, SearchFor.Text, UserOptions.ResultsPerCall);
+                                            "{0}entrez/eutils/esearch.fcgi?db=pccompound&term={1}&retmode=xml&relevanceorder=on&usehistory=y&retmax={2}",
+                                            UserOptions.PubChemWebServiceUri, SearchFor.Text, UserOptions.ResultsPerCall);
                 }
                 else
                 {
@@ -199,15 +201,15 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     {
                         int startFrom = firstResult + numResults;
                         webCall = string.Format(CultureInfo.InvariantCulture,
-                                "{0}entrez/eutils/esearch.fcgi?db=pccompound&term={1}&retmode=xml&relevanceorder=on&usehistory=y&retmax={2}&WebEnv={3}&RetStart={4}",
-                                UserOptions.PubChemWebServiceUri, SearchFor.Text, UserOptions.ResultsPerCall, webEnv, startFrom);
+                                                "{0}entrez/eutils/esearch.fcgi?db=pccompound&term={1}&retmode=xml&relevanceorder=on&usehistory=y&retmax={2}&WebEnv={3}&RetStart={4}",
+                                                UserOptions.PubChemWebServiceUri, SearchFor.Text, UserOptions.ResultsPerCall, webEnv, startFrom);
                     }
                     else
                     {
                         int startFrom = firstResult - numResults;
                         webCall = string.Format(CultureInfo.InvariantCulture,
-                                "{0}entrez/eutils/esearch.fcgi?db=pccompound&term={1}&retmode=xml&relevanceorder=on&usehistory=y&retmax={2}&WebEnv={3}&RetStart={4}",
-                                UserOptions.PubChemWebServiceUri, SearchFor.Text, UserOptions.ResultsPerCall, webEnv, startFrom);
+                                                "{0}entrez/eutils/esearch.fcgi?db=pccompound&term={1}&retmode=xml&relevanceorder=on&usehistory=y&retmax={2}&WebEnv={3}&RetStart={4}",
+                                                UserOptions.PubChemWebServiceUri, SearchFor.Text, UserOptions.ResultsPerCall, webEnv, startFrom);
                     }
                 }
 

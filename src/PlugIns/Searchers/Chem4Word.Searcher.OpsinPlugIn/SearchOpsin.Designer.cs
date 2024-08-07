@@ -47,6 +47,7 @@
             this.SearchFor.Name = "SearchFor";
             this.SearchFor.Size = new System.Drawing.Size(462, 22);
             this.SearchFor.TabIndex = 0;
+            this.SearchFor.TextChanged += new System.EventHandler(this.SearchFor_TextChanged);
             // 
             // SearchButton
             // 

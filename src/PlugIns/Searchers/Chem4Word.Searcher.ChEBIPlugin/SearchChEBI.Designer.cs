@@ -59,6 +59,7 @@
             this.SearchFor.Name = "SearchFor";
             this.SearchFor.Size = new System.Drawing.Size(859, 22);
             this.SearchFor.TabIndex = 2;
+            this.SearchFor.TextChanged += new System.EventHandler(this.SearchFor_TextChanged);
             // 
             // SearchButton
             // 
@@ -106,7 +107,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
             this.splitContainer1.Size = new System.Drawing.Size(953, 407);
-            this.splitContainer1.SplitterDistance = 437;
+            this.splitContainer1.SplitterDistance = 436;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 13;
             // 
@@ -125,7 +126,7 @@
             this.ResultsListView.Location = new System.Drawing.Point(0, 0);
             this.ResultsListView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ResultsListView.Name = "ResultsListView";
-            this.ResultsListView.Size = new System.Drawing.Size(435, 405);
+            this.ResultsListView.Size = new System.Drawing.Size(434, 405);
             this.ResultsListView.TabIndex = 0;
             this.ResultsListView.UseCompatibleStateImageBehavior = false;
             this.ResultsListView.View = System.Windows.Forms.View.Details;
@@ -153,7 +154,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(509, 405);
+            this.panel1.Size = new System.Drawing.Size(510, 405);
             this.panel1.TabIndex = 0;
             // 
             // elementHost1
@@ -165,7 +166,7 @@
             this.elementHost1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.elementHost1.Name = "elementHost1";
             this.elementHost1.Padding = new System.Windows.Forms.Padding(12);
-            this.elementHost1.Size = new System.Drawing.Size(507, 403);
+            this.elementHost1.Size = new System.Drawing.Size(508, 403);
             this.elementHost1.TabIndex = 1;
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.display1;
