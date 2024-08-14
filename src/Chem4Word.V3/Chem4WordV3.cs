@@ -1769,6 +1769,8 @@ namespace Chem4Word
                 Telemetry.Write(module, "Exception", ex.ToString());
             }
 
+            ClearChemistryContextMenus();
+
             if (selectedWords.Count > 0)
             {
                 AddChemistryMenuPopup(selectedWords);
@@ -1847,7 +1849,8 @@ namespace Chem4Word
                             var popupControl = (CommandBarPopup)contextMenu.FindControl(
                                 MsoControlType.msoControlPopup, Type.Missing,
                                 ContextMenuTag, true, true);
-                            if (popupControl != null)
+                            if (popupControl != null
+                                && popupControl.Caption.Equals(ContextMenuText))
                             {
                                 popupControl.Delete(true);
                             }
@@ -1978,6 +1981,8 @@ namespace Chem4Word
                                 // Call disable first to ensure events not registered multiple times
                                 DisableContentControlEvents();
                                 EnableContentControlEvents();
+
+                                ClearChemistryContextMenus();
 
                                 SelectChemistry(document.Application.Selection);
                                 EvaluateChemistryAllowed();

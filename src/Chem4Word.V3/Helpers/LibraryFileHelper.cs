@@ -173,11 +173,17 @@ namespace Chem4Word.Helpers
 
                     var usableLibraries = new List<string> { $"Libraries [{result.AvailableDatabases.Count}]:" };
                     usableLibraries.AddRange(result.AvailableDatabases.Select(l => $"  '{l.DisplayName}' [{l.Properties["Count"]}]"));
-                    _telemetry.Write(module, "Information", string.Join(Environment.NewLine, usableLibraries));
+                    if (!silent)
+                    {
+                        _telemetry.Write(module, "Information", string.Join(Environment.NewLine, usableLibraries));
+                    }
                 }
                 else
                 {
-                    _telemetry.Write(module, "Warning", "No usable databases found!");
+                    if (!silent)
+                    {
+                        _telemetry.Write(module, "Warning", "No usable databases found!");
+                    }
                     DeleteSettingsFile();
                     result = null;
                 }

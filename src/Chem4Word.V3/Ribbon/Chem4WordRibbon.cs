@@ -722,7 +722,7 @@ namespace Chem4Word
                 {
                     Globals.Chem4WordV3.ListOfDetectedLibraries
                         = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                            .GetListOfLibraries();
+                            .GetListOfLibraries(silent:true);
                 }
             }
         }

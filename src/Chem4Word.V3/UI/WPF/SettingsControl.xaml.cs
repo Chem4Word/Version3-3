@@ -985,7 +985,7 @@ namespace Chem4Word.UI.WPF
         {
             Globals.Chem4WordV3.ListOfDetectedLibraries
                 = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                    .GetListOfLibraries();
+                    .GetListOfLibraries(silent:true);
         }
 
         private string GetPropertyValue(DatabaseDetails database, string key, string defaultValue)

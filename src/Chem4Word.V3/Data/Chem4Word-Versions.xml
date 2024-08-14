@@ -5,14 +5,13 @@
     <Version>
         <Number>3.3.7 Release 5</Number>
         <IsBeta>false</IsBeta>
-        <Released>31-Aug-2024</Released>
-        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.7.Release.5.msi</Url>
+        <Released>14-Aug-2024</Released>
         <Changes>
-            <Change>...</Change>
-            <Change>...</Change>
+            <Change>UX: Improve RightClick "Convert To Chemistry" context menu</Change>
             <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
             <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
         </Changes>
+        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.7.Release.5.msi</Url>
     </Version>
     <Version>
         <Number>3.3.6 Release 4</Number>
@@ -22,9 +21,7 @@
             <Change>BugFix: Prevent html input in searchers</Change>
             <Change>UX: Prohibit import of binary files</Change>
             <Change>BugFix: User unable to hide Hydrogens in Renderer (seen in Word document)</Change>
-            <Change>Update NuGet packages</Change>
-            <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
-            <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
+            <Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-30105)</Change>
         </Changes>
     </Version>
     <Version>

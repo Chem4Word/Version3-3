@@ -376,7 +376,7 @@ namespace Chem4Word.Telemetry
                     processId = _helper.ProcessId;
                     if (string.IsNullOrEmpty(_helper.MachineId) || _helper.MachineId.Equals(Guid.Empty.ToString("D")))
                     {
-                        SystemHelper.GetMachineId();
+                        machineId = SystemHelper.GetMachineId();
                     }
                     else
                     {
