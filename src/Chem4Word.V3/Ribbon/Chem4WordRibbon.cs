@@ -949,6 +949,10 @@ namespace Chem4Word
 
                                             if (changedProperties > 0)
                                             {
+                                                afterModel.SetAnyMissingNameIds();
+                                                afterModel.ReLabelGuids();
+                                                afterModel.Relabel(true);
+
                                                 using (var host =
                                                        new EditLabelsHost(
                                                            new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath)))

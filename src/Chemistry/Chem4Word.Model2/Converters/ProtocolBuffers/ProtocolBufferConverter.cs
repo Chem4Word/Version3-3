@@ -10,6 +10,7 @@ using Chem4Word.Model2.Helpers;
 using Chem4Word.Model2.Interfaces;
 using Google.Protobuf;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Chem4Word.Model2.Converters.ProtocolBuffers

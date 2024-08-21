@@ -102,6 +102,7 @@ namespace Chem4Word.UI.WPF
             {
                 CMLConverter cc = new CMLConverter();
                 DialogResult = DialogResult.OK;
+                editor.EditedModel.SetAnyMissingNameIds();
                 Cml = cc.Export(editor.EditedModel);
                 Hide();
             }

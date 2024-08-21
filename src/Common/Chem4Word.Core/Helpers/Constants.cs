@@ -36,6 +36,7 @@ namespace Chem4Word.Core.Helpers
 
         public const string Chem4WordSetupRegistryKey = @"SOFTWARE\Chem4Word V3\Setup";
         public const string Chem4WordUpdateRegistryKey = @"SOFTWARE\Chem4Word V3\Update";
+        public const string Chem4WordMsiActionsRegistryKey = @"SOFTWARE\Chem4Word V3\MsiActions";
         public const string Chem4WordMessagesRegistryKey = @"SOFTWARE\Chem4Word V3\Messages";
         public const string Chem4WordExceptionsRegistryKey = @"SOFTWARE\Chem4Word V3\Exceptions";
         public const string Chem4WordAzureSettingsRegistryKey = @"SOFTWARE\Chem4Word V3\AzureSettings";

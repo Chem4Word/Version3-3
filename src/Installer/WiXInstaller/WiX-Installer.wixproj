@@ -54,6 +54,7 @@
     <Content Include="Chem4Word.ico" />
     <Content Include="EULA.rtf" />
     <Content Include="Test.cmd" />
+    <Content Include="Testing\Insert Test Messages.reg" />
     <Content Include="Testing\Insert-Legacy-Versions.reg" />
     <Content Include="Testing\WiX Custom Actions.txt" />
   </ItemGroup>

@@ -91,8 +91,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Editor.ACME", "Pl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{53F5ADDD-80C3-4FE4-88A1-B04239474E4B}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Deep-Clean.ps1 = Scripts\Deep-Clean.ps1
 		Scripts\Create-Clones.ps1 = Scripts\Create-Clones.ps1
+		Scripts\Deep-Clean.ps1 = Scripts\Deep-Clean.ps1
 		Scripts\Detect-Invalid-Config.ps1 = Scripts\Detect-Invalid-Config.ps1
 		Scripts\Get-Back-To-Square-One.ps1 = Scripts\Get-Back-To-Square-One.ps1
 		Scripts\Install-Dev-Certificate.ps1 = Scripts\Install-Dev-Certificate.ps1

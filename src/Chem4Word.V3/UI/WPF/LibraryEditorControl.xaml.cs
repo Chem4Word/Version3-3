@@ -184,6 +184,10 @@ namespace Chem4Word.UI.WPF
                         afterModel.CreatorGuid = Globals.Chem4WordV3.Helper.MachineId;
                         pc.CalculateProperties(afterModel);
 
+                        afterModel.SetAnyMissingNameIds();
+                        afterModel.ReLabelGuids();
+                        afterModel.Relabel(true);
+
                         using (var editLabelsHost =
                                new EditLabelsHost(
                                    new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath)))
@@ -196,7 +200,7 @@ namespace Chem4Word.UI.WPF
                             if (dr == DialogResult.OK)
                             {
                                 afterModel = cmlConverter.Import(editLabelsHost.Cml);
-                                afterCml = editLabelsHost.Cml;
+                                afterCml = cmlConverter.Export(afterModel);
                             }
                             editLabelsHost.Close();
                         }
@@ -913,8 +917,11 @@ namespace Chem4Word.UI.WPF
 
                         model.CreatorGuid = Globals.Chem4WordV3.Helper.MachineId;
                         var changed = pc.CalculateProperties(model, showProgress: false);
+
                         if (changed > 0)
                         {
+                            model.SetAnyMissingNameIds();
+                            model.ReLabelGuids();
                             model.Relabel(true);
 
                             var chemistryDataObject = DtoHelper.CreateFromModel(model, obj.DataType);

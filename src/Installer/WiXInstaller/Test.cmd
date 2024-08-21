@@ -1,16 +1,18 @@
 dir bin\Setup\
 rem pause
 
+set release=Chem4Word-Setup.3.3.8.Release.6.msi
+
 del setup.log
 del remove.log
 
-msiexec /i bin\Setup\Chem4Word-Setup.3.3.0.Alpha.0.msi /l*v setup.log
+msiexec /i bin\Setup\%release% /l*v setup.log
 
-rem pause
+pause
 
-msiexec /uninstall bin\Setup\Chem4Word-Setup.3.3.0.Alpha.0.msi /l*v remove.log
+msiexec /uninstall bin\Setup\%release% /l*v remove.log
 
-rem pause
+pause
 
 rem find "Property(" setup.log > properties.log
 rem search logs for "Calling custom action WiX.CustomAction"
