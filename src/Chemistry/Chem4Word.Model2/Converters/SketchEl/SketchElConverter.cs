@@ -262,7 +262,7 @@ namespace Chem4Word.Model2.Converters.SketchEl
                 }
 
                 // Invert Y as SketchEl is upside down
-                atom.Position = new Point(double.Parse(parts[1]), 0 - double.Parse(parts[2]));
+                atom.Position = new Point(SafeDouble.Parse(parts[1]), 0 - SafeDouble.Parse(parts[2]));
 
                 atom.FormalCharge = int.Parse(parts[3]);
 

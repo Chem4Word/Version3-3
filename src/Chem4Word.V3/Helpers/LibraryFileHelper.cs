@@ -5,12 +5,12 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using IChem4Word.Contracts;
 using Newtonsoft.Json;
-using System.Data.Entity;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -26,6 +26,9 @@ namespace Chem4Word.Helpers
 
         private readonly IChem4WordTelemetry _telemetry;
         private string _programDataPath;
+
+        private const string LibrariesFolder = "Libraries";
+        private const string BackupsFolder = "Backups";
 
         public LibraryFileHelper(IChem4WordTelemetry telemetry, string programDataPath)
         {
@@ -43,8 +46,9 @@ namespace Chem4Word.Helpers
             sw.Start();
 
             var result = new ListOfLibraries();
-            var backupDirectory = new DirectoryInfo(Path.Combine(_programDataPath, "Libraries", "Backups"));
-            var librariesDirectory = new DirectoryInfo(Path.Combine(_programDataPath, "Libraries"));
+
+            var librariesDirectory = new DirectoryInfo(Path.Combine(_programDataPath, LibrariesFolder));
+            var backupDirectory = new DirectoryInfo(Path.Combine(_programDataPath, LibrariesFolder, BackupsFolder));
 
             var settingsFile = Path.Combine(_programDataPath, "Libraries.json");
             if (File.Exists(settingsFile))
@@ -171,10 +175,10 @@ namespace Chem4Word.Helpers
                         }
                     }
 
-                    var usableLibraries = new List<string> { $"Libraries [{result.AvailableDatabases.Count}]:" };
-                    usableLibraries.AddRange(result.AvailableDatabases.Select(l => $"  '{l.DisplayName}' [{l.Properties["Count"]}]"));
                     if (!silent)
                     {
+                        var usableLibraries = new List<string> { $"Libraries [{result.AvailableDatabases.Count}]:" };
+                        usableLibraries.AddRange(result.AvailableDatabases.Select(l => $"  '{l.DisplayName}' [{l.Properties["Count"]}]"));
                         _telemetry.Write(module, "Information", string.Join(Environment.NewLine, usableLibraries));
                     }
                 }
@@ -213,10 +217,24 @@ namespace Chem4Word.Helpers
 
         private void EnsureFoldersExist()
         {
-            var path = Path.Combine(_programDataPath, "Libraries");
-            if (!Directory.Exists(path))
+            if (FileSystemHelper.UserHasWritePermission(_programDataPath))
             {
-                Directory.CreateDirectory(path);
+                var path = Path.Combine(_programDataPath, LibrariesFolder);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                path = Path.Combine(path, BackupsFolder);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
+            else
+            {
+                // Inform User
+                UserInteractions.StopUser($"You need write permission to {_programDataPath}");
             }
         }
     }

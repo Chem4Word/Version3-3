@@ -436,20 +436,26 @@ namespace Chem4Word
             }
         }
 
+        private bool CanSendTelemetry() =>
+            Telemetry != null
+            && Helper != null
+            && !string.IsNullOrEmpty(Helper.IpAddress)
+            && !Helper.IpAddress.Equals("0.0.0.0")
+            && !Helper.IpAddress.Equals("8.8.8.8");
+
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            if (Telemetry != null
-                && Helper != null
-                && !string.IsNullOrEmpty(Helper.IpAddress)
-                && !Helper.IpAddress.Equals("0.0.0.0")
-                && !Helper.IpAddress.Equals("0.0.0.0"))
+            if (CanSendTelemetry())
             {
-                RegistryHelper.SendSetupActions();
-                RegistryHelper.SendUpdateActions();
-                RegistryHelper.SendMsiActions();
-
                 _timer.Enabled = false;
                 _timer.Elapsed -= OnTimerElapsed;
+
+                RegistryHelper.SendMsiActions();
+                RegistryHelper.SendSetupActions();
+                RegistryHelper.SendUpdateActions();
+
+                // Early check for updates with longer that normal period
+                UpdateHelper.CheckForUpdates(30);
             }
         }
 
@@ -500,7 +506,7 @@ namespace Chem4Word
                     SystemOptions = new Chem4WordOptions(AddInInfo.ProductAppDataPath);
                     if (SystemOptions.Errors.Any())
                     {
-                        Telemetry.Write(module, "Exception", string.Join(Environment.NewLine, SystemOptions.Errors));
+                        RegistryHelper.StoreMessage(module, "Error(s):" + Environment.NewLine + string.Join(Environment.NewLine, SystemOptions.Errors));
                         SystemOptions.Errors = new List<string>();
                     }
 
@@ -547,7 +553,7 @@ namespace Chem4Word
                                 if (editor == null)
                                 {
                                     SystemOptions.SelectedEditorPlugIn = Constants.DefaultEditorPlugIn;
-                                    Telemetry.Write(module, "Information", $"Setting editor to {SystemOptions.SelectedEditorPlugIn}");
+                                    RegistryHelper.StoreMessage(module, $"Setting editor to {SystemOptions.SelectedEditorPlugIn}");
                                     settingsChanged = true;
                                 }
                             }
@@ -566,7 +572,7 @@ namespace Chem4Word
                                 if (renderer == null)
                                 {
                                     SystemOptions.SelectedRendererPlugIn = Constants.DefaultRendererPlugIn;
-                                    Telemetry.Write(module, "Information", $"Setting renderer to {SystemOptions.SelectedRendererPlugIn}");
+                                    RegistryHelper.StoreMessage(module, $"Setting renderer to {SystemOptions.SelectedRendererPlugIn}");
                                     settingsChanged = true;
                                 }
                             }
@@ -574,18 +580,18 @@ namespace Chem4Word
 
                         if (settingsChanged)
                         {
-                            Telemetry.Write(module, "Information", "Saving revised settings");
+                            RegistryHelper.StoreMessage(module, "Saving revised settings");
                             SystemOptions.Save();
                             if (SystemOptions.Errors.Any())
                             {
-                                Telemetry.Write(module, "Exception", string.Join(Environment.NewLine, SystemOptions.Errors));
+                                RegistryHelper.StoreMessage(module, "Error(s):" + Environment.NewLine + string.Join(Environment.NewLine, SystemOptions.Errors));
                                 SystemOptions.Errors = new List<string>();
                             }
                         }
                     }
                     catch
                     {
-                        //
+                        // Do nothing
                     }
 
                     try
@@ -600,22 +606,13 @@ namespace Chem4Word
                     }
                     catch
                     {
-                        //
+                        // Do nothing
                     }
                 }
             }
             catch (Exception exception)
             {
-                if (Telemetry != null)
-                {
-                    Telemetry.Write(module, "Exception", exception.Message);
-                    Telemetry.Write(module, "Exception", exception.StackTrace);
-                }
-                else
-                {
-                    RegistryHelper.StoreException(module, exception);
-                }
-
+                RegistryHelper.StoreException(module, exception);
                 SystemOptions = null;
             }
         }
@@ -1067,7 +1064,7 @@ namespace Chem4Word
                     }
                 }
             }
-            
+
             if (plugin == null)
             {
                 Telemetry.Write(module, "Warning", $"Could not find renderer plug in {name}");

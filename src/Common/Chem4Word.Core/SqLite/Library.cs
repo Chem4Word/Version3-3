@@ -172,7 +172,7 @@ namespace Chem4Word.Core.SqLite
                                 var molWeight = chemistry["molweight"].ToString();
                                 if (!string.IsNullOrEmpty(molWeight))
                                 {
-                                    dto.MolWeight = double.Parse(molWeight);
+                                    dto.MolWeight = SafeDouble.Parse(molWeight);
                                 }
                                 results.Add(dto);
                             }
@@ -401,7 +401,7 @@ namespace Chem4Word.Core.SqLite
                             var molWeight = chemistry["molweight"].ToString();
                             if (!string.IsNullOrEmpty(molWeight))
                             {
-                                result.MolWeight = double.Parse(molWeight);
+                                result.MolWeight = SafeDouble.Parse(molWeight);
                             }
 
                             result.Names = GetChemicalNamesCommand(conn, id);

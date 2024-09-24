@@ -215,14 +215,14 @@ namespace Chem4Word.Core
                 {
                     var settings = JsonConvert.DeserializeObject<AzureSettings>(temp);
 
+                    _dirty = LastChecked != today;
+
                     ChemicalServicesUri = settings.ChemicalServicesUri;
                     ServiceBusEndPoint = settings.ServiceBusEndPoint;
                     ServiceBusToken = settings.ServiceBusToken;
                     ServiceBusQueue = settings.ServiceBusQueue;
                     LibrariesUri = settings.LibrariesUri;
                     LastChecked = today;
-
-                    _dirty = true;
                 }
             }
             catch

@@ -150,7 +150,7 @@ namespace Chem4Word.Model2.Converters.CML
             string symbolSize = cmlElement.Attribute(name: CMLConstants.AttributeSymbolSize)?.Value;
             if (!string.IsNullOrEmpty(symbolSize))
             {
-                newAnnotation.SymbolSize = double.Parse(symbolSize);
+                newAnnotation.SymbolSize = SafeDouble.Parse(symbolSize);
             }
 
             string isEditable = cmlElement.Attribute(name: CMLConstants.AttributeIsEditable)?.Value;
@@ -736,7 +736,7 @@ namespace Chem4Word.Model2.Converters.CML
                 result.Add(new XAttribute(CMLConstants.AttributeId, annotation.Id));
                 result.Add(new XAttribute(CMLConstants.AttributeX2, SafeDouble.AsCMLString(annotation.Position.X)));
                 result.Add(new XAttribute(CMLConstants.AttributeY2, SafeDouble.AsCMLString(annotation.Position.Y)));
-                result.Add(new XAttribute(CMLConstants.AttributeSymbolSize, annotation.SymbolSize));
+                result.Add(new XAttribute(CMLConstants.AttributeSymbolSize, SafeDouble.AsCMLString(annotation.SymbolSize)));
                 result.Add(new XAttribute(CMLConstants.AttributeIsEditable, annotation.IsEditable));
             }
             return result;

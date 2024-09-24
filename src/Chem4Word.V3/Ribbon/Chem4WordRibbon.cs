@@ -731,6 +731,7 @@ namespace Chem4Word
         {
             if (Globals.Chem4WordV3.Telemetry != null)
             {
+                RegistryHelper.SendMsiActions();
                 RegistryHelper.SendSetupActions();
                 RegistryHelper.SendUpdateActions();
                 RegistryHelper.SendMessages();
@@ -767,6 +768,7 @@ namespace Chem4Word
             {
                 Globals.Chem4WordV3.EvaluateChemistryAllowed();
                 Globals.Chem4WordV3.ShowOrHideUpdateShield();
+
                 if (Globals.Chem4WordV3.ChemistryAllowed)
                 {
                     Globals.Chem4WordV3.SelectChemistry(Globals.Chem4WordV3.Application.Selection);

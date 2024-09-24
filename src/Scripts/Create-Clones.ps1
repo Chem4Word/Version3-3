@@ -2,7 +2,7 @@
 
 $pwd = Split-Path -Path $MyInvocation.MyCommand.Path
 
-$source = "$($pwd)\Chem4Word-Setup.3.3.3.Release.1.msi";
+$source = "$($pwd)\Chem4Word-Setup.3.3.8.Release.6.msi";
 
 $targets = @();
 
@@ -48,6 +48,13 @@ $targets += "Chem4Word-Setup.3.0.31.Release.19.msi"
 $targets += "Chem4Word-Setup.3.0.32.Release.20.msi"
 $targets += "Chem4Word-Setup.3.0.33.Release.21.msi"
 $targets += "Chem4Word-Setup.3.0.34.Release.22.msi"
+$targets += "Chem4Word-Setup.3.0.35.Release.23.msi"
+$targets += "Chem4Word-Setup.3.0.36.Release.24.msi"
+$targets += "Chem4Word-Setup.3.0.37.Release.25.msi"
+$targets += "Chem4Word-Setup.3.0.38.Release.26.msi"
+$targets += "Chem4Word-Setup.3.0.39.Release.27.msi"
+$targets += "Chem4Word-Setup.3.0.40.Release.28.msi"
+$targets += "Chem4Word-Setup.3.0.41.Release.29.msi"
 
 # V3.1 Clones
 $targets += "Chem4Word.Setup.3.1.0.Alpha.1.msi"
@@ -66,6 +73,17 @@ $targets += "Chem4Word.Setup.3.1.12.Release.2.msi"
 $targets += "Chem4Word.Setup.3.1.13.Release.3.msi"
 $targets += "Chem4Word.Setup.3.1.14.Release.4.msi"
 $targets += "Chem4Word.Setup.3.1.15.Release.5.msi"
+$targets += "Chem4Word.Setup.3.1.16.Release.6.msi"
+$targets += "Chem4Word.Setup.3.1.17.Release.7.msi"
+$targets += "Chem4Word.Setup.3.1.18.Release.8.msi"
+$targets += "Chem4Word.Setup.3.1.19.Release.9.msi"
+$targets += "Chem4Word.Setup.3.1.20.Release.10.msi"
+$targets += "Chem4Word.Setup.3.1.21.Release.11.msi"
+$targets += "Chem4Word.Setup.3.1.22.Release.12.msi"
+$targets += "Chem4Word.Setup.3.1.23.Release.13.msi"
+
+$targets += "Chem4Word-Setup.3.1.Latest.msi"
+
 
 foreach ($target in $targets)
 {

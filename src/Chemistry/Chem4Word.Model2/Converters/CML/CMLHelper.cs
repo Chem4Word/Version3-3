@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
+using Chem4Word.Core.Helpers;
 
 namespace Chem4Word.Model2.Converters.CML
 {
@@ -213,19 +214,20 @@ namespace Chem4Word.Model2.Converters.CML
             if (cmlElement.Attribute(CMLConstants.AttributeX2) != null && cmlElement.Attribute(CMLConstants.AttributeY2) != null)
             {
                 result = new Point(
-                    Double.Parse(cmlElement.Attribute(CMLConstants.AttributeX2).Value, CultureInfo.InvariantCulture),
-                    Double.Parse(cmlElement.Attribute(CMLConstants.AttributeY2).Value, CultureInfo.InvariantCulture));
+                    SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeX2).Value),
+                    SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeY2).Value));
                 found = true;
             }
 
             if (!found)
             {
                 // Try again with 3D Co-ordinate scheme
-                if (cmlElement.Attribute(CMLConstants.AttributeX3) != null && cmlElement.Attribute(CMLConstants.AttributeY3) != null)
+                if (cmlElement.Attribute(CMLConstants.AttributeX3) != null
+                    && cmlElement.Attribute(CMLConstants.AttributeY3) != null)
                 {
                     result = new Point(
-                        Double.Parse(cmlElement.Attribute(CMLConstants.AttributeX3).Value, CultureInfo.InvariantCulture),
-                        Double.Parse(cmlElement.Attribute(CMLConstants.AttributeY3).Value, CultureInfo.InvariantCulture));
+                        SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeX3).Value),
+                        SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeY3).Value));
                     found = true;
                 }
             }

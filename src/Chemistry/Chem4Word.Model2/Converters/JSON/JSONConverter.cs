@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using Chem4Word.Core.Helpers;
 
 namespace Chem4Word.Model2.Converters.JSON
 {
@@ -239,7 +240,7 @@ namespace Chem4Word.Model2.Converters.JSON
                     string o;
                     if (b.o != null)
                     {
-                        o = Bond.OrderValueToOrder(double.Parse(b.o.ToString()));
+                        o = Bond.OrderValueToOrder(SafeDouble.Parse(b.o.ToString()));
                     }
                     else
                     {
