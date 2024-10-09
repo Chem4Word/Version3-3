@@ -3,6 +3,21 @@
 <ChangeLog>
     <Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>
     <Version>
+        <Number>3.3.10 Release 8</Number>
+        <IsBeta>false</IsBeta>
+        <Released>31-Oct-2024</Released>
+        <Changes>
+            <Change>...</Change>
+            <Change>...</Change>
+            <Change>...</Change>
+            <Change>...</Change>
+            <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
+            <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
+            <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
+        </Changes>
+        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.9.Release.7.msi</Url>
+    </Version>
+    <Version>
         <Number>3.3.9 Release 7</Number>
         <IsBeta>false</IsBeta>
         <Released>09-Oct-2024</Released>
@@ -10,11 +25,7 @@
             <Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-43485 [System.Text.Json])</Change>
             <Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-43483 [System.IO.Packaging])</Change>
             <Change>BugFix: Ensure strings for doubles are converted using InvariantCulture</Change>
-            <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
-            <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
-            <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
         </Changes>
-        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.9.Release.7.msi</Url>
     </Version>
     <Version>
         <Number>3.3.8 Release 6</Number>
