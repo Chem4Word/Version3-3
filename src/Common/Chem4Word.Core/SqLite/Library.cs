@@ -100,7 +100,7 @@ namespace Chem4Word.Core.SqLite
                             while (names.Read())
                             {
                                 var name = names["Name"] as string;
-                                // Exclude any names that are three characters or less
+                                // Exclude any names that are three characters or fewer
                                 if (!string.IsNullOrEmpty(name) && name.Length > 3)
                                 {
                                     var id = int.Parse(names["ChemistryId"].ToString());
