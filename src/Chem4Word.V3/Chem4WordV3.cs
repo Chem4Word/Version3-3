@@ -1003,8 +1003,8 @@ namespace Chem4Word
 
             if (plugin == null)
             {
-                Telemetry.Write(module, "Warning", $"Could not find driver plug in {name}");
-                Debug.WriteLine($"Could not find driver plug in {name}");
+                Telemetry.Write(module, "Warning", $"Could not find driver plug in [{name}]");
+                Debug.WriteLine($"Could not find driver plug in [{name}]");
                 Debugger.Break();
             }
 
@@ -1035,8 +1035,8 @@ namespace Chem4Word
 
             if (plugin == null)
             {
-                Telemetry.Write(module, "Warning", $"Could not find editor plug in {name}");
-                Debug.WriteLine($"Could not find editor plug in {name}");
+                Telemetry.Write(module, "Warning", $"Could not find editor plug in [{name}]");
+                Debug.WriteLine($"Could not find editor plug in [{name}]");
                 Debugger.Break();
             }
 
@@ -1067,8 +1067,8 @@ namespace Chem4Word
 
             if (plugin == null)
             {
-                Telemetry.Write(module, "Warning", $"Could not find renderer plug in {name}");
-                Debug.WriteLine($"Could not find renderer plug in {name}");
+                Telemetry.Write(module, "Warning", $"Could not find renderer plug in [{name}]");
+                Debug.WriteLine($"Could not find renderer plug in [{name}]");
                 Debugger.Break();
             }
 
@@ -1099,8 +1099,8 @@ namespace Chem4Word
 
             if (plugin == null)
             {
-                Telemetry.Write(module, "Warning", $"Could not find searcher plug in {name}");
-                Debug.WriteLine($"Could not find searcher plug in {name}");
+                Telemetry.Write(module, "Warning", $"Could not find searcher plug in [{name}]");
+                Debug.WriteLine($"Could not find searcher plug in [{name}]");
                 Debugger.Break();
             }
 
@@ -2963,26 +2963,36 @@ namespace Chem4Word
                         var match = Regex.Match(ccTag, regex, RegexOptions.IgnoreCase);
                         if (match.Success)
                         {
+                            var prefix = CustomXmlPartHelper.PrefixFromTag(ccTag);
+                            var guid = CustomXmlPartHelper.GuidFromTag(ccTag);
+
                             var message = $"ContentControl {ccId} added; Looking for structure {ccTag}";
                             Telemetry.Write(module, "Information", message);
 
-                            var cxml = CustomXmlPartHelper.GetCustomXmlPart(thisDocument, ccTag);
+                            var cxml = CustomXmlPartHelper.GetCustomXmlPart(thisDocument, guid);
                             if (cxml != null)
                             {
-                                Telemetry.Write(module, "Information", "Found copy of " + ccTag + " in this document.");
+                                Telemetry.Write(module, "Information", $"Found XmlPart for {ccTag} in this document.");
                             }
                             else
                             {
                                 if (Globals.Chem4WordV3.Application.Documents.Count > 1)
                                 {
-                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(ccTag, thisDocument.Name);
+                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(guid, thisDocument.Name);
                                     if (cxml != null)
                                     {
-                                        Telemetry.Write(module, "Information", "Found copy of " + ccTag + " in other document, adding it into this.");
+                                        Telemetry.Write(module, "Information", $"Found XmlPart for {ccTag} in other document, adding it into this.");
 
                                         // Generate new molecule Guid and apply it
                                         var newGuid = Guid.NewGuid().ToString("N");
-                                        newContentControl.Tag = newGuid;
+                                        if (string.IsNullOrEmpty(prefix))
+                                        {
+                                            newContentControl.Tag = newGuid;
+                                        }
+                                        else
+                                        {
+                                            newContentControl.Tag = $"{prefix}:{newGuid}";
+                                        }
 
                                         var cmlConverter = new CMLConverter();
                                         var model = cmlConverter.Import(cxml.XML);

@@ -139,8 +139,8 @@ namespace Chem4Word
                                 var guid = contentControl.Tag;
                                 if (guid.Contains(":"))
                                 {
-                                    prefix = contentControl.Tag.Split(':')[0];
-                                    guid = contentControl.Tag.Split(':')[1];
+                                    prefix = CustomXmlPartHelper.PrefixFromTag(contentControl.Tag);
+                                    guid = CustomXmlPartHelper.GuidFromTag(contentControl.Tag);
                                 }
 
                                 if (!prefix.Equals(chosenState))
@@ -271,7 +271,7 @@ namespace Chem4Word
                         var prefix = "2D";
                         if (contentControl.Tag.Contains(":"))
                         {
-                            prefix = contentControl.Tag.Split(':')[0];
+                            prefix = CustomXmlPartHelper.PrefixFromTag(contentControl.Tag);
                         }
 
                         customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(document, contentControl.Tag);
@@ -307,12 +307,12 @@ namespace Chem4Word
                                             ShowAsMenu.Items.Add(ribbonButton);
                                             break;
 
-                                        case "N":
+                                        case "N": // Name
                                             ribbonButton.SuperTip = "Render as name";
                                             ShowAsMenu.Items.Add(ribbonButton);
                                             break;
 
-                                        case "F":
+                                        case "F": // Formula
                                             if (item.FullType.ToLower().Contains("formula"))
                                             {
                                                 var parts = FormulaHelper.ParseFormulaIntoParts(item.Value);
