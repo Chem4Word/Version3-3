@@ -124,7 +124,6 @@ namespace Chem4Word.Renderer.OoXmlV4
                     {
                         try
                         {
-                            Debug.WriteLine($"Reading OoXmlV4 Options from {optionsFile}");
                             var contents = File.ReadAllText(optionsFile);
                             var options = JsonConvert.DeserializeObject<OoXmlV4Options>(contents);
                             SetValuesFromCopy(options);
@@ -177,7 +176,6 @@ namespace Chem4Word.Renderer.OoXmlV4
         {
             try
             {
-                Debug.WriteLine($"Saving OoXmlV4 Options to {optionsFile}");
                 var contents = JsonConvert.SerializeObject(this, Formatting.Indented);
                 File.WriteAllText(optionsFile, contents);
             }

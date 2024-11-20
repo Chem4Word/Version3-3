@@ -157,6 +157,7 @@ namespace Chem4Word
                 if (!string.IsNullOrEmpty(path))
                 {
                     var optionsFile = GetFileName(path);
+                    var optionsFileForLogs = optionsFile.Replace(SettingsPath, @"%LocalAppData%\Chem4Word.V3");
 
                     var fileContents = string.Empty;
 
@@ -168,7 +169,7 @@ namespace Chem4Word
                             fileContents = ReadOptionsFile(optionsFile);
                             if (string.IsNullOrEmpty(fileContents))
                             {
-                                RegistryHelper.StoreMessage(module, $"Setting {optionsFile} to defaults because it's empty");
+                                RegistryHelper.StoreMessage(module, $"Setting {optionsFileForLogs} to defaults because it's empty");
 
                                 RestoreDefaults();
                                 PersistOptions(optionsFile);
@@ -186,7 +187,7 @@ namespace Chem4Word
                                 if (!fileContents.Equals(temp))
                                 {
                                     // Auto fix the file if required
-                                    RegistryHelper.StoreMessage(module, $"Auto fixing {optionsFile}");
+                                    RegistryHelper.StoreMessage(module, $"Auto fixing {optionsFileForLogs}");
 
                                     PersistOptions(optionsFile);
                                 }
@@ -204,7 +205,7 @@ namespace Chem4Word
                                 RegistryHelper.StoreMessage(module, $"Length of file is {fileContents.Length}");
                             }
                             RegistryHelper.StoreException(module, exception);
-                            RegistryHelper.StoreMessage(module, $"Setting {optionsFile} to defaults");
+                            RegistryHelper.StoreMessage(module, $"Setting {optionsFileForLogs} to defaults");
 
                             RestoreDefaults();
                             PersistOptions(optionsFile);
@@ -212,7 +213,7 @@ namespace Chem4Word
                     }
                     else
                     {
-                        RegistryHelper.StoreMessage(module, $"Creating {optionsFile} with defaults");
+                        RegistryHelper.StoreMessage(module, $"Creating {optionsFileForLogs} with defaults");
 
                         RestoreDefaults();
                         PersistOptions(optionsFile);

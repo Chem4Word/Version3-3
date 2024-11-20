@@ -283,52 +283,74 @@ namespace Chem4Word
                             var model = converter.Import(cml, used1D);
 
                             var list = model.AllTextualProperties;
+                            var addedNames = new Dictionary<string, string>();
+                            var separatorAdded = false;
                             foreach (var item in list)
                             {
                                 if (item.IsValid && !item.FullType.ToLower().Contains("auxinfo"))
                                 {
-                                    var ribbonButton = Factory.CreateRibbonButton();
-                                    ribbonButton.Tag = item.Id;
-                                    if (prefix.Equals(ribbonButton.Tag))
-                                    {
-                                        ribbonButton.Image = Properties.Resources.SmallTick;
-                                    }
-                                    ribbonButton.Label = item.Value;
-                                    ribbonButton.Click += OnClick_RenderAs;
-
+                                    var compactValue = item.Value.Replace(" ", "").ToLower();
                                     switch (item.TypeCode)
                                     {
                                         case "S":
-                                            ShowAsMenu.Items.Add(Factory.CreateRibbonSeparator());
+                                            if (!separatorAdded)
+                                            {
+                                                ShowAsMenu.Items.Add(Factory.CreateRibbonSeparator());
+                                                separatorAdded = true;
+                                            }
                                             break;
 
                                         case "2D":
-                                            ribbonButton.SuperTip = "Render as 2D image";
-                                            ShowAsMenu.Items.Add(ribbonButton);
+                                            var ribbonButton2d = MakeRibbonButton(item, prefix);
+                                            ribbonButton2d.SuperTip = "Render as 2D image";
+                                            ShowAsMenu.Items.Add(ribbonButton2d);
                                             break;
 
                                         case "N": // Name
-                                            ribbonButton.SuperTip = "Render as name";
-                                            ShowAsMenu.Items.Add(ribbonButton);
+                                            if (!addedNames.ContainsKey(compactValue))
+                                            {
+                                                addedNames.Add(compactValue, compactValue);
+
+                                                var ribbonButtonN = MakeRibbonButton(item, prefix);
+                                                ribbonButtonN.SuperTip = "Render as name";
+                                                ShowAsMenu.Items.Add(ribbonButtonN);
+                                            }
+                                            break;
+
+                                        case "L": // Caption (stored as CML label)
+                                            if (!addedNames.ContainsKey(compactValue))
+                                            {
+                                                addedNames.Add(compactValue, compactValue);
+
+                                                var ribbonButtonC = MakeRibbonButton(item, prefix);
+                                                ribbonButtonC.SuperTip = "Render as caption";
+                                                ShowAsMenu.Items.Add(ribbonButtonC);
+                                            }
                                             break;
 
                                         case "F": // Formula
-                                            if (item.FullType.ToLower().Contains("formula"))
+                                            if (!addedNames.ContainsKey(compactValue))
                                             {
-                                                var parts = FormulaHelper.ParseFormulaIntoParts(item.Value);
-                                                ribbonButton.Label = parts.Count == 0
-                                                                        ? item.Value
-                                                                        : FormulaHelper.FormulaPartsAsUnicode(parts);
+                                                addedNames.Add(compactValue, compactValue);
+
+                                                var ribbonButtonF = MakeRibbonButton(item, prefix);
+                                                if (item.FullType.ToLower().Contains("formula"))
+                                                {
+                                                    var parts = FormulaHelper.ParseFormulaIntoParts(item.Value);
+                                                    ribbonButtonF.Label = parts.Count == 0
+                                                        ? item.Value
+                                                        : FormulaHelper.FormulaPartsAsUnicode(parts);
+                                                }
+                                                if (item.Id.Equals("c0"))
+                                                {
+                                                    ribbonButtonF.SuperTip = "Render as overall concise formula";
+                                                }
+                                                else
+                                                {
+                                                    ribbonButtonF.SuperTip = "Render as " + (item.Id.EndsWith(".f0") ? "concise" : "") + " formula";
+                                                }
+                                                ShowAsMenu.Items.Add(ribbonButtonF);
                                             }
-                                            if (item.Id.Equals("c0"))
-                                            {
-                                                ribbonButton.SuperTip = "Render as overall concise formula";
-                                            }
-                                            else
-                                            {
-                                                ribbonButton.SuperTip = "Render as " + (item.Id.EndsWith(".f0") ? "concise" : "") + " formula";
-                                            }
-                                            ShowAsMenu.Items.Add(ribbonButton);
                                             break;
                                     }
                                 }
@@ -343,6 +365,20 @@ namespace Chem4Word
                 {
                     form.ShowDialog();
                 }
+            }
+
+            // Local function to create a ribbon button
+            RibbonButton MakeRibbonButton(TextualProperty item, string prefix)
+            {
+                var ribbonButton = Factory.CreateRibbonButton();
+                ribbonButton.Tag = item.Id;
+                if (prefix.Equals(ribbonButton.Tag))
+                {
+                    ribbonButton.Image = Properties.Resources.SmallTick;
+                }
+                ribbonButton.Label = item.Value;
+                ribbonButton.Click += OnClick_RenderAs;
+                return ribbonButton;
             }
         }
 
@@ -469,6 +505,52 @@ namespace Chem4Word
                     form.ShowDialog();
                 }
             }
+
+            AfterButtonChecks(sender as RibbonButton);
+        }
+
+        private void OnClick_EditLibrary(object sender, RibbonControlEventArgs e)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            BeforeButtonChecks();
+            if (Globals.Chem4WordV3.Telemetry != null)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            }
+            else
+            {
+                RegistryHelper.StoreMessage(module, "Triggered");
+            }
+
+            using (var cursor = new WaitCursor())
+            {
+                if (Globals.Chem4WordV3.EventsEnabled)
+                {
+                    Globals.Chem4WordV3.EventsEnabled = false;
+
+                    try
+                    {
+                        CloseLibraryTaskPane();
+
+                        var host = new LibraryEditorHost();
+                        host.TopLeft = Globals.Chem4WordV3.WordTopLeft;
+                        host.Telemetry = Globals.Chem4WordV3.Telemetry;
+                        host.SelectedDatabase = Globals.Chem4WordV3.GetSelectedDatabaseDetails().DisplayName;
+
+                        host.ShowDialog();
+                    }
+                    catch (Exception ex)
+                    {
+                        cursor.Reset();
+                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                        {
+                            form.ShowDialog();
+                        }
+                    }
+                }
+            }
+
+            Globals.Chem4WordV3.EventsEnabled = true;
 
             AfterButtonChecks(sender as RibbonButton);
         }
@@ -722,7 +804,7 @@ namespace Chem4Word
                 {
                     Globals.Chem4WordV3.ListOfDetectedLibraries
                         = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                            .GetListOfLibraries(silent:true);
+                            .GetListOfLibraries(silent: true);
                 }
             }
         }

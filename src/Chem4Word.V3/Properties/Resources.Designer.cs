@@ -363,6 +363,16 @@ namespace Chem4Word.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Library_Edit {
+            get {
+                object obj = ResourceManager.GetObject("Library_Edit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Library_Find {
             get {
                 object obj = ResourceManager.GetObject("Library_Find", resourceCulture);

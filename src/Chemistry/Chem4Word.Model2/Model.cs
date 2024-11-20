@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace Chem4Word.Model2
 {
@@ -435,23 +436,28 @@ namespace Chem4Word.Model2
             {
                 var result = ConciseFormula;
 
-                var names = Molecules.Values.First().Names.ToList();
-                foreach (var name in names)
+                var properties = AllTextualProperties.Where(p => p.TypeCode.Equals("L")).ToList();
+                properties.AddRange(AllTextualProperties.Where(p => p.TypeCode.Equals("N")));
+
+                foreach (var property in properties)
                 {
                     // Not special names
-                    if (!name.FullType.ToLower().Contains("inchi"))
+                    if (!property.FullType.ToLower().Contains("inchi"))
                     {
                         // Not special values
-                        if (!name.Value.ToLower().Equals("unable to calculate")
-                            && !name.Value.ToLower().Equals("not found")
-                            && !name.Value.ToLower().Equals("not requested")
-                            && !name.Value.Contains("-"))
+                        if (!property.Value.ToLower().Equals("unable to calculate")
+                            && !property.Value.ToLower().Equals("not found")
+                            && !property.Value.ToLower().Equals("not requested"))
                         {
-                            // Not numeric
-                            if (!long.TryParse(name.Value, out _))
+                            // Greater than 3 characters
+                            if (property.Value.Length > 3)
                             {
-                                result = name.Value;
-                                break;
+                                // Not numeric
+                                if (!decimal.TryParse(property.Value, out _))
+                                {
+                                    result = property.Value;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -576,6 +582,7 @@ namespace Chem4Word.Model2
         }
 
         public string CreatorGuid { get; set; }
+
         public void SetXamlBondLength(int bondLength)
         {
             XamlBondLength = bondLength;
@@ -1246,6 +1253,12 @@ namespace Chem4Word.Model2
                     }
 
                     tp = molecule.Names.SingleOrDefault(n => n.Id.Equals(id));
+                    if (tp != null)
+                    {
+                        break;
+                    }
+
+                    tp = molecule.Captions.SingleOrDefault(l => l.Id.Equals(id));
                     if (tp != null)
                     {
                         break;

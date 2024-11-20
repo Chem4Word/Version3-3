@@ -12,7 +12,6 @@ copy ..\Installer\Chem4WordSetup\bin\Setup\Chem4Word-Setup.exe %working% > nul
 copy ..\Installer\WiXInstaller\bin\Setup\%release% %working% > nul
 
 pushd %working%
-dir
 
 echo Signing Chem4Word-Setup.exe
 %signtoolpath% code azure-key-vault Chem4Word-Setup.exe ^

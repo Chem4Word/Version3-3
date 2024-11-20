@@ -78,7 +78,6 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     {
                         try
                         {
-                            Debug.WriteLine($"Reading Options from {optionsFile}");
                             string contents = File.ReadAllText(optionsFile);
                             var options = JsonConvert.DeserializeObject<ChEBIOptions>(contents);
                             SetValuesFromCopy(options);
@@ -125,7 +124,6 @@ namespace Chem4Word.Searcher.ChEBIPlugin
         {
             try
             {
-                Debug.WriteLine($"Saving ChEBI Options to {optionsFile}");
                 string contents = JsonConvert.SerializeObject(this, Formatting.Indented);
                 File.WriteAllText(optionsFile, contents);
             }

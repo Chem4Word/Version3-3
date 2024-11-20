@@ -45,6 +45,7 @@ namespace Chem4Word
             this.ShowLibrary = this.Factory.CreateRibbonToggleButton();
             this.ManageLibraries = this.Factory.CreateRibbonButton();
             this.BuyLibrary = this.Factory.CreateRibbonButton();
+            this.EditLibrary = this.Factory.CreateRibbonButton();
             this.SaveToLibrary = this.Factory.CreateRibbonButton();
             this.GroupStructure = this.Factory.CreateRibbonGroup();
             this.EditStructure = this.Factory.CreateRibbonButton();
@@ -127,6 +128,7 @@ namespace Chem4Word
             this.GroupLibrary.Items.Add(this.ShowLibrary);
             this.GroupLibrary.Items.Add(this.ManageLibraries);
             this.GroupLibrary.Items.Add(this.BuyLibrary);
+            this.GroupLibrary.Items.Add(this.EditLibrary);
             this.GroupLibrary.Items.Add(this.SaveToLibrary);
             this.GroupLibrary.Label = "Libraries";
             this.GroupLibrary.Name = "GroupLibrary";
@@ -138,7 +140,7 @@ namespace Chem4Word
             this.ShowLibrary.Image = global::Chem4Word.Properties.Resources.Library_Find;
             this.ShowLibrary.Label = "Show";
             this.ShowLibrary.Name = "ShowLibrary";
-            this.ShowLibrary.ScreenTip = "Show current library to import a structure from";
+            this.ShowLibrary.ScreenTip = "Show your currently selected library to import a structure from";
             this.ShowLibrary.ShowImage = true;
             this.ShowLibrary.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_ShowLibrary);
             // 
@@ -160,18 +162,29 @@ namespace Chem4Word
             this.BuyLibrary.Image = global::Chem4Word.Properties.Resources.Library_Buy;
             this.BuyLibrary.Label = "Download or Buy";
             this.BuyLibrary.Name = "BuyLibrary";
-            this.BuyLibrary.ScreenTip = "Download or buy a library (Most are free!)";
+            this.BuyLibrary.ScreenTip = "Download or buy a library (most are free!)";
             this.BuyLibrary.ShowImage = true;
             this.BuyLibrary.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_BuyLibrary);
+            // 
+            // EditLibrary
+            // 
+            this.EditLibrary.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.EditLibrary.Enabled = false;
+            this.EditLibrary.Image = global::Chem4Word.Properties.Resources.Library_Edit;
+            this.EditLibrary.Label = "Edit Library";
+            this.EditLibrary.Name = "EditLibrary";
+            this.EditLibrary.ScreenTip = "Edit your currently selected library";
+            this.EditLibrary.ShowImage = true;
+            this.EditLibrary.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_EditLibrary);
             // 
             // SaveToLibrary
             // 
             this.SaveToLibrary.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.SaveToLibrary.Enabled = false;
             this.SaveToLibrary.Image = global::Chem4Word.Properties.Resources.Library_Save;
-            this.SaveToLibrary.Label = "Save";
+            this.SaveToLibrary.Label = "Save to Library";
             this.SaveToLibrary.Name = "SaveToLibrary";
-            this.SaveToLibrary.ScreenTip = "Save the selected structure to the selected Library";
+            this.SaveToLibrary.ScreenTip = "Save the selected structure to your currently selected Library";
             this.SaveToLibrary.ShowImage = true;
             this.SaveToLibrary.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_SaveToLibrary);
             // 
@@ -408,6 +421,7 @@ namespace Chem4Word
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ShowSystemInfo;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ManageLibraries;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton BuyLibrary;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton EditLibrary;
     }
 
     partial class ThisRibbonCollection

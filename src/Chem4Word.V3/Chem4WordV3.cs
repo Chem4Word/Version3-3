@@ -62,7 +62,6 @@ namespace Chem4Word
         public XDocument ThisVersion;
 
         public bool EventsEnabled = true;
-        public bool PlugInsHaveBeenLoaded;
 
         public bool ChemistryAllowed;
         public string ChemistryProhibitedReason = "";
@@ -87,6 +86,8 @@ namespace Chem4Word
         public TelemetryWriter Telemetry;
 
         private System.Timers.Timer _timer;
+
+        public bool PlugInsHaveBeenLoaded;
 
         public List<IChem4WordEditor> Editors = new List<IChem4WordEditor>();
         public List<IChem4WordRenderer> Renderers = new List<IChem4WordRenderer>();
@@ -1248,7 +1249,9 @@ namespace Chem4Word
 
                 if (PlugInsHaveBeenLoaded)
                 {
+                    var databaseDetails = GetSelectedDatabaseDetails();
                     var plugInsLoaded = Editors.Count + Renderers.Count + Searchers.Count > 0;
+
                     // Enabled once any PlugIns are loaded
                     Ribbon.ChangeOptions.Enabled = plugInsLoaded;
                     IsEnabled = true;
@@ -1270,6 +1273,7 @@ namespace Chem4Word
                             Ribbon.ManageLibraries.Enabled = false;
                             Ribbon.WebSearchMenu.Enabled = false;
                             Ribbon.SaveToLibrary.Enabled = false;
+                            Ribbon.EditLibrary.Enabled = false;
                             Ribbon.ArrangeMolecules.Enabled = false;
                             Ribbon.ButtonsDisabled.Enabled = true;
                             break;
@@ -1287,13 +1291,13 @@ namespace Chem4Word
                             Ribbon.BuyLibrary.Enabled = true;
                             Ribbon.ManageLibraries.Enabled = true;
                             Ribbon.WebSearchMenu.Enabled = false;
-                            var canSave = false;
-                            var details = GetSelectedDatabaseDetails();
-                            if (details != null)
+                            var canSaveOrEdit = false;
+                            if (databaseDetails != null)
                             {
-                                canSave = !details.IsLocked();
+                                canSaveOrEdit = !databaseDetails.IsLocked();
                             }
-                            Ribbon.SaveToLibrary.Enabled = canSave;
+                            Ribbon.SaveToLibrary.Enabled = canSaveOrEdit;
+                            Ribbon.EditLibrary.Enabled = canSaveOrEdit;
                             Ribbon.ArrangeMolecules.Enabled = true;
                             Ribbon.ButtonsDisabled.Enabled = false;
                             break;
@@ -1311,6 +1315,12 @@ namespace Chem4Word
                             Ribbon.BuyLibrary.Enabled = true;
                             Ribbon.ManageLibraries.Enabled = true;
                             Ribbon.SaveToLibrary.Enabled = false;
+                            var canEdit = false;
+                            if (databaseDetails != null)
+                            {
+                                canEdit = !databaseDetails.IsLocked();
+                            }
+                            Ribbon.EditLibrary.Enabled = canEdit;
                             Ribbon.WebSearchMenu.Enabled = plugInsLoaded && Searchers.Count > 0;
                             Ribbon.ArrangeMolecules.Enabled = false;
                             Ribbon.ButtonsDisabled.Enabled = false;
@@ -1332,6 +1342,7 @@ namespace Chem4Word
                         Ribbon.ShowNavigator.Enabled = false;
                         Ribbon.ShowLibrary.Enabled = false;
                         Ribbon.SaveToLibrary.Enabled = false;
+                        Ribbon.EditLibrary.Enabled = false;
                         Ribbon.BuyLibrary.Enabled = false;
                         Ribbon.ManageLibraries.Enabled = false;
                         Ribbon.WebSearchMenu.Enabled = false;
@@ -1522,13 +1533,16 @@ namespace Chem4Word
             {
                 try
                 {
-                    ClearChemistryContextMenus();
-                    EvaluateChemistryAllowed(inRightClick: true);
-                    if (ChemistryAllowed)
+                    if (PlugInsHaveBeenLoaded)
                     {
-                        if (selection.Start != selection.End)
+                        ClearChemistryContextMenus();
+                        EvaluateChemistryAllowed(inRightClick: true);
+                        if (ChemistryAllowed)
                         {
-                            HandleRightClick(selection);
+                            if (selection.Start != selection.End)
+                            {
+                                HandleRightClick(selection);
+                            }
                         }
                     }
                 }

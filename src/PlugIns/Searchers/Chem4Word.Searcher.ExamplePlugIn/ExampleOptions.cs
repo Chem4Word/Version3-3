@@ -72,7 +72,6 @@ namespace Chem4Word.Searcher.ExamplePlugIn
                     {
                         try
                         {
-                            Debug.WriteLine($"Reading Options from {optionsFile}");
                             string contents = File.ReadAllText(optionsFile);
                             var options = JsonConvert.DeserializeObject<ExampleOptions>(contents);
                             SetValuesFromCopy(options);
@@ -125,7 +124,6 @@ namespace Chem4Word.Searcher.ExamplePlugIn
         {
             try
             {
-                Debug.WriteLine($"Saving Example Options to {optionsFile}");
                 string contents = JsonConvert.SerializeObject(this, Formatting.Indented);
                 File.WriteAllText(optionsFile, contents);
             }

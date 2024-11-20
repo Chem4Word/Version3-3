@@ -524,6 +524,7 @@
     <Content Include="Resources\Button Images\Office-2016\Libraries-Manage.png" />
     <Content Include="Resources\Button Images\Office-2016\Library-Buy.png" />
     <Content Include="Resources\Button Images\Office-2016\Library-Delete.png" />
+    <Content Include="Resources\Button Images\Office-2016\Library-Edit.png" />
     <Content Include="Resources\Button Images\Office-2016\Library-Find.png" />
     <Content Include="Resources\Button Images\Office-2016\Library-Save.png" />
     <Content Include="Resources\Button Images\Office-2016\Library-Toggle.png" />

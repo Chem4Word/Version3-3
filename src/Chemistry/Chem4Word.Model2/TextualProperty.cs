@@ -24,13 +24,21 @@ namespace Chem4Word.Model2
         private string _fullType;
         private string _value;
 
+        /// <summary>
+        /// TypeCode should be one of
+        /// <br/>L == Caption
+        /// <br/>F == Formula
+        /// <br/>N == Name
+        /// <br/>S == Separator
+        /// <br/>2D == 2D (used in View As drop down)
+        /// </summary>
         public string TypeCode
         {
             get => _typeCode;
             set
             {
                 _typeCode = value;
-                OnPropertyChanged(nameof(TypeCode));
+                OnPropertyChanged();
             }
         }
 
@@ -41,7 +49,7 @@ namespace Chem4Word.Model2
             {
                 _fullType = value;
                 SetEditFlag();
-                OnPropertyChanged(nameof(FullType));
+                OnPropertyChanged();
             }
         }
 
@@ -52,7 +60,7 @@ namespace Chem4Word.Model2
             {
                 _value = value;
                 IsValid = !string.IsNullOrEmpty(_value);
-                OnPropertyChanged(nameof(Value));
+                OnPropertyChanged();
             }
         }
 

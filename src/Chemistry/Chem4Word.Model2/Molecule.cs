@@ -40,7 +40,7 @@ namespace Chem4Word.Model2
 
         public ObservableCollection<TextualProperty> Formulas { get; internal set; }
         public ObservableCollection<TextualProperty> Names { get; internal set; }
-        public ObservableCollection<TextualProperty> Captions { get; set; }
+        public ObservableCollection<TextualProperty> Captions { get; internal set; }
 
         public List<string> Warnings { get; set; }
         public List<string> Errors { get; set; }
@@ -697,6 +697,17 @@ namespace Chem4Word.Model2
             get
             {
                 var list = new List<TextualProperty>();
+
+                foreach (TextualProperty caption in Captions)
+                {
+                    list.Add(new TextualProperty
+                    {
+                        Id = caption.Id,
+                        TypeCode = "L",
+                        FullType = caption.FullType,
+                        Value = caption.Value
+                    });
+                }
 
                 list.AddRange(GetChildProperties(this));
 

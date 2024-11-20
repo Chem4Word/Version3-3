@@ -81,7 +81,6 @@ namespace Chem4Word.Editor.ChemDoodleWeb800
                     {
                         try
                         {
-                            Debug.WriteLine($"Reading Cdw800 Options from {optionsFile}");
                             string contents = File.ReadAllText(optionsFile);
                             var options = JsonConvert.DeserializeObject<Cdw800Options>(contents);
                             SetValuesFromCopy(options);
@@ -121,7 +120,6 @@ namespace Chem4Word.Editor.ChemDoodleWeb800
         {
             try
             {
-                Debug.WriteLine($"Saving Cdw800 Options to {optionsFile}");
                 string contents = JsonConvert.SerializeObject(this, Formatting.Indented);
                 File.WriteAllText(optionsFile, contents);
             }
