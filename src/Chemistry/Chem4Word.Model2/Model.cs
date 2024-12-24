@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2024, The .NET Foundation.
+//  Copyright (c) 2025, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -441,25 +441,16 @@ namespace Chem4Word.Model2
 
                 foreach (var property in properties)
                 {
-                    // Not special names
-                    if (!property.FullType.ToLower().Contains("inchi"))
+                    // Is long enough, not inchi related, not a special string, not a number
+                    if (property.Value.Length > 3
+                        && !property.FullType.ToLower().Contains("inchi")
+                        && !property.Value.ToLower().Equals("unable to calculate")
+                        && !property.Value.ToLower().Equals("not found")
+                        && !property.Value.ToLower().Equals("not requested")
+                        && !decimal.TryParse(property.Value, out _))
                     {
-                        // Not special values
-                        if (!property.Value.ToLower().Equals("unable to calculate")
-                            && !property.Value.ToLower().Equals("not found")
-                            && !property.Value.ToLower().Equals("not requested"))
-                        {
-                            // Greater than 3 characters
-                            if (property.Value.Length > 3)
-                            {
-                                // Not numeric
-                                if (!decimal.TryParse(property.Value, out _))
-                                {
-                                    result = property.Value;
-                                    break;
-                                }
-                            }
-                        }
+                        result = property.Value;
+                        break;
                     }
                 }
 

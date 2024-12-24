@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2024, The .NET Foundation.
+//  Copyright (c) 2025, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -34,5 +34,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("3.3.10.9070")]
-[assembly: AssemblyFileVersion("3.3.10.9070")]
+[assembly: AssemblyVersion("3.3.10.9132")]
+[assembly: AssemblyFileVersion("3.3.10.9132")]

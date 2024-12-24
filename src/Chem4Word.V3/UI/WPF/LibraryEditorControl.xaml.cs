@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2024, The .NET Foundation.
+//  Copyright (c) 2025, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -133,6 +133,9 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_ChemistryItem(object sender, RoutedEventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
+
             if (e.OriginalSource is WpfEventArgs source
                 && DataContext is LibraryEditorViewModel controller)
             {
@@ -373,6 +376,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ClearButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
             try
             {
                 CheckedFilterButton.IsChecked = false;
@@ -393,13 +397,16 @@ namespace Chem4Word.UI.WPF
         private void OnClick_SearchButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
             try
             {
                 CheckedFilterButton.IsChecked = false;
-                if (!string.IsNullOrWhiteSpace(SearchBox.Text)
+                var searchFor = TextHelper.StripControlCharacters(SearchBox.Text).Trim();
+                if (!string.IsNullOrWhiteSpace(searchFor)
                     && DataContext != null)
                 {
-                    FilterByText();
+                    _telemetry.Write(module, "Information", $"Filter library by '{searchFor}'");
+                    FilterByText(searchFor);
                     UpdateStatusBar();
                 }
             }
@@ -415,6 +422,8 @@ namespace Chem4Word.UI.WPF
         private void OnClick_CheckedFilterButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
+
             try
             {
                 if (DataContext != null)
@@ -514,7 +523,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void FilterByText()
+        private void FilterByText(string searchFor)
         {
             ClearSelectedChemistryItem();
 
@@ -528,7 +537,7 @@ namespace Chem4Word.UI.WPF
                               {
                                   if (ci is ChemistryObject item)
                                   {
-                                      var queryString = SearchBox.Text.ToUpper();
+                                      var queryString = searchFor.ToUpper();
                                       if (item.Name.ToUpper().Contains(queryString)
                                           || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString))
                                           || item.Tags.Any(n => n.ToUpper().Contains(queryString)))
@@ -583,6 +592,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_MetadataButton(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
             try
             {
                 _telemetry.Write(module, "Action", "Editing structure meta data");
@@ -698,6 +708,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ImportButton(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
             try
             {
                 SetButtonStates(false);
@@ -989,6 +1000,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ExportButton(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
             try
             {
                 SetButtonStates(false);
@@ -1079,6 +1091,8 @@ namespace Chem4Word.UI.WPF
 
         private void OnTagRemoved_TagControlModel(object sender, WpfEventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            _telemetry.Write(module, "Action", "Triggered");
             if (sender is TagControlModel tcm)
             {
                 UpdateTags(tcm);

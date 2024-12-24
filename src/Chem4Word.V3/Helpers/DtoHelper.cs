@@ -1,10 +1,11 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2024, The .NET Foundation.
+//  Copyright (c) 2025, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System.Collections.Generic;
 using Chem4Word.ACME.Models;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
@@ -100,14 +101,29 @@ namespace Chem4Word.Helpers
                 MolecularWeight = chemistryDto.MolWeight,
                 Tags = chemistryDto.Tags.Select(t => t.Text).ToList(),
 
-                // List of names to be shown inline in custom UserControl ChemistryItem
-                ChemicalNames = chemistryDto.Names.Select(t => t.Name).Distinct().ToList(),
-
                 // Lists of ChemistryNameDataObject for TreeView
                 Names = chemistryDto.Names,
                 Formulae = chemistryDto.Formulae,
                 Captions = chemistryDto.Captions
             };
+
+            // List of captions and names to be shown inline in the custom UserControl ChemistryItem
+            var listOfNames = chemistryDto.Captions.Select(c => c.Name).ToList();
+            listOfNames.AddRange(chemistryDto.Names.Select(t => t.Name).ToList());
+
+            obj.ChemicalNames = new List<string>();
+            foreach (var name in listOfNames.Distinct())
+            {
+                // Is long enough, not a special string, not a number
+                if (name.Length > 3
+                    && !name.ToLower().Equals("unable to calculate")
+                    && !name.ToLower().Equals("not found")
+                    && !name.ToLower().Equals("not requested")
+                    && !decimal.TryParse(name, out _))
+                {
+                    obj.ChemicalNames.Add(name);
+                }
+            }
 
             if (chemistryDto.DataType.Equals("cml"))
             {

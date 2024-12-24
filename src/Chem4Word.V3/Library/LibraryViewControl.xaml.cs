@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2024, The .NET Foundation.
+//  Copyright (c) 2025, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Chem4Word.Core.Helpers;
 
 namespace Chem4Word.Library
 {
@@ -240,12 +241,14 @@ namespace Chem4Word.Library
         private void OnClick_SearchButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             try
             {
-                if (!string.IsNullOrWhiteSpace(SearchBox.Text)
+                var searchFor = TextHelper.StripControlCharacters(SearchBox.Text).Trim();
+                if (!string.IsNullOrEmpty(searchFor)
                     && DataContext != null)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Filter library by '{SearchBox.Text}'");
+                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Filter library by '{searchFor}'");
 
                     //get the view from the listbox's source
                     ICollectionView view = CollectionViewSource.GetDefaultView(((LibraryController)DataContext).ChemistryItems);
@@ -255,7 +258,7 @@ namespace Chem4Word.Library
                         view.Filter = ci =>
                                       {
                                           var item = ci as ChemistryObject;
-                                          var queryString = SearchBox.Text.ToUpper();
+                                          var queryString = searchFor.ToUpper();
                                           return item != null
                                                  && (item.Name.ToUpper().Contains(queryString)
                                                      || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString)));
