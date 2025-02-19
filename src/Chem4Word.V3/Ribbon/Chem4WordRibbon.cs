@@ -961,7 +961,6 @@ namespace Chem4Word
                                                 }
 
                                                 isNewDrawing = false;
-                                                options = new RenderingOptions(beforeModel);
                                                 if (beforeModel.TotalBondsCount == 0 || beforeModel.MeanBondLength == 0)
                                                 {
                                                     options.DefaultBondLength = Globals.Chem4WordV3.SystemOptions.BondLength;
