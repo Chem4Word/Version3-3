@@ -6,14 +6,14 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Enums;
+using Chem4Word.Core.Helpers;
+using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
-using Chem4Word.Core.Helpers;
 
 namespace Chem4Word.Model2.Converters.CML
 {
@@ -57,6 +57,34 @@ namespace Chem4Word.Model2.Converters.CML
             }
 
             return null;
+        }
+
+        internal static XElement GetExplicitCarbonTag(XElement doc)
+        {
+            var id1 = from XElement xe in doc.Elements(CMLConstants.TagExplicitC) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagExplicitC) select xe;
+            return id1.Union(id2).FirstOrDefault();
+        }
+
+        internal static XElement GetExplicitHydrogenTag(XElement doc)
+        {
+            var id1 = from XElement xe in doc.Elements(CMLConstants.TagExplicitH) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagExplicitH) select xe;
+            return id1.Union(id2).FirstOrDefault();
+        }
+
+        internal static XElement GetColouredAtomsTag(XElement doc)
+        {
+            var id1 = from XElement xe in doc.Elements(CMLConstants.TagShowColouredAtoms) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagShowColouredAtoms) select xe;
+            return id1.Union(id2).FirstOrDefault();
+        }
+
+        internal static XElement GetShowMoleculeGroupingTag(XElement doc)
+        {
+            var id1 = from XElement xe in doc.Elements(CMLConstants.TagShowMoleculeGrouping) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagShowMoleculeGrouping) select xe;
+            return id1.Union(id2).FirstOrDefault();
         }
 
         internal static XElement GetCustomXmlPartGuid(XElement doc)
@@ -184,9 +212,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         internal static int? GetFormalCharge(XElement cmlElement)
         {
-            int formalCharge;
-
-            if (int.TryParse(cmlElement.Attribute(CMLConstants.AttributeFormalCharge)?.Value, out formalCharge))
+            if (int.TryParse(cmlElement.Attribute(CMLConstants.AttributeFormalCharge)?.Value, out var formalCharge))
             {
                 return formalCharge;
             }
@@ -201,7 +227,7 @@ namespace Chem4Word.Model2.Converters.CML
         /// </summary>
         /// <param name="cmlElement">XElement representing the cmlElement CML</param>
         /// <returns>Point containing the cmlElement coordinates</returns>
-        internal static Point GetPosn(XElement cmlElement, out string message)
+        internal static Point GetPosition(XElement cmlElement, out string message)
         {
             message = "";
             string symbol = cmlElement.Attribute(CMLConstants.AttributeElementType)?.Value;
@@ -211,7 +237,8 @@ namespace Chem4Word.Model2.Converters.CML
             bool found = false;
 
             // Try first with 2D Co-ordinate scheme
-            if (cmlElement.Attribute(CMLConstants.AttributeX2) != null && cmlElement.Attribute(CMLConstants.AttributeY2) != null)
+            if (cmlElement.Attribute(CMLConstants.AttributeX2) != null
+                && cmlElement.Attribute(CMLConstants.AttributeY2) != null)
             {
                 result = new Point(
                     SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeX2).Value),
@@ -241,40 +268,47 @@ namespace Chem4Word.Model2.Converters.CML
 
         public static bool? GetExplicit(XElement cmlElement)
         {
-            bool expl;
+            if (bool.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicit)?.Value, out var explicitC))
+            {
+                return explicitC;
+            }
 
-            if (bool.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicit)?.Value, out expl))
+            if (bool.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitC)?.Value, out explicitC))
             {
-                return expl;
+                return explicitC;
             }
-            else
+
+            return null;
+        }
+
+        public static HydrogenLabels? GetExplicitH(XElement cmlElement)
+        {
+            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitH)?.Value, out HydrogenLabels explicitH))
             {
-                return null;
+                return explicitH;
             }
+
+            return null;
         }
 
         public static CompassPoints? GetExplicitHPlacement(XElement cmlElement)
         {
-            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeHydrogenPlacement)?.Value, out CompassPoints expl))
+            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeHydrogenPlacement)?.Value, out CompassPoints explicitHPlacement))
             {
-                return expl;
+                return explicitHPlacement;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static CompassPoints? GetExplicitGroupPlacement(XElement cmlElement)
         {
-            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeFunctionalGroupPlacement)?.Value, out CompassPoints expl))
+            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeFunctionalGroupPlacement)?.Value, out CompassPoints explicitGroupPlacement))
             {
-                return expl;
+                return explicitGroupPlacement;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static List<XElement> GetReactions(XElement doc)
@@ -286,9 +320,7 @@ namespace Chem4Word.Model2.Converters.CML
             return result;
         }
 
-        public static bool BondOrderIsValid(string order)
-        {
-            return "0|1|2|3|S|D|T|hbond|partial01|partial12|partial23|A|".Contains($"|{order}|");
-        }
+        public static bool BondOrderIsValid(string order) =>
+            "0|1|2|3|S|D|T|hbond|partial01|partial12|partial23|A|".Contains($"|{order}|");
     }
 }

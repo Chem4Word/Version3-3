@@ -63,7 +63,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
             CurrentEditor = (EditorCanvas)adornedElement;
 
-            PreviewKeyDown += DrawBondAdorner_PreviewKeyDown;
+            PreviewKeyDown += OnPreviewKeyDown_DrawBondAdorner;
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
             myAdornerLayer.Add(this);
@@ -72,7 +72,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             Focus();
         }
 
-        private void DrawBondAdorner_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnPreviewKeyDown_DrawBondAdorner(object sender, System.Windows.Input.KeyEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
@@ -189,14 +189,14 @@ namespace Chem4Word.ACME.Adorners.Sketching
             }
 
             var orderValue = Bond.OrderToOrderValue(order);
-            //single or dotted bond
+            // single or dotted bond
             if (orderValue <= 1)
             {
                 descriptor = new BondLayout { Start = startPoint, End = endPoint };
                 BondGeometry.GetSingleBondGeometry(descriptor, CurrentEditor.Controller.Standoff);
             }
 
-            //double bond
+            // double bond
             if (orderValue == 2 || orderValue == 1.5)
             {
                 DoubleBondLayout dbd = new DoubleBondLayout { Start = startPoint, End = endPoint };

@@ -7,6 +7,7 @@
 
 using Chem4Word.Core.Helpers;
 using Chem4Word.Helpers;
+using Chem4Word.Model2.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,6 @@ namespace Chem4Word
     [JsonObject(MemberSerialization.OptIn)]
     public class Chem4WordOptions
     {
-        private const int DefaultCheckInterval = 7;
         private const bool DefaultCheckingEnabled = true;
 
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
@@ -77,6 +77,22 @@ namespace Chem4Word
 
         #endregion General
 
+        #region Rendering Options
+
+        [JsonProperty]
+        public HydrogenLabels ExplicitH { get; set; } = HydrogenLabels.HeteroAndTerminal;
+
+        [JsonProperty]
+        public bool ExplicitC { get; set; }
+
+        [JsonProperty]
+        public bool ShowColouredAtoms { get; set; } = true;
+
+        [JsonProperty]
+        public bool ShowMoleculeGrouping { get; set; } = true;
+
+        #endregion Rendering Options
+
         // Not serialised
         public Point WordTopLeft { get; set; }
 
@@ -121,9 +137,14 @@ namespace Chem4Word
             RemoveExplicitHydrogensOnImportFromSearch = false;
             RemoveExplicitHydrogensOnImportFromLibrary = false;
 
+            ShowColouredAtoms = true;
+            ExplicitC = false;
+            ExplicitH = HydrogenLabels.HeteroAndTerminal;
+            ShowMoleculeGrouping = true;
+
             // Non serialised settings
             AutoUpdateEnabled = DefaultCheckingEnabled;
-            AutoUpdateFrequency = DefaultCheckInterval;
+            AutoUpdateFrequency = Constants.DefaultCheckInterval;
         }
 
         public Chem4WordOptions Clone()
@@ -170,6 +191,7 @@ namespace Chem4Word
                             if (string.IsNullOrEmpty(fileContents))
                             {
                                 RegistryHelper.StoreMessage(module, $"Setting {optionsFileForLogs} to defaults because it's empty");
+                                Debugger.Break();
 
                                 RestoreDefaults();
                                 PersistOptions(optionsFile);
@@ -177,9 +199,9 @@ namespace Chem4Word
                             else
                             {
                                 var settings = new JsonSerializerSettings
-                                               {
-                                                   CheckAdditionalContent = false
-                                               };
+                                {
+                                    CheckAdditionalContent = false
+                                };
                                 var options = JsonConvert.DeserializeObject<Chem4WordOptions>(fileContents, settings);
                                 SetValuesFromCopy(options);
 
@@ -244,6 +266,11 @@ namespace Chem4Word
             RemoveExplicitHydrogensOnImportFromFile = copy.RemoveExplicitHydrogensOnImportFromFile;
             RemoveExplicitHydrogensOnImportFromSearch = copy.RemoveExplicitHydrogensOnImportFromSearch;
             RemoveExplicitHydrogensOnImportFromLibrary = copy.RemoveExplicitHydrogensOnImportFromLibrary;
+
+            ShowColouredAtoms = copy.ShowColouredAtoms;
+            ExplicitC = copy.ExplicitC;
+            ExplicitH = copy.ExplicitH;
+            ShowMoleculeGrouping = copy.ShowMoleculeGrouping;
 
             // Non serialised settings
             AutoUpdateEnabled = copy.AutoUpdateEnabled;
@@ -312,6 +339,34 @@ namespace Chem4Word
                 Errors.Add(exception.Message);
                 Errors.Add(exception.StackTrace);
             }
+        }
+
+        public bool AreDefault()
+        {
+            var result = TelemetryEnabled
+
+                         && SelectedEditorPlugIn == Constants.DefaultEditorPlugIn
+                         && SelectedRendererPlugIn == Constants.DefaultRendererPlugIn
+
+                         && BondLength == (int)Constants.StandardBondLength
+
+                         && SetBondLengthOnImportFromFile
+                         && SetBondLengthOnImportFromSearch
+                         && SetBondLengthOnImportFromLibrary
+
+                         && !RemoveExplicitHydrogensOnImportFromFile
+                         && !RemoveExplicitHydrogensOnImportFromSearch
+                         && !RemoveExplicitHydrogensOnImportFromLibrary
+
+                         && ShowColouredAtoms
+                         && !ExplicitC
+                         && ExplicitH == HydrogenLabels.HeteroAndTerminal
+                         && ShowMoleculeGrouping
+
+                         && AutoUpdateEnabled
+                         && AutoUpdateFrequency == 7;
+
+            return result;
         }
     }
 }

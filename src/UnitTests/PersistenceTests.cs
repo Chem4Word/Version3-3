@@ -31,8 +31,8 @@ namespace Chem4WordTests
             // Arrange
 
             // Act
-            CMLConverter mc = new CMLConverter();
-            Model m = mc.Import(ResourceHelper.GetStringResource(file));
+            var mc = new CMLConverter();
+            var m = mc.Import(ResourceHelper.GetStringResource(file));
 
             // Assert
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
@@ -53,13 +53,13 @@ namespace Chem4WordTests
         public void CmlImport(string file, int molecules, int atoms, int bonds, int allRings, int placementRings, int names, int formulas)
         {
             var mc = new CMLConverter();
-            Model model = mc.Import(ResourceHelper.GetStringResource(file));
+            var model = mc.Import(ResourceHelper.GetStringResource(file));
 
             Assert.True(model.Molecules.Count == molecules, $"Expected {molecules} Molecules; Got {model.Molecules.Count}");
             Assert.True(model.TotalAtomsCount == atoms, $"Expected {atoms} Atoms; Got {model.TotalAtomsCount}");
             Assert.True(model.TotalBondsCount == bonds, $"Expected {bonds} Bonds; Got {model.TotalBondsCount}");
 
-            Molecule molecule = model.Molecules.Values.First();
+            var molecule = model.Molecules.Values.First();
             Assert.True(molecule.Rings.Count == allRings, $"Expected {allRings} Rings; Got {molecule.Rings.Count}");
             Assert.True(molecule.Names.Count == names, $"Expected {names} Chemical Names; Got {molecule.Names.Count}");
             Assert.True(molecule.Formulas.Count == formulas, $"Expected {formulas} Chemical Formulas; Got {molecule.Formulas.Count}");
@@ -93,7 +93,7 @@ namespace Chem4WordTests
 
             // Basic Sanity Checks
             Assert.True(model.Molecules.Count == 1, $"Expected 1 Molecule; Got {model.Molecules.Count}");
-            Molecule molecule = model.Molecules.Values.First();
+            var molecule = model.Molecules.Values.First();
             Assert.True(molecule.Atoms.Count == 6, $"Expected 6 Atoms; Got {molecule.Atoms.Count}");
             Assert.True(molecule.Bonds.Count == 6, $"Expected 6 Bonds; Got {molecule.Bonds.Count}");
 
@@ -136,13 +136,13 @@ namespace Chem4WordTests
         [Fact]
         public void CheckAtomTransforms()
         {
-            CMLConverter mc = new CMLConverter();
-            Model model = mc.Import(ResourceHelper.GetStringResource("Transformed.xml"));
+            var mc = new CMLConverter();
+            var model = mc.Import(ResourceHelper.GetStringResource("Transformed.xml"));
 
             // Basic Sanity Checks
             Assert.True(model.Molecules.Count == 1, $"Expected 1 Molecule; Got {model.Molecules.Count}");
 
-            Molecule molecule = model.Molecules.Values.First();
+            var molecule = model.Molecules.Values.First();
             Assert.True(molecule.Atoms.Count == 6, $"Expected 6 Atoms; Got {molecule.Atoms.Count}");
 
             var atoms = molecule.Atoms.Values.ToArray();
@@ -161,13 +161,13 @@ namespace Chem4WordTests
         [Fact]
         public void CmlImportNested()
         {
-            CMLConverter mc = new CMLConverter();
-            Model model = mc.Import(ResourceHelper.GetStringResource("NestedMolecules.xml"));
+            var mc = new CMLConverter();
+            var model = mc.Import(ResourceHelper.GetStringResource("NestedMolecules.xml"));
 
             // Basic Sanity Checks
             Assert.True(model.Molecules.Count == 1, $"Expected 1 Molecule; Got {model.Molecules.Count}");
             // Check molecule m0 has 4 child molecules and no atoms
-            Molecule molecule = model.Molecules.Values.First();
+            var molecule = model.Molecules.Values.First();
             Assert.True(molecule.Molecules.Count == 4, $"Expected 4 Molecules; Got {molecule.Molecules.Count}");
             Assert.True(molecule.Atoms.Count == 0, $"Expected 0 Atoms; Got {molecule.Atoms.Count}");
             // Check molecule m2 has no child molecules and 6 atoms
@@ -188,7 +188,7 @@ namespace Chem4WordTests
         public void CmlExportSingleMolecule_Cml_Root()
         {
             // Arrange
-            Model model = CreateSingleMolecule();
+            var model = CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model);
@@ -202,7 +202,7 @@ namespace Chem4WordTests
         public void CmlExportFlatMolecules_Cml_Root()
         {
             // Arrange
-            Model model = CreateTwoFlatMolecule();
+            var model = CreateTwoFlatMolecules();
 
             // Act
             var cml = new CMLConverter().Export(model);
@@ -216,7 +216,7 @@ namespace Chem4WordTests
         public void CmlExportSingleMolecule_RequestChemDrawFormat_IsAccepted()
         {
             // Arrange
-            Model model = CreateSingleMolecule();
+            var model = CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.ChemDraw);
@@ -230,7 +230,7 @@ namespace Chem4WordTests
         public void CmlExportSingleMolecule_RequestMarvinJSFormat_IsAccepted()
         {
             // Arrange
-            Model model = CreateSingleMolecule();
+            var model = CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.MarvinJs);
@@ -244,7 +244,7 @@ namespace Chem4WordTests
         public void CmlExportTwoFlatMolecules_RequestChemDrawFormat_IsRejected()
         {
             // Arrange
-            Model model = CreateTwoFlatMolecule();
+            var model = CreateTwoFlatMolecules();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.ChemDraw);
@@ -256,7 +256,7 @@ namespace Chem4WordTests
 
         private Model CreateSingleMolecule()
         {
-            Model model = new Model();
+            var model = new Model();
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
@@ -290,9 +290,9 @@ namespace Chem4WordTests
             return model;
         }
 
-        private Model CreateTwoFlatMolecule()
+        private Model CreateTwoFlatMolecules()
         {
-            Model model = new Model();
+            var model = new Model();
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
@@ -356,13 +356,13 @@ namespace Chem4WordTests
         [Fact]
         public void CmlImportExportNested()
         {
-            CMLConverter mc = new CMLConverter();
-            Model model_1 = mc.Import(ResourceHelper.GetStringResource("NestedMolecules.xml"));
+            var mc = new CMLConverter();
+            var model_1 = mc.Import(ResourceHelper.GetStringResource("NestedMolecules.xml"));
 
             // Basic Sanity Checks
             Assert.True(model_1.Molecules.Count == 1, $"Expected 1 Molecule; Got {model_1.Molecules.Count}");
             // Check molecule m0 has 4 child molecules and no atoms
-            Molecule molecule_1 = model_1.Molecules.Values.First();
+            var molecule_1 = model_1.Molecules.Values.First();
             Assert.True(molecule_1.Molecules.Count == 4, $"Expected 4 Molecule; Got {molecule_1.Molecules.Count}");
             Assert.True(molecule_1.Atoms.Count == 0, $"Expected 0 Atoms; Got {molecule_1.Atoms.Count}");
             // Check molecule m2 has no child molecules and 6 atoms
@@ -379,12 +379,12 @@ namespace Chem4WordTests
             Assert.True(molecule_1.Atoms.Count == 6, $"Expected 6 Atoms; Got {molecule_1.Atoms.Count}");
 
             var exported = mc.Export(model_1);
-            Model model_2 = mc.Import(exported);
+            var model_2 = mc.Import(exported);
 
             // Basic Sanity Checks
             Assert.True(model_2.Molecules.Count == 1, $"Expected 1 Molecule; Got {model_2.Molecules.Count}");
             // Check molecule m0 has 4 child molecules and no atoms
-            Molecule molecule_2 = model_2.Molecules.Values.First();
+            var molecule_2 = model_2.Molecules.Values.First();
             Assert.True(molecule_2.Molecules.Count == 4, $"Expected 4 Molecule; Got {molecule_2.Molecules.Count}");
             Assert.True(molecule_2.Atoms.Count == 0, $"Expected 0 Atoms; Got {molecule_2.Atoms.Count}");
             // Check molecule m2 has no child molecules and 6 atoms
@@ -405,8 +405,8 @@ namespace Chem4WordTests
         [Fact]
         public void SdfImportBenzene()
         {
-            SdFileConverter mc = new SdFileConverter();
-            Model m = mc.Import(ResourceHelper.GetStringResource("Benzene.txt"));
+            var mc = new SdFileConverter();
+            var m = mc.Import(ResourceHelper.GetStringResource("Benzene.txt"));
 
             // Basic sanity checks
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
@@ -424,8 +424,8 @@ namespace Chem4WordTests
         [Fact]
         public void SdfImportBasicParafuchsin()
         {
-            SdFileConverter mc = new SdFileConverter();
-            Model m = mc.Import(ResourceHelper.GetStringResource("BasicParafuchsin.txt"));
+            var mc = new SdFileConverter();
+            var m = mc.Import(ResourceHelper.GetStringResource("BasicParafuchsin.txt"));
 
             // Basic sanity checks
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
@@ -443,14 +443,14 @@ namespace Chem4WordTests
         [Fact]
         public void PbuffExportNested()
         {
-            Stopwatch sw = new Stopwatch();
+            var sw = new Stopwatch();
 
-            CMLConverter mc = new CMLConverter();
+            var mc = new CMLConverter();
 
-            string cml = ResourceHelper.GetStringResource("NestedMolecules.xml");
-            ProtocolBufferConverter pc = new ProtocolBufferConverter();
+            var cml = ResourceHelper.GetStringResource("NestedMolecules.xml");
+            var pc = new ProtocolBufferConverter();
             Debug.WriteLine($"CML Length = {cml.Length}");
-            Model m = mc.Import(cml);
+            var m = mc.Import(cml);
             sw.Start();
             var pbm = pc.Export(m);
             sw.Stop();
@@ -465,7 +465,7 @@ namespace Chem4WordTests
             // Basic Sanity Checks
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
             // Check molecule m0 has 4 child molecules and no atoms
-            Molecule molecule_1 = m.Molecules.Values.First();
+            var molecule_1 = m.Molecules.Values.First();
             Assert.True(molecule_1.Molecules.Count == 4, $"Expected 4 Molecule; Got {molecule_1.Molecules.Count}");
             Assert.True(molecule_1.Atoms.Count == 0, $"Expected 0 Atoms; Got {molecule_1.Atoms.Count}");
             // Check molecule m2 has no child molecules and 6 atoms

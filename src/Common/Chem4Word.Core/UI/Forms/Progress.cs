@@ -104,7 +104,7 @@ namespace Chem4Word.Core.UI.Forms
             }
         }
 
-        private void FormProgress_Load(object sender, System.EventArgs e)
+        private void OnLoad_FormProgress(object sender, System.EventArgs e)
         {
             if (!PointHelper.PointIsEmpty(TopLeft))
             {

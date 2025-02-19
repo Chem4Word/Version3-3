@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
 using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Forms;
 using System;
@@ -20,7 +19,6 @@ namespace Chem4Word.Library
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
         private LibraryController _libraryController;
-        private AcmeOptions _editorOptions;
 
         public LibraryHost()
         {
@@ -42,9 +40,6 @@ namespace Chem4Word.Library
                     var libraryViewControl = new LibraryViewControl();
                     elementHost1.Child = libraryViewControl;
 
-                    _editorOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
-                    libraryViewControl.SetOptions(_editorOptions);
-
                     _libraryController = new LibraryController(Globals.Chem4WordV3.Telemetry);
                     libraryViewControl.DataContext = _libraryController;
                 }
@@ -58,7 +53,7 @@ namespace Chem4Word.Library
             }
         }
 
-        private void LibraryHost_Load(object sender, EventArgs e)
+        private void OnLoaded_LibraryHost(object sender, EventArgs e)
         {
             var wpfChild = new LibraryViewControl();
             elementHost1.Child = wpfChild;

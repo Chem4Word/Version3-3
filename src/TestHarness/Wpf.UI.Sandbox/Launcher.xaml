@@ -16,7 +16,7 @@
             <Setter Property="VerticalAlignment" Value="Stretch" />
         </Style>
     </Window.Resources>
-    <Grid>
+    <Grid d:IsLocked="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
@@ -30,6 +30,7 @@
         <Button
             Grid.Row="0"
             Grid.Column="0"
+            d:IsLocked="True"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
             Tag="Shapes">
@@ -38,6 +39,7 @@
         <Button
             Grid.Row="0"
             Grid.Column="1"
+            d:IsLocked="True"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
             Tag="Styles">
@@ -46,6 +48,7 @@
         <Button
             Grid.Row="0"
             Grid.Column="2"
+            d:IsLocked="True"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
             Tag="Ticker">
@@ -54,6 +57,7 @@
         <Button
             Grid.Row="1"
             Grid.Column="0"
+            d:IsLocked="True"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
             Tag="Animation">
@@ -62,6 +66,7 @@
         <Button
             Grid.Row="1"
             Grid.Column="1"
+            d:IsLocked="True"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
             Tag="DropDownStyle">
@@ -70,6 +75,7 @@
         <Button
             Grid.Row="2"
             Grid.Column="0"
+            d:IsLocked="True"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
             Tag="FunctionalGroupExpansionEditor">
@@ -78,6 +84,7 @@
         <Button
             Grid.Row="2"
             Grid.Column="1"
+            d:IsLocked="True"
             Click="OnClick_Button"
             Style="{StaticResource LauncherButtons}"
             Tag="FunctionalGroupExpansionTesting">

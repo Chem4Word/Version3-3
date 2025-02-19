@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
@@ -30,26 +29,14 @@ namespace Chem4Word.Navigator
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        private AcmeOptions _options;
-
         public NavigatorViewControl()
         {
             InitializeComponent();
         }
 
-        public bool ShowAllCarbonAtoms => _options.ShowCarbons;
-        public bool ShowImplicitHydrogens => _options.ShowHydrogens;
-        public bool ShowAtomsInColour => _options.ColouredAtoms;
-        public bool ShowMoleculeGrouping => _options.ShowMoleculeGrouping;
-
-        public void SetOptions(AcmeOptions options)
-        {
-            _options = options;
-        }
-
         public Document ActiveDocument { get; set; }
 
-        private void OnItemButtonClick(object sender, RoutedEventArgs e)
+        private void OnClick_ItemButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 

@@ -12,10 +12,10 @@
     MinWidth="200"
     d:DataContext="{d:DesignInstance {x:Type dvm:BpeDesigner},
                                      IsDesignTimeCreatable=True}"
-    Closing="BondPropertyEditor_OnClosing"
-    ContentRendered="BondPropertyEditor_OnContentRendered"
+    Closing="OnClosing_BondPropertyEditor"
+    ContentRendered="OnContentRendered_BondPropertyEditor"
     Icon="/Chem4Word.ACME;component/Resources/ms-word-16.ico"
-    Loaded="BondPropertyEditor_OnLoaded"
+    Loaded="OnLoaded_BondPropertyEditor"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
@@ -41,7 +41,10 @@
             <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
             <x:Array x:Key="BondItems" Type="{x:Type ComboBoxItem}">
 
-                <ComboBoxItem Height="Auto" Tag="0">
+                <ComboBoxItem
+                    Height="30"
+                    VerticalContentAlignment="Center"
+                    Tag="0">
                     <StackPanel Height="Auto" Orientation="Horizontal">
                         <TextBlock Width="50" FontWeight="DemiBold">None</TextBlock>
                         <Canvas Width="60" Height="Auto">
@@ -57,7 +60,10 @@
                         </Canvas>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem Tag="0.5">
+                <ComboBoxItem
+                    Height="30"
+                    VerticalContentAlignment="Center"
+                    Tag="0.5">
                     <StackPanel Height="Auto" Orientation="Horizontal">
                         <TextBlock Width="50" FontWeight="DemiBold">Half</TextBlock>
                         <Canvas Width="60" Height="Auto">
@@ -73,7 +79,10 @@
                         </Canvas>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem Tag="1">
+                <ComboBoxItem
+                    Height="30"
+                    VerticalContentAlignment="Center"
+                    Tag="1">
                     <StackPanel Height="Auto" Orientation="Horizontal">
                         <TextBlock Width="50" FontWeight="DemiBold">Single</TextBlock>
                         <Canvas Width="60" Height="Auto">
@@ -88,7 +97,10 @@
                         </Canvas>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem Tag="1.5">
+                <ComboBoxItem
+                    Height="30"
+                    VerticalContentAlignment="Center"
+                    Tag="1.5">
                     <StackPanel Height="Auto" Orientation="Horizontal">
                         <TextBlock Width="50" FontWeight="DemiBold">1.5</TextBlock>
                         <Canvas Width="60" Height="Auto">
@@ -112,7 +124,10 @@
                         </Canvas>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem Tag="2">
+                <ComboBoxItem
+                    Height="30"
+                    VerticalContentAlignment="Center"
+                    Tag="2">
                     <StackPanel Height="Auto" Orientation="Horizontal">
                         <TextBlock Width="50" FontWeight="DemiBold">Double</TextBlock>
                         <Canvas Width="60" Height="Auto">
@@ -133,7 +148,10 @@
                         </Canvas>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem Tag="2.5">
+                <ComboBoxItem
+                    Height="30"
+                    VerticalContentAlignment="Center"
+                    Tag="2.5">
                     <StackPanel Height="Auto" Orientation="Horizontal">
                         <TextBlock Width="50" FontWeight="DemiBold">2.5</TextBlock>
                         <Canvas Width="60" Height="Auto">
@@ -163,7 +181,10 @@
                         </Canvas>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem Tag="3">
+                <ComboBoxItem
+                    Height="30"
+                    VerticalContentAlignment="Center"
+                    Tag="3">
                     <StackPanel Height="Auto" Orientation="Horizontal">
                         <TextBlock Width="50" FontWeight="DemiBold">Triple</TextBlock>
                         <Canvas Width="60" Height="Auto">
@@ -278,7 +299,7 @@
                 Background="{Binding Path=BondAngleInvalid, Mode=OneWay, Converter={StaticResource InvalidConverter}}"
                 Style="{StaticResource Acme.Controls.TextBox}"
                 Text="{Binding Path=BondAngle, Mode=TwoWay}"
-                TextChanged="BondAngle_OnTextChanged"
+                TextChanged="OnTextChanged_BondAngle"
                 ToolTip="Angles are measured from Screen North" />
             <TextBlock
                 Grid.Row="3"
@@ -291,7 +312,9 @@
             <ComboBox
                 Grid.Row="3"
                 Grid.Column="1"
+                Height="30"
                 Margin="5,8,144,8"
+                VerticalContentAlignment="Center"
                 d:IsLocked="True"
                 ItemsSource="{Binding Source={StaticResource BondItems}}"
                 SelectedValue="{Binding Path=BondOrderValue, Mode=TwoWay}"
@@ -1166,14 +1189,14 @@
                 <Button
                     Grid.Column="1"
                     d:IsLocked="True"
-                    Click="Save_OnClick"
+                    Click="OnClick_Save"
                     Style="{StaticResource Acme.Control.Button.DialogButton}">
                     OK
                 </Button>
                 <Button
                     Grid.Column="2"
                     d:IsLocked="True"
-                    Click="Cancel_OnClick"
+                    Click="OnClick_Cancel"
                     Style="{StaticResource Acme.Control.Button.DialogButton}">
                     Cancel
                 </Button>

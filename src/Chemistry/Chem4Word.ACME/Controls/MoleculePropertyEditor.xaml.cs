@@ -10,7 +10,9 @@ using Chem4Word.ACME.Entities;
 using Chem4Word.ACME.Models;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Core;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Enums;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -19,6 +21,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace Chem4Word.ACME.Controls
 {
@@ -65,7 +68,7 @@ namespace Chem4Word.ACME.Controls
             InitializeComponent();
         }
 
-        public MoleculePropertyEditor(MoleculePropertiesModel model, AcmeOptions options)
+        public MoleculePropertyEditor(MoleculePropertiesModel model)
         {
             InitializeComponent();
 #if DEBUG
@@ -75,14 +78,12 @@ namespace Chem4Word.ACME.Controls
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 MpeModel = model;
-                MpeModel.Options = options;
                 DataContext = model;
                 MoleculePath.Text = MpeModel.Path;
-                LabelsEditor.SetOptions(options);
             }
         }
 
-        private void MoleculePropertyEditor_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_MoleculePropertyEditor(object sender, RoutedEventArgs e)
         {
             var point = UIUtils.GetOffScreenPoint();
             Left = point.X;
@@ -102,10 +103,50 @@ namespace Chem4Word.ACME.Controls
                              || thisMolecule.SpinMultiplicity.HasValue && thisMolecule.SpinMultiplicity.Value > 1;
 
             ShowBracketsValue.IsEnabled = !showBrackets;
+
             IsDirty = true;
         }
 
-        private void MoleculePropertyEditor_OnContentRendered(object sender, EventArgs e)
+        private void SetupHydrogenLabelsDropDown()
+        {
+            ImplicitHydrogenMode.Items.Clear();
+
+            var inherited = new TextBlock
+            {
+                Text = "Inherited from parent",
+                FontStyle = FontStyles.Italic,
+                Foreground = new SolidColorBrush(Colors.Gray)
+            };
+
+            var notSet = new ComboBoxItem
+            {
+                Content = inherited,
+                Tag = null
+            };
+            ImplicitHydrogenMode.Items.Add(notSet);
+            if (!_moleculePropertiesModel.ExplicitH.HasValue)
+            {
+                ImplicitHydrogenMode.SelectedItem = notSet;
+            }
+
+            foreach (var keyValuePair in EnumHelper.GetEnumValuesWithDescriptions<HydrogenLabels>())
+            {
+                var cbi = new ComboBoxItem
+                {
+                    Content = keyValuePair.Value,
+                    Tag = keyValuePair.Key
+                };
+                ImplicitHydrogenMode.Items.Add(cbi);
+
+                if (_moleculePropertiesModel.ExplicitH.HasValue
+                    && _moleculePropertiesModel.ExplicitH == keyValuePair.Key)
+                {
+                    ImplicitHydrogenMode.SelectedItem = cbi;
+                }
+            }
+        }
+
+        private void OnContentRendered_MoleculePropertyEditor(object sender, EventArgs e)
         {
             // This moves the window to the correct position
             var point = UIUtils.GetOnScreenCentrePoint(_moleculePropertiesModel.Centre, ActualWidth, ActualHeight);
@@ -116,7 +157,7 @@ namespace Chem4Word.ACME.Controls
             IsDirty = false;
         }
 
-        private void Save_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Save(object sender, RoutedEventArgs e)
         {
             _moleculePropertiesModel.Save = true;
             _closedByUser = true;
@@ -136,9 +177,11 @@ namespace Chem4Word.ACME.Controls
             thisMolecule.FormalCharge = GetChargeField();
             thisMolecule.SpinMultiplicity = GetMultiplicityField();
             thisMolecule.ShowMoleculeBrackets = GetShowBracketsField();
+            thisMolecule.ExplicitC = GetExplicitCarbonField();
+            thisMolecule.ExplicitH = GetImplicitHydrogenField();
         }
 
-        private void Close_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Close(object sender, RoutedEventArgs e)
         {
             Close();
         }
@@ -146,6 +189,7 @@ namespace Chem4Word.ACME.Controls
         private void PopulateTabOne()
         {
             Preview.Chemistry = _moleculePropertiesModel.Data.Copy();
+            SetupHydrogenLabelsDropDown();
         }
 
         private void PopulateTabTwo()
@@ -154,12 +198,11 @@ namespace Chem4Word.ACME.Controls
             {
                 CMLConverter cc = new CMLConverter();
                 LabelsEditor.Used1D = _moleculePropertiesModel.Used1DProperties;
-                LabelsEditor.SetOptions(_moleculePropertiesModel.Options);
                 LabelsEditor.PopulateTreeView(cc.Export(_moleculePropertiesModel.Data));
             }
         }
 
-        private void CountSpinnerIncreaseButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_CountSpinnerIncreaseButton(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(CountSpinner.Text))
             {
@@ -177,7 +220,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void CountSpinnerDecreaseButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_CountSpinnerDecreaseButton(object sender, RoutedEventArgs e)
         {
             int count;
             if (int.TryParse(CountSpinner.Text, out count))
@@ -194,7 +237,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void CountSpinner_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void OnTextChanged_CountSpinner(object sender, TextChangedEventArgs e)
         {
             var thisMolecule = _moleculePropertiesModel.Data.Molecules.First().Value;
             var value = GetCountField();
@@ -204,7 +247,7 @@ namespace Chem4Word.ACME.Controls
             SetControlState();
         }
 
-        private void ChargeValues_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_ChargeValues(object sender, SelectionChangedEventArgs e)
         {
             var thisMolecule = _moleculePropertiesModel.Data.Molecules.First().Value;
             var value = GetChargeField();
@@ -214,7 +257,7 @@ namespace Chem4Word.ACME.Controls
             SetControlState();
         }
 
-        private void SpinMultiplicityValues_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_SpinMultiplicityValues(object sender, SelectionChangedEventArgs e)
         {
             var thisMolecule = _moleculePropertiesModel.Data.Molecules.First().Value;
             var value = GetMultiplicityField();
@@ -224,7 +267,7 @@ namespace Chem4Word.ACME.Controls
             SetControlState();
         }
 
-        private void ShowBracketsValue_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_ShowBrackets(object sender, RoutedEventArgs e)
         {
             var thisMolecule = _moleculePropertiesModel.Data.Molecules.First().Value;
             var value = GetShowBracketsField();
@@ -232,6 +275,62 @@ namespace Chem4Word.ACME.Controls
             LabelsEditor.SetShowBrackets(value);
             Preview.Chemistry = _moleculePropertiesModel.Data.Copy();
             SetControlState();
+        }
+
+        private void OnClick_ExplicitC(object sender, RoutedEventArgs e)
+        {
+            var thisMolecule = _moleculePropertiesModel.Data.Molecules.First().Value;
+            var value = GetExplicitCarbonField();
+            thisMolecule.ExplicitC = value;
+            LabelsEditor.SetShowCarbons(value);
+            Preview.Chemistry = _moleculePropertiesModel.Data.Copy();
+            SetControlState();
+        }
+
+        private void OnSelectionChanged_ImplicitHydrogenMode(object sender, SelectionChangedEventArgs e)
+        {
+            var thisMolecule = _moleculePropertiesModel.Data.Molecules.First().Value;
+            var explicitH = GetImplicitHydrogenField();
+            thisMolecule.ExplicitH = explicitH;
+            LabelsEditor.SetHydrogensMode(explicitH);
+            Preview.Chemistry = _moleculePropertiesModel.Data.Copy();
+
+            if (explicitH == HydrogenLabels.All)
+            {
+                ShowAllCarbonAtoms.IsEnabled = false;
+            }
+            else
+            {
+                ShowAllCarbonAtoms.IsEnabled = true;
+            }
+
+            SetControlState();
+        }
+
+        private bool? GetExplicitCarbonField()
+        {
+            bool? result = null;
+
+            if (ShowAllCarbonAtoms.IsChecked != null)
+            {
+                result = ShowAllCarbonAtoms.IsChecked;
+            }
+
+            return result;
+        }
+
+        private HydrogenLabels? GetImplicitHydrogenField()
+        {
+            HydrogenLabels? result = null;
+
+            if (ImplicitHydrogenMode.SelectedItem is ComboBoxItem cbi
+                && cbi.Tag is HydrogenLabels
+                && Enum.TryParse(cbi.Tag.ToString(), out HydrogenLabels hydrogenLabels))
+            {
+                result = hydrogenLabels;
+            }
+
+            return result;
         }
 
         private bool? GetShowBracketsField()
@@ -289,7 +388,7 @@ namespace Chem4Word.ACME.Controls
             return result;
         }
 
-        private void MoleculePropertyEditor_OnClosing(object sender, CancelEventArgs e)
+        private void OnClosing_MoleculePropertyEditor(object sender, CancelEventArgs e)
         {
             if (!_closedByUser && IsDirty)
             {

@@ -70,7 +70,7 @@
             this.SearchButton.TabIndex = 1;
             this.SearchButton.Text = "Search";
             this.SearchButton.UseVisualStyleBackColor = true;
-            this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
+            this.SearchButton.Click += new System.EventHandler(this.OnClick_SearchButton);
             // 
             // SearchFor
             // 
@@ -81,7 +81,7 @@
             this.SearchFor.Name = "SearchFor";
             this.SearchFor.Size = new System.Drawing.Size(765, 25);
             this.SearchFor.TabIndex = 0;
-            this.SearchFor.TextChanged += new System.EventHandler(this.SearchFor_TextChanged);
+            this.SearchFor.TextChanged += new System.EventHandler(this.OnTextChanged_SearchFor);
             // 
             // Results
             // 
@@ -103,8 +103,8 @@
             this.Results.TabIndex = 3;
             this.Results.UseCompatibleStateImageBehavior = false;
             this.Results.View = System.Windows.Forms.View.Details;
-            this.Results.SelectedIndexChanged += new System.EventHandler(this.Results_SelectedIndexChanged);
-            this.Results.DoubleClick += new System.EventHandler(this.Results_DoubleClick);
+            this.Results.SelectedIndexChanged += new System.EventHandler(this.OnSelectedIndexChanged_Results);
+            this.Results.DoubleClick += new System.EventHandler(this.OnDoubleClick_Results);
             // 
             // columnHeader1
             // 
@@ -131,7 +131,7 @@
             this.ImportButton.TabIndex = 4;
             this.ImportButton.Text = "Import";
             this.ImportButton.UseVisualStyleBackColor = true;
-            this.ImportButton.Click += new System.EventHandler(this.ImportButton_Click);
+            this.ImportButton.Click += new System.EventHandler(this.OnClick_ImportButton);
             // 
             // PreviousButton
             // 
@@ -146,7 +146,7 @@
             this.PreviousButton.Text = "Prev";
             this.PreviousButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.PreviousButton.UseVisualStyleBackColor = true;
-            this.PreviousButton.Click += new System.EventHandler(this.PreviousButton_Click);
+            this.PreviousButton.Click += new System.EventHandler(this.OnClick_PreviousButton);
             // 
             // NextButton
             // 
@@ -161,7 +161,7 @@
             this.NextButton.Text = "Next";
             this.NextButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.NextButton.UseVisualStyleBackColor = true;
-            this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
+            this.NextButton.Click += new System.EventHandler(this.OnClick_NextButton);
             // 
             // splitContainer1
             // 
@@ -215,8 +215,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SearchPubChem";
             this.Text = "Search PubChem public database";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SearchPubChem_FormClosing);
-            this.Load += new System.EventHandler(this.SearchPubChem_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing_SearchPubChem);
+            this.Load += new System.EventHandler(this.OnLoad_SearchPubChem);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

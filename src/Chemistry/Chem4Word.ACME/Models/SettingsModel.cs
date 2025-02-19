@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2.Annotations;
+using Chem4Word.Model2.Enums;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -13,70 +14,53 @@ namespace Chem4Word.ACME.Models
 {
     public class SettingsModel : INotifyPropertyChanged
     {
-        private double _currentBondLength;
+        private HydrogenLabels _explicitH;
 
-        public double CurrentBondLength
+        public HydrogenLabels ExplicitH
         {
-            get
-            {
-                return _currentBondLength;
-            }
+            get => _explicitH;
             set
             {
-                _currentBondLength = value;
+                _explicitH = value;
                 OnPropertyChanged();
             }
         }
 
-        private bool _showImplicitHydrogens;
+        private bool _showColouredAtoms;
 
-        public bool ShowImplicitHydrogens
+        public bool ShowColouredAtoms
         {
-            get => _showImplicitHydrogens;
+            get => _showColouredAtoms;
             set
             {
-                _showImplicitHydrogens = value;
+                _showColouredAtoms = value;
                 OnPropertyChanged();
             }
         }
 
-        private bool _showAtomsInColour;
+        private bool _explicitC;
 
-        public bool ShowAtomsInColour
+        public bool ExplicitC
         {
-            get => _showAtomsInColour;
+            get => _explicitC;
             set
             {
-                _showAtomsInColour = value;
+                _explicitC = value;
                 OnPropertyChanged();
             }
         }
 
-        private bool _showAllCarbonAtoms;
+        private bool _showMoleculeGrouping;
 
-        public bool ShowAllCarbonAtoms
+        public bool ShowMoleculeGrouping
         {
-            get => _showAllCarbonAtoms;
+            get => _showMoleculeGrouping;
             set
             {
-                _showAllCarbonAtoms = value;
+                _showMoleculeGrouping = value;
                 OnPropertyChanged();
             }
         }
-
-        private bool _showMoleculeGroups;
-
-        public bool ShowMoleculeGroups
-        {
-            get => _showMoleculeGroups;
-            set
-            {
-                _showMoleculeGroups = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string SettingsPath { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

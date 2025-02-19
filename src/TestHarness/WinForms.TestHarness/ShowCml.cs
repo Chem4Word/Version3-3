@@ -22,7 +22,7 @@ namespace WinForms.TestHarness
             InitializeComponent();
         }
 
-        private void ShowCml_Load(object sender, EventArgs e)
+        private void OnLoad_ShowCml(object sender, EventArgs e)
         {
             // Set the XML Lexer
             scintilla.Lexer = Lexer.Xml;
@@ -43,7 +43,7 @@ namespace WinForms.TestHarness
             scintilla.Margins[2].Width = 20;
 
             // Reset folder markers
-            for (int i = Marker.FolderEnd; i <= Marker.FolderOpen; i++)
+            for (var i = Marker.FolderEnd; i <= Marker.FolderOpen; i++)
             {
                 scintilla.Markers[i].SetForeColor(SystemColors.ControlLightLight);
                 scintilla.Markers[i].SetBackColor(SystemColors.ControlDark);
@@ -84,7 +84,7 @@ namespace WinForms.TestHarness
             timer1.Enabled = true;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void OnTick_timer1(object sender, EventArgs e)
         {
             foreach (var line in scintilla.Lines)
             {

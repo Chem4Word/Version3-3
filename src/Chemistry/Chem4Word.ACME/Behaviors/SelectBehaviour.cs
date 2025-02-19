@@ -61,10 +61,10 @@ namespace Chem4Word.ACME.Behaviors
 
             CurrentEditor = (EditorCanvas)AssociatedObject;
 
-            CurrentEditor.PreviewMouseLeftButtonDown += CurrentEditor_PreviewMouseLeftButtonDown;
-            CurrentEditor.PreviewMouseLeftButtonUp += CurrentEditor_PreviewMouseLeftButtonUp;
-            CurrentEditor.PreviewMouseMove += CurrentEditor_PreviewMouseMove;
-            CurrentEditor.PreviewMouseRightButtonUp += CurrentEditor_PreviewMouseRightButtonUp;
+            CurrentEditor.PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.PreviewMouseMove += OnPreviewMouseMove_CurrentEditor;
+            CurrentEditor.PreviewMouseRightButtonUp += OnPreviewMouseRightButtonUp_CurrentEditor;
 
             CurrentEditor.Cursor = Cursors.Arrow;
 
@@ -73,7 +73,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentStatus = DefaultText;
         }
 
-        private void CurrentEditor_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             UIUtils.DoPropertyEdit(e, CurrentEditor);
         }
@@ -141,7 +141,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentStatus = DefaultText;
         }
 
-        private void CurrentEditor_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             dynamic currentObject = CurrentObject(e);
 
@@ -246,7 +246,7 @@ namespace Chem4Word.ACME.Behaviors
             return HitTestResultBehavior.Continue;
         }
 
-        private void CurrentEditor_PreviewMouseMove(object sender, MouseEventArgs e)
+        private void OnPreviewMouseMove_CurrentEditor(object sender, MouseEventArgs e)
         {
             //this is a *tunnelling* event which means it fires on the outmost
             //container before any of the visual children
@@ -495,7 +495,7 @@ namespace Chem4Word.ACME.Behaviors
 
         private Point GetCurrentMouseLocation(MouseEventArgs e) => e.GetPosition(CurrentEditor);
 
-        private void CurrentEditor_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseLeftButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             ChemicalVisual visual = CurrentEditor.GetTargetedVisual(e.GetPosition(CurrentEditor));
             if (e.ClickCount == 1)
@@ -719,10 +719,10 @@ namespace Chem4Word.ACME.Behaviors
         {
             base.OnDetaching();
 
-            CurrentEditor.PreviewMouseLeftButtonDown -= CurrentEditor_PreviewMouseLeftButtonDown;
-            CurrentEditor.MouseLeftButtonUp -= CurrentEditor_PreviewMouseLeftButtonUp;
-            CurrentEditor.PreviewMouseMove -= CurrentEditor_PreviewMouseMove;
-            CurrentEditor.PreviewMouseRightButtonUp -= CurrentEditor_PreviewMouseRightButtonUp;
+            CurrentEditor.PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
+            CurrentEditor.PreviewMouseRightButtonUp -= OnPreviewMouseRightButtonUp_CurrentEditor;
 
             _lassoAdorner = null;
         }

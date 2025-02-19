@@ -113,11 +113,11 @@ namespace Chem4Word.ACME.Drawing.Visuals
             List<Point> startAtomHull = new List<Point>();
             List<Point> endAtomHull = new List<Point>();
 
-            if (startAtomVisual.ParentAtom.SymbolText != "" || startAtomVisual.ShowAllCarbons)
+            if (startAtomVisual.ParentAtom.SymbolText != "" || startAtomVisual.CarbonIsShowing)
             {
                 startAtomHull = startAtomVisual.Hull;
             }
-            if (endAtomVisual.ParentAtom.SymbolText != "" || endAtomVisual.ShowAllCarbons)
+            if (endAtomVisual.ParentAtom.SymbolText != "" || endAtomVisual.CarbonIsShowing)
             {
                 endAtomHull = endAtomVisual.Hull;
             }

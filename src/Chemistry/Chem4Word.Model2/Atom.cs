@@ -8,6 +8,7 @@
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Annotations;
+using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,13 @@ namespace Chem4Word.Model2
         #endregion Fields
 
         #region Properties
+
+        private bool _isAllenic;
+        private bool _doubletRadical;
+        private Point _position;
+
+        private CompassPoints? _explicitHPlacement;
+        private CompassPoints? _explicitFGPlacement;
 
         /// <summary>
         /// use this property to SET H placement
@@ -62,6 +70,19 @@ namespace Chem4Word.Model2
                 return _explicitHPlacement.Value;
             }
         }
+
+        public bool ShowImplicitHydrogenCharacters =>
+            (IsHetero && (InheritedHydrogenLabels == HydrogenLabels.HeteroAndTerminal || InheritedHydrogenLabels == HydrogenLabels.Hetero))
+            || IsTerminal && InheritedHydrogenLabels == HydrogenLabels.HeteroAndTerminal
+            || InheritedHydrogenLabels == HydrogenLabels.All;
+
+        public string AtomSymbol => IsSingleton || InheritedC || InheritedHydrogenLabels == HydrogenLabels.All
+            ? Element.Symbol
+            : SymbolText;
+
+        public bool CarbonIsShowing => IsCarbon && (InheritedC || IsSingleton)
+                                       || InheritedHydrogenLabels == HydrogenLabels.All
+                                       || InheritedHydrogenLabels == HydrogenLabels.HeteroAndTerminal && IsTerminal;
 
         /// <summary>
         /// Use this property to SET FG placement
@@ -100,7 +121,7 @@ namespace Chem4Word.Model2
 
         private CompassPoints GetDefaultFGPlacement()
         {
-            if (Element is FunctionalGroup)
+            if (_element is FunctionalGroup)
             {
                 if (Bonds.Count() == 1)
                 {
@@ -136,11 +157,77 @@ namespace Chem4Word.Model2
 
         public bool? ExplicitC { get; set; }
 
+        public bool InheritedC
+        {
+            get
+            {
+                switch (_element)
+                {
+                    case Element _:
+                        return ExplicitC ?? Parent.InheritedC;
+
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        public HydrogenLabels? ExplicitH { get; set; }
+
+        public HydrogenLabels InheritedHydrogenLabels
+        {
+            get
+            {
+                switch (_element)
+                {
+                    case Element _:
+                        return ExplicitH ?? Parent.InheritedHydrogenLabels;
+
+                    default:
+                        return HydrogenLabels.HeteroAndTerminal;
+                }
+            }
+        }
+
+        public bool IsTerminal => Bonds.Count() <= 1;
+
+        public bool IsSingleton => !Bonds.Any();
+
+        public bool IsCarbon
+        {
+            get
+            {
+                switch (_element)
+                {
+                    case Element element:
+                        return element == Globals.PeriodicTable.C;
+
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        public bool IsHetero
+        {
+            get
+            {
+                switch (_element)
+                {
+                    case Element _:
+                        return Globals.PeriodicTable.HeteroAtomList.Contains($"|{Element.Symbol}|");
+
+                    default:
+                        return false;
+                }
+            }
+        }
+
         private ElementBase _element;
 
         public ElementBase Element
         {
-            get { return _element; }
+            get => _element;
             set
             {
                 _element = value;
@@ -158,10 +245,7 @@ namespace Chem4Word.Model2
             }
         }
 
-        public IEnumerable<Atom> Neighbours
-        {
-            get { return Parent.GetAtomNeighbours(this); }
-        }
+        public IEnumerable<Atom> Neighbours => Parent.GetAtomNeighbours(this);
 
         public HashSet<Atom> NeighbourSet => new HashSet<Atom>(Neighbours);
 
@@ -255,7 +339,7 @@ namespace Chem4Word.Model2
 
         public string Id
         {
-            get { return _id; }
+            get => _id;
             set
             {
                 if (_id != value)
@@ -282,7 +366,7 @@ namespace Chem4Word.Model2
 
         public Point Position
         {
-            get { return _position; }
+            get => _position;
             set
             {
                 _position = value;
@@ -320,48 +404,41 @@ namespace Chem4Word.Model2
                         {
                             // Use initialised value of true
                         }
-                        else if (Element.Symbol == Globals.CarbonSymbol)
+                        else if (IsCarbon)
                         {
-                            result = false;
+                            result = InheritedC;
 
-                            if (ExplicitC.HasValue)
+                            if (Degree == 2)
                             {
-                                result = ExplicitC.Value;
-                            }
-                            else
-                            {
-                                if (Degree <= 1)
+                                var bonds = Bonds.ToArray();
+                                // This code is triggered when adding the first Atom to a bond
+                                //  at this point one of the atoms is undefined
+                                Atom a1 = bonds[0].OtherAtom(this);
+                                Atom a2 = bonds[1].OtherAtom(this);
+                                if (a1 != null && a2 != null)
                                 {
-                                    result = true;
-                                }
-
-                                if (Degree == 2)
-                                {
-                                    var bonds = Bonds.ToArray();
-                                    // This code is triggered when adding the first Atom to a bond
-                                    //  at this point one of the atoms is undefined
-                                    Atom a1 = bonds[0].OtherAtom(this);
-                                    Atom a2 = bonds[1].OtherAtom(this);
-                                    if (a1 != null && a2 != null)
+                                    double angle1 =
+                                        Vector.AngleBetween(-(Position - a1.Position),
+                                                            Position - a2.Position);
+                                    if (Math.Abs(angle1) < 8)
                                     {
-                                        double angle1 =
-                                            Vector.AngleBetween(-(Position - a1.Position),
-                                                                Position - a2.Position);
-                                        if (Math.Abs(angle1) < 8)
+                                        if (bonds[0].OrderValue == 2
+                                            && bonds[1].OrderValue == 2)
                                         {
-                                            if (bonds[0].OrderValue == 2
-                                                && bonds[1].OrderValue == 2)
-                                            {
-                                                _isAllenic = true;
-                                            }
-                                            else
-                                            {
-                                                // Change this to false to hide C if bonds are in a straight line
-                                                result = true;
-                                            }
+                                            _isAllenic = true;
+                                        }
+                                        else
+                                        {
+                                            // Change this to false if you wish to hide C when bonds are in a straight line
+                                            result = true;
                                         }
                                     }
                                 }
+                            }
+
+                            if (IsTerminal && InheritedHydrogenLabels == HydrogenLabels.HeteroAndTerminal)
+                            {
+                                result = true;
                             }
                         }
                     }
@@ -370,8 +447,6 @@ namespace Chem4Word.Model2
                 return result;
             }
         }
-
-        private bool _isAllenic;
 
         //tries to get an estimated bounding box for each atom symbol
         public Rect BoundingBox(double fontSize)
@@ -487,12 +562,6 @@ namespace Chem4Word.Model2
             }
         }
 
-        private bool _doubletRadical;
-        private Point _position;
-
-        private CompassPoints? _explicitHPlacement;
-        private CompassPoints? _explicitFGPlacement;
-
         public int ImplicitHydrogenCount
         {
             get
@@ -507,10 +576,7 @@ namespace Chem4Word.Model2
 
                 if (Element != null)
                 {
-                    // Applies to "B,C,N,O,F,Si,P,S,Cl,As,Se,Br,Te,I,At"
-                    string appliesTo = Globals.PeriodicTable.ImplicitHydrogenTargets;
-
-                    if (appliesTo.Contains(Element.Symbol))
+                    if (Globals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{Element.Symbol}|"))
                     {
                         int bondCount = (int)Math.Truncate(BondOrders);
                         int charge = FormalCharge ?? 0;
@@ -518,6 +584,7 @@ namespace Chem4Word.Model2
                         iHydrogenCount = availableElectrons <= 0 ? 0 : availableElectrons;
                     }
                 }
+
                 return iHydrogenCount;
             }
         }
@@ -753,7 +820,7 @@ namespace Chem4Word.Model2
 
         #endregion Events
 
-        public void SendDummyNotif()
+        public void SendDummyNotify()
         {
             OnPropertyChanged(nameof(SymbolText));
         }

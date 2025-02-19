@@ -22,7 +22,7 @@ namespace Chem4Word.UI
             InitializeComponent();
         }
 
-        private void UpdateFailure_Load(object sender, EventArgs e)
+        private void OnLOad_UpdateFailure(object sender, EventArgs e)
         {
             if (!PointHelper.PointIsEmpty(TopLeft))
             {

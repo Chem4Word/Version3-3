@@ -47,7 +47,7 @@
             this.SearchFor.Name = "SearchFor";
             this.SearchFor.Size = new System.Drawing.Size(462, 22);
             this.SearchFor.TabIndex = 0;
-            this.SearchFor.TextChanged += new System.EventHandler(this.SearchFor_TextChanged);
+            this.SearchFor.TextChanged += new System.EventHandler(this.OnTextChanged_SearchFor);
             // 
             // SearchButton
             // 
@@ -60,7 +60,7 @@
             this.SearchButton.TabIndex = 3;
             this.SearchButton.Text = "Search";
             this.SearchButton.UseVisualStyleBackColor = true;
-            this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
+            this.SearchButton.Click += new System.EventHandler(this.OnClick_SearchButton);
             // 
             // ImportButton
             // 
@@ -73,7 +73,7 @@
             this.ImportButton.TabIndex = 5;
             this.ImportButton.Text = "Import";
             this.ImportButton.UseVisualStyleBackColor = true;
-            this.ImportButton.Click += new System.EventHandler(this.ImportButton_Click);
+            this.ImportButton.Click += new System.EventHandler(this.OnClick_ImportButton);
             // 
             // elementHost1
             // 
@@ -115,7 +115,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "SearchOpsin";
             this.Text = "Search Opsin public database";
-            this.Load += new System.EventHandler(this.SearchOpsin_Load);
+            this.Load += new System.EventHandler(this.OnLoad_SearchOpsin);
             this.ResumeLayout(false);
             this.PerformLayout();
 

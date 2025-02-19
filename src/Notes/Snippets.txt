@@ -38,7 +38,7 @@ catch (Exception ex)
 }
 
 // Experimental code
-private void btnWpf_Click(object sender, RibbonControlEventArgs e)
+private void OnClick_WpfButton(object sender, RibbonControlEventArgs e)
 {
     // Could this be from a list of supported PlugIns ???
     string[] wpfChildren = new[] { "UserControl1", "UserControl2" };

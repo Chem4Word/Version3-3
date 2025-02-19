@@ -39,13 +39,13 @@ namespace Chem4Word.ACME
             InitializeComponent();
         }
 
-        private void PTPicker_ElementSelected(object sender, Controls.VisualPeriodicTable.ElementEventArgs e)
+        private void OnElementSelected_PTPicker(object sender, Controls.VisualPeriodicTable.ElementEventArgs e)
         {
             SelectedElement = e.SelectedElement;
             Close();
         }
 
-        private void PTPickerWindow_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnPreviewKeyDown_PTPickerWindow(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
@@ -53,7 +53,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        private void PTPickerWindow_Loaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_PTPickerWindow(object sender, RoutedEventArgs e)
         {
             // This moves the window off screen while it renders
             var point = UIUtils.GetOffScreenPoint();
@@ -61,7 +61,7 @@ namespace Chem4Word.ACME
             Top = point.Y;
         }
 
-        private void PTPopup_OnContentRendered(object sender, EventArgs e)
+        private void OnContentRendered_PTPopup(object sender, EventArgs e)
         {
             // This moves the window to the correct position
             var point = UIUtils.GetOnScreenCentrePoint(CentrePoint, ActualWidth, ActualHeight);

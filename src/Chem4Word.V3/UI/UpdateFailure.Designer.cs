@@ -51,7 +51,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "UpdateFailure";
             this.Text = "Chem4Word Update Failure";
-            this.Load += new System.EventHandler(this.UpdateFailure_Load);
+            this.Load += new System.EventHandler(this.OnLOad_UpdateFailure);
             this.ResumeLayout(false);
 
         }

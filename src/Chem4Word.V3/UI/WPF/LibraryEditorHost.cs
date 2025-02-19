@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Wpf;
@@ -36,7 +35,7 @@ namespace Chem4Word.UI.WPF
             InitializeComponent();
         }
 
-        private void LibraryEditorHost_Load(object sender, EventArgs e)
+        private void OnLoad_LibraryEditorHost(object sender, EventArgs e)
         {
             if (!PointHelper.PointIsEmpty(TopLeft))
             {
@@ -50,8 +49,9 @@ namespace Chem4Word.UI.WPF
 
             using (new WaitCursor())
             {
-                var editor = new LibraryEditorControl();
+                var editor = new LibraryEditorControl(Globals.Chem4WordV3.Telemetry);
                 elementHost1.Child = editor;
+                editor.DefaultBondLength = Globals.Chem4WordV3.SystemOptions.BondLength;
 
                 var details = Globals.Chem4WordV3.ListOfDetectedLibraries.AvailableDatabases
                                      .FirstOrDefault(l => l.DisplayName.Equals(SelectedDatabase));
@@ -65,15 +65,13 @@ namespace Chem4Word.UI.WPF
                         var controller = new LibraryEditorViewModel(Telemetry, _driver);
                         editor.TopLeft = TopLeft;
 
-                        var acmeOptions = new AcmeOptions(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath);
-
-                        editor.SetOptions(Telemetry, acmeOptions, _driver);
+                        editor.SetDriver(_driver);
                         editor.DataContext = controller;
                         editor.UpdateStatusBar();
                         Text = $"Editing Library '{_driver.FileName}'";
 
-                        editor.OnSelectionChange -= OnSelectionChangeLibraryEditorControl;
-                        editor.OnSelectionChange += OnSelectionChangeLibraryEditorControl;
+                        editor.OnSelectionChange -= OnSelectionChange_LibraryEditorControl;
+                        editor.OnSelectionChange += OnSelectionChange_LibraryEditorControl;
                     }
                 }
 
@@ -81,7 +79,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void OnSelectionChangeLibraryEditorControl(object sender, WpfEventArgs e)
+        private void OnSelectionChange_LibraryEditorControl(object sender, WpfEventArgs e)
         {
             Debug.WriteLine($"{e.Button} {e.OutputValue}");
         }

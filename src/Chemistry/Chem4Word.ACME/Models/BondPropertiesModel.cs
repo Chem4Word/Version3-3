@@ -140,7 +140,7 @@ namespace Chem4Word.ACME.Models
                         OnPropertyChanged(nameof(SingleBondChoice));
                     }
 
-                    if (IsDouble | Is1Point5 | Is2Point5)
+                    if (IsDouble || Is1Point5 || Is2Point5)
                     {
                         DoubleBondChoice = DoubleBondType.Auto;
                         OnPropertyChanged(nameof(DoubleBondChoice));

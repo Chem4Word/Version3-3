@@ -46,7 +46,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.elementHost);
             this.Name = "NavigatorHost";
-            this.Load += new System.EventHandler(this.NavigatorHost_Load);
+            this.Load += new System.EventHandler(this.OnLoad_NavigatorHost);
             this.ResumeLayout(false);
 
         }

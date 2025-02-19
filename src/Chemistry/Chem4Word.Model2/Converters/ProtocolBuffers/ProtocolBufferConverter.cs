@@ -6,11 +6,11 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Enums;
+using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using Chem4Word.Model2.Interfaces;
 using Google.Protobuf;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Chem4Word.Model2.Converters.ProtocolBuffers
@@ -33,9 +33,14 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
         /// <returns>Protocol Buffer representation of the model</returns>
         public byte[] Export(Model model)
         {
-            Dictionary<string, PBMolecule> moleculeLookup = new Dictionary<string, PBMolecule>();
+            var moleculeLookup = new Dictionary<string, PBMolecule>();
             //create the model first
-            PBModel pbModel = new PBModel();
+            var pbModel = new PBModel();
+
+            pbModel.ExplicitC = model.ExplicitC;
+            pbModel.ExplicitH = (int?)model.ExplicitH;
+            pbModel.ShowColouredAtoms = model.ShowColouredAtoms;
+            pbModel.ShowMoleculeBrackets = model.ShowMoleculeGrouping;
 
             //add annotations
             foreach (var ann in model.Annotations.Values)
@@ -54,14 +59,14 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             //reaction schemes
             foreach (var scheme in model.ReactionSchemes.Values)
             {
-                var schemeBuffer = new PBReactionScheme()
+                var schemeBuffer = new PBReactionScheme
                 {
                     Id = scheme.Id
                 };
 
                 foreach (var reaction in scheme.Reactions.Values)
                 {
-                    var reactionBuffer = new PBReaction()
+                    var reactionBuffer = new PBReaction
                     {
                         ConditionsText = reaction.ConditionsText,
                         Id = reaction.Id,
@@ -100,15 +105,17 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
         private PBMolecule MoleculeToPBuff(Molecule mol)
         {
-            Dictionary<string, PBAtom> atomLookup = new Dictionary<string, PBAtom>();
-            PBMolecule result = new PBMolecule
+            var atomLookup = new Dictionary<string, PBAtom>();
+            var result = new PBMolecule
             {
                 Count = mol.Count,
                 DictRef = mol.DictRef,
                 FormalCharge = mol.FormalCharge,
                 Id = mol.Id,
                 SpinMultiplicity = mol.SpinMultiplicity,
-                Title = mol.Title
+                Title = mol.Title,
+                ExplicitC = mol.ExplicitC,
+                ExplicitH = (int?)mol.ExplicitH
             };
 
             foreach (var atom in mol.Atoms.Values)
@@ -130,7 +137,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
             foreach (var ring in mol.Rings)
             {
-                PBRing newRing = new PBRing();
+                var newRing = new PBRing();
                 foreach (var modelAtom in ring.Atoms)
                 {
                     newRing.Atoms.Add(atomLookup[modelAtom.Id]);
@@ -159,7 +166,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
         private PBTextualProperty TPToPBuff(TextualProperty property)
         {
-            PBTextualProperty result = new PBTextualProperty
+            var result = new PBTextualProperty
             {
                 Id = property.Id,
                 FullType = property.FullType,
@@ -170,7 +177,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
         private PBAtom AtomToPBuff(Atom atom)
         {
-            PBAtom result = new PBAtom
+            var result = new PBAtom
             {
                 ExplicitC = atom.ExplicitC,
                 Id = atom.Id,
@@ -179,6 +186,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 FormalCharge = atom.FormalCharge,
                 DoubletRadical = atom.DoubletRadical,
                 IsotopeNumber = atom.IsotopeNumber,
+                ExplicitH = (int?)atom.ExplicitH
             };
 
             if (atom.Element is FunctionalGroup fg)
@@ -203,7 +211,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
         private PBBond BondToPBuff(Bond bond)
         {
-            PBBond result = new PBBond
+            var result = new PBBond
             {
                 Id = bond.Id,
                 StartAtomID = bond.StartAtom.Id,
@@ -236,7 +244,25 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
             var moleculeLookup = new Dictionary<string, Molecule>();
 
-            Model result = new Model();
+            var result = new Model();
+
+            if (protoBuffModel.ExplicitH.HasValue)
+            {
+                result.ExplicitH = (HydrogenLabels)protoBuffModel.ExplicitH.Value;
+            }
+            if (protoBuffModel.ExplicitC.HasValue)
+            {
+                result.ExplicitC = protoBuffModel.ExplicitC.Value;
+            }
+            if (protoBuffModel.ShowColouredAtoms.HasValue)
+            {
+                result.ShowColouredAtoms = protoBuffModel.ShowColouredAtoms.Value;
+            }
+            if (protoBuffModel.ShowMoleculeBrackets.HasValue)
+            {
+                result.ShowMoleculeGrouping = protoBuffModel.ShowMoleculeBrackets.Value;
+            }
+
             ImportAnnotations(protoBuffModel, result);
 
             ImportMolecules(protoBuffModel, result, moleculeLookup);
@@ -252,7 +278,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 foreach (var ann in model.Annotations)
                 {
                     var annValue = ann.Value;
-                    var newAnnotation = new Annotation()
+                    var newAnnotation = new Annotation
                     {
                         Id = annValue.Id,
                         Xaml = annValue.Xaml,
@@ -277,7 +303,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             //local function
             Reaction ImportReaction(PBReaction reactionVal, ReactionScheme rs)
             {
-                var newReaction = new Reaction()
+                var newReaction = new Reaction
                 {
                     ConditionsText = reactionVal.ConditionsText,
                     HeadPoint = new System.Windows.Point(
@@ -289,13 +315,13 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     TailPoint = new System.Windows.Point(reactionVal.TailPoint.X, reactionVal.TailPoint.Y)
                 };
 
-                foreach (string reactantId in reactionVal.Reactants)
+                foreach (var reactantId in reactionVal.Reactants)
                 {
                     var reactant = moleculeLookup[reactantId];
                     newReaction.AddReactant(reactant);
                 }
 
-                foreach (string productId in reactionVal.Products)
+                foreach (var productId in reactionVal.Products)
                 {
                     var product = moleculeLookup[productId];
                     newReaction.AddProduct(product);
@@ -310,7 +336,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 foreach (var scheme in protoBuffModel2.ReactionSchemes)
                 {
                     var schemeval = scheme.Value;
-                    ReactionScheme rs = new ReactionScheme()
+                    var rs = new ReactionScheme
                     {
                         Id = schemeval.Id,
                         Parent = result2
@@ -334,7 +360,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             var atomLookup = new Dictionary<string, Atom>();
             var molval = molecule.Value;
 
-            Molecule newMol = new Molecule
+            var newMol = new Molecule
             {
                 Id = molval.Id,
                 Count = molval.Count,
@@ -345,12 +371,16 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 Parent = parent
             };
 
+            newMol.ExplicitH = (HydrogenLabels?)molval.ExplicitH;
+            newMol.ExplicitC = molval.ExplicitC;
+
             foreach (var atom in molval.Atoms.Values)
             {
-                Atom newAtom = new Atom
+                var newAtom = new Atom
                 {
                     DoubletRadical = atom.DoubletRadical,
                     ExplicitC = atom.ExplicitC,
+                    ExplicitH = (HydrogenLabels?)atom.ExplicitH,
                     FormalCharge = atom.FormalCharge,
                     Id = atom.Id,
                     IsotopeNumber = atom.IsotopeNumber,
@@ -376,7 +406,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
             foreach (var bond in molval.Bonds)
             {
-                Bond newBond = new Bond
+                var newBond = new Bond
                 {
                     Id = bond.Id,
                     EndAtomInternalId = atomLookup[bond.EndAtomID].InternalId,
@@ -399,8 +429,8 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
 
             foreach (var ring in molval.Rings)
             {
-                Ring newRing = new Ring();
-                foreach (PBAtom ringAtom in ring.Atoms)
+                var newRing = new Ring();
+                foreach (var ringAtom in ring.Atoms)
                 {
                     newRing.Atoms.Add(atomLookup[ringAtom.Id]);
                 }

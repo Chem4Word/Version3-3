@@ -33,6 +33,8 @@ namespace Chem4Word.Telemetry
         private readonly bool _permissionGranted;
         private readonly bool _isBeta;
 
+        public int BufferCount() => _azureServiceBusWriter.BufferCount;
+
         public TelemetryWriter(bool permissionGranted, bool isBeta, SystemHelper helper)
         {
             _permissionGranted = permissionGranted;
@@ -41,7 +43,7 @@ namespace Chem4Word.Telemetry
 
             if (_helper == null)
             {
-                //Debugger.Break();
+                Debugger.Break();
             }
 
             if (_wmiHelper == null)
@@ -296,8 +298,8 @@ namespace Chem4Word.Telemetry
             lines.Add($"Debug - Environment.OSVersion: {Environment.OSVersion}");
             lines.Add($"Debug - Environment.Version: {Environment.Version}");
 
-            lines.Add($"Debug - Environment.CommandLine: {Environment.CommandLine}");
             lines.Add($"Debug - AddIn Location: {_helper.AddInLocation}");
+            lines.Add($"Debug - Environment.CommandLine: {Environment.CommandLine}");
 
             WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, lines));
 

@@ -10,7 +10,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
-    Loaded="LabelsEditor_OnLoaded"
+    Loaded="OnLoaded_LabelsEditor"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -26,7 +26,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -37,19 +37,21 @@
             Height="Auto"
             MinHeight="16"
             Margin="5"
+            d:IsLocked="True"
             Orientation="Horizontal"
             Visibility="{Binding Path=ShowTopPanel, Mode=TwoWay, Converter={StaticResource VisConverter}}" />
         <Border
             Grid.Row="1"
+            d:IsLocked="True"
             BorderBrush="{StaticResource Chem4WordBlue}"
             BorderThickness="2">
-            <Grid>
+            <Grid d:IsLocked="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="33*" MinWidth="100" />
                     <ColumnDefinition Width="5" />
                     <ColumnDefinition Width="66*" MinWidth="100" />
                 </Grid.ColumnDefinitions>
-                <Grid Column="0">
+                <Grid d:IsLocked="True" Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" MinHeight="100" />
                         <RowDefinition Height="5" />
@@ -57,34 +59,35 @@
                     </Grid.RowDefinitions>
                     <ScrollViewer
                         Grid.Row="0"
+                        d:IsLocked="True"
                         HorizontalScrollBarVisibility="Auto"
                         VerticalScrollBarVisibility="Auto">
                         <TreeView
                             x:Name="TreeView"
+                            d:IsLocked="True"
                             FontFamily="Segoe UI"
-                            SelectedItemChanged="TreeView_OnSelectedItemChanged" />
+                            SelectedItemChanged="OnSelectedItemChanged_TreeView" />
                     </ScrollViewer>
                     <Border
                         Grid.Row="2"
                         Grid.Column="0"
+                        d:IsLocked="True"
                         CornerRadius="5">
                         <acme:Display
                             x:Name="Display"
                             Margin="3"
+                            d:IsLocked="True"
                             Background="White"
-                            HighlightActive="False"
-                            ShowAllCarbonAtoms="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=acme:LabelsEditor}, Path=ShowAllCarbonAtoms}"
-                            ShowAtomsInColour="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=acme:LabelsEditor}, Path=ShowAtomsInColour}"
-                            ShowImplicitHydrogens="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=acme:LabelsEditor}, Path=ShowImplicitHydrogens}"
-                            ShowMoleculeGrouping="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=acme:LabelsEditor}, Path=ShowMoleculeGrouping}" />
+                            HighlightActive="False" />
                     </Border>
                     <GridSplitter
                         Grid.Row="1"
                         Height="5"
                         HorizontalAlignment="Stretch"
+                        d:IsLocked="True"
                         Background="{StaticResource SplitterBackground}" />
                 </Grid>
-                <Grid Column="2">
+                <Grid d:IsLocked="True" Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="33*" MinHeight="100" />
                         <RowDefinition Height="5" />
@@ -92,24 +95,36 @@
                         <RowDefinition Height="5" />
                         <RowDefinition Height="33*" MinHeight="100" />
                     </Grid.RowDefinitions>
-                    <local:NamesEditor x:Name="NamesGrid" Grid.Row="0" />
-                    <local:NamesEditor x:Name="FormulaGrid" Grid.Row="2" />
-                    <local:NamesEditor x:Name="CaptionsGrid" Grid.Row="4" />
+                    <local:NamesEditor
+                        x:Name="NamesGrid"
+                        Grid.Row="0"
+                        d:IsLocked="True" />
+                    <local:NamesEditor
+                        x:Name="FormulaGrid"
+                        Grid.Row="2"
+                        d:IsLocked="True" />
+                    <local:NamesEditor
+                        x:Name="CaptionsGrid"
+                        Grid.Row="4"
+                        d:IsLocked="True" />
                     <GridSplitter
                         Grid.Row="1"
                         Height="5"
                         HorizontalAlignment="Stretch"
+                        d:IsLocked="True"
                         Background="{StaticResource SplitterBackground}" />
                     <GridSplitter
                         Grid.Row="3"
                         Height="5"
                         HorizontalAlignment="Stretch"
+                        d:IsLocked="True"
                         Background="{StaticResource SplitterBackground}" />
                 </Grid>
                 <GridSplitter
                     Grid.Column="1"
                     Width="5"
                     HorizontalAlignment="Stretch"
+                    d:IsLocked="True"
                     Background="{StaticResource SplitterBackground}" />
             </Grid>
         </Border>

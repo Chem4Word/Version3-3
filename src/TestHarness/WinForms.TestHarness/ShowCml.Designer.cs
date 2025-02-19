@@ -46,7 +46,7 @@
             // timer1
             // 
             this.timer1.Interval = 125;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timer1.Tick += new System.EventHandler(this.OnTick_timer1);
             // 
             // ShowCml
             // 
@@ -58,7 +58,7 @@
             this.Name = "ShowCml";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ShowCml";
-            this.Load += new System.EventHandler(this.ShowCml_Load);
+            this.Load += new System.EventHandler(this.OnLoad_ShowCml);
             this.ResumeLayout(false);
 
         }

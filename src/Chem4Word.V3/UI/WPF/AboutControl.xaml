@@ -4,13 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Height="426"
+    Height="450"
     d:DesignWidth="500"
     FontFamily="Segoe UI"
     FontSize="12"
     FontWeight="Normal"
     Foreground="Blue"
-    Loaded="AboutControl_Loaded"
+    Loaded="OnLoaded_AboutControl"
     mc:Ignorable="d">
 
     <!--  Fixed format for hyperlinks  -->
@@ -26,14 +26,15 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid x:Name="grdAbout">
+    <Grid x:Name="grdAbout" d:IsLocked="True">
         <Grid.Background>
             <ImageBrush ImageSource="../../Resources/About Images/C4W Background 512.png" Stretch="UniformToFill" />
         </Grid.Background>
-        <StackPanel Margin="5,5,5,10">
+        <StackPanel Margin="5,5,5,10" d:IsLocked="True">
             <TextBlock
                 Margin="5"
                 VerticalAlignment="Top"
+                d:IsLocked="True"
                 FontSize="18"
                 FontWeight="Bold"
                 Text="Chemistry Add-In for Microsoft Word"
@@ -43,6 +44,7 @@
                 x:Name="Chem4WordVersion"
                 Margin="5"
                 VerticalAlignment="Top"
+                d:IsLocked="True"
                 FontSize="18"
                 Foreground="Blue"
                 Text="Version..."
@@ -50,34 +52,42 @@
                 TextWrapping="Wrap" />
             <TextBlock
                 Margin="5"
+                d:IsLocked="True"
                 FontSize="12"
                 Foreground="Black"
                 TextAlignment="Justify"
                 TextWrapping="Wrap"><Run Text="The Chemistry Add-In for Word " /><Run Text="originated from" /><Run Text=" Microsoft Research and the University of Cambridge" /><Run Text=", to" /><Run Text=" " /><Run Text="add chemistry to " /><Run Text="Word documents.  " /><LineBreak /><Run /><LineBreak /><Run Text="The Add-In is now being further developed by a small, independent project team " /><Run Text="based in the UK" /><Run Text=" (Andy Wright, Clyde Davies &amp; Mike Williams)" /><Run Text=".  " /><LineBreak /><Run /><LineBreak /><Run Text="The Chem4Word Project" /><Run Text=" " /><Run Text="accurately " /><Run Text="capture" /><Run Text="s" /><Run Text=" and retain" /><Run Text="s semantic chemistry" /><Run Text=" " /><Run Text="as you author a document. This" /><Run Text=" simplifies" /><Run Text=" pre-publication and " /><Run Text="rich " /><Run Text="information discovery scenarios, " /><Run Text="and " /><Run Text="preserve" /><Run Text="s" /><Run Text=" " /><Run Text="chemistry" /><Run Text=" for archival" /><Run Text="." /><LineBreak /><Run /><LineBreak /><Run Text="Chem4Word uses " /><Run Text="Chemical Markup Language" /><Run Language="en-gb" Text=" (CML)" /><Run Text=" - an open standard." /></TextBlock>
-            <DockPanel Margin="5" LastChildFill="True" />
-            <TextBlock Margin="5,0,0,0">
+            <DockPanel
+                Margin="5"
+                d:IsLocked="True"
+                LastChildFill="True" />
+            <TextBlock Margin="5,0,0,0" d:IsLocked="True">
                 <Hyperlink Click="OnClick_MainWebsite">Visit the project's website</Hyperlink>
             </TextBlock>
-            <TextBlock Margin="5,0,0,0">
+            <TextBlock Margin="5,0,0,0" d:IsLocked="True">
+                <Hyperlink Click="OnClick_Donate">If you like our work, please consider donating at Buy Me a Coffee</Hyperlink>
+            </TextBlock>
+            <TextBlock Margin="5,0,0,0" d:IsLocked="True">
                 <Hyperlink Click="OnClick_SourceCode">Visit the project's GitHub repository to view the source code</Hyperlink>
             </TextBlock>
-            <TextBlock Margin="5,0,0,0">
+            <TextBlock Margin="5,0,0,0" d:IsLocked="True">
                 <Hyperlink Click="OnClick_YouTube">See our tutorials on YouTube</Hyperlink>
             </TextBlock>
-            <TextBlock Margin="5,0,0,0">
+            <TextBlock Margin="5,0,0,0" d:IsLocked="True">
                 <Hyperlink Click="OnClick_Sponsor">Visit our page on our sponsor's web site (The .NET Foundation)</Hyperlink>
             </TextBlock>
-            <TextBlock Margin="5,0,0,0">
+            <TextBlock Margin="5,0,0,0" d:IsLocked="True">
                 <Hyperlink Click="OnClick_Cambridge">Visit the University of Cambridge Chemistry Department</Hyperlink>
             </TextBlock>
             <TextBlock
                 Margin="5"
+                d:IsLocked="True"
                 Foreground="Black"
                 TextAlignment="Justify"
                 TextWrapping="Wrap">
                 <Run Text="The Chemistry Add-In for Microsoft Word is " /><Run FontWeight="Bold" Text="free" /><Run Text=". Your feedback is important to us!" /><Run Text=" Join our Facebook group and let us know if you have any suggestions or problems using it." />
             </TextBlock>
-            <TextBlock Margin="5,0,0,0">
+            <TextBlock Margin="5,0,0,0" d:IsLocked="True">
                 <Hyperlink Click="OnClick_Facebook">Join our Facebook Group</Hyperlink>
             </TextBlock>
         </StackPanel>

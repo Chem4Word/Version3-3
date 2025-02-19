@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("Chem4Word")]
 [assembly: AssemblyProduct("WiX.CustomAction")]
-[assembly: AssemblyCopyright("© Chem4Word 2024. All rights reserved.")]
+[assembly: AssemblyCopyright("© Chem4Word 2025. All rights reserved.")]
 [assembly: AssemblyTrademark("Chem4Word")]
 [assembly: AssemblyCulture("")]
 
@@ -34,5 +34,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("3.3.10.9132")]
-[assembly: AssemblyFileVersion("3.3.10.9132")]
+[assembly: AssemblyVersion("3.3.10.9181")]
+[assembly: AssemblyFileVersion("3.3.10.9181")]

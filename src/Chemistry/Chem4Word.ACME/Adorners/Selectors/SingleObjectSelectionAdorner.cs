@@ -74,14 +74,14 @@ namespace Chem4Word.ACME.Adorners.Selectors
         protected void DisableHandlers()
         {
             //detach the handlers to stop them interfering with dragging
-            PreviewMouseLeftButtonDown -= BaseSelectionAdorner_PreviewMouseLeftButtonDown;
-            MouseLeftButtonDown -= BaseSelectionAdorner_MouseLeftButtonDown;
-            PreviewMouseMove -= BaseSelectionAdorner_PreviewMouseMove;
-            PreviewMouseLeftButtonUp -= BaseSelectionAdorner_PreviewMouseLeftButtonUp;
-            MouseLeftButtonUp -= BaseSelectionAdorner_MouseLeftButtonUp;
+            PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown_BaseSelectionAdorner;
+            MouseLeftButtonDown -= OnMouseLeftButtonDown_BaseSelectionAdorner;
+            PreviewMouseMove -= OnPreviewMouseMove_BaseSelectionAdorner;
+            PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_BaseSelectionAdorner;
+            MouseLeftButtonUp -= OnMouseLeftButtonUp_BaseSelectionAdorner;
         }
 
-        private void BigThumb_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_BigThumb(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
             {
@@ -100,10 +100,10 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
             BigThumb.Style = (Style)FindResource(Common.ThumbStyle);
             BigThumb.Cursor = Cursors.Hand;
-            BigThumb.DragStarted += BigThumb_DragStarted;
-            BigThumb.DragCompleted += BigThumb_DragCompleted;
-            BigThumb.DragDelta += BigThumb_DragDelta;
-            BigThumb.MouseLeftButtonDown += BigThumb_MouseLeftButtonDown;
+            BigThumb.DragStarted += OnDragStarted_BigThumb;
+            BigThumb.DragCompleted += OnDragCompleted_BigThumb;
+            BigThumb.DragDelta += OnDragDelta_BigThumb;
+            BigThumb.MouseLeftButtonDown += OnMouseLeftButtonDown_BigThumb;
             BigThumb.Focusable = true;
             Keyboard.Focus(BigThumb);
         }
@@ -178,7 +178,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         #region MouseIsDown
 
-        private void BigThumb_DragStarted(object sender, DragStartedEventArgs e)
+        private void OnDragStarted_BigThumb(object sender, DragStartedEventArgs e)
         {
             Dragging = true;
 
@@ -189,7 +189,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             LastOperation = new TranslateTransform();
         }
 
-        private void BigThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        private void OnDragDelta_BigThumb(object sender, DragDeltaEventArgs e)
         {
             //update how far it's travelled so far
             double horizontalChange = e.HorizontalChange;
@@ -215,7 +215,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BigThumb_DragCompleted(object sender, DragCompletedEventArgs e)
+        private void OnDragCompleted_BigThumb(object sender, DragCompletedEventArgs e)
         {
             if (!e.Canceled)
             {
@@ -228,7 +228,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 //move the molecule
                 EditController.TransformObjects(LastOperation, AdornedObjects);
 
-                RaiseDRCompleted(sender, e);
+                RaiseDragCompleted(sender, e);
 
                 CurrentEditor.SuppressRedraw = false;
 
@@ -246,7 +246,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         #endregion MouseIsDown
 
-        protected void RaiseDRCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
+        protected void RaiseDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
         {
             DragIsCompleted?.Invoke(this, dragCompletedEventArgs);
         }

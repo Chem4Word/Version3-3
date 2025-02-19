@@ -46,14 +46,14 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void BondPropertyEditor_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_BondPropertyEditor(object sender, RoutedEventArgs e)
         {
             var point = UIUtils.GetOffScreenPoint();
             Left = point.X;
             Top = point.Y;
         }
 
-        private void BondPropertyEditor_OnContentRendered(object sender, EventArgs e)
+        private void OnContentRendered_BondPropertyEditor(object sender, EventArgs e)
         {
             // This moves the window to the correct position
             var point = UIUtils.GetOnScreenCentrePoint(_bondPropertiesModel.Centre, ActualWidth, ActualHeight);
@@ -64,19 +64,19 @@ namespace Chem4Word.ACME.Controls
             _bondPropertiesModel.ClearFlags();
         }
 
-        private void Cancel_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Cancel(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
-        private void Save_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Save(object sender, RoutedEventArgs e)
         {
             _bondPropertiesModel.Save = true;
             _closedByUser = true;
             Close();
         }
 
-        private void BondPropertyEditor_OnClosing(object sender, CancelEventArgs e)
+        private void OnClosing_BondPropertyEditor(object sender, CancelEventArgs e)
         {
             if (!_closedByUser && _bondPropertiesModel.IsDirty)
             {
@@ -104,7 +104,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void BondAngle_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void OnTextChanged_BondAngle(object sender, TextChangedEventArgs e)
         {
             if (sender is TextBox textBox)
             {

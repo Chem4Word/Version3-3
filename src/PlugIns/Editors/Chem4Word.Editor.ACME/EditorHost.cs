@@ -5,11 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Wpf;
+using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Helpers;
 using IChem4Word.Contracts;
@@ -37,11 +37,11 @@ namespace Chem4Word.Editor.ACME
 
         private readonly string _cml;
         private readonly List<string> _used1DProperties;
-        private readonly AcmeOptions _options;
+        private readonly RenderingOptions _defaultRenderingOptions;
 
         private bool IsLoading { get; set; } = true;
 
-        public EditorHost(string cml, List<string> used1DProperties, AcmeOptions options)
+        public EditorHost(string cml, List<string> used1DProperties, string defaultOptions)
         {
             using (new WaitCursor())
             {
@@ -49,11 +49,11 @@ namespace Chem4Word.Editor.ACME
 
                 _cml = cml;
                 _used1DProperties = used1DProperties;
-                _options = options;
+                _defaultRenderingOptions = new RenderingOptions(defaultOptions);
             }
         }
 
-        private void EditorHost_LocationChanged(object sender, EventArgs e)
+        private void OnLocationChanged_EditorHost(object sender, EventArgs e)
         {
             if (!IsLoading)
             {
@@ -65,7 +65,7 @@ namespace Chem4Word.Editor.ACME
             }
         }
 
-        private void EditorHost_Load(object sender, EventArgs e)
+        private void OnLoad_EditorHost(object sender, EventArgs e)
         {
             using (new WaitCursor())
             {
@@ -90,7 +90,7 @@ namespace Chem4Word.Editor.ACME
                 }
 
                 // Fix bottom panel
-                int margin = Buttons.Height - Save.Bottom;
+                var margin = Buttons.Height - Save.Bottom;
                 splitContainer1.SplitterDistance = splitContainer1.Height - Save.Height - margin * 2;
                 splitContainer1.FixedPanel = FixedPanel.Panel2;
                 splitContainer1.IsSplitterFixed = true;
@@ -101,8 +101,8 @@ namespace Chem4Word.Editor.ACME
                     editor.ShowFeedback = false;
                     editor.TopLeft = TopLeft;
                     editor.Telemetry = Telemetry;
-                    editor.SetProperties(_cml, _used1DProperties, _options);
-                    editor.OnFeedbackChange += AcmeEditorOnFeedbackChange;
+                    editor.SetProperties(_cml, _used1DProperties, _defaultRenderingOptions);
+                    editor.OnFeedbackChange += OnFeedbackChange_AcmeEditor;
 
                     var model = editor.ActiveController.Model;
                     if (model == null || model.Molecules.Count == 0)
@@ -111,7 +111,7 @@ namespace Chem4Word.Editor.ACME
                     }
                     else
                     {
-                        List<MoleculeFormulaPart> parts = FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula);
+                        var parts = FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula);
                         var formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
                         Text = "ACME - Editing " + formulaPartsAsUnicode;
                     }
@@ -121,16 +121,16 @@ namespace Chem4Word.Editor.ACME
             }
         }
 
-        private void AcmeEditorOnFeedbackChange(object sender, WpfEventArgs e)
+        private void OnFeedbackChange_AcmeEditor(object sender, WpfEventArgs e)
         {
             MessageFromWpf.Text = e.OutputValue;
         }
 
-        private void Save_Click(object sender, EventArgs e)
+        private void OnClick_Save(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            CMLConverter cc = new CMLConverter();
+            var cc = new CMLConverter();
             DialogResult = DialogResult.Cancel;
 
             if (elementHost1.Child is Chem4Word.ACME.Editor editor
@@ -143,28 +143,28 @@ namespace Chem4Word.Editor.ACME
             Hide();
         }
 
-        private void Cancel_Click(object sender, EventArgs e)
+        private void OnClick_Cancel(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             DialogResult = DialogResult.Cancel;
             Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
             Hide();
         }
 
-        private void EditorHost_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_EditorHost(object sender, FormClosingEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             if (DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
             {
                 if (elementHost1.Child is Chem4Word.ACME.Editor editor
                     && editor.IsDirty)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    var sb = new StringBuilder();
                     sb.AppendLine("Do you wish to save your changes?");
                     sb.AppendLine("  Click 'Yes' to save your changes and exit.");
                     sb.AppendLine("  Click 'No' to discard your changes and exit.");
                     sb.AppendLine("  Click 'Cancel' to return to the form.");
-                    DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                    var dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
                     switch (dr)
                     {
                         case DialogResult.Cancel:
@@ -174,10 +174,9 @@ namespace Chem4Word.Editor.ACME
                         case DialogResult.Yes:
                             DialogResult = DialogResult.OK;
                             var model = editor.EditedModel;
-                            model.RescaleForCml();
                             // Replace any temporary Ids which are Guids
                             model.ReLabelGuids();
-                            CMLConverter cc = new CMLConverter();
+                            var cc = new CMLConverter();
                             OutputValue = cc.Export(model);
                             Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
                             Hide();

@@ -88,7 +88,7 @@
       <HintPath>..\..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-    <SpecificVersion>False</SpecificVersion>
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
@@ -125,6 +125,8 @@
   <ItemGroup>
     <Compile Include="AzureSettings.cs" />
     <Compile Include="Enums\CompassPoints.cs" />
+    <Compile Include="Helpers\ConfigWatcher.cs" />
+    <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Helpers\RestApiResult.cs" />
     <Compile Include="Helpers\AzureRestApi.cs" />
     <Compile Include="Helpers\CohenSutherland.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\SafeDate.cs" />
     <Compile Include="Helpers\SafeDouble.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Helpers\XAMLHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -46,17 +46,16 @@
             this.EditCml = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.CalculateProperties = new System.Windows.Forms.Button();
+            this.LayoutStructure = new System.Windows.Forms.Button();
             this.SearchOpsin = new System.Windows.Forms.Button();
             this.EditLabels = new System.Windows.Forms.Button();
             this.SearchChEBI = new System.Windows.Forms.Button();
             this.SearchPubChem = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ChangeOoXmlSettings = new System.Windows.Forms.Button();
-            this.ChangeAcmeSettings = new System.Windows.Forms.Button();
             this.ShowCml = new System.Windows.Forms.Button();
             this.SaveStructure = new System.Windows.Forms.Button();
             this.ClearChemistry = new System.Windows.Forms.Button();
-            this.LayoutStructure = new System.Windows.Forms.Button();
             this.RenderOoXml = new System.Windows.Forms.Button();
             this.LayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -73,7 +72,7 @@
             this.LoadStructure.Text = "Load";
             this.LoadStructure.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.LoadStructure.UseVisualStyleBackColor = true;
-            this.LoadStructure.Click += new System.EventHandler(this.LoadStructure_Click);
+            this.LoadStructure.Click += new System.EventHandler(this.OnClick_LoadStructure);
             // 
             // openFileDialog1
             // 
@@ -88,7 +87,7 @@
             this.EditWithAcme.Text = "ACME";
             this.EditWithAcme.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.EditWithAcme.UseVisualStyleBackColor = true;
-            this.EditWithAcme.Click += new System.EventHandler(this.EditWithAcme_Click);
+            this.EditWithAcme.Click += new System.EventHandler(this.OnClick_EditWithAcme);
             // 
             // Undo
             // 
@@ -101,7 +100,7 @@
             this.Undo.Text = "Undo";
             this.Undo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.Undo.UseVisualStyleBackColor = true;
-            this.Undo.Click += new System.EventHandler(this.Undo_Click);
+            this.Undo.Click += new System.EventHandler(this.OnClick_Undo);
             // 
             // Redo
             // 
@@ -114,7 +113,7 @@
             this.Redo.Text = "Redo";
             this.Redo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.Redo.UseVisualStyleBackColor = true;
-            this.Redo.Click += new System.EventHandler(this.Redo_Click);
+            this.Redo.Click += new System.EventHandler(this.OnClick_Redo);
             // 
             // LayoutPanel
             // 
@@ -187,7 +186,7 @@
             this.EditCml.Text = "CML";
             this.EditCml.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.EditCml.UseVisualStyleBackColor = true;
-            this.EditCml.Click += new System.EventHandler(this.EditCml_Click);
+            this.EditCml.Click += new System.EventHandler(this.OnClick_EditCml);
             // 
             // groupBox1
             // 
@@ -217,7 +216,19 @@
             this.CalculateProperties.Text = "Properties";
             this.CalculateProperties.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.CalculateProperties.UseVisualStyleBackColor = true;
-            this.CalculateProperties.Click += new System.EventHandler(this.CalculateProperties_Click);
+            this.CalculateProperties.Click += new System.EventHandler(this.OnClick_CalculateProperties);
+            // 
+            // LayoutStructure
+            // 
+            this.LayoutStructure.Enabled = false;
+            this.LayoutStructure.Location = new System.Drawing.Point(87, 48);
+            this.LayoutStructure.Name = "LayoutStructure";
+            this.LayoutStructure.Size = new System.Drawing.Size(75, 23);
+            this.LayoutStructure.TabIndex = 20;
+            this.LayoutStructure.Text = "Layout";
+            this.LayoutStructure.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.LayoutStructure.UseVisualStyleBackColor = true;
+            this.LayoutStructure.Click += new System.EventHandler(this.OnClick_LayoutStructure);
             // 
             // SearchOpsin
             // 
@@ -228,7 +239,7 @@
             this.SearchOpsin.Text = "OPSIN";
             this.SearchOpsin.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.SearchOpsin.UseVisualStyleBackColor = true;
-            this.SearchOpsin.Click += new System.EventHandler(this.SearchOpsin_Click);
+            this.SearchOpsin.Click += new System.EventHandler(this.OnClick_SearchOpsin);
             // 
             // EditLabels
             // 
@@ -240,7 +251,7 @@
             this.EditLabels.Text = "Labels";
             this.EditLabels.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.EditLabels.UseVisualStyleBackColor = true;
-            this.EditLabels.Click += new System.EventHandler(this.EditLabels_Click);
+            this.EditLabels.Click += new System.EventHandler(this.OnClick_EditLabels);
             // 
             // SearchChEBI
             // 
@@ -251,7 +262,7 @@
             this.SearchChEBI.Text = "ChEBI";
             this.SearchChEBI.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.SearchChEBI.UseVisualStyleBackColor = true;
-            this.SearchChEBI.Click += new System.EventHandler(this.SearchChEBI_Click);
+            this.SearchChEBI.Click += new System.EventHandler(this.OnClick_SearchChEBI);
             // 
             // SearchPubChem
             // 
@@ -262,13 +273,12 @@
             this.SearchPubChem.Text = "PubChem";
             this.SearchPubChem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.SearchPubChem.UseVisualStyleBackColor = true;
-            this.SearchPubChem.Click += new System.EventHandler(this.SearchPubChem_Click);
+            this.SearchPubChem.Click += new System.EventHandler(this.OnClick_SearchPubChem);
             // 
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox2.Controls.Add(this.ChangeOoXmlSettings);
-            this.groupBox2.Controls.Add(this.ChangeAcmeSettings);
             this.groupBox2.Location = new System.Drawing.Point(255, 501);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(108, 81);
@@ -279,26 +289,14 @@
             // ChangeOoXmlSettings
             // 
             this.ChangeOoXmlSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ChangeOoXmlSettings.Location = new System.Drawing.Point(15, 48);
+            this.ChangeOoXmlSettings.Location = new System.Drawing.Point(15, 19);
             this.ChangeOoXmlSettings.Name = "ChangeOoXmlSettings";
             this.ChangeOoXmlSettings.Size = new System.Drawing.Size(75, 23);
             this.ChangeOoXmlSettings.TabIndex = 13;
             this.ChangeOoXmlSettings.Text = "OoXml";
             this.ChangeOoXmlSettings.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ChangeOoXmlSettings.UseVisualStyleBackColor = true;
-            this.ChangeOoXmlSettings.Click += new System.EventHandler(this.ChangeOoXmlSettings_Click);
-            // 
-            // ChangeAcmeSettings
-            // 
-            this.ChangeAcmeSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ChangeAcmeSettings.Location = new System.Drawing.Point(15, 19);
-            this.ChangeAcmeSettings.Name = "ChangeAcmeSettings";
-            this.ChangeAcmeSettings.Size = new System.Drawing.Size(75, 23);
-            this.ChangeAcmeSettings.TabIndex = 12;
-            this.ChangeAcmeSettings.Text = "ACME";
-            this.ChangeAcmeSettings.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ChangeAcmeSettings.UseVisualStyleBackColor = true;
-            this.ChangeAcmeSettings.Click += new System.EventHandler(this.ChangeAcmeSettings_Click);
+            this.ChangeOoXmlSettings.Click += new System.EventHandler(this.OnClick_ChangeOoXmlSettings);
             // 
             // ShowCml
             // 
@@ -311,7 +309,7 @@
             this.ShowCml.Text = "Show CML";
             this.ShowCml.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ShowCml.UseVisualStyleBackColor = true;
-            this.ShowCml.Click += new System.EventHandler(this.ShowCml_Click);
+            this.ShowCml.Click += new System.EventHandler(this.OnClick_ShowCml);
             // 
             // SaveStructure
             // 
@@ -336,19 +334,7 @@
             this.ClearChemistry.TabIndex = 0;
             this.ClearChemistry.Text = "Clear";
             this.ClearChemistry.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ClearChemistry.Click += new System.EventHandler(this.ClearChemistry_Click);
-            // 
-            // LayoutStructure
-            // 
-            this.LayoutStructure.Enabled = false;
-            this.LayoutStructure.Location = new System.Drawing.Point(87, 48);
-            this.LayoutStructure.Name = "LayoutStructure";
-            this.LayoutStructure.Size = new System.Drawing.Size(75, 23);
-            this.LayoutStructure.TabIndex = 20;
-            this.LayoutStructure.Text = "Layout";
-            this.LayoutStructure.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LayoutStructure.UseVisualStyleBackColor = true;
-            this.LayoutStructure.Click += new System.EventHandler(this.LayoutStructure_Click);
+            this.ClearChemistry.Click += new System.EventHandler(this.OnClick_ClearChemistry);
             // 
             // RenderOoXml
             // 
@@ -361,9 +347,9 @@
             this.RenderOoXml.Text = "OoXml (raw)";
             this.RenderOoXml.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.RenderOoXml.UseVisualStyleBackColor = true;
-            this.RenderOoXml.Click += new System.EventHandler(this.RenderOoXml_Click);
+            this.RenderOoXml.Click += new System.EventHandler(this.OnClick_RenderOoXml);
             // 
-            // FlexForm
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -383,7 +369,7 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ACME Test Bed";
-            this.Load += new System.EventHandler(this.FlexForm_Load);
+            this.Load += new System.EventHandler(this.OnLoad_FlexForm);
             this.LayoutPanel.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -415,7 +401,6 @@
         private System.Windows.Forms.Button EditLabels;
         private StackViewer UndoStack;
         private StackViewer RedoStack;
-        private System.Windows.Forms.Button ChangeAcmeSettings;
         private System.Windows.Forms.Button LayoutStructure;
         private System.Windows.Forms.Button RenderOoXml;
         private System.Windows.Forms.Button ChangeOoXmlSettings;

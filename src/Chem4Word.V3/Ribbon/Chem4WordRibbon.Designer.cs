@@ -59,6 +59,7 @@ namespace Chem4Word
             this.HelpMenu = this.Factory.CreateRibbonMenu();
             this.ShowAbout = this.Factory.CreateRibbonButton();
             this.ShowHome = this.Factory.CreateRibbonButton();
+            this.Donate = this.Factory.CreateRibbonButton();
             this.ShowSystemInfo = this.Factory.CreateRibbonButton();
             this.CheckNow = this.Factory.CreateRibbonButton();
             this.ReadManual = this.Factory.CreateRibbonButton();
@@ -292,6 +293,7 @@ namespace Chem4Word
             this.HelpMenu.Image = global::Chem4Word.Properties.Resources.Help;
             this.HelpMenu.Items.Add(this.ShowAbout);
             this.HelpMenu.Items.Add(this.ShowHome);
+            this.HelpMenu.Items.Add(this.Donate);
             this.HelpMenu.Items.Add(this.ShowSystemInfo);
             this.HelpMenu.Items.Add(this.CheckNow);
             this.HelpMenu.Items.Add(this.ReadManual);
@@ -317,6 +319,14 @@ namespace Chem4Word
             this.ShowHome.Name = "ShowHome";
             this.ShowHome.ShowImage = true;
             this.ShowHome.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_ShowHome);
+            // 
+            // Donate
+            // 
+            this.Donate.Image = global::Chem4Word.Properties.Resources.Pound;
+            this.Donate.Label = "Donate";
+            this.Donate.Name = "Donate";
+            this.Donate.ShowImage = true;
+            this.Donate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_Donate);
             // 
             // ShowSystemInfo
             // 
@@ -376,7 +386,7 @@ namespace Chem4Word
             this.Name = "CustomRibbon";
             this.RibbonType = "Microsoft.Word.Document";
             this.Tabs.Add(this.Chem4WordV3);
-            this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.CustomRibbon_Load);
+            this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.OnLOad_CustomRibbon);
             this.Chem4WordV3.ResumeLayout(false);
             this.Chem4WordV3.PerformLayout();
             this.GroupInputOutput.ResumeLayout(false);
@@ -422,6 +432,7 @@ namespace Chem4Word
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ManageLibraries;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton BuyLibrary;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton EditLibrary;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton Donate;
     }
 
     partial class ThisRibbonCollection

@@ -15,7 +15,7 @@ namespace WinForms.TestHarness
         public HexViewer(string filename)
         {
             InitializeComponent();
-            ByteViewer bv = new ByteViewer();
+            var bv = new ByteViewer();
             bv.SetFile(filename);
             bv.Dock = DockStyle.Fill;
             bv.SetDisplayMode(DisplayMode.Hexdump);

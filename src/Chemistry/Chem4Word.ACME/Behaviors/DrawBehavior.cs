@@ -48,16 +48,16 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.Cursor = CursorUtils.Pencil;
             EditController.ClearSelection();
 
-            CurrentEditor.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.PreviewMouseLeftButtonUp += CurrentEditor_PreviewMouseLeftButtonUp;
-            CurrentEditor.PreviewMouseMove += CurrentEditor_PreviewMouseMove;
-            CurrentEditor.PreviewMouseRightButtonUp += CurrentEditor_PreviewMouseRightButtonUp;
+            CurrentEditor.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.PreviewMouseMove += OnPreviewMouseMove_CurrentEditor;
+            CurrentEditor.PreviewMouseRightButtonUp += OnPreviewMouseRightButtonUp_CurrentEditor;
             CurrentEditor.IsHitTestVisible = true;
 
             CurrentStatus = DefaultText;
         }
 
-        private void CurrentEditor_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             if (CurrentEditor.ActiveVisual != null)
             {
@@ -65,7 +65,7 @@ namespace Chem4Word.ACME.Behaviors
             }
         }
 
-        private void CurrentEditor_PreviewMouseMove(object sender, MouseEventArgs e)
+        private void OnPreviewMouseMove_CurrentEditor(object sender, MouseEventArgs e)
         {
             Bond existingBond = null;
 
@@ -191,7 +191,7 @@ namespace Chem4Word.ACME.Behaviors
             }
         }
 
-        private void CurrentEditor_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.ReleaseMouseCapture();
             CurrentStatus = "";
@@ -470,7 +470,7 @@ namespace Chem4Word.ACME.Behaviors
             return newTag;
         }
 
-        private void CurrentEditor_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             var position = e.GetPosition(CurrentEditor);
             ChemicalVisual chemicalVisual = CurrentEditor.GetTargetedVisual(position);
@@ -515,10 +515,10 @@ namespace Chem4Word.ACME.Behaviors
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            CurrentEditor.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.PreviewMouseLeftButtonUp -= CurrentEditor_PreviewMouseLeftButtonUp;
-            CurrentEditor.PreviewMouseMove -= CurrentEditor_PreviewMouseMove;
-            CurrentEditor.PreviewMouseRightButtonUp -= CurrentEditor_PreviewMouseRightButtonUp;
+            CurrentEditor.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
+            CurrentEditor.PreviewMouseRightButtonUp -= OnPreviewMouseRightButtonUp_CurrentEditor;
             CurrentStatus = "";
             CurrentEditor.Cursor = _lastCursor;
         }

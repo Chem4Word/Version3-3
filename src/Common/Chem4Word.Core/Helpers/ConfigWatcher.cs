@@ -14,24 +14,22 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Chem4Word.Helpers
+namespace Chem4Word.Core.Helpers
 {
     public class ConfigWatcher : IDisposable
     {
         // Files to watch for
-        private const string _filter = "*.json";
+        private const string Filter = "*.json";
 
         // Config settings to watch
         private Config[] _watchedConfigs = {
-            new Config { Name = "ShowHydrogens", Type = "bool" },
-            new Config { Name = "ShowCarbons", Type = "bool" },
-            new Config { Name = "ShowMoleculeGrouping", Type = "bool" },
-            new Config { Name = "ColouredAtoms", Type = "bool" },
-            new Config { Name = "BondLength", Type = "int" }
-        };
+                                               new Config { Name = "ShowMoleculeGrouping", Type = "bool" },
+                                               new Config { Name = "ColouredAtoms", Type = "bool" },
+                                               new Config { Name = "BondLength", Type = "int" }
+                                           };
 
-        private FileSystemWatcher _watcher;
-        private string _watchedPath;
+        private readonly FileSystemWatcher _watcher;
+        private readonly string _watchedPath;
         private bool _handleEvents = true;
 
         public ConfigWatcher(string watchedPath)
@@ -41,7 +39,7 @@ namespace Chem4Word.Helpers
             _watcher = new FileSystemWatcher();
 
             _watcher.Path = _watchedPath;
-            _watcher.Filter = _filter;
+            _watcher.Filter = Filter;
             _watcher.NotifyFilter = NotifyFilters.LastWrite;
 
             _watcher.Changed += OnChanged;
@@ -89,7 +87,7 @@ namespace Chem4Word.Helpers
 
                     if (sourceConfigs.Any())
                     {
-                        var files = Directory.GetFiles(_watchedPath, _filter);
+                        var files = Directory.GetFiles(_watchedPath, Filter);
                         foreach (var file in files)
                         {
                             if (!file.Equals(thisFile))
@@ -137,6 +135,11 @@ namespace Chem4Word.Helpers
                                                             jObject[kvp.Key] = int.Parse(kvp.Value.Value);
                                                             write = true;
                                                             break;
+
+                                                        default:
+                                                            jObject[kvp.Key] = kvp.Value.Value;
+                                                            write = true;
+                                                            break;
                                                     }
                                                 }
                                             }
@@ -146,7 +149,7 @@ namespace Chem4Word.Helpers
                                     if (write)
                                     {
                                         Debug.WriteLine($"Writing file {file}");
-                                        Globals.Chem4WordV3.OptionsReloadRequired = true;
+                                        Debugger.Break();
                                         var json = JsonConvert.SerializeObject(jObject, Formatting.Indented);
                                         File.WriteAllText(file, json);
                                     }

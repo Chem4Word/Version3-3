@@ -30,7 +30,7 @@ namespace Chem4Word.UI
             InitializeComponent();
         }
 
-        private void ImportErrors_Load(object sender, EventArgs e)
+        private void OnLoad_ImportErrors(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -62,21 +62,21 @@ namespace Chem4Word.UI
             }
         }
 
-        private void Continue_Click(object sender, EventArgs e)
+        private void OnClick_Continue(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             _dialogResult = DialogResult.OK;
             DialogResult = DialogResult.OK;
         }
 
-        private void Abort_Click(object sender, EventArgs e)
+        private void OnClick_Abort(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             _dialogResult = DialogResult.Cancel;
             DialogResult = DialogResult.Cancel;
         }
 
-        private void ImportErrors_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_ImportErrors(object sender, FormClosingEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             if (_dialogResult == DialogResult.Abort)

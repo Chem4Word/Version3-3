@@ -158,13 +158,22 @@ namespace Chem4Word.Model2
 
         public string ValidElements { get; }
 
+        /// <summary>
+        /// Atom.ImplicitHydrogenCount = f(ImplicitHydrogenTargets) |B|C|N|O|F|Si|P|S|Cl|As|Se|Br|Te|I|At|
+        /// </summary>
         public string ImplicitHydrogenTargets { get; }
+
+        /// <summary>
+        /// Atom.IsHetero = f(HeteroAtomList) |Li|N|O|Mg|P|S|Cl|Br|I|
+        /// </summary>
+        public string HeteroAtomList { get; }
 
         public PeriodicTable()
         {
             LoadFromCsv();
             ValidElements = Elements.Values.Select(e => e.Symbol).Aggregate((start, next) => start + "|" + next);
-            ImplicitHydrogenTargets = string.Join(",", Elements.Values.Where(e => e.AddHydrogens).Select(e => e.Symbol));
+            ImplicitHydrogenTargets = $"|{string.Join("|", Elements.Values.Where(e => e.AddHydrogens).Select(e => e.Symbol))}|";
+            HeteroAtomList = $"|{string.Join("|", Elements.Values.Where(e => e.IsHetero).Select(e => e.Symbol))}|";
         }
 
         public bool HasElement(string symbol) => Elements.ContainsKey(symbol);
@@ -249,26 +258,28 @@ namespace Chem4Word.Model2
                     if (data[0].Length <= 3)
                     {
                         Element x = new Element();
+                        int index = 0;
 
-                        string symbol = data[0];
-
+                        string symbol = data[index++];
                         x.Symbol = symbol;
-                        x.Name = data[1];
-                        x.AtomicNumber = IntParser(data[2]);
-                        x.AddHydrogens = BoolParser(data[3]);
-                        x.Colour = string.IsNullOrEmpty(data[4]) ? "#000000" : data[4];
-                        x.CovalentRadius = DoubleParser(data[5]);
-                        x.VdWRadius = DoubleParser(data[6]);
-                        x.Valency = IntParser(data[7]);
-                        x.AtomicWeight = DoubleParser(data[8]);
-                        x.Valencies = IntArrayFromString(data[9]);
-                        x.IsotopeMasses = IntArrayFromString(data[10]);
-                        x.Group = IntParser(data[11]);
-                        x.Row = IntParser(data[12]);
-                        x.PTRow = IntParser(data[13]);
-                        x.PTColumn = IntParser(data[14]);
-                        x.PTElementType = data[15];
-                        x.ElectronicConfiguration = data[16];
+                        x.Name = data[index++];
+                        x.AtomicNumber = IntParser(data[index++]);
+                        x.AddHydrogens = BoolParser(data[index++]);
+                        x.IsHetero = BoolParser(data[index++]);
+                        string colour = data[index++];
+                        x.Colour = string.IsNullOrEmpty(colour) ? "#000000" : colour;
+                        x.CovalentRadius = DoubleParser(data[index++]);
+                        x.VdWRadius = DoubleParser(data[index++]);
+                        x.Valency = IntParser(data[index++]);
+                        x.AtomicWeight = DoubleParser(data[index++]);
+                        x.Valencies = IntArrayFromString(data[index++]);
+                        x.IsotopeMasses = IntArrayFromString(data[index++]);
+                        x.Group = IntParser(data[index++]);
+                        x.Row = IntParser(data[index++]);
+                        x.PTRow = IntParser(data[index++]);
+                        x.PTColumn = IntParser(data[index++]);
+                        x.PTElementType = data[index++];
+                        x.ElectronicConfiguration = data[index];
 
                         Elements.Add(symbol, x);
                         this[symbol] = x;

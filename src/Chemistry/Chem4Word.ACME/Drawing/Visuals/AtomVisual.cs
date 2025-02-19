@@ -26,30 +26,20 @@ namespace Chem4Word.ACME.Drawing.Visuals
     /// </summary>
     public class AtomVisual : ChemicalVisual
     {
-        public HydrogenVisual HydrogenChildVisual { get; set; }
-        private ChargeVisual ChargeChildVisual { get; set; }
-        public IsotopeVisual IsotopeChildVisual { get; set; }
-        private List<Visual> children = new List<Visual>();
-
-        #region Fields
-
-        public bool ShowInColour { get; set; }
-        public bool ShowImplicitHydrogens { get; set; }
-        public bool ShowAllCarbons { get; set; }
-
-        #endregion Fields
-
-        public AtomVisual(Atom atom, bool showInColour, bool showImplicitHydrogens, bool showAllCarbons) : this()
+        public AtomVisual(Atom atom, Model model) : this()
         {
             ParentAtom = atom;
             Position = atom.Position;
-            AtomSymbol = ShowAllCarbons ? ParentAtom.Element.Symbol : ParentAtom.SymbolText;
-            Charge = ParentAtom.FormalCharge;
-            ImplicitHydrogenCount = ParentAtom.ImplicitHydrogenCount;
-            Isotope = ParentAtom.IsotopeNumber;
-            ShowInColour = showInColour;
-            ShowImplicitHydrogens = showImplicitHydrogens;
-            ShowAllCarbons = showAllCarbons;
+
+            AtomSymbol = atom.AtomSymbol;
+
+            Charge = atom.FormalCharge;
+            Isotope = atom.IsotopeNumber;
+            ShowThisAtomInColour = model.ShowColouredAtoms;
+
+            CarbonIsShowing = atom.CarbonIsShowing;
+            ShowImplicitHydrogens = atom.ShowImplicitHydrogenCharacters;
+            ImplicitHydrogenCount = atom.ImplicitHydrogenCount;
         }
 
         public AtomVisual()
@@ -58,21 +48,11 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         #region Properties
 
-        public virtual Atom ParentAtom { get; protected set; }
+        public bool ShowThisAtomInColour { get; set; }
+        public bool ShowImplicitHydrogens { get; set; }
+        public bool CarbonIsShowing { get; set; }
 
-        #region Visual Properties
-
-        public double SymbolSize { get; set; }
-        public Point Position { get; set; }
-        private string AtomSymbol { get; set; }
-        public Brush BackgroundColor { get; set; }
-        public Brush Fill { get; set; }
-        public int? Charge { get; set; }
-        public int? Isotope { get; set; }
-        public int ImplicitHydrogenCount { get; set; }
-        public CompassPoints HydrogenOrientation { get; set; }
-
-        protected List<Point> CoreHull { get; set; }
+        public Atom ParentAtom { get; protected set; }
 
         /// <summary>
         /// Returns a list of points corresponding to the combined hulls of all label parts
@@ -104,9 +84,35 @@ namespace Chem4Word.ACME.Drawing.Visuals
             }
         }
 
-        #endregion Visual Properties
+        public bool DisplayOverbonding { get; set; }
 
         #endregion Properties
+
+        #region Visual Properties
+
+        public double Standoff { get; set; }
+        public double SubscriptSize { get; set; }
+        public double SuperscriptSize { get; set; }
+
+        public HydrogenVisual HydrogenChildVisual { get; set; }
+        private ChargeVisual ChargeChildVisual { get; set; }
+        public IsotopeVisual IsotopeChildVisual { get; set; }
+
+        private List<Visual> children = new List<Visual>();
+
+        public double SymbolSize { get; set; }
+        public Point Position { get; set; }
+        private string AtomSymbol { get; set; }
+        public Brush BackgroundColor { get; set; }
+        public Brush Fill { get; set; }
+        public int? Charge { get; set; }
+        public int? Isotope { get; set; }
+        public int ImplicitHydrogenCount { get; set; }
+        public CompassPoints HydrogenOrientation { get; set; }
+
+        protected List<Point> CoreHull { get; set; }
+
+        #endregion Visual Properties
 
         #region Methods
 
@@ -150,7 +156,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             //renders the atom complete with charges, hydrogens and labels.
             //this code is *complex* - alter it at your own risk!
 
-            //private variables used to keep track of onscreen visuals
+            // private variables used to keep track of onscreen visuals
             CoreHull = new List<Point>();
 
             //stage 1:  measure up the main atom symbol in position
@@ -167,7 +173,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 }
             }
 
-            //stage 2.  grab the main atom metrics br drawing it
+            //stage 2.  grab the main atom metrics by drawing it
 
             var mainAtomMetrics = DrawSelf(drawingContext);
             //if it's a vertex atom we need the hull
@@ -274,16 +280,9 @@ namespace Chem4Word.ACME.Drawing.Visuals
             {
                 using (DrawingContext dc = RenderOpen())
                 {
-                    Fill = ShowInColour
+                    Fill = ShowThisAtomInColour
                         ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(e.Colour))
                         : new SolidColorBrush(Colors.Black);
-
-                    var atomSymbol = ParentAtom.SymbolText;
-                    if (ShowAllCarbons)
-                    {
-                        atomSymbol = ParentAtom.Element.Symbol;
-                        AtomSymbol = ParentAtom.Element.Symbol;
-                    }
 
                     //if it's over bonded draw the warning circle
                     if (DisplayOverbonding && ParentAtom.Overbonded)
@@ -297,7 +296,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                         dc.DrawGeometry(warningFill, new Pen(new SolidColorBrush(Colors.OrangeRed), Common.BondThickness), eg);
                     }
 
-                    if (atomSymbol == "")
+                    if (AtomSymbol == "")
                     {
                         //draw an empty circle for hit testing purposes
                         RenderAsVertex(dc);
@@ -393,11 +392,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 return null;
             }
         }
-
-        public bool DisplayOverbonding { get; set; }
-        public double Standoff { get; set; }
-        public double SubscriptSize { get; set; }
-        public double SuperscriptSize { get; set; }
 
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
         {

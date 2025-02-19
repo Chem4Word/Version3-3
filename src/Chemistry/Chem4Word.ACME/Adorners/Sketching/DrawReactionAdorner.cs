@@ -34,8 +34,8 @@ namespace Chem4Word.ACME.Adorners.Sketching
             CurrentEditor = (EditorCanvas)adornedElement;
             Cursor = CursorUtils.Pencil;
 
-            PreviewKeyDown += DrawBondAdorner_PreviewKeyDown;
-            MouseLeftButtonUp += DrawReactionAdorner_MouseLeftButtonUp;
+            PreviewKeyDown += OnPreviewKeyDown_DrawBondAdorner;
+            MouseLeftButtonUp += OnMouseLeftButtonUp_DrawReactionAdorner;
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
             myAdornerLayer.Add(this);
@@ -44,12 +44,12 @@ namespace Chem4Word.ACME.Adorners.Sketching
             Focus();
         }
 
-        private void DrawReactionAdorner_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnMouseLeftButtonUp_DrawReactionAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        private void DrawBondAdorner_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnPreviewKeyDown_DrawBondAdorner(object sender, System.Windows.Input.KeyEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }

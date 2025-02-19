@@ -450,7 +450,7 @@ namespace Chem4Word.Model2
                 {
                     if (endLigands.GetHCount() == 2 || endLigands.ContainNoH())
                     {
-                        //Double sided bond on the side of the non H atom from StartLigands
+                        // Double sided bond on the side of the non H atom from StartLigands
                         //Elbow bond :¬)
                         return VectorOnSideOfNonHAtomFromStartLigands(StartAtom, EndAtom);
                     }
@@ -458,7 +458,7 @@ namespace Chem4Word.Model2
                     if (AtomsAreCis(startLigands.GetFirstNonH(), endLigands.GetFirstNonH())
                         /*if a2a H on the same side as a1a H*/)
                     {
-                        //double bond on the side of non H
+                        // double bond on the side of non H
                         return VectorOnSideOfNonHAtomFromStartLigands(StartAtom, EndAtom);
                     }
 
@@ -469,7 +469,7 @@ namespace Chem4Word.Model2
                 //Count now 1
                 if (endLigands.GetHCount() == 1)
                 {
-                    //Double bond on the side of non H from StartLigands, bevel 1 end.
+                    // Double bond on the side of non H from StartLigands, bevel 1 end.
                     return VectorOnSideOfNonHAtomFromStartLigands(StartAtom, EndAtom);
                 }
 
@@ -477,7 +477,7 @@ namespace Chem4Word.Model2
                 if (AtomsAreCis(startLigands.GetFirstNonH(), endLigands.GetFirstNonH())
                     /*EndAtomAtom's !H is on the same side as StartAtomAtom's !H*/)
                 {
-                    //double bond on the side of !H from StartLigands, bevel both ends
+                    // double bond on the side of !H from StartLigands, bevel both ends
                     return VectorOnSideOfNonHAtomFromStartLigands(StartAtom, EndAtom);
                 }
 
@@ -495,7 +495,7 @@ namespace Chem4Word.Model2
                     }
 
                     //Must now have 1 H and 1 !H
-                    //double bond on the side of EndLigands' !H, bevel 1 end only
+                    // double bond on the side of EndLigands' !H, bevel 1 end only
                     return VectorOnSideOfNonHAtomFromStartLigands(StartAtom, EndAtom);
                 }
                 //Count must now be 1
@@ -517,7 +517,7 @@ namespace Chem4Word.Model2
                         return null;
                     }
                     // Now must have 1 H and 1 !H
-                    //Double bond on the side of EndLigands' !H, bevel both ends.
+                    // Double bond on the side of EndLigands' !H, bevel both ends.
                     return VectorOnSideOfNonHAtomFromStartLigands(StartAtom, EndAtom);
                 }
                 //Count is 1
@@ -528,7 +528,7 @@ namespace Chem4Word.Model2
 
                 if (endLigands.GetHCount() == 0)
                 {
-                    //double bond on the side of EndLigands' !H, bevel both ends.
+                    // double bond on the side of EndLigands' !H, bevel both ends.
                     return VectorOnSideOfNonHAtomFromStartLigands(StartAtom, EndAtom);
                 }
             }
@@ -547,7 +547,7 @@ namespace Chem4Word.Model2
                     }
 
                     //Now EndLigands contains 1 H and 1 !H
-                    //double bond on side of EndLigands' !H, bevel 1 end
+                    // double bond on side of EndLigands' !H, bevel 1 end
                     return VectorOnSideOfNonHAtomFromStartLigands(StartAtom, EndAtom);
                 }
 
@@ -953,7 +953,7 @@ namespace Chem4Word.Model2
         /// Forces a notification event to be sent up the tree
         /// used to force a redraw
         /// </summary>
-        public void SendDummyNotif()
+        public void SendDummyNotify()
         {
             OnPropertyChanged(nameof(Order));
         }

@@ -5,11 +5,12 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
@@ -21,11 +22,11 @@ namespace Chem4Word.Editor.ACME
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        public string Name => "ACME Structure Editor";
+        public string Name => Constants.DefaultEditorPlugIn;
 
-        public string Description => "This is the standard editor for Chem4Word 2025 editor. ACME stands for Advanced CML-based Molecule Editor.";
+        public string Description => "This is the standard editor for Chem4Word 2025. ACME stands for Advanced CML-based Molecule Editor.";
 
-        public bool HasSettings => true;
+        public bool HasSettings => false;
 
         public bool CanEditNestedMolecules => true;
         public bool CanEditFunctionalGroups => true;
@@ -33,6 +34,8 @@ namespace Chem4Word.Editor.ACME
         public bool RequiresSeedAtom => false;
 
         public string SettingsPath { get; set; }
+
+        public string DefaultRenderingOptions { get; set; }
 
         public List<string> Used1DProperties { get; set; }
 
@@ -44,67 +47,28 @@ namespace Chem4Word.Editor.ACME
 
         public string Cml { get; set; }
 
-        private AcmeOptions _editorOptions;
-
-        public bool ChangeSettings(Point topLeft)
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                Telemetry.Write(module, "Verbose", "Called");
-                if (HasSettings)
-                {
-                    _editorOptions = new AcmeOptions(SettingsPath)
-                    {
-                        Dirty = false
-                    };
-
-                    using (var settings = new AcmeSettingsHost())
-                    {
-                        settings.Telemetry = Telemetry;
-                        settings.TopLeft = topLeft;
-
-                        var tempOptions = _editorOptions.Clone();
-                        settings.EditorOptions = tempOptions;
-
-                        DialogResult dr = settings.ShowDialog();
-                        if (dr == DialogResult.OK)
-                        {
-                            _editorOptions = tempOptions.Clone();
-                        }
-                        settings.Close();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                new ReportError(Telemetry, TopLeft, module, ex).ShowDialog();
-            }
-            return true;
-        }
+        public bool ChangeSettings(Point topLeft) => false;
 
         public DialogResult Edit()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            DialogResult dialogResult = DialogResult.Cancel;
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var dialogResult = DialogResult.Cancel;
 
             try
             {
                 Telemetry.Write(module, "Verbose", "Called");
-                if (HasSettings)
+
+                if (string.IsNullOrEmpty(DefaultRenderingOptions))
                 {
-                    _editorOptions = new AcmeOptions(SettingsPath)
-                    {
-                        Dirty = false
-                    };
+                    Debugger.Break();
                 }
 
-                using (EditorHost host = new EditorHost(Cml, Used1DProperties, _editorOptions))
+                using (var host = new EditorHost(Cml, Used1DProperties, DefaultRenderingOptions))
                 {
                     host.TopLeft = TopLeft;
                     host.Telemetry = Telemetry;
 
-                    DialogResult showDialog = host.ShowDialog();
+                    var showDialog = host.ShowDialog();
                     if (showDialog == DialogResult.OK)
                     {
                         dialogResult = showDialog;

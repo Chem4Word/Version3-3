@@ -27,7 +27,7 @@ namespace Chem4Word.UI.WPF
             InitializeComponent();
         }
 
-        private void OnWpfButtonClick(object sender, EventArgs e)
+        private void OnClick_WpfButton(object sender, EventArgs e)
         {
             var args = (WpfEventArgs)e;
             switch (args.Button.ToLower())
@@ -38,7 +38,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void LibraryDownloadHost_Load(object sender, EventArgs e)
+        private void OnLoad_LibraryDownloadHost(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -47,7 +47,7 @@ namespace Chem4Word.UI.WPF
                 var control = new LibraryDownloadControl();
                 elementHost1.Child = control;
                 control.TopLeft = TopLeft;
-                control.OnButtonClick += OnWpfButtonClick;
+                control.OnButtonClick += OnClick_WpfButton;
 
                 if (!PointHelper.PointIsEmpty(TopLeft))
                 {
@@ -59,7 +59,7 @@ namespace Chem4Word.UI.WPF
                     Top = (int)sensible.Y;
                 }
 
-                MinimumSize = new Size(800, 400);
+                MinimumSize = new Size(850, 450);
             }
             catch (Exception exception)
             {

@@ -62,10 +62,10 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private void DisableHandlers()
         {
             //detach the handlers to stop them interfering with dragging
-            MouseLeftButtonDown -= BaseSelectionAdorner_MouseLeftButtonDown;
-            MouseLeftButtonUp -= BaseSelectionAdorner_MouseLeftButtonUp;
-            PreviewMouseLeftButtonDown -= BaseSelectionAdorner_PreviewMouseLeftButtonDown;
-            PreviewMouseLeftButtonUp -= BaseSelectionAdorner_PreviewMouseLeftButtonUp;
+            MouseLeftButtonDown -= OnMouseLeftButtonDown_BaseSelectionAdorner;
+            MouseLeftButtonUp -= OnMouseLeftButtonUp_BaseSelectionAdorner;
+            PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown_BaseSelectionAdorner;
+            PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_BaseSelectionAdorner;
         }
 
         protected new void AttachHandlers()
@@ -73,13 +73,13 @@ namespace Chem4Word.ACME.Adorners.Selectors
             //detach the handlers to stop them interfering with dragging
             DisableHandlers();
 
-            MouseLeftButtonDown += ReactionSelectionAdorner_MouseLeftButtonDown;
-            MouseLeftButtonUp += ReactionSelectionAdorner_MouseLeftButtonUp;
-            PreviewMouseMove += ReactionSelectionAdorner_MouseMove;
-            PreviewMouseLeftButtonDown += ReactionSelectionAdorner_PreviewMouseLeftButtonDown;
+            MouseLeftButtonDown += OnMouseLeftButtonDown_ReactionSelectionAdorner;
+            MouseLeftButtonUp += OnMouseLeftButtonUp_ReactionSelectionAdorner;
+            PreviewMouseMove += OnMouseMove_ReactionSelectionAdorner;
+            PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown_ReactionSelectionAdorner;
         }
 
-        private void ReactionSelectionAdorner_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseLeftButtonDown_ReactionSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
             OriginalLocation = e.GetPosition(CurrentEditor);
             CurrentLocation = OriginalLocation;
@@ -97,7 +97,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             }
         }
 
-        private void ReactionSelectionAdorner_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_ReactionSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
 
@@ -145,7 +145,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             e.Handled = true;
         }
 
-        private void ReactionSelectionAdorner_MouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove_ReactionSelectionAdorner(object sender, MouseEventArgs e)
         {
             CurrentLocation = e.GetPosition(CurrentEditor);
             if (Resizing || Dragging)
@@ -189,7 +189,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             e.Handled = true;
         }
 
-        private void ReactionSelectionAdorner_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonUp_ReactionSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
             if (Resizing || Dragging)
             {

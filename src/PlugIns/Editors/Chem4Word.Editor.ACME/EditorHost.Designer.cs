@@ -110,7 +110,7 @@
             this.Save.TabIndex = 1;
             this.Save.Text = "OK";
             this.Save.UseVisualStyleBackColor = true;
-            this.Save.Click += new System.EventHandler(this.Save_Click);
+            this.Save.Click += new System.EventHandler(this.OnClick_Save);
             // 
             // Cancel
             // 
@@ -123,7 +123,7 @@
             this.Cancel.TabIndex = 0;
             this.Cancel.Text = "Cancel";
             this.Cancel.UseVisualStyleBackColor = true;
-            this.Cancel.Click += new System.EventHandler(this.Cancel_Click);
+            this.Cancel.Click += new System.EventHandler(this.OnClick_Cancel);
             // 
             // EditorHost
             // 
@@ -136,9 +136,9 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "EditorHost";
             this.Text = "ACME";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditorHost_FormClosing);
-            this.Load += new System.EventHandler(this.EditorHost_Load);
-            this.LocationChanged += new System.EventHandler(this.EditorHost_LocationChanged);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing_EditorHost);
+            this.Load += new System.EventHandler(this.OnLoad_EditorHost);
+            this.LocationChanged += new System.EventHandler(this.OnLocationChanged_EditorHost);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

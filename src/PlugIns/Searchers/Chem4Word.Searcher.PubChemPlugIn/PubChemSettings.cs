@@ -36,7 +36,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             InitializeComponent();
         }
 
-        private void Settings_Load(object sender, EventArgs e)
+        private void OnLoad_Settings(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -61,7 +61,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             }
         }
 
-        private void btnSetDefaults_Click(object sender, EventArgs e)
+        private void OnClick_SetDefaults(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Telemetry.Write(module, "Action", "Triggered");
@@ -81,7 +81,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             }
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        private void OnClick_Ok(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Telemetry.Write(module, "Action", "Triggered");
@@ -100,13 +100,13 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void RestoreControls()
         {
-            txtPubChemWsUri.Text = SearcherOptions.PubChemWebServiceUri;
-            txtPubChemRestUri.Text = SearcherOptions.PubChemRestApiUri;
-            nudDisplayOrder.Value = SearcherOptions.DisplayOrder;
-            nudResultsPerCall.Value = SearcherOptions.ResultsPerCall;
+            PubChemWsUri.Text = SearcherOptions.PubChemWebServiceUri;
+            PubChemRestUri.Text = SearcherOptions.PubChemRestApiUri;
+            DisplayOrder.Value = SearcherOptions.DisplayOrder;
+            ResultsPerCall.Value = SearcherOptions.ResultsPerCall;
         }
 
-        private void Settings_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_Settings(object sender, FormClosingEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -142,12 +142,12 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             }
         }
 
-        private void txtPubChemWsUri_TextChanged(object sender, EventArgs e)
+        private void OnTextChanged_PubChemWsUri(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                SearcherOptions.PubChemWebServiceUri = txtPubChemWsUri.Text;
+                SearcherOptions.PubChemWebServiceUri = PubChemWsUri.Text;
                 _dirty = true;
             }
             catch (Exception ex)
@@ -156,12 +156,12 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             }
         }
 
-        private void txtPubChemRestUri_TextChanged(object sender, EventArgs e)
+        private void OnTextChanged_PubChemRestUri(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                SearcherOptions.PubChemRestApiUri = txtPubChemRestUri.Text;
+                SearcherOptions.PubChemRestApiUri = PubChemRestUri.Text;
                 _dirty = true;
             }
             catch (Exception ex)
@@ -170,13 +170,13 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             }
         }
 
-        private void nudResultsPerCall_ValueChanged(object sender, EventArgs e)
+        private void OnValueChanged_ResultsPerCall(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Telemetry.Write(module, "Action", "Triggered");
             try
             {
-                SearcherOptions.ResultsPerCall = (int)nudResultsPerCall.Value;
+                SearcherOptions.ResultsPerCall = (int)ResultsPerCall.Value;
                 _dirty = true;
             }
             catch (Exception ex)
@@ -185,12 +185,12 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             }
         }
 
-        private void nudDisplayOrder_ValueChanged(object sender, EventArgs e)
+        private void OnValueChanged_DisplayOrder(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                SearcherOptions.DisplayOrder = (int)nudDisplayOrder.Value;
+                SearcherOptions.DisplayOrder = (int)DisplayOrder.Value;
                 _dirty = true;
             }
             catch (Exception ex)

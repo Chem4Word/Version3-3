@@ -25,27 +25,28 @@ namespace WinForms.TestHarness
     {
         public string OutputValue { get; set; }
 
+        private RenderingOptions DefaultRenderingOptions { get; set; } = new RenderingOptions();
+
         private readonly string _editorType;
 
-        public EditorHost(string cml, string type)
+        public EditorHost(string cml, string type, int defaultBondLength)
         {
             InitializeComponent();
             _editorType = type;
 
-            AcmeOptions acmeOptions = new AcmeOptions(null);
+            Model model;
 
             var used1D = SimulateGetUsed1DLabels(cml);
 
             MessageFromWpf.Text = "";
 
-            SystemHelper helper = new SystemHelper();
+            var helper = new SystemHelper();
             var telemetry = new TelemetryWriter(true, true, helper);
 
             switch (_editorType)
             {
                 case "ACME":
-                    Editor acmeEditor = new Editor();
-                    acmeEditor.EditorOptions = acmeOptions;
+                    var acmeEditor = new Editor();
                     acmeEditor.InitializeComponent();
                     elementHost1.Child = acmeEditor;
 
@@ -53,10 +54,13 @@ namespace WinForms.TestHarness
                     acmeEditor.ShowFeedback = false;
                     acmeEditor.TopLeft = new Point(Left, Top);
                     acmeEditor.Telemetry = telemetry;
-                    acmeEditor.SetProperties(cml, used1D, acmeOptions);
 
-                    var model = acmeEditor.ActiveController.Model;
-                    if (model == null || model.Molecules.Count == 0)
+                    var options = DefaultRenderingOptions.Copy();
+                    options.DefaultBondLength = defaultBondLength;
+                    acmeEditor.SetProperties(cml, used1D, options);
+                    model = acmeEditor.ActiveController.Model;
+
+                    if (model.Molecules.Count == 0)
                     {
                         Text = "ACME - New structure";
                     }
@@ -65,12 +69,12 @@ namespace WinForms.TestHarness
                         Text = "ACME - Editing " + FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula));
                     }
 
-                    acmeEditor.OnFeedbackChange += AcmeEditorOnFeedbackChange;
+                    acmeEditor.OnFeedbackChange += OnFeedbackChange_AcmeEditor;
 
                     break;
 
                 case "LABELS":
-                    LabelsEditor labelsEditor = new LabelsEditor(acmeOptions);
+                    var labelsEditor = new LabelsEditor();
                     labelsEditor.InitializeComponent();
                     elementHost1.Child = labelsEditor;
 
@@ -82,7 +86,7 @@ namespace WinForms.TestHarness
                     break;
 
                 default:
-                    CmlEditor cmlEditor = new CmlEditor();
+                    var cmlEditor = new CmlEditor();
                     cmlEditor.InitializeComponent();
                     elementHost1.Child = cmlEditor;
 
@@ -93,38 +97,41 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void AcmeEditorOnFeedbackChange(object sender, WpfEventArgs e)
+        private void OnFeedbackChange_AcmeEditor(object sender, WpfEventArgs e)
         {
             MessageFromWpf.Text = e.OutputValue;
         }
 
         private List<string> SimulateGetUsed1DLabels(string cml)
         {
-            CMLConverter cc = new CMLConverter();
-            Model model = cc.Import(cml);
+            var used1D = new List<string>();
 
-            List<string> used1D = new List<string>();
-
-            foreach (var property in model.AllTextualProperties)
+            if (!string.IsNullOrEmpty(cml))
             {
-                if (property.FullType != null
-                    && (property.FullType.Equals(CMLConstants.ValueChem4WordCaption)
-                      || property.FullType.Equals(CMLConstants.ValueChem4WordFormula)
-                      || property.FullType.Equals(CMLConstants.ValueChem4WordSynonym)))
+                var cc = new CMLConverter();
+                var model = cc.Import(cml);
+
+                foreach (var property in model.AllTextualProperties)
                 {
-                    used1D.Add($"{property.Id}:{model.CustomXmlPartGuid}");
+                    if (property.FullType != null
+                        && (property.FullType.Equals(CMLConstants.ValueChem4WordCaption)
+                            || property.FullType.Equals(CMLConstants.ValueChem4WordFormula)
+                            || property.FullType.Equals(CMLConstants.ValueChem4WordSynonym)))
+                    {
+                        used1D.Add($"{property.Id}:{model.CustomXmlPartGuid}");
+                    }
                 }
             }
 
             return used1D;
         }
 
-        private void EditorHost_Load(object sender, EventArgs e)
+        private void OnLoad_EditorHost(object sender, EventArgs e)
         {
             MinimumSize = new Size(900, 600);
 
             // Fix bottom panel
-            int margin = Buttons.Height - Save.Bottom;
+            var margin = Buttons.Height - Save.Bottom;
             splitContainer1.SplitterDistance = splitContainer1.Height - Save.Height - margin * 2;
             splitContainer1.FixedPanel = FixedPanel.Panel2;
             splitContainer1.IsSplitterFixed = true;
@@ -151,9 +158,9 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void Save_Click(object sender, EventArgs e)
+        private void OnClick_Save(object sender, EventArgs e)
         {
-            CMLConverter cc = new CMLConverter();
+            var cc = new CMLConverter();
             DialogResult = DialogResult.Cancel;
 
             switch (_editorType)
@@ -164,7 +171,6 @@ namespace WinForms.TestHarness
                     {
                         DialogResult = DialogResult.OK;
                         var model = acmeEditor.EditedModel;
-                        model.RescaleForCml();
                         // Replace any temporary Ids which are Guids
                         model.ReLabelGuids();
                         OutputValue = cc.Export(model);
@@ -192,22 +198,22 @@ namespace WinForms.TestHarness
             Hide();
         }
 
-        private void Cancel_Click(object sender, EventArgs e)
+        private void OnClick_Cancel(object sender, EventArgs e)
         {
             Hide();
         }
 
-        private void EditorHost_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_EditorHost(object sender, FormClosingEventArgs e)
         {
             if (DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.AppendLine("Do you wish to save your changes?");
                 sb.AppendLine("  Click 'Yes' to save your changes and exit.");
                 sb.AppendLine("  Click 'No' to discard your changes and exit.");
                 sb.AppendLine("  Click 'Cancel' to return to the form.");
 
-                CMLConverter cc = new CMLConverter();
+                var cc = new CMLConverter();
 
                 switch (_editorType)
                 {
@@ -215,7 +221,7 @@ namespace WinForms.TestHarness
                         if (elementHost1.Child is Editor acmeEditor
                             && acmeEditor.IsDirty)
                         {
-                            DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                            var dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
                             switch (dr)
                             {
                                 case DialogResult.Cancel:
@@ -225,7 +231,6 @@ namespace WinForms.TestHarness
                                 case DialogResult.Yes:
                                     DialogResult = DialogResult.OK;
                                     var model = acmeEditor.EditedModel;
-                                    model.RescaleForCml();
                                     // Replace any temporary Ids which are Guids
                                     model.ReLabelGuids();
                                     OutputValue = cc.Export(model);
@@ -242,7 +247,7 @@ namespace WinForms.TestHarness
                         if (elementHost1.Child is LabelsEditor labelsEditor
                             && labelsEditor.IsDirty)
                         {
-                            DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                            var dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
                             switch (dr)
                             {
                                 case DialogResult.Cancel:
@@ -265,7 +270,7 @@ namespace WinForms.TestHarness
                         if (elementHost1.Child is CmlEditor editor
                             && editor.IsDirty)
                         {
-                            DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                            var dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
                             switch (dr)
                             {
                                 case DialogResult.Cancel:

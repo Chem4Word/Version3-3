@@ -13,11 +13,22 @@ namespace Chem4Word.Model2.Converters.CML
         // Namespaces
         public const string TagCml = "cml";
 
+        public const string TagC4W = "c4w";
+
+        // Other top level stuff
         public const string TagConventions = "conventions";
+
         public const string TagCmlDict = "cmlDict";
         public const string TagNameDict = "nameDict";
         public const string TagConventionMolecular = "convention:molecular";
-        public const string TagC4W = "c4w";
+
+        // Structure
+        public const string TagXmlPartGuid = "customXmlPartGuid";
+
+        public const string TagExplicitC = "explicitC";
+        public const string TagExplicitH = "explicitH";
+        public const string TagShowColouredAtoms = "showColouredAtoms";
+        public const string TagShowMoleculeGrouping = "showMoleculeGrouping";
 
         // General
         public const string AttributeId = "id";
@@ -27,8 +38,6 @@ namespace Chem4Word.Model2.Converters.CML
 
         public const string AttributeSpinMultiplicity = "spinMultiplicity";
         public const string AttributeCount = "count";
-
-        public const string TagXmlPartGuid = "customXmlPartGuid";
         public const string AttributeShowMoleculeBrackets = "showBrackets";
 
         // Reactions and schemes
@@ -61,7 +70,12 @@ namespace Chem4Word.Model2.Converters.CML
         public const string AttributeRole = "role";
         public const string AttributeRef = "ref";
 
-        // Atoms
+        // Atom(s) or Molecule(s)
+        public const string AttributeExplicitC = "explicitC";
+
+        public const string AttributeExplicitH = "explicitH";
+
+        // Atom(s)
         public const string TagAtomArray = "atomArray";
 
         public const string TagAtom = "atom";
@@ -77,7 +91,7 @@ namespace Chem4Word.Model2.Converters.CML
         public const string AttributeHydrogenPlacement = "hydrogenPlacement";
         public const string AttributeFunctionalGroupPlacement = "groupPlacement";
 
-        // Bonds
+        // Bond(s)
         public const string TagBondArray = "bondArray";
 
         public const string TagBond = "bond";
@@ -122,7 +136,7 @@ namespace Chem4Word.Model2.Converters.CML
         // Our DictRef values
         public const string ValueChem4WordInchiName = "chem4word:CalculatedInchi";
 
-        //public const string ValueChem4WordAuxInfoName = "chem4word:CalculatedAuxInfo";
+        //public const string ValueChem4WordAuxInfoName = "chem4word:CalculatedAuxInfo"
         public const string ValueChem4WordInchiKeyName = "chem4word:CalculatedInchikey";
 
         public const string ValueChem4WordResolverIupacName = "chem4word:ResolvedIupacname";

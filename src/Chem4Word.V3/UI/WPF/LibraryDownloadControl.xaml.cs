@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net.Mail;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -30,6 +29,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Point = System.Windows.Point;
@@ -66,6 +66,14 @@ namespace Chem4Word.UI.WPF
 
         private void OnLoaded_LibraryDownloadControl(object sender, RoutedEventArgs e)
         {
+            UserErrorMessage.Visibility = Visibility.Collapsed;
+            EmailErrorMessage.Visibility = Visibility.Collapsed;
+
+            RefreshListOfLibraries();
+        }
+
+        private void RefreshListOfLibraries()
+        {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Obtaining list of libraries available for download");
@@ -76,26 +84,50 @@ namespace Chem4Word.UI.WPF
                 {
                     _settings = new AzureSettings(true);
 
-                    // Restore UserName and Email from Credential Store
-                    var lastUser = CredentialManager.ReadCredential(Chem4WordUser);
-                    if (lastUser != null
-                        && lastUser.UserName != null)
+                    if (_userIsDirty)
                     {
-                        var temp = lastUser.UserName.Replace("<", "|").Replace(">", "");
-                        var parts = temp.Split('|');
-                        if (parts.Length == 2)
+                        if (!string.IsNullOrEmpty(UserName.Text) && StringHelper.IsValidEmail(UserEmail.Text))
                         {
-                            UserName.Text = parts[0].Trim();
-                            UserEmail.Text = parts[1].ToLower();
-                            _userIsDirty = false;
+                            CredentialManager.WriteCredential(Chem4WordUser,
+                                                              $"{UserName.Text}<{UserEmail.Text.ToLower()}>",
+                                                              Globals.Chem4WordV3.Helper.MachineId,
+                                                              CredentialPersistence.LocalMachine);
+                        }
+                        else
+                        {
+                            var credential = CredentialManager.ReadCredential(Chem4WordUser);
+                            if (credential != null)
+                            {
+                                CredentialManager.DeleteCredential(Chem4WordUser);
+                            }
+                        }
+
+                        Libraries.UnselectAll();
+                        Download.IsEnabled = false;
+                        _userIsDirty = false;
+                    }
+                    else
+                    {
+                        // Restore UserName and Email from Credential Store
+                        var credential = CredentialManager.ReadCredential(Chem4WordUser);
+                        if (credential != null && credential.UserName != null)
+                        {
+                            var temp = credential.UserName.Replace("<", "|").Replace(">", "");
+                            var parts = temp.Split('|');
+                            if (parts.Length == 2)
+                            {
+                                UserName.Text = parts[0].Trim();
+                                UserEmail.Text = parts[1].ToLower();
+                                _userIsDirty = false;
+                            }
                         }
                     }
 
                     var formData = new Dictionary<string, string>
-                               {
-                                   { "Version", Globals.Chem4WordV3.Helper.AddInVersion.Replace("Chem4Word V", "") },
-                                   { "MachineId", Globals.Chem4WordV3.Helper.MachineId }
-                               };
+                                   {
+                                       { "Version", Globals.Chem4WordV3.Helper.AddInVersion.Replace("Chem4Word V", "") },
+                                       { "MachineId", Globals.Chem4WordV3.Helper.MachineId }
+                                   };
 
                     var helper = new ApiHelper(_settings.LibrariesUri, Globals.Chem4WordV3.Telemetry);
 
@@ -135,6 +167,10 @@ namespace Chem4Word.UI.WPF
 
         private void RefreshPaidFor()
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Obtaining list of libraries paid for by this user");
+
             _paidFor = new List<string>();
 
             var email = UserEmail.Text.Trim();
@@ -156,31 +192,6 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private bool IsValidEmail(string email)
-        {
-            var trimmedEmail = email.Trim();
-
-            if (trimmedEmail.EndsWith("."))
-            {
-                return false; // suggested by @TK-421
-            }
-
-            if (trimmedEmail.Contains(".."))
-            {
-                return false;
-            }
-
-            try
-            {
-                var address = new MailAddress(trimmedEmail);
-                return address.Address == trimmedEmail;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         private void OnClick_DownloadButton(object sender, RoutedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
@@ -199,7 +210,8 @@ namespace Chem4Word.UI.WPF
             {
                 UserErrorMessage.Visibility = Visibility.Collapsed;
             }
-            if (UserEmail.Text.Trim().Length == 0 || !IsValidEmail(UserEmail.Text.Trim()))
+
+            if (UserEmail.Text.Trim().Length == 0 || !StringHelper.IsValidEmail(UserEmail.Text.Trim()))
             {
                 EmailErrorMessage.Visibility = Visibility.Visible;
                 EmailErrorMessage.Text = "Please enter a valid email address.";
@@ -422,7 +434,7 @@ namespace Chem4Word.UI.WPF
             StartProgressIndicator();
 
             var worker = new BackgroundWorker();
-            worker.DoWork += WorkDownloadLibrary;
+            worker.DoWork += OnDoWork_DownloadLibrary;
             worker.RunWorkerCompleted += OnRunWorkerCompleted;
 
             worker.RunWorkerAsync(formData);
@@ -445,7 +457,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void WorkDownloadLibrary(object sender, DoWorkEventArgs e)
+        private void OnDoWork_DownloadLibrary(object sender, DoWorkEventArgs e)
         {
             var helper = new ApiHelper(_settings.LibrariesUri, Globals.Chem4WordV3.Telemetry);
             helper.DownloadLibrary((Dictionary<string, string>)e.Argument, _downloadPath, 60);
@@ -462,7 +474,7 @@ namespace Chem4Word.UI.WPF
             StartProgressIndicator();
 
             var worker = new BackgroundWorker();
-            worker.DoWork += WorkDownloadDriver;
+            worker.DoWork += OnDoWork_DownloadDriver;
             worker.RunWorkerCompleted += OnRunWorkerCompleted;
 
             worker.RunWorkerAsync(formData);
@@ -485,7 +497,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void WorkDownloadDriver(object sender, DoWorkEventArgs e)
+        private void OnDoWork_DownloadDriver(object sender, DoWorkEventArgs e)
         {
             var helper = new ApiHelper(_settings.LibrariesUri, Globals.Chem4WordV3.Telemetry);
             helper.DownloadDriver((Dictionary<string, string>)e.Argument, _downloadPath, 15);
@@ -552,7 +564,10 @@ namespace Chem4Word.UI.WPF
 
             if (_userIsDirty)
             {
-                CredentialManager.WriteCredential(Chem4WordUser, $"{UserName.Text}<{UserEmail.Text.ToLower()}>", Globals.Chem4WordV3.Helper.MachineId, CredentialPersistence.LocalMachine);
+                CredentialManager.WriteCredential(Chem4WordUser,
+                                                  $"{UserName.Text}<{UserEmail.Text.ToLower()}>",
+                                                  Globals.Chem4WordV3.Helper.MachineId,
+                                                  CredentialPersistence.LocalMachine);
                 _userIsDirty = false;
             }
 
@@ -585,6 +600,16 @@ namespace Chem4Word.UI.WPF
         private void OnTextChanged_UserNameOrEmail(object sender, TextChangedEventArgs e)
         {
             _userIsDirty = true;
+
+            UserEmail.Background = UserEmail.Text.Trim().Length > 0 && StringHelper.IsValidEmail(UserEmail.Text.Trim())
+                ? SystemColors.WindowBrush
+                : Brushes.Salmon;
+        }
+
+        private void OnLostFocus_UserNameOrEmail(object sender, RoutedEventArgs e)
+        {
+            _userIsDirty = true;
+            RefreshListOfLibraries();
         }
     }
 }

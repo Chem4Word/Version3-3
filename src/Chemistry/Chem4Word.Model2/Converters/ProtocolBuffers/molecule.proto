@@ -9,6 +9,7 @@ syntax ="proto3";
 package model;
 
 option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
+
 import "Converters/ProtocolBuffers/atom.proto";
 import "Converters/ProtocolBuffers/bond.proto";
 import "Converters/ProtocolBuffers/textualProperty.proto";
@@ -30,4 +31,6 @@ message PBMolecule
 	map<string,PBTextualProperty> Names = 11;
 	map<string,PBTextualProperty> Captions = 12;
 	repeated PBRing Rings = 13;
+	google.protobuf.BoolValue ExplicitC = 14;
+	google.protobuf.Int32Value ExplicitH = 15;
 }

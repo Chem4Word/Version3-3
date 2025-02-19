@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Navigator"
-    controls:ChemistryItem.ChemistryItemButtonClick="OnItemButtonClick"
+    controls:ChemistryItem.ChemistryItemButtonClick="OnClick_ItemButton"
     d:DesignHeight="300"
     d:DesignWidth="300"
     Background="{x:Static SystemColors.WindowBrush}"
@@ -86,11 +86,7 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             DisplayHeight="150"
-                            ItemMode="Navigator"
-                            ShowAllCarbonAtoms="{Binding ElementName=Navigator, Path=ShowAllCarbonAtoms}"
-                            ShowAtomsInColour="{Binding ElementName=Navigator, Path=ShowAtomsInColour}"
-                            ShowImplicitHydrogens="{Binding ElementName=Navigator, Path=ShowImplicitHydrogens}"
-                            ShowMoleculeGrouping="{Binding ElementName=Navigator, Path=ShowMoleculeGrouping}">
+                            ItemMode="Navigator">
                             <controls:ChemistryItem.Style>
                                 <Style TargetType="{x:Type controls:ChemistryItem}">
                                     <Style.Triggers>

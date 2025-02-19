@@ -32,20 +32,20 @@ namespace Chem4Word.ACME.Behaviors
 
             _cursor = CurrentEditor.Cursor;
             CurrentEditor.Cursor = CursorUtils.Eraser;
-            CurrentEditor.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
+            CurrentEditor.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             //set up an intercept on mouse move to control adorner visibility
-            CurrentEditor.PreviewMouseMove += CurrentEditor_PreviewMouseMove;
+            CurrentEditor.PreviewMouseMove += OnPreviewMouseMove_CurrentEditor;
             CurrentEditor.IsHitTestVisible = true;
             if (_parent != null)
             {
-                _parent.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
+                _parent.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
             //clear the current selection
             EditController.ClearSelection();
             CurrentStatus = "Click to remove an atom or bond.";
         }
 
-        private void CurrentEditor_PreviewMouseMove(object sender, MouseEventArgs e)
+        private void OnPreviewMouseMove_CurrentEditor(object sender, MouseEventArgs e)
         {
             //needed to detect when we are over a hydrogen visual
             var hitTestResult = CurrentEditor.GetTargetedVisual(e.GetPosition(CurrentEditor));
@@ -58,7 +58,7 @@ namespace Chem4Word.ACME.Behaviors
             }
         }
 
-        private void CurrentEditor_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentEditor(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var hitTestResult = CurrentEditor.ActiveVisual;
             switch (hitTestResult)
@@ -115,8 +115,8 @@ namespace Chem4Word.ACME.Behaviors
             base.OnDetaching();
             if (CurrentEditor != null)
             {
-                CurrentEditor.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
-                CurrentEditor.PreviewMouseMove -= CurrentEditor_PreviewMouseMove;
+                CurrentEditor.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
+                CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
                 CurrentEditor.IsHitTestVisible = false;
                 CurrentEditor.Cursor = _cursor;
                 CurrentStatus = "";

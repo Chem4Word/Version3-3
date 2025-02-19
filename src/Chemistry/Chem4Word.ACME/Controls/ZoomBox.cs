@@ -20,7 +20,6 @@ namespace Chem4Word.ACME.Controls
         private Thumb _zoomThumb;
         private Canvas _zoomCanvas;
         private Slider _zoomSlider;
-        //private ScaleTransform Canvas.LayoutTransform;
 
         #region DPs
 

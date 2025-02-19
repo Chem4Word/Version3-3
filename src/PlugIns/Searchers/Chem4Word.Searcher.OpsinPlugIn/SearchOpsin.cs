@@ -35,12 +35,12 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             InitializeComponent();
         }
 
-        private void SearchFor_TextChanged(object sender, EventArgs e)
+        private void OnTextChanged_SearchFor(object sender, EventArgs e)
         {
             SearchButton.Enabled = TextHelper.IsValidSearchString(SearchFor.Text);
         }
 
-        private void SearchButton_Click(object sender, EventArgs e)
+        private void OnClick_SearchButton(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -53,7 +53,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             Cursor = Cursors.WaitCursor;
 
             var securityProtocol = ServicePointManager.SecurityProtocol;
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             UriBuilder builder = new UriBuilder(UserOptions.OpsinWebServiceUri + searchFor);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(builder.Uri);
@@ -140,13 +140,13 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             }
         }
 
-        private void ImportButton_Click(object sender, EventArgs e)
+        private void OnClick_ImportButton(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
             Hide();
         }
 
-        private void SearchOpsin_Load(object sender, EventArgs e)
+        private void OnLoad_SearchOpsin(object sender, EventArgs e)
         {
             if (!PointHelper.PointIsEmpty(TopLeft))
             {

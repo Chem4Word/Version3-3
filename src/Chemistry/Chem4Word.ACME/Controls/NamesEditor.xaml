@@ -29,7 +29,7 @@
     <!--
     <Border BorderBrush="{StaticResource Chem4WordBlue}" BorderThickness="2">
     -->
-    <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+    <Grid d:IsLocked="True" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -38,9 +38,13 @@
             x:Name="ScrollViewer"
             Grid.Row="0"
             Padding="5"
+            d:IsLocked="True"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Auto">
-            <ItemsControl Grid.IsSharedSizeScope="True" ItemsSource="{Binding ListOfNames, Mode=TwoWay}">
+            <ItemsControl
+                d:IsLocked="True"
+                Grid.IsSharedSizeScope="True"
+                ItemsSource="{Binding ListOfNames, Mode=TwoWay}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="3,3,3,0">
@@ -112,22 +116,30 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
             HorizontalContentAlignment="Left"
+            d:IsLocked="True"
             BorderThickness="0"
             Style="{StaticResource Acme.Control.Button.DialogButton}">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel d:IsLocked="True" Orientation="Horizontal">
                 <Viewbox
                     Width="16"
                     Height="16"
                     Margin="5,0,5,0"
+                    d:IsLocked="True"
                     Stretch="UniformToFill">
                     <Path
                         Width="16"
                         Height="16"
+                        d:IsLocked="True"
                         Data="M12.1,0 L19.8,0 19.8,12.1 32,12.1 32,19.8 19.9,19.8 19.9,32 12.2,32 12.2,19.9 0,19.9 0,12.2 12.1,12.2z"
                         Fill="{DynamicResource Chem4WordBlue}"
                         Stretch="Fill" />
                 </Viewbox>
-                <TextBlock x:Name="AddButtonCaption" VerticalAlignment="Center">Set at runtime</TextBlock>
+                <TextBlock
+                    x:Name="AddButtonCaption"
+                    VerticalAlignment="Center"
+                    d:IsLocked="True">
+                    Set at runtime
+                </TextBlock>
             </StackPanel>
         </Button>
     </Grid>

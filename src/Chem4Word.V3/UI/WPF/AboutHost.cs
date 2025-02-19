@@ -27,7 +27,7 @@ namespace Chem4Word.UI.WPF
             InitializeComponent();
         }
 
-        private void AboutHost_Load(object sender, EventArgs e)
+        private void OnLoad_AboutHost(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try

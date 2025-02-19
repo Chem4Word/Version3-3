@@ -83,7 +83,7 @@ namespace Chem4WordUpdater
             }
         }
 
-        private void Cancel_Click(object sender, EventArgs e)
+        private void OnClick_Cancel(object sender, EventArgs e)
         {
             RegistryHelper.WriteAction("Update was cancelled by User");
             timer1.Enabled = false;
@@ -99,7 +99,7 @@ namespace Chem4WordUpdater
             Close();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void OnTick_timer1(object sender, EventArgs e)
         {
             int wordCount = ShowWordProcesses();
             if (wordCount == 0 && _downloadCompleted)
@@ -149,6 +149,9 @@ namespace Chem4WordUpdater
         private bool DownloadFile(string url)
         {
             bool started = false;
+
+            var securityProtocol = ServicePointManager.SecurityProtocol;
+
             _sw = new Stopwatch();
             _sw.Start();
 
@@ -172,8 +175,7 @@ namespace Chem4WordUpdater
 
                 _downloadedFile = Path.Combine(downloadPath, filename);
 
-                var securityProtocol = ServicePointManager.SecurityProtocol;
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 _webClient = new WebClient();
                 _webClient.Headers.Add("user-agent", "Chem4Word Updater");
@@ -189,6 +191,10 @@ namespace Chem4WordUpdater
             {
                 RegistryHelper.WriteAction(ex.Message);
                 Information.Text = ex.Message;
+            }
+            finally
+            {
+                ServicePointManager.SecurityProtocol = securityProtocol;
             }
 
             return started;
@@ -284,7 +290,7 @@ namespace Chem4WordUpdater
             return exitCode;
         }
 
-        private void Updater_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_Updater(object sender, FormClosingEventArgs e)
         {
             if (!_userCancelledUpdate)
             {
@@ -292,7 +298,7 @@ namespace Chem4WordUpdater
             }
         }
 
-        private void Updater_Load(object sender, EventArgs e)
+        private void OnLoad_Updater(object sender, EventArgs e)
         {
             // Move up and left by half the form size
             Left = Left - Width / 2;

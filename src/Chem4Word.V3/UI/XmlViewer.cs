@@ -41,7 +41,7 @@ namespace Chem4Word.UI
             InitializeComponent();
         }
 
-        private void FormXmlViewer_Load(object sender, EventArgs e)
+        private void OnLoad_XmlViewer(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try

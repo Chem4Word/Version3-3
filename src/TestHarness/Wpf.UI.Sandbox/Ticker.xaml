@@ -9,9 +9,12 @@
     Title="Ticker"
     Width="800"
     Height="60"
-    Loaded="Ticker_OnLoaded"
+    Loaded="OnLoaded_Ticker"
     mc:Ignorable="d">
-    <Grid>
-        <controls:Marquee x:Name="Marquee" MouseDown="UIElement_OnMouseDown" />
+    <Grid d:IsLocked="True">
+        <controls:Marquee
+            x:Name="Marquee"
+            d:IsLocked="True"
+            MouseDown="OnMouseDown_UIElement" />
     </Grid>
 </Window>

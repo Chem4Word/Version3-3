@@ -36,7 +36,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             InitializeComponent();
         }
 
-        private void Settings_Load(object sender, EventArgs e)
+        private void OnLoad_Settings(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -54,7 +54,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
 #if DEBUG
 #else
-                tabControlEx.TabPages.Remove(tabDebug);
+                tabControlEx.TabPages.Remove(Debug);
 #endif
                 _dirty = false;
             }
@@ -64,7 +64,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void Ok_Click(object sender, EventArgs e)
+        private void OnClick_Ok(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -81,7 +81,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void SetDefaults_Click(object sender, EventArgs e)
+        private void OnClick_SetDefaults(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -103,12 +103,8 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void RestoreControls()
         {
-            ColouredAtoms.Checked = RendererOptions.ColouredAtoms;
-            ShowHydrogens.Checked = RendererOptions.ShowHydrogens;
-            ShowAllCarbonAtoms.Checked = RendererOptions.ShowCarbons;
             ClipCrossingBonds.Checked = RendererOptions.ClipCrossingBonds;
             ShowMoleculeCaptions.Checked = RendererOptions.ShowMoleculeCaptions;
-            ShowMoleculeGrouping.Checked = RendererOptions.ShowMoleculeGrouping;
 
             // Debugging Options
             ClipBondLines.Checked = RendererOptions.ClipBondLines;
@@ -123,7 +119,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             ShowBondCrossingPoints.Checked = RendererOptions.ShowBondCrossingPoints;
         }
 
-        private void Settings_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_Settings(object sender, FormClosingEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -161,7 +157,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ClipLines_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ClipLines(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -176,37 +172,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowHydrogens_CheckedChanged(object sender, EventArgs e)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            try
-            {
-                RendererOptions.ShowHydrogens = ShowHydrogens.Checked;
-                _dirty = true;
-            }
-            catch (Exception ex)
-            {
-                new ReportError(Telemetry, TopLeft, module, ex).ShowDialog();
-            }
-        }
-
-        private void ColouredAtoms_CheckedChanged(object sender, EventArgs e)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            try
-            {
-                RendererOptions.ColouredAtoms = ColouredAtoms.Checked;
-                _dirty = true;
-            }
-            catch (Exception ex)
-            {
-                new ReportError(Telemetry, TopLeft, module, ex).ShowDialog();
-            }
-        }
-
-        private void ShowRingCentres_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowRingCentres(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -221,7 +187,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowMoleculeBox_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowMoleculeBox(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -236,7 +202,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowCharacterBox_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowCharacterBox(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -251,7 +217,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowAtomCentres_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowAtomCentres(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -266,7 +232,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowConvexHulls_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowConvexHulls(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -281,22 +247,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowMoleculeGrouping_CheckedChanged(object sender, EventArgs e)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            try
-            {
-                RendererOptions.ShowMoleculeGrouping = ShowMoleculeGrouping.Checked;
-                _dirty = true;
-            }
-            catch (Exception ex)
-            {
-                new ReportError(Telemetry, TopLeft, module, ex).ShowDialog();
-            }
-        }
-
-        private void ShowMoleculeCaptions_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowMoleculeCaptions(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -311,22 +262,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowAllCarbonAtoms_CheckedChanged(object sender, EventArgs e)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            try
-            {
-                RendererOptions.ShowCarbons = ShowAllCarbonAtoms.Checked;
-                _dirty = true;
-            }
-            catch (Exception ex)
-            {
-                new ReportError(Telemetry, TopLeft, module, ex).ShowDialog();
-            }
-        }
-
-        private void ShowDoubleBondTrimmingLines_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowDoubleBondTrimmingLines(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -341,7 +277,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowBondDirection_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowBondDirection(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -356,7 +292,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowCharacterGroupsBox_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowCharacterGroupsBox(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -371,7 +307,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ShowBondCrossingPoints_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowBondCrossingPoints(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -386,7 +322,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void ClipCrossingBonds_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ClipCrossingBonds(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 

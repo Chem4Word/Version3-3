@@ -94,7 +94,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             _medianBondLength = _chemistryModel.MeanBondLength;
             if (_chemistryModel.GetAllBonds().Count == 0)
             {
-                _medianBondLength = _options.BondLength;
+                _medianBondLength = Constants.StandardBondLength;
             }
 
             // Initialise progress monitoring
@@ -121,11 +121,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             var run = CreateRun();
 
             // Render molecule Group Brackets
-            if (_options.ShowMoleculeGrouping)
+            if (_chemistryModel.ShowMoleculeGrouping)
             {
                 foreach (var group in _positionerOutputs.GroupBrackets)
                 {
-                    var bracketColour = _options.ColouredAtoms ? "00bbff" : OoXmlHelper.Black;
+                    var bracketColour = _chemistryModel.ShowColouredAtoms ? "00bbff" : OoXmlHelper.Black;
                     DrawGroupBrackets(group, _medianBondLength * 0.5, OoXmlHelper.AcsLineWidth * 2, bracketColour);
                 }
             }
@@ -329,9 +329,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                             var p2 = shared.Nose - v2;
                             //_positionerOutputs.Diagnostics.Lines.Add(new DiagnosticLine(shared.Nose, p2, BondLineStyle.Dotted, "ff0000"))
 
-                            Point? intersection;
-
-                            intersection = GeometryTool.GetIntersection(wedge.Nose, p1, shared.Nose, p2);
+                            var intersection = GeometryTool.GetIntersection(wedge.Nose, p1, shared.Nose, p2);
                             if (intersection != null)
                             {
                                 wedge.LeftTail = intersection.Value;

@@ -30,26 +30,14 @@ namespace Chem4Word.UI.WPF
         public List<string> Used1D { get; set; }
         public string Message { get; set; }
 
-        private AcmeOptions _options;
-
         private bool _closedInCode = false;
 
         public EditLabelsHost()
         {
-            _options = new AcmeOptions();
             InitializeComponent();
         }
 
-        public EditLabelsHost(AcmeOptions options)
-        {
-            using (new WaitCursor())
-            {
-                _options = options;
-                InitializeComponent();
-            }
-        }
-
-        private void EditLabelsHost_Load(object sender, EventArgs e)
+        private void OnLoad_EditLabelsHost(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -74,7 +62,7 @@ namespace Chem4Word.UI.WPF
                     splitContainer1.FixedPanel = FixedPanel.Panel2;
                     splitContainer1.IsSplitterFixed = true;
 
-                    var editor = new LabelsEditor(_options);
+                    var editor = new LabelsEditor();
                     editor.InitializeComponent();
                     elementHost1.Child = editor;
 
@@ -94,7 +82,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void Save_Click(object sender, EventArgs e)
+        private void OnClick_Save(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
             _closedInCode = true;
@@ -108,12 +96,12 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void Cancel_Click(object sender, EventArgs e)
+        private void OnClick_Cancel(object sender, EventArgs e)
         {
             Hide();
         }
 
-        private void EditLabelsHost_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_EditLabelsHost(object sender, FormClosingEventArgs e)
         {
             if (!_closedInCode)
             {

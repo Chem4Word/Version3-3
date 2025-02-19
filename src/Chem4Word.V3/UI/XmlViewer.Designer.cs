@@ -57,7 +57,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "XmlViewer";
             this.Text = "CML Viewer";
-            this.Load += new System.EventHandler(this.FormXmlViewer_Load);
+            this.Load += new System.EventHandler(this.OnLoad_XmlViewer);
             this.ResumeLayout(false);
 
         }

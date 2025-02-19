@@ -21,7 +21,7 @@ namespace Wpf.UI.Sandbox
             InitializeComponent();
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_ButtonBase(object sender, RoutedEventArgs e)
         {
             if (sender is Button button)
             {

@@ -35,7 +35,7 @@ namespace Chem4Word.Core.Helpers
             try
             {
                 SetConnectionLeaseTimeout(uri);
-                SetServicePointManagerProperties(securityProtocol);
+                SetServicePointManagerProperties();
 
                 SetCommonHeaders();
 
@@ -86,7 +86,7 @@ namespace Chem4Word.Core.Helpers
             try
             {
                 SetConnectionLeaseTimeout(uri);
-                SetServicePointManagerProperties(securityProtocol);
+                SetServicePointManagerProperties();
 
                 SetCommonHeaders();
 
@@ -146,13 +146,13 @@ namespace Chem4Word.Core.Helpers
             _httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
         }
 
-        private static void SetServicePointManagerProperties(SecurityProtocolType securityProtocol)
+        private static void SetServicePointManagerProperties()
         {
             ServicePointManager.DefaultConnectionLimit = 100;
             ServicePointManager.UseNagleAlgorithm = false;
             ServicePointManager.Expect100Continue = false;
 
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
         private static void SetConnectionLeaseTimeout(string uri)

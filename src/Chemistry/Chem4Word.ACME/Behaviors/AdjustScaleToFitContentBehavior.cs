@@ -69,14 +69,14 @@ namespace Chem4Word.ACME.Behaviors
         {
             base.OnAttached();
             Debug.Assert(AssociatedObject != null);
-            AssociatedObject.SizeChanged += AssociatedObjectOnSizeChanged;
+            AssociatedObject.SizeChanged += OnSizeChanged_AssociatedObject;
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
 
-            AssociatedObject.SizeChanged -= AssociatedObjectOnSizeChanged;
+            AssociatedObject.SizeChanged -= OnSizeChanged_AssociatedObject;
         }
 
         #endregion Overrides of Behavior
@@ -116,7 +116,7 @@ namespace Chem4Word.ACME.Behaviors
 
         #region Private EventHandlers
 
-        private void AssociatedObjectOnSizeChanged(object sender, SizeChangedEventArgs sizeChangedEventArgs)
+        private void OnSizeChanged_AssociatedObject(object sender, SizeChangedEventArgs sizeChangedEventArgs)
         {
             SetScaleRatio();
         }

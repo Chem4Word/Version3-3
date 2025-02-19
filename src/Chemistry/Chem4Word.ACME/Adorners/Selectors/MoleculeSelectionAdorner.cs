@@ -98,23 +98,23 @@ namespace Chem4Word.ACME.Adorners.Selectors
             DisableHandlers();
 
             //wire up the event handling
-            TopLeftHandle.DragStarted += ResizeStarted;
-            TopRightHandle.DragStarted += ResizeStarted;
-            BottomLeftHandle.DragStarted += ResizeStarted;
-            BottomRightHandle.DragStarted += ResizeStarted;
+            TopLeftHandle.DragStarted += OnResizeStarted;
+            TopRightHandle.DragStarted += OnResizeStarted;
+            BottomLeftHandle.DragStarted += OnResizeStarted;
+            BottomRightHandle.DragStarted += OnResizeStarted;
 
             TopLeftHandle.DragDelta += TopLeftHandleDragDelta;
             TopRightHandle.DragDelta += TopRightHandleDragDelta;
             BottomLeftHandle.DragDelta += BottomLeftHandleDragDelta;
             BottomRightHandle.DragDelta += BottomRightHandleDragDelta;
 
-            TopLeftHandle.DragCompleted += HandleResizeCompleted;
-            TopRightHandle.DragCompleted += HandleResizeCompleted;
-            BottomLeftHandle.DragCompleted += HandleResizeCompleted;
-            BottomRightHandle.DragCompleted += HandleResizeCompleted;
+            TopLeftHandle.DragCompleted += OnHandle_ResizeCompleted;
+            TopRightHandle.DragCompleted += OnHandle_ResizeCompleted;
+            BottomLeftHandle.DragCompleted += OnHandle_ResizeCompleted;
+            BottomRightHandle.DragCompleted += OnHandle_ResizeCompleted;
         }
 
-        private void ResizeStarted(object sender, DragStartedEventArgs e)
+        private void OnResizeStarted(object sender, DragStartedEventArgs e)
         {
             Resizing = true;
             Dragging = false;
@@ -135,15 +135,15 @@ namespace Chem4Word.ACME.Adorners.Selectors
             RotateHandle.Height = _rotateThumbWidth;
             RotateHandle.Cursor = Cursors.Hand;
             rotateThumb.Style = (Style)FindResource(Common.RotateThumbStyle);
-            rotateThumb.DragStarted += RotateStarted;
-            rotateThumb.DragDelta += RotateThumb_DragDelta;
-            rotateThumb.DragCompleted += HandleResizeCompleted;
+            rotateThumb.DragStarted += OnRotateStarted;
+            rotateThumb.DragDelta += OnDragDelta_RotateThumb;
+            rotateThumb.DragCompleted += OnHandle_ResizeCompleted;
             rotateThumb.ToolTip = "Drag this to rotate molecule";
 
             VisualChildren.Add(rotateThumb);
         }
 
-        private void RotateStarted(object sender, DragStartedEventArgs e)
+        private void OnRotateStarted(object sender, DragStartedEventArgs e)
         {
             Rotating = true;
             if (_rotateAngle == 0.0d)
@@ -154,7 +154,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             }
         }
 
-        private void RotateThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        private void OnDragDelta_RotateThumb(object sender, DragDeltaEventArgs e)
         {
             if (Rotating)
             {
@@ -179,7 +179,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         public event DragCompletedEventHandler ResizeCompleted;
 
-        private void HandleResizeCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
+        private void OnHandle_ResizeCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
         {
             Resizing = false;
 

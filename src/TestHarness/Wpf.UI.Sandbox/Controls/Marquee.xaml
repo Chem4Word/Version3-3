@@ -7,19 +7,21 @@
     x:Name="MarqueeUserControl"
     d:DesignHeight="50"
     d:DesignWidth="300"
-    Loaded="Marquee_OnLoaded"
+    Loaded="OnLoaded_Marquee"
     mc:Ignorable="d">
-    <Grid>
+    <Grid d:IsLocked="True">
         <Canvas
             Name="ScrollingRegion"
             Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}, Path=ActualWidth}"
             Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}, Path=ActualHeight}"
+            d:IsLocked="True"
             ClipToBounds="True">
             <Canvas.Background>
                 <SolidColorBrush Color="White" />
             </Canvas.Background>
             <TextBlock
                 Name="TextToScroll"
+                d:IsLocked="True"
                 FontSize="30"
                 Foreground="#2A579A">
                 Text to scroll

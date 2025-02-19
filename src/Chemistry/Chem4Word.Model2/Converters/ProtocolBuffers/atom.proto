@@ -38,4 +38,5 @@ message PBAtom
 	google.protobuf.Int32Value FormalCharge = 7;
 	PBPoint Position = 8;
 	bool DoubletRadical = 9;
+	google.protobuf.Int32Value ExplicitH = 10;
 }

@@ -38,7 +38,7 @@ namespace Chem4Word.ACME.Controls
         public ChemistryCanvas()
         {
             ChemicalVisuals = new Dictionary<object, DrawingVisual>();
-            MouseMove += Canvas_MouseMove;
+            MouseMove += OnMouseMove_Canvas;
         }
 
         #endregion Constructors
@@ -105,56 +105,10 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        public bool ShowMoleculeGrouping
+        public void RepaintCanvas()
         {
-            get { return (bool)GetValue(ShowMoleculeGroupingProperty); }
-            set { SetValue(ShowMoleculeGroupingProperty, value); }
+            DrawChemistry(Controller);
         }
-
-        public static readonly DependencyProperty ShowMoleculeGroupingProperty =
-            DependencyProperty.Register("ShowMoleculeGrouping", typeof(bool), typeof(ChemistryCanvas),
-                                        new FrameworkPropertyMetadata(true,
-                                            FrameworkPropertyMetadataOptions.AffectsParentArrange
-                                            | FrameworkPropertyMetadataOptions.AffectsMeasure,
-                                            RepaintCanvas));
-
-        public bool ShowAtomsInColour
-        {
-            get { return (bool)GetValue(ShowAtomsInColourProperty); }
-            set { SetValue(ShowAtomsInColourProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShowAtomsInColourProperty =
-            DependencyProperty.Register("ShowAtomsInColour", typeof(bool), typeof(ChemistryCanvas),
-                                        new FrameworkPropertyMetadata(true,
-                                              FrameworkPropertyMetadataOptions.AffectsRender,
-                                              RepaintCanvas));
-
-        public bool ShowAllCarbonAtoms
-        {
-            get { return (bool)GetValue(ShowAllCarbonAtomsProperty); }
-            set { SetValue(ShowAllCarbonAtomsProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShowAllCarbonAtomsProperty =
-            DependencyProperty.Register("ShowAllCarbonAtoms", typeof(bool), typeof(ChemistryCanvas),
-                                        new FrameworkPropertyMetadata(false,
-                                              FrameworkPropertyMetadataOptions.AffectsParentArrange
-                                              | FrameworkPropertyMetadataOptions.AffectsMeasure,
-                                              RepaintCanvas));
-
-        public bool ShowImplicitHydrogens
-        {
-            get { return (bool)GetValue(ShowImplicitHydrogensProperty); }
-            set { SetValue(ShowImplicitHydrogensProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShowImplicitHydrogensProperty =
-            DependencyProperty.Register("ShowImplicitHydrogens", typeof(bool), typeof(ChemistryCanvas),
-                                        new FrameworkPropertyMetadata(true,
-                                          FrameworkPropertyMetadataOptions.AffectsParentArrange
-                                          | FrameworkPropertyMetadataOptions.AffectsMeasure,
-                                          RepaintCanvas));
 
         private static void RepaintCanvas(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs eventArgs)
         {
@@ -258,16 +212,16 @@ namespace Chem4Word.ACME.Controls
 
         private void ConnectHandlers()
         {
-            _controller.Model.AtomsChanged += Model_AtomsChanged;
-            _controller.Model.BondsChanged += Model_BondsChanged;
-            _controller.Model.MoleculesChanged += Model_MoleculesChanged;
-            _controller.Model.ReactionsChanged += Model_ReactionsChanged;
-            _controller.Model.ReactionSchemesChanged += Model_ReactionSchemesChanged;
-            _controller.Model.PropertyChanged += Model_PropertyChanged;
-            _controller.Model.AnnotationsChanged += Model_AnnotationsChanged;
+            _controller.Model.AtomsChanged += OnAtomsChanged_Model;
+            _controller.Model.BondsChanged += OnBondsChanged_Model;
+            _controller.Model.MoleculesChanged += OnMoleculesChanged_Model;
+            _controller.Model.ReactionsChanged += OnReactionsChanged_Model;
+            _controller.Model.ReactionSchemesChanged += OnReactionSchemesChanged_Model;
+            _controller.Model.PropertyChanged += OnPropertyChanged_Model;
+            _controller.Model.AnnotationsChanged += OnAnnotationsChanged_Model;
         }
 
-        private void Model_AnnotationsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnAnnotationsChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
@@ -290,13 +244,13 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void Model_ReactionSchemesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnReactionSchemesChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
         {
         }
 
         public bool AutoResize = true;
 
-        private void Model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnPropertyChanged_Model(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (!SuppressRedraw)
             {
@@ -354,11 +308,14 @@ namespace Chem4Word.ACME.Controls
 
             var footprint = GetExtents(molecule);
 
-            if (molecule.IsGrouped && ShowMoleculeGrouping)
+            // Detect if we are in the editor to allow forcing of molecule grouping brackets on
+            var canvas = this as EditorCanvas;
+            var inEditor = canvas != null;
+
+            if (molecule.IsGrouped && (inEditor || _controller.Model.ShowMoleculeGrouping))
             {
                 //we may be passing in a null bounding box here
-
-                ChemicalVisuals[groupKey] = new GroupVisual(molecule, ShowAtomsInColour, footprint);
+                ChemicalVisuals[groupKey] = new GroupVisual(molecule, _controller.Model.ShowColouredAtoms, footprint);
                 var gv = (GroupVisual)ChemicalVisuals[groupKey];
                 gv.ChemicalVisuals = ChemicalVisuals;
                 gv.Render();
@@ -429,7 +386,7 @@ namespace Chem4Word.ACME.Controls
             rv.RefCount = refcount;
         }
 
-        private void Model_MoleculesChanged(object sender,
+        private void OnMoleculesChanged_Model(object sender,
                                             NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -453,7 +410,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void Model_BondsChanged(object sender,
+        private void OnBondsChanged_Model(object sender,
                                         NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -477,7 +434,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void Model_AtomsChanged(object sender,
+        private void OnAtomsChanged_Model(object sender,
                                         NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -501,7 +458,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void Model_ReactionsChanged(object sender,
+        private void OnReactionsChanged_Model(object sender,
                                           NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -537,11 +494,11 @@ namespace Chem4Word.ACME.Controls
 
         private void DisconnectHandlers()
         {
-            _controller.Model.AtomsChanged -= Model_AtomsChanged;
-            _controller.Model.BondsChanged -= Model_BondsChanged;
-            _controller.Model.MoleculesChanged -= Model_MoleculesChanged;
+            _controller.Model.AtomsChanged -= OnAtomsChanged_Model;
+            _controller.Model.BondsChanged -= OnBondsChanged_Model;
+            _controller.Model.MoleculesChanged -= OnMoleculesChanged_Model;
 
-            _controller.Model.PropertyChanged -= Model_PropertyChanged;
+            _controller.Model.PropertyChanged -= OnPropertyChanged_Model;
         }
 
         #endregion Properties
@@ -895,11 +852,11 @@ namespace Chem4Word.ACME.Controls
             {
                 if (atom.Element is FunctionalGroup)
                 {
-                    ChemicalVisuals[atom] = new FunctionalGroupVisual(atom, ShowAtomsInColour);
+                    ChemicalVisuals[atom] = new FunctionalGroupVisual(atom, _controller.Model);
                 }
                 else
                 {
-                    ChemicalVisuals[atom] = new AtomVisual(atom, ShowAtomsInColour, ShowImplicitHydrogens, ShowAllCarbonAtoms);
+                    ChemicalVisuals[atom] = new AtomVisual(atom, _controller.Model);
                 }
             }
 
@@ -1003,7 +960,7 @@ namespace Chem4Word.ACME.Controls
 
         #region Event handlers
 
-        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove_Canvas(object sender, MouseEventArgs e)
         {
             ActiveVisual = GetTargetedVisual(e.GetPosition(this));
         }

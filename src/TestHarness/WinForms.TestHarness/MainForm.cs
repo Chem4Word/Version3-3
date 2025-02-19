@@ -7,7 +7,6 @@
 
 using Chem4Word.ACME;
 using Chem4Word.Core.Helpers;
-using Chem4Word.Editor.ACME;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.JSON;
@@ -42,6 +41,8 @@ namespace WinForms.TestHarness
 {
     public partial class MainForm : Form
     {
+        private const int DefaultBondLength = 25;
+
         private Stack<Model> _undoStack = new Stack<Model>();
         private Stack<Model> _redoStack = new Stack<Model>();
 
@@ -51,10 +52,8 @@ namespace WinForms.TestHarness
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        private const string EmptyCml = "<cml></cml>";
-        private string _lastCml = EmptyCml;
+        private string _lastCml = string.Empty;
 
-        private AcmeOptions _editorOptions;
         private OoXmlV4Options _renderOptions;
         private ConfigWatcher _configWatcher;
 
@@ -69,18 +68,17 @@ namespace WinForms.TestHarness
             var path = Path.GetDirectoryName(location);
 
             // Use either path or null below
-            _editorOptions = new AcmeOptions(null);
             _renderOptions = new OoXmlV4Options(null);
         }
 
-        private void LoadStructure_Click(object sender, EventArgs e)
+        private void OnClick_LoadStructure(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 Model model = null;
 
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.Append("All molecule files (*.cml, *.xml, *.mol, *.sdf, *.json, *.pbuff, *.el)|*.cml;*.xml;*.mol;*.sdf;*.json;*.pbuff;*.el");
                 sb.Append("|CML molecule files (*.cml, *.xml)|*.cml;*.xml");
                 sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
@@ -94,13 +92,13 @@ namespace WinForms.TestHarness
                 openFileDialog1.FileName = "";
                 openFileDialog1.ShowHelp = false;
 
-                DialogResult dr = openFileDialog1.ShowDialog();
+                var dr = openFileDialog1.ShowDialog();
 
                 if (dr == DialogResult.OK)
                 {
-                    string fileType = Path.GetExtension(openFileDialog1.FileName).ToLower();
-                    string filename = Path.GetFileName(openFileDialog1.FileName);
-                    string mol = File.ReadAllText(openFileDialog1.FileName);
+                    var fileType = Path.GetExtension(openFileDialog1.FileName).ToLower();
+                    var filename = Path.GetFileName(openFileDialog1.FileName);
+                    var mol = File.ReadAllText(openFileDialog1.FileName);
 
                     var cmlConverter = new CMLConverter();
                     var fileConverter = new SdFileConverter();
@@ -172,7 +170,7 @@ namespace WinForms.TestHarness
                         if (model.AllErrors.Count == 0)
                         {
                             var originalBondLength = model.MeanBondLength;
-                            model.EnsureBondLength(20, false);
+                            model.EnsureBondLength(DefaultBondLength, false);
 
                             if (string.IsNullOrEmpty(model.CustomXmlPartGuid))
                             {
@@ -181,12 +179,9 @@ namespace WinForms.TestHarness
 
                             if (!string.IsNullOrEmpty(_lastCml))
                             {
-                                if (_lastCml != EmptyCml)
-                                {
-                                    var clone = cmlConverter.Import(_lastCml);
-                                    Debug.WriteLine($"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength:#,##0.00} onto Stack");
-                                    _undoStack.Push(clone);
-                                }
+                                var clone = cmlConverter.Import(_lastCml);
+                                Debug.WriteLine($"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength:#,##0.00} onto Stack");
+                                _undoStack.Push(clone);
                             }
 
                             stopwatch = new Stopwatch();
@@ -217,9 +212,9 @@ namespace WinForms.TestHarness
 
         #region Disconnected Code - Please Keep for reference
 
-        private void ChangeBackground_Click(object sender, EventArgs e)
+        private void OnClick_ChangeBackground(object sender, EventArgs e)
         {
-            DialogResult dr = colorDialog1.ShowDialog();
+            var dr = colorDialog1.ShowDialog();
             if (dr == DialogResult.OK)
             {
                 DisplayHost.BackColor = colorDialog1.Color;
@@ -228,19 +223,19 @@ namespace WinForms.TestHarness
 
         private Brush ColorToBrush(Color colour)
         {
-            string hex = $"#{colour.A:X2}{colour.R:X2}{colour.G:X2}{colour.B:X2}";
+            var hex = $"#{colour.A:X2}{colour.R:X2}{colour.G:X2}{colour.B:X2}";
             var converter = new BrushConverter();
             return (Brush)converter.ConvertFromString(hex);
         }
 
-        private void ShowCarbons_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_ShowCarbons(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 if (Display.Chemistry is Model model)
                 {
-                    Model copy = model.Copy();
+                    var copy = model.Copy();
                     copy.Refresh();
                     Debug.WriteLine($"Old Model: ({model.MinX}, {model.MinY}):({model.MaxX}, {model.MaxY})");
                     Debug.WriteLine($"New Model: ({copy.MinX}, {copy.MinY}):({copy.MaxX}, {copy.MaxY})");
@@ -255,9 +250,9 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void RemoveAtom_Click(object sender, EventArgs e)
+        private void OnClick_RemoveAtom(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 if (Display.Chemistry is Model model)
@@ -265,7 +260,7 @@ namespace WinForms.TestHarness
                     var allAtoms = model.GetAllAtoms();
                     if (model.GetAllAtoms().Any())
                     {
-                        Molecule modelMolecule =
+                        var modelMolecule =
                             model.GetAllMolecules().FirstOrDefault(m => allAtoms.Any() && m.Atoms.Count > 0);
                         var atom = modelMolecule.Atoms.Values.First();
                         var bondList = atom.Bonds.ToList();
@@ -273,7 +268,7 @@ namespace WinForms.TestHarness
                         {
                             modelMolecule.RemoveBond(neighbouringBond);
                             neighbouringBond.OtherAtom(atom).UpdateVisual();
-                            foreach (Bond bond in neighbouringBond.OtherAtom(atom).Bonds)
+                            foreach (var bond in neighbouringBond.OtherAtom(atom).Bonds)
                             {
                                 bond.UpdateVisual();
                             }
@@ -295,9 +290,9 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void RandomElement_Click(object sender, EventArgs e)
+        private void OnClick_RandomElement(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 if (Display.Chemistry is Model model)
@@ -308,10 +303,10 @@ namespace WinForms.TestHarness
                         var rnd = new Random(DateTime.UtcNow.Millisecond);
 
                         var maxAtoms = allAtoms.Count;
-                        int targetAtom = rnd.Next(0, maxAtoms);
+                        var targetAtom = rnd.Next(0, maxAtoms);
 
                         var elements = Globals.PeriodicTable.Elements;
-                        int newElement = rnd.Next(0, elements.Values.Max(v => v.AtomicNumber));
+                        var newElement = rnd.Next(0, elements.Values.Max(v => v.AtomicNumber));
                         var x = elements.Values.FirstOrDefault(v => v.AtomicNumber == newElement);
 
                         if (x == null)
@@ -322,12 +317,12 @@ namespace WinForms.TestHarness
                         allAtoms[targetAtom].Element = x;
                         if (x.Symbol.Equals("C"))
                         {
-                            //allAtoms[targetAtom].ShowSymbol = ShowCarbons.Checked
+                            //allAtoms[targetAtom].ShowSymbol = ExplicitC.Checked
                         }
 
                         allAtoms[targetAtom].UpdateVisual();
 
-                        foreach (Bond b in allAtoms[targetAtom].Bonds)
+                        foreach (var b in allAtoms[targetAtom].Bonds)
                         {
                             b.UpdateVisual();
                         }
@@ -348,7 +343,7 @@ namespace WinForms.TestHarness
 
         #endregion Disconnected Code - Please Keep for reference
 
-        private void EditLabels_Click(object sender, EventArgs e)
+        private void OnClick_EditLabels(object sender, EventArgs e)
         {
 #if !DEBUG
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
@@ -358,7 +353,7 @@ namespace WinForms.TestHarness
 
             if (!string.IsNullOrEmpty(_lastCml))
             {
-                using (EditorHost editorHost = new EditorHost(_lastCml, "LABELS"))
+                using (var editorHost = new EditorHost(_lastCml, "LABELS", DefaultBondLength))
                 {
                     editorHost.ShowDialog(this);
                     if (editorHost.DialogResult == DialogResult.OK)
@@ -381,27 +376,24 @@ namespace WinForms.TestHarness
 #endif
         }
 
-        private void EditWithAcme_Click(object sender, EventArgs e)
+        private void OnClick_EditWithAcme(object sender, EventArgs e)
         {
 #if !DEBUG
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
 #endif
-            if (!string.IsNullOrEmpty(_lastCml))
+            using (var editorHost = new EditorHost(_lastCml, "ACME", DefaultBondLength))
             {
-                using (EditorHost editorHost = new EditorHost(_lastCml, "ACME"))
+                editorHost.ShowDialog(this);
+                if (editorHost.DialogResult == DialogResult.OK)
                 {
-                    editorHost.ShowDialog(this);
-                    if (editorHost.DialogResult == DialogResult.OK)
-                    {
-                        HandleChangedCml(editorHost.OutputValue, "ACME result");
-                    }
+                    HandleChangedCml(editorHost.OutputValue, "ACME result");
                 }
-                TopMost = true;
-                TopMost = false;
-                Activate();
             }
+            TopMost = true;
+            TopMost = false;
+            Activate();
 #if !DEBUG
             }
             catch (Exception exception)
@@ -421,7 +413,7 @@ namespace WinForms.TestHarness
             {
                 if (model.AllErrors.Any())
                 {
-                    List<string> lines = new List<string>();
+                    var lines = new List<string>();
 
                     if (model.AllErrors.Any())
                     {
@@ -483,7 +475,7 @@ namespace WinForms.TestHarness
 
         private List<Controller> StackToList(Stack<Model> stack)
         {
-            List<Controller> list = new List<Controller>();
+            var list = new List<Controller>();
             foreach (var item in stack)
             {
                 var model = item.Copy();
@@ -501,27 +493,28 @@ namespace WinForms.TestHarness
             RedoStack.ListOfDisplays.ItemsSource = StackToList(_redoStack);
         }
 
-        private void Undo_Click(object sender, EventArgs e)
+        private void OnClick_Undo(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                Model m = _undoStack.Pop();
+                var model = _undoStack.Pop();
                 Debug.WriteLine(
-                    $"Popped F: {m.ConciseFormula} BL: {SafeDouble.AsString0(m.MeanBondLength)} from Undo Stack");
+                    $"Popped F: {model.ConciseFormula} BL: {SafeDouble.AsString0(model.MeanBondLength)} from Undo Stack");
 
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
-                    CMLConverter cc = new CMLConverter();
+                    var cc = new CMLConverter();
                     var copy = cc.Import(_lastCml);
-                    _lastCml = cc.Export(m);
+                    _lastCml = cc.Export(model);
 
                     Debug.WriteLine(
                         $"Pushing F: {copy.ConciseFormula} BL: {SafeDouble.AsString0(copy.MeanBondLength)} onto Redo Stack");
                     _redoStack.Push(copy);
                 }
 
-                ShowChemistry($"Undo -> {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(m.ConciseFormula))}", m);
+                SetDisplayOptions();
+                ShowChemistry($"Undo -> {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
             }
             catch (Exception exception)
             {
@@ -531,27 +524,28 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void Redo_Click(object sender, EventArgs e)
+        private void OnClick_Redo(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                Model m = _redoStack.Pop();
+                var model = _redoStack.Pop();
                 Debug.WriteLine(
-                    $"Popped F: {m.ConciseFormula} BL: {SafeDouble.AsString0(m.MeanBondLength)} from Redo Stack");
+                    $"Popped F: {model.ConciseFormula} BL: {SafeDouble.AsString0(model.MeanBondLength)} from Redo Stack");
 
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
-                    CMLConverter cc = new CMLConverter();
+                    var cc = new CMLConverter();
                     var clone = cc.Import(_lastCml);
-                    _lastCml = cc.Export(m);
+                    _lastCml = cc.Export(model);
 
                     Debug.WriteLine(
                         $"Pushing F: {clone.ConciseFormula} BL: {SafeDouble.AsString0(clone.MeanBondLength)} onto Undo Stack");
                     _undoStack.Push(clone);
                 }
 
-                ShowChemistry($"Redo -> {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(m.ConciseFormula))}", m);
+                SetDisplayOptions();
+                ShowChemistry($"Redo -> {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
             }
             catch (Exception exception)
             {
@@ -584,15 +578,15 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void EditCml_Click(object sender, EventArgs e)
+        private void OnClick_EditCml(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
-                    using (EditorHost editorHost = new EditorHost(_lastCml, "CML"))
+                    using (var editorHost = new EditorHost(_lastCml, "CML", DefaultBondLength))
                     {
                         editorHost.ShowDialog(this);
                         if (editorHost.DialogResult == DialogResult.OK)
@@ -613,9 +607,9 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void ShowCml_Click(object sender, EventArgs e)
+        private void OnClick_ShowCml(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 if (!string.IsNullOrEmpty(_lastCml))
@@ -636,29 +630,29 @@ namespace WinForms.TestHarness
 
         private void SaveStructure_Click(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                CMLConverter cmlConverter = new CMLConverter();
-                Model m = cmlConverter.Import(_lastCml);
+                var cmlConverter = new CMLConverter();
+                var m = cmlConverter.Import(_lastCml);
                 m.CustomXmlPartGuid = "";
 
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.Append("CML molecule files (*.cml, *.xml)|*.cml;*.xml");
                 sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
                 sb.Append("|ChemDoodle Web json files (*.json)|*.json");
                 sb.Append("|Protocol Buffers (*.pbuff)|*.pbuff");
                 sb.Append("|SketchEl (*.el)|*.el");
 
-                using (SaveFileDialog sfd = new SaveFileDialog { Filter = sb.ToString() })
+                using (var sfd = new SaveFileDialog { Filter = sb.ToString() })
                 {
                     sfd.AddExtension = true;
-                    DialogResult dr = sfd.ShowDialog();
+                    var dr = sfd.ShowDialog();
                     if (dr == DialogResult.OK)
                     {
-                        FileInfo fi = new FileInfo(sfd.FileName);
+                        var fi = new FileInfo(sfd.FileName);
                         _telemetry.Write(module, "Information", $"Exporting to '{fi.Name}'");
-                        string fileType = Path.GetExtension(sfd.FileName).ToLower();
+                        var fileType = Path.GetExtension(sfd.FileName).ToLower();
                         switch (fileType)
                         {
                             case ".cml":
@@ -669,10 +663,10 @@ namespace WinForms.TestHarness
                             case ".mol":
                             case ".sdf":
                                 // https://www.chemaxon.com/marvin-archive/6.0.2/marvin/help/formats/mol-csmol-doc.html
-                                double before = m.MeanBondLength;
+                                var before = m.MeanBondLength;
                                 // Set bond length to 1.54 angstroms (Å)
                                 m.ScaleToAverageBondLength(1.54);
-                                double after = m.MeanBondLength;
+                                var after = m.MeanBondLength;
                                 _telemetry.Write(module, "Information", $"Structure rescaled from {before.ToString("#0.00")} to {after.ToString("#0.00")}");
                                 var sdFileConverter = new SdFileConverter();
                                 File.WriteAllText(sfd.FileName, sdFileConverter.Export(m));
@@ -705,31 +699,32 @@ namespace WinForms.TestHarness
 
         private void WritePBuffFile(string sfdFileName, Model model)
         {
-            ProtocolBufferConverter pbc = new ProtocolBufferConverter();
+            var pbc = new ProtocolBufferConverter();
             var bytes = pbc.Export(model);
             File.WriteAllBytes(sfdFileName, bytes);
         }
 
-        private void ClearChemistry_Click(object sender, EventArgs e)
+        private void OnClick_ClearChemistry(object sender, EventArgs e)
         {
             var cc = new CMLConverter();
             _undoStack.Push(cc.Import(_lastCml));
-            _lastCml = EmptyCml;
+            _lastCml = string.Empty;
 
             Display.Clear();
             EnableUndoRedoButtonsAndShowStacks();
         }
 
-        private void FlexForm_Load(object sender, EventArgs e)
+        private void OnLoad_FlexForm(object sender, EventArgs e)
         {
             SetDisplayOptions();
             Display.HighlightActive = false;
 
-            RedoStack = new StackViewer(_editorOptions);
+            RedoStack = new StackViewer();
             RedoHost.Child = RedoStack;
-            UndoStack = new StackViewer(_editorOptions);
+            UndoStack = new StackViewer();
             UndoHost.Child = UndoStack;
 
+            // ToDo: Check if we still need the config watcher
             var location = Assembly.GetExecutingAssembly().Location;
             var path = Path.GetDirectoryName(location);
             _configWatcher = new ConfigWatcher(path);
@@ -741,44 +736,22 @@ namespace WinForms.TestHarness
             Thread.Sleep(250);
 
             _renderOptions = new OoXmlV4Options(null);
-            _editorOptions = new AcmeOptions(null);
-            Debug.WriteLine($"ACME ColouredAtoms {_editorOptions.ColouredAtoms}");
-            Debug.WriteLine($"OoXml ColouredAtoms {_renderOptions.ColouredAtoms}");
             UpdateControls();
         }
 
-        private void ChangeOoXmlSettings_Click(object sender, EventArgs e)
+        private void OnClick_ChangeOoXmlSettings(object sender, EventArgs e)
         {
-            OoXmlV4Settings settings = new OoXmlV4Settings();
+            var settings = new OoXmlV4Settings();
             settings.Telemetry = _telemetry;
             settings.TopLeft = new Point(Left + 24, Top + 24);
 
             var tempOptions = _renderOptions.Clone();
             settings.RendererOptions = tempOptions;
 
-            DialogResult dr = settings.ShowDialog();
+            var dr = settings.ShowDialog();
             if (dr == DialogResult.OK)
             {
                 _renderOptions = tempOptions.Clone();
-                OptionsChanged();
-            }
-
-            settings.Close();
-        }
-
-        private void ChangeAcmeSettings_Click(object sender, EventArgs e)
-        {
-            AcmeSettingsHost settings = new AcmeSettingsHost();
-            settings.Telemetry = _telemetry;
-            settings.TopLeft = new Point(Left + 24, Top + 24);
-
-            var tempOptions = _editorOptions.Clone();
-            settings.EditorOptions = tempOptions;
-
-            DialogResult dr = settings.ShowDialog();
-            if (dr == DialogResult.OK)
-            {
-                _editorOptions = tempOptions.Clone();
                 OptionsChanged();
             }
 
@@ -789,21 +762,18 @@ namespace WinForms.TestHarness
         {
             SetDisplayOptions();
             Display.Chemistry = _lastCml;
-            RedoStack.SetOptions(_editorOptions);
-            UndoStack.SetOptions(_editorOptions);
+            //RedoStack.SetOptions(_editorOptions);
+            //UndoStack.SetOptions(_editorOptions);
             UndoStack.ListOfDisplays.ItemsSource = StackToList(_undoStack);
             RedoStack.ListOfDisplays.ItemsSource = StackToList(_redoStack);
         }
 
         private void SetDisplayOptions()
         {
-            Display.ShowAllCarbonAtoms = _editorOptions.ShowCarbons;
-            Display.ShowImplicitHydrogens = _editorOptions.ShowHydrogens;
-            Display.ShowAtomsInColour = _editorOptions.ColouredAtoms;
-            Display.ShowMoleculeGrouping = _editorOptions.ShowMoleculeGrouping;
+            // Remove
         }
 
-        private void LayoutStructure_Click(object sender, EventArgs e)
+        private void OnClick_LayoutStructure(object sender, EventArgs e)
         {
             LayoutUsingCheblClean();
         }
@@ -885,27 +855,32 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void RenderOoXml_Click(object sender, EventArgs e)
+        private void OnClick_RenderOoXml(object sender, EventArgs e)
         {
             var renderer = new Renderer();
             renderer.Telemetry = _telemetry;
             renderer.TopLeft = new Point(Left + 24, Top + 24);
             renderer.Cml = _lastCml;
-            renderer.Properties = new Dictionary<string, string>();
-            renderer.Properties.Add("Guid", Guid.NewGuid().ToString("N"));
-            string file = renderer.Render();
-            if (string.IsNullOrEmpty(file))
+            renderer.Properties = new Dictionary<string, string>
+                                  {
+                                      {
+                                          "Guid", Guid.NewGuid().ToString("N")
+                                      }
+                                  };
+            var tempFileName = renderer.Render();
+            if (string.IsNullOrEmpty(tempFileName))
             {
                 MessageBox.Show("Something went wrong!", "Error");
             }
             else
             {
+                Debug.WriteLine($"File {tempFileName} was created, opening it in Word");
                 // Start word in quiet mode [/q] without any add ins loaded [/a]
-                Process.Start(OfficeHelper.GetWinWordPath(), $"/q /a {file}");
+                Process.Start(OfficeHelper.GetWinWordPath(), $"/q /a {tempFileName}");
             }
         }
 
-        private void SearchChEBI_Click(object sender, EventArgs e)
+        private void OnClick_SearchChEBI(object sender, EventArgs e)
         {
             using (var searcher = new SearchChEBI())
             {
@@ -913,7 +888,7 @@ namespace WinForms.TestHarness
                 searcher.UserOptions = new ChEBIOptions();
                 searcher.TopLeft = new Point(Left + 24, Top + 24);
 
-                DialogResult result = searcher.ShowDialog(this);
+                var result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
                     HandleChangedCml(searcher.Cml, "ChEBI Search result");
@@ -925,7 +900,7 @@ namespace WinForms.TestHarness
             Activate();
         }
 
-        private void SearchPubChem_Click(object sender, EventArgs e)
+        private void OnClick_SearchPubChem(object sender, EventArgs e)
         {
             using (var searcher = new SearchPubChem())
             {
@@ -933,7 +908,7 @@ namespace WinForms.TestHarness
                 searcher.UserOptions = new PubChemOptions();
                 searcher.TopLeft = new Point(Left + 24, Top + 24);
 
-                DialogResult result = searcher.ShowDialog(this);
+                var result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
                     HandleChangedCml(searcher.Cml, "PubChem Search result");
@@ -945,7 +920,7 @@ namespace WinForms.TestHarness
             Activate();
         }
 
-        private void SearchOpsin_Click(object sender, EventArgs e)
+        private void OnClick_SearchOpsin(object sender, EventArgs e)
         {
             using (var searcher = new SearchOpsin())
             {
@@ -953,7 +928,7 @@ namespace WinForms.TestHarness
                 searcher.UserOptions = new SearcherOptions();
                 searcher.TopLeft = new Point(Left + 24, Top + 24);
 
-                DialogResult result = searcher.ShowDialog(this);
+                var result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
                     HandleChangedCml(searcher.Cml, "ChEBI Search result");
@@ -968,7 +943,7 @@ namespace WinForms.TestHarness
         private void HandleChangedCml(string cml, string captionPrefix)
         {
             var cc = new CMLConverter();
-            if (_lastCml != EmptyCml)
+            if (!string.IsNullOrEmpty(_lastCml))
             {
                 var clone = cc.Import(_lastCml);
                 Debug.WriteLine(
@@ -976,18 +951,14 @@ namespace WinForms.TestHarness
                 _undoStack.Push(clone);
             }
 
-            Model model = cc.Import(cml);
+            var model = cc.Import(cml);
             if (model.AllErrors.Count == 0 && model.AllWarnings.Count == 0)
             {
                 model.Relabel(true);
-                model.EnsureBondLength(20, false);
+                model.EnsureBondLength(DefaultBondLength, false);
                 _lastCml = cc.Export(model);
 
-                // Cause re-read of settings (in case they have changed)
-                _editorOptions = new AcmeOptions(null);
                 SetDisplayOptions();
-                RedoStack.SetOptions(_editorOptions);
-                UndoStack.SetOptions(_editorOptions);
 
                 ShowChemistry($"{captionPrefix} {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
             }
@@ -1000,10 +971,10 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void CalculateProperties_Click(object sender, EventArgs e)
+        private void OnClick_CalculateProperties(object sender, EventArgs e)
         {
             var cc = new CMLConverter();
-            if (_lastCml != EmptyCml)
+            if (!string.IsNullOrEmpty(_lastCml))
             {
                 var clone = cc.Import(_lastCml);
                 Debug.WriteLine(
@@ -1011,7 +982,7 @@ namespace WinForms.TestHarness
                 _undoStack.Push(clone);
             }
 
-            Model model = cc.Import(_lastCml);
+            var model = cc.Import(_lastCml);
 
             var assembly = Assembly.GetExecutingAssembly();
             var version = assembly.GetName().Version;
@@ -1020,19 +991,15 @@ namespace WinForms.TestHarness
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            model.CreatorGuid = $"TH:{Guid.NewGuid():D}";
+            model.CreatorGuid = $"TH:{Guid.NewGuid():N}";
             var changedProperties = pc.CalculateProperties(model);
 
             stopwatch.Stop();
-            Debug.WriteLine($"Calulating {changedProperties} changed properties took {stopwatch.Elapsed}");
+            Debug.WriteLine($"Calculating {changedProperties} changed properties took {stopwatch.Elapsed}");
 
             _lastCml = cc.Export(model);
 
-            // Cause re-read of settings (in case they have changed)
-            _editorOptions = new AcmeOptions(null);
             SetDisplayOptions();
-            RedoStack.SetOptions(_editorOptions);
-            UndoStack.SetOptions(_editorOptions);
 
             ShowChemistry($"{changedProperties} changed properties; {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
         }

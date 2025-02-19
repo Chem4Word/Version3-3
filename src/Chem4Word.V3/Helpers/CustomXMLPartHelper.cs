@@ -28,7 +28,7 @@ namespace Chem4Word.Helpers
         public static int ChemistryXmlParts(Word.Document document)
             => AllChemistryParts(document).Count;
 
-        public static CustomXMLPart FindCustomXmlPartInOtherDocuments(string id, string activeDocumentName)
+        public static CustomXMLPart FindCustomXmlPartInOtherDocuments(string id, string activeDocumentName, ref string foundInDocumentName)
         {
             CustomXMLPart result = null;
 
@@ -42,6 +42,7 @@ namespace Chem4Word.Helpers
                         if (molId.Equals(id))
                         {
                             result = customXmlPart;
+                            foundInDocumentName = otherDocument.Name;
                             break;
                         }
                     }
@@ -71,12 +72,28 @@ namespace Chem4Word.Helpers
         {
             var prefix = string.Empty;
 
-            if (!string.IsNullOrEmpty(tag))
+            if (!string.IsNullOrEmpty(tag) && tag.Contains(":"))
             {
-                prefix = tag.Contains(":") ? tag.Split(':')[0] : tag;
+                prefix = tag.Split(':')[0];
             }
 
             return prefix;
+        }
+
+        public static List<string> ListCustomXmlParts(Word.Document document)
+        {
+            var parts = new List<string>
+                        {
+                            $"Chemistry XML Parts in {document.Name} :-"
+                        };
+
+            foreach (CustomXMLPart xmlPart in AllChemistryParts(document))
+            {
+                var cmlId = GetCmlId(xmlPart);
+                parts.Add($"Id: {xmlPart.Id} customXmlPartGuid: '{cmlId}'");
+            }
+
+            return parts;
         }
 
         public static CustomXMLPart GetCustomXmlPart(Word.Document document, string id)
@@ -149,7 +166,10 @@ namespace Chem4Word.Helpers
 
                 var backupFolder = Path.Combine(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath, "Backups");
 
-                foreach (CustomXMLPart customXmlPart in AllChemistryParts(document))
+                var allChemistryParts = AllChemistryParts(document);
+                var carryOutPurge = true;
+
+                foreach (CustomXMLPart customXmlPart in allChemistryParts)
                 {
                     var molId = GetCmlId(customXmlPart);
                     if (!referencedXmlParts.ContainsKey(molId))
@@ -160,13 +180,34 @@ namespace Chem4Word.Helpers
                             var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
 
                             var fileName = Path.Combine(backupFolder, $"Chem4Word-Orphaned-Structure-{timestamp}-{guid}.cml");
-                            File.WriteAllText(fileName, XmlHelper.AddHeader(customXmlPart.XML));
-
-                            customXmlPart.Delete();
+                            var find = "<?xml version=\"1.0\"?>";
+                            var replace = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + Environment.NewLine;
+                            var xml = customXmlPart.XML;
+                            File.WriteAllText(fileName, xml.Replace(find, replace));
                         }
                         catch (Exception exception)
                         {
+                            carryOutPurge = false;
                             RegistryHelper.StoreException(module, exception);
+                        }
+                    }
+                }
+
+                if (carryOutPurge)
+                {
+                    foreach (CustomXMLPart customXmlPart in allChemistryParts)
+                    {
+                        var molId = GetCmlId(customXmlPart);
+                        if (!referencedXmlParts.ContainsKey(molId))
+                        {
+                            try
+                            {
+                                customXmlPart.Delete();
+                            }
+                            catch (Exception exception)
+                            {
+                                RegistryHelper.StoreException(module, exception);
+                            }
                         }
                     }
                 }

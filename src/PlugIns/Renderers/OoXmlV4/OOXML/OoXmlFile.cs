@@ -12,9 +12,9 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using IChem4Word.Contracts;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows;
 
@@ -57,8 +57,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
             var fileName = string.Empty;
 
-            var canRender = model.ReactionSchemes.Any()
-                            || model.Annotations.Any()
+            var canRender = model.HasReactions
+                            || model.HasAnnotations
                             || model.TotalAtomsCount > 0
                             && (model.TotalBondsCount == 0
                                 || model.MeanBondLength > Core.Helpers.Constants.BondLengthTolerance / 2);
@@ -82,6 +82,21 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     // Save changes to the main document part.
                     document.MainDocumentPart.Document.Save();
                 }
+            }
+            else
+            {
+                var message = new List<string>
+                              {
+                                  "Unable to render this structure",
+                                  $"  Molecules:{model.TotalMoleculesCount}",
+                                  $"  Bonds:{model.TotalBondsCount}",
+                                  $"  Atoms:{model.TotalAtomsCount}",
+                                  $"  MeanBondLength:{model.MeanBondLength}",
+                                  $"  HasAnnotations:{model.HasAnnotations}",
+                                  $"  HasReactions:{model.HasReactions}"
+                              };
+
+                telemetry.Write(module, "Information", string.Join(Environment.NewLine, message));
             }
 
             return fileName;

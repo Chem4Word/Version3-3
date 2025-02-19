@@ -98,6 +98,8 @@
             <!--  Library selector  -->
             <ComboBox
                 Name="LibrarySelector"
+                Height="30"
+                VerticalContentAlignment="Center"
                 d:IsLocked="True"
                 FontSize="16" />
 
@@ -261,11 +263,7 @@
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
                                 DisplayHeight="150"
-                                ItemMode="Library"
-                                ShowAllCarbonAtoms="{Binding ElementName=LibraryControl, Path=ShowAllCarbonAtoms}"
-                                ShowAtomsInColour="{Binding ElementName=LibraryControl, Path=ShowAtomsInColour}"
-                                ShowImplicitHydrogens="{Binding ElementName=LibraryControl, Path=ShowImplicitHydrogens}"
-                                ShowMoleculeGrouping="{Binding ElementName=LibraryControl, Path=ShowMoleculeGrouping}">
+                                ItemMode="Library">
                                 <controls:ChemistryItem.Style>
                                     <Style TargetType="{x:Type controls:ChemistryItem}">
                                         <Style.Triggers>

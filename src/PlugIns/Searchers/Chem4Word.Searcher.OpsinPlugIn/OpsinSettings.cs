@@ -36,7 +36,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             InitializeComponent();
         }
 
-        private void Settings_Load(object sender, EventArgs e)
+        private void OnLoad_Settings(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -61,7 +61,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             }
         }
 
-        private void btnSetDefaults_Click(object sender, EventArgs e)
+        private void OnClick_SetDefaults(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Telemetry.Write(module, "Action", "Triggered");
@@ -81,7 +81,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             }
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        private void OnClick_Ok(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Telemetry.Write(module, "Action", "Triggered");
@@ -100,8 +100,8 @@ namespace Chem4Word.Searcher.OpsinPlugIn
 
         private void RestoreControls()
         {
-            txtOpsinWsUri.Text = SearcherOptions.OpsinWebServiceUri;
-            nudDisplayOrder.Value = SearcherOptions.DisplayOrder;
+            OpsinWsUri.Text = SearcherOptions.OpsinWebServiceUri;
+            DisplayOrder.Value = SearcherOptions.DisplayOrder;
         }
 
         private string EnsureTrailingSlash(string input)
@@ -116,7 +116,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             return output;
         }
 
-        private void Settings_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_Settings(object sender, FormClosingEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -152,12 +152,12 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             }
         }
 
-        private void txtOpsinWsUri_TextChanged(object sender, EventArgs e)
+        private void OnTextChanged_OpsinWsUri(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                SearcherOptions.OpsinWebServiceUri = txtOpsinWsUri.Text;
+                SearcherOptions.OpsinWebServiceUri = OpsinWsUri.Text;
                 _dirty = true;
             }
             catch (Exception ex)
@@ -166,13 +166,13 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             }
         }
 
-        private void nudDisplayOrder_ValueChanged(object sender, EventArgs e)
+        private void OnValueChanged_DisplayOrder(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            Telemetry.Write(module, "Action", $"Triggered; New value: {nudDisplayOrder.Value}");
+            Telemetry.Write(module, "Action", $"Triggered; New value: {DisplayOrder.Value}");
             try
             {
-                SearcherOptions.DisplayOrder = (int)nudDisplayOrder.Value;
+                SearcherOptions.DisplayOrder = (int)DisplayOrder.Value;
                 _dirty = true;
             }
             catch (Exception ex)

@@ -33,7 +33,7 @@ namespace Chem4Word.UI.WPF
             InitializeComponent();
         }
 
-        private void AboutControl_Loaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_AboutControl(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -174,6 +174,24 @@ namespace Chem4Word.UI.WPF
             try
             {
                 Process.Start("https://www.youtube.com/@chem4word");
+            }
+            catch (Exception ex)
+            {
+                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, TopLeft, module, ex))
+                {
+                    form.ShowDialog();
+                }
+            }
+        }
+
+        private void OnClick_Donate(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+            try
+            {
+                Process.Start("https://buymeacoffee.com/chem4word");
             }
             catch (Exception ex)
             {

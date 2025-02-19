@@ -10,6 +10,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
+using Chem4Word.Model2.Enums;
 using Chem4Word.Models;
 using IChem4Word.Contracts;
 using Ookii.Dialogs.WinForms;
@@ -21,11 +22,12 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Media;
 using System.Xml.Linq;
 using System.Xml.XPath;
+
 using Forms = System.Windows.Forms;
+
 using Point = System.Windows.Point;
 using TextBox = System.Windows.Controls.TextBox;
 using UserControl = System.Windows.Controls.UserControl;
@@ -63,6 +65,22 @@ namespace Chem4Word.UI.WPF
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
+            ImplicitHydrogenMode.Items.Clear();
+            foreach (var keyValuePair in EnumHelper.GetEnumValuesWithDescriptions<HydrogenLabels>())
+            {
+                var cbi = new ComboBoxItem
+                {
+                    Content = keyValuePair.Value,
+                    Tag = keyValuePair.Key
+                };
+                ImplicitHydrogenMode.Items.Add(cbi);
+
+                if (SystemOptions.ExplicitH == keyValuePair.Key)
+                {
+                    ImplicitHydrogenMode.SelectedItem = cbi;
+                }
+            }
+
             #region Set Current Values
 
             if (SystemOptions != null)
@@ -84,6 +102,8 @@ namespace Chem4Word.UI.WPF
             #endregion Set Current Values
 
             _loading = false;
+
+            EnableButtons();
         }
 
         #endregion Form Load
@@ -144,10 +164,11 @@ namespace Chem4Word.UI.WPF
                 if (dr == Forms.DialogResult.OK)
                 {
                     _loading = true;
-                    Dirty = true;
                     SystemOptions.RestoreDefaults();
                     LoadSettings();
                     _loading = false;
+                    Dirty = true;
+                    EnableButtons();
                 }
             }
             catch (Exception ex)
@@ -204,6 +225,7 @@ namespace Chem4Word.UI.WPF
                 SelectedEditorSettings.IsEnabled = editor.HasSettings;
 
                 Dirty = true;
+                EnableButtons();
             }
         }
 
@@ -221,6 +243,7 @@ namespace Chem4Word.UI.WPF
                 SelectedRendererSettings.IsEnabled = renderer.HasSettings;
 
                 Dirty = true;
+                EnableButtons();
             }
         }
 
@@ -235,8 +258,6 @@ namespace Chem4Word.UI.WPF
                 SelectedSearcherDescription.Text = pci?.Description;
                 var searcher = Globals.Chem4WordV3.GetSearcherPlugIn(pci.Name);
                 SelectedSearcherSettings.IsEnabled = searcher.HasSettings;
-
-                Dirty = true;
             }
         }
 
@@ -251,10 +272,13 @@ namespace Chem4Word.UI.WPF
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-                var cbi = DefaultBondLength.SelectedItem as ComboBoxItem;
-                SystemOptions.BondLength = int.Parse((string)cbi.Tag);
+                if (DefaultBondLength.SelectedItem is ComboBoxItem cbi)
+                {
+                    SystemOptions.BondLength = int.Parse((string)cbi.Tag);
 
-                Dirty = true;
+                    Dirty = true;
+                    EnableButtons();
+                }
             }
         }
 
@@ -264,6 +288,7 @@ namespace Chem4Word.UI.WPF
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             SystemOptions.RemoveExplicitHydrogensOnImportFromFile = RemoveExplicitOnImportFile.IsChecked.Value;
             Dirty = true;
+            EnableButtons();
         }
 
         private void OnClick_RemoveExplicitOnImportSearch(object sender, RoutedEventArgs e)
@@ -272,6 +297,7 @@ namespace Chem4Word.UI.WPF
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             SystemOptions.RemoveExplicitHydrogensOnImportFromSearch = RemoveExplicitOnImportSearch.IsChecked.Value;
             Dirty = true;
+            EnableButtons();
         }
 
         private void OnClick_RemoveExplicitOnImportLibrary(object sender, RoutedEventArgs e)
@@ -280,6 +306,7 @@ namespace Chem4Word.UI.WPF
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             SystemOptions.RemoveExplicitHydrogensOnImportFromLibrary = RemoveExplicitOnImportLibrary.IsChecked.Value;
             Dirty = true;
+            EnableButtons();
         }
 
         private void OnClick_ApplyDefaultOnImportFile(object sender, RoutedEventArgs e)
@@ -288,6 +315,7 @@ namespace Chem4Word.UI.WPF
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             SystemOptions.SetBondLengthOnImportFromFile = ApplyDefaultOnImportFile.IsChecked.Value;
             Dirty = true;
+            EnableButtons();
         }
 
         private void OnClick_ApplyDefaultOnImportSearch(object sender, RoutedEventArgs e)
@@ -296,6 +324,7 @@ namespace Chem4Word.UI.WPF
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             SystemOptions.SetBondLengthOnImportFromSearch = ApplyDefaultOnImportSearch.IsChecked.Value;
             Dirty = true;
+            EnableButtons();
         }
 
         private void OnClick_ApplyDefaultOnImportLibrary(object sender, RoutedEventArgs e)
@@ -304,6 +333,55 @@ namespace Chem4Word.UI.WPF
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             SystemOptions.SetBondLengthOnImportFromLibrary = ApplyDefaultOnImportLibrary.IsChecked.Value;
             Dirty = true;
+            EnableButtons();
+        }
+
+        private void OnClick_ApplyShowAtomsInColour(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.ShowColouredAtoms = ShowAtomsInColour.IsChecked.Value;
+            Dirty = true;
+            EnableButtons();
+        }
+
+        private void OnClick_ApplyShowAllCarbonAtoms(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.ExplicitC = ShowAllCarbonAtoms.IsChecked.Value;
+            Dirty = true;
+            EnableButtons();
+        }
+
+        private void OnSelectionChanged_ImplicitHydrogenMode(object sender, SelectionChangedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
+            if (!_loading)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+
+                if (ImplicitHydrogenMode.SelectedItem is ComboBoxItem cbi)
+                {
+                    if (Enum.TryParse(cbi.Tag.ToString(), out HydrogenLabels hydrogenLabels))
+                    {
+                        SystemOptions.ExplicitH = hydrogenLabels;
+                    }
+
+                    Dirty = true;
+                    EnableButtons();
+                }
+            }
+        }
+
+        private void OnClick_ShowGroupingOfMolecules(object sender, RoutedEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            SystemOptions.ShowMoleculeGrouping = ShowGroupingOfMolecules.IsChecked.Value;
+            Dirty = true;
+            EnableButtons();
         }
 
         #endregion General Tab Events
@@ -318,6 +396,7 @@ namespace Chem4Word.UI.WPF
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
                 SystemOptions.TelemetryEnabled = TelemetryEnabled.IsChecked.Value;
                 Dirty = true;
+                EnableButtons();
             }
         }
 
@@ -932,15 +1011,45 @@ namespace Chem4Word.UI.WPF
 
             foreach (var item in DefaultBondLength.Items)
             {
-                var cbi = item as ComboBoxItem;
-                if (int.Parse(cbi.Tag as string) == SystemOptions.BondLength)
+                if (item is ComboBoxItem cbi)
                 {
-                    DefaultBondLength.SelectedItem = item;
-                    break;
+                    if (int.Parse(cbi.Tag.ToString()) == SystemOptions.BondLength)
+                    {
+                        DefaultBondLength.SelectedItem = item;
+                        break;
+                    }
                 }
             }
 
+            ShowAtomsInColour.IsChecked = SystemOptions.ShowColouredAtoms;
+            ShowAllCarbonAtoms.IsChecked = SystemOptions.ExplicitC;
+
+            foreach (var item in ImplicitHydrogenMode.Items)
+            {
+                if (item is ComboBoxItem cbi)
+                {
+                    var tag = cbi.Tag.ToString();
+                    if (Enum.TryParse(tag, out HydrogenLabels hydrogenLabels))
+                    {
+                        if (hydrogenLabels == SystemOptions.ExplicitH)
+                        {
+                            ImplicitHydrogenMode.SelectedItem = item;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            ShowGroupingOfMolecules.IsChecked = SystemOptions.ShowMoleculeGrouping;
+
             #endregion General Tab
+        }
+
+        private void EnableButtons()
+        {
+            Ok.IsEnabled = Dirty;
+
+            Defaults.IsEnabled = !SystemOptions.AreDefault();
         }
 
         private void LoadLibrariesListTab()
@@ -985,7 +1094,7 @@ namespace Chem4Word.UI.WPF
         {
             Globals.Chem4WordV3.ListOfDetectedLibraries
                 = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
-                    .GetListOfLibraries(silent:true);
+                    .GetListOfLibraries(silent: true);
         }
 
         private string GetPropertyValue(DatabaseDetails database, string key, string defaultValue)

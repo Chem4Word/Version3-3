@@ -1250,12 +1250,12 @@ namespace Chem4WordTests
 
             #region Create Model
 
-            Molecule m1 = new Molecule();
+            var m1 = new Molecule();
 
-            Atom a1 = new Atom { Position = new Point(0, 0) };
-            Atom a2 = new Atom { Position = new Point(0, 1.5) };
-            Atom a3 = new Atom { Position = new Point(1.5, 1.5) };
-            Atom a4 = new Atom { Position = new Point(1.5, 0) };
+            var a1 = new Atom { Position = new Point(0, 0) };
+            var a2 = new Atom { Position = new Point(0, 1.5) };
+            var a3 = new Atom { Position = new Point(1.5, 1.5) };
+            var a4 = new Atom { Position = new Point(1.5, 0) };
             m1.AddAtom(a1);
             a1.Parent = m1;
             m1.AddAtom(a2);
@@ -1265,10 +1265,10 @@ namespace Chem4WordTests
             m1.AddAtom(a4);
             a4.Parent = m1;
 
-            Bond b1 = new Bond(a1, a2);
-            Bond b2 = new Bond(a2, a3);
-            Bond b3 = new Bond(a3, a4);
-            Bond b4 = new Bond(a4, a1);
+            var b1 = new Bond(a1, a2);
+            var b2 = new Bond(a2, a3);
+            var b3 = new Bond(a3, a4);
+            var b4 = new Bond(a4, a1);
             m1.AddBond(b1);
             b1.Parent = m1;
             m1.AddBond(b2);
@@ -1278,11 +1278,11 @@ namespace Chem4WordTests
             m1.AddBond(b4);
             b4.Parent = m1;
 
-            Molecule m2 = new Molecule();
-            Atom a5 = new Atom { Position = new Point(2, 2) };
-            Atom a6 = new Atom { Position = new Point(2, 3) };
-            Atom a7 = new Atom { Position = new Point(3, 3) };
-            Atom a8 = new Atom { Position = new Point(3, 2) };
+            var m2 = new Molecule();
+            var a5 = new Atom { Position = new Point(2, 2) };
+            var a6 = new Atom { Position = new Point(2, 3) };
+            var a7 = new Atom { Position = new Point(3, 3) };
+            var a8 = new Atom { Position = new Point(3, 2) };
             m2.AddAtom(a5);
             a5.Parent = m2;
             m2.AddAtom(a6);
@@ -1292,10 +1292,10 @@ namespace Chem4WordTests
             m2.AddAtom(a8);
             a8.Parent = m2;
 
-            Bond b5 = new Bond(a5, a6);
-            Bond b6 = new Bond(a6, a7);
-            Bond b7 = new Bond(a7, a8);
-            Bond b8 = new Bond(a8, a5);
+            var b5 = new Bond(a5, a6);
+            var b6 = new Bond(a6, a7);
+            var b7 = new Bond(a7, a8);
+            var b8 = new Bond(a8, a5);
             m2.AddBond(b5);
             b5.Parent = m2;
             m2.AddBond(b6);
@@ -1516,7 +1516,7 @@ namespace Chem4WordTests
         private void CheckUndoStack(List<string> expected, List<string> actual)
         {
             Assert.True(expected.Count == actual.Count, $"Records - Expected {expected.Count} Got {actual.Count}");
-            for (int i = 0; i < expected.Count; i++)
+            for (var i = 0; i < expected.Count; i++)
             {
                 Assert.Equal(expected[i], actual[i]);
             }

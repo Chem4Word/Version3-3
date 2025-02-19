@@ -55,7 +55,7 @@
             this.MinimizeBox = false;
             this.Name = "AboutHost";
             this.Text = "About - Chemistry Add-in for Microsoft Word";
-            this.Load += new System.EventHandler(this.AboutHost_Load);
+            this.Load += new System.EventHandler(this.OnLoad_AboutHost);
             this.ResumeLayout(false);
 
         }

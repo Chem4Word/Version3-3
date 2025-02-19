@@ -43,76 +43,78 @@ namespace Chem4Word.Helpers
 
             var wordSettings = new WordSettings(app);
 
-            var renderer =
-                Globals.Chem4WordV3.GetRendererPlugIn(
-                    Globals.Chem4WordV3.SystemOptions.SelectedRendererPlugIn);
-
-            if (renderer != null)
+            if (Globals.Chem4WordV3.SystemOptions != null)
             {
-                try
+                var renderer =
+                    Globals.Chem4WordV3.GetRendererPlugIn(
+                        Globals.Chem4WordV3.SystemOptions.SelectedRendererPlugIn);
+
+                if (renderer != null)
                 {
-                    app.ScreenUpdating = false;
-                    Globals.Chem4WordV3.DisableContentControlEvents();
-
-                    var converter = new CMLConverter();
-                    var model = converter.Import(cml);
-                    var modified = false;
-
-                    if (isCopy)
+                    try
                     {
-                        // Always generate new Guid on Import
-                        model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
-                        modified = true;
-                    }
+                        app.ScreenUpdating = false;
+                        Globals.Chem4WordV3.DisableContentControlEvents();
 
-                    if (modified)
-                    {
-                        // Re-export as the CustomXmlPartGuid or Bond Length has been changed
-                        cml = converter.Export(model);
-                    }
-
-                    var guid = model.CustomXmlPartGuid;
-
-                    renderer.Properties = new Dictionary<string, string>();
-                    renderer.Properties.Add("Guid", guid);
-                    renderer.Cml = cml;
-
-                    // Generate temp file which can be inserted into a content control
-                    var tempfileName = renderer.Render();
-                    if (File.Exists(tempfileName))
-                    {
-                        cc = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
-                        Insert2D(document, cc.ID, tempfileName, guid);
-
-                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"ContentControl inserted at position {cc.Range.Start}");
+                        var converter = new CMLConverter();
+                        var model = converter.Import(cml);
+                        var modified = false;
 
                         if (isCopy)
                         {
-                            document.CustomXMLParts.Add(XmlHelper.AddHeader(cml));
+                            // Always generate new Guid on Import
+                            model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
+                            modified = true;
                         }
 
-                        try
+                        if (modified)
                         {
-                            // Delete the temporary file now we are finished with it
+                            // Re-export as the CustomXmlPartGuid or Bond Length has been changed
+                            cml = converter.Export(model);
+                        }
+
+                        var guid = model.CustomXmlPartGuid;
+
+                        renderer.Properties = new Dictionary<string, string> { { "Guid", guid } };
+                        renderer.Cml = cml;
+
+                        // Generate temp file which can be inserted into a content control
+                        var tempFileName = renderer.Render();
+                        if (File.Exists(tempFileName))
+                        {
+                            cc = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
+                            Insert2D(document, cc.ID, tempFileName, guid);
+
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"ContentControl inserted at position {cc.Range.Start}");
+
+                            if (isCopy)
+                            {
+                                document.CustomXMLParts.Add(XmlHelper.AddHeader(cml));
+                            }
+
+                            try
+                            {
+                                // Delete the temporary file now we are finished with it
 #if DEBUG
 #else
-                            File.Delete(tempfileName);
+                                File.Delete(tempFileName);
 #endif
-                        }
-                        catch
-                        {
-                            // Not much we can do here
+                            }
+                            catch
+                            {
+                                // Not much we can do here
+                            }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Error in Insert2DChemistry; See InnerException for details", ex);
-                }
-                finally
-                {
-                    app.ScreenUpdating = true;
-                    Globals.Chem4WordV3.EnableContentControlEvents();
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Error in Insert2DChemistry; See InnerException for details", ex);
+                    }
+                    finally
+                    {
+                        app.ScreenUpdating = true;
+                        Globals.Chem4WordV3.EnableContentControlEvents();
+                    }
                 }
             }
 
@@ -172,14 +174,13 @@ namespace Chem4Word.Helpers
                     var cc = new CMLConverter();
                     var model = cc.Import(cml);
 
-                    renderer.Properties = new Dictionary<string, string>();
-                    renderer.Properties.Add("Guid", cxmlId);
+                    renderer.Properties = new Dictionary<string, string> { { "Guid", cxmlId } };
                     renderer.Cml = cml;
 
-                    var tempfileName = renderer.Render();
-                    if (File.Exists(tempfileName))
+                    var tempFileName = renderer.Render();
+                    if (File.Exists(tempFileName))
                     {
-                        UpdateThisStructure(document, model, cxmlId, tempfileName);
+                        UpdateThisStructure(document, model, cxmlId, tempFileName);
                     }
                 }
             }
@@ -231,7 +232,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 2D structure in ContentControl {ccId} Tag {guid}");
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 2D structure in ContentControl {ccId} Tag {guid} in document '{document.Name}'");
 
             var application = Globals.Chem4WordV3.Application;
 
@@ -258,7 +259,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 2D structure in ContentControl {ccId} Tag {guid}");
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 2D structure in ContentControl {ccId} Tag {guid} in document '{document.Name}'");
 
             var cc = GetContentControl(document, ccId);
             if (cc != null)
@@ -306,7 +307,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 1D label in ContentControl {ccId} Tag {tag}");
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 1D label in ContentControl {ccId} Tag {tag} in document '{document.Name}'");
 
             var cc = GetContentControl(document, ccId);
             if (cc != null)
@@ -330,7 +331,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 1D label in ContentControl {ccId} Tag {tag}");
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 1D label in ContentControl {ccId} Tag {tag} in document '{document.Name}'");
 
             var cc = GetContentControl(document, ccId);
             if (cc != null)

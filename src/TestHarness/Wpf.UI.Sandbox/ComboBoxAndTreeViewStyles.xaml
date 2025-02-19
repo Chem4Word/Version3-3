@@ -14,7 +14,7 @@
         <ResourceDictionary Source="CommonStyles.xaml" />
     </Window.Resources>
 
-    <Grid Background="Beige">
+    <Grid d:IsLocked="True" Background="Beige">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -30,31 +30,39 @@
         <ComboBox
             Grid.Row="0"
             Grid.Column="0"
-            Margin="5">
-            <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
-            <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
-            <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
-            <ComboBoxItem>ComboBox Item #4</ComboBoxItem>
-            <ComboBoxItem>ComboBox Item #5</ComboBoxItem>
+            Margin="5"
+            d:IsLocked="True">
+            <ComboBoxItem d:IsLocked="True">ComboBox Item #1</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True" IsSelected="True">ComboBox Item #2</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True">ComboBox Item #3</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True">ComboBox Item #4</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True">ComboBox Item #5</ComboBoxItem>
         </ComboBox>
 
         <TreeView
             x:Name="Ootb"
             Grid.Row="1"
             Grid.Column="0"
-            Margin="5">
-            <TreeViewItem Header="Level 1" IsExpanded="True">
-                <TreeViewItem Header="Level 2.1" />
-                <TreeViewItem Header="Level 2.2">
-                    <TreeViewItem Header="Level 3.1" />
-                    <TreeViewItem Header="Level 3.2" />
+            Margin="5"
+            d:IsLocked="True">
+            <TreeViewItem
+                d:IsLocked="True"
+                Header="Level 1"
+                IsExpanded="True">
+                <TreeViewItem d:IsLocked="True" Header="Level 2.1" />
+                <TreeViewItem d:IsLocked="True" Header="Level 2.2">
+                    <TreeViewItem d:IsLocked="True" Header="Level 3.1" />
+                    <TreeViewItem d:IsLocked="True" Header="Level 3.2" />
                 </TreeViewItem>
-                <TreeViewItem Header="Level 2.3" IsExpanded="True">
-                    <TreeViewItem Header="Level 4.1" />
-                    <TreeViewItem Header="Level 4.2" />
+                <TreeViewItem
+                    d:IsLocked="True"
+                    Header="Level 2.3"
+                    IsExpanded="True">
+                    <TreeViewItem d:IsLocked="True" Header="Level 4.1" />
+                    <TreeViewItem d:IsLocked="True" Header="Level 4.2" />
                 </TreeViewItem>
             </TreeViewItem>
-            <TreeViewItem Header="Another Level" />
+            <TreeViewItem d:IsLocked="True" Header="Another Level" />
         </TreeView>
 
         <!--  Chem4Word styled controls  -->
@@ -63,12 +71,13 @@
             Grid.Row="0"
             Grid.Column="1"
             Margin="5"
+            d:IsLocked="True"
             Style="{StaticResource Chem4WordComboBoxStyle}">
-            <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
-            <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
-            <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
-            <ComboBoxItem>ComboBox Item #4</ComboBoxItem>
-            <ComboBoxItem>ComboBox Item #5</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True">ComboBox Item #1</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True" IsSelected="True">ComboBox Item #2</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True">ComboBox Item #3</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True">ComboBox Item #4</ComboBoxItem>
+            <ComboBoxItem d:IsLocked="True">ComboBox Item #5</ComboBoxItem>
         </ComboBox>
 
         <!--  Template and Style must be declared at EVERY level  -->
@@ -76,45 +85,55 @@
             x:Name="Chem4Word"
             Grid.Row="1"
             Grid.Column="1"
-            Margin="5">
+            Margin="5"
+            d:IsLocked="True">
             <TreeViewItem
+                d:IsLocked="True"
                 Header="Level 1"
                 IsExpanded="True"
                 Style="{StaticResource Chem4WordTreeViewItemStyle}"
                 Template="{StaticResource Chem4WordTreeViewItemTemplate}">
                 <TreeViewItem
+                    d:IsLocked="True"
                     Header="Level 2.1"
                     Style="{StaticResource Chem4WordTreeViewItemStyle}"
                     Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
                 <TreeViewItem
+                    d:IsLocked="True"
                     Header="Level 2.2"
                     Style="{StaticResource Chem4WordTreeViewItemStyle}"
                     Template="{StaticResource Chem4WordTreeViewItemTemplate}">
                     <TreeViewItem
+                        d:IsLocked="True"
                         Header="Level 3.1"
                         Style="{StaticResource Chem4WordTreeViewItemStyle}"
                         Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
                     <TreeViewItem
+                        d:IsLocked="True"
                         Header="Level 3.2"
                         Style="{StaticResource Chem4WordTreeViewItemStyle}"
                         Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
                 </TreeViewItem>
                 <TreeViewItem
+                    d:IsLocked="True"
                     Header="Level 2.3"
                     IsExpanded="True"
                     Style="{StaticResource Chem4WordTreeViewItemStyle}"
                     Template="{StaticResource Chem4WordTreeViewItemTemplate}">
                     <TreeViewItem
+                        d:IsLocked="True"
                         Header="Level 4.1"
                         Style="{StaticResource Chem4WordTreeViewItemStyle}"
                         Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
                     <TreeViewItem
+                        d:IsLocked="True"
                         Header="Level 4.2"
                         Style="{StaticResource Chem4WordTreeViewItemStyle}"
                         Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
                 </TreeViewItem>
             </TreeViewItem>
             <TreeViewItem
+                d:IsLocked="True"
                 Header="Another Level"
                 Style="{StaticResource Chem4WordTreeViewItemStyle}"
                 Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
@@ -123,16 +142,19 @@
         <StackPanel
             Grid.Row="2"
             Grid.Column="0"
+            d:IsLocked="True"
             Orientation="Horizontal">
             <Button
                 Width="100"
-                Click="ButtonBase_OnClick"
+                d:IsLocked="True"
+                Click="OnClick_ButtonBase"
                 Tag="Ootb">
                 + Child Node
             </Button>
             <Button
                 Width="100"
-                Click="ButtonBase_OnClick"
+                d:IsLocked="True"
+                Click="OnClick_ButtonBase"
                 Tag="OotbTop">
                 + TopLevel Node
             </Button>
@@ -141,16 +163,19 @@
         <StackPanel
             Grid.Row="2"
             Grid.Column="1"
+            d:IsLocked="True"
             Orientation="Horizontal">
             <Button
                 Width="100"
-                Click="ButtonBase_OnClick"
+                d:IsLocked="True"
+                Click="OnClick_ButtonBase"
                 Tag="Chem4Word">
                 + Child Node
             </Button>
             <Button
                 Width="100"
-                Click="ButtonBase_OnClick"
+                d:IsLocked="True"
+                Click="OnClick_ButtonBase"
                 Tag="Chem4WordTop">
                 + TopLevel Node
             </Button>

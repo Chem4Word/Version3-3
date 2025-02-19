@@ -27,7 +27,7 @@ namespace Chem4Word.ACME.Controls
             var window = Window.GetWindow(this);
             Focusable = true;
             Focus();
-            ElementGrid.ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
+            ElementGrid.ItemContainerGenerator.StatusChanged += new EventHandler(OnStatusChanged_ItemContainerGenerator);
         }
 
         public Element SelectedElement
@@ -46,7 +46,7 @@ namespace Chem4Word.ACME.Controls
             var control = d as VisualPeriodicTable;
         }
 
-        private void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+        private void OnStatusChanged_ItemContainerGenerator(object sender, EventArgs e)
         {
             if (ElementGrid.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
             {
@@ -86,7 +86,7 @@ namespace Chem4Word.ACME.Controls
 
         public event ElementSelectedEvent ElementSelected;
 
-        private void ElementSquare_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseLeftButtonDown_ElementSquare(object sender, MouseButtonEventArgs e)
         {
             var elementBlocks = VisualTreeHelpers.FindAllChildren<TextBlock>(sender as Border);
             SelectedElement = (elementBlocks.ToList()[0].Tag as Element);

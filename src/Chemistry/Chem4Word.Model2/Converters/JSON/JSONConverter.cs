@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using Newtonsoft.Json;
@@ -12,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Chem4Word.Core.Helpers;
 
 namespace Chem4Word.Model2.Converters.JSON
 {
@@ -294,12 +294,12 @@ namespace Chem4Word.Model2.Converters.JSON
                         if (!sa.Equals(ea))
                         {
                             Bond newBond = new Bond()
-                                           {
-                                               StartAtomInternalId = sa,
-                                               EndAtomInternalId = ea,
-                                               Stereo = s,
-                                               Order = o
-                                           };
+                            {
+                                StartAtomInternalId = sa,
+                                EndAtomInternalId = ea,
+                                Stereo = s,
+                                Order = o
+                            };
                             newMol.AddBond(newBond);
                             newBond.Parent = newMol;
                         }

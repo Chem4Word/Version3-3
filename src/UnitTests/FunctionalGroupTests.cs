@@ -57,7 +57,7 @@ namespace Chem4WordTests
             var functionalGroup = FunctionalGroups.ShortcutList.FirstOrDefault(f => f.Name.Equals(shortcut));
 
             var calculated = functionalGroup.FormulaParts;
-            string actual = string.Empty;
+            var actual = string.Empty;
             foreach (var kvp in calculated)
             {
                 actual += $"{kvp.Key} {kvp.Value} ";
@@ -128,7 +128,7 @@ namespace Chem4WordTests
 
         private string Flatten(List<FunctionalGroupTerm> terms)
         {
-            string result = string.Empty;
+            var result = string.Empty;
 
             foreach (var term in terms)
             {

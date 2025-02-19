@@ -30,6 +30,8 @@ namespace Chem4Word.ACME
             }
         }
 
+        public double DefaultBondLength { get; set; }
+
         public bool IsDirty { get; private set; }
 
         public Model EditedModel
@@ -41,7 +43,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        private void CmlText_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void OnTextChanged_CmlText(object sender, TextChangedEventArgs e)
         {
             IsDirty = true;
         }

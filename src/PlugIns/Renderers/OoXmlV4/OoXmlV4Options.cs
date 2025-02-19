@@ -21,26 +21,10 @@ namespace Chem4Word.Renderer.OoXmlV4
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         [JsonProperty]
-        public bool ShowHydrogens { get; set; }
-
-        [JsonProperty]
-        public bool ColouredAtoms { get; set; }
-
-        [JsonProperty]
-        public bool ShowMoleculeGrouping { get; set; }
-
-        [JsonProperty]
-        public bool ShowCarbons { get; set; }
-
-        [JsonProperty]
         public bool ShowMoleculeCaptions { get; set; }
 
         [JsonProperty]
         public bool ClipCrossingBonds { get; set; }
-
-        // Not editable here, kept in sync by file system watcher
-        [JsonProperty]
-        public int BondLength { get; set; }
 
         // Debugging
         [JsonProperty]
@@ -186,30 +170,23 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
         }
 
-        private void SetValuesFromCopy(OoXmlV4Options options)
+        private void SetValuesFromCopy(OoXmlV4Options copy)
         {
             // Main User Options
-            ColouredAtoms = options.ColouredAtoms;
-            ShowHydrogens = options.ShowHydrogens;
-            ShowMoleculeGrouping = options.ShowMoleculeGrouping;
-            ShowMoleculeCaptions = options.ShowMoleculeCaptions;
-            ShowCarbons = options.ShowCarbons;
-            ClipCrossingBonds = options.ClipCrossingBonds;
-
-            // Hidden
-            BondLength = options.BondLength;
+            ShowMoleculeCaptions = copy.ShowMoleculeCaptions;
+            ClipCrossingBonds = copy.ClipCrossingBonds;
 
             // Debugging Options
-            ClipBondLines = options.ClipBondLines;
-            ShowDoubleBondTrimmingLines = options.ShowDoubleBondTrimmingLines;
-            ShowCharacterBoundingBoxes = options.ShowCharacterBoundingBoxes;
-            ShowMoleculeBoundingBoxes = options.ShowMoleculeBoundingBoxes;
-            ShowRingCentres = options.ShowRingCentres;
-            ShowAtomPositions = options.ShowAtomPositions;
-            ShowHulls = options.ShowHulls;
-            ShowBondDirection = options.ShowBondDirection;
-            ShowCharacterGroupBoundingBoxes = options.ShowCharacterGroupBoundingBoxes;
-            ShowBondCrossingPoints = options.ShowBondCrossingPoints;
+            ClipBondLines = copy.ClipBondLines;
+            ShowDoubleBondTrimmingLines = copy.ShowDoubleBondTrimmingLines;
+            ShowCharacterBoundingBoxes = copy.ShowCharacterBoundingBoxes;
+            ShowMoleculeBoundingBoxes = copy.ShowMoleculeBoundingBoxes;
+            ShowRingCentres = copy.ShowRingCentres;
+            ShowAtomPositions = copy.ShowAtomPositions;
+            ShowHulls = copy.ShowHulls;
+            ShowBondDirection = copy.ShowBondDirection;
+            ShowCharacterGroupBoundingBoxes = copy.ShowCharacterGroupBoundingBoxes;
+            ShowBondCrossingPoints = copy.ShowBondCrossingPoints;
         }
 
         private string GetFileName(string path)
@@ -234,15 +211,8 @@ namespace Chem4Word.Renderer.OoXmlV4
         public void RestoreDefaults()
         {
             // Main User Options
-            ColouredAtoms = true;
-            ShowHydrogens = true;
-            ShowMoleculeGrouping = true;
             ShowMoleculeCaptions = false;
-            ShowCarbons = false;
             ClipCrossingBonds = false;
-
-            // Hidden
-            BondLength = (int)Constants.StandardBondLength;
 
             // Debugging Options
             ClipBondLines = true;

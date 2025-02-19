@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Renderer.OoXmlV4.OOXML;
 using IChem4Word.Contracts;
@@ -23,7 +24,7 @@ namespace Chem4Word.Renderer.OoXmlV4
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        public string Name => "Open Office Xml Renderer V4";
+        public string Name => Constants.DefaultRendererPlugIn;
         public string Description => "This is the standard renderer for Chem4Word 2025";
         public bool HasSettings => true;
 
@@ -89,9 +90,9 @@ namespace Chem4Word.Renderer.OoXmlV4
                 if (!File.Exists(result))
                 {
                     Telemetry.Write(module, "Exception", "Structure could not be rendered.");
+                    Telemetry.Write(module, "Exception(Data)", Cml);
                     UserInteractions.WarnUser("Sorry this structure could not be rendered.");
                 }
-
                 // Deliberate crash to test Error Reporting
                 //int ii = 2;
                 //int dd = 0;

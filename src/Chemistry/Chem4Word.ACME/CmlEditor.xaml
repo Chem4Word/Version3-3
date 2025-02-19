@@ -8,7 +8,7 @@
     d:DesignHeight="400"
     d:DesignWidth="600"
     mc:Ignorable="d">
-    <Grid>
+    <Grid d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
@@ -18,10 +18,11 @@
             Grid.Row="0"
             Margin="5"
             HorizontalAlignment="Stretch"
+            d:IsLocked="True"
             AcceptsReturn="True"
             FontFamily="Consolas"
             HorizontalScrollBarVisibility="Auto"
-            TextChanged="CmlText_OnTextChanged"
+            TextChanged="OnTextChanged_CmlText"
             TextWrapping="NoWrap"
             VerticalScrollBarVisibility="Auto" />
     </Grid>

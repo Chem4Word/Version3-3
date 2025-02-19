@@ -52,8 +52,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsHost";
             this.Text = "Chem4Word Settings";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsHost_FormClosing);
-            this.Load += new System.EventHandler(this.SettingsHost_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing_SettingsHost);
+            this.Load += new System.EventHandler(this.OnLoad_SettingsHost);
             this.ResumeLayout(false);
 
         }

@@ -85,37 +85,37 @@ namespace Chem4Word.ACME.Adorners.Selectors
         /// </summary>
         protected virtual void AttachHandlers()
         {
-            MouseLeftButtonDown += BaseSelectionAdorner_MouseLeftButtonDown;
-            PreviewMouseLeftButtonDown += BaseSelectionAdorner_PreviewMouseLeftButtonDown;
-            MouseLeftButtonDown += BaseSelectionAdorner_MouseLeftButtonDown;
-            PreviewMouseLeftButtonDown += BaseSelectionAdorner_PreviewMouseLeftButtonDown;
-            MouseMove += BaseSelectionAdorner_MouseMove;
-            PreviewMouseMove += BaseSelectionAdorner_PreviewMouseMove;
-            PreviewMouseLeftButtonUp += BaseSelectionAdorner_PreviewMouseLeftButtonUp;
-            PreviewMouseRightButtonUp += BaseSelectionAdorner_PreviewMouseRightButtonUp;
-            MouseLeftButtonUp += BaseSelectionAdorner_MouseLeftButtonUp;
-            PreviewKeyDown += BaseSelectionAdorner_PreviewKeyDown;
-            KeyDown += BaseSelectionAdorner_KeyDown;
+            MouseLeftButtonDown += OnMouseLeftButtonDown_BaseSelectionAdorner;
+            PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown_BaseSelectionAdorner;
+            MouseLeftButtonDown += OnMouseLeftButtonDown_BaseSelectionAdorner;
+            PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown_BaseSelectionAdorner;
+            MouseMove += OnMouseMove_BaseSelectionAdorner;
+            PreviewMouseMove += OnPreviewMouseMove_BaseSelectionAdorner;
+            PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp_BaseSelectionAdorner;
+            PreviewMouseRightButtonUp += OnPreviewMouseRightButtonUp_BaseSelectionAdorner;
+            MouseLeftButtonUp += OnMouseLeftButtonUp_BaseSelectionAdorner;
+            PreviewKeyDown += OnPreviewKeyDown_BaseSelectionAdorner;
+            KeyDown += OnKeyDown_BaseSelectionAdorner;
         }
 
-        protected virtual void BaseSelectionAdorner_KeyDown(object sender, KeyEventArgs e)
+        protected virtual void OnKeyDown_BaseSelectionAdorner(object sender, KeyEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
         protected void DetachHandlers()
         {
-            MouseLeftButtonDown -= BaseSelectionAdorner_MouseLeftButtonDown;
-            PreviewMouseLeftButtonDown -= BaseSelectionAdorner_PreviewMouseLeftButtonDown;
-            MouseLeftButtonDown -= BaseSelectionAdorner_MouseLeftButtonDown;
-            PreviewMouseLeftButtonDown -= BaseSelectionAdorner_PreviewMouseLeftButtonDown;
-            MouseMove -= BaseSelectionAdorner_MouseMove;
-            PreviewMouseMove -= BaseSelectionAdorner_PreviewMouseMove;
-            PreviewMouseLeftButtonUp -= BaseSelectionAdorner_PreviewMouseLeftButtonUp;
-            PreviewMouseRightButtonUp -= BaseSelectionAdorner_PreviewMouseRightButtonUp;
-            MouseLeftButtonUp -= BaseSelectionAdorner_MouseLeftButtonUp;
-            PreviewKeyDown -= BaseSelectionAdorner_PreviewKeyDown;
-            KeyDown -= BaseSelectionAdorner_KeyDown;
+            MouseLeftButtonDown -= OnMouseLeftButtonDown_BaseSelectionAdorner;
+            PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown_BaseSelectionAdorner;
+            MouseLeftButtonDown -= OnMouseLeftButtonDown_BaseSelectionAdorner;
+            PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown_BaseSelectionAdorner;
+            MouseMove -= OnMouseMove_BaseSelectionAdorner;
+            PreviewMouseMove -= OnPreviewMouseMove_BaseSelectionAdorner;
+            PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_BaseSelectionAdorner;
+            PreviewMouseRightButtonUp -= OnPreviewMouseRightButtonUp_BaseSelectionAdorner;
+            MouseLeftButtonUp -= OnMouseLeftButtonUp_BaseSelectionAdorner;
+            PreviewKeyDown -= OnPreviewKeyDown_BaseSelectionAdorner;
+            KeyDown -= OnKeyDown_BaseSelectionAdorner;
         }
 
         protected void DefaultSettings()
@@ -131,42 +131,42 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         //override these methods in derived classes to handle specific events
         //The forwarding chain for events is adorner -> CurrentEditor -> attached behaviour
-        protected virtual void BaseSelectionAdorner_PreviewKeyDown(object sender, KeyEventArgs e)
+        protected virtual void OnPreviewKeyDown_BaseSelectionAdorner(object sender, KeyEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        protected virtual void BaseSelectionAdorner_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        protected virtual void OnMouseLeftButtonUp_BaseSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        protected virtual void BaseSelectionAdorner_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        protected virtual void OnPreviewMouseRightButtonUp_BaseSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        protected virtual void BaseSelectionAdorner_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        protected virtual void OnPreviewMouseLeftButtonUp_BaseSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        protected virtual void BaseSelectionAdorner_PreviewMouseMove(object sender, MouseEventArgs e)
+        protected virtual void OnPreviewMouseMove_BaseSelectionAdorner(object sender, MouseEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        protected virtual void BaseSelectionAdorner_MouseMove(object sender, MouseEventArgs e)
+        protected virtual void OnMouseMove_BaseSelectionAdorner(object sender, MouseEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        protected virtual void BaseSelectionAdorner_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        protected virtual void OnPreviewMouseLeftButtonDown_BaseSelectionAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        protected virtual void BaseSelectionAdorner_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        protected virtual void OnMouseLeftButtonDown_BaseSelectionAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }

@@ -51,7 +51,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LibraryEditorHost";
             this.Text = "EditLibraryHost";
-            this.Load += new System.EventHandler(this.LibraryEditorHost_Load);
+            this.Load += new System.EventHandler(this.OnLoad_LibraryEditorHost);
             this.ResumeLayout(false);
 
         }

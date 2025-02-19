@@ -113,6 +113,7 @@
     <Compile Include="Enums\ClockDirections.cs" />
     <Compile Include="Enums\FormulaPartType.cs" />
     <Compile Include="Enums\GroupType.cs" />
+    <Compile Include="Enums\HydrogenLabels.cs" />
     <Compile Include="FunctionalGroup.cs" />
     <Compile Include="FunctionalGroupPart.cs" />
     <Compile Include="FunctionalGroupPartType.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Reaction.cs" />
     <Compile Include="ReactionScheme.cs" />
     <Compile Include="ReactionType.cs" />
+    <Compile Include="RenderingOptions.cs" />
     <Compile Include="Ring.cs" />
     <Compile Include="MoleculePropertyBag.cs" />
     <Compile Include="SubstanceRole.cs" />

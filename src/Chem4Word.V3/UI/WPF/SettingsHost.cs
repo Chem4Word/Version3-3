@@ -36,7 +36,7 @@ namespace Chem4Word.UI.WPF
             InitializeComponent();
         }
 
-        private void OnWpfButtonClick(object sender, EventArgs e)
+        private void OnClick_WpfButton(object sender, EventArgs e)
         {
             WpfEventArgs args = (WpfEventArgs)e;
             switch (args.Button.ToLower())
@@ -63,7 +63,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void SettingsHost_Load(object sender, EventArgs e)
+        private void OnLoad_SettingsHost(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -73,7 +73,7 @@ namespace Chem4Word.UI.WPF
                 sc.TopLeft = TopLeft;
                 sc.SystemOptions = SystemOptions;
                 sc.ActiveTab = ActiveTab;
-                sc.OnButtonClick += OnWpfButtonClick;
+                sc.OnButtonClick += OnClick_WpfButton;
 
                 using (new WaitCursor())
                 {
@@ -96,7 +96,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void SettingsHost_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_SettingsHost(object sender, FormClosingEventArgs e)
         {
             if (!_closedInCode)
             {

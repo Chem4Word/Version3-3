@@ -213,7 +213,15 @@ namespace Chem4Word.Helpers
                                     cc.Delete();
 
                                     Globals.Chem4WordV3.Application.Selection.SetRange(start - 1, start - 1);
+                                    var options = new RenderingOptions
+                                    {
+                                        ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC,
+                                        ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH,
+                                        ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms,
+                                        ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping
+                                    };
                                     var model = new Model();
+                                    model.SetUserOptions(options);
                                     var molecule = new Molecule();
                                     molecule.Names.Add(new TextualProperty { Id = "m1.n1", Value = cci.Text, FullType = CMLConstants.ValueChem4WordSynonym });
                                     model.AddMolecule(molecule);

@@ -12,10 +12,15 @@ option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
 import "Converters/ProtocolBuffers/molecule.proto";
 import "Converters/ProtocolBuffers/reactionScheme.proto";
 import "Converters/ProtocolBuffers/annotation.proto";
+import "google/protobuf/wrappers.proto";
 
 message PBModel
 {
 	map<string,PBMolecule> Molecules = 1;
 	map<string, PBReactionScheme> ReactionSchemes = 2;
 	map<string, PBAnnotation> Annotations = 3;
+	google.protobuf.BoolValue ExplicitC = 4;
+	google.protobuf.Int32Value ExplicitH = 5;
+	google.protobuf.BoolValue ShowColouredAtoms = 6;
+	google.protobuf.BoolValue ShowMoleculeBrackets = 7;
 }

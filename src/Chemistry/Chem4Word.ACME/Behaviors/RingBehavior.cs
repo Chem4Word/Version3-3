@@ -47,13 +47,13 @@ namespace Chem4Word.ACME.Behaviors
                 {
                     var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
                     layer.Remove(_currentAdorner);
-                    _currentAdorner.MouseLeftButtonDown -= CurrentAdornerOnMouseLeftButtonDown;
+                    _currentAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentAdorner;
                     _currentAdorner = null;
                 }
                 _currentAdorner = value;
                 if (_currentAdorner != null)
                 {
-                    _currentAdorner.MouseLeftButtonDown += CurrentAdornerOnMouseLeftButtonDown;
+                    _currentAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentAdorner;
                 }
             }
         }
@@ -70,14 +70,14 @@ namespace Chem4Word.ACME.Behaviors
 
             CurrentEditor.Cursor = CursorUtils.Pencil;
 
-            CurrentEditor.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.MouseMove += CurrentEditor_MouseMove;
-            CurrentEditor.MouseLeftButtonUp += CurrentEditor_MouseLeftButtonUp;
+            CurrentEditor.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseMove += OnMouseMove_CurrentEditor;
+            CurrentEditor.MouseLeftButtonUp += OnMouseLeftButtonUp_CurrentEditor;
             AssociatedObject.IsHitTestVisible = true;
 
             if (_parent != null)
             {
-                _parent.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
+                _parent.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
 
             CurrentStatus = "Draw a ring by clicking on a bond, atom or free space.";
@@ -87,7 +87,7 @@ namespace Chem4Word.ACME.Behaviors
         {
         }
 
-        private void CurrentEditor_MouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove_CurrentEditor(object sender, MouseEventArgs e)
         {
             List<Point> altPlacements;
             List<Point> preferredPlacements;
@@ -159,17 +159,17 @@ namespace Chem4Word.ACME.Behaviors
             }
         }
 
-        private void CurrentAdornerOnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentAdorner(object sender, MouseButtonEventArgs e)
         {
-            CurrentEditor_MouseLeftButtonDown(sender, e);
+            OnMouseLeftButtonDown_CurrentEditor(sender, e);
         }
 
-        private void CurrentEditor_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             CurrentStatus = "";
         }
 
-        private void CurrentEditor_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             if (!Clashing)
             {
@@ -459,12 +459,12 @@ namespace Chem4Word.ACME.Behaviors
         protected override void OnDetaching()
         {
             CurrentAdorner = null;
-            CurrentEditor.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.MouseMove -= CurrentEditor_MouseMove;
-            CurrentEditor.MouseLeftButtonUp -= CurrentEditor_MouseLeftButtonUp;
+            CurrentEditor.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseMove -= OnMouseMove_CurrentEditor;
+            CurrentEditor.MouseLeftButtonUp -= OnMouseLeftButtonUp_CurrentEditor;
             if (_parent != null)
             {
-                _parent.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
+                _parent.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
             }
             _parent = null;
         }

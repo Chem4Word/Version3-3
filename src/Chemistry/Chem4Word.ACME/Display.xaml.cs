@@ -75,63 +75,12 @@ namespace Chem4Word.ACME
                                             | FrameworkPropertyMetadataOptions.AffectsArrange
                                             | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
-        public bool ShowMoleculeGrouping
-        {
-            get { return (bool)GetValue(ShowMoleculeGroupingProperty); }
-            set { SetValue(ShowMoleculeGroupingProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShowMoleculeGroupingProperty =
-            DependencyProperty.Register("ShowMoleculeGrouping", typeof(bool), typeof(Display),
-                                        new FrameworkPropertyMetadata(true,
-                                             FrameworkPropertyMetadataOptions.AffectsRender
-                                             | FrameworkPropertyMetadataOptions.AffectsArrange
-                                             | FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public bool ShowAtomsInColour
-        {
-            get { return (bool)GetValue(ShowAtomsInColourProperty); }
-            set { SetValue(ShowAtomsInColourProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShowAtomsInColourProperty =
-            DependencyProperty.Register("ShowAtomsInColour", typeof(bool), typeof(Display),
-                                        new FrameworkPropertyMetadata(true,
-                                              FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public bool ShowAllCarbonAtoms
-        {
-            get { return (bool)GetValue(ShowAllCarbonAtomsProperty); }
-            set { SetValue(ShowAllCarbonAtomsProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShowAllCarbonAtomsProperty =
-            DependencyProperty.Register("ShowAllCarbonAtoms", typeof(bool), typeof(Display),
-                                        new FrameworkPropertyMetadata(false,
-                                           FrameworkPropertyMetadataOptions.AffectsRender
-                                           | FrameworkPropertyMetadataOptions.AffectsArrange
-                                           | FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public bool ShowImplicitHydrogens
-        {
-            get { return (bool)GetValue(ShowImplicitHydrogensProperty); }
-            set { SetValue(ShowImplicitHydrogensProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShowImplicitHydrogensProperty =
-            DependencyProperty.Register("ShowImplicitHydrogens", typeof(bool), typeof(Display),
-                                        new FrameworkPropertyMetadata(true,
-                                          FrameworkPropertyMetadataOptions.AffectsRender
-                                          | FrameworkPropertyMetadataOptions.AffectsArrange
-                                          | FrameworkPropertyMetadataOptions.AffectsMeasure));
-
         public bool ShowOverbondedAtoms
         {
             get { return (bool)GetValue(ShowOverbondedAtomsProperty); }
             set { SetValue(ShowOverbondedAtomsProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for ShowOverbondedAtoms.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ShowOverbondedAtomsProperty =
             DependencyProperty.Register("ShowOverbondedAtoms", typeof(bool), typeof(Display), new PropertyMetadata(default(bool)));
 

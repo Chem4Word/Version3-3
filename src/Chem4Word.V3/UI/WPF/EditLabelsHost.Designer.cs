@@ -112,7 +112,7 @@ namespace Chem4Word.UI.WPF
             this.Save.TabIndex = 1;
             this.Save.Text = "OK";
             this.Save.UseVisualStyleBackColor = true;
-            this.Save.Click += new System.EventHandler(this.Save_Click);
+            this.Save.Click += new System.EventHandler(this.OnClick_Save);
             // 
             // Cancel
             // 
@@ -124,7 +124,7 @@ namespace Chem4Word.UI.WPF
             this.Cancel.TabIndex = 0;
             this.Cancel.Text = "Cancel";
             this.Cancel.UseVisualStyleBackColor = true;
-            this.Cancel.Click += new System.EventHandler(this.Cancel_Click);
+            this.Cancel.Click += new System.EventHandler(this.OnClick_Cancel);
             // 
             // EditLabelsHost
             // 
@@ -137,8 +137,8 @@ namespace Chem4Word.UI.WPF
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "EditLabelsHost";
             this.Text = "Edit Labels";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditLabelsHost_FormClosing);
-            this.Load += new System.EventHandler(this.EditLabelsHost_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing_EditLabelsHost);
+            this.Load += new System.EventHandler(this.OnLoad_EditLabelsHost);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

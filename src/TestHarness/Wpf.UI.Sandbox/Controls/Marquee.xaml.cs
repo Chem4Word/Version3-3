@@ -26,7 +26,7 @@ namespace Wpf.UI.Sandbox.Controls
             InitializeComponent();
         }
 
-        private void Marquee_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_Marquee(object sender, RoutedEventArgs e)
         {
             if (DesignerProperties.GetIsInDesignMode(this))
             {
@@ -48,11 +48,11 @@ namespace Wpf.UI.Sandbox.Controls
             {
                 doubleAnimation.RepeatBehavior = RepeatBehavior.Forever;
             }
-            doubleAnimation.Completed += DoubleAnimationOnCompleted;
+            doubleAnimation.Completed += OnCompleted_DoubleAnimation;
             TextToScroll.BeginAnimation(Canvas.RightProperty, doubleAnimation);
         }
 
-        private void DoubleAnimationOnCompleted(object sender, EventArgs e)
+        private void OnCompleted_DoubleAnimation(object sender, EventArgs e)
         {
             WpfEventArgs args = new WpfEventArgs();
             OnAnimationCompleted?.Invoke(this, args);

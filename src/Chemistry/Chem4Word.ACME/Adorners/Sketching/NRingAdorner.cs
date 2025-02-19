@@ -23,9 +23,9 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
         public NRingAdorner([NotNull] UIElement adornedElement, double bondThickness, List<Point> placements, Point startPoint, Point endPoint, bool greyedOut = false) : base(adornedElement, bondThickness, placements, greyedOut: greyedOut)
         {
-            PreviewMouseUp += NRingAdorner_PreviewMouseUp;
-            PreviewKeyDown += NRingAdorner_PreviewKeyDown;
-            MouseUp += NRingAdorner_MouseUp;
+            PreviewMouseUp += OnPreviewMouseUp_NRingAdorner;
+            PreviewKeyDown += OnPreviewKeyDown_NRingAdorner;
+            MouseUp += OnMouseUp_NRingAdorner;
             StartPoint = startPoint;
             EndPoint = endPoint;
             GreyedOut = greyedOut;
@@ -33,17 +33,17 @@ namespace Chem4Word.ACME.Adorners.Sketching
             Focus();
         }
 
-        private void NRingAdorner_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnPreviewKeyDown_NRingAdorner(object sender, System.Windows.Input.KeyEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        private void NRingAdorner_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnMouseUp_NRingAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        private void NRingAdorner_PreviewMouseUp(object sender, System.Windows.Input.MouseEventArgs e)
+        private void OnPreviewMouseUp_NRingAdorner(object sender, System.Windows.Input.MouseEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
@@ -115,9 +115,9 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
         ~NRingAdorner()
         {
-            PreviewMouseUp -= NRingAdorner_PreviewMouseUp;
-            PreviewKeyDown -= NRingAdorner_PreviewKeyDown;
-            MouseUp -= NRingAdorner_MouseUp;
+            PreviewMouseUp -= OnPreviewMouseUp_NRingAdorner;
+            PreviewKeyDown -= OnPreviewKeyDown_NRingAdorner;
+            MouseUp -= OnMouseUp_NRingAdorner;
         }
     }
 }

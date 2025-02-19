@@ -29,8 +29,8 @@ namespace Chem4Word.Model2
         public struct TextOffset
         {
             // Temporarily commented out as not yet used ...
-            //private double FractionalLength;
-            //private double Angle;
+            //private double FractionalLength
+            //private double Angle
         }
 
         #endregion Internal Constructs

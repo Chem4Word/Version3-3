@@ -301,6 +301,7 @@ namespace Chem4Word
         private void SlowOperations()
         {
             var module = $"{MethodBase.GetCurrentMethod()?.Name}()";
+            var securityProtocol = ServicePointManager.SecurityProtocol;
 
             try
             {
@@ -314,14 +315,13 @@ namespace Chem4Word
 
                 LoadPlugins();
 
-                Helper = new SystemHelper(StartUpTimings);
-
                 ServicePointManager.DefaultConnectionLimit = 100;
                 ServicePointManager.UseNagleAlgorithm = false;
                 ServicePointManager.Expect100Continue = false;
 
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
+                // ToDo: Check if we still need the config watcher
                 _configWatcher = new ConfigWatcher(AddInInfo.ProductAppDataPath);
 
                 Telemetry = new TelemetryWriter(true, true, Helper);
@@ -335,6 +335,10 @@ namespace Chem4Word
             {
                 // Do Nothing
             }
+            finally
+            {
+                ServicePointManager.SecurityProtocol = securityProtocol;
+            }
         }
 
         private void PerformStartUpActions()
@@ -347,6 +351,8 @@ namespace Chem4Word
                 _timer.Elapsed += OnTimerElapsed;
                 _timer.AutoReset = true;
                 _timer.Enabled = true;
+
+                Helper = new SystemHelper(StartUpTimings);
 
                 SetButtonStates(ButtonState.NoDocument);
 
@@ -683,6 +689,21 @@ namespace Chem4Word
                 _configWatcher?.Dispose();
                 Debug.WriteLine("Disposing of Reference Keeper");
                 _keeper?.Dispose();
+
+#if DEBUG
+                // Wait up to 5 seconds for all telemetry to be sent
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                while (Globals.Chem4WordV3.Telemetry.BufferCount() > 0)
+                {
+                    Debug.WriteLine($"Buffer count is {Globals.Chem4WordV3.Telemetry.BufferCount()}");
+                    Thread.Sleep(25);
+                    if (stopwatch.ElapsedMilliseconds > 5000)
+                    {
+                        break;
+                    }
+                }
+#endif
 
                 Debug.WriteLine("Waiting for garbage collection");
                 GC.Collect();
@@ -1917,6 +1938,7 @@ namespace Chem4Word
 
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
+                var autoUpdateFrequency = Constants.DefaultCheckInterval;
                 try
                 {
                     if (Ribbon != null)
@@ -1947,7 +1969,11 @@ namespace Chem4Word
                     }
 
                     UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    if (SystemOptions != null)
+                    {
+                        autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
+                    }
+                    UpdateHelper.CheckForUpdates(autoUpdateFrequency);
                 }
             }
         }
@@ -1956,24 +1982,21 @@ namespace Chem4Word
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            Debug.WriteLine("OnDocumentChange()");
-
-            if (VersionsBehind < Constants.MaximumVersionsBehind)
+            if (Application.Documents.Count > 0)
             {
-                try
+                if (VersionsBehind < Constants.MaximumVersionsBehind)
                 {
-                    if (Application.Documents.Count > 0)
+                    try
                     {
                         Word.Document document = null;
                         try
                         {
                             document = Application.ActiveDocument;
                         }
-                        catch (Exception ex1)
+                        catch
                         {
                             // This only happens when document is in protected mode
                             SetButtonStates(ButtonState.NoDocument);
-                            Debug.WriteLine($"Module: {module}; Exception: {ex1.Message}");
                         }
 
                         if (document != null)
@@ -1987,29 +2010,7 @@ namespace Chem4Word
                                 Ribbon.ShowLibrary.Label = Ribbon.ShowLibrary.Checked ? "Hide" : "Show";
                             }
 
-                            var answer = Upgrader.UpgradeIsRequired(document);
-                            switch (answer)
-                            {
-                                case DialogResult.Yes:
-                                    if (SystemOptions == null)
-                                    {
-                                        LoadOptions();
-                                    }
-
-                                    Upgrader.DoUpgrade(document);
-                                    break;
-
-                                case DialogResult.No:
-                                    Telemetry.Write(module, "Information", "User chose not to upgrade");
-                                    break;
-
-                                case DialogResult.Cancel:
-                                    // Returns Cancel if nothing to do
-                                    break;
-                            }
-
                             HandleNavigatorPane(document);
-
                             HandleLibraryPane(document, docxMode);
 
                             if (docxMode)
@@ -2034,21 +2035,30 @@ namespace Chem4Word
                             }
                         }
                     }
+                    catch (Exception exception)
+                    {
+                        if (SystemOptions == null)
+                        {
+                            LoadOptions();
+                        }
+
+                        using (var form = new ReportError(Telemetry, WordTopLeft, module, exception))
+                        {
+                            form.ShowDialog();
+                        }
+
+                        UpdateHelper.ClearSettings();
+                        var autoUpdateFrequency = Constants.DefaultCheckInterval;
+                        if (SystemOptions != null)
+                        {
+                            autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
+                        }
+                        UpdateHelper.CheckForUpdates(autoUpdateFrequency);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    if (SystemOptions == null)
-                    {
-                        LoadOptions();
-                    }
-
-                    using (var form = new ReportError(Telemetry, WordTopLeft, module, ex))
-                    {
-                        form.ShowDialog();
-                    }
-
-                    UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    SetButtonStates(ButtonState.Disabled);
                 }
             }
         }
@@ -2161,6 +2171,30 @@ namespace Chem4Word
             {
                 try
                 {
+#if DEBUG
+                    Telemetry.Write(module, "Information", $"Checking if upgrade of document '{document.Name}' is required.");
+#endif
+                    var answer = Upgrader.UpgradeIsRequired(document);
+                    switch (answer)
+                    {
+                        case DialogResult.Yes:
+                            if (SystemOptions == null)
+                            {
+                                LoadOptions();
+                            }
+
+                            Upgrader.DoUpgrade(document);
+                            break;
+
+                        case DialogResult.No:
+                            Telemetry.Write(module, "Information", "User chose not to upgrade");
+                            break;
+
+                        case DialogResult.Cancel:
+                            // Returns Cancel if nothing to do
+                            break;
+                    }
+
                     if (Ribbon != null)
                     {
                         if (SystemOptions == null)
@@ -2183,18 +2217,16 @@ namespace Chem4Word
                     }
 
                     UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    var autoUpdateFrequency = Constants.DefaultCheckInterval;
+                    if (SystemOptions != null)
+                    {
+                        autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
+                    }
+                    UpdateHelper.CheckForUpdates(autoUpdateFrequency);
                 }
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="document">The document that is being saved.</param>
-        /// <param name="saveAsUi">True if the Save As dialog box is displayed, whether to save a new document, in response to the Save command; or in response to the Save As command; or in response to the SaveAs or SaveAs2 method.</param>
-        /// <param name="cancel">False when the event occurs.
-        /// If the event procedure sets this argument to True, the document is not saved when the procedure is finished.</param>
         private void OnDocumentBeforeSave(Word.Document document, ref bool saveAsUi, ref bool cancel)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
@@ -2263,17 +2295,16 @@ namespace Chem4Word
                     //}
 
                     UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    var autoUpdateFrequency = Constants.DefaultCheckInterval;
+                    if (SystemOptions != null)
+                    {
+                        autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
+                    }
+                    UpdateHelper.CheckForUpdates(autoUpdateFrequency);
                 }
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="document">The document that's being closed.</param>
-        /// <param name="cancel">False when the event occurs.
-        /// If the event procedure sets this argument to True, the document doesn't close when the procedure is finished.</param>
         private void OnDocumentBeforeClose(Word.Document document, ref bool cancel)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
@@ -2335,7 +2366,12 @@ namespace Chem4Word
                     }
 
                     UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    var autoUpdateFrequency = Constants.DefaultCheckInterval;
+                    if (SystemOptions != null)
+                    {
+                        autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
+                    }
+                    UpdateHelper.CheckForUpdates(autoUpdateFrequency);
                 }
             }
         }
@@ -2344,11 +2380,6 @@ namespace Chem4Word
 
         #region Window Events
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="selection">The text selected.
-        /// If no text is selected, the Sel parameter returns either nothing or the first character to the right of the insertion point.</param>
         private void OnWindowSelectionChange(Word.Selection selection)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
@@ -2948,11 +2979,6 @@ namespace Chem4Word
 
         #region Content Control Events
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="newContentControl"></param>
-        /// <param name="inUndoRedo"></param>
         private void OnContentControlAfterAdd(Word.ContentControl newContentControl, bool inUndoRedo)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
@@ -2980,7 +3006,7 @@ namespace Chem4Word
                             var prefix = CustomXmlPartHelper.PrefixFromTag(ccTag);
                             var guid = CustomXmlPartHelper.GuidFromTag(ccTag);
 
-                            var message = $"ContentControl {ccId} added; Looking for structure {ccTag}";
+                            var message = $"ContentControl {ccId} added; Looking for structure {ccTag} in '{thisDocument.Name}'";
                             Telemetry.Write(module, "Information", message);
 
                             var cxml = CustomXmlPartHelper.GetCustomXmlPart(thisDocument, guid);
@@ -2992,10 +3018,11 @@ namespace Chem4Word
                             {
                                 if (Globals.Chem4WordV3.Application.Documents.Count > 1)
                                 {
-                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(guid, thisDocument.Name);
+                                    var foundIn = string.Empty;
+                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(guid, thisDocument.Name, ref foundIn);
                                     if (cxml != null)
                                     {
-                                        Telemetry.Write(module, "Information", $"Found XmlPart for {ccTag} in other document, adding it into this.");
+                                        Telemetry.Write(module, "Information", $"Found XmlPart for {ccTag} in other document '{foundIn}', adding it into this.");
 
                                         // Generate new molecule Guid and apply it
                                         var newGuid = Guid.NewGuid().ToString("N");
@@ -3011,7 +3038,9 @@ namespace Chem4Word
                                         var cmlConverter = new CMLConverter();
                                         var model = cmlConverter.Import(cxml.XML);
                                         model.CustomXmlPartGuid = newGuid;
+
                                         thisDocument.CustomXMLParts.Add(XmlHelper.AddHeader(cmlConverter.Export(model)));
+                                        Telemetry.Write(module, "Information", $"Added XmlPart {newGuid} in document '{thisDocument.Name}'");
                                     }
                                 }
                             }
@@ -3039,7 +3068,7 @@ namespace Chem4Word
         }
 
         /// <summary>
-        ///
+        /// Fires before a content control is deleted
         /// </summary>
         /// <param name="contentControl"></param>
         /// <param name="cancel"></param>
@@ -3072,7 +3101,7 @@ namespace Chem4Word
         }
 
         /// <summary>
-        ///
+        /// Fires when a content control is exited
         /// </summary>
         /// <param name="contentControl"></param>
         /// <param name="cancel"></param>
@@ -3105,7 +3134,7 @@ namespace Chem4Word
         }
 
         /// <summary>
-        ///
+        /// Fires when a content control is entered
         /// </summary>
         /// <param name="contentControl"></param>
         private void OnContentControlOnEnter(Word.ContentControl contentControl)

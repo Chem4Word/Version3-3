@@ -32,15 +32,15 @@ namespace Chem4Word.ACME.Drawing.Visuals
             }
         }
 
-        public FunctionalGroupVisual(Atom parent, bool showInColour)
-            : base(parent, showInColour, true, true)
+        public FunctionalGroupVisual(Atom parent, Model model)
+            : base(parent, model)
         {
             ParentGroup = (FunctionalGroup)parent.Element;
         }
 
         public override void Render()
         {
-            Render(ParentAtom.Position, ShowInColour ? ParentGroup.Colour : "#000000");
+            Render(ParentAtom.Position, ShowThisAtomInColour ? ParentGroup.Colour : "#000000");
         }
 
         private void Render(Point location, string colour)

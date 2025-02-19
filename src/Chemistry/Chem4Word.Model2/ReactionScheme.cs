@@ -98,9 +98,9 @@ namespace Chem4Word.Model2
                 foreach (var oldItem in e.OldItems)
                 {
                     var r = (Reaction)oldItem;
-                    r.ReactantsChanged -= Reaction_ReactantsChanged;
-                    r.ProductsChanged -= Reaction_ProductsChanged;
-                    r.PropertyChanged -= Reaction_PropertyChanged;
+                    r.ReactantsChanged -= OnReactantsChanged_Reaction;
+                    r.ProductsChanged -= OnProductsChanged_Reaction;
+                    r.PropertyChanged -= OnPropertyChanged_Reaction;
                 }
             }
 
@@ -109,24 +109,24 @@ namespace Chem4Word.Model2
                 foreach (var newItem in e.NewItems)
                 {
                     var r = (Reaction)newItem;
-                    r.ReactantsChanged += Reaction_ReactantsChanged;
-                    r.ProductsChanged += Reaction_ProductsChanged;
-                    r.PropertyChanged += Reaction_PropertyChanged;
+                    r.ReactantsChanged += OnReactantsChanged_Reaction;
+                    r.ProductsChanged += OnProductsChanged_Reaction;
+                    r.PropertyChanged += OnPropertyChanged_Reaction;
                 }
             }
         }
 
-        private void Reaction_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged_Reaction(object sender, PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(sender, e);
         }
 
-        private void Reaction_ProductsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnProductsChanged_Reaction(object sender, NotifyCollectionChangedEventArgs e)
         {
             // Don't do anything for now
         }
 
-        private void Reaction_ReactantsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnReactantsChanged_Reaction(object sender, NotifyCollectionChangedEventArgs e)
         {
             // Don't do anything for now
         }

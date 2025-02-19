@@ -601,7 +601,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                 if (boundingBox != Rect.Empty)
                 {
                     boundingBox.Union(thisMoleculeExtents.ExternalCharacterExtents);
-                    if (Inputs.Options.ShowMoleculeGrouping)
+                    if (Inputs.Model.ShowMoleculeGrouping)
                     {
                         boundingBox = Inflate(boundingBox, OoXmlHelper.BracketOffset(Inputs.MeanBondLength));
                         Outputs.GroupBrackets.Add(boundingBox);
@@ -891,20 +891,15 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var atomLabel = atom.SymbolText;
-            if (Inputs.Options.ShowCarbons
-                && atom.Element is Element e
-                && e == Globals.PeriodicTable.C)
-            {
-                atomLabel = e.Symbol;
-            }
+            var atomSymbol = atom.AtomSymbol;
+            var showImplicitHydrogenCharacters = atom.ShowImplicitHydrogenCharacters;
 
-            if (!string.IsNullOrEmpty(atomLabel))
+            if (!string.IsNullOrEmpty(atomSymbol))
             {
                 #region Set Up Atom Colour
 
                 string atomColour = OoXmlHelper.Black;
-                if (Inputs.Options.ColouredAtoms
+                if (Inputs.Model.ShowColouredAtoms
                     && atom.Element.Colour != null)
                 {
                     atomColour = atom.Element.Colour;
@@ -917,12 +912,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                 // Create main character group
                 var main = new GroupOfCharacters(atom.Position, atom.Path, atom.Parent.Path,
                                                  Inputs.TtfCharacterSet, Inputs.MeanBondLength);
-                main.AddString(atomLabel, atomColour);
+                main.AddString(atomSymbol, atomColour);
 
                 // Create a special group for the first character
                 var firstCharacter = new GroupOfCharacters(atom.Position, atom.Path, atom.Parent.Path,
                                                            Inputs.TtfCharacterSet, Inputs.MeanBondLength);
-                firstCharacter.AddCharacter(atomLabel[0], atomColour);
+                firstCharacter.AddCharacter(atomSymbol[0], atomColour);
 
                 // Distance to move horizontally to midpoint of whole label
                 var x = atom.Position.X - main.Centre.X;
@@ -932,16 +927,15 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                 // Move to new position
                 main.AdjustPosition(new Vector(x, y));
 
-                // Create other character groups
-
-                // Implicit Hydrogens
-                GroupOfCharacters hydrogens = null;
-
-                // Determine position of implicit hydrogens if any
+                // Get orientation of other character groups
                 var orientation = atom.ImplicitHPlacement;
 
-                if (Inputs.Options.ShowHydrogens)
+                // Implicit Hydrogen Labels
+                GroupOfCharacters hydrogens = null;
+
+                if (showImplicitHydrogenCharacters)
                 {
+                    // Determine position of implicit hydrogen labels
                     var implicitHCount = atom.ImplicitHydrogenCount;
                     if (implicitHCount > 0)
                     {
@@ -1139,7 +1133,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             #region Set Up Atom Colour
 
             var atomColour = OoXmlHelper.Black;
-            if (Inputs.Options.ColouredAtoms
+            if (Inputs.Model.ShowColouredAtoms
                 && fg?.Colour != null)
             {
                 atomColour = fg.Colour;

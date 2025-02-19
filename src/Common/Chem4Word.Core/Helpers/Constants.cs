@@ -25,6 +25,8 @@ namespace Chem4Word.Core.Helpers
         public const string DefaultEditorPlugIn = "ACME Structure Editor";
         public const string DefaultRendererPlugIn = "Open Office Xml Renderer V4";
 
+        public const int DefaultCheckInterval = 7;
+
         // Registry Locations
         public const string Chem4WordRegistryKey = @"SOFTWARE\Chem4Word V3";
 
@@ -42,6 +44,7 @@ namespace Chem4Word.Core.Helpers
         public const string Chem4WordAzureSettingsRegistryKey = @"SOFTWARE\Chem4Word V3\AzureSettings";
 
         public const string XmlFileHeader = "<?xml version='1.0' encoding='utf-8'?>";
+        public const string DummyMachineGuid = "90160000-000F-0000-0000-0000000FF1CE";
 
         // Update Checks
         public const int MaximumVersionsBehind = 7;

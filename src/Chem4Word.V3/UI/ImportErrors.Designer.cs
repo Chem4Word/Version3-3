@@ -91,7 +91,7 @@
             this.Abort.TabIndex = 0;
             this.Abort.Text = "Abort";
             this.Abort.UseVisualStyleBackColor = true;
-            this.Abort.Click += new System.EventHandler(this.Abort_Click);
+            this.Abort.Click += new System.EventHandler(this.OnClick_Abort);
             // 
             // Continue
             // 
@@ -104,7 +104,7 @@
             this.Continue.TabIndex = 1;
             this.Continue.Text = "Continue";
             this.Continue.UseVisualStyleBackColor = true;
-            this.Continue.Click += new System.EventHandler(this.Continue_Click);
+            this.Continue.Click += new System.EventHandler(this.OnClick_Continue);
             // 
             // label4
             // 
@@ -216,8 +216,8 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "ImportErrors";
             this.Text = "Import Error(s) or Warnings(s)";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ImportErrors_FormClosing);
-            this.Load += new System.EventHandler(this.ImportErrors_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing_ImportErrors);
+            this.Load += new System.EventHandler(this.OnLoad_ImportErrors);
             this.OuterSplitContainer.Panel1.ResumeLayout(false);
             this.OuterSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.OuterSplitContainer)).EndInit();

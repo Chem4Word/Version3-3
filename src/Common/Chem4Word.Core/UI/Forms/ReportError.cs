@@ -9,8 +9,10 @@ using Chem4Word.Core.Helpers;
 using IChem4Word.Contracts;
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using Color = System.Drawing.Color;
 
 namespace Chem4Word.Core.UI.Forms
 {
@@ -50,7 +52,7 @@ namespace Chem4Word.Core.UI.Forms
             }
         }
 
-        private void ErrorReport_Load(object sender, EventArgs e)
+        private void OnLoad_ErrorReport(object sender, EventArgs e)
         {
             if (!PointHelper.PointIsEmpty(TopLeft))
             {
@@ -72,13 +74,13 @@ namespace Chem4Word.Core.UI.Forms
             }
         }
 
-        private void btnSubmit_Click(object sender, EventArgs e)
+        private void OnClick_Submit(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        private void ReportError_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_ReportError(object sender, FormClosingEventArgs e)
         {
             if (_telemetry != null)
             {
@@ -105,11 +107,18 @@ namespace Chem4Word.Core.UI.Forms
             }
         }
 
-        private void KBLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void OnLinkClicked_KBLinkLabel(object sender, LinkLabelLinkClickedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
             Process.Start("https://www.chem4word.co.uk/knowledge-base/");
+        }
+
+        private void OnTextChanged_UserEmailAddress(object sender, EventArgs e)
+        {
+            UserEmailAddress.BackColor = StringHelper.IsValidEmail(UserEmailAddress.Text)
+                ? SystemColors.Window
+                : Color.Salmon;
         }
     }
 }

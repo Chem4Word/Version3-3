@@ -9,12 +9,12 @@
     Width="800"
     Height="450"
     mc:Ignorable="d">
-    <Grid>
+    <Grid d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <Grid>
+        <Grid d:IsLocked="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -23,7 +23,8 @@
                 Grid.Column="0"
                 Width="75"
                 Height="75"
-                Click="ButtonBase_OnClick"
+                d:IsLocked="True"
+                Click="OnClick_ButtonBase"
                 Tag="Start">
                 Start
             </Button>
@@ -31,11 +32,15 @@
                 Grid.Column="1"
                 Width="75"
                 Height="75"
-                Click="ButtonBase_OnClick"
+                d:IsLocked="True"
+                Click="OnClick_ButtonBase"
                 Tag="Stop">
                 Stop
             </Button>
         </Grid>
-        <ProgressBar x:Name="ProgressBar" Grid.Row="1" />
+        <ProgressBar
+            x:Name="ProgressBar"
+            Grid.Row="1"
+            d:IsLocked="True" />
     </Grid>
 </Window>

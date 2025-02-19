@@ -60,7 +60,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         #region Methods
 
-        private void SearchFor_TextChanged(object sender, EventArgs e)
+        private void OnTextChanged_SearchFor(object sender, EventArgs e)
         {
             SearchButton.Enabled = TextHelper.IsValidSearchString(SearchFor.Text);
         }
@@ -91,7 +91,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                 getLiteEntityResponse results;
 
                 var securityProtocol = ServicePointManager.SecurityProtocol;
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 ws.Url = UserOptions.ChEBIWebServiceUri;
                 ws.UserAgent = "Chem4Word";
@@ -160,7 +160,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             using (new WaitCursor())
             {
                 var securityProtocol = ServicePointManager.SecurityProtocol;
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 ChebiWebServiceService ws = new ChebiWebServiceService();
                 getCompleteEntityResponse results;
@@ -182,7 +182,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
         }
 
-        private void ImportButton_Click(object sender, EventArgs e)
+        private void OnClick_ImportButton(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -259,7 +259,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             return string.Join(Environment.NewLine, lines);
         }
 
-        private void ShowMolfile_Click(object sender, EventArgs e)
+        private void OnClick_ShowMolfile(object sender, EventArgs e)
         {
             if (_lastModel != null)
             {
@@ -269,7 +269,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
         }
 
-        private void ResultsListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void OnMouseDoubleClick_ResultsListView(object sender, MouseEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -302,7 +302,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
         }
 
-        private void ResultsListView_SelectedIndexChanged(object sender, EventArgs e)
+        private void OnSelectedIndexChanged_ResultsListView(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -327,7 +327,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
         }
 
-        private void SearchButton_Click(object sender, EventArgs e)
+        private void OnClick_SearchButton(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -352,7 +352,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
         }
 
-        private void SearchChEBI_Load(object sender, EventArgs e)
+        private void OnLoad_SearchChEBI(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try

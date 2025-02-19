@@ -46,19 +46,19 @@ namespace Chem4Word.ACME.Behaviors
             _lastCursor = CurrentEditor.Cursor;
             CurrentEditor.Cursor = CursorUtils.Pencil;
 
-            CurrentEditor.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.MouseMove += CurrentEditor_MouseMove;
-            CurrentEditor.MouseLeftButtonUp += CurrentEditor_MouseLeftButtonUp;
-            CurrentEditor.KeyDown += CurrentEditor_KeyDown;
+            CurrentEditor.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseMove += OnMouseMove_CurrentEditor;
+            CurrentEditor.MouseLeftButtonUp += OnMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.KeyDown += OnKeyDown_CurrentEditor;
             CurrentEditor.IsHitTestVisible = true;
             CurrentEditor.Focusable = true;
             if (_parent != null)
             {
-                _parent.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
+                _parent.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
         }
 
-        private void CurrentEditor_KeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown_CurrentEditor(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
@@ -99,7 +99,7 @@ namespace Chem4Word.ACME.Behaviors
             return e.LeftButton == MouseButtonState.Pressed & IsDrawing;
         }
 
-        private void CurrentEditor_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.ReleaseMouseCapture();
             CurrentStatus = "";
@@ -116,7 +116,7 @@ namespace Chem4Word.ACME.Behaviors
             ClearTemporaries();
         }
 
-        private void CurrentEditor_MouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove_CurrentEditor(object sender, MouseEventArgs e)
         {
             var currentPos = e.GetPosition(CurrentEditor);
             var displacement = currentPos - LastPos;
@@ -133,7 +133,7 @@ namespace Chem4Word.ACME.Behaviors
             }
         }
 
-        private void CurrentEditor_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             var position = e.GetPosition(CurrentEditor);
 
@@ -147,9 +147,9 @@ namespace Chem4Word.ACME.Behaviors
         {
             base.OnDetaching();
 
-            CurrentEditor.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.MouseLeftButtonUp -= CurrentEditor_MouseLeftButtonUp;
-            CurrentEditor.MouseMove -= CurrentEditor_MouseMove;
+            CurrentEditor.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseLeftButtonUp -= OnMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.MouseMove -= OnMouseMove_CurrentEditor;
 
             CurrentStatus = "";
             CurrentEditor.Cursor = _lastCursor;

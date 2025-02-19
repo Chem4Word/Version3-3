@@ -70,7 +70,6 @@ namespace Chem4Word.ACME
         private Dictionary<int, BondOption> _bondOptions = new Dictionary<int, BondOption>();
         private int? _selectedBondOptionId;
 
-        public AcmeOptions EditorOptions { get; set; }
         private IChem4WordTelemetry Telemetry { get; set; }
         private BaseEditBehavior _activeMode;
 
@@ -436,6 +435,7 @@ namespace Chem4Word.ACME
         public ObservableCollection<AtomOption> AtomOptions { get; set; }
 
         public bool IsDirty => UndoManager.CanUndo;
+        public bool HasChangedSettings { get; set; }
 
         private AnnotationEditor _annotationEditor;
         private bool _isBlockEditing;
@@ -493,7 +493,7 @@ namespace Chem4Word.ACME
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SelectedItems_Changed(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnChanged_SelectedItems(object sender, NotifyCollectionChangedEventArgs e)
         {
             var newObjects = e.NewItems;
             var oldObjects = e.OldItems;
@@ -521,7 +521,7 @@ namespace Chem4Word.ACME
             UpdateCommandStatuses();
         }
 
-        private void MolAdorner_DragCompleted(object sender, DragCompletedEventArgs e)
+        private void OnDragCompleted_MolAdorner(object sender, DragCompletedEventArgs e)
         {
             //we've completed the drag operation
             //remove the existing molecule adorner
@@ -535,7 +535,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        private void AtomAdorner_DragCompleted(object sender, DragCompletedEventArgs e)
+        private void OnDragCompleted_AtomAdorner(object sender, DragCompletedEventArgs e)
         {
             //we've completed the drag operation
             //remove the existing molecule adorner
@@ -548,7 +548,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        private void SelAdorner_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_SelAdorner(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
             {
@@ -626,7 +626,7 @@ namespace Chem4Word.ACME
             Telemetry = telemetry;
 
             ClipboardMonitor = new ClipboardMonitor();
-            ClipboardMonitor.OnClipboardContentChanged += ClipboardMonitor_OnClipboardContentChanged;
+            ClipboardMonitor.OnClipboardContentChanged += OnClipboardContentChanged_ClipboardMonitor;
 
             AtomOptions = new ObservableCollection<AtomOption>();
             LoadAtomOptions();
@@ -634,7 +634,7 @@ namespace Chem4Word.ACME
 
             _selectedItems = new ObservableCollection<object>();
             SelectedItems = new ReadOnlyObservableCollection<object>(_selectedItems);
-            _selectedItems.CollectionChanged += SelectedItems_Changed;
+            _selectedItems.CollectionChanged += OnChanged_SelectedItems;
 
             UndoManager = new UndoHandler(this, telemetry);
 
@@ -705,7 +705,7 @@ namespace Chem4Word.ACME
             ClearReactionRolesCommand = new ClearReactionRolesCommand(this);
         }
 
-        private void ClipboardMonitor_OnClipboardContentChanged(object sender, EventArgs e)
+        private void OnClipboardContentChanged_ClipboardMonitor(object sender, EventArgs e)
         {
             PasteCommand.RaiseCanExecChanged();
         }
@@ -1901,19 +1901,20 @@ namespace Chem4Word.ACME
 
         public void CopySelection()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
 
-                CMLConverter converter = new CMLConverter();
-                Model tempModel = new Model();
+                var converter = new CMLConverter();
+                var tempModel = new Model();
                 //if selection isn't null
                 if (SelectedItems.Count > 0)
                 {
-                    HashSet<Atom> copiedAtoms = new HashSet<Atom>();
+                    var copiedAtoms = new HashSet<Atom>();
+
                     //iterate through the active selection
-                    foreach (object selectedItem in SelectedItems)
+                    foreach (var selectedItem in SelectedItems)
                     {
                         //if the current selection is a molecule
                         if (selectedItem is Molecule molecule)
@@ -1922,7 +1923,7 @@ namespace Chem4Word.ACME
                         }
                         else if (selectedItem is Reaction reaction)
                         {
-                            //TODO: [DCD] Handle multiple reaction schemes in future. This is a kludge
+                            //TODO: [DCD] Handle multiple reaction schemes in the future. This is a kludge
                             tempModel.DefaultReactionScheme.AddReaction(reaction);
                         }
                         else if (selectedItem is Annotation annotation)
@@ -1936,16 +1937,16 @@ namespace Chem4Word.ACME
                     }
 
                     //keep track of added atoms
-                    Dictionary<string, Atom> aa = new Dictionary<string, Atom>();
+                    var aa = new Dictionary<string, Atom>();
                     //while the atom copy list isn't empty
                     while (copiedAtoms.Any())
                     {
-                        Atom seedAtom = copiedAtoms.First();
+                        var seedAtom = copiedAtoms.First();
                         //create a new molecule
-                        Molecule newMol = new Molecule();
-                        Molecule oldParent = seedAtom.Parent;
+                        var newMol = new Molecule();
+                        var oldParent = seedAtom.Parent;
 
-                        HashSet<Atom> thisAtomGroup = new HashSet<Atom>();
+                        var thisAtomGroup = new HashSet<Atom>();
 
                         //Traverse the molecule, excluding atoms that have been processed and bonds that aren't in the list
                         oldParent.TraverseBFS(seedAtom,
@@ -1962,9 +1963,9 @@ namespace Chem4Word.ACME
 
                         //add the atoms and bonds to the new molecule
 
-                        foreach (Atom thisAtom in thisAtomGroup)
+                        foreach (var thisAtom in thisAtomGroup)
                         {
-                            Atom a = new Atom
+                            var a = new Atom
                             {
                                 Id = thisAtom.Id,
                                 Position = thisAtom.Position,
@@ -1980,17 +1981,17 @@ namespace Chem4Word.ACME
                         }
 
                         Bond thisBond = null;
-                        List<Bond> copiedBonds = new List<Bond>();
-                        foreach (Atom startAtom in thisAtomGroup)
+                        var copiedBonds = new List<Bond>();
+                        foreach (var startAtom in thisAtomGroup)
                         {
-                            foreach (Atom otherAtom in thisAtomGroup)
+                            foreach (var otherAtom in thisAtomGroup)
                             {
                                 if ((thisBond = startAtom.BondBetween(otherAtom)) != null && !copiedBonds.Contains(thisBond))
                                 {
                                     copiedBonds.Add(thisBond);
-                                    Atom s = aa[thisBond.StartAtom.Id];
-                                    Atom e = aa[thisBond.EndAtom.Id];
-                                    Bond b = new Bond(s, e)
+                                    var s = aa[thisBond.StartAtom.Id];
+                                    var e = aa[thisBond.EndAtom.Id];
+                                    var b = new Bond(s, e)
                                     {
                                         Id = thisBond.Id,
                                         Order = thisBond.Order,
@@ -2009,7 +2010,7 @@ namespace Chem4Word.ACME
                     }
 
                     tempModel.RescaleForCml();
-                    string export = converter.Export(tempModel);
+                    var export = converter.Export(tempModel);
                     Clipboard.Clear();
                     IDataObject ido = new DataObject();
                     ido.SetData(FormatCML, export);
@@ -2049,7 +2050,7 @@ namespace Chem4Word.ACME
                 if (SelectionAdorners.ContainsKey(bond))
                 {
                     var selectionAdorner = SelectionAdorners[bond];
-                    selectionAdorner.MouseLeftButtonDown -= SelAdorner_MouseLeftButtonDown;
+                    selectionAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_SelAdorner;
                     layer.Remove(selectionAdorner);
                     SelectionAdorners.Remove(bond);
                 }
@@ -2060,7 +2061,7 @@ namespace Chem4Word.ACME
                 if (SelectionAdorners.ContainsKey(atom))
                 {
                     var selectionAdorner = SelectionAdorners[atom];
-                    selectionAdorner.MouseLeftButtonDown -= SelAdorner_MouseLeftButtonDown;
+                    selectionAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_SelAdorner;
                     layer.Remove(selectionAdorner);
                     SelectionAdorners.Remove(atom);
                 }
@@ -2135,7 +2136,7 @@ namespace Chem4Word.ACME
             {
                 if (MultiAdorner != null)
                 {
-                    MultiAdorner.MouseLeftButtonDown -= SelAdorner_MouseLeftButtonDown;
+                    MultiAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_SelAdorner;
                     var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
                     layer.Remove(MultiAdorner);
                     MultiAdorner = null;
@@ -2148,7 +2149,7 @@ namespace Chem4Word.ACME
                 if (selAtomBonds.Any())
                 {
                     MultiAdorner = new MultiAtomBondAdorner(CurrentEditor, selAtomBonds);
-                    MultiAdorner.MouseLeftButtonDown += SelAdorner_MouseLeftButtonDown;
+                    MultiAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_SelAdorner;
                 }
             }
             catch (Exception exception)
@@ -2169,9 +2170,9 @@ namespace Chem4Word.ACME
                     {
                         var msAdorner = (MoleculeSelectionAdorner)selectionAdorner;
 
-                        msAdorner.DragIsCompleted -= MolAdorner_DragCompleted;
-                        msAdorner.MouseLeftButtonDown -= SelAdorner_MouseLeftButtonDown;
-                        (msAdorner as SingleObjectSelectionAdorner).DragIsCompleted -= MolAdorner_DragCompleted;
+                        msAdorner.DragIsCompleted -= OnDragCompleted_MolAdorner;
+                        msAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_SelAdorner;
+                        (msAdorner as SingleObjectSelectionAdorner).DragIsCompleted -= OnDragCompleted_MolAdorner;
                     }
 
                     layer.Remove(selectionAdorner);
@@ -2215,8 +2216,8 @@ namespace Chem4Word.ACME
                     SelectionAdorners[mol] = atomAdorner;
                 }
 
-                atomAdorner.MouseLeftButtonDown += SelAdorner_MouseLeftButtonDown;
-                atomAdorner.DragIsCompleted += AtomAdorner_DragCompleted;
+                atomAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_SelAdorner;
+                atomAdorner.DragIsCompleted += OnDragCompleted_AtomAdorner;
             }
             else if (allGroups)
             {
@@ -2229,8 +2230,8 @@ namespace Chem4Word.ACME
                     {
                         SelectionAdorners[mol] = groupAdorner;
                     }
-                    groupAdorner.MouseLeftButtonDown += SelAdorner_MouseLeftButtonDown;
-                    groupAdorner.DragIsCompleted += AtomAdorner_DragCompleted;
+                    groupAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_SelAdorner;
+                    groupAdorner.DragIsCompleted += OnDragCompleted_AtomAdorner;
                 }
                 else //some reactions & groups
                 {
@@ -2249,8 +2250,8 @@ namespace Chem4Word.ACME
                     {
                         SelectionAdorners[mol] = molAdorner;
                     }
-                    molAdorner.MouseLeftButtonDown += SelAdorner_MouseLeftButtonDown;
-                    molAdorner.DragIsCompleted += AtomAdorner_DragCompleted;
+                    molAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_SelAdorner;
+                    molAdorner.DragIsCompleted += OnDragCompleted_AtomAdorner;
                 }
                 else //some reactions & molecules
                 {
@@ -2272,14 +2273,14 @@ namespace Chem4Word.ACME
                         var r = allReactions.First();
                         var reactionAdorner = new ReactionSelectionAdorner(CurrentEditor, CurrentEditor.ChemicalVisuals[r] as ReactionVisual);
                         SelectionAdorners[r] = reactionAdorner;
-                        reactionAdorner.MouseLeftButtonDown += SelAdorner_MouseLeftButtonDown;
+                        reactionAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_SelAdorner;
                     }
                     if (allAnnotations.Any())
                     {
                         var a = allAnnotations.First();
                         var annotationAdorner = new SingleObjectSelectionAdorner(CurrentEditor, new List<BaseObject> { a });
                         SelectionAdorners[a] = annotationAdorner;
-                        annotationAdorner.MouseLeftButtonDown += SelAdorner_MouseLeftButtonDown;
+                        annotationAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_SelAdorner;
                     }
                 }
             }
@@ -2865,7 +2866,7 @@ namespace Chem4Word.ACME
             CheckModelIntegrity(module);
         }
 
-        private void ReactionAdorner_DragCompleted(object sender, DragCompletedEventArgs e)
+        private void OnDragCompleted_ReactionAdorner(object sender, DragCompletedEventArgs e)
         {
             //we've completed the drag operation
             //remove the existing molecule adorner
@@ -3784,7 +3785,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        public void UpdateAtom(Atom atom, AtomPropertiesModel model)
+        public void UpdateAtom(Atom atom, AtomPropertiesModel atomPropertiesModel)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -3796,27 +3797,31 @@ namespace Chem4Word.ACME
                 CompassPoints? explicitFGPlacementBefore = atom.ExplicitFunctionalGroupPlacement;
                 int? isotopeBefore = atom.IsotopeNumber;
                 bool? explicitCBefore = atom.ExplicitC;
+                HydrogenLabels? explicitHBefore = atom.ExplicitH;
+
                 CompassPoints? hydrogenPlacementBefore = atom.ExplicitHPlacement;
 
-                ElementBase elementBaseAfter = model.Element;
+                ElementBase elementBaseAfter = atomPropertiesModel.Element;
                 int? chargeAfter = null;
                 int? isotopeAfter = null;
                 bool? explicitCAfter = null;
+                HydrogenLabels? explictHAfter = null;
 
                 CompassPoints? hydrogenPlacementAfter = null;
                 CompassPoints? explicitFGPlacementAfter = null;
                 if (elementBaseAfter is FunctionalGroup)
                 {
-                    explicitFGPlacementAfter = model.ExplicitFunctionalGroupPlacement;
+                    explicitFGPlacementAfter = atomPropertiesModel.ExplicitFunctionalGroupPlacement;
                 }
                 else if (elementBaseAfter is Element)
                 {
-                    chargeAfter = model.Charge;
-                    explicitCAfter = model.ExplicitC;
-                    hydrogenPlacementAfter = model.ExplicitHydrogenPlacement;
-                    if (!string.IsNullOrEmpty(model.Isotope))
+                    chargeAfter = atomPropertiesModel.Charge;
+                    explicitCAfter = atomPropertiesModel.ExplicitC;
+                    explictHAfter = atomPropertiesModel.ExplicitH;
+                    hydrogenPlacementAfter = atomPropertiesModel.ExplicitHydrogenPlacement;
+                    if (!string.IsNullOrEmpty(atomPropertiesModel.Isotope))
                     {
-                        isotopeAfter = int.Parse(model.Isotope);
+                        isotopeAfter = int.Parse(atomPropertiesModel.Isotope);
                     }
                 }
 
@@ -3826,6 +3831,7 @@ namespace Chem4Word.ACME
                                   atom.FormalCharge = chargeAfter;
                                   atom.IsotopeNumber = isotopeAfter;
                                   atom.ExplicitC = explicitCAfter;
+                                  atom.ExplicitH = explictHAfter;
                                   atom.ExplicitHPlacement = hydrogenPlacementAfter;
                                   atom.ExplicitFunctionalGroupPlacement = explicitFGPlacementAfter;
                                   atom.Parent.UpdateVisual();
@@ -3843,6 +3849,7 @@ namespace Chem4Word.ACME
                                   atom.FormalCharge = chargeBefore;
                                   atom.IsotopeNumber = isotopeBefore;
                                   atom.ExplicitC = explicitCBefore;
+                                  atom.ExplicitH = explicitHBefore;
                                   atom.ExplicitHPlacement = hydrogenPlacementBefore;
                                   atom.ExplicitFunctionalGroupPlacement = explicitFGPlacementBefore;
                                   atom.Parent.UpdateVisual();
@@ -3875,12 +3882,17 @@ namespace Chem4Word.ACME
                 WriteTelemetry(module, "Debug", "Called");
 
                 bool? showBefore = target.ShowMoleculeBrackets;
-                bool? showAfter = source.ShowMoleculeBrackets;
+                bool? showCarbonBefore = target.ExplicitC;
+                HydrogenLabels? hydrogenLabelsBefore = target.ExplicitH;
                 int? chargeBefore = target.FormalCharge;
-                int? chargeAfter = source.FormalCharge;
                 int? countBefore = target.Count;
-                int? countAfter = source.Count;
                 int? spinBefore = target.SpinMultiplicity;
+
+                bool? showAfter = source.ShowMoleculeBrackets;
+                bool? showCarbonAfter = source.ExplicitC;
+                HydrogenLabels? hydrogenLabelsAfter = source.ExplicitH;
+                int? chargeAfter = source.FormalCharge;
+                int? countAfter = source.Count;
                 int? spinAfter = source.SpinMultiplicity;
 
                 //caches the properties for undo/redo
@@ -3889,9 +3901,12 @@ namespace Chem4Word.ACME
                 Action redo = () =>
                 {
                     target.ShowMoleculeBrackets = showAfter;
+                    target.ExplicitC = showCarbonAfter;
+                    target.ExplicitH = hydrogenLabelsAfter;
                     target.FormalCharge = chargeAfter;
                     target.Count = countAfter;
                     target.SpinMultiplicity = spinAfter;
+                    target.UpdateVisual();
 
                     StashProperties(source, sourceProps);
                     UnstashProperties(target, sourceProps);
@@ -3900,9 +3915,12 @@ namespace Chem4Word.ACME
                 Action undo = () =>
                 {
                     target.ShowMoleculeBrackets = showBefore;
+                    target.ExplicitC = showCarbonBefore;
+                    target.ExplicitH = hydrogenLabelsBefore;
                     target.FormalCharge = chargeBefore;
                     target.Count = countBefore;
                     target.SpinMultiplicity = spinBefore;
+                    target.UpdateVisual();
 
                     UnstashProperties(target, sourceProps);
                 };
@@ -5130,21 +5148,21 @@ namespace Chem4Word.ACME
             }
 
             ActiveBlockEditor = BlockEditor;
-            BlockEditor.Completed += BlockEditor_EditorClosed;
-            BlockEditor.SelectionChanged += BlockEditor_SelectionChanged;
+            BlockEditor.Completed += OnEditorClosed_BlockEditor;
+            BlockEditor.SelectionChanged += OnSelectionChanged_BlockEditor;
             IsBlockEditing = true;
             SendStatus(EditingTextStatus);
             BlockEditor.Focus();
         }
 
-        private void BlockEditor_SelectionChanged(object sender, RoutedEventArgs e)
+        private void OnSelectionChanged_BlockEditor(object sender, RoutedEventArgs e)
         {
             SelectionIsSubscript = BlockEditor.SelectionIsSubscript;
             SelectionIsSuperscript = BlockEditor.SelectionIsSuperscript;
         }
 
         // Event handler on termination of the textblock editor
-        private void BlockEditor_EditorClosed(object sender, AnnotationEditorEventArgs e)
+        private void OnEditorClosed_BlockEditor(object sender, AnnotationEditorEventArgs e)
         {
             var activeEditor = (AnnotationEditor)sender;
             if (e.Reason != AnnotationEditorExitArgsType.Aborted)
@@ -5153,8 +5171,8 @@ namespace Chem4Word.ACME
             }
             activeEditor.Visibility = Visibility.Collapsed;
             activeEditor.Clear();
-            activeEditor.Completed -= BlockEditor_EditorClosed;
-            activeEditor.SelectionChanged -= BlockEditor_SelectionChanged;
+            activeEditor.Completed -= OnEditorClosed_BlockEditor;
+            activeEditor.SelectionChanged -= OnSelectionChanged_BlockEditor;
             activeEditor.Controller = null;
             IsBlockEditing = false;
             ActiveBlockEditor = null;
@@ -5247,10 +5265,10 @@ namespace Chem4Word.ACME
                 WriteTelemetry(module, "Debug", $"Adding Annotation '{text}'");
 
                 var newSymbol = new Annotation
-                                {
-                                    Position = pos,
-                                    IsEditable = isEditable,
-                                    SymbolSize = BlockTextSize
+                {
+                    Position = pos,
+                    IsEditable = isEditable,
+                    SymbolSize = BlockTextSize
                 };
                 var docElement = new XElement(CMLNamespaces.xaml + "FlowDocument",
                                               new XElement(CMLNamespaces.xaml + "Paragraph",

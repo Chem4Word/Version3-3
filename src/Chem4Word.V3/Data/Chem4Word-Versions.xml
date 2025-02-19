@@ -5,17 +5,17 @@
     <Version>
         <Number>3.3.10 Release 8</Number>
         <IsBeta>false</IsBeta>
-        <Released>01-Jan-2025</Released>
+        <Released>19-Feb-2025</Released>
         <Changes>
-            <Change>...</Change>
+            <Change>New Feature: Showing of Implicit Hydrogen labels and Showing of Carbon labels is now hierarchical</Change>
             <Change>Prohibit search for empty string</Change>
             <Change>Tweaking of list of names to be shown and deduplicate dropdown list for ShowAs</Change>
-            <Change>BugFix: Copy/Paste of 1D structure into new document - Pasted structure not editable.</Change>
+            <Change>BugFix: Copy/Paste of structure into another document - Pasted structure sometimes not editable. (Warning: The CML for this chemistry item can't be found!)</Change>
             <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
             <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
             <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
         </Changes>
-        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.9.Release.7.msi</Url>
+        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.10.Release.8.msi</Url>
     </Version>
     <Version>
         <Number>3.3.9 Release 7</Number>

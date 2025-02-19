@@ -5,8 +5,8 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
 using Chem4Word.ACME.Models;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
@@ -21,7 +21,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Chem4Word.Core.Helpers;
 
 namespace Chem4Word.Library
 {
@@ -33,22 +32,11 @@ namespace Chem4Word.Library
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
-        private AcmeOptions _options;
-
         public LibraryViewControl()
         {
             InitializeComponent();
         }
 
-        public void SetOptions(AcmeOptions options)
-        {
-            _options = options;
-        }
-
-        public bool ShowAllCarbonAtoms => _options.ShowCarbons;
-        public bool ShowImplicitHydrogens => _options.ShowHydrogens;
-        public bool ShowAtomsInColour => _options.ColouredAtoms;
-        public bool ShowMoleculeGrouping => _options.ShowMoleculeGrouping;
         private string _selectedLibrary = string.Empty;
 
         private void OnLoaded_LibraryViewControl(object sender, RoutedEventArgs e)

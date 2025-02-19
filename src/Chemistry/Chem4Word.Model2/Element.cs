@@ -34,6 +34,7 @@ namespace Chem4Word.Model2
         public int Group { get; set; }
         public int Row { get; set; }
         public bool AddHydrogens { get; set; }
+        public bool IsHetero { get; set; }
 
         public override string Colour { get; set; }
 

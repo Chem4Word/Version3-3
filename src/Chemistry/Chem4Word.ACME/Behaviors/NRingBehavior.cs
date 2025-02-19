@@ -55,17 +55,17 @@ namespace Chem4Word.ACME.Behaviors
                 _currentAdorner = value;
                 if (_currentAdorner != null)
                 {
-                    _currentAdorner.MouseLeftButtonDown += CurrentAdorner_MouseLeftButtonDown;
-                    _currentAdorner.MouseLeftButtonUp += CurrentAdorner_MouseLeftButtonUp;
-                    _currentAdorner.PreviewKeyDown += CurrentAdorner_KeyDown;
-                    _currentAdorner.MouseMove += CurrentAdorner_MouseMove;
+                    _currentAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentAdorner;
+                    _currentAdorner.MouseLeftButtonUp += OnMouseLeftButtonUp_CurrentAdorner;
+                    _currentAdorner.PreviewKeyDown += OnKeyDown_CurrentAdorner;
+                    _currentAdorner.MouseMove += OnMouseMove_CurrentAdorner;
                 }
             }
         }
 
-        private void CurrentAdorner_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonUp_CurrentAdorner(object sender, MouseButtonEventArgs e)
         {
-            CurrentEditor_MouseLeftButtonUp(sender, e);
+            OnMouseLeftButtonUp_CurrentEditor(sender, e);
         }
 
         public override void Abort()
@@ -80,9 +80,9 @@ namespace Chem4Word.ACME.Behaviors
             CurrentStatus = DefaultStatusText;
         }
 
-        private void CurrentAdorner_MouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove_CurrentAdorner(object sender, MouseEventArgs e)
         {
-            CurrentEditor_MouseMove(sender, e);
+            OnMouseMove_CurrentEditor(sender, e);
             CurrentStatus = DefaultStatusText;
         }
 
@@ -92,20 +92,20 @@ namespace Chem4Word.ACME.Behaviors
             {
                 var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
                 layer.Remove(_currentAdorner);
-                _currentAdorner.MouseLeftButtonDown -= CurrentAdorner_MouseLeftButtonDown;
-                _currentAdorner.MouseLeftButtonUp -= CurrentAdorner_MouseLeftButtonUp;
-                _currentAdorner.PreviewKeyDown -= CurrentAdorner_KeyDown;
-                _currentAdorner.MouseMove -= CurrentAdorner_MouseMove;
+                _currentAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentAdorner;
+                _currentAdorner.MouseLeftButtonUp -= OnMouseLeftButtonUp_CurrentAdorner;
+                _currentAdorner.PreviewKeyDown -= OnKeyDown_CurrentAdorner;
+                _currentAdorner.MouseMove -= OnMouseMove_CurrentAdorner;
                 _currentAdorner = null;
             }
         }
 
-        private void CurrentAdorner_KeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown_CurrentAdorner(object sender, KeyEventArgs e)
         {
-            CurrentEditor_KeyDown(sender, e);
+            OnKeyDown_CurrentEditor(sender, e);
         }
 
-        private void CurrentEditor_MouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove_CurrentEditor(object sender, MouseEventArgs e)
         {
             Clashing = false;
             CurrentPoint = e.GetPosition(CurrentEditor);
@@ -288,12 +288,12 @@ namespace Chem4Word.ACME.Behaviors
             return 3;
         }
 
-        private void CurrentAdorner_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentAdorner(object sender, MouseButtonEventArgs e)
         {
-            CurrentEditor_MouseLeftButtonDown(sender, e);
+            OnMouseLeftButtonDown_CurrentEditor(sender, e);
         }
 
-        private void CurrentEditor_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             if (!Clashing && MouseIsDown)
             {
@@ -313,7 +313,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentStatus = DefaultStatusText;
         }
 
-        private void CurrentEditor_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             //save the current targeted visual
             Target = CurrentEditor.ActiveVisual;
@@ -336,19 +336,19 @@ namespace Chem4Word.ACME.Behaviors
 
             CurrentEditor.Cursor = CursorUtils.Pencil;
 
-            CurrentEditor.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.MouseMove += CurrentEditor_MouseMove;
-            CurrentEditor.MouseLeftButtonUp += CurrentEditor_MouseLeftButtonUp;
-            CurrentEditor.KeyDown += CurrentEditor_KeyDown;
+            CurrentEditor.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseMove += OnMouseMove_CurrentEditor;
+            CurrentEditor.MouseLeftButtonUp += OnMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.KeyDown += OnKeyDown_CurrentEditor;
             CurrentEditor.IsHitTestVisible = true;
             CurrentEditor.Focusable = true;
             if (_parent != null)
             {
-                _parent.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
+                _parent.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
         }
 
-        private void CurrentEditor_KeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown_CurrentEditor(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
@@ -362,14 +362,14 @@ namespace Chem4Word.ACME.Behaviors
         protected override void OnDetaching()
         {
             CurrentAdorner = null;
-            CurrentEditor.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.MouseMove -= CurrentEditor_MouseMove;
-            CurrentEditor.MouseLeftButtonUp -= CurrentEditor_MouseLeftButtonUp;
-            CurrentEditor.PreviewKeyDown -= CurrentEditor_KeyDown;
+            CurrentEditor.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseMove -= OnMouseMove_CurrentEditor;
+            CurrentEditor.MouseLeftButtonUp -= OnMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.PreviewKeyDown -= OnKeyDown_CurrentEditor;
             CurrentEditor = null;
             if (_parent != null)
             {
-                _parent.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
+                _parent.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
             }
             _parent = null;
         }

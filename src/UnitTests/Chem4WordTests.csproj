@@ -143,6 +143,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="GeneralTests.cs" />
+    <Compile Include="ImplicitHydrogenAndCarbonTests.cs" />
+    <Compile Include="ModelHelper.cs" />
     <Compile Include="PersistenceTests.cs" />
     <Compile Include="FunctionalGroupTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

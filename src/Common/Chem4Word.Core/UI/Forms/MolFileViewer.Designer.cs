@@ -54,7 +54,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MolFileViewer";
             this.Text = "MOLFile Viewer";
-            this.Load += new System.EventHandler(this.TextViewer_Load);
+            this.Load += new System.EventHandler(this.OnLoad_TextViewer);
             this.ResumeLayout(false);
             this.PerformLayout();
 

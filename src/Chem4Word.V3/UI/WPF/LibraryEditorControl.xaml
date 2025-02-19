@@ -291,6 +291,7 @@
             <ComboBox
                 Name="ComboBox"
                 Width="Auto"
+                Height="30"
                 Margin="5,0,5,0"
                 HorizontalAlignment="Left"
                 VerticalContentAlignment="Center"
@@ -488,11 +489,7 @@
                                 HorizontalContentAlignment="Stretch"
                                 DisplayHeight="{Binding ElementName=EditorControl, Path=DisplayHeight, Mode=OneWay}"
                                 DisplayWidth="{Binding ElementName=EditorControl, Path=DisplayWidth, Mode=OneWay}"
-                                ItemMode="Catalogue"
-                                ShowAllCarbonAtoms="{Binding ElementName=EditorControl, Path=ShowAllCarbonAtoms}"
-                                ShowAtomsInColour="{Binding ElementName=EditorControl, Path=ShowAtomsInColour}"
-                                ShowImplicitHydrogens="{Binding ElementName=EditorControl, Path=ShowImplicitHydrogens}"
-                                ShowMoleculeGrouping="{Binding ElementName=EditorControl, Path=ShowMoleculeGrouping}">
+                                ItemMode="Catalogue">
                                 <controls:ChemistryItem.Style>
                                     <Style TargetType="{x:Type controls:ChemistryItem}">
                                         <Style.Triggers>

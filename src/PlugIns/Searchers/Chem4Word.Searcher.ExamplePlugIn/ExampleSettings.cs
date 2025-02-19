@@ -36,7 +36,7 @@ namespace Chem4Word.Searcher.ExamplePlugIn
             InitializeComponent();
         }
 
-        private void Settings_Load(object sender, EventArgs e)
+        private void OnLoad_Settings(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -61,12 +61,12 @@ namespace Chem4Word.Searcher.ExamplePlugIn
             }
         }
 
-        private void chkProperty1_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_Property1(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                SearcherOptions.Property1 = chkProperty1.Checked;
+                SearcherOptions.Property1 = Property1.Checked;
                 _dirty = true;
             }
             catch (Exception ex)
@@ -75,12 +75,12 @@ namespace Chem4Word.Searcher.ExamplePlugIn
             }
         }
 
-        private void chkProperty2_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChanged_Property2(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                SearcherOptions.Property2 = chkProperty2.Checked;
+                SearcherOptions.Property2 = Property2.Checked;
                 _dirty = true;
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace Chem4Word.Searcher.ExamplePlugIn
             }
         }
 
-        private void btnSetDefaults_Click(object sender, EventArgs e)
+        private void OnClick_SetDefaults(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -108,7 +108,7 @@ namespace Chem4Word.Searcher.ExamplePlugIn
             }
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        private void OnClick_Ok(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -126,11 +126,11 @@ namespace Chem4Word.Searcher.ExamplePlugIn
 
         private void RestoreControls()
         {
-            chkProperty2.Checked = SearcherOptions.Property1;
-            chkProperty1.Checked = SearcherOptions.Property2;
+            Property2.Checked = SearcherOptions.Property1;
+            Property1.Checked = SearcherOptions.Property2;
         }
 
-        private void Settings_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_Settings(object sender, FormClosingEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try

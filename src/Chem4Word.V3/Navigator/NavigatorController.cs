@@ -14,7 +14,6 @@ using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using ContentControl = Microsoft.Office.Interop.Word.ContentControl;
@@ -41,11 +40,18 @@ namespace Chem4Word.Navigator
 
         public NavigatorController(Document doc) : this()
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
             //get a reference to the document
             _doc = doc;
+
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"NavigatorController({doc.Name})");
             Parts = _doc.CustomXMLParts.SelectByNamespace(CMLNamespaces.cml.NamespaceName);
-            Parts.PartAfterLoad += OnPartAfterLoad;
-            Parts.PartBeforeDelete += OnPartBeforeDelete;
+
+            Parts.PartAfterLoad -= OnAfterLoad_CustomXmlPart;
+            Parts.PartAfterLoad += OnAfterLoad_CustomXmlPart;
+            Parts.PartBeforeDelete -= OnBeforeDelete_CustomXmlPart;
+            Parts.PartBeforeDelete += OnBeforeDelete_CustomXmlPart;
 
             LoadModel();
         }
@@ -55,7 +61,7 @@ namespace Chem4Word.Navigator
         /// </summary>
         private void LoadModel()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -64,23 +70,28 @@ namespace Chem4Word.Navigator
                 {
                     NavigatorItems.Clear();
                 }
+
                 if (_doc != null)
                 {
                     var added = new Dictionary<string, int>();
 
-                    var navItems = from ContentControl ccs in _doc.ContentControls
-                                   join CustomXMLPart part in Parts
-                                     on CustomXmlPartHelper.GuidFromTag(ccs?.Tag) equals CustomXmlPartHelper.GetCmlId(part)
-                                   orderby ccs.Range.Start
-                                   let chemModel = converter.Import(part.XML)
-                                   select new ChemistryObject
-                                   {
-                                       CustomControlTag = CustomXmlPartHelper.GuidFromTag(ccs?.Tag),
-                                       Chemistry = part.XML,
-                                       Formula = chemModel.ConciseFormula
-                                   };
+                    var items = from ContentControl ccs in _doc.ContentControls
+                                join CustomXMLPart part in Parts
+                                    on CustomXmlPartHelper.GuidFromTag(ccs?.Tag) equals CustomXmlPartHelper.GetCmlId(part)
+                                orderby ccs.Range.Start
+                                let chemModel = converter.Import(part.XML)
+                                select new ChemistryObject
+                                {
+                                    CustomControlTag = CustomXmlPartHelper.GuidFromTag(ccs?.Tag),
+                                    Chemistry = part.XML,
+                                    Formula = chemModel.ConciseFormula
+                                };
 
-                    foreach (var chemistryObject in navItems)
+                    var chemistryObjects = items.ToList();
+
+                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Found {chemistryObjects.Count} XmlParts in document '{_doc.Name}'");
+
+                    foreach (var chemistryObject in chemistryObjects)
                     {
                         if (!string.IsNullOrEmpty(chemistryObject.CustomControlTag)
                             && !added.ContainsKey(chemistryObject.CustomControlTag))
@@ -90,7 +101,7 @@ namespace Chem4Word.Navigator
                         }
                     }
 
-                    Debug.WriteLine("Number of items loaded = {0}", NavigatorItems.Count);
+                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Number of Navigator items loaded = {NavigatorItems.Count}");
                 }
             }
             catch (Exception ex)
@@ -106,14 +117,19 @@ namespace Chem4Word.Navigator
         /// handles deletion of an XML Part...removes the corresponding navigator item
         /// </summary>
         /// <param name="OldPart">The custom XML part that gets deleted</param>
-        private void OnPartBeforeDelete(CustomXMLPart OldPart)
+        private void OnBeforeDelete_CustomXmlPart(CustomXMLPart OldPart)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"XmlPart Id:{OldPart.Id} has been removed from '{_doc.Name}'");
                 var oldPart = NavigatorItems.FirstOrDefault(ni
                                                                 => CustomXmlPartHelper.GuidFromTag(ni.CustomControlTag) == CustomXmlPartHelper.GetCmlId(OldPart));
-                NavigatorItems.Remove(oldPart);
+                if (oldPart != null)
+                {
+                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Removing Tag:{oldPart.CustomControlTag} from items in navigator for '{_doc.Name}'");
+                    NavigatorItems.Remove(oldPart);
+                }
             }
             catch (Exception ex)
             {
@@ -129,14 +145,17 @@ namespace Chem4Word.Navigator
         /// Useful for updating the Navigator
         /// </summary>
         /// <param name="NewPart"></param>
-        private void OnPartAfterLoad(CustomXMLPart NewPart)
+        private void OnAfterLoad_CustomXmlPart(CustomXMLPart NewPart)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"XmlPart Id:{NewPart.Id} has been added to '{_doc.Name}'");
                 var converter = new CMLConverter();
+
                 //get the chemistry
                 var chemModel = converter.Import(NewPart.XML);
+
                 //find out which content control matches the custom XML part
                 try
                 {
@@ -145,32 +164,36 @@ namespace Chem4Word.Navigator
                                       orderby cc.Range.Start
                                       where CustomXmlPartHelper.GuidFromTag(cc.Tag) == CustomXmlPartHelper.GetCmlId(NewPart)
                                       select cc).First();
+                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Found Content Control {matchingCC.ID} with Tag {matchingCC.Tag}");
 
                     //get the ordinal position of the content control
-                    int start = 0;
+                    var start = 0;
                     foreach (ContentControl cc in _doc.ContentControls)
                     {
                         if (cc.ID == matchingCC.ID)
                         {
                             break;
                         }
+
                         start += 1;
                     }
 
                     //insert the new navigator item at the ordinal position
                     var newNavItem = new ChemistryObject
                     {
-                        CustomControlTag = matchingCC?.Tag,
+                        CustomControlTag = matchingCC.Tag,
                         Chemistry = NewPart.XML,
                         Formula = chemModel.ConciseFormula
                     };
                     try
                     {
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding Tag {newNavItem.CustomControlTag} at position {start}");
                         NavigatorItems.Insert(start, newNavItem);
                     }
                     catch (ArgumentOutOfRangeException) //can happen when there are more content controls than navigator items
                     {
                         //so simply insert the new navigator item at the end
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding Tag {newNavItem.CustomControlTag} at end");
                         NavigatorItems.Add(newNavItem);
                     }
                 }

@@ -5,12 +5,12 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Chem4Word.ACME.Models;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
 using IChem4Word.Contracts.Dto;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 

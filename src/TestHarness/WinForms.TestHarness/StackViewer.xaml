@@ -50,11 +50,7 @@
                             Background="White"
                             BackgroundColor="White"
                             Chemistry="{Binding Path=Model}"
-                            HighlightActive="False"
-                            ShowAllCarbonAtoms="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=testHarness:StackViewer}, Path=ShowAllCarbonAtoms}"
-                            ShowAtomsInColour="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=testHarness:StackViewer}, Path=ShowAtomsInColour}"
-                            ShowImplicitHydrogens="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=testHarness:StackViewer}, Path=ShowImplicitHydrogens}"
-                            ShowMoleculeGrouping="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=testHarness:StackViewer}, Path=ShowMoleculeGrouping}" />
+                            HighlightActive="False" />
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>

@@ -22,28 +22,28 @@ namespace Chem4WordTests
         [Fact]
         public void CheckClone()
         {
-            Model model = new Model();
+            var model = new Model();
 
-            Molecule molecule = new Molecule();
+            var molecule = new Molecule();
             molecule.Id = "m1";
             model.AddMolecule(molecule);
             molecule.Parent = model;
 
-            Atom startAtom = new Atom();
+            var startAtom = new Atom();
             startAtom.Id = "a1";
             startAtom.Element = Globals.PeriodicTable.C;
             startAtom.Position = new Point(5, 5);
             molecule.AddAtom(startAtom);
             startAtom.Parent = molecule;
 
-            Atom endAtom = new Atom();
+            var endAtom = new Atom();
             endAtom.Id = "a2";
             endAtom.Element = Globals.PeriodicTable.C;
             endAtom.Position = new Point(10, 10);
             molecule.AddAtom(endAtom);
             endAtom.Parent = molecule;
 
-            Bond bond = new Bond(startAtom, endAtom);
+            var bond = new Bond(startAtom, endAtom);
             bond.Id = "b1";
             bond.Order = Globals.OrderSingle;
             molecule.AddBond(bond);
@@ -55,7 +55,7 @@ namespace Chem4WordTests
             Assert.True(Math.Abs(a1.Position.X - 5.0) < 0.001, $"Expected a1.X = 5; Got {a1.Position.X}");
             Assert.True(Math.Abs(a1.Position.Y - 5.0) < 0.001, $"Expected a1.Y = 5; Got {a1.Position.Y}");
 
-            Model clone = model.Copy();
+            var clone = model.Copy();
 
             Assert.True(model.Molecules.Count == 1, $"Expected 1 Molecule; Got {model.Molecules.Count}");
             Assert.True(clone.Molecules.Count == 1, $"Expected 1 Molecule; Got {clone.Molecules.Count}");
@@ -81,8 +81,8 @@ namespace Chem4WordTests
         [InlineData("N", 2, true)]
         public void CheckAtomRings(string element, int ringCount, bool isInRing)
         {
-            CMLConverter mc = new CMLConverter();
-            Model m = mc.Import(ResourceHelper.GetStringResource("Two-Rings.xml"));
+            var mc = new CMLConverter();
+            var m = mc.Import(ResourceHelper.GetStringResource("Two-Rings.xml"));
 
             // Basic sanity checks
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
@@ -92,7 +92,7 @@ namespace Chem4WordTests
             // Get atom to test
             var atoms = molecule.Atoms.Values.Where(a => a.SymbolText == element).ToList();
             Assert.True(atoms.Count == 1, "Expected only one atom");
-            Atom atom = atoms.FirstOrDefault();
+            var atom = atoms.FirstOrDefault();
             Assert.NotNull(atom);
 
             Assert.True(atom.RingCount == ringCount, $"Expected RingCount: {ringCount}; Got {atom.RingCount}");
@@ -124,9 +124,9 @@ namespace Chem4WordTests
         [Fact]
         public void CheckFormulasCanBeAdded()
         {
-            Model model = new Model();
+            var model = new Model();
 
-            Molecule molecule = new Molecule();
+            var molecule = new Molecule();
             molecule.Id = "m1";
             model.AddMolecule(molecule);
             molecule.Parent = model;
@@ -146,9 +146,9 @@ namespace Chem4WordTests
         [Fact]
         public void CheckNamesCanBeAdded()
         {
-            Model model = new Model();
+            var model = new Model();
 
-            Molecule molecule = new Molecule();
+            var molecule = new Molecule();
             molecule.Id = "m1";
             model.AddMolecule(molecule);
             molecule.Parent = model;
@@ -565,15 +565,15 @@ namespace Chem4WordTests
 
         private void AddHBonds(Molecule molecule, Atom atom, int bonds)
         {
-            for (int i = 0; i < bonds; i++)
+            for (var i = 0; i < bonds; i++)
             {
-                Atom h = new Atom();
+                var h = new Atom();
                 h.Element = Globals.PeriodicTable.H;
 
                 molecule.AddAtom(h);
                 h.Parent = molecule;
 
-                Bond bond = new Bond(atom, h);
+                var bond = new Bond(atom, h);
                 bond.Order = "S";
                 molecule.AddBond(bond);
                 bond.Parent = molecule;

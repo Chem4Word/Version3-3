@@ -24,7 +24,7 @@ namespace Chem4Word.Core.UI.Forms
             Message = text;
         }
 
-        private void TextViewer_Load(object sender, EventArgs e)
+        private void OnLoad_TextViewer(object sender, EventArgs e)
         {
             if (!PointHelper.PointIsEmpty(TopLeft))
             {

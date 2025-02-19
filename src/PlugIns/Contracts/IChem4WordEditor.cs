@@ -19,6 +19,8 @@ namespace IChem4Word.Contracts
         bool CanEditReactions { get; }
         bool RequiresSeedAtom { get; }
 
+        string DefaultRenderingOptions { get; set; }
+
         List<string> Used1DProperties { get; set; }
     }
 }

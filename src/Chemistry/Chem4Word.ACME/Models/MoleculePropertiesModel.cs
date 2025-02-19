@@ -7,6 +7,7 @@
 
 using Chem4Word.ACME.Entities;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Enums;
 using System.Collections.Generic;
 
 namespace Chem4Word.ACME.Models
@@ -14,13 +15,6 @@ namespace Chem4Word.ACME.Models
     public class MoleculePropertiesModel : BaseDialogModel
     {
         public Model Data { get; set; }
-
-        public AcmeOptions Options { get; set; }
-
-        public bool ShowAllCarbonAtoms => Options.ShowCarbons;
-        public bool ShowImplicitHydrogens => Options.ShowHydrogens;
-        public bool ShowAtomsInColour => Options.ColouredAtoms;
-        public bool ShowMoleculeGrouping => Options.ShowMoleculeGrouping;
 
         public List<string> Used1DProperties { get; set; }
 
@@ -32,6 +26,18 @@ namespace Chem4Word.ACME.Models
             set
             {
                 _showMoleculeBrackets = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool? _explicitC;
+
+        public bool? ExplicitC
+        {
+            get => _explicitC;
+            set
+            {
+                _explicitC = value;
                 OnPropertyChanged();
             }
         }
@@ -72,15 +78,18 @@ namespace Chem4Word.ACME.Models
             }
         }
 
+        public HydrogenLabels? ExplicitH { get; set; }
+
         public List<ChargeValue> MultiplicityValues
         {
             get
             {
-                List<ChargeValue> values = new List<ChargeValue>();
-
-                values.Add(new ChargeValue { Value = 0, Label = "(none)" });
-                values.Add(new ChargeValue { Value = 2, Label = "•" });
-                values.Add(new ChargeValue { Value = 3, Label = "• •" });
+                var values = new List<ChargeValue>
+                             {
+                                 new ChargeValue { Value = 0, Label = "(none)" },
+                                 new ChargeValue { Value = 2, Label = "•" },
+                                 new ChargeValue { Value = 3, Label = "• •" }
+                             };
 
                 return values;
             }
@@ -90,8 +99,8 @@ namespace Chem4Word.ACME.Models
         {
             get
             {
-                List<ChargeValue> charges = new List<ChargeValue>();
-                for (int charge = -8; charge < 9; charge++)
+                var charges = new List<ChargeValue>();
+                for (var charge = -8; charge < 9; charge++)
                 {
                     charges.Add(new ChargeValue { Value = charge, Label = charge.ToString() });
                 }

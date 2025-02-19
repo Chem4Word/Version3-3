@@ -20,6 +20,8 @@ namespace Chem4Word.Editor.SimpleWpfEditor
     {
         public System.Windows.Point TopLeft { get; set; }
 
+        public double DefaultBondLength { get; set; }
+
         public Size FormSize { get; set; }
 
         public string OutputValue { get; set; }
@@ -31,7 +33,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
             _cml = cml;
         }
 
-        private void EditorHost_Load(object sender, EventArgs e)
+        private void OnLoad_EditorHost(object sender, EventArgs e)
         {
             if (!PointHelper.PointIsEmpty(TopLeft))
             {
@@ -52,7 +54,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
             }
 
             // Fix bottom panel
-            int margin = Buttons.Height - Save.Bottom;
+            var margin = Buttons.Height - Save.Bottom;
             splitContainer1.SplitterDistance = splitContainer1.Height - Save.Height - margin * 2;
             splitContainer1.FixedPanel = FixedPanel.Panel2;
             splitContainer1.IsSplitterFixed = true;
@@ -61,12 +63,13 @@ namespace Chem4Word.Editor.SimpleWpfEditor
             if (elementHost1.Child is CmlEditor editor)
             {
                 editor.Cml = _cml;
+                editor.DefaultBondLength = DefaultBondLength;
             }
         }
 
-        private void Save_Click(object sender, EventArgs e)
+        private void OnClick_Save(object sender, EventArgs e)
         {
-            CMLConverter cc = new CMLConverter();
+            var cc = new CMLConverter();
             DialogResult = DialogResult.Cancel;
 
             if (elementHost1.Child is CmlEditor editor
@@ -78,25 +81,25 @@ namespace Chem4Word.Editor.SimpleWpfEditor
             Hide();
         }
 
-        private void Cancel_Click(object sender, EventArgs e)
+        private void OnClick_Cancel(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Hide();
         }
 
-        private void EditorHost_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_EditorHost(object sender, FormClosingEventArgs e)
         {
             if (DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing
                                                 && elementHost1.Child is CmlEditor editor
                                                 && editor.IsDirty)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.AppendLine("Do you wish to save your changes?");
                 sb.AppendLine("  Click 'Yes' to save your changes and exit.");
                 sb.AppendLine("  Click 'No' to discard your changes and exit.");
                 sb.AppendLine("  Click 'Cancel' to return to the form.");
 
-                DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                var dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
                 switch (dr)
                 {
                     case DialogResult.Cancel:
@@ -105,7 +108,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
 
                     case DialogResult.Yes:
                         DialogResult = DialogResult.OK;
-                        CMLConverter cc = new CMLConverter();
+                        var cc = new CMLConverter();
                         OutputValue = cc.Export(editor.EditedModel);
                         Hide();
                         break;

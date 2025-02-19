@@ -19,15 +19,16 @@
             <!--  Brushes  -->
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid d:IsLocked="True">
         <Border
             Height="24"
             Padding="5,0"
+            d:IsLocked="True"
             Background="White"
             BorderBrush="{StaticResource Chem4WordBlue}"
             BorderThickness="1"
             CornerRadius="5">
-            <Grid>
+            <Grid d:IsLocked="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -40,6 +41,7 @@
                     Margin="0,0,5,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
+                    d:IsLocked="True"
                     Stretch="Uniform">
                     <Label
                         x:Name="ItemLabel"
@@ -47,6 +49,7 @@
                         Padding="0"
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
+                        d:IsLocked="True"
                         x:FieldModifier="public"
                         Content="Label"
                         Foreground="{StaticResource Chem4WordBlue}" />
@@ -54,7 +57,8 @@
                 <Image
                     x:Name="Image"
                     Grid.Column="1"
-                    Width="18">
+                    Width="18"
+                    d:IsLocked="True">
                     <Image.Source>
                         <DrawingImage>
                             <DrawingImage.Drawing>

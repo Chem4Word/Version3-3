@@ -22,16 +22,16 @@ namespace Chem4Word.ACME.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.PreviewMouseWheel += AssociatedObject_PreviewMouseWheel;
+            AssociatedObject.PreviewMouseWheel += OnPreviewMouseWheel_AssociatedObject;
         }
 
         protected override void OnDetaching()
         {
-            AssociatedObject.PreviewMouseWheel -= AssociatedObject_PreviewMouseWheel;
+            AssociatedObject.PreviewMouseWheel -= OnPreviewMouseWheel_AssociatedObject;
             base.OnDetaching();
         }
 
-        private void AssociatedObject_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void OnPreviewMouseWheel_AssociatedObject(object sender, MouseWheelEventArgs e)
         {
             e.Handled = true;
 

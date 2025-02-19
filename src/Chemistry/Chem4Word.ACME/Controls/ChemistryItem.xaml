@@ -115,14 +115,14 @@
             <system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">10</system:Double>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Margin="3">
+    <Grid Margin="3" d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" d:IsLocked="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -132,6 +132,7 @@
             <Grid
                 Name="LibraryTopGrid"
                 Grid.Row="0"
+                d:IsLocked="True"
                 Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Library}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -140,23 +141,27 @@
                 </Grid.RowDefinitions>
                 <local:FormulaBlock
                     Grid.Row="0"
+                    d:IsLocked="True"
                     FontFamily="Segoe UI"
                     Foreground="{StaticResource Chem4WordBlue}"
                     Formula="{Binding Path=Formula}" />
                 <Expander
                     Grid.Row="1"
                     MaxWidth="{Binding ElementName=LibraryTopGrid, Path=ActualWidth}"
+                    d:IsLocked="True"
                     BorderBrush="Transparent"
                     BorderThickness="0"
                     Foreground="{StaticResource Chem4WordBlue}"
                     ToolTip="Click to see more names ...">
                     <Expander.Header>
                         <TextBlock
+                            d:IsLocked="True"
                             FontSize="14"
                             Foreground="{StaticResource Chem4WordBlue}"
                             Text="{Binding Path=Name}" />
                     </Expander.Header>
                     <ItemsControl
+                        d:IsLocked="True"
                         Foreground="{StaticResource Chem4WordBlue}"
                         ItemsSource="{Binding Path=ChemicalNames}"
                         Style="{StaticResource ChemicalNamesStyle}">
@@ -170,24 +175,41 @@
             <Grid
                 Name="NavigatorTopGrid"
                 Grid.Row="1"
+                d:IsLocked="True"
                 Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Navigator}}">
-                <local:FormulaBlock
-                    Grid.Column="0"
-                    FontFamily="Segoe UI"
-                    Foreground="{StaticResource Chem4WordBlue}"
-                    Formula="{Binding Path=Formula}" />
+                <Grid d:IsLocked="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        x:Name="CustomControlTag"
+                        Grid.Row="0"
+                        d:IsLocked="True"
+                        FontFamily="Segoe UI"
+                        Foreground="{StaticResource Chem4WordBlue}"
+                        Text="{Binding Path=CustomControlTag}" />
+                    <local:FormulaBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        d:IsLocked="True"
+                        FontFamily="Segoe UI"
+                        Foreground="{StaticResource Chem4WordBlue}"
+                        Formula="{Binding Path=Formula}" />
+                </Grid>
             </Grid>
             <!--  Top Panel for Catalogue Mode  -->
             <Grid
                 Name="CatalogueTopGrid"
                 Grid.Row="2"
+                d:IsLocked="True"
                 Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Catalogue}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
+                <Grid Grid.Row="0" d:IsLocked="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -195,13 +217,15 @@
                     <CheckBox
                         Name="CheckBox"
                         Grid.Column="0"
+                        Margin="0,0,2,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Margin="0,0,2,0"
-                        Click="CheckBox_OnClick"
+                        d:IsLocked="True"
+                        Click="OnClick_CheckBox"
                         IsChecked="{Binding Path=IsChecked}" />
                     <local:FormulaBlock
                         Grid.Column="1"
+                        d:IsLocked="True"
                         FontFamily="Segoe UI"
                         Foreground="{StaticResource Chem4WordBlue}"
                         Formula="{Binding Path=Formula}" />
@@ -209,17 +233,20 @@
                 <Expander
                     Grid.Row="1"
                     MaxWidth="{Binding ElementName=CatalogueTopGrid, Path=ActualWidth}"
+                    d:IsLocked="True"
                     BorderBrush="Transparent"
                     BorderThickness="0"
                     Foreground="{StaticResource Chem4WordBlue}"
                     ToolTip="Click to see more names ...">
                     <Expander.Header>
                         <TextBlock
+                            d:IsLocked="True"
                             FontSize="14"
                             Foreground="{StaticResource Chem4WordBlue}"
                             Text="{Binding Path=Name}" />
                     </Expander.Header>
                     <ItemsControl
+                        d:IsLocked="True"
                         Foreground="{StaticResource Chem4WordBlue}"
                         ItemsSource="{Binding Path=ChemicalNames}"
                         Style="{StaticResource ChemicalNamesStyle}">
@@ -230,7 +257,7 @@
                 </Expander>
             </Grid>
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" d:IsLocked="True">
             <acme:Display
                 x:Name="AcmeDisplay"
                 Width="{Binding ElementName=AcmeChemistryItem, Path=DisplayWidth, FallbackValue=150}"
@@ -240,29 +267,29 @@
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch"
+                d:IsLocked="True"
                 Chemistry="{Binding Path=Chemistry}"
                 HighlightActive="False"
-                MouseDoubleClick="AcmeDisplay_OnMouseDoubleClick"
-                ShowAllCarbonAtoms="{Binding ElementName=AcmeChemistryItem, Path=ShowAllCarbonAtoms}"
-                ShowAtomsInColour="{Binding ElementName=AcmeChemistryItem, Path=ShowAtomsInColour}"
-                ShowImplicitHydrogens="{Binding ElementName=AcmeChemistryItem, Path=ShowImplicitHydrogens}"
-                ShowMoleculeGrouping="{Binding ElementName=AcmeChemistryItem, Path=ShowMoleculeGrouping}" />
+                MouseDoubleClick="OnMouseDoubleClick_AcmeDisplay" />
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" d:IsLocked="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <!--  Bottom Panel for Library Mode  -->
-            <Grid Grid.Row="0" Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Library}}">
+            <Grid
+                Grid.Row="0"
+                d:IsLocked="True"
+                Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Library}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
+                <Grid Grid.Row="0" d:IsLocked="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -270,6 +297,7 @@
                     <ItemsControl
                         Grid.Column="0"
                         MinHeight="15"
+                        d:IsLocked="True"
                         Foreground="{StaticResource Chem4WordBlue}"
                         ItemsSource="{Binding Path=Tags}"
                         Style="{StaticResource TagListStyle}">
@@ -281,20 +309,23 @@
                         Grid.Column="1"
                         Width="32"
                         Height="32"
+                        d:IsLocked="True"
                         Click="OnItemButtonClick"
                         Style="{StaticResource NavButtonStyle}"
                         Tag="Library|InsertCopy">
                         <Button.ToolTip>Insert a copy of the chemistry</Button.ToolTip>
-                        <Viewbox Stretch="Uniform">
+                        <Viewbox d:IsLocked="True" Stretch="Uniform">
                             <Canvas
                                 Width="32"
                                 Height="32"
+                                d:IsLocked="True"
                                 ClipToBounds="True">
                                 <Path
                                     Canvas.Left="4"
                                     Canvas.Top="4"
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Fill"
                                     Style="{StaticResource CopyButtonPath}" />
@@ -304,7 +335,10 @@
                 </Grid>
             </Grid>
             <!--  Bottom for Navigator Mode  -->
-            <Grid Grid.Row="1" Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Navigator}}">
+            <Grid
+                Grid.Row="1"
+                d:IsLocked="True"
+                Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Navigator}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -314,24 +348,28 @@
                 <StackPanel
                     Grid.Row="0"
                     HorizontalAlignment="Left"
+                    d:IsLocked="True"
                     Orientation="Horizontal">
                     <Button
                         Width="32"
                         Height="32"
+                        d:IsLocked="True"
                         Click="OnItemButtonClick"
                         Style="{StaticResource NavButtonStyle}"
                         Tag="Navigator|InsertCopy">
                         <Button.ToolTip>Insert a copy of the chemistry</Button.ToolTip>
-                        <Viewbox Stretch="Uniform">
+                        <Viewbox d:IsLocked="True" Stretch="Uniform">
                             <Canvas
                                 Width="32"
                                 Height="32"
+                                d:IsLocked="True"
                                 ClipToBounds="True">
                                 <Path
                                     Canvas.Left="4"
                                     Canvas.Top="4"
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Fill"
                                     Style="{StaticResource CopyButtonPath}" />
@@ -341,20 +379,23 @@
                     <Button
                         Width="32"
                         Height="32"
+                        d:IsLocked="True"
                         Click="OnItemButtonClick"
                         Style="{StaticResource NavButtonStyle}"
                         Tag="Navigator|InsertLink">
                         <Button.ToolTip>Insert a link to the original chemistry</Button.ToolTip>
-                        <Viewbox Stretch="Uniform">
+                        <Viewbox d:IsLocked="True" Stretch="Uniform">
                             <Canvas
                                 Width="32"
                                 Height="32"
+                                d:IsLocked="True"
                                 ClipToBounds="True">
                                 <Path
                                     Canvas.Left="4"
                                     Canvas.Top="4"
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Fill"
                                     Style="{StaticResource LinkButtonPath}" />
@@ -364,20 +405,23 @@
                     <Button
                         Width="32"
                         Height="32"
+                        d:IsLocked="True"
                         Click="OnItemButtonClick"
                         Style="{StaticResource NavButtonStyle}"
                         Tag="Navigator|Previous">
                         <Button.ToolTip>Move to the previous linked structure</Button.ToolTip>
-                        <Viewbox Stretch="Uniform">
+                        <Viewbox d:IsLocked="True" Stretch="Uniform">
                             <Canvas
                                 Width="32"
                                 Height="32"
+                                d:IsLocked="True"
                                 ClipToBounds="True">
                                 <Path
                                     Canvas.Left="4"
                                     Canvas.Top="4"
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Fill"
                                     Style="{StaticResource PrevButtonPath}" />
@@ -387,20 +431,23 @@
                     <Button
                         Width="32"
                         Height="32"
+                        d:IsLocked="True"
                         Click="OnItemButtonClick"
                         Style="{StaticResource NavButtonStyle}"
                         Tag="Navigator|Next">
                         <Button.ToolTip>Move to the next linked structure</Button.ToolTip>
-                        <Viewbox Stretch="Uniform">
+                        <Viewbox d:IsLocked="True" Stretch="Uniform">
                             <Canvas
                                 Width="32"
                                 Height="32"
+                                d:IsLocked="True"
                                 ClipToBounds="True">
                                 <Path
                                     Canvas.Left="4"
                                     Canvas.Top="4"
                                     Width="24"
                                     Height="24"
+                                    d:IsLocked="True"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Fill"
                                     Style="{StaticResource NextButtonPath}" />
@@ -410,7 +457,10 @@
                 </StackPanel>
             </Grid>
             <!--  Bottom Panel for Catalogue Mode  -->
-            <Grid Grid.Row="2" Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Catalogue}}">
+            <Grid
+                Grid.Row="2"
+                d:IsLocked="True"
+                Visibility="{Binding ElementName=AcmeChemistryItem, Path=ItemMode, Converter={StaticResource EnumVisibilityConvertor}, ConverterParameter={x:Static enums:ChemistryItemMode.Catalogue}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -421,6 +471,7 @@
                     Grid.Row="0"
                     MinHeight="15"
                     MaxWidth="{Binding ElementName=CatalogueTopGrid, Path=ActualWidth}"
+                    d:IsLocked="True"
                     Foreground="{StaticResource Chem4WordBlue}"
                     ItemsSource="{Binding Path=Tags}"
                     Style="{StaticResource TagListStyle}">

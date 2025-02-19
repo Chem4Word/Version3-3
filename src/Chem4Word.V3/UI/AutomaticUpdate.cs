@@ -59,7 +59,7 @@ namespace Chem4Word.UI
             }
         }
 
-        private void OnReleasesPageLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void OnLinkClicked_ReleasesPage(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             _telemetry.Write(module, "Action", "Triggered");
@@ -75,7 +75,7 @@ namespace Chem4Word.UI
             }
         }
 
-        private void OnRichTextBoxLinkClicked(object sender, LinkClickedEventArgs e)
+        private void OnLinkClicked_RichTextBox(object sender, LinkClickedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             _telemetry.Write(module, "Action", "Triggered");
@@ -93,7 +93,7 @@ namespace Chem4Word.UI
             }
         }
 
-        private void AutomaticUpdate_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing_AutomaticUpdate(object sender, FormClosingEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -109,7 +109,7 @@ namespace Chem4Word.UI
             }
         }
 
-        private void OnUpdateNowClick(object sender, EventArgs e)
+        private void OnClick_UpdateNow(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             _telemetry.Write(module, "Action", "Triggered");
@@ -165,7 +165,7 @@ namespace Chem4Word.UI
             }
         }
 
-        private void OnUpdateLaterClick(object sender, EventArgs e)
+        private void OnClick_UpdateLater(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             _telemetry.Write(module, "Action", "Triggered");
@@ -181,7 +181,7 @@ namespace Chem4Word.UI
             }
         }
 
-        private void AutomaticUpdate_Load(object sender, EventArgs e)
+        private void OnLoad_AutomaticUpdate(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -201,8 +201,8 @@ namespace Chem4Word.UI
                     string currentVersionNumber = CurrentVersion.Root.Element("Number").Value;
                     DateTime currentReleaseDate = SafeDate.Parse(CurrentVersion.Root.Element("Released").Value);
 
-                    lblInfo.Text = "Your current version of Chem4Word is " + currentVersionNumber + "; Released " + SafeDate.ToShortDate(currentReleaseDate);
-                    _telemetry.Write(module, "AutomaticUpdate", lblInfo.Text);
+                    Info.Text = "Your current version of Chem4Word is " + currentVersionNumber + "; Released " + SafeDate.ToShortDate(currentReleaseDate);
+                    _telemetry.Write(module, "AutomaticUpdate", Info.Text);
 
                     var versions = NewVersions.XPathSelectElements("//Version");
                     foreach (var version in versions)

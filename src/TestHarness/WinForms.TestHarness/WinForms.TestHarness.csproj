@@ -149,7 +149,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigWatcher.cs" />
     <Compile Include="Dumper.cs">
       <SubType>Form</SubType>
     </Compile>

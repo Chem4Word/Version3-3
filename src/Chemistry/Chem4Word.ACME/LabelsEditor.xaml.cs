@@ -8,6 +8,7 @@
 using Chem4Word.ACME.Controls;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Enums;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -30,30 +31,14 @@ namespace Chem4Word.ACME
         public bool IsDirty { get; set; }
         public Model EditedModel { get; private set; }
 
+        private RenderingOptions _modelRenderingOptions;
+
         private string _cml;
-        public AcmeOptions Options { get; set; }
 
         public LabelsEditor()
         {
-            Options = new AcmeOptions();
             InitializeComponent();
         }
-
-        public LabelsEditor(AcmeOptions options)
-        {
-            Options = options;
-            InitializeComponent();
-        }
-
-        public void SetOptions(AcmeOptions options)
-        {
-            Options = options;
-        }
-
-        public bool ShowAllCarbonAtoms => Options.ShowCarbons;
-        public bool ShowImplicitHydrogens => Options.ShowHydrogens;
-        public bool ShowAtomsInColour => Options.ColouredAtoms;
-        public bool ShowMoleculeGrouping => Options.ShowMoleculeGrouping;
 
         public bool ShowTopPanel
         {
@@ -69,19 +54,19 @@ namespace Chem4Word.ACME
                                                                         | FrameworkPropertyMetadataOptions.AffectsMeasure
                                                                         | FrameworkPropertyMetadataOptions.AffectsRender));
 
-        private void LabelsEditor_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_LabelsEditor(object sender, RoutedEventArgs e)
         {
             if (!DesignerProperties.GetIsInDesignMode(this)
                 && !string.IsNullOrEmpty(_cml)
                 && !IsInitialised)
             {
                 PopulateTreeView(_cml);
-                TreeView_OnSelectedItemChanged(null, null);
+                OnSelectedItemChanged_TreeView(null, null);
                 IsInitialised = true;
             }
         }
 
-        private void TreeView_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void OnSelectedItemChanged_TreeView(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             Display.Clear();
 
@@ -99,6 +84,7 @@ namespace Chem4Word.ACME
 
                     case Molecule thisMolecule:
                         var model = new Model();
+                        model.SetUserOptions(_modelRenderingOptions);
                         var copy = thisMolecule.Copy();
                         model.AddMolecule(copy);
                         copy.Parent = model;
@@ -122,11 +108,11 @@ namespace Chem4Word.ACME
             _cml = cml;
             var cc = new CMLConverter();
             EditedModel = cc.Import(_cml, Used1D, relabel: false);
+            _modelRenderingOptions = new RenderingOptions(EditedModel);
             TreeView.Items.Clear();
             bool initialSelectionMade = false;
 
             var style = (Style)TreeView.FindResource("Chem4WordTreeViewItemStyle");
-            var template = (ControlTemplate)TreeView.FindResource("Chem4WordTreeViewItemTemplate");
 
             if (EditedModel != null)
             {
@@ -137,8 +123,8 @@ namespace Chem4Word.ACME
                 {
                     Header = "Structure",
                     Tag = EditedModel,
-                    Template = template,
-                    Style = style
+                    Style = style,
+                    ItemContainerStyle = style
                 };
                 TreeView.Items.Add(root);
                 root.IsExpanded = true;
@@ -146,13 +132,13 @@ namespace Chem4Word.ACME
                 AddNodes(root, EditedModel.Molecules.Values);
             }
 
-            SetupNamesEditor(NamesGrid, "Add Name", OnAddNameClick, "Alternative name(s) for molecule");
-            SetupNamesEditor(FormulaGrid, "Add Formula", OnAddFormulaClick, "Alternative formula for molecule");
-            SetupNamesEditor(CaptionsGrid, "Add Caption", OnAddLabelClick, "Molecule Caption(s)");
+            SetupNamesEditor(NamesGrid, "Add Name", OnClick_AddName, "Alternative name(s) for molecule");
+            SetupNamesEditor(FormulaGrid, "Add Formula", OnClick_AddFormula, "Alternative formula for molecule");
+            SetupNamesEditor(CaptionsGrid, "Add Caption", OnClick_AddLabel, "Molecule Caption(s)");
 
             TreeView.Focus();
 
-            TreeView_OnSelectedItemChanged(null, null);
+            OnSelectedItemChanged_TreeView(null, null);
 
             // Local Function to support recursion
             void AddNodes(TreeViewItem parent, IEnumerable<Molecule> molecules)
@@ -161,8 +147,8 @@ namespace Chem4Word.ACME
                 {
                     var tvi = new TreeViewItem
                     {
-                        Template = template,
-                        Style = style
+                        Style = style,
+                        ItemContainerStyle = style
                     };
 
                     if (molecule.Atoms.Count == 0)
@@ -229,7 +215,7 @@ namespace Chem4Word.ACME
             {
                 var parent = EditedModel.Molecules.First().Value;
                 parent.Count = value;
-                TreeView_OnSelectedItemChanged(null, null);
+                OnSelectedItemChanged_TreeView(null, null);
             }
         }
 
@@ -239,7 +225,7 @@ namespace Chem4Word.ACME
             {
                 var parent = EditedModel.Molecules.First().Value;
                 parent.FormalCharge = value;
-                TreeView_OnSelectedItemChanged(null, null);
+                OnSelectedItemChanged_TreeView(null, null);
             }
         }
 
@@ -249,7 +235,27 @@ namespace Chem4Word.ACME
             {
                 var parent = EditedModel.Molecules.First().Value;
                 parent.SpinMultiplicity = value;
-                TreeView_OnSelectedItemChanged(null, null);
+                OnSelectedItemChanged_TreeView(null, null);
+            }
+        }
+
+        public void SetHydrogensMode(HydrogenLabels? value)
+        {
+            if (EditedModel != null)
+            {
+                var parent = EditedModel.Molecules.First().Value;
+                parent.ExplicitH = value;
+                OnSelectedItemChanged_TreeView(null, null);
+            }
+        }
+
+        public void SetShowCarbons(bool? value)
+        {
+            if (EditedModel != null)
+            {
+                var parent = EditedModel.Molecules.First().Value;
+                parent.ExplicitC = value;
+                OnSelectedItemChanged_TreeView(null, null);
             }
         }
 
@@ -259,11 +265,11 @@ namespace Chem4Word.ACME
             {
                 var parent = EditedModel.Molecules.First().Value;
                 parent.ShowMoleculeBrackets = value;
-                TreeView_OnSelectedItemChanged(null, null);
+                OnSelectedItemChanged_TreeView(null, null);
             }
         }
 
-        private void OnAddFormulaClick(object sender, RoutedEventArgs e)
+        private void OnClick_AddFormula(object sender, RoutedEventArgs e)
         {
             if (TreeView.SelectedItem is TreeViewItem treeViewItem
                 && treeViewItem.Tag is Molecule molecule)
@@ -279,7 +285,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        private void OnAddNameClick(object sender, RoutedEventArgs e)
+        private void OnClick_AddName(object sender, RoutedEventArgs e)
         {
             if (TreeView.SelectedItem is TreeViewItem treeViewItem
                 && treeViewItem.Tag is Molecule molecule)
@@ -295,7 +301,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        private void OnAddLabelClick(object sender, RoutedEventArgs e)
+        private void OnClick_AddLabel(object sender, RoutedEventArgs e)
         {
             if (TreeView.SelectedItem is TreeViewItem treeViewItem
                 && treeViewItem.Tag is Molecule molecule)

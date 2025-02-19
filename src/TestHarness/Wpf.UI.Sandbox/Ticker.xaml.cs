@@ -35,18 +35,18 @@ namespace Wpf.UI.Sandbox
             InitializeComponent();
         }
 
-        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseDown_UIElement(object sender, MouseButtonEventArgs e)
         {
             Debug.WriteLine($"User Clicked {_tickerItems[_index].Url}");
         }
 
-        private void Ticker_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_Ticker(object sender, RoutedEventArgs e)
         {
-            Marquee.OnAnimationCompleted += MarqueeOnOnAnimationCompleted;
+            Marquee.OnAnimationCompleted += OnAnimationCompleted_Marquee;
             Marquee.Start(_tickerItems[_index].Text);
         }
 
-        private void MarqueeOnOnAnimationCompleted(object sender, WpfEventArgs e)
+        private void OnAnimationCompleted_Marquee(object sender, WpfEventArgs e)
         {
             _index++;
             if (_index >= _tickerItems.Count)

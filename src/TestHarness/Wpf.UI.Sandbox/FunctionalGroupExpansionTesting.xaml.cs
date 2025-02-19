@@ -26,12 +26,10 @@ namespace Wpf.UI.Sandbox
             InitializeComponent();
         }
 
-        private void FunctionalGroupExpansion_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_FunctionalGroupExpansion(object sender, RoutedEventArgs e)
         {
-            Editor.EditorOptions = new AcmeOptions(null);
-
             var model = new Model();
-            Editor.SetModel(model);
+            Editor.SetProperties(new CMLConverter().Export(model), null, new RenderingOptions());
         }
 
         private void OnClick_ExpandButton(object sender, RoutedEventArgs e)
@@ -65,7 +63,7 @@ namespace Wpf.UI.Sandbox
                 var model = converter.Import(File.ReadAllText(openFileDialog.FileName));
                 if (model != null)
                 {
-                    Editor.SetModel(model);
+                    Editor.SetProperties(new CMLConverter().Export(model), null, new RenderingOptions());
                 }
             }
         }

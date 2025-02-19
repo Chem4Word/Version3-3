@@ -22,6 +22,10 @@ namespace Chem4Word.ACME.Controls
         public ChemistryItem()
         {
             InitializeComponent();
+
+#if !DEBUG
+            CustomControlTag.Visibility = Visibility.Collapsed;
+#endif
         }
 
         // Source of Event Bubbling Example https://www.stevefenton.co.uk/2012/09/wpf-bubbling-a-command-from-a-child-view/
@@ -46,7 +50,6 @@ namespace Chem4Word.ACME.Controls
             set => SetValue(DisplayWidthProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DisplayWidthProperty =
             DependencyProperty.Register("DisplayWidth", typeof(double), typeof(ChemistryItem),
                                         new FrameworkPropertyMetadata(double.NaN,
@@ -60,7 +63,6 @@ namespace Chem4Word.ACME.Controls
             set => SetValue(DisplayHeightProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DisplayHeightProperty =
             DependencyProperty.Register("DisplayHeight", typeof(double), typeof(ChemistryItem),
                                         new FrameworkPropertyMetadata(double.NaN,
@@ -80,56 +82,6 @@ namespace Chem4Word.ACME.Controls
                                                                       FrameworkPropertyMetadataOptions.AffectsRender
                                                                       | FrameworkPropertyMetadataOptions.AffectsArrange
                                                                       | FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public bool ShowMoleculeGrouping
-        {
-            get => (bool)GetValue(ShowMoleculeGroupingProperty);
-            set => SetValue(ShowMoleculeGroupingProperty, value);
-        }
-
-        public static readonly DependencyProperty ShowMoleculeGroupingProperty =
-            DependencyProperty.Register("ShowMoleculeGrouping", typeof(bool), typeof(ChemistryItem),
-                                        new FrameworkPropertyMetadata(true,
-                                             FrameworkPropertyMetadataOptions.AffectsRender
-                                             | FrameworkPropertyMetadataOptions.AffectsArrange
-                                             | FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public bool ShowAtomsInColour
-        {
-            get => (bool)GetValue(ShowAtomsInColourProperty);
-            set => SetValue(ShowAtomsInColourProperty, value);
-        }
-
-        public static readonly DependencyProperty ShowAtomsInColourProperty =
-            DependencyProperty.Register("ShowAtomsInColour", typeof(bool), typeof(ChemistryItem),
-                                        new FrameworkPropertyMetadata(true,
-                                              FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public bool ShowAllCarbonAtoms
-        {
-            get => (bool)GetValue(ShowAllCarbonAtomsProperty);
-            set => SetValue(ShowAllCarbonAtomsProperty, value);
-        }
-
-        public static readonly DependencyProperty ShowAllCarbonAtomsProperty =
-            DependencyProperty.Register("ShowAllCarbonAtoms", typeof(bool), typeof(ChemistryItem),
-                                        new FrameworkPropertyMetadata(false,
-                                           FrameworkPropertyMetadataOptions.AffectsRender
-                                           | FrameworkPropertyMetadataOptions.AffectsArrange
-                                           | FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public bool ShowImplicitHydrogens
-        {
-            get => (bool)GetValue(ShowImplicitHydrogensProperty);
-            set => SetValue(ShowImplicitHydrogensProperty, value);
-        }
-
-        public static readonly DependencyProperty ShowImplicitHydrogensProperty =
-            DependencyProperty.Register("ShowImplicitHydrogens", typeof(bool), typeof(ChemistryItem),
-                                        new FrameworkPropertyMetadata(true,
-                                          FrameworkPropertyMetadataOptions.AffectsRender
-                                          | FrameworkPropertyMetadataOptions.AffectsArrange
-                                          | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         private void OnItemButtonClick(object sender, RoutedEventArgs e)
         {
@@ -157,7 +109,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void CheckBox_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_CheckBox(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox checkBox
                 && DataContext is ChemistryObject chemistryObject)
@@ -180,7 +132,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void AcmeDisplay_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void OnMouseDoubleClick_AcmeDisplay(object sender, MouseButtonEventArgs e)
         {
             if (ItemMode == ChemistryItemMode.Catalogue
                 && sender is Display

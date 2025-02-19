@@ -57,25 +57,25 @@ namespace Chem4Word.ACME.Adorners
         {
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(controller.CurrentEditor);
             myAdornerLayer.Add(this);
-            PreviewMouseMove += PartialGhostAdorner_PreviewMouseMove;
-            PreviewMouseUp += PartialGhostAdorner_PreviewMouseUp;
-            MouseUp += PartialGhostAdorner_MouseUp;
+            PreviewMouseMove += OnPreviewMouseMove_PartialGhostAdorner;
+            PreviewMouseUp += OnPreviewMouseUp_PartialGhostAdorner;
+            MouseUp += OnMouseUp_PartialGhostAdorner;
             CurrentController = controller;
 
             CurrentEditor = CurrentController.CurrentEditor;
         }
 
-        private void PartialGhostAdorner_MouseUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseUp_PartialGhostAdorner(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        private void PartialGhostAdorner_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnPreviewMouseUp_PartialGhostAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
 
-        private void PartialGhostAdorner_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void OnPreviewMouseMove_PartialGhostAdorner(object sender, System.Windows.Input.MouseEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }
@@ -119,7 +119,7 @@ namespace Chem4Word.ACME.Adorners
                 var startAtomPosition = transformedPositions[bond.StartAtom];
                 var endAtomPosition = transformedPositions[bond.EndAtom];
                 if (bond.OrderValue != 1.0 ||
-                    !(bond.Stereo == BondStereo.Hatch | bond.Stereo == BondStereo.Wedge))
+                    !(bond.Stereo == BondStereo.Hatch || bond.Stereo == BondStereo.Wedge))
                 {
                     var descriptor = BondVisual.GetBondDescriptor(CurrentEditor.GetAtomVisual(bond.StartAtom),
                                                                   CurrentEditor.GetAtomVisual(bond.EndAtom),

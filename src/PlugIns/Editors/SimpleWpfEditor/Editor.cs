@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.UI.Forms;
+using Chem4Word.Model2;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
@@ -30,10 +31,11 @@ namespace Chem4Word.Editor.SimpleWpfEditor
         public bool CanEditNestedMolecules => true;
         public bool CanEditFunctionalGroups => true;
         public bool CanEditReactions => true;
-        public bool RequiresSeedAtom => false;
+        public bool RequiresSeedAtom => true;
 
         public string SettingsPath { get; set; }
 
+        public string DefaultRenderingOptions { get; set; }
         public List<string> Used1DProperties { get; set; }
 
         public string Cml { get; set; }
@@ -51,18 +53,20 @@ namespace Chem4Word.Editor.SimpleWpfEditor
 
         public DialogResult Edit()
         {
-            DialogResult dialogResult = DialogResult.Cancel;
+            var dialogResult = DialogResult.Cancel;
 
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 Telemetry.Write(module, "Verbose", "Called");
 
-                using (EditorHost host = new EditorHost(Cml))
+                using (var host = new EditorHost(Cml))
                 {
+                    var renderingOptions = new RenderingOptions(DefaultRenderingOptions);
                     host.TopLeft = TopLeft;
+                    host.DefaultBondLength = renderingOptions.DefaultBondLength;
 
-                    DialogResult showDialog = host.ShowDialog();
+                    var showDialog = host.ShowDialog();
                     if (showDialog == DialogResult.OK)
                     {
                         dialogResult = showDialog;

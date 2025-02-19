@@ -8,8 +8,8 @@
     d:DesignHeight="100"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <Grid x:Name="GridOfTags">
-        <ItemsControl ItemsSource="{Binding Mode=OneWay, Path=CurrentTags}">
+    <Grid x:Name="GridOfTags" d:IsLocked="True">
+        <ItemsControl d:IsLocked="True" ItemsSource="{Binding Mode=OneWay, Path=CurrentTags}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />

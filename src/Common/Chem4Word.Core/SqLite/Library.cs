@@ -170,9 +170,10 @@ namespace Chem4Word.Core.SqLite
 
                                 // Handle new field(s) which may be null
                                 var molWeight = chemistry["molweight"].ToString();
-                                if (!string.IsNullOrEmpty(molWeight))
+                                if (!string.IsNullOrEmpty(molWeight)
+                                    && SafeDouble.TryParse(molWeight, out var result))
                                 {
-                                    dto.MolWeight = SafeDouble.Parse(molWeight);
+                                    dto.MolWeight = result;
                                 }
                                 results.Add(dto);
                             }

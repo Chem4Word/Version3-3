@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Chem4Word.Models"
+    Width="800"
+    Height="400"
     d:DesignHeight="400"
     d:DesignWidth="800"
     FontFamily="Segoe UI"
@@ -132,10 +134,18 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock
                     Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    d:IsLocked="True">
+                    Downloaded libraries will be registered to:
+                </TextBlock>
+                <TextBlock
+                    Grid.Row="1"
                     Grid.Column="0"
                     Margin="5"
                     d:IsLocked="True">
@@ -143,25 +153,26 @@
                 </TextBlock>
                 <TextBox
                     x:Name="UserName"
-                    Grid.Row="0"
+                    Grid.Row="1"
                     Grid.Column="1"
                     Height="30"
                     Margin="5"
                     d:IsLocked="True"
+                    LostFocus="OnLostFocus_UserNameOrEmail"
                     TextChanged="OnTextChanged_UserNameOrEmail"
                     ToolTip="Please enter the name that you wish us to use" />
                 <TextBlock
                     x:Name="UserErrorMessage"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     Grid.Column="1"
-                    Margin="5,-5,5,5"
+                    Margin="10,-5,0,0"
                     HorizontalAlignment="Left"
                     d:IsLocked="True"
                     Foreground="Red"
-                    Text="Error"
-                    Visibility="Collapsed" />
+                    Text="User error message"
+                    Visibility="Visible" />
                 <TextBlock
-                    Grid.Row="2"
+                    Grid.Row="3"
                     Grid.Column="0"
                     Margin="5"
                     d:IsLocked="True">
@@ -169,24 +180,25 @@
                 </TextBlock>
                 <TextBox
                     x:Name="UserEmail"
-                    Grid.Row="2"
+                    Grid.Row="3"
                     Grid.Column="1"
                     Height="30"
                     Margin="5"
                     VerticalAlignment="Top"
                     d:IsLocked="True"
+                    LostFocus="OnLostFocus_UserNameOrEmail"
                     TextChanged="OnTextChanged_UserNameOrEmail"
                     ToolTip="Please ensure that you enter a valid real email address, so that we can keep you informed if there are any changes to libraries that you have downloaded" />
                 <TextBlock
                     x:Name="EmailErrorMessage"
-                    Grid.Row="3"
+                    Grid.Row="4"
                     Grid.Column="1"
-                    Margin="5,-5,5,5"
+                    Margin="10,-5,0,0"
                     HorizontalAlignment="Left"
                     d:IsLocked="True"
                     Foreground="Red"
-                    Text="Error"
-                    Visibility="Collapsed" />
+                    Text="Email error message"
+                    Visibility="Visible" />
             </Grid>
             <Grid
                 Grid.Column="1"

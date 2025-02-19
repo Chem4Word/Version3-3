@@ -65,15 +65,15 @@ namespace Chem4Word.ACME.Controls
         {
             SpellCheck.IsEnabled = false;
 
-            PreviewKeyDown += AnnotationEditor_PreviewKeyDown;
-            LostFocus += AnnotationEditor_LostFocus;
-            TextChanged += AnnotationEditor_TextChanged;
+            PreviewKeyDown += OnPreviewKeyDown_AnnotationEditor;
+            LostFocus += OnLostFocus_AnnotationEditor;
+            TextChanged += OnTextChanged_AnnotationEditor;
             MakeSubscriptCommand = new SubscriptCommand(this);
             MakeSuperscriptCommand = new SuperscriptCommand(this);
             InsertSymbolCommand = new InsertTextCommand(this, "Δ");
             InsertDegreeCommand = new InsertTextCommand(this, "℃");
-            SelectionChanged += AnnotationEditor_SelectionChanged;
-            DataObject.AddPastingHandler(this, AnnotationEditor_Pasting);
+            SelectionChanged += OnSelectionChanged_AnnotationEditor;
+            DataObject.AddPastingHandler(this, OnPasting_AnnotationEditor);
         }
 
         #endregion Constructors
@@ -81,7 +81,7 @@ namespace Chem4Word.ACME.Controls
         #region Event Handlers
 
         //see https://thomaslevesque.com/2015/09/05/wpf-prevent-the-user-from-pasting-an-image-in-a-richtextbox/
-        private void AnnotationEditor_Pasting(object sender, DataObjectPastingEventArgs e)
+        private void OnPasting_AnnotationEditor(object sender, DataObjectPastingEventArgs e)
         {
             if (e.FormatToApply == DataFormats.Bitmap
                 || e.FormatToApply == DataFormats.Dib
@@ -102,17 +102,17 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void AnnotationEditor_SelectionChanged(object sender, RoutedEventArgs e)
+        private void OnSelectionChanged_AnnotationEditor(object sender, RoutedEventArgs e)
         {
             MakeSubscriptCommand.RaiseCanExecChanged();
         }
 
-        private void AnnotationEditor_TextChanged(object sender, TextChangedEventArgs e)
+        private void OnTextChanged_AnnotationEditor(object sender, TextChangedEventArgs e)
         {
             Dirty = true;
         }
 
-        private void AnnotationEditor_LostFocus(object sender, RoutedEventArgs e)
+        private void OnLostFocus_AnnotationEditor(object sender, RoutedEventArgs e)
         {
             Completed?.Invoke(this, new AnnotationEditorEventArgs { Reason = AnnotationEditorExitArgsType.LostFocus });
         }
@@ -122,7 +122,7 @@ namespace Chem4Word.ACME.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AnnotationEditor_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void OnPreviewKeyDown_AnnotationEditor(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape) //abort the edit
             {

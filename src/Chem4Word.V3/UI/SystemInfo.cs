@@ -32,7 +32,7 @@ namespace Chem4Word.UI
             InitializeComponent();
         }
 
-        private void SystemInfo_Load(object sender, EventArgs e)
+        private void OnLoad_SystemInfo(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try

@@ -34,10 +34,8 @@ namespace Wpf.UI.Sandbox
             InitializeComponent();
         }
 
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_MainWindow(object sender, RoutedEventArgs e)
         {
-            Editor.EditorOptions = new AcmeOptions(null);
-
             var model = new List<FgItem>();
 
             var groupsToShow = Globals.FunctionalGroupsList
@@ -60,17 +58,17 @@ namespace Wpf.UI.Sandbox
             Groups.SelectedIndex = 0;
         }
 
-        private void MainWindow_OnContentRendered(object sender, EventArgs e)
+        private void OnContentRendered_MainWindow(object sender, EventArgs e)
         {
             InvalidateArrange();
         }
 
-        private void MainWindow_OnLocationChanged(object sender, EventArgs e)
+        private void OnLocationChanged_MainWindow(object sender, EventArgs e)
         {
             Editor.TopLeft = new Point(Left, Top);
         }
 
-        private void Groups_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_Groups(object sender, SelectionChangedEventArgs e)
         {
             if (Groups.SelectedItem is FgItem item)
             {
@@ -106,13 +104,13 @@ namespace Wpf.UI.Sandbox
                 if (fg == null || string.IsNullOrEmpty(fg.Expansion))
                 {
                     var model = new Model();
-                    Editor.SetModel(model);
+                    Editor.SetProperties(new CMLConverter().Export(model), null, new RenderingOptions());
                 }
                 else
                 {
                     var model = cmlConverter.Import(fg.Expansion);
                     Debug.WriteLine($"Formula for '{fg.Name}' is {model.ConciseFormula}");
-                    Editor.SetModel(model);
+                    Editor.SetProperties(new CMLConverter().Export(model), null, new RenderingOptions());
                 }
 
                 Title = $"Functional Group Expansion Editor - {item.Name}";
@@ -121,7 +119,7 @@ namespace Wpf.UI.Sandbox
             }
         }
 
-        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        private void OnClosing_MainWindow(object sender, CancelEventArgs e)
         {
             if (Editor.IsDirty)
             {

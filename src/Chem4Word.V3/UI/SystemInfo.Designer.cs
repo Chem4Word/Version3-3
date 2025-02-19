@@ -56,7 +56,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SystemInfo";
             this.Text = "System Info";
-            this.Load += new System.EventHandler(this.SystemInfo_Load);
+            this.Load += new System.EventHandler(this.OnLoad_SystemInfo);
             this.ResumeLayout(false);
             this.PerformLayout();
 

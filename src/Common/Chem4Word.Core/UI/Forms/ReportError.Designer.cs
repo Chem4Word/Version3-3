@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReportError));
-            this.btnSubmit = new System.Windows.Forms.Button();
+            this.Submit = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -41,18 +41,18 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnSubmit
+            // Submit
             // 
-            this.btnSubmit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSubmit.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSubmit.Location = new System.Drawing.Point(529, 519);
-            this.btnSubmit.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(87, 28);
-            this.btnSubmit.TabIndex = 6;
-            this.btnSubmit.Text = "Submit";
-            this.btnSubmit.UseVisualStyleBackColor = true;
-            this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
+            this.Submit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Submit.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Submit.Location = new System.Drawing.Point(529, 519);
+            this.Submit.Margin = new System.Windows.Forms.Padding(4);
+            this.Submit.Name = "Submit";
+            this.Submit.Size = new System.Drawing.Size(87, 28);
+            this.Submit.TabIndex = 6;
+            this.Submit.Text = "Submit";
+            this.Submit.UseVisualStyleBackColor = true;
+            this.Submit.Click += new System.EventHandler(this.OnClick_Submit);
             // 
             // textBox1
             // 
@@ -126,6 +126,7 @@
             this.UserEmailAddress.Size = new System.Drawing.Size(498, 23);
             this.UserEmailAddress.TabIndex = 3;
             this.UserEmailAddress.WordWrap = false;
+            this.UserEmailAddress.TextChanged += new System.EventHandler(this.OnTextChanged_UserEmailAddress);
             // 
             // UserComments
             // 
@@ -150,7 +151,7 @@
             this.KBLinkLabel.TabIndex = 8;
             this.KBLinkLabel.TabStop = true;
             this.KBLinkLabel.Text = "Please visit our Knowledge Base to see if we are already aware of this issue.";
-            this.KBLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.KBLinkLabel_LinkClicked);
+            this.KBLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnLinkClicked_KBLinkLabel);
             // 
             // ReportError
             // 
@@ -165,14 +166,14 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.btnSubmit);
+            this.Controls.Add(this.Submit);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "ReportError";
             this.Text = "Chem4Word - Error";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ReportError_FormClosing);
-            this.Load += new System.EventHandler(this.ErrorReport_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing_ReportError);
+            this.Load += new System.EventHandler(this.OnLoad_ErrorReport);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -181,7 +182,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnSubmit;
+        private System.Windows.Forms.Button Submit;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label1;

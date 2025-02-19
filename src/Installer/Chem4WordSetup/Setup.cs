@@ -50,7 +50,7 @@ namespace Chem4WordSetup
             InitializeComponent();
         }
 
-        private void Setup_Load(object sender, EventArgs e)
+        private void OnLoad_Setup(object sender, EventArgs e)
         {
             // Move up and left by half the form size
             Left = Left - Width / 2;
@@ -275,7 +275,7 @@ namespace Chem4WordSetup
             bool foundOurXmlFile = false;
 
             var securityProtocol = ServicePointManager.SecurityProtocol;
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             foreach (var domain in OurDomains)
             {
@@ -349,7 +349,7 @@ namespace Chem4WordSetup
             return message;
         }
 
-        private void Action_Click(object sender, EventArgs e)
+        private void OnClick_Action(object sender, EventArgs e)
         {
             if (Action.Text.Equals("Install"))
             {
@@ -595,6 +595,8 @@ namespace Chem4WordSetup
         {
             bool started = false;
 
+            var securityProtocol = ServicePointManager.SecurityProtocol;
+
             _sw = new Stopwatch();
             _sw.Start();
 
@@ -627,8 +629,7 @@ namespace Chem4WordSetup
                     }
                 }
 
-                var securityProtocol = ServicePointManager.SecurityProtocol;
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 _webClient = new WebClient();
                 _webClient.Headers.Add("user-agent", "Chem4Word Bootstrapper");
@@ -644,6 +645,10 @@ namespace Chem4WordSetup
             {
                 RegistryHelper.WriteAction(ex.Message);
                 Information.Text = ex.Message;
+            }
+            finally
+            {
+                ServicePointManager.SecurityProtocol = securityProtocol;
             }
 
             return started;
@@ -737,7 +742,7 @@ namespace Chem4WordSetup
             Done
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void OnTick_timer1(object sender, EventArgs e)
         {
             HandleNextState();
         }

@@ -71,7 +71,7 @@ namespace Chem4Word.ACME.Models
                     tagControlItem.ItemLabel.Content = newTagText.ToLower(CultureInfo.InvariantCulture);
 
                     // Add the remove event to this tag
-                    tagControlItem.Image.MouseUp += TagControlItem_OnMouseUp;
+                    tagControlItem.Image.MouseUp += OnMouseUp_TagControlItem;
 
                     // Determine position of where to insert the new tag
                     int position = CurrentTags.Count;
@@ -128,8 +128,8 @@ namespace Chem4Word.ACME.Models
                     Margin = new Thickness(2.0)
                 };
 
-                autoCompleteBox.KeyUp += TextBox_KeyUp;
-                autoCompleteBox.DropDownClosed += AutoCompleteBox_DropDownClosed;
+                autoCompleteBox.KeyUp += OnKeyUp_TextBox;
+                autoCompleteBox.DropDownClosed += OnDropDownClosed_AutoCompleteBox;
 
                 // Add at end
                 CurrentTags.Add(autoCompleteBox);
@@ -139,7 +139,7 @@ namespace Chem4Word.ACME.Models
 
             #region Event handlers
 
-            private void AutoCompleteBox_DropDownClosed(object sender, RoutedPropertyChangedEventArgs<bool> e)
+            private void OnDropDownClosed_AutoCompleteBox(object sender, RoutedPropertyChangedEventArgs<bool> e)
             {
                 if (sender is AutoCompleteBox autoCompleteBox
                     && autoCompleteBox.SelectedItem != null
@@ -149,7 +149,7 @@ namespace Chem4Word.ACME.Models
                 }
             }
 
-            private void TextBox_KeyUp(object sender, KeyEventArgs e)
+            private void OnKeyUp_TextBox(object sender, KeyEventArgs e)
             {
                 if (sender is AutoCompleteBox autoCompleteBox
                     && autoCompleteBox.Text.Length > 1)
@@ -173,7 +173,7 @@ namespace Chem4Word.ACME.Models
                 }
             }
 
-            private void TagControlItem_OnMouseUp(object sender, MouseButtonEventArgs e)
+            private void OnMouseUp_TagControlItem(object sender, MouseButtonEventArgs e)
             {
                 var parent = VisualTreeHelpers.FindAncestor<TagItem>(sender as Image);
                 if (parent != null)

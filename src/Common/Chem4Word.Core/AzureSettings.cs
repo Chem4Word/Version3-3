@@ -171,12 +171,12 @@ namespace Chem4Word.Core
 
         private void GetFromWebsite(string today)
         {
+            var securityProtocol = ServicePointManager.SecurityProtocol;
             try
             {
                 var file = $"{Constants.Chem4WordVersionFiles}/AzureSettings.json";
 
-                var securityProtocol = ServicePointManager.SecurityProtocol;
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 var found = false;
                 var temp = string.Empty;
@@ -228,6 +228,10 @@ namespace Chem4Word.Core
             catch
             {
                 // Do Nothing
+            }
+            finally
+            {
+                ServicePointManager.SecurityProtocol = securityProtocol;
             }
         }
 

@@ -8,6 +8,7 @@
 using Chem4Word.ACME.Entities;
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Enums;
 using System.Collections.Generic;
 
 namespace Chem4Word.ACME.Models
@@ -18,9 +19,11 @@ namespace Chem4Word.ACME.Models
         private int? _charge;
         private string _isotope;
         private bool? _explicitC;
+        private HydrogenLabels? _explicitH;
         private bool _isFunctionalGroup;
         private bool _isElement;
         private bool _showCompass;
+        private bool _showHydrogenLabels;
         private CompassPoints? _explicitHydrogenPlacement;
         private CompassPoints? _fgPlacement;
 
@@ -125,6 +128,16 @@ namespace Chem4Word.ACME.Models
             }
         }
 
+        public HydrogenLabels? ExplicitH
+        {
+            get => _explicitH;
+            set
+            {
+                _explicitH = value;
+                OnPropertyChanged();
+            }
+        }
+
         public List<ChargeValue> Charges
         {
             get
@@ -164,13 +177,25 @@ namespace Chem4Word.ACME.Models
         public bool ShowCompass
         {
             get
-
             {
                 return _showCompass;
             }
             set
             {
                 _showCompass = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ShowHydrogenLabels
+        {
+            get
+            {
+                return _showHydrogenLabels;
+            }
+            set
+            {
+                _showHydrogenLabels = value;
                 OnPropertyChanged();
             }
         }

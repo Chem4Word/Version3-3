@@ -36,47 +36,50 @@ namespace Chem4Word.Helpers
             {
                 bool doCheck = true;
 
-                if (!string.IsNullOrEmpty(Globals.Chem4WordV3.AddInInfo.DeploymentPath))
+                if (Globals.Chem4WordV3.AddInInfo != null)
                 {
-                    #region CheckForUpdate
-
-                    ReadSavedValues();
-
-                    if (frequency == 0)
+                    if (!string.IsNullOrEmpty(Globals.Chem4WordV3.AddInInfo.DeploymentPath))
                     {
-                        Debugger.Break();
-                    }
+                        #region CheckForUpdate
 
-                    TimeSpan delta = DateTime.Today - Globals.Chem4WordV3.VersionLastChecked;
-                    Debug.WriteLine($"Delta = {delta.TotalDays}");
-                    if (Math.Abs(delta.TotalDays) <= frequency)
-                    {
-                        doCheck = false;
+                        ReadSavedValues();
+
+                        if (frequency == 0)
+                        {
+                            Debugger.Break();
+                        }
+
+                        TimeSpan delta = DateTime.Today - Globals.Chem4WordV3.VersionLastChecked;
+                        Debug.WriteLine($"Delta = {delta.TotalDays}");
+                        if (Math.Abs(delta.TotalDays) <= frequency)
+                        {
+                            doCheck = false;
+                        }
+
+                        if (doCheck)
+                        {
+                            Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Last check {delta.TotalDays:0} day(s) ago; Check frequency {frequency} days.");
+                            Debug.WriteLine("Saving date last checked in Registry as Today");
+                            RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordRegistryKey);
+                            registryKey?.SetValue(Constants.RegistryValueNameLastCheck, DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                        }
                     }
 
                     if (doCheck)
                     {
-                        Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Last check {delta.TotalDays:0} day(s) ago; Check frequency {frequency} days.");
-                        Debug.WriteLine("Saving date last checked in Registry as Today");
-                        RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordRegistryKey);
-                        registryKey?.SetValue(Constants.RegistryValueNameLastCheck, DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                    }
-                }
+                        bool update = false;
+                        using (new WaitCursor())
+                        {
+                            update = FetchUpdateInfo();
+                        }
 
-                if (doCheck)
-                {
-                    bool update = false;
-                    using (new WaitCursor())
-                    {
-                        update = FetchUpdateInfo();
-                    }
+                        if (update)
+                        {
+                            ShowUpdateForm();
+                        }
 
-                    if (update)
-                    {
-                        ShowUpdateForm();
+                        #endregion CheckForUpdate
                     }
-
-                    #endregion CheckForUpdate
                 }
             }
             catch (Exception ex)
@@ -327,7 +330,7 @@ namespace Chem4Word.Helpers
             string contents = null;
 
             var securityProtocol = ServicePointManager.SecurityProtocol;
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             bool foundOurXmlFile = false;
             foreach (var domain in Constants.OurDomains)

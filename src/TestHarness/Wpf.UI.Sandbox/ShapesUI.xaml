@@ -2,13 +2,17 @@
     x:Class="Wpf.UI.Sandbox.ShapesUI"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:shapes="clr-namespace:Chem4Word.ACME.Graphics;assembly=Chem4Word.ACME"
     Title="Shapes UI Test"
     Width="800"
-    Height="600">
-    <Canvas>
+    Height="600"
+    mc:Ignorable="av">
+    <Canvas av:IsLocked="True">
         <!--  H Rotators +30 to +100  -->
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="500,100"
@@ -19,6 +23,7 @@
             Stroke="Black"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="500,100"
@@ -29,6 +34,7 @@
             Stroke="Red"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="500,100"
@@ -39,6 +45,7 @@
             Stroke="Green"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="500,100"
@@ -51,6 +58,7 @@
 
         <!--  Reversed H Rotators -30 to -100  -->
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="600,100"
@@ -61,6 +69,7 @@
             Stroke="Black"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="600,100"
@@ -71,6 +80,7 @@
             Stroke="Red"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="600,100"
@@ -81,6 +91,7 @@
             Stroke="Green"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="600,100"
@@ -93,6 +104,7 @@
 
         <!--  Other random stuff  -->
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="100,100"
@@ -103,6 +115,7 @@
             Stroke="Black"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="200,100"
@@ -114,6 +127,7 @@
             Stroke="Red"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="False"
             Center="300,100"
@@ -123,6 +137,7 @@
             Stroke="Green"
             StrokeThickness="3" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="End"
             ArrowHeadClosed="True"
             Center="400,100"
@@ -136,6 +151,7 @@
 
         <!--  Lines and Curves  -->
         <shapes:EquilibriumArrow
+            av:IsLocked="True"
             Bias="Forward"
             HeadLength="25"
             Separation="5"
@@ -144,6 +160,7 @@
             StartPoint="100,200"
             EndPoint="300,200" />
         <shapes:EquilibriumArrow
+            av:IsLocked="True"
             Bias="Backward"
             HeadLength="25"
             Separation="5"
@@ -152,6 +169,7 @@
             StartPoint="100,250"
             EndPoint="300,250" />
         <shapes:EquilibriumArrow
+            av:IsLocked="True"
             Bias="None"
             HeadLength="25"
             Separation="5"
@@ -160,24 +178,27 @@
             StartPoint="100,300"
             EndPoint="300,300" />
         <shapes:BlockedArrow
+            av:IsLocked="True"
             HeadLength="25"
             Stroke="DarkRed"
             StrokeThickness="3"
             StartPoint="100,350"
             EndPoint="300,400" />
         <shapes:QuadraticArrow
+            av:IsLocked="True"
             ArrowEnds="Both"
             ArrowHeadClosed="True"
-            Fill="{Binding RelativeSource={RelativeSource Self}, Path=Stroke}"
+            Fill="{Binding Stroke, RelativeSource={RelativeSource Mode=Self}}"
             FirstControlPoint="550,150"
             Stroke="OrangeRed"
             StrokeThickness="3"
             StartPoint="400,200"
             EndPoint="500,300" />
         <shapes:BezierArrow
+            av:IsLocked="True"
             ArrowEnds="Both"
             ArrowHeadClosed="True"
-            Fill="{Binding RelativeSource={RelativeSource Self}, Path=Stroke}"
+            Fill="{Binding Stroke, RelativeSource={RelativeSource Mode=Self}}"
             FirstControlPoint="200,300"
             SecondControlPoint="300,700"
             Stroke="Teal"
@@ -185,11 +206,12 @@
             StartPoint="100,500"
             EndPoint="400,500" />
         <shapes:ArcArrow
+            av:IsLocked="True"
             ArrowEnds="Both"
             ArrowHeadClosed="True"
             Center="400,400"
             EndAngle="120"
-            Fill="{Binding RelativeSource={RelativeSource Self}, Path=Stroke}"
+            Fill="{Binding Stroke, RelativeSource={RelativeSource Mode=Self}}"
             HeadAngle="45"
             HeadLength="20"
             Radius="60"
@@ -197,6 +219,7 @@
             Stroke="#7FCA34"
             StrokeThickness="3" />
         <shapes:RetrosyntheticArrow
+            av:IsLocked="True"
             Bias="Forward"
             HeadLength="25"
             Separation="5"

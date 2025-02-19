@@ -37,15 +37,18 @@ namespace Chem4Word.ACME.Utils
             dialog.ShowDialog();
         }
 
-        public static void ShowAcmeSettings(EditorCanvas currentEditor, AcmeOptions options, IChem4WordTelemetry telemetry, Point topLeft)
+        public static RenderingOptions ShowAcmeSettings(EditorCanvas currentEditor, RenderingOptions currentOptions, RenderingOptions userDefaultOptions, IChem4WordTelemetry telemetry, Point topLeft)
         {
             var mode = Application.Current.ShutdownMode;
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-            var pe = new SettingsHost(options, telemetry, topLeft);
+            var pe = new AcmeSettingsHost(currentOptions, userDefaultOptions, telemetry, topLeft);
             ShowDialog(pe, currentEditor);
+            var result = pe.Result;
 
             Application.Current.ShutdownMode = mode;
+
+            return result;
         }
 
         public static Point GetOffScreenPoint()
@@ -104,7 +107,7 @@ namespace Chem4Word.ACME.Utils
 
         public static void DoPropertyEdit(MouseButtonEventArgs e, EditorCanvas currentEditor)
         {
-            EditController controller = (EditController)currentEditor.Controller;
+            var controller = (EditController)currentEditor.Controller;
 
             var position = e.GetPosition(currentEditor);
             var screenPosition = currentEditor.PointToScreen(position);
@@ -120,27 +123,36 @@ namespace Chem4Word.ACME.Utils
                     var mode = Application.Current.ShutdownMode;
                     Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-                    var model = new MoleculePropertiesModel();
-                    model.Centre = screenPosition;
-                    model.Path = moleculeAdorner.AdornedMolecules[0].Path;
-                    model.Used1DProperties = controller.Used1DProperties;
+                    var moleculePropertiesModel = new MoleculePropertiesModel
+                    {
+                        Centre = screenPosition,
+                        Path = moleculeAdorner.AdornedMolecules[0].Path,
+                        Used1DProperties = controller.Used1DProperties
+                    };
 
-                    model.Data = new Model();
-                    Molecule mol = moleculeAdorner.AdornedMolecules[0].Copy();
-                    model.Data.AddMolecule(mol);
-                    mol.Parent = model.Data;
+                    moleculePropertiesModel.Data = new Model();
+                    var parent = moleculeAdorner.AdornedMolecules[0].Model;
+                    moleculePropertiesModel.Data.SetUserOptions(parent.GetCurrentOptions());
 
-                    model.Charge = mol.FormalCharge;
-                    model.Count = mol.Count;
-                    model.SpinMultiplicity = mol.SpinMultiplicity;
-                    model.ShowMoleculeBrackets = mol.ShowMoleculeBrackets;
+                    var molecule = moleculeAdorner.AdornedMolecules[0].Copy();
 
-                    var pe = new MoleculePropertyEditor(model, controller.EditorOptions);
+                    moleculePropertiesModel.Data.AddMolecule(molecule);
+                    molecule.Parent = moleculePropertiesModel.Data;
+
+                    moleculePropertiesModel.Charge = molecule.FormalCharge;
+                    moleculePropertiesModel.Count = molecule.Count;
+                    moleculePropertiesModel.SpinMultiplicity = molecule.SpinMultiplicity;
+                    moleculePropertiesModel.ShowMoleculeBrackets = molecule.ShowMoleculeBrackets;
+
+                    moleculePropertiesModel.ExplicitC = molecule.ExplicitC;
+                    moleculePropertiesModel.ExplicitH = molecule.ExplicitH;
+
+                    var pe = new MoleculePropertyEditor(moleculePropertiesModel);
                     ShowDialog(pe, currentEditor);
 
-                    if (model.Save)
+                    if (moleculePropertiesModel.Save)
                     {
-                        var thisMolecule = model.Data.Molecules.First().Value;
+                        var thisMolecule = moleculePropertiesModel.Data.Molecules.First().Value;
                         controller.UpdateMolecule(moleculeAdorner.AdornedMolecules[0], thisMolecule);
                     }
 
@@ -163,7 +175,7 @@ namespace Chem4Word.ACME.Utils
                         Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
                         var atom = av.ParentAtom;
-                        var model = new AtomPropertiesModel
+                        var atomPropertiesModel = new AtomPropertiesModel
                         {
                             Centre = screenPosition,
                             Path = atom.Path,
@@ -172,43 +184,54 @@ namespace Chem4Word.ACME.Utils
 
                         if (atom.Element is Element)
                         {
-                            model.IsFunctionalGroup = false;
-                            model.IsElement = true;
+                            atomPropertiesModel.IsFunctionalGroup = false;
+                            atomPropertiesModel.IsElement = true;
 
-                            model.Charge = atom.FormalCharge ?? 0;
-                            model.Isotope = atom.IsotopeNumber.ToString();
-                            model.ExplicitC = atom.ExplicitC;
-                            model.ExplicitHydrogenPlacement = atom.ExplicitHPlacement;
+                            atomPropertiesModel.Charge = atom.FormalCharge ?? 0;
+                            atomPropertiesModel.Isotope = atom.IsotopeNumber.ToString();
+                            atomPropertiesModel.ExplicitC = atom.ExplicitC;
+                            atomPropertiesModel.ExplicitH = atom.ExplicitH;
+                            atomPropertiesModel.ExplicitHydrogenPlacement = atom.ExplicitHPlacement;
+                            atomPropertiesModel.ShowHydrogenLabels = true;
                         }
 
                         if (atom.Element is FunctionalGroup)
                         {
-                            model.IsElement = false;
-                            model.IsFunctionalGroup = true;
-                            model.ExplicitFunctionalGroupPlacement = atom.ExplicitFunctionalGroupPlacement;
+                            atomPropertiesModel.IsElement = false;
+                            atomPropertiesModel.IsFunctionalGroup = true;
+
+                            atomPropertiesModel.ExplicitFunctionalGroupPlacement = atom.ExplicitFunctionalGroupPlacement;
+                            atomPropertiesModel.ShowHydrogenLabels = false;
                         }
 
-                        model.IsNotSingleton = !atom.Singleton;
+                        atomPropertiesModel.IsNotSingleton = !atom.Singleton;
 
-                        model.MicroModel = new Model();
+                        atomPropertiesModel.MicroModel = new Model();
+                        atomPropertiesModel.MicroModel.SetUserOptions(currentEditor.Controller.Model.GetCurrentOptions());
 
                         Molecule m = new Molecule();
-                        model.MicroModel.AddMolecule(m);
-                        m.Parent = model.MicroModel;
+                        atomPropertiesModel.MicroModel.AddMolecule(m);
+                        m.Parent = atomPropertiesModel.MicroModel;
 
                         Atom a = new Atom();
+                        a.Id = atom.Id;
                         a.Element = atom.Element;
                         a.Position = atom.Position;
+                        a.ExplicitC = atom.ExplicitC;
+                        a.ExplicitH = atom.ExplicitH;
                         a.FormalCharge = atom.FormalCharge;
                         a.IsotopeNumber = atom.IsotopeNumber;
                         m.AddAtom(a);
                         a.Parent = m;
 
+                        int atomId = 0;
                         foreach (var bond in atom.Bonds)
                         {
                             Atom ac = new Atom();
+                            ac.Id = $"aa{atomId++}";
                             ac.Element = Globals.PeriodicTable.C;
                             ac.ExplicitC = false;
+                            ac.ExplicitH = HydrogenLabels.None;
                             ac.Position = bond.OtherAtom(atom).Position;
                             m.AddAtom(ac);
                             ac.Parent = m;
@@ -234,27 +257,27 @@ namespace Chem4Word.ACME.Utils
                             m.AddBond(b);
                             b.Parent = m;
                         }
-                        model.MicroModel.ScaleToAverageBondLength(20);
+                        atomPropertiesModel.MicroModel.ScaleToAverageBondLength(20);
 
-                        var pe = new AtomPropertyEditor(model, controller.EditorOptions);
+                        var atomPropertyEditor = new AtomPropertyEditor(atomPropertiesModel);
 
-                        ShowDialog(pe, currentEditor);
+                        ShowDialog(atomPropertyEditor, currentEditor);
                         Application.Current.ShutdownMode = mode;
 
-                        if (model.Save)
+                        if (atomPropertiesModel.Save)
                         {
-                            controller.UpdateAtom(atom, model);
+                            controller.UpdateAtom(atom, atomPropertiesModel);
 
                             controller.ClearSelection();
                             controller.AddToSelection(atom);
 
-                            if (model.AddedElement != null)
+                            if (atomPropertiesModel.AddedElement != null)
                             {
-                                AddOptionIfNeeded(model);
+                                AddOptionIfNeeded(atomPropertiesModel);
                             }
-                            controller.SelectedElement = model.Element;
+                            controller.SelectedElement = atomPropertiesModel.Element;
                         }
-                        pe.Close();
+                        atomPropertyEditor.Close();
                     }
 
                     // Did RightClick occur on a BondVisual?

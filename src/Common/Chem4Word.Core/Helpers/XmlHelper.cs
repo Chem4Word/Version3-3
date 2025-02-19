@@ -21,7 +21,8 @@ namespace Chem4Word.Core.Helpers
             var header = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
             var result = cml;
 
-            if (!cml.StartsWith(header))
+            // Using shorter version to test for as this string may have the short version (without utf-8)
+            if (!cml.StartsWith("<?xml version"))
             {
                 if (cml.Contains(Environment.NewLine))
                 {

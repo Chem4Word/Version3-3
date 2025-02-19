@@ -50,11 +50,13 @@ namespace Chem4Word.ACME
 
         public Point TopLeft { get; set; }
 
+        private double _defaultBondLength;
+
         private Model _model;
 
         private List<string> _used1DProperties;
 
-        public AcmeOptions EditorOptions { get; set; }
+        private RenderingOptions _userDefaultOptions;
 
         public IChem4WordTelemetry Telemetry
         {
@@ -81,27 +83,78 @@ namespace Chem4Word.ACME
             InitializeComponent();
         }
 
-        public void SetModel(Model model)
+        private void OnLoaded_ACMEControl(object sender, RoutedEventArgs e)
         {
-            _model = model.Copy();
-
             InitialiseEditor();
         }
 
-        public void SetProperties(string cml, List<string> used1DProperties, AcmeOptions options)
+        private void InitialiseEditor()
         {
-            CMLConverter cc = new CMLConverter();
-            _model = cc.Import(cml, used1DProperties);
+            if (_model != null)
+            {
+                _model.RescaleForXaml(false, _defaultBondLength);
 
+                ActiveController = new EditController(_model, ChemCanvas, HostingCanvas, ReactionBoxEditor, _used1DProperties, Telemetry)
+                {
+                    EditorControl = this
+                };
+                ActiveController.Model.CentreInCanvas(new Size(ChemCanvas.ActualWidth, ChemCanvas.ActualHeight));
+
+                ChemCanvas.Controller = ActiveController;
+
+                ActiveController.Loading = true;
+
+                if (ActiveController.Model.TotalBondsCount == 0)
+                {
+                    ActiveController.CurrentBondLength = _defaultBondLength;
+                }
+                else
+                {
+                    var mean = ActiveController.Model.MeanBondLength / Globals.ScaleFactorForXaml;
+                    var average = Math.Round(mean / 5.0) * 5;
+                    ActiveController.CurrentBondLength = average;
+                }
+
+                ActiveController.Loading = false;
+
+                ScrollIntoView();
+                BindControls(ActiveController);
+
+                ActiveController.OnFeedbackChange += OnFeedbackChangeActiveController;
+
+                //refresh the ring button
+                SetCurrentRing(BenzeneButton);
+                //refresh the selection button
+                SetSelectionMode(LassoButton);
+
+                //HACK: [DCD] Need to do this to put the editor into the right mode after refreshing the ring button
+                DrawButton.IsChecked = true;
+                OnChecked_Mode(DrawButton, new RoutedEventArgs());
+            }
+        }
+
+        public void SetProperties(string cml, List<string> used1DProperties, RenderingOptions userDefaultOptions)
+        {
+            if (string.IsNullOrEmpty(cml))
+            {
+                _model = new Model();
+                _model.SetUserOptions(userDefaultOptions);
+            }
+            else
+            {
+                _model = new CMLConverter().Import(cml);
+            }
+
+            _userDefaultOptions = userDefaultOptions;
             _used1DProperties = used1DProperties;
-            EditorOptions = options;
+            _defaultBondLength = userDefaultOptions.DefaultBondLength;
 
             InitialiseEditor();
         }
 
         public event EventHandler<WpfEventArgs> OnFeedbackChange;
 
-        private void ActiveControllerOnFeedbackChange(object sender, WpfEventArgs e)
+        private void OnFeedbackChangeActiveController(object sender, WpfEventArgs e)
         {
             OnFeedbackChange?.Invoke(this, e);
         }
@@ -114,13 +167,14 @@ namespace Chem4Word.ACME
                 {
                     return false;
                 }
-                else
-                {
-                    return ActiveController.IsDirty;
-                }
+
+                return ActiveController.IsDirty || ActiveController.HasChangedSettings;
             }
         }
 
+        /// <summary>
+        /// This model is ONLY for exporting the results of the editing session
+        /// </summary>
         public Model EditedModel
         {
             get
@@ -129,12 +183,10 @@ namespace Chem4Word.ACME
                 {
                     return null;
                 }
-                else
-                {
-                    Model model = ActiveController.Model.Copy();
-                    model.RescaleForCml();
-                    return model;
-                }
+
+                var model = ActiveController.Model.Copy();
+                model.RescaleForCml();
+                return model;
             }
         }
 
@@ -221,21 +273,21 @@ namespace Chem4Word.ACME
             return DrawingArea.TranslatePoint(p, ChemCanvas);
         }
 
-        private void Popup_Click(object sender, RoutedEventArgs e)
+        private void OnClick_Popup(object sender, RoutedEventArgs e)
         {
             RingButton.IsChecked = true;
         }
 
-        private void RingDropdown_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_RingDropdown(object sender, RoutedEventArgs e)
         {
             RingPopup.IsOpen = true;
             RingPopup.Closed += (senderClosed, eClosed) => { };
         }
 
-        private void RingSelButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_RingSelect(object sender, RoutedEventArgs e)
         {
             SetCurrentRing(sender);
-            ModeButton_OnChecked(RingButton, null);
+            OnChecked_Mode(RingButton, null);
             RingButton.IsChecked = true;
             RingPopup.IsOpen = false;
         }
@@ -252,60 +304,6 @@ namespace Chem4Word.ACME
                 RingPanel.Background = currentFace;
                 RingButton.Tag = button.Tag;
             }
-        }
-
-        private void InitialiseEditor()
-        {
-            if (_model != null)
-            {
-                _model.RescaleForXaml(false, EditorOptions.BondLength);
-
-                ActiveController = new EditController(_model, ChemCanvas, HostingCanvas, ReactionBoxEditor, _used1DProperties, Telemetry);
-                ActiveController.EditorControl = this;
-                ActiveController.Model.CentreInCanvas(new Size(ChemCanvas.ActualWidth, ChemCanvas.ActualHeight));
-                ActiveController.EditorOptions = EditorOptions;
-
-                ChemCanvas.Controller = ActiveController;
-
-                ChemCanvas.ShowMoleculeGrouping = true;
-                ChemCanvas.ShowAtomsInColour = EditorOptions.ColouredAtoms;
-                ChemCanvas.ShowImplicitHydrogens = EditorOptions.ShowHydrogens;
-                ChemCanvas.ShowAllCarbonAtoms = EditorOptions.ShowCarbons;
-
-                ActiveController.Loading = true;
-
-                if (ActiveController.Model.TotalBondsCount == 0)
-                {
-                    ActiveController.CurrentBondLength = EditorOptions.BondLength;
-                }
-                else
-                {
-                    var mean = ActiveController.Model.MeanBondLength / Globals.ScaleFactorForXaml;
-                    var average = Math.Round(mean / 5.0) * 5;
-                    ActiveController.CurrentBondLength = average;
-                }
-
-                ActiveController.Loading = false;
-
-                ScrollIntoView();
-                BindControls(ActiveController);
-
-                ActiveController.OnFeedbackChange += ActiveControllerOnFeedbackChange;
-
-                //refresh the ring button
-                SetCurrentRing(BenzeneButton);
-                //refresh the selection button
-                SetSelectionMode(LassoButton);
-
-                //HACK: [DCD] Need to do this to put the editor into the right mode after refreshing the ring button
-                DrawButton.IsChecked = true;
-                ModeButton_OnChecked(DrawButton, new RoutedEventArgs());
-            }
-        }
-
-        private void ACMEControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            InitialiseEditor();
         }
 
         /// <summary>
@@ -327,40 +325,28 @@ namespace Chem4Word.ACME
             DrawingArea.ScrollToVerticalOffset((DrawingArea.ExtentHeight - DrawingArea.ViewportHeight) / 2);
         }
 
-        private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Settings(object sender, RoutedEventArgs e)
         {
             Point locationFromScreen = AcmeControl.PointToScreen(new Point(0, 0));
             Point dialogueTopLeft = new Point(locationFromScreen.X + Core.Helpers.Constants.TopLeftOffset,
                                               locationFromScreen.Y + Core.Helpers.Constants.TopLeftOffset);
 
-            UIUtils.ShowAcmeSettings(ChemCanvas, EditorOptions, Telemetry, dialogueTopLeft);
+            var currentOptions = ActiveController.Model.GetCurrentOptions();
 
-            // Re Load settings as they may have changed
-            EditorOptions = new AcmeOptions(EditorOptions.SettingsPath);
+            var newOptions = UIUtils.ShowAcmeSettings(ChemCanvas, currentOptions.Copy(), _userDefaultOptions, Telemetry, dialogueTopLeft);
 
-            if (ActiveController != null)
+            if (ActiveController != null
+                && newOptions != null
+                && !currentOptions.IsEqualTo(newOptions))
             {
-                if (ActiveController.Model.TotalBondsCount == 0)
-                {
-                    // Change current selection if the model is empty
-                    foreach (ComboBoxItem item in BondLengthSelector.Items)
-                    {
-                        if (int.Parse(item.Content.ToString()) == EditorOptions.BondLength)
-                        {
-                            ActiveController.Loading = true;
-                            BondLengthSelector.SelectedItem = item;
+                ActiveController.Model.ExplicitC = newOptions.ExplicitC;
+                ActiveController.Model.ExplicitH = newOptions.ExplicitH;
+                ActiveController.Model.ShowColouredAtoms = newOptions.ShowColouredAtoms;
+                ActiveController.Model.ShowMoleculeGrouping = newOptions.ShowMoleculeGrouping;
 
-                            ActiveController.CurrentBondLength = EditorOptions.BondLength;
+                ActiveController.HasChangedSettings = true;
 
-                            ActiveController.Model.SetXamlBondLength(EditorOptions.BondLength);
-                            ActiveController.Loading = false;
-                        }
-                    }
-                }
-
-                ActiveController.CurrentEditor.ShowAtomsInColour = EditorOptions.ColouredAtoms;
-                ActiveController.CurrentEditor.ShowImplicitHydrogens = EditorOptions.ShowHydrogens;
-                ActiveController.CurrentEditor.ShowAllCarbonAtoms = EditorOptions.ShowCarbons;
+                ChemCanvas.RepaintCanvas();
             }
         }
 
@@ -370,7 +356,7 @@ namespace Chem4Word.ACME
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ModeButton_OnChecked(object sender, RoutedEventArgs e)
+        private void OnChecked_Mode(object sender, RoutedEventArgs e)
         {
             ActiveController.ActiveMode = null;
 
@@ -393,7 +379,7 @@ namespace Chem4Word.ACME
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void Editor_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        private void OnPreviewKeyDown_Editor(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
             {
@@ -411,21 +397,21 @@ namespace Chem4Word.ACME
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SelectionPopup_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_SelectionPopup(object sender, RoutedEventArgs e)
         {
             SelectionButton.IsChecked = true;
         }
 
-        private void SelectionDropdownButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_SelectionDropdown(object sender, RoutedEventArgs e)
         {
             SelectionPopup.IsOpen = true;
             SelectionPopup.Closed += (senderClosed, eClosed) => { };
         }
 
-        private void SelectionButton_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Selection(object sender, RoutedEventArgs e)
         {
             SetSelectionMode(sender);
-            ModeButton_OnChecked(SelectionButton, null);
+            OnChecked_Mode(SelectionButton, null);
             SelectionButton.IsChecked = true;
             SelectionPopup.IsOpen = false;
         }
@@ -445,17 +431,17 @@ namespace Chem4Word.ACME
             SelectionButton.Tag = selButton.Tag;
         }
 
-        private void ReagentsButton_Click(object sender, RoutedEventArgs e)
+        private void OnClick_Reagents(object sender, RoutedEventArgs e)
         {
         }
 
-        private void SymbolDropdown_Click(object sender, RoutedEventArgs e)
+        private void OnClick_SymbolDropdown(object sender, RoutedEventArgs e)
         {
             SymbolPopup.IsOpen = true;
             SymbolPopup.Closed += (senderClosed, eClosed) => { };
         }
 
-        private void SymbolSelButton_Click(object sender, RoutedEventArgs e)
+        private void OnClick_SymbolSelect(object sender, RoutedEventArgs e)
         {
             SetSymbol(sender);
             SymbolPopup.IsOpen = false;

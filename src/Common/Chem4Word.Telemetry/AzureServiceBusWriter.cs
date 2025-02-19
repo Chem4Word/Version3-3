@@ -33,8 +33,12 @@ namespace Chem4Word.Telemetry
 
         private static readonly object QueueLock = Guid.NewGuid();
 
-        private readonly Queue<OutputMessage> _buffer1 = new Queue<OutputMessage>();
+        private readonly Queue<OutputMessage> _mainBuffer = new Queue<OutputMessage>();
+        private readonly Queue<OutputMessage> _secondaryBuffer = new Queue<OutputMessage>();
+
         private bool _running = false;
+
+        public int BufferCount => _mainBuffer.Count + _secondaryBuffer.Count;
 
         public AzureServiceBusWriter(AzureSettings settings)
         {
@@ -68,7 +72,7 @@ namespace Chem4Word.Telemetry
         {
             lock (QueueLock)
             {
-                _buffer1.Enqueue(message);
+                _mainBuffer.Enqueue(message);
                 Monitor.PulseAll(QueueLock);
             }
 
@@ -86,23 +90,21 @@ namespace Chem4Word.Telemetry
             // Small sleep before we start
             Thread.Sleep(25);
 
-            var buffer2 = new Queue<OutputMessage>();
-
             while (_running)
             {
                 // Move messages from 1st stage buffer to 2nd stage buffer
                 lock (QueueLock)
                 {
-                    while (_buffer1.Count > 0)
+                    while (_mainBuffer.Count > 0)
                     {
-                        buffer2.Enqueue(_buffer1.Dequeue());
+                        _secondaryBuffer.Enqueue(_mainBuffer.Dequeue());
                     }
                     Monitor.PulseAll(QueueLock);
                 }
 
-                while (buffer2.Count > 0)
+                while (_secondaryBuffer.Count > 0)
                 {
-                    var task = WriteMessage(buffer2.Dequeue());
+                    var task = WriteMessage(_secondaryBuffer.Dequeue());
                     task.Wait();
 
                     // Small micro sleep between each message
@@ -111,7 +113,7 @@ namespace Chem4Word.Telemetry
 
                 lock (QueueLock)
                 {
-                    if (_buffer1.Count == 0)
+                    if (_mainBuffer.Count == 0)
                     {
                         _running = false;
                     }
@@ -123,7 +125,7 @@ namespace Chem4Word.Telemetry
         private async Task WriteMessage(OutputMessage message)
         {
             var securityProtocol = ServicePointManager.SecurityProtocol;
-            ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             try
             {

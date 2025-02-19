@@ -39,7 +39,7 @@ namespace Chem4Word.UI.WPF
 
             ChemistryItems = new ObservableCollection<ChemistryObject>();
             LoadChemistryItems();
-            ChemistryItems.CollectionChanged += ChemistryItems_CollectionChanged;
+            ChemistryItems.CollectionChanged += OnCollectionChanged_ChemistryItems;
         }
 
         //used for XAML data binding
@@ -129,7 +129,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void ChemistryItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged_ChemistryItems(object sender, NotifyCollectionChangedEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try

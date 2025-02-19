@@ -10,12 +10,12 @@
     Width="450"
     Height="255"
     d:DesignWidth="362.337"
-    ContentRendered="PTPopup_OnContentRendered"
+    ContentRendered="OnContentRendered_PTPopup"
     FontFamily="Segoe UI"
     FontSize="12"
     Icon="/Chem4Word.ACME;component/Resources/ms-word-16.ico"
-    Loaded="PTPickerWindow_Loaded"
-    PreviewKeyDown="PTPickerWindow_PreviewKeyDown"
+    Loaded="OnLoaded_PTPickerWindow"
+    PreviewKeyDown="OnPreviewKeyDown_PTPickerWindow"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     mc:Ignorable="d">
@@ -27,18 +27,19 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid>
+    <Grid d:IsLocked="True">
         <Grid.Resources>
             <Style TargetType="{x:Type TextBlock}">
                 <Setter Property="FontSize" Value="18" />
             </Style>
         </Grid.Resources>
-        <Viewbox>
+        <Viewbox d:IsLocked="True">
             <controls:VisualPeriodicTable
                 x:Name="PTPicker"
                 Margin="0"
                 Padding="0"
-                ElementSelected="PTPicker_ElementSelected" />
+                d:IsLocked="True"
+                ElementSelected="OnElementSelected_PTPicker" />
         </Viewbox>
     </Grid>
 </Window>

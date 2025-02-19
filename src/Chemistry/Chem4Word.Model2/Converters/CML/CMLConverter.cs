@@ -48,7 +48,47 @@ namespace Chem4Word.Model2.Converters.CML
                 XDocument modelDoc = XDocument.Parse(cml);
                 XElement root = modelDoc.Root;
 
-                // Only import if not null
+                // Only import if set
+                XElement explicitC = CMLHelper.GetExplicitCarbonTag(root);
+                if (explicitC != null && !string.IsNullOrEmpty(explicitC.Value))
+                {
+                    if (bool.TryParse(explicitC.Value, out var result))
+                    {
+                        newModel.ExplicitC = result;
+                    }
+                }
+
+                // Only import if set
+                XElement explicitH = CMLHelper.GetExplicitHydrogenTag(root);
+                if (explicitH != null && !string.IsNullOrEmpty(explicitH.Value))
+                {
+                    if (Enum.TryParse(explicitH.Value, out HydrogenLabels result))
+                    {
+                        newModel.ExplicitH = result;
+                    }
+                }
+
+                // Only import if set
+                XElement colouredAtoms = CMLHelper.GetColouredAtomsTag(root);
+                if (colouredAtoms != null && !string.IsNullOrEmpty(colouredAtoms.Value))
+                {
+                    if (bool.TryParse(colouredAtoms.Value, out bool result))
+                    {
+                        newModel.ShowColouredAtoms = result;
+                    }
+                }
+
+                // Only import if set
+                XElement showGrouping = CMLHelper.GetShowMoleculeGroupingTag(root);
+                if (showGrouping != null && !string.IsNullOrEmpty(showGrouping.Value))
+                {
+                    if (bool.TryParse(showGrouping.Value, out bool result))
+                    {
+                        newModel.ShowMoleculeGrouping = result;
+                    }
+                }
+
+                // Only import if set
                 XElement customXmlPartGuid = CMLHelper.GetCustomXmlPartGuid(root);
                 if (customXmlPartGuid != null && !string.IsNullOrEmpty(customXmlPartGuid.Value))
                 {
@@ -109,7 +149,7 @@ namespace Chem4Word.Model2.Converters.CML
                     }
                 }
 
-                #endregion Fix any annotations without Symbol Size
+                #endregion Fix any annotations without SymbolSize set
 
                 // Calculate dynamic properties
                 newModel.Refresh();
@@ -145,7 +185,7 @@ namespace Chem4Word.Model2.Converters.CML
                 newAnnotation.Id = idValue;
             }
 
-            newAnnotation.Position = CMLHelper.GetPosn(cmlElement, out _);
+            newAnnotation.Position = CMLHelper.GetPosition(cmlElement, out _);
 
             string symbolSize = cmlElement.Attribute(name: CMLConstants.AttributeSymbolSize)?.Value;
             if (!string.IsNullOrEmpty(symbolSize))
@@ -192,22 +232,34 @@ namespace Chem4Word.Model2.Converters.CML
                     // Only export if set and format is default
                     if (!string.IsNullOrEmpty(model.CustomXmlPartGuid))
                     {
-                        var customXmlPartGuid = new XElement(CMLNamespaces.c4w + CMLConstants.TagXmlPartGuid, model.CustomXmlPartGuid);
-                        root.Add(customXmlPartGuid);
+                        root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagXmlPartGuid, model.CustomXmlPartGuid));
                     }
+
+                    root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagExplicitC, model.ExplicitC));
+                    root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagExplicitH, model.ExplicitH));
+                    root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagShowColouredAtoms, model.ShowColouredAtoms));
+                    root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagShowMoleculeGrouping, model.ShowMoleculeGrouping));
 
                     // Build document
                     foreach (var molecule in model.Molecules.Values)
                     {
                         root.Add(GetMoleculeElement(molecule));
                     }
-                    foreach (var scheme in model.ReactionSchemes.Values)
+
+                    if (model.HasReactions)
                     {
-                        root.Add(GetXElement(scheme));
+                        foreach (var scheme in model.ReactionSchemes.Values)
+                        {
+                            root.Add(GetXElement(scheme));
+                        }
                     }
-                    foreach (var annotation in model.Annotations.Values)
+
+                    if (model.HasAnnotations)
                     {
-                        root.Add(GetXElement(annotation));
+                        foreach (var annotation in model.Annotations.Values)
+                        {
+                            root.Add(GetXElement(annotation));
+                        }
                     }
 
                     // Add namespaces etc
@@ -441,6 +493,16 @@ namespace Chem4Word.Model2.Converters.CML
                 {
                     molElement.Add(new XAttribute(CMLConstants.AttributeCount, mol.Count.Value));
                 }
+
+                if (mol.ExplicitC != null)
+                {
+                    molElement.Add(new XAttribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitC, mol.ExplicitC.Value));
+                }
+
+                if (mol.ExplicitH != null)
+                {
+                    molElement.Add(new XAttribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitH, mol.ExplicitH.Value));
+                }
             }
 
             if (mol.Molecules.Any())
@@ -665,7 +727,13 @@ namespace Chem4Word.Model2.Converters.CML
                 && element2 == Globals.PeriodicTable.C
                 && atom.ExplicitC != null)
             {
-                result.Add(new XAttribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicit, atom.ExplicitC));
+                result.Add(new XAttribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitC, atom.ExplicitC));
+            }
+
+            if (atom.Element is Element
+                && atom.ExplicitH != null)
+            {
+                result.Add(new XAttribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitH, atom.ExplicitH));
             }
 
             if (atom.Element is Element && atom.ExplicitHPlacement != null)
@@ -780,6 +848,21 @@ namespace Chem4Word.Model2.Converters.CML
             if (!string.IsNullOrEmpty(showBracketsValue))
             {
                 molecule.ShowMoleculeBrackets = bool.Parse(showBracketsValue);
+            }
+
+            string explicitCValue = cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitC)?.Value;
+            if (!string.IsNullOrEmpty(explicitCValue))
+            {
+                molecule.ExplicitC = bool.Parse(explicitCValue);
+            }
+
+            string explicitHValue = cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitH)?.Value;
+            if (!string.IsNullOrEmpty(explicitHValue))
+            {
+                if (Enum.TryParse(explicitHValue, out HydrogenLabels explicitH))
+                {
+                    molecule.ExplicitH = explicitH;
+                }
             }
 
             string idValue = cmlElement.Attribute(CMLConstants.AttributeId)?.Value;
@@ -917,8 +1000,10 @@ namespace Chem4Word.Model2.Converters.CML
             {
                 // Remove ExplicitC flag
                 molecule.Atoms.First().Value.ExplicitC = null;
+                // Remove ExplicitH setting
+                molecule.Atoms.First().Value.ExplicitH = null;
 
-                // Remove invalid molecule properties
+                // Remove other invalid molecule properties
                 molecule.ShowMoleculeBrackets = null;
                 molecule.SpinMultiplicity = null;
                 molecule.FormalCharge = null;
@@ -938,7 +1023,7 @@ namespace Chem4Word.Model2.Converters.CML
             string atomLabel = cmlElement.Attribute(CMLConstants.AttributeId)?.Value;
 
             string message = "";
-            Point p = CMLHelper.GetPosn(cmlElement, out message);
+            Point p = CMLHelper.GetPosition(cmlElement, out message);
             if (!string.IsNullOrEmpty(message))
             {
                 atom.Messages.Add(message);
@@ -959,6 +1044,7 @@ namespace Chem4Word.Model2.Converters.CML
                 atom.FormalCharge = CMLHelper.GetFormalCharge(cmlElement);
                 atom.IsotopeNumber = CMLHelper.GetIsotopeNumber(cmlElement);
                 atom.ExplicitC = CMLHelper.GetExplicit(cmlElement);
+                atom.ExplicitH = CMLHelper.GetExplicitH(cmlElement);
                 atom.ExplicitHPlacement = CMLHelper.GetExplicitHPlacement(cmlElement);
                 atom.ExplicitFunctionalGroupPlacement = CMLHelper.GetExplicitGroupPlacement(cmlElement);
             }

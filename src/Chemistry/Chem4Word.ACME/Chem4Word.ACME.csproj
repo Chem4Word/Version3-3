@@ -139,10 +139,7 @@
     <Compile Include="Graphics\EquilibriumArrow.cs" />
     <Compile Include="Graphics\Harpoon.cs" />
     <Compile Include="Graphics\RetrosyntheticArrow.cs" />
-    <Compile Include="Models\CryptoRandomizer.cs" />
     <Compile Include="Controls\FormulaBlock.cs" />
-    <Compile Include="Interfaces\IPositioner.cs" />
-    <Compile Include="Interfaces\IRandomizer.cs" />
     <Compile Include="Controls\MoleculePropertyEditor.xaml.cs">
       <DependentUpon>MoleculePropertyEditor.xaml</DependentUpon>
     </Compile>
@@ -153,9 +150,6 @@
     <Compile Include="Adorners\Selectors\MultiObjectAdorner.cs" />
     <Compile Include="Adorners\Selectors\SingleObjectSelectionAdorner.cs" />
     <Compile Include="Adorners\Selectors\SingleChemistryAdorner.cs" />
-    <Compile Include="Controls\SketcherHost.xaml.cs">
-      <DependentUpon>SketcherHost.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\TaggingControl.xaml.cs">
       <DependentUpon>TaggingControl.xaml</DependentUpon>
     </Compile>
@@ -213,11 +207,11 @@
     <Compile Include="Controls\BondOption.cs" />
     <Compile Include="Controls\FunctionalGroupBlock.cs" />
     <Compile Include="Controls\GridAwareItemsControl.cs" />
-    <Compile Include="Controls\SettingsHost.xaml.cs">
-      <DependentUpon>SettingsHost.xaml</DependentUpon>
+    <Compile Include="Controls\AcmeSettingsHost.xaml.cs">
+      <DependentUpon>AcmeSettingsHost.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings.xaml.cs">
-      <DependentUpon>Settings.xaml</DependentUpon>
+    <Compile Include="Controls\AcmeSettings.xaml.cs">
+      <DependentUpon>AcmeSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\VisualPeriodicTable.xaml.cs">
       <DependentUpon>VisualPeriodicTable.xaml</DependentUpon>
@@ -273,7 +267,6 @@
     <Compile Include="Models\NamesModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\NewAtomPlacement.cs" />
-    <Compile Include="AcmeOptions.cs" />
     <Compile Include="Controls\PTPopup.xaml.cs">
       <DependentUpon>PTPopup.xaml</DependentUpon>
     </Compile>
@@ -338,10 +331,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SketcherHost.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\TaggingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -386,11 +375,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SettingsHost.xaml">
+    <Page Include="Controls\AcmeSettingsHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings.xaml">
+    <Page Include="Controls\AcmeSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -469,5 +458,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Error.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

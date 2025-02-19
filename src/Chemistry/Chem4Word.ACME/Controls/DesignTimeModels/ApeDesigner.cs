@@ -49,6 +49,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
         public bool HasIsotopes { get; }
 
         public bool ShowCompass { get; }
+        public bool ShowHydrogenLabels { get; }
 
         public CompassPoints? ExplicitHydrogenPlacement { get; set; }
         public CompassPoints? ExplicitFunctionalGroupPlacement { get; set; }
@@ -60,7 +61,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
 
         public ApeDesigner()
         {
-            IsElement = false;
+            IsElement = true;
             IsFunctionalGroup = !IsElement;
 
             if (IsElement)
@@ -72,6 +73,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
                 Isotope = "13";
 
                 ExplicitHydrogenPlacement = CompassPoints.East;
+                ShowHydrogenLabels = true;
 
                 // For some reason these have to be done after setting the properties
                 SetUpCharges();
@@ -81,6 +83,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
             {
                 Element = Globals.FunctionalGroupsList.Find(fg => fg.Name == "CH2CH2OH");
                 ExplicitFunctionalGroupPlacement = CompassPoints.East;
+                ShowHydrogenLabels = false;
             }
 
             ShowCompass = true;

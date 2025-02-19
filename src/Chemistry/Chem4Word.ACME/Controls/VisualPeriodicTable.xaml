@@ -20,7 +20,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Margin="5,5,5,5">
+    <Grid Margin="5,5,5,5" d:IsLocked="True">
         <Grid.Resources>
             <Style x:Key="ElementType" TargetType="Border">
                 <Setter Property="BorderThickness" Value="2" />
@@ -113,6 +113,7 @@
         </Grid.Resources>
         <local:GridAwareItemsControl
             x:Name="ElementGrid"
+            d:IsLocked="True"
             Background="{x:Static SystemColors.WindowBrush}"
             ItemsSource="{Binding Source={StaticResource PeriodicTable}, Path=ElementsSource}">
             <local:GridAwareItemsControl.ItemsPanel>
@@ -161,7 +162,7 @@
                         Grid.Row="{Binding Path=PTRow}"
                         Grid.Column="{Binding PTColumn}"
                         Width="Auto"
-                        PreviewMouseLeftButtonDown="ElementSquare_OnPreviewMouseLeftButtonDown"
+                        PreviewMouseLeftButtonDown="OnPreviewMouseLeftButtonDown_ElementSquare"
                         Style="{StaticResource ElementType}"
                         Tag="{Binding}">
                         <Border.ToolTip>

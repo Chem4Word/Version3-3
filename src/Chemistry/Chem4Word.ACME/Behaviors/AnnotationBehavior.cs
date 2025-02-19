@@ -29,18 +29,18 @@ namespace Chem4Word.ACME.Behaviors
                 {
                     var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
                     layer.Remove(_currentAdorner);
-                    _currentAdorner.MouseLeftButtonDown -= CurrentAdornerOnMouseLeftButtonDown;
+                    _currentAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentAdorner;
                     _currentAdorner = null;
                 }
                 _currentAdorner = value;
                 if (_currentAdorner != null)
                 {
-                    _currentAdorner.MouseLeftButtonDown += CurrentAdornerOnMouseLeftButtonDown;
+                    _currentAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentAdorner;
                 }
             }
         }
 
-        private void CurrentAdornerOnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentAdorner(object sender, MouseButtonEventArgs e)
         {
             if (!Clashing)
             {
@@ -115,19 +115,19 @@ namespace Chem4Word.ACME.Behaviors
 
             CurrentEditor.Cursor = Cursors.Hand;
 
-            CurrentEditor.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.MouseMove += CurrentEditor_MouseMove;
+            CurrentEditor.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseMove += OnMouseMove_CurrentEditor;
             AssociatedObject.IsHitTestVisible = true;
 
             if (_window != null)
             {
-                _window.MouseLeftButtonDown += CurrentEditor_MouseLeftButtonDown;
+                _window.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
 
             CurrentStatus = StatusText;
         }
 
-        private void CurrentEditor_MouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove_CurrentEditor(object sender, MouseEventArgs e)
         {
             var mousePos = e.GetPosition(CurrentEditor);
             CurrentAdorner = new FloatingSymbolAdorner(CurrentEditor, DefaultText, mousePos);
@@ -135,20 +135,20 @@ namespace Chem4Word.ACME.Behaviors
             Clashing = CurrentEditor.GetTargetedVisual(pos) != null;
         }
 
-        private void CurrentEditor_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
-            CurrentAdornerOnMouseLeftButtonDown(sender, e);
+            OnMouseLeftButtonDown_CurrentAdorner(sender, e);
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
             CurrentAdorner = null;
-            CurrentEditor.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
-            CurrentEditor.MouseMove -= CurrentEditor_MouseMove;
+            CurrentEditor.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
+            CurrentEditor.MouseMove -= OnMouseMove_CurrentEditor;
             if (_window != null)
             {
-                _window.MouseLeftButtonDown -= CurrentEditor_MouseLeftButtonDown;
+                _window.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
             }
             _window = null;
         }

@@ -619,15 +619,20 @@ namespace Chem4Word.Telemetry
 
         private string ObjectAsString(object input)
         {
-            var temp = input.ToString();
+            if (input != null)
+            {
+                var temp = input.ToString();
 
-            // Replace tab with space
-            temp = temp.Replace("\t", " ");
+                // Replace tab with space
+                temp = temp.Replace("\t", " ");
 
-            // Replace double spaces with single space
-            temp = temp.Replace("  ", " ");
+                // Replace double spaces with single space
+                temp = temp.Replace("  ", " ");
 
-            return temp.Trim();
+                return temp.Trim();
+            }
+
+            return string.Empty;
         }
 
         private string DecodeSKU(string sku)

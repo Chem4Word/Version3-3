@@ -8,10 +8,11 @@
 using Chem4Word.ACME.Annotations;
 using Chem4Word.ACME.Entities;
 using Chem4Word.ACME.Models;
-using Chem4Word.ACME.Resources;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Core;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using System;
 using System.ComponentModel;
@@ -21,6 +22,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace Chem4Word.ACME.Controls
 {
@@ -31,9 +33,9 @@ namespace Chem4Word.ACME.Controls
     {
         private bool _closedByUser;
         private bool IsDirty { get; set; }
+        private bool _isLoading;
 
         private AtomPropertiesModel _atomPropertiesModel;
-        private AcmeOptions _options;
 
         public AtomPropertiesModel AtomPropertiesModel
         {
@@ -53,45 +55,89 @@ namespace Chem4Word.ACME.Controls
             InitializeComponent();
         }
 
-        public AtomPropertyEditor(AtomPropertiesModel model, AcmeOptions options) : this()
+        public AtomPropertyEditor(AtomPropertiesModel model) : this()
         {
 #if DEBUG
             AtomPath.Visibility = Visibility.Visible;
 #endif
+
+            _isLoading = true;
 
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 AtomPropertiesModel = model;
                 DataContext = AtomPropertiesModel;
                 AtomPath.Text = AtomPropertiesModel.Path;
-                _options = options;
             }
         }
 
-        private void AtomPropertyEditor_OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded_AtomPropertyEditor(object sender, RoutedEventArgs e)
         {
             // This moves the window off screen while it renders
             var point = UIUtils.GetOffScreenPoint();
             Left = point.X;
             Top = point.Y;
 
-            _options = new AcmeOptions(_options.SettingsPath);
-            SetPreviewProperties();
+            SetupHydrogenLabelsDropDown();
             LoadAtomItems();
             LoadFunctionalGroups();
             ShowPreview();
+
+            IsDirty = false;
+            _isLoading = false;
         }
 
-        private void AtomPropertyEditor_OnContentRendered(object sender, EventArgs e)
+        private void SetupHydrogenLabelsDropDown()
+        {
+            var atoms = _atomPropertiesModel.MicroModel.GetAllAtoms();
+            var atom = atoms[0];
+
+            ImplicitHydrogenMode.Items.Clear();
+
+            var inherited = new TextBlock
+            {
+                Text = "Inherited from parent",
+                FontStyle = FontStyles.Italic,
+                Foreground = new SolidColorBrush(Colors.Gray)
+            };
+
+            var notSet = new ComboBoxItem
+            {
+                Content = inherited,
+                Tag = null
+            };
+            ImplicitHydrogenMode.Items.Add(notSet);
+            if (!atom.ExplicitC.HasValue)
+            {
+                ImplicitHydrogenMode.SelectedItem = notSet;
+            }
+
+            foreach (var keyValuePair in EnumHelper.GetEnumValuesWithDescriptions<HydrogenLabels>())
+            {
+                var cbi = new ComboBoxItem
+                {
+                    Content = keyValuePair.Value,
+                    Tag = keyValuePair.Key
+                };
+                ImplicitHydrogenMode.Items.Add(cbi);
+
+                if (atom.ExplicitH.HasValue
+                    && atom.ExplicitH == keyValuePair.Key)
+                {
+                    ImplicitHydrogenMode.SelectedItem = cbi;
+                }
+            }
+        }
+
+        private void OnContentRendered_AtomPropertyEditor(object sender, EventArgs e)
         {
             // This moves the window to the correct position
             var point = UIUtils.GetOnScreenCentrePoint(_atomPropertiesModel.Centre, ActualWidth, ActualHeight);
             Left = point.X;
             Top = point.Y;
 
-            SetPreviewProperties();
-            InvalidateArrange();
             IsDirty = false;
+            InvalidateArrange();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -102,19 +148,19 @@ namespace Chem4Word.ACME.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void Close_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Close(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
-        private void Save_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Save(object sender, RoutedEventArgs e)
         {
             _atomPropertiesModel.Save = true;
             _closedByUser = true;
             Close();
         }
 
-        private void AtomTable_OnElementSelected(object sender, VisualPeriodicTable.ElementEventArgs e)
+        private void OnElementSelected_AtomTable(object sender, VisualPeriodicTable.ElementEventArgs e)
         {
             AtomOption newOption = null;
             var selElement = e.SelectedElement as Element;
@@ -151,26 +197,26 @@ namespace Chem4Word.ACME.Controls
             ShowPreview();
         }
 
-        private void AtomPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_AtomPicker(object sender, SelectionChangedEventArgs e)
         {
             AtomOption option = AtomPicker.SelectedItem as AtomOption;
             AtomPropertiesModel.AddedElement = option?.Element;
             ShowPreview();
         }
 
-        private void FunctionalGroupPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_FunctionalGroupPicker(object sender, SelectionChangedEventArgs e)
         {
             AtomOption option = FunctionalGroupPicker.SelectedItem as AtomOption;
             AtomPropertiesModel.AddedElement = option?.Element;
             ShowPreview();
         }
 
-        private void ChargeCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_ChargeCombo(object sender, SelectionChangedEventArgs e)
         {
             HandleIsotopeOrChargeChange();
         }
 
-        private void IsotopePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_IsotopePicker(object sender, SelectionChangedEventArgs e)
         {
             HandleIsotopeOrChargeChange();
         }
@@ -205,7 +251,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void ExplicitCheckBox_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_ExplicitCheckBox(object sender, RoutedEventArgs e)
         {
             ShowPreview();
         }
@@ -213,14 +259,14 @@ namespace Chem4Word.ACME.Controls
         private void LoadAtomItems()
         {
             AtomPicker.Items.Clear();
-            foreach (var item in Constants.StandardAtoms)
+            foreach (var item in ACME.Resources.Constants.StandardAtoms)
             {
                 AtomPicker.Items.Add(new AtomOption(Globals.PeriodicTable.Elements[item]));
             }
 
             if (AtomPropertiesModel.Element is Element el)
             {
-                if (!Constants.StandardAtoms.Contains(el.Symbol))
+                if (!ACME.Resources.Constants.StandardAtoms.Contains(el.Symbol))
                 {
                     AtomPicker.Items.Add(new AtomOption(Globals.PeriodicTable.Elements[el.Symbol]));
                 }
@@ -260,6 +306,7 @@ namespace Chem4Word.ACME.Controls
             {
                 atom.FormalCharge = AtomPropertiesModel.Charge;
                 atom.ExplicitC = AtomPropertiesModel.ExplicitC;
+                atom.ExplicitH = AtomPropertiesModel.ExplicitH;
                 atom.ExplicitHPlacement = AtomPropertiesModel.ExplicitHydrogenPlacement;
 
                 if (string.IsNullOrEmpty(AtomPropertiesModel.Isotope))
@@ -273,7 +320,7 @@ namespace Chem4Word.ACME.Controls
 
                 if (atom.Element is Element)
                 {
-                    AtomPropertiesModel.ShowCompass = atom.ShowSymbol && atom.ImplicitHydrogenCount > 0;
+                    SetVisibilityFlags(atom);
                 }
             }
 
@@ -282,29 +329,21 @@ namespace Chem4Word.ACME.Controls
                 atom.ExplicitFunctionalGroupPlacement = AtomPropertiesModel.ExplicitFunctionalGroupPlacement;
                 atom.FormalCharge = null;
                 atom.ExplicitC = null;
+                atom.ExplicitH = null;
                 atom.IsotopeNumber = null;
 
                 if (AtomPropertiesModel.Element is FunctionalGroup fg)
                 {
+                    AtomPropertiesModel.ShowHydrogenLabels = false;
                     AtomPropertiesModel.ShowCompass = fg.Flippable;
                 }
             }
-
-            SetPreviewProperties();
 
             Preview.Chemistry = AtomPropertiesModel.MicroModel.Copy();
             IsDirty = true;
         }
 
-        private void SetPreviewProperties()
-        {
-            Preview.ShowAtomsInColour = _options.ColouredAtoms;
-            Preview.ShowImplicitHydrogens = _options.ShowHydrogens;
-            Preview.ShowMoleculeGrouping = _options.ShowMoleculeGrouping;
-            Preview.ShowAllCarbonAtoms = _options.ShowCarbons;
-        }
-
-        private void AtomPropertyEditor_OnClosing(object sender, CancelEventArgs e)
+        private void OnClosing_AtomPropertyEditor(object sender, CancelEventArgs e)
         {
             if (!_closedByUser && IsDirty)
             {
@@ -332,31 +371,45 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void PlacementButton_OnChecked(object sender, RoutedEventArgs e)
+        private void OnChecked_PlacementButton(object sender, RoutedEventArgs e)
         {
             ShowPreview();
         }
 
-        private void FGPlacementButton_OnChecked(object sender, RoutedEventArgs e)
+        private void OnChecked_FGPlacementButton(object sender, RoutedEventArgs e)
         {
             ShowPreview();
         }
 
-        private void Element_OnClick(object sender, RoutedEventArgs e)
+        private void OnClick_Element(object sender, RoutedEventArgs e)
         {
             var atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
             var atom = atoms[0];
 
-            AtomPropertiesModel.ShowCompass = false;
-
             if (AtomPropertiesModel.IsElement
                 && AtomPropertiesModel.Element is Element)
             {
-                AtomPropertiesModel.ShowCompass = atom.ShowSymbol && atom.ImplicitHydrogenCount > 0;
+                SetVisibilityFlags(atom);
             }
         }
 
-        private void FunctionalGroup_OnClick(object sender, RoutedEventArgs e)
+        private void SetVisibilityFlags(Atom atom)
+        {
+            ExplicitCheckBox.IsEnabled = !atom.IsSingleton;
+
+            var canShowHydrogen = Globals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{atom.Element.Symbol}|");
+
+            AtomPropertiesModel.ShowHydrogenLabels = canShowHydrogen
+                                                     || atom.IsHetero
+                                                     || atom.IsTerminal;
+
+            var showHydrogenLabels = atom.ShowImplicitHydrogenCharacters;
+            var atomSymbol = atom.AtomSymbol;
+
+            AtomPropertiesModel.ShowCompass = showHydrogenLabels && atom.ImplicitHydrogenCount > 0 && atomSymbol != "";
+        }
+
+        private void OnClick_FunctionalGroup(object sender, RoutedEventArgs e)
         {
             AtomPropertiesModel.ShowCompass = false;
 
@@ -364,6 +417,34 @@ namespace Chem4Word.ACME.Controls
                 && AtomPropertiesModel.Element is FunctionalGroup fg)
             {
                 AtomPropertiesModel.ShowCompass = fg.Flippable;
+            }
+        }
+
+        private void OnSelectionChanged_ImplicitHydrogenMode(object sender, SelectionChangedEventArgs e)
+        {
+            if (!_isLoading
+                && ImplicitHydrogenMode.SelectedItem is ComboBoxItem cbi)
+            {
+                ExplicitCheckBox.IsEnabled = true;
+                if (cbi.Tag is null)
+                {
+                    AtomPropertiesModel.ExplicitH = null;
+                }
+                else
+                {
+                    if (Enum.TryParse(cbi.Tag.ToString(), out HydrogenLabels hydrogenLabels))
+                    {
+                        AtomPropertiesModel.ExplicitH = hydrogenLabels;
+                        var atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
+                        var atom = atoms[0];
+                        if (atom.IsCarbon && hydrogenLabels == HydrogenLabels.All)
+                        {
+                            ExplicitCheckBox.IsEnabled = false;
+                        }
+                    }
+                }
+                ShowPreview();
+                IsDirty = true;
             }
         }
     }

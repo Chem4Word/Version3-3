@@ -9,11 +9,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Molecule Properties"
     Width="800"
-    Height="600"
-    Closing="MoleculePropertyEditor_OnClosing"
-    ContentRendered="MoleculePropertyEditor_OnContentRendered"
+    Height="500"
+    Closing="OnClosing_MoleculePropertyEditor"
+    ContentRendered="OnContentRendered_MoleculePropertyEditor"
     Icon="/Chem4Word.ACME;component/Resources/ms-word-16.ico"
-    Loaded="MoleculePropertyEditor_OnLoaded"
+    Loaded="OnLoaded_MoleculePropertyEditor"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     mc:Ignorable="d">
@@ -27,8 +27,8 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <Border Margin="3">
-        <Grid>
+    <Border Margin="3" d:IsLocked="True">
+        <Grid d:IsLocked="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -45,6 +45,7 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
+                d:IsLocked="True"
                 Foreground="Black"
                 Visibility="Collapsed">
                 Molecule Path
@@ -55,77 +56,80 @@
                 x:Name="TabControl"
                 Grid.Row="1"
                 Grid.Column="0"
-                Grid.ColumnSpan="2">
-                <TabItem x:Name="Properties" Header="Properties">
-                    <Grid>
+                Grid.ColumnSpan="2"
+                d:IsLocked="True">
+                <TabItem
+                    x:Name="Properties"
+                    d:IsLocked="True"
+                    Header="Properties">
+                    <Grid d:IsLocked="True">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="400" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Border
                             Grid.Row="0"
                             Grid.Column="0"
                             Margin="5"
+                            d:IsLocked="True"
                             BorderBrush="DarkOrange"
                             BorderThickness="3"
                             CornerRadius="5">
                             <acme:Display
                                 x:Name="Preview"
-                                Width="400"
-                                Height="400"
                                 Margin="3"
+                                d:IsLocked="True"
                                 Background="White"
-                                HighlightActive="False"
-                                ShowAllCarbonAtoms="{Binding Path=ShowAllCarbonAtoms}"
-                                ShowAtomsInColour="{Binding Path=ShowAtomsInColour}"
-                                ShowImplicitHydrogens="{Binding Path=ShowImplicitHydrogens}"
-                                ShowMoleculeGrouping="{Binding Path=ShowMoleculeGrouping}" />
+                                HighlightActive="False" />
                         </Border>
-                        <CheckBox
-                            x:Name="ShowBracketsValue"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="5"
-                            VerticalContentAlignment="Center"
-                            Click="ShowBracketsValue_OnClick"
-                            IsChecked="{Binding ShowMoleculeBrackets}"
-                            IsThreeState="True">
-                            <TextBlock Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">Show Brackets</TextBlock>
-                        </CheckBox>
-                        <Grid Grid.Row="0" Grid.Column="1">
+                        <Grid
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            d:IsLocked="True">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0">
+                            <Grid
+                                Grid.Row="0"
+                                Margin="5,0,0,0"
+                                d:IsLocked="True">
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="75" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Style="{StaticResource Acme.Controls.TextBlock.StdLabel}" Text="Charge" />
+
                                 <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="1"
+                                    d:IsLocked="True"
+                                    Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
+                                    Text="Charge" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    d:IsLocked="True"
                                     Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                     Text="Radical" />
                                 <ComboBox
                                     x:Name="ChargeValues"
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Width="50"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Width="75"
+                                    Height="30"
+                                    VerticalContentAlignment="Center"
+                                    d:IsLocked="True"
                                     ItemsSource="{Binding Charges}"
                                     SelectedValue="{Binding Charge, Mode=TwoWay}"
                                     SelectedValuePath="Value"
-                                    SelectionChanged="ChargeValues_OnSelectionChanged"
+                                    SelectionChanged="OnSelectionChanged_ChargeValues"
                                     Style="{StaticResource StandardCombo}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
@@ -137,11 +141,14 @@
                                     x:Name="SpinMultiplicityValues"
                                     Grid.Row="1"
                                     Grid.Column="1"
-                                    Width="70"
+                                    Width="75"
+                                    Height="30"
+                                    VerticalContentAlignment="Center"
+                                    d:IsLocked="True"
                                     ItemsSource="{Binding MultiplicityValues}"
                                     SelectedValue="{Binding SpinMultiplicity, Mode=TwoWay}"
                                     SelectedValuePath="Value"
-                                    SelectionChanged="SpinMultiplicityValues_OnSelectionChanged"
+                                    SelectionChanged="OnSelectionChanged_SpinMultiplicityValues"
                                     Style="{StaticResource StandardCombo}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
@@ -149,21 +156,16 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                            </Grid>
-                            <Grid
-                                Grid.Row="2"
-                                Margin="5"
-                                HorizontalAlignment="Left">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
                                 <TextBlock
-                                    Grid.Row="0"
-                                    Margin="0,0"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    d:IsLocked="True"
                                     Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                     Text="Count" />
-                                <Grid Grid.Row="1">
+                                <Grid
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    d:IsLocked="True">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
@@ -171,16 +173,19 @@
                                     <TextBox
                                         x:Name="CountSpinner"
                                         Grid.Column="0"
-                                        Width="28"
-                                        Margin="0,0,0,0"
+                                        Width="40"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Right"
+                                        d:IsLocked="True"
                                         Style="{StaticResource Acme.Controls.TextBox}"
                                         Text="{Binding Count, Mode=TwoWay}"
-                                        TextChanged="CountSpinner_OnTextChanged"
+                                        TextChanged="OnTextChanged_CountSpinner"
                                         ToolTip="Set count" />
-                                    <Grid Grid.Column="1" HorizontalAlignment="Left">
+                                    <Grid
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Left"
+                                        d:IsLocked="True">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="*" />
@@ -191,11 +196,13 @@
                                             Width="16"
                                             Height="9"
                                             VerticalAlignment="Bottom"
+                                            d:IsLocked="True"
                                             BorderThickness="0"
-                                            Click="CountSpinnerIncreaseButton_OnClick"
+                                            Click="OnClick_CountSpinnerIncreaseButton"
                                             Focusable="False"
                                             ToolTip="Increment by 1">
                                             <Path
+                                                d:IsLocked="True"
                                                 Data="M 0 20 L 35 -20 L 70 20 Z"
                                                 Fill="Black"
                                                 Stretch="Uniform" />
@@ -206,16 +213,72 @@
                                             Width="16"
                                             Height="9"
                                             VerticalAlignment="Top"
+                                            d:IsLocked="True"
                                             BorderThickness="0"
-                                            Click="CountSpinnerDecreaseButton_OnClick"
+                                            Click="OnClick_CountSpinnerDecreaseButton"
                                             Focusable="False"
                                             ToolTip="Decrement by 1">
                                             <Path
+                                                d:IsLocked="True"
                                                 Data="M 0 0 L 35 40 L 70 0 Z"
                                                 Fill="Black"
                                                 Stretch="Uniform" />
                                         </RepeatButton>
                                     </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="1" d:IsLocked="True">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <CheckBox
+                                    x:Name="ShowBracketsValue"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="5,0,0,0"
+                                    VerticalContentAlignment="Center"
+                                    d:IsLocked="True"
+                                    Click="OnClick_ShowBrackets"
+                                    IsChecked="{Binding ShowMoleculeBrackets}"
+                                    IsThreeState="True">
+                                    <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">Show Molecule Brackets</TextBlock>
+                                </CheckBox>
+                                <CheckBox
+                                    x:Name="ShowAllCarbonAtoms"
+                                    Grid.Row="1"
+                                    Margin="5,0,0,0"
+                                    VerticalContentAlignment="Center"
+                                    d:IsLocked="True"
+                                    Click="OnClick_ExplicitC"
+                                    IsChecked="{Binding Path=ExplicitC, Mode=TwoWay}"
+                                    IsThreeState="True">
+                                    <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">Show All Carbon Atoms</TextBlock>
+                                </CheckBox>
+                            </Grid>
+                            <Grid
+                                Grid.Row="2"
+                                Margin="5,0,0,0"
+                                d:IsLocked="True">
+                                <Grid d:IsLocked="True">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        d:IsLocked="True"
+                                        Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
+                                        Implicit Hydrogen Mode
+                                    </TextBlock>
+                                    <ComboBox
+                                        x:Name="ImplicitHydrogenMode"
+                                        Grid.Column="1"
+                                        Height="30"
+                                        Margin="5,0,5,0"
+                                        VerticalContentAlignment="Center"
+                                        d:IsLocked="True"
+                                        SelectionChanged="OnSelectionChanged_ImplicitHydrogenMode" />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -225,8 +288,12 @@
                     x:Name="Labels"
                     Height="22"
                     VerticalAlignment="Top"
+                    d:IsLocked="True"
                     Header="Labels">
-                    <acme:LabelsEditor x:Name="LabelsEditor" ShowTopPanel="False" />
+                    <acme:LabelsEditor
+                        x:Name="LabelsEditor"
+                        d:IsLocked="True"
+                        ShowTopPanel="False" />
                 </TabItem>
             </TabControl>
 
@@ -235,13 +302,16 @@
                 Grid.Row="2"
                 Grid.Column="1"
                 HorizontalAlignment="Right"
+                d:IsLocked="True"
                 Orientation="Horizontal">
                 <Button
-                    Click="Save_OnClick"
+                    d:IsLocked="True"
+                    Click="OnClick_Save"
                     Content="OK"
                     Style="{StaticResource Acme.Control.Button.DialogButton}" />
                 <Button
-                    Click="Close_OnClick"
+                    d:IsLocked="True"
+                    Click="OnClick_Close"
                     Content="Cancel"
                     Style="{StaticResource Acme.Control.Button.DialogButton}" />
             </StackPanel>

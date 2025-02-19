@@ -41,19 +41,19 @@ namespace Chem4Word.ACME.Behaviors
             {
                 if (_currentEditor != null)
                 {
-                    _currentEditor.PreviewKeyDown -= CurrentEditor_PreviewKeyDown;
+                    _currentEditor.PreviewKeyDown -= OnPreviewKeyDown_CurrentEditor;
                 }
                 _currentEditor = value;
                 if (_currentEditor != null)
                 {
-                    _currentEditor.PreviewKeyDown += CurrentEditor_PreviewKeyDown;
+                    _currentEditor.PreviewKeyDown += OnPreviewKeyDown_CurrentEditor;
                     _currentEditor.Focusable = true;
                     _currentEditor.Focus();
                 }
             }
         }
 
-        private void CurrentEditor_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void OnPreviewKeyDown_CurrentEditor(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
@@ -90,7 +90,7 @@ namespace Chem4Word.ACME.Behaviors
             base.OnDetaching();
             if (_currentEditor != null)
             {
-                _currentEditor.PreviewKeyDown -= CurrentEditor_PreviewKeyDown;
+                _currentEditor.PreviewKeyDown -= OnPreviewKeyDown_CurrentEditor;
             }
         }
     }
