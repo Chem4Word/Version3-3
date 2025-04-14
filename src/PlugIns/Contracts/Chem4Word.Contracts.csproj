@@ -109,6 +109,11 @@ del "$(SolutionDir)\Chem4Word.V3\$(OutDir)\PlugIns\*.pdb" /q
 del "$(SolutionDir)\Chem4Word.V3\$(OutDir)\PlugIns\*.config" /q
 ))</PreBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>echo "Copying files"
+xcopy "$(TargetDir)$(TargetName)*.*" "$(SolutionDir)\bin" /C /f /r /y /i
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

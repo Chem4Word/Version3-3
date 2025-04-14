@@ -5,12 +5,12 @@
     <Version>
         <Number>3.3.11 Release 9</Number>
         <IsBeta>false</IsBeta>
-        <Released>31-Mar-2025</Released>
+        <Released>14-Apr-2025</Released>
         <Changes>
             <Change>...</Change>
             <Change>...</Change>
             <Change>...</Change>
-            <Change>...</Change>
+            <Change>BugFix: Broken installer repaired</Change>
             <Change>BugFix: Bond length is now set properly on sprout and copy/paste</Change>
             <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
             <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
