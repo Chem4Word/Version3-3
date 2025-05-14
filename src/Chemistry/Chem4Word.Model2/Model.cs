@@ -481,8 +481,12 @@ namespace Chem4Word.Model2
             {
                 var result = ConciseFormula;
 
+                // Get Captions and Names
                 var properties = AllTextualProperties.Where(p => p.TypeCode.Equals("L")).ToList();
                 properties.AddRange(AllTextualProperties.Where(p => p.TypeCode.Equals("N")));
+
+                // Sorting by Full type should put captions first then our names
+                properties = properties.OrderBy(p => p.FullType).ToList();
 
                 foreach (var property in properties)
                 {

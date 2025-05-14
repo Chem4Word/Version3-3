@@ -4660,147 +4660,62 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetry(module, "Debug", $"Aligning middles of {objects.Count} objects");
 
-                List<Transform> shifts = new List<Transform>();
-                List<Transform> annShifts = new List<Transform>();
+                var moleculeTransforms = new List<Transform>();
+                var annotationTransforms = new List<Transform>();
+                var reactionTransforms = new List<Transform>();
 
-                var molsToAlign = objects.OfType<Molecule>().ToList();
+                var moleculesToAlign = objects.OfType<Molecule>().ToList();
                 var annotationsToAlign = objects.OfType<Annotation>().ToList();
+                var reactionsToAlign = objects.OfType<Reaction>().ToList();
 
                 double molsMiddle = 0;
                 double annotationsMiddle = 0;
+                double reactionsMiddle = 0;
 
-                if (molsToAlign.Any())
+                if (moleculesToAlign.Any())
                 {
-                    molsMiddle = molsToAlign.Average(m => m.Centre.Y);
+                    molsMiddle = moleculesToAlign.Average(m => m.Centre.Y);
                 }
                 if (annotationsToAlign.Any())
                 {
                     annotationsMiddle = annotationsToAlign.Average(a => (CurrentEditor.ChemicalVisuals[a].ContentBounds.Top + CurrentEditor.ChemicalVisuals[a].ContentBounds.Bottom) / 2);
                 }
-
-                double middle = (annotationsMiddle * annotationsToAlign.Count + molsMiddle * molsToAlign.Count) / (molsToAlign.Count + annotationsToAlign.Count);
-
-                for (int i = 0; i < molsToAlign.Count; i++)
+                if (reactionsToAlign.Any())
                 {
-                    var shift = new TranslateTransform();
-                    shift.Y = middle - molsToAlign[i].Centre.Y;
-                    shifts.Add(shift);
+                    reactionsMiddle = reactionsToAlign.Average(r => (r.BoundingBox.Top + r.BoundingBox.Bottom) / 2);
+                }
+
+                double middle = (annotationsMiddle * annotationsToAlign.Count + molsMiddle * moleculesToAlign.Count + reactionsMiddle * reactionsToAlign.Count)
+                                / (moleculesToAlign.Count + annotationsToAlign.Count + reactionsToAlign.Count);
+
+                for (int i = 0; i < moleculesToAlign.Count; i++)
+                {
+                    var transform = new TranslateTransform();
+                    transform.Y = middle - moleculesToAlign[i].Centre.Y;
+                    moleculeTransforms.Add(transform);
                 }
 
                 for (int i = 0; i < annotationsToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
+                    var transform = new TranslateTransform();
                     var a = annotationsToAlign[i];
-                    shift.Y = middle - (CurrentEditor.ChemicalVisuals[a].ContentBounds.Top + CurrentEditor.ChemicalVisuals[a].ContentBounds.Bottom) / 2;
-                    annShifts.Add(shift);
+                    transform.Y = middle - (CurrentEditor.ChemicalVisuals[a].ContentBounds.Top + CurrentEditor.ChemicalVisuals[a].ContentBounds.Bottom) / 2;
+                    annotationTransforms.Add(transform);
+                }
+
+                for (int i = 0; i < reactionsToAlign.Count; i++)
+                {
+                    var transform = new TranslateTransform();
+                    var a = reactionsToAlign[i];
+                    transform.Y = middle - (a.BoundingBox.Top + a.BoundingBox.Bottom) / 2;
+                    reactionTransforms.Add(transform);
                 }
 
                 UndoManager.BeginUndoBlock();
-                AlignMolecules(molsToAlign, shifts);
-                AlignAnnotations(annotationsToAlign, annShifts);
-                List<Reaction> reacts = objects.OfType<Reaction>().ToList();
-                AlignReactionMiddles(reacts, middle);
+                AlignMolecules(moleculesToAlign, moleculeTransforms);
+                AlignAnnotations(annotationsToAlign, annotationTransforms);
+                AlignReactions(reactionsToAlign, reactionTransforms);
                 UndoManager.EndUndoBlock();
-            }
-            catch (Exception exception)
-            {
-                WriteTelemetryException(module, exception);
-            }
-        }
-
-        public void AlignReactionMiddles(List<Reaction> reactions, double middle)
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                Dictionary<Reaction, (Point start, Point end)> originalPos = new Dictionary<Reaction, (Point, Point)>();
-                foreach (Reaction r in reactions)
-                {
-                    originalPos[r] = (r.TailPoint, r.HeadPoint);
-                }
-
-                Action redo = () =>
-                {
-                    foreach (Reaction r in reactions)
-                    {
-                        Point newTailPoint = new Point(r.TailPoint.X, middle);
-                        Point newHeadPoint = new Point(r.HeadPoint.X, middle);
-
-                        if (newHeadPoint != newTailPoint)
-                        {
-                            r.TailPoint = newTailPoint;
-                            r.HeadPoint = newHeadPoint;
-                        }
-                        else
-                        {
-                            WriteTelemetry(module, "Warning", $"Can't align middles of reaction {r.Id}");
-                        }
-                    }
-                    AddObjectListToSelection(reactions.Cast<BaseObject>().ToList());
-                };
-
-                Action undo = () =>
-                {
-                    foreach (Reaction r in reactions)
-                    {
-                        r.TailPoint = new Point(r.TailPoint.X, originalPos[r].start.Y);
-                        r.HeadPoint = new Point(r.HeadPoint.X, originalPos[r].end.Y);
-                    }
-                    AddObjectListToSelection(reactions.Cast<BaseObject>().ToList());
-                };
-
-                UndoManager.BeginUndoBlock();
-                UndoManager.RecordAction(undo, redo);
-                UndoManager.EndUndoBlock();
-                redo();
-            }
-            catch (Exception exception)
-            {
-                WriteTelemetryException(module, exception);
-            }
-        }
-
-        public void AlignReactionCentres(List<Reaction> reacts, double centre)
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                Dictionary<Reaction, (Point start, Point end)> originalPos = new Dictionary<Reaction, (Point, Point)>();
-                foreach (Reaction r in reacts)
-                {
-                    originalPos[r] = (r.TailPoint, r.HeadPoint);
-                }
-                Action redo = () =>
-                {
-                    foreach (Reaction r in reacts)
-                    {
-                        Point newTailPoint = new Point(centre, r.TailPoint.Y);
-                        Point newHeadpoint = new Point(centre, r.HeadPoint.Y);
-                        if (newHeadpoint != newTailPoint)
-                        {
-                            r.TailPoint = newTailPoint;
-                            r.HeadPoint = newHeadpoint;
-                        }
-                        else
-                        {
-                            WriteTelemetry(module, "Warning", $"Can't align centres of reaction {r.Id}");
-                        }
-                    }
-                    AddObjectListToSelection(reacts.Cast<BaseObject>().ToList());
-                };
-                Action undo = () =>
-                {
-                    foreach (Reaction r in reacts)
-                    {
-                        r.TailPoint = new Point(originalPos[r].start.X, r.TailPoint.Y);
-                        r.HeadPoint = new Point(originalPos[r].end.X, r.HeadPoint.Y);
-                    }
-                    AddObjectListToSelection(reacts.Cast<BaseObject>().ToList());
-                };
-                UndoManager.BeginUndoBlock();
-                UndoManager.RecordAction(undo, redo);
-                UndoManager.EndUndoBlock();
-                redo();
             }
             catch (Exception exception)
             {
@@ -4815,36 +4730,36 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetry(module, "Debug", $"Aligning tops of {objects.Count} objects");
 
-                List<Transform> shifts = new List<Transform>();
-                List<Transform> annShifts = new List<Transform>();
+                var moleculeTransforms = new List<Transform>();
+                var annotationTransforms = new List<Transform>();
 
-                var molsToAlign = objects.OfType<Molecule>().ToList();
+                var moleculesToAlign = objects.OfType<Molecule>().ToList();
                 var annotationsToAlign = objects.OfType<Annotation>().ToList();
 
                 double stupidMin = 1.0E6;
 
-                double top = Math.Min(molsToAlign.Select(m => m.Top)
+                double top = Math.Min(moleculesToAlign.Select(m => m.Top)
                                                  .DefaultIfEmpty(stupidMin).Min(),
                                       annotationsToAlign.Select(a => CurrentEditor.ChemicalVisuals[a].ContentBounds.Top)
                                                         .DefaultIfEmpty(stupidMin).Min());
 
-                for (int i = 0; i < molsToAlign.Count; i++)
+                for (int i = 0; i < moleculesToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
-                    shift.Y = top - molsToAlign[i].Top;
-                    shifts.Add(shift);
+                    var transform = new TranslateTransform();
+                    transform.Y = top - moleculesToAlign[i].Top;
+                    moleculeTransforms.Add(transform);
                 }
 
                 for (int i = 0; i < annotationsToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
-                    shift.Y = top - CurrentEditor.ChemicalVisuals[annotationsToAlign[i]].ContentBounds.Top;
-                    annShifts.Add(shift);
+                    var transform = new TranslateTransform();
+                    transform.Y = top - CurrentEditor.ChemicalVisuals[annotationsToAlign[i]].ContentBounds.Top;
+                    annotationTransforms.Add(transform);
                 }
 
                 UndoManager.BeginUndoBlock();
-                AlignMolecules(molsToAlign, shifts);
-                AlignAnnotations(annotationsToAlign, annShifts);
+                AlignMolecules(moleculesToAlign, moleculeTransforms);
+                AlignAnnotations(annotationsToAlign, annotationTransforms);
                 UndoManager.EndUndoBlock();
             }
             catch (Exception exception)
@@ -4853,7 +4768,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        public void AlignAnnotations(List<Annotation> annotationsToAlign, List<Transform> shifts)
+        public void AlignAnnotations(List<Annotation> annotationsToAlign, List<Transform> transforms)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -4862,14 +4777,14 @@ namespace Chem4Word.ACME
                 {
                     for (int i = 0; i < annotationsToAlign.Count; i++)
                     {
-                        annotationsToAlign[i].Position = shifts[i].Transform(annotationsToAlign[i].Position);
+                        annotationsToAlign[i].Position = transforms[i].Transform(annotationsToAlign[i].Position);
                     }
                 };
                 Action undo = () =>
                 {
                     for (int i = 0; i < annotationsToAlign.Count; i++)
                     {
-                        annotationsToAlign[i].Position = shifts[i].Inverse.Transform(annotationsToAlign[i].Position);
+                        annotationsToAlign[i].Position = transforms[i].Inverse.Transform(annotationsToAlign[i].Position);
                     }
                 };
                 UndoManager.BeginUndoBlock();
@@ -4891,36 +4806,36 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetry(module, "Debug", $"Aligning bottoms of {objects.Count} objects");
 
-                List<Transform> shifts = new List<Transform>();
-                List<Transform> annShifts = new List<Transform>();
+                var moleculeTransforms = new List<Transform>();
+                var annotationTransforms = new List<Transform>();
 
-                var molsToAlign = objects.OfType<Molecule>().ToList();
+                var moleculesToAlign = objects.OfType<Molecule>().ToList();
                 var annotationsToAlign = objects.OfType<Annotation>().ToList();
 
                 double stupidMax = -100;
 
-                double bottom = Math.Max(molsToAlign.Select(m => m.Bottom)
+                double bottom = Math.Max(moleculesToAlign.Select(m => m.Bottom)
                                                     .DefaultIfEmpty(stupidMax).Max(),
                                          annotationsToAlign.Select(a => CurrentEditor.ChemicalVisuals[a].ContentBounds.Bottom)
                                                            .DefaultIfEmpty(stupidMax).Max());
 
-                for (int i = 0; i < molsToAlign.Count; i++)
+                for (int i = 0; i < moleculesToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
-                    shift.Y = bottom - molsToAlign[i].Bottom;
-                    shifts.Add(shift);
+                    var transform = new TranslateTransform();
+                    transform.Y = bottom - moleculesToAlign[i].Bottom;
+                    moleculeTransforms.Add(transform);
                 }
 
                 for (int i = 0; i < annotationsToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
-                    shift.Y = bottom - CurrentEditor.ChemicalVisuals[annotationsToAlign[i]].ContentBounds.Bottom;
-                    annShifts.Add(shift);
+                    var transform = new TranslateTransform();
+                    transform.Y = bottom - CurrentEditor.ChemicalVisuals[annotationsToAlign[i]].ContentBounds.Bottom;
+                    annotationTransforms.Add(transform);
                 }
 
                 UndoManager.BeginUndoBlock();
-                AlignMolecules(molsToAlign, shifts);
-                AlignAnnotations(annotationsToAlign, annShifts);
+                AlignMolecules(moleculesToAlign, moleculeTransforms);
+                AlignAnnotations(annotationsToAlign, annotationTransforms);
                 UndoManager.EndUndoBlock();
             }
             catch (Exception exception)
@@ -4936,48 +4851,97 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetry(module, "Debug", $"Aligning centres of {objects.Count} objects");
 
-                List<Transform> shifts = new List<Transform>();
-                List<Transform> annShifts = new List<Transform>();
+                var moleculeTransforms = new List<Transform>();
+                var annotationTransforms = new List<Transform>();
+                var reactionTransforms = new List<Transform>();
 
-                var molsToAlign = objects.OfType<Molecule>().ToList();
+                var moleculesToAlign = objects.OfType<Molecule>().ToList();
                 var annotationsToAlign = objects.OfType<Annotation>().ToList();
+                var reactionsToAlign = objects.OfType<Reaction>().ToList();
 
                 double molsCentre = 0;
                 double annotationsCentre = 0;
+                double reactionsCentre = 0;
 
-                if (molsToAlign.Any())
+                if (moleculesToAlign.Any())
                 {
-                    molsCentre = molsToAlign.Average(m => m.Centre.X);
+                    molsCentre = moleculesToAlign.Average(m => m.Centre.X);
                 }
                 if (annotationsToAlign.Any())
                 {
                     annotationsCentre = annotationsToAlign
                         .Average(a => (CurrentEditor.ChemicalVisuals[a].ContentBounds.Left + CurrentEditor.ChemicalVisuals[a].ContentBounds.Right) / 2);
                 }
-
-                double centre = (annotationsCentre * annotationsToAlign.Count + molsCentre * molsToAlign.Count) / (molsToAlign.Count + annotationsToAlign.Count);
-
-                for (int i = 0; i < molsToAlign.Count; i++)
+                if (reactionsToAlign.Any())
                 {
-                    var shift = new TranslateTransform();
-                    shift.X = centre - molsToAlign[i].Centre.X;
-                    shifts.Add(shift);
+                    reactionsCentre = reactionsToAlign.Average(r => (r.BoundingBox.Left + r.BoundingBox.Right) / 2);
+                }
+
+                double centre = (annotationsCentre * annotationsToAlign.Count + molsCentre * moleculesToAlign.Count + reactionsCentre * reactionsToAlign.Count)
+                                / (moleculesToAlign.Count + annotationsToAlign.Count + reactionsToAlign.Count);
+
+                for (int i = 0; i < moleculesToAlign.Count; i++)
+                {
+                    var transform = new TranslateTransform();
+                    transform.X = centre - moleculesToAlign[i].Centre.X;
+                    moleculeTransforms.Add(transform);
                 }
 
                 for (int i = 0; i < annotationsToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
+                    var transform = new TranslateTransform();
                     var a = annotationsToAlign[i];
-                    shift.X = centre - (CurrentEditor.ChemicalVisuals[a].ContentBounds.Left + CurrentEditor.ChemicalVisuals[a].ContentBounds.Right) / 2;
-                    annShifts.Add(shift);
+                    transform.X = centre - (CurrentEditor.ChemicalVisuals[a].ContentBounds.Left + CurrentEditor.ChemicalVisuals[a].ContentBounds.Right) / 2;
+                    annotationTransforms.Add(transform);
+                }
+
+                for (int i = 0; i < reactionsToAlign.Count; i++)
+                {
+                    var transform = new TranslateTransform();
+                    var a = reactionsToAlign[i];
+                    transform.X = centre - (a.BoundingBox.Left + a.BoundingBox.Right) / 2;
+                    reactionTransforms.Add(transform);
+
                 }
 
                 UndoManager.BeginUndoBlock();
-                AlignMolecules(molsToAlign, shifts);
-                AlignAnnotations(annotationsToAlign, annShifts);
-                List<Reaction> reacts = objects.OfType<Reaction>().ToList();
-                AlignReactionCentres(reacts, centre);
+                AlignMolecules(moleculesToAlign, moleculeTransforms);
+                AlignAnnotations(annotationsToAlign, annotationTransforms);
+                AlignReactions(reactionsToAlign, reactionTransforms);
                 UndoManager.EndUndoBlock();
+            }
+            catch (Exception exception)
+            {
+                WriteTelemetryException(module, exception);
+            }
+        }
+
+        public void AlignReactions(List<Reaction> reactionsToAlign, List<Transform> transforms)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            try
+            {
+                Action redo = () =>
+                              {
+                                  for (int i = 0; i < reactionsToAlign.Count; i++)
+                                  {
+                                      reactionsToAlign[i].TailPoint = transforms[i].Transform(reactionsToAlign[i].TailPoint);
+                                      reactionsToAlign[i].HeadPoint = transforms[i].Transform(reactionsToAlign[i].HeadPoint);
+                                  }
+                              };
+                Action undo = () =>
+                              {
+                                  for (int i = 0; i < reactionsToAlign.Count; i++)
+                                  {
+                                      reactionsToAlign[i].TailPoint = transforms[i].Inverse.Transform(reactionsToAlign[i].TailPoint);
+                                      reactionsToAlign[i].HeadPoint = transforms[i].Inverse.Transform(reactionsToAlign[i].HeadPoint);
+                                  }
+                              };
+                UndoManager.BeginUndoBlock();
+                UndoManager.RecordAction(undo, redo);
+                UndoManager.EndUndoBlock();
+                redo();
+                AddObjectListToSelection(reactionsToAlign.Cast<BaseObject>().ToList());
             }
             catch (Exception exception)
             {
@@ -4992,36 +4956,36 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetry(module, "Debug", $"Aligning lefts of {objects.Count} objects");
 
-                List<Transform> shifts = new List<Transform>();
-                List<Transform> annShifts = new List<Transform>();
+                var moleculeTransforms = new List<Transform>();
+                var annotationTransforms = new List<Transform>();
 
-                var molsToAlign = objects.OfType<Molecule>().ToList();
+                var moleculesToAlign = objects.OfType<Molecule>().ToList();
                 var annotationsToAlign = objects.OfType<Annotation>().ToList();
 
                 double stupidMin = 1.0E6;
 
-                double left = Math.Min(molsToAlign.Select(m => m.Left)
+                double left = Math.Min(moleculesToAlign.Select(m => m.Left)
                                                   .DefaultIfEmpty(stupidMin).Min(),
                                        annotationsToAlign.Select(a => CurrentEditor.ChemicalVisuals[a].ContentBounds.Left)
                                                          .DefaultIfEmpty(stupidMin).Min());
 
-                for (int i = 0; i < molsToAlign.Count; i++)
+                for (int i = 0; i < moleculesToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
-                    shift.X = left - molsToAlign[i].Left;
-                    shifts.Add(shift);
+                    var transform = new TranslateTransform();
+                    transform.X = left - moleculesToAlign[i].Left;
+                    moleculeTransforms.Add(transform);
                 }
 
                 for (int i = 0; i < annotationsToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
-                    shift.X = left - CurrentEditor.ChemicalVisuals[annotationsToAlign[i]].ContentBounds.Left;
-                    annShifts.Add(shift);
+                    var transform = new TranslateTransform();
+                    transform.X = left - CurrentEditor.ChemicalVisuals[annotationsToAlign[i]].ContentBounds.Left;
+                    annotationTransforms.Add(transform);
                 }
 
                 UndoManager.BeginUndoBlock();
-                AlignMolecules(molsToAlign, shifts);
-                AlignAnnotations(annotationsToAlign, annShifts);
+                AlignMolecules(moleculesToAlign, moleculeTransforms);
+                AlignAnnotations(annotationsToAlign, annotationTransforms);
                 UndoManager.EndUndoBlock();
             }
             catch (Exception exception)
@@ -5037,36 +5001,36 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetry(module, "Debug", $"Aligning rights of {objects.Count} objects");
 
-                List<Transform> shifts = new List<Transform>();
-                List<Transform> annShifts = new List<Transform>();
+                var moleculeTransforms = new List<Transform>();
+                var annotationTransforms = new List<Transform>();
 
-                var molsToAlign = objects.OfType<Molecule>().ToList();
+                var moleculesToAlign = objects.OfType<Molecule>().ToList();
                 var annotationsToAlign = objects.OfType<Annotation>().ToList();
 
                 double stupidMax = -100;
 
-                double right = Math.Max(molsToAlign.Select(m => m.Right)
+                double right = Math.Max(moleculesToAlign.Select(m => m.Right)
                                                    .DefaultIfEmpty(stupidMax).Max(),
                                         annotationsToAlign.Select(a => CurrentEditor.ChemicalVisuals[a].ContentBounds.Right)
                                                           .DefaultIfEmpty(stupidMax).Max());
 
-                for (int i = 0; i < molsToAlign.Count; i++)
+                for (int i = 0; i < moleculesToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
-                    shift.X = right - molsToAlign[i].Right;
-                    shifts.Add(shift);
+                    var transform = new TranslateTransform();
+                    transform.X = right - moleculesToAlign[i].Right;
+                    moleculeTransforms.Add(transform);
                 }
 
                 for (int i = 0; i < annotationsToAlign.Count; i++)
                 {
-                    var shift = new TranslateTransform();
-                    shift.X = right - CurrentEditor.ChemicalVisuals[annotationsToAlign[i]].ContentBounds.Right;
-                    annShifts.Add(shift);
+                    var transform = new TranslateTransform();
+                    transform.X = right - CurrentEditor.ChemicalVisuals[annotationsToAlign[i]].ContentBounds.Right;
+                    annotationTransforms.Add(transform);
                 }
 
                 UndoManager.BeginUndoBlock();
-                AlignMolecules(molsToAlign, shifts);
-                AlignAnnotations(annotationsToAlign, annShifts);
+                AlignMolecules(moleculesToAlign, moleculeTransforms);
+                AlignAnnotations(annotationsToAlign, annotationTransforms);
                 UndoManager.EndUndoBlock();
             }
             catch (Exception exception)
@@ -5076,21 +5040,21 @@ namespace Chem4Word.ACME
         }
 
         // aligns a set of molecules given a set of adjusting transforms
-        private void AlignMolecules(List<Molecule> molsToAlign, List<Transform> adjustments)
+        private void AlignMolecules(List<Molecule> molsToAlign, List<Transform> transforms)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            //first check to see whether or not we have an equal number of adjustments and molecules
-            if (molsToAlign.Count == adjustments.Count)
+            //first check to see whether or not we have an equal number of transforms and molecules
+            if (molsToAlign.Count == transforms.Count)
             {
                 UndoManager.BeginUndoBlock();
-                MultiTransformMolecules(adjustments, molsToAlign);
+                MultiTransformMolecules(transforms, molsToAlign);
                 AddObjectListToSelection(molsToAlign.Cast<BaseObject>().ToList());
                 UndoManager.EndUndoBlock();
             }
             else
             {
-                WriteTelemetry(module, "Warning", "Number of adjustments and molecules are not equal");
+                WriteTelemetry(module, "Warning", "Number of transforms and molecules are not equal");
                 WriteTelemetry(module, "StackTrace", Environment.StackTrace);
                 Debugger.Break();
             }

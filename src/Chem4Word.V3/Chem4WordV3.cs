@@ -14,6 +14,7 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Navigator;
+using Chem4Word.Shared;
 using Chem4Word.Telemetry;
 using IChem4Word.Contracts;
 using Microsoft.Office.Core;
@@ -22,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -461,8 +463,69 @@ namespace Chem4Word
                 RegistryHelper.SendSetupActions();
                 RegistryHelper.SendUpdateActions();
 
-                // Early check for updates with longer that normal period
+                CollectAndSendMsiLogs();
+
+                // Early check for updates but with longer that normal period
                 UpdateHelper.CheckForUpdates(30);
+            }
+        }
+
+        private void CollectAndSendMsiLogs()
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var downloadPath = FolderHelper.GetPath(KnownFolder.Downloads);
+            if (!Directory.Exists(downloadPath))
+            {
+                downloadPath = Path.GetTempPath();
+            }
+
+            var logFiles = Directory.GetFiles(downloadPath, "Chem4Word-Setup.*.log");
+            foreach (var logFile in logFiles)
+            {
+                try
+                {
+                    var fileInfo = new FileInfo(logFile);
+                    var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+                    var zipFile = Path.Combine(fileInfo.DirectoryName, $"{fileName}.zip");
+
+                    ZipLogFile(logFile, zipFile);
+
+                    if (File.Exists(zipFile))
+                    {
+                        var fileBytes = File.ReadAllBytes(zipFile);
+                        Globals.Chem4WordV3.Telemetry.SendZipFile(fileBytes, $"{fileName}.zip");
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"{fileName}.zip uploaded");
+
+                        Thread.Sleep(25);
+                        File.Delete(zipFile);
+                        Thread.Sleep(25);
+                        File.Delete(logFile);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    if (Telemetry != null)
+                    {
+                        Telemetry.Write(module, "Exception", exception.Message);
+                        Telemetry.Write(module, "Exception", exception.StackTrace);
+                    }
+                    else
+                    {
+                        RegistryHelper.StoreException(module, exception);
+                    }
+                }
+            }
+        }
+
+        private static void ZipLogFile(string logFilePath, string zipFilePath)
+        {
+            using (var zipToOpen = new FileStream(zipFilePath, FileMode.Create))
+            {
+                using (var archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
+                {
+                    archive.CreateEntryFromFile(logFilePath, Path.GetFileName(logFilePath));
+                }
             }
         }
 
@@ -500,7 +563,7 @@ namespace Chem4Word
 
         public void LoadOptions()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -1003,11 +1066,11 @@ namespace Chem4Word
 
         public IChem4WordLibraryBase GetDriverPlugIn(string name)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             IChem4WordLibraryBase plugin = null;
 
-            if (!string.IsNullOrEmpty(name))
+            if (PlugInsHaveBeenLoaded && !string.IsNullOrEmpty(name))
             {
                 foreach (var ice in Drivers)
                 {
@@ -1021,13 +1084,13 @@ namespace Chem4Word
                         break;
                     }
                 }
-            }
 
-            if (plugin == null)
-            {
-                Telemetry.Write(module, "Warning", $"Could not find driver plug in [{name}]");
-                Debug.WriteLine($"Could not find driver plug in [{name}]");
-                Debugger.Break();
+                if (plugin == null)
+                {
+                    Telemetry.Write(module, "Warning", $"Could not find driver plug in [{name}]");
+                    Debug.WriteLine($"Could not find driver plug in [{name}]");
+                    Debugger.Break();
+                }
             }
 
             return plugin;
@@ -1035,11 +1098,11 @@ namespace Chem4Word
 
         public IChem4WordEditor GetEditorPlugIn(string name)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             IChem4WordEditor plugin = null;
 
-            if (!string.IsNullOrEmpty(name))
+            if (PlugInsHaveBeenLoaded && !string.IsNullOrEmpty(name))
             {
                 foreach (var ice in Editors)
                 {
@@ -1053,13 +1116,13 @@ namespace Chem4Word
                         break;
                     }
                 }
-            }
 
-            if (plugin == null)
-            {
-                Telemetry.Write(module, "Warning", $"Could not find editor plug in [{name}]");
-                Debug.WriteLine($"Could not find editor plug in [{name}]");
-                Debugger.Break();
+                if (plugin == null)
+                {
+                    Telemetry.Write(module, "Warning", $"Could not find editor plug in [{name}]");
+                    Debug.WriteLine($"Could not find editor plug in [{name}]");
+                    Debugger.Break();
+                }
             }
 
             return plugin;
@@ -1067,11 +1130,11 @@ namespace Chem4Word
 
         public IChem4WordRenderer GetRendererPlugIn(string name)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             IChem4WordRenderer plugin = null;
 
-            if (!string.IsNullOrEmpty(name))
+            if (PlugInsHaveBeenLoaded && !string.IsNullOrEmpty(name))
             {
                 foreach (var ice in Renderers)
                 {
@@ -1085,13 +1148,13 @@ namespace Chem4Word
                         break;
                     }
                 }
-            }
 
-            if (plugin == null)
-            {
-                Telemetry.Write(module, "Warning", $"Could not find renderer plug in [{name}]");
-                Debug.WriteLine($"Could not find renderer plug in [{name}]");
-                Debugger.Break();
+                if (plugin == null)
+                {
+                    Telemetry.Write(module, "Warning", $"Could not find renderer plug in [{name}]");
+                    Debug.WriteLine($"Could not find renderer plug in [{name}]");
+                    Debugger.Break();
+                }
             }
 
             return plugin;
@@ -1099,11 +1162,11 @@ namespace Chem4Word
 
         public IChem4WordSearcher GetSearcherPlugIn(string name)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             IChem4WordSearcher plugin = null;
 
-            if (!string.IsNullOrEmpty(name))
+            if (PlugInsHaveBeenLoaded && !string.IsNullOrEmpty(name))
             {
                 foreach (var ice in Searchers)
                 {
@@ -1117,13 +1180,13 @@ namespace Chem4Word
                         break;
                     }
                 }
-            }
 
-            if (plugin == null)
-            {
-                Telemetry.Write(module, "Warning", $"Could not find searcher plug in [{name}]");
-                Debug.WriteLine($"Could not find searcher plug in [{name}]");
-                Debugger.Break();
+                if (plugin == null)
+                {
+                    Telemetry.Write(module, "Warning", $"Could not find searcher plug in [{name}]");
+                    Debug.WriteLine($"Could not find searcher plug in [{name}]");
+                    Debugger.Break();
+                }
             }
 
             return plugin;
@@ -1604,104 +1667,107 @@ namespace Chem4Word
                     if (details != null)
                     {
                         var driver = (IChem4WordLibraryReader)GetDriverPlugIn(details.Driver);
-                        var dto = driver.GetChemistryById(targetWord.ChemistryId);
+                        if (driver != null)
+                        {
+                            var dto = driver.GetChemistryById(targetWord.ChemistryId);
 
-                        if (dto == null)
-                        {
-                            UserInteractions.WarnUser($"No match for '{targetWord.ChemicalName}' was found in your selected library");
-                        }
-                        else
-                        {
-                            var converter = new CMLConverter();
-                            Model model;
-                            if (dto.DataType.Equals("cml"))
+                            if (dto == null)
                             {
-                                model = converter.Import(Encoding.UTF8.GetString(dto.Chemistry));
+                                UserInteractions.WarnUser($"No match for '{targetWord.ChemicalName}' was found in your selected library");
                             }
                             else
                             {
-                                var pbc = new ProtocolBufferConverter();
-                                model = pbc.Import(dto.Chemistry);
-                            }
-
-                            var document = Application.ActiveDocument;
-
-                            // Generate new CustomXmlPartGuid
-                            model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
-                            model.EnsureBondLength(SystemOptions.BondLength,
-                                                   SystemOptions.SetBondLengthOnImportFromLibrary);
-                            var cml = converter.Export(model);
-
-                            #region Find Id of name
-
-                            var tagPrefix = "";
-                            foreach (var mol in model.Molecules.Values)
-                            {
-                                foreach (var name in mol.Names)
+                                var converter = new CMLConverter();
+                                Model model;
+                                if (dto.DataType.Equals("cml"))
                                 {
-                                    if (targetWord.ChemicalName.ToLower().Equals(name.Value.ToLower()))
+                                    model = converter.Import(Encoding.UTF8.GetString(dto.Chemistry));
+                                }
+                                else
+                                {
+                                    var pbc = new ProtocolBufferConverter();
+                                    model = pbc.Import(dto.Chemistry);
+                                }
+
+                                var document = Application.ActiveDocument;
+
+                                // Generate new CustomXmlPartGuid
+                                model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
+                                model.EnsureBondLength(SystemOptions.BondLength,
+                                                       SystemOptions.SetBondLengthOnImportFromLibrary);
+                                var cml = converter.Export(model);
+
+                                #region Find Id of name
+
+                                var tagPrefix = "";
+                                foreach (var mol in model.Molecules.Values)
+                                {
+                                    foreach (var name in mol.Names)
                                     {
-                                        tagPrefix = name.Id;
+                                        if (targetWord.ChemicalName.ToLower().Equals(name.Value.ToLower()))
+                                        {
+                                            tagPrefix = name.Id;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!string.IsNullOrEmpty(tagPrefix))
+                                    {
                                         break;
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(tagPrefix))
+                                if (string.IsNullOrEmpty(tagPrefix))
                                 {
-                                    break;
+                                    tagPrefix = "c0";
+                                }
+
+                                #endregion Find Id of name
+
+                                // Test phrases (ensure benzene and cyclopropane are in your library)
+                                // This is benzene, this is not.
+                                // This is cyclopropane. This is not.
+
+                                Word.ContentControl contentControl = null;
+                                var wordSettings = new WordSettings(Application);
+
+                                try
+                                {
+                                    Application.ScreenUpdating = false;
+                                    DisableContentControlEvents();
+
+                                    var insertionPoint = targetWord.Start;
+                                    document.Range(targetWord.Start, targetWord.Start + targetWord.ChemicalName.Length).Delete();
+
+                                    Application.Selection.SetRange(insertionPoint, insertionPoint);
+
+                                    var tag = $"{tagPrefix}:{model.CustomXmlPartGuid}";
+                                    contentControl = ChemistryHelper.Insert1DChemistry(document, targetWord.ChemicalName, false, tag);
+
+                                    Telemetry.Write(module, "Information", $"Inserted 1D version of {targetWord.ChemicalName} from library");
+                                }
+                                catch (Exception e)
+                                {
+                                    Telemetry.Write(module, "Exception", e.Message);
+                                    Telemetry.Write(module, "Exception", e.StackTrace);
+                                }
+                                finally
+                                {
+                                    EnableContentControlEvents();
+                                    Application.ScreenUpdating = true;
+                                    wordSettings.RestoreSettings(Application);
+                                }
+
+                                if (contentControl != null)
+                                {
+                                    document.CustomXMLParts.Add(XmlHelper.AddHeader(cml));
+                                    Application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
                                 }
                             }
 
-                            if (string.IsNullOrEmpty(tagPrefix))
-                            {
-                                tagPrefix = "c0";
-                            }
-
-                            #endregion Find Id of name
-
-                            // Test phrases (ensure benzene and cyclopropane are in your library)
-                            // This is benzene, this is not.
-                            // This is cyclopropane. This is not.
-
-                            Word.ContentControl contentControl = null;
-                            var wordSettings = new WordSettings(Application);
-
-                            try
-                            {
-                                Application.ScreenUpdating = false;
-                                DisableContentControlEvents();
-
-                                var insertionPoint = targetWord.Start;
-                                document.Range(targetWord.Start, targetWord.Start + targetWord.ChemicalName.Length).Delete();
-
-                                Application.Selection.SetRange(insertionPoint, insertionPoint);
-
-                                var tag = $"{tagPrefix}:{model.CustomXmlPartGuid}";
-                                contentControl = ChemistryHelper.Insert1DChemistry(document, targetWord.ChemicalName, false, tag);
-
-                                Telemetry.Write(module, "Information", $"Inserted 1D version of {targetWord.ChemicalName} from library");
-                            }
-                            catch (Exception e)
-                            {
-                                Telemetry.Write(module, "Exception", e.Message);
-                                Telemetry.Write(module, "Exception", e.StackTrace);
-                            }
-                            finally
-                            {
-                                EnableContentControlEvents();
-                                Application.ScreenUpdating = true;
-                                wordSettings.RestoreSettings(Application);
-                            }
-
-                            if (contentControl != null)
-                            {
-                                document.CustomXMLParts.Add(XmlHelper.AddHeader(cml));
-                                Application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
-                            }
+                            ClearChemistryContextMenus();
+                            _markAsChemistryHandled = true;
                         }
-
-                        ClearChemistryContextMenus();
-                        _markAsChemistryHandled = true;
                     }
                 }
             }
@@ -2172,7 +2238,7 @@ namespace Chem4Word
                 try
                 {
 #if DEBUG
-                    Telemetry.Write(module, "Information", $"Checking if upgrade of document '{document.Name}' is required.");
+                    Telemetry.Write(module, "Information", $"Checking if upgrade of document [{document.DocID}] is required.");
 #endif
                     var answer = Upgrader.UpgradeIsRequired(document);
                     switch (answer)
@@ -2914,7 +2980,12 @@ namespace Chem4Word
                 {
                     if (EventsEnabled && _chemistrySelected)
                     {
+                        Telemetry.Write(module, "Information", "Double click on Chemistry");
+                        EventsEnabled = false;
                         CustomRibbon.PerformEdit();
+                        EventsEnabled = true;
+                        UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                        cancel = true;
                     }
                 }
                 catch (Exception ex)
@@ -2990,63 +3061,81 @@ namespace Chem4Word
                     LoadOptions();
                 }
 
-                var thisDocument = newContentControl.Application.ActiveDocument;
-
-                var ccId = newContentControl.ID;
-                var ccTag = newContentControl.Tag;
-                if (!inUndoRedo && !string.IsNullOrEmpty(ccTag))
+                if (EventsEnabled)
                 {
-                    if (!ccId.Equals(_lastContentControlAdded))
+                    var thisDocument = newContentControl.Application.ActiveDocument;
+                    var ccId = newContentControl.ID;
+                    var ccTag = newContentControl.Tag;
+                    if (!inUndoRedo && !string.IsNullOrEmpty(ccTag))
                     {
-                        // Check that tag looks like it might be a C4W Tag
-                        var regex = @"^[0-9a-fmn.:]+$";
-                        var match = Regex.Match(ccTag, regex, RegexOptions.IgnoreCase);
-                        if (match.Success)
+                        var xmlPartFound = false;
+
+                        if (!ccId.Equals(_lastContentControlAdded))
                         {
-                            var prefix = CustomXmlPartHelper.PrefixFromTag(ccTag);
-                            var guid = CustomXmlPartHelper.GuidFromTag(ccTag);
-
-                            var message = $"ContentControl {ccId} added; Looking for structure {ccTag} in '{thisDocument.Name}'";
-                            Telemetry.Write(module, "Information", message);
-
-                            var cxml = CustomXmlPartHelper.GetCustomXmlPart(thisDocument, guid);
-                            if (cxml != null)
+                            // Check that tag looks like it might be a C4W Tag
+                            var regex = @"^[0-9a-fmn.:]+$";
+                            var match = Regex.Match(ccTag, regex, RegexOptions.IgnoreCase);
+                            if (match.Success)
                             {
-                                Telemetry.Write(module, "Information", $"Found XmlPart for {ccTag} in this document.");
-                            }
-                            else
-                            {
-                                if (Globals.Chem4WordV3.Application.Documents.Count > 1)
+                                var prefix = CustomXmlPartHelper.PrefixFromTag(ccTag);
+                                var guid = CustomXmlPartHelper.GuidFromTag(ccTag);
+
+                                var message = $"ContentControl {ccId} added at position {newContentControl.Range.Start}; Looking for structure {ccTag} in document [{thisDocument.DocID}]";
+                                Telemetry.Write(module, "Information", message);
+
+                                var cxml = CustomXmlPartHelper.GetCustomXmlPart(thisDocument, guid);
+                                if (cxml != null)
                                 {
-                                    var foundIn = string.Empty;
-                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(guid, thisDocument.Name, ref foundIn);
-                                    if (cxml != null)
+                                    Telemetry.Write(module, "Information", $"Found CustomXmlPart for structure {ccTag} in this document.");
+                                    xmlPartFound = true;
+                                }
+                                else
+                                {
+                                    if (Globals.Chem4WordV3.Application.Documents.Count > 1)
                                     {
-                                        Telemetry.Write(module, "Information", $"Found XmlPart for {ccTag} in other document '{foundIn}', adding it into this.");
-
-                                        // Generate new molecule Guid and apply it
-                                        var newGuid = Guid.NewGuid().ToString("N");
-                                        if (string.IsNullOrEmpty(prefix))
+                                        var foundIn = string.Empty;
+                                        cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(guid, thisDocument.Name, ref foundIn);
+                                        if (cxml != null)
                                         {
-                                            newContentControl.Tag = newGuid;
-                                        }
-                                        else
-                                        {
-                                            newContentControl.Tag = $"{prefix}:{newGuid}";
-                                        }
+                                            Telemetry.Write(module, "Information", $"Found CustomXmlPart for structure {ccTag} in other document [{foundIn}], adding it into this.");
 
-                                        var cmlConverter = new CMLConverter();
-                                        var model = cmlConverter.Import(cxml.XML);
-                                        model.CustomXmlPartGuid = newGuid;
+                                            // Generate new molecule Guid and apply it
+                                            var newGuid = Guid.NewGuid().ToString("N");
+                                            if (string.IsNullOrEmpty(prefix))
+                                            {
+                                                newContentControl.Tag = newGuid;
+                                            }
+                                            else
+                                            {
+                                                newContentControl.Tag = $"{prefix}:{newGuid}";
+                                            }
 
-                                        thisDocument.CustomXMLParts.Add(XmlHelper.AddHeader(cmlConverter.Export(model)));
-                                        Telemetry.Write(module, "Information", $"Added XmlPart {newGuid} in document '{thisDocument.Name}'");
+                                            var cmlConverter = new CMLConverter();
+                                            var model = cmlConverter.Import(cxml.XML);
+                                            model.CustomXmlPartGuid = newGuid;
+
+                                            thisDocument.CustomXMLParts.Add(XmlHelper.AddHeader(cmlConverter.Export(model)));
+                                            Telemetry.Write(module, "Information", $"Added CustomXmlPart {newGuid} in document [{thisDocument.DocID}]");
+                                            xmlPartFound = true;
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        _lastContentControlAdded = ccId;
+                            if (xmlPartFound)
+                            {
+                                _lastContentControlAdded = ccId;
+                            }
+                            else
+                            {
+                                Telemetry.Write(module, "Warning", $"CustomXmlPart with tag {ccTag} not found in any open document(s)");
+                                newContentControl.Title = $"{Constants.ContentControlTitle}-Missing";
+                            }
+                        }
+                        else
+                        {
+                            Telemetry.Write(module, "Warning", $"CustomXmlPart with tag {ccTag} not searched for");
+                        }
                     }
                 }
             }

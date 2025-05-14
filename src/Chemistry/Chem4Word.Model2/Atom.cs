@@ -429,8 +429,10 @@ namespace Chem4Word.Model2
                                         }
                                         else
                                         {
-                                            // Change this to false if you wish to hide C when bonds are in a straight line
-                                            result = true;
+                                            if (ExplicitC.HasValue)
+                                            {
+                                                result = ExplicitC.Value;
+                                            }
                                         }
                                     }
                                 }

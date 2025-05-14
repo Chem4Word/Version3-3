@@ -5,14 +5,17 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-namespace IChem4Word.Contracts
+namespace Chem4WordSetup
 {
-    public interface IChem4WordTelemetry
+    public enum State
     {
-        void Write(string source, string level, string message);
-
-        void SendZipFile(byte[] bytes, string fileName);
-
-        int BufferCount();
+        DownloadVsto = 0,
+        WaitingForVstoDownload,
+        InstallVsto,
+        DownloadChem4Word,
+        WaitingForChem4WordDownload,
+        InstallChem4Word,
+        WaitingForInstaller,
+        Done
     }
 }

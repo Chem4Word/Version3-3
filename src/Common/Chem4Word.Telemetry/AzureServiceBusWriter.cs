@@ -122,6 +122,11 @@ namespace Chem4Word.Telemetry
             }
         }
 
+        public void SendZipFileMessage(ServiceBusMessage message)
+        {
+            _sender.SendMessageAsync(message);
+        }
+
         private async Task WriteMessage(OutputMessage message)
         {
             var securityProtocol = ServicePointManager.SecurityProtocol;

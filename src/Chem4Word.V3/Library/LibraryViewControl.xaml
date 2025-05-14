@@ -262,7 +262,7 @@
                                 x:Name="ChemistryItemControl"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
-                                DisplayHeight="150"
+                                DisplayHeight="145"
                                 ItemMode="Library">
                                 <controls:ChemistryItem.Style>
                                     <Style TargetType="{x:Type controls:ChemistryItem}">

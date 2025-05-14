@@ -84,13 +84,13 @@ namespace Chem4Word.Helpers
         {
             var parts = new List<string>
                         {
-                            $"Chemistry XML Parts in {document.Name} :-"
+                            $"Chemistry CustomXmlParts in document [{document.DocID}] :-"
                         };
 
             foreach (CustomXMLPart xmlPart in AllChemistryParts(document))
             {
                 var cmlId = GetCmlId(xmlPart);
-                parts.Add($"Id: {xmlPart.Id} customXmlPartGuid: '{cmlId}'");
+                parts.Add($"XmlPartId: {xmlPart.Id} customXmlPartGuid: '{cmlId}'");
             }
 
             return parts;
@@ -152,7 +152,7 @@ namespace Chem4Word.Helpers
                 {
                     if (cc.Title != null && cc.Title.Equals(Constants.ContentControlTitle))
                     {
-                        var guid = GuidFromTag(cc?.Tag);
+                        var guid = GuidFromTag(cc.Tag);
 
                         if (!string.IsNullOrEmpty(guid))
                         {
@@ -169,6 +169,7 @@ namespace Chem4Word.Helpers
                 var allChemistryParts = AllChemistryParts(document);
                 var carryOutPurge = true;
 
+                // Pass 1 save orphans
                 foreach (CustomXMLPart customXmlPart in allChemistryParts)
                 {
                     var molId = GetCmlId(customXmlPart);
@@ -193,6 +194,7 @@ namespace Chem4Word.Helpers
                     }
                 }
 
+                // Pass 2 purge orphans
                 if (carryOutPurge)
                 {
                     foreach (CustomXMLPart customXmlPart in allChemistryParts)
@@ -202,6 +204,7 @@ namespace Chem4Word.Helpers
                         {
                             try
                             {
+                                RegistryHelper.StoreMessage(module, $"Purging Orphaned XmlPart Id:{customXmlPart.Id} Tag: {molId}");
                                 customXmlPart.Delete();
                             }
                             catch (Exception exception)

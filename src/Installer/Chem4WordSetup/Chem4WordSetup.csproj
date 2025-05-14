@@ -12,10 +12,6 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -79,6 +75,9 @@
     <Compile Include="..\..\Shared\OfficeHelper.cs">
       <Link>OfficeHelper.cs</Link>
     </Compile>
+    <Compile Include="..\..\Shared\ProcessHelper.cs">
+      <Link>ProcessHelper.cs</Link>
+    </Compile>
     <Compile Include="..\..\Shared\RegistryWOW6432.cs">
       <Link>RegistryWOW6432.cs</Link>
     </Compile>
@@ -97,6 +96,7 @@
     <Compile Include="Setup.Designer.cs">
       <DependentUpon>Setup.cs</DependentUpon>
     </Compile>
+    <Compile Include="State.cs" />
     <Compile Include="TaskIndicator.cs">
       <SubType>UserControl</SubType>
     </Compile>

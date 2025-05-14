@@ -1323,7 +1323,7 @@ namespace Chem4WordTests
                     expectedStack = new List<string>
                                     {
                                         "0 - #end#",
-                                        $"2 - {nameof(EditController.AlignReactionCentres)}",
+                                        $"2 - {nameof(EditController.AlignReactions)}",
                                         $"2 - {nameof(EditController.AlignAnnotations)}",
                                         $"3 - {nameof(EditController.MultiTransformMolecules)}",
                                         "0 - #start#"
@@ -1343,7 +1343,7 @@ namespace Chem4WordTests
                     expectedStack = new List<string>
                                     {
                                         "0 - #end#",
-                                        $"2 - {nameof(EditController.AlignReactionMiddles)}",
+                                        $"2 - {nameof(EditController.AlignReactions)}",
                                         $"2 - {nameof(EditController.AlignAnnotations)}",
                                         $"3 - {nameof(EditController.MultiTransformMolecules)}",
                                         "0 - #start#"

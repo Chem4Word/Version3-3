@@ -892,13 +892,12 @@ namespace Chem4Word
                     var document = application.ActiveDocument;
 
                     Word.ContentControl contentControl = null;
-                    var wordSettings = new WordSettings(application);
 
                     try
                     {
                         if (document != null)
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Document name [{document.Name}]");
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Document [{document.DocID}]");
                             if (Globals.Chem4WordV3.SystemOptions == null)
                             {
                                 Globals.Chem4WordV3.LoadOptions();
@@ -968,7 +967,7 @@ namespace Chem4Word
                                             }
                                             else
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"Can't find CML for {contentControl.Tag} in Active Document '{document.Name}'");
+                                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]");
                                                 var listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
                                                 Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, listCustomXmlParts));
 
@@ -1162,6 +1161,7 @@ namespace Chem4Word
 
                                                         if (customXmlPart != null)
                                                         {
+                                                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {fullTag}");
                                                             customXmlPart.Delete();
                                                         }
 
@@ -1243,22 +1243,21 @@ namespace Chem4Word
                     }
                     finally
                     {
-                        // Tidy Up - Resume Screen Updating and Enable Document Event Handlers
-                        application.ScreenUpdating = true;
-                        Globals.Chem4WordV3.EnableContentControlEvents();
-
                         if (contentControl != null)
                         {
                             // Move selection point into the Content Control which was just edited or added
                             application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
                             Globals.Chem4WordV3.SelectChemistry(application.Selection);
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; ContentControl was inserted or updated");
                         }
                         else
                         {
                             Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; No ContentControl was inserted");
                         }
 
-                        wordSettings.RestoreSettings(application);
+                        // Tidy Up - Resume Screen Updating and Enable Document Event Handlers
+                        application.ScreenUpdating = true;
+                        Globals.Chem4WordV3.EnableContentControlEvents();
                         application.ActiveWindow.SetFocus();
                         application.Activate();
                     }
@@ -1507,6 +1506,14 @@ namespace Chem4Word
                                         if (result == DialogResult.OK)
                                         {
                                             var afterCml = host.Cml;
+                                            if (Globals.Chem4WordV3.Telemetry != null)
+                                            {
+                                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
+                                            }
+                                            else
+                                            {
+                                                RegistryHelper.StoreMessage(module, $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
+                                            }
                                             customXmlPart.Delete();
                                             document.CustomXMLParts.Add(XmlHelper.AddHeader(afterCml));
 
@@ -1794,17 +1801,21 @@ namespace Chem4Word
                                     var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
                                     if (details != null)
                                     {
-                                        var lib = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
-                                        lib.FileName = details.Connection;
+                                        var driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+                                        if (driver != null)
+                                        {
+                                            var lib = (IChem4WordLibraryWriter)driver;
+                                            lib.FileName = details.Connection;
 
-                                        var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
-                                        lib.AddChemistry(dto);
+                                            var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
+                                            lib.AddChemistry(dto);
 
-                                        // Re- Read the Library Names
-                                        Globals.Chem4WordV3.LoadNamesFromLibrary();
+                                            // Re- Read the Library Names
+                                            Globals.Chem4WordV3.LoadNamesFromLibrary();
 
-                                        UserInteractions.InformUser($"Structure '{dto.Name}' added into Library");
-                                        Globals.Chem4WordV3.Telemetry?.Write(module, "Information", $"Structure '{model.ConciseFormula}' added into Library");
+                                            UserInteractions.InformUser($"Structure '{dto.Name}' added into Library");
+                                            Globals.Chem4WordV3.Telemetry?.Write(module, "Information", $"Structure '{model.ConciseFormula}' added into Library");
+                                        }
                                     }
                                 }
                                 else
@@ -2186,6 +2197,14 @@ namespace Chem4Word
 
                                             ChemistryHelper.UpdateThisStructure(document, model, guidString, tempfile);
 
+                                            if (Globals.Chem4WordV3.Telemetry != null)
+                                            {
+                                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
+                                            }
+                                            else
+                                            {
+                                                RegistryHelper.StoreMessage(module, $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
+                                            }
                                             customXmlPart.Delete();
                                             document.CustomXMLParts.Add(XmlHelper.AddHeader(afterCml));
 
@@ -2271,8 +2290,6 @@ namespace Chem4Word
 
             AfterButtonChecks(sender as RibbonButton);
         }
-
-
 
         private void OnClick_ShowAbout(object sender, RibbonControlEventArgs e)
         {

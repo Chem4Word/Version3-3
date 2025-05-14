@@ -57,6 +57,7 @@ namespace Chem4Word.Model2
             set
             {
                 _startPoint = value;
+                _boundingBox = new Rect(_startPoint, _endPoint);
                 OnPropertyChanged();
             }
         }
@@ -69,9 +70,14 @@ namespace Chem4Word.Model2
             set
             {
                 _endPoint = value;
+                _boundingBox = new Rect(_startPoint, _endPoint);
                 OnPropertyChanged();
             }
         }
+
+        private Rect _boundingBox;
+
+        public Rect BoundingBox => _boundingBox;
 
         private string _reagentText;
 

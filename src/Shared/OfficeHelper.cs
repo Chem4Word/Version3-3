@@ -709,7 +709,7 @@ namespace Chem4Word.Shared
                     }
                     break;
 
-                case 16: // Word 2016
+                case 16: // Word 2016, 2019, 2024 or 365
                     break;
             }
 
@@ -1035,12 +1035,12 @@ namespace Chem4Word.Shared
                     version = 2013;
                     break;
 
-                case 16:
+                case 16: // Versions 2016, 2019, 2024 and 365 all have major version of 16
                     version = 2016;
                     break;
 
-                case 17:
-                    version = 2019;
+                case 17: // Version 17 does not exist yet so return something bigger than 2010
+                    version = 2099;
                     break;
             }
 

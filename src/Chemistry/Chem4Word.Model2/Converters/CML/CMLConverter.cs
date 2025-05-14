@@ -29,133 +29,158 @@ namespace Chem4Word.Model2.Converters.CML
             if (data != null)
             {
                 var cml = (string)data;
-                if (cml.Contains("http://www.chemaxon.com") || cml.Contains("<MDocument>"))
+
+                if (CanImport(cml, out var reason))
                 {
-                    // Strip all xml namespaces to make it easier to process
-                    cml = RemoveNamespaces(cml);
-
-                    var temp = XDocument.Parse(cml);
-
-                    var mol = temp.Descendants(CMLConstants.TagMolecule).FirstOrDefault();
-
-                    if (mol != null)
+                    if (cml.Contains("http://www.chemaxon.com") || cml.Contains("<MDocument>"))
                     {
-                        // Make cml the same as if it has come from ChemDraw
-                        cml = mol.ToString();
+                        // Strip all xml namespaces to make it easier to process
+                        cml = RemoveNamespaces(cml);
+
+                        var temp = XDocument.Parse(cml);
+
+                        var mol = temp.Descendants(CMLConstants.TagMolecule).FirstOrDefault();
+
+                        if (mol != null)
+                        {
+                            // Make cml the same as if it has come from ChemDraw
+                            cml = mol.ToString();
+                        }
                     }
-                }
 
-                XDocument modelDoc = XDocument.Parse(cml);
-                XElement root = modelDoc.Root;
+                    XDocument modelDoc = XDocument.Parse(cml);
+                    XElement root = modelDoc.Root;
 
-                // Only import if set
-                XElement explicitC = CMLHelper.GetExplicitCarbonTag(root);
-                if (explicitC != null && !string.IsNullOrEmpty(explicitC.Value))
-                {
-                    if (bool.TryParse(explicitC.Value, out var result))
+                    // Only import if set
+                    XElement explicitC = CMLHelper.GetExplicitCarbonTag(root);
+                    if (explicitC != null && !string.IsNullOrEmpty(explicitC.Value))
                     {
-                        newModel.ExplicitC = result;
+                        if (bool.TryParse(explicitC.Value, out var result))
+                        {
+                            newModel.ExplicitC = result;
+                        }
                     }
-                }
 
-                // Only import if set
-                XElement explicitH = CMLHelper.GetExplicitHydrogenTag(root);
-                if (explicitH != null && !string.IsNullOrEmpty(explicitH.Value))
-                {
-                    if (Enum.TryParse(explicitH.Value, out HydrogenLabels result))
+                    // Only import if set
+                    XElement explicitH = CMLHelper.GetExplicitHydrogenTag(root);
+                    if (explicitH != null && !string.IsNullOrEmpty(explicitH.Value))
                     {
-                        newModel.ExplicitH = result;
+                        if (Enum.TryParse(explicitH.Value, out HydrogenLabels result))
+                        {
+                            newModel.ExplicitH = result;
+                        }
                     }
-                }
 
-                // Only import if set
-                XElement colouredAtoms = CMLHelper.GetColouredAtomsTag(root);
-                if (colouredAtoms != null && !string.IsNullOrEmpty(colouredAtoms.Value))
-                {
-                    if (bool.TryParse(colouredAtoms.Value, out bool result))
+                    // Only import if set
+                    XElement colouredAtoms = CMLHelper.GetColouredAtomsTag(root);
+                    if (colouredAtoms != null && !string.IsNullOrEmpty(colouredAtoms.Value))
                     {
-                        newModel.ShowColouredAtoms = result;
+                        if (bool.TryParse(colouredAtoms.Value, out bool result))
+                        {
+                            newModel.ShowColouredAtoms = result;
+                        }
                     }
-                }
 
-                // Only import if set
-                XElement showGrouping = CMLHelper.GetShowMoleculeGroupingTag(root);
-                if (showGrouping != null && !string.IsNullOrEmpty(showGrouping.Value))
-                {
-                    if (bool.TryParse(showGrouping.Value, out bool result))
+                    // Only import if set
+                    XElement showGrouping = CMLHelper.GetShowMoleculeGroupingTag(root);
+                    if (showGrouping != null && !string.IsNullOrEmpty(showGrouping.Value))
                     {
-                        newModel.ShowMoleculeGrouping = result;
+                        if (bool.TryParse(showGrouping.Value, out bool result))
+                        {
+                            newModel.ShowMoleculeGrouping = result;
+                        }
                     }
-                }
 
-                // Only import if set
-                XElement customXmlPartGuid = CMLHelper.GetCustomXmlPartGuid(root);
-                if (customXmlPartGuid != null && !string.IsNullOrEmpty(customXmlPartGuid.Value))
-                {
-                    newModel.CustomXmlPartGuid = customXmlPartGuid.Value;
-                }
-
-                List<XElement> moleculeElements = CMLHelper.GetMolecules(root);
-
-                foreach (XElement meElement in moleculeElements)
-                {
-                    Molecule newMol = GetMolecule(meElement);
-
-                    AddMolecule(newModel, newMol);
-                    newMol.Parent = newModel;
-                }
-
-                List<XElement> schemeElements = CMLHelper.GetReactionSchemes(root);
-                foreach (XElement schemeElement in schemeElements)
-                {
-                    ReactionScheme newScheme = GetReactionScheme(schemeElement, newModel);
-                    AddReactionScheme(newModel, newScheme);
-                    newScheme.Parent = newModel;
-                }
-
-                //load any model-level annotations
-                List<XElement> annotationElements = CMLHelper.GetAnnotations(root);
-                foreach (XElement annElement in annotationElements)
-                {
-                    Annotation newAnnotation = GetAnnotation(annElement);
-                    AddAnnotation(newModel, newAnnotation);
-                    newAnnotation.Parent = newModel;
-                }
-
-                #region Handle 1D Labels
-
-                if (protectedLabels != null && protectedLabels.Count >= 1)
-                {
-                    newModel.Relabel(false);
-                    newModel.SetAnyMissingNameIds();
-                    newModel.SetProtectedLabels(protectedLabels);
-                }
-                else if (relabel)
-                {
-                    newModel.Relabel(true);
-                }
-
-                #endregion Handle 1D Labels
-
-                #region Fix any annotations without SymbolSize set
-
-                var symbolSize = Math.Round(newModel.MeanBondLength / 5.0) * 5;
-
-                foreach (var annotation in newModel.Annotations.Values)
-                {
-                    if (annotation.SymbolSize == 0)
+                    // Only import if set
+                    XElement customXmlPartGuid = CMLHelper.GetCustomXmlPartGuid(root);
+                    if (customXmlPartGuid != null && !string.IsNullOrEmpty(customXmlPartGuid.Value))
                     {
-                        annotation.SymbolSize = symbolSize;
+                        newModel.CustomXmlPartGuid = customXmlPartGuid.Value;
                     }
+
+                    List<XElement> moleculeElements = CMLHelper.GetMolecules(root);
+
+                    foreach (XElement meElement in moleculeElements)
+                    {
+                        Molecule newMol = GetMolecule(meElement);
+
+                        AddMolecule(newModel, newMol);
+                        newMol.Parent = newModel;
+                    }
+
+                    List<XElement> schemeElements = CMLHelper.GetReactionSchemes(root);
+                    foreach (XElement schemeElement in schemeElements)
+                    {
+                        ReactionScheme newScheme = GetReactionScheme(schemeElement, newModel);
+                        AddReactionScheme(newModel, newScheme);
+                        newScheme.Parent = newModel;
+                    }
+
+                    //load any model-level annotations
+                    List<XElement> annotationElements = CMLHelper.GetAnnotations(root);
+                    foreach (XElement annElement in annotationElements)
+                    {
+                        Annotation newAnnotation = GetAnnotation(annElement);
+                        AddAnnotation(newModel, newAnnotation);
+                        newAnnotation.Parent = newModel;
+                    }
+
+                    #region Handle 1D Labels
+
+                    if (protectedLabels != null && protectedLabels.Count >= 1)
+                    {
+                        newModel.Relabel(false);
+                        newModel.SetAnyMissingNameIds();
+                        newModel.SetProtectedLabels(protectedLabels);
+                    }
+                    else if (relabel)
+                    {
+                        newModel.Relabel(true);
+                    }
+
+                    #endregion Handle 1D Labels
+
+                    #region Fix any annotations without SymbolSize set
+
+                    var symbolSize = Math.Round(newModel.MeanBondLength / 5.0) * 5;
+
+                    foreach (var annotation in newModel.Annotations.Values)
+                    {
+                        if (annotation.SymbolSize == 0)
+                        {
+                            annotation.SymbolSize = symbolSize;
+                        }
+                    }
+
+                    #endregion Fix any annotations without SymbolSize set
+
+                    // Calculate dynamic properties
+                    newModel.Refresh();
                 }
-
-                #endregion Fix any annotations without SymbolSize set
-
-                // Calculate dynamic properties
-                newModel.Refresh();
+                else
+                {
+                    newModel.GeneralErrors.Add(reason);
+                }
             }
 
             return newModel;
+        }
+
+        private bool CanImport(string cml, out string reason)
+        {
+            reason = "";
+            var result = true;
+
+            var contents = cml.ToUpper();
+
+            // https://chemapps.stolaf.edu/iupac/cdx/sdk/IntroExampleSimple.htm
+            if (contents.Contains("<CDXML") && contents.Contains("</CDXML>"))
+            {
+                result = false;
+                reason = "Can't import CDXML files";
+            }
+
+            return result;
         }
 
         private string RemoveNamespaces(string xml)

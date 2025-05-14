@@ -62,8 +62,8 @@ function Update-AllAssemblyInfoFiles ($version)
    #Write-Host "Searching '$path'"
    foreach ($file in "AssemblyInfo.cs", "AssemblyInfo.vb" ) 
    {
-		Get-ChildItem $path -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version ;
-        Get-ChildItem "..\..\..\Secure-Libraries\Chem4Word.Driver.Closed"  -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version ;
+		Get-ChildItem $path -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
+		Get-ChildItem "..\..\..\Secure-Libraries\Chem4Word.Driver.Closed"  -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
    }
 }
 
@@ -154,8 +154,8 @@ $wixFile = "$($pwd)\..\Installer\WiXInstaller\Product.wxs"
 Write-Host "$($wixFile)" -ForegroundColor Green
 
 $xml = [xml](Get-Content $wixFile)
-$xml.Wix.Product.Version = "$($version).$($delta.Days)"
-$xml.Wix.Product.Name = "Chemistry Add-In for Microsoft Word 2025 $($name)"
+$xml.Wix.Package.Version = "$($version).$($delta.Days)"
+$xml.Wix.Package.Name = "Chemistry Add-In for Microsoft Word 2025 $($name)"
 $xml.Save($wixFile)
 
 # ---------------------------------------------------------- #
@@ -167,7 +167,7 @@ Write-Host "$($wixProj)" -ForegroundColor Green
 
 $xml = [xml](Get-Content $wixProj)
 $dottedname = $name.Replace(" ", ".")
-$xml.Project.PropertyGroup[0].OutputName = "Chem4Word-Setup.$($version).$($dottedname)"
+$xml.Project.PropertyGroup.OutputName = "Chem4Word-Setup.$($version).$($dottedname)"
 $xml.Save($wixProj)
 
 # ---------------------------------------------------------- #
@@ -227,7 +227,7 @@ $replaceWith = 'var versionNumber = "' + "$($version)" + '.666";';
 # Update CustomAction.cs
 Write-Host " Updating 'CustomAction.cs'" -ForegroundColor Yellow
 
-$file = "$($pwd)\..\Installer\WiX.CustomAction\CustomAction.cs"
+$file = "$($pwd)\..\Installer\WiX.CustomAction.V6\CustomAction.cs"
 Write-Host "$($file)" -ForegroundColor Green
 
 $findPattern = 'var versionNumber = .*'

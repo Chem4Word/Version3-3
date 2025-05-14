@@ -195,11 +195,16 @@ namespace Chem4Word.ACME.Drawing
             {
                 //now, if there is a centroid defined, the bond is part of a ring
                 Point? workingCentroid = null;
-                //work out whether the bond is place inside or outside the ring
-                var bondvector = descriptor.PrincipleVector;
+                //work out whether the bond is placed inside or outside the ring
+                var principleVector = descriptor.PrincipleVector;
                 var centreVector = descriptor.PrimaryCentroid - descriptor.Start;
+                var computedPlacement = BondDirection.None;
 
-                var computedPlacement = (BondDirection)Math.Sign(Vector.CrossProduct(centreVector.Value, bondvector));
+                var crossProduct = Vector.CrossProduct(centreVector.Value, principleVector);
+                if (!double.IsNaN(crossProduct))
+                {
+                    computedPlacement = (BondDirection)Math.Sign(crossProduct);
+                }
 
                 if (descriptor.Placement != BondDirection.None)
                 {
@@ -218,9 +223,9 @@ namespace Chem4Word.ACME.Drawing
                     var bondVector = (descriptor.End - descriptor.Start);
                     var midPoint = bondVector / 2 + descriptor.Start;
 
-                    var perpAngle = Math.Abs(Vector.AngleBetween(workingCentroid.Value - midPoint, bondVector));
+                    var angle = Math.Abs(Vector.AngleBetween(workingCentroid.Value - midPoint, bondVector));
 
-                    if (perpAngle >= 80 && perpAngle <= 100) //probably convex ring
+                    if (angle >= 80 && angle <= 100) //probably convex ring
                     {
                         //shorten the second bond to fit neatly within the ring
                         descriptorSecondaryStart = GeometryTool.GetIntersection(descriptor.Start, workingCentroid.Value,

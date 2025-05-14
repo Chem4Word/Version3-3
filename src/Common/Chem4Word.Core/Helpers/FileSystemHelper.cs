@@ -67,7 +67,8 @@ namespace Chem4Word.Core.Helpers
 
             var nulCount = 0;
 
-            using (var streamReader = new StreamReader(filePath))
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using (var streamReader = new StreamReader(fileStream))
             {
                 for (var i = 0; i < charsToCheck; i++)
                 {

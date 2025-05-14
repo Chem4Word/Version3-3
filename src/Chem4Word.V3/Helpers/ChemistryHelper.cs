@@ -232,7 +232,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 2D structure in ContentControl {ccId} Tag {guid} in document '{document.Name}'");
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 2D structure in ContentControl {ccId} Tag {guid} in document [{document.DocID}]");
 
             var application = Globals.Chem4WordV3.Application;
 
@@ -259,7 +259,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 2D structure in ContentControl {ccId} Tag {guid} in document '{document.Name}'");
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 2D structure in ContentControl {ccId} Tag {guid} in document [{document.DocID}]");
 
             var cc = GetContentControl(document, ccId);
             if (cc != null)
@@ -307,7 +307,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 1D label in ContentControl {ccId} Tag {tag} in document '{document.Name}'");
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Inserting 1D label in ContentControl {ccId} Tag {tag} in document [{document.DocID}]");
 
             var cc = GetContentControl(document, ccId);
             if (cc != null)
@@ -331,7 +331,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 1D label in ContentControl {ccId} Tag {tag} in document '{document.Name}'");
+            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Updating 1D label in ContentControl {ccId} Tag {tag} in document [{document.DocID}]");
 
             var cc = GetContentControl(document, ccId);
             if (cc != null)
