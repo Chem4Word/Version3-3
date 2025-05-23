@@ -618,9 +618,9 @@ namespace Chem4Word
             AfterButtonChecks(sender as RibbonButton);
         }
 
-        public static void InsertFile()
+        private static void InsertFile()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var application = Globals.Chem4WordV3.Application;
             var activeDocument = application.ActiveDocument;
@@ -645,7 +645,7 @@ namespace Chem4Word
                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Importing file '{ofd.SafeFileName}'");
                         if (ofd.FileName != null)
                         {
-                            if (FileSystemHelper.IsBinary(ofd.FileName))
+                            if (FileHelper.IsBinary(ofd.FileName))
                             {
                                 Globals.Chem4WordV3.Telemetry.Write(module, "Warning", $"File '{ofd.SafeFileName}' detected as binary");
                                 UserInteractions.InformUser("Sorry, Binary files such as images and office documents etc can't be imported");
@@ -886,10 +886,9 @@ namespace Chem4Word
             {
                 if (Globals.Chem4WordV3.IsEnabled)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Started");
-
                     var application = Globals.Chem4WordV3.Application;
                     var document = application.ActiveDocument;
+                    var cancelled = true;
 
                     Word.ContentControl contentControl = null;
 
@@ -897,7 +896,7 @@ namespace Chem4Word
                     {
                         if (document != null)
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Document [{document.DocID}]");
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Started document Name: '{document.Name}' Id: [{document.DocID}] ");
                             if (Globals.Chem4WordV3.SystemOptions == null)
                             {
                                 Globals.Chem4WordV3.LoadOptions();
@@ -1002,11 +1001,11 @@ namespace Chem4Word
 
                                     if (isNewDrawing)
                                     {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Starting create new structure Tag {fullTag}");
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Starting create new structure Tag {fullTag} at position {sel.Start}");
                                     }
                                     else
                                     {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Starting edit existing structure Tag {fullTag}");
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Starting edit existing structure Tag {fullTag} at position {sel.Start}");
                                     }
 
                                     var used1D = ChemistryHelper.GetUsed1D(document, guidString);
@@ -1019,10 +1018,7 @@ namespace Chem4Word
 
                                     if (chemEditorResult == DialogResult.OK)
                                     {
-                                        // Stop Screen Updating and Disable Document Event Handlers
-                                        application.ScreenUpdating = false;
-                                        Globals.Chem4WordV3.DisableContentControlEvents();
-
+                                        cancelled = false;
                                         var cmlConverter = new CMLConverter();
 
                                         var afterModel = cmlConverter.Import(editor.Cml, used1D);
@@ -1068,8 +1064,7 @@ namespace Chem4Word
                                                 afterModel.ReLabelGuids();
                                                 afterModel.Relabel(true);
 
-                                                using (var host =
-                                                       new EditLabelsHost())
+                                                using (var host = new EditLabelsHost())
                                                 {
                                                     host.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                                                     host.Cml = cmlConverter.Export(afterModel);
@@ -1082,10 +1077,19 @@ namespace Chem4Word
                                                     if (dr == DialogResult.OK)
                                                     {
                                                         afterModel = cmlConverter.Import(host.Cml, used1D);
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Labels updated");
+                                                    }
+                                                    else
+                                                    {
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Labels accepted");
                                                     }
 
                                                     host.Close();
                                                 }
+                                            }
+                                            else
+                                            {
+                                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Properties not changed");
                                             }
 
                                             #endregion Show Label Editor
@@ -1111,13 +1115,17 @@ namespace Chem4Word
 
                                                 var readyToInsert = true;
 
+                                                // Stop Screen Updating and Disable Document Event Handlers
+                                                application.ScreenUpdating = false;
+                                                Globals.Chem4WordV3.DisableContentControlEvents();
+
                                                 if (!isNewDrawing)
                                                 {
-                                                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Erasing old ContentControl {contentControl.ID}");
-
                                                     contentControl = ChemistryHelper.GetContentControl(document, contentControl.ID);
                                                     if (contentControl != null)
                                                     {
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Erasing old ContentControl {contentControl.ID}");
+
                                                         // Erase old CC
                                                         contentControl.LockContents = false;
                                                         if (contentControl.Type == Word.WdContentControlType.wdContentControlPicture)
@@ -1133,6 +1141,8 @@ namespace Chem4Word
                                                     }
                                                     else
                                                     {
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Error", $"Can't find old ContentControl {contentControl.ID}");
+
                                                         readyToInsert = false;
                                                     }
                                                 }
@@ -1165,6 +1175,7 @@ namespace Chem4Word
                                                             customXmlPart.Delete();
                                                         }
 
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding XmlPart Tag: {fullTag}");
                                                         document.CustomXMLParts.Add(XmlHelper.AddHeader(afterCml));
 
                                                         #endregion Replace CustomXMLPart with our new cml
@@ -1245,14 +1256,21 @@ namespace Chem4Word
                     {
                         if (contentControl != null)
                         {
-                            // Move selection point into the Content Control which was just edited or added
-                            application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
-                            Globals.Chem4WordV3.SelectChemistry(application.Selection);
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; ContentControl was inserted or updated");
+                            if (cancelled)
+                            {
+                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; User canceled edit");
+                            }
+                            else
+                            {
+                                // Move selection point into the Content Control which was just edited or added
+                                application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
+                                Globals.Chem4WordV3.SelectChemistry(application.Selection);
+                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; Structure was updated");
+                            }
                         }
                         else
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; No ContentControl was inserted");
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; User canceled insert");
                         }
 
                         // Tidy Up - Resume Screen Updating and Enable Document Event Handlers
@@ -1506,17 +1524,6 @@ namespace Chem4Word
                                         if (result == DialogResult.OK)
                                         {
                                             var afterCml = host.Cml;
-                                            if (Globals.Chem4WordV3.Telemetry != null)
-                                            {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
-                                            }
-                                            else
-                                            {
-                                                RegistryHelper.StoreMessage(module, $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
-                                            }
-                                            customXmlPart.Delete();
-                                            document.CustomXMLParts.Add(XmlHelper.AddHeader(afterCml));
-
                                             var renderer =
                                                 Globals.Chem4WordV3.GetRendererPlugIn(
                                                     Globals.Chem4WordV3.SystemOptions.SelectedRendererPlugIn);
@@ -1537,6 +1544,17 @@ namespace Chem4Word
                                                     var converter = new CMLConverter();
                                                     var model = converter.Import(afterCml, used1D);
                                                     ChemistryHelper.UpdateThisStructure(document, model, guid, tempFileName);
+
+                                                    if (Globals.Chem4WordV3.Telemetry != null)
+                                                    {
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
+                                                    }
+                                                    else
+                                                    {
+                                                        RegistryHelper.StoreMessage(module, $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
+                                                    }
+                                                    customXmlPart.Delete();
+                                                    document.CustomXMLParts.Add(XmlHelper.AddHeader(afterCml));
 
                                                     // Delete the temporary file now we are finished with it
                                                     try

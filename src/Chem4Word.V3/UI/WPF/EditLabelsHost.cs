@@ -98,6 +98,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_Cancel(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.Cancel;
             Hide();
         }
 
@@ -109,28 +110,31 @@ namespace Chem4Word.UI.WPF
                 {
                     if (editor.IsDirty)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.AppendLine("Do you wish to save your changes?");
-                        sb.AppendLine("  Click 'Yes' to save your changes and exit.");
-                        sb.AppendLine("  Click 'No' to discard your changes and exit.");
-                        sb.AppendLine("  Click 'Cancel' to return to the form.");
-
-                        DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
-                        switch (dr)
+                        if (DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
                         {
-                            case DialogResult.Cancel:
-                                e.Cancel = true;
-                                break;
+                            StringBuilder sb = new StringBuilder();
+                            sb.AppendLine("Do you wish to save your changes?");
+                            sb.AppendLine("  Click 'Yes' to save your changes and exit.");
+                            sb.AppendLine("  Click 'No' to discard your changes and exit.");
+                            sb.AppendLine("  Click 'Cancel' to return to the form.");
 
-                            case DialogResult.Yes:
-                                var cmlConvertor = new CMLConverter();
-                                Cml = cmlConvertor.Export(editor.EditedModel);
-                                DialogResult = DialogResult.OK;
-                                break;
+                            DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                            switch (dr)
+                            {
+                                case DialogResult.Cancel:
+                                    e.Cancel = true;
+                                    break;
 
-                            case DialogResult.No:
-                                DialogResult = DialogResult.Cancel;
-                                break;
+                                case DialogResult.Yes:
+                                    var cmlConvertor = new CMLConverter();
+                                    Cml = cmlConvertor.Export(editor.EditedModel);
+                                    DialogResult = DialogResult.OK;
+                                    break;
+
+                                case DialogResult.No:
+                                    DialogResult = DialogResult.Cancel;
+                                    break;
+                            }
                         }
                     }
                 }

@@ -77,7 +77,7 @@ namespace Chem4Word.Core.Helpers
                     // At least one endpoint is outside the clip rectangle; pick it.
                     int outCodeOut = outCode1 != 0 ? outCode1 : outCode2;
 
-                    // Now find the intersection point;
+                    // Now find the intersection point
                     //  use formulas y = y0 + slope * (x - x0), x = x0 + (1/slope)* (y - y0)
                     if ((outCodeOut & Top) > 0)
                     {

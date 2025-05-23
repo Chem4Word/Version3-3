@@ -14,6 +14,11 @@ namespace Chem4Word.Core.Helpers
 {
     public static class FileSystemHelper
     {
+        /// <summary>
+        /// Checks to see if the user has write permission on a folder
+        /// </summary>
+        /// <param name="path">Folder to check</param>
+        /// <returns>true if user can write to the folder</returns>
         public static bool UserHasWritePermission(string path)
         {
             var tempFile = Path.Combine(path, Guid.NewGuid().ToString("N")) + ".tmp";
@@ -32,6 +37,11 @@ namespace Chem4Word.Core.Helpers
             }
         }
 
+        /// <summary>
+        /// Obtains a writable path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>Path of where the user has write access</returns>
         public static string GetWritablePath(string path)
         {
             // 1. Check supplied path
@@ -52,74 +62,6 @@ namespace Chem4Word.Core.Helpers
             // 3. Local AppData Path i.e. "C:\Users\{User}\AppData\Local\"
             path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             return UserHasWritePermission(path) ? path : null;
-        }
-
-        /// <summary>
-        /// Check to see if file is binary by checking if the first 8k characters contains at least n null characters
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="requiredConsecutiveNul"></param>
-        /// <returns></returns>
-        public static bool IsBinary(string filePath, int requiredConsecutiveNul = 1)
-        {
-            const int charsToCheck = 8096;
-            const char nulChar = '\0';
-
-            var nulCount = 0;
-
-            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using (var streamReader = new StreamReader(fileStream))
-            {
-                for (var i = 0; i < charsToCheck; i++)
-                {
-                    if (streamReader.EndOfStream)
-                    {
-                        return false;
-                    }
-
-                    if ((char)streamReader.Read() == nulChar)
-                    {
-                        nulCount++;
-
-                        if (nulCount >= requiredConsecutiveNul)
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        nulCount = 0;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public static string DetectFileType(string filePath)
-        {
-            var result = string.Empty;
-
-            var contents = File.ReadAllText(filePath);
-
-            if (contents.Contains("M  END"))
-            {
-                result = ".mol";
-            }
-
-            if (contents.StartsWith("<")
-                && contents.Contains("<cml")
-                && contents.Contains("</cml"))
-            {
-                result = ".cml";
-            }
-
-            if (contents.StartsWith("SketchEl"))
-            {
-                result = ".el";
-            }
-
-            return result;
         }
     }
 }

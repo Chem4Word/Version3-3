@@ -188,13 +188,13 @@ namespace Chem4Word.Navigator
                     };
                     try
                     {
-                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding Tag {newNavItem.CustomControlTag} at position {start}");
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding Tag {newNavItem.CustomControlTag} into navigator at position {start} for document [{_doc.DocID}]");
                         NavigatorItems.Insert(start, newNavItem);
                     }
                     catch (ArgumentOutOfRangeException) //can happen when there are more content controls than navigator items
                     {
                         //so simply insert the new navigator item at the end
-                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding Tag {newNavItem.CustomControlTag} at end");
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding Tag {newNavItem.CustomControlTag} into navigator at end for document [{_doc.DocID}]");
                         NavigatorItems.Add(newNavItem);
                     }
                 }

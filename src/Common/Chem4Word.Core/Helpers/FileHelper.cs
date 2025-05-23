@@ -13,6 +13,14 @@ namespace Chem4Word.Core.Helpers
 {
     public static class FileHelper
     {
+        /// <summary>
+        /// Backs up a file
+        /// </summary>
+        /// <param name="file">File to be backed up</param>
+        /// <param name="directory">Path to back up to</param>
+        /// <param name="addPrefix">Prefix to add</param>
+        /// <param name="moveFile">true if file is to be moved</param>
+        /// <returns></returns>
         public static string BackupFile(FileInfo file, DirectoryInfo directory, bool addPrefix, bool moveFile)
         {
             var destination = Path.Combine(directory.FullName, file.Name);
@@ -40,6 +48,81 @@ namespace Chem4Word.Core.Helpers
             }
 
             return destination;
+        }
+
+        /// <summary>
+        /// Check to see if file is binary by checking if the first 8k characters contains at least n null characters
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="requiredConsecutiveNul"></param>
+        /// <returns>true if file is detected as binary</returns>
+        public static bool IsBinary(string filePath, int requiredConsecutiveNul = 1)
+        {
+            const int charsToCheck = 8096;
+            const char nulChar = '\0';
+
+            var nulCount = 0;
+
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using (var streamReader = new StreamReader(fileStream))
+            {
+                for (var i = 0; i < charsToCheck; i++)
+                {
+                    if (streamReader.EndOfStream)
+                    {
+                        return false;
+                    }
+
+                    if ((char)streamReader.Read() == nulChar)
+                    {
+                        nulCount++;
+
+                        if (nulCount >= requiredConsecutiveNul)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        nulCount = 0;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check to see if a file is in use (locked)
+        /// </summary>
+        /// <param name="filePath">File to check</param>
+        /// <param name="message">Message if locked</param>
+        /// <returns>true if file is in use</returns>
+        public static bool FileIsInUse(string filePath, out string message)
+        {
+            var result = false;
+            message = string.Empty;
+
+            try
+            {
+                using (new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                {
+                    // If we can open the file with exclusive access, it's not in use.
+                }
+            }
+            catch (IOException exception)
+            {
+                // If an IOException is thrown, the file is in use.
+                message = $"IOException: {exception.Message}";
+                result = true;
+            }
+            catch (Exception exception)
+            {
+                message = $"Exception: {exception.Message}";
+                result = true;
+            }
+
+            return result;
         }
     }
 }

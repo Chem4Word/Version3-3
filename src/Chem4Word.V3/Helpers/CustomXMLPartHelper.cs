@@ -28,13 +28,13 @@ namespace Chem4Word.Helpers
         public static int ChemistryXmlParts(Word.Document document)
             => AllChemistryParts(document).Count;
 
-        public static CustomXMLPart FindCustomXmlPartInOtherDocuments(string id, string activeDocumentName, ref string foundInDocumentName)
+        public static CustomXMLPart FindCustomXmlPartInOtherDocuments(string id, int activeDocumentId, ref int foundInDocumentId)
         {
             CustomXMLPart result = null;
 
             foreach (Word.Document otherDocument in Globals.Chem4WordV3.Application.Documents)
             {
-                if (!otherDocument.Name.Equals(activeDocumentName))
+                if (!otherDocument.DocID.Equals(activeDocumentId))
                 {
                     foreach (CustomXMLPart customXmlPart in AllChemistryParts(otherDocument))
                     {
@@ -42,7 +42,7 @@ namespace Chem4Word.Helpers
                         if (molId.Equals(id))
                         {
                             result = customXmlPart;
-                            foundInDocumentName = otherDocument.Name;
+                            foundInDocumentId = otherDocument.DocID;
                             break;
                         }
                     }
@@ -140,9 +140,10 @@ namespace Chem4Word.Helpers
             return result;
         }
 
-        public static void RemoveOrphanedXmlParts(Word.Document document)
+        public static int RemoveOrphanedXmlParts(Word.Document document)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            var result = 0;
 
             if (document != null)
             {
@@ -180,11 +181,13 @@ namespace Chem4Word.Helpers
                             var guid = Guid.NewGuid().ToString("N");
                             var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
 
-                            var fileName = Path.Combine(backupFolder, $"Chem4Word-Orphaned-Structure-{timestamp}-{guid}.cml");
+                            var fileName = $"Chem4Word-Orphaned-Structure-{timestamp}-{guid}.cml";
+                            var filePath = Path.Combine(backupFolder, fileName);
                             var find = "<?xml version=\"1.0\"?>";
                             var replace = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + Environment.NewLine;
                             var xml = customXmlPart.XML;
-                            File.WriteAllText(fileName, xml.Replace(find, replace));
+                            File.WriteAllText(filePath, xml.Replace(find, replace));
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information, ", $"Saved Orphaned XmlPart Id:{customXmlPart.Id} Tag: {molId} from document [{document.DocID}] as {fileName}");
                         }
                         catch (Exception exception)
                         {
@@ -204,8 +207,9 @@ namespace Chem4Word.Helpers
                         {
                             try
                             {
-                                RegistryHelper.StoreMessage(module, $"Purging Orphaned XmlPart Id:{customXmlPart.Id} Tag: {molId}");
+                                Globals.Chem4WordV3.Telemetry.Write(module, "Information, ", $"Purging Orphaned XmlPart Id:{customXmlPart.Id} Tag: {molId} from document [{document.DocID}]");
                                 customXmlPart.Delete();
+                                result++;
                             }
                             catch (Exception exception)
                             {
@@ -215,6 +219,8 @@ namespace Chem4Word.Helpers
                     }
                 }
             }
+
+            return result;
         }
     }
 }
