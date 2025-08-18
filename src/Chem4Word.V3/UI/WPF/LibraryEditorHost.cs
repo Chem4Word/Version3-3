@@ -81,7 +81,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnSelectionChange_LibraryEditorControl(object sender, WpfEventArgs e)
         {
-            Debug.WriteLine($"{e.Button} {e.OutputValue}");
+            Debug.WriteLine($"{e.Button} {e.ButtonDetails}");
         }
     }
 }

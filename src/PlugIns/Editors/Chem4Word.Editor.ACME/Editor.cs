@@ -72,7 +72,7 @@ namespace Chem4Word.Editor.ACME
                     if (showDialog == DialogResult.OK)
                     {
                         dialogResult = showDialog;
-                        Cml = host.OutputValue;
+                        Cml = host.OutputCml;
                     }
                 }
             }

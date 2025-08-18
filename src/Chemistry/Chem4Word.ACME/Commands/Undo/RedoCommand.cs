@@ -18,6 +18,7 @@ namespace Chem4Word.ACME.Commands.Undo
         public override void Execute(object parameter)
         {
             EditController.UndoManager.Redo();
+            EditController.SendStatus(("Redo", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt()));
         }
     }
 }

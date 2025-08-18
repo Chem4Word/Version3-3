@@ -31,10 +31,10 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private SolidColorBrush _solidColorBrush;
         private Pen _dashPen;
 
-        private const string UnlockStatus = "[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.";
-        private const string DefaultStatus = "Drag a handle to resize; drag shaft to reposition.";
-        private const string EditReagentsStatus = "Double-click box to edit reagents.";
-        private const string EditConditionsStatus = "Double-click box to edit conditions";
+        private const string UnlockStatusText = "[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.";
+        private const string DefaultStatusText = "Drag a handle to resize; drag shaft to reposition.";
+        private const string EditReagentsStatusText = "Double-click box to edit reagents.";
+        private const string EditConditionsStatusText = "Double-click box to edit conditions";
 
         private Point OriginalLocation { get; set; }
         private Point CurrentLocation { get; set; }
@@ -49,7 +49,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             AdornedReaction = reactionVisual.ParentReaction;
 
             AttachHandlers();
-            EditController.SendStatus(DefaultStatus);
+            EditController.SendStatus((DefaultStatusText, "", ""));
         }
 
         private ReactionVisual AdornedReactionVisual { get; }
@@ -165,7 +165,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
                         CurrentLocation = AdornedReaction.HeadPoint + _resizeSnapper.SnapVector(AdornedReaction.Angle, CurrentLocation - AdornedReaction.HeadPoint);
                         TailDisplacement = CurrentLocation - AdornedReaction.TailPoint;
                     }
-                    EditController.SendStatus(UnlockStatus);
+                    EditController.SendStatus((UnlockStatusText, "", ""));
                 }
                 else if (Dragging)
                 {
@@ -179,11 +179,11 @@ namespace Chem4Word.ACME.Adorners.Selectors
             {
                 if (AdornedReactionVisual.ReagentsBlockRect.Contains(CurrentLocation))
                 {
-                    EditController.SendStatus(EditReagentsStatus);
+                    EditController.SendStatus((EditReagentsStatusText, "", ""));
                 }
                 else if (AdornedReactionVisual.ConditionsBlockRect.Contains(CurrentLocation))
                 {
-                    EditController.SendStatus(EditConditionsStatus);
+                    EditController.SendStatus((EditConditionsStatusText, "", ""));
                 }
             }
             e.Handled = true;
@@ -202,7 +202,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             ReleaseMouseCapture();
             InvalidateVisual();
             e.Handled = true;
-            EditController.SendStatus(DefaultStatus);
+            EditController.SendStatus((DefaultStatusText, "", ""));
         }
 
         protected override void OnRender(DrawingContext drawingContext)

@@ -12,6 +12,10 @@ namespace Chem4Word.Core.UI.Wpf
     public class WpfEventArgs : EventArgs
     {
         public string Button { get; set; }
-        public string OutputValue { get; set; }
+        public string ButtonDetails { get; set; }
+
+        public string Message { get; set; }
+        public string Formula { get; set; }
+        public string MolecularWeight { get; set; }
     }
 }

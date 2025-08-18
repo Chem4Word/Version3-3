@@ -213,16 +213,22 @@ namespace Chem4Word.Helpers
                 }
                 else
                 {
-                    // 1D Structures
-                    if (prefix.Equals("c0"))
+                    switch (prefix)
                     {
-                        Update1D(document, target.Key, model.ConciseFormula, true, $"c0:{cxmlId}");
-                    }
-                    else
-                    {
-                        var isFormula = false;
-                        var text = GetInlineText(model, prefix, ref isFormula, out _);
-                        Update1D(document, target.Key, text, isFormula, $"{prefix}:{cxmlId}");
+                        // 1D Structures
+                        case "c0":
+                            Update1D(document, target.Key, model.ConciseFormula, true, $"{prefix}:{cxmlId}");
+                            break;
+                        case "w0":
+                            Update1D(document, target.Key, SafeDouble.AsCMLString(model.MolecularWeight), false, $"{prefix}:{cxmlId}");
+                            break;
+                        default:
+                        {
+                            var isFormula = false;
+                            var text = GetInlineText(model, prefix, ref isFormula, out _);
+                            Update1D(document, target.Key, text, isFormula, $"{prefix}:{cxmlId}");
+                            break;
+                        }
                     }
                 }
             }
@@ -369,6 +375,11 @@ namespace Chem4Word.Helpers
                 {
                     source = "ConciseFormula";
                     isFormula = true;
+                }
+                else if (tp.Id.EndsWith("w0"))
+                {
+                    source = "MolecularWeight";
+                    isFormula = false;
                 }
                 else
                 {

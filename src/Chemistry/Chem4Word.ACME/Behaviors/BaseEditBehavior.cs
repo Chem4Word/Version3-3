@@ -30,7 +30,7 @@ namespace Chem4Word.ACME.Behaviors
         public static readonly DependencyProperty EditControllerProperty =
             DependencyProperty.Register("EditController", typeof(EditController), typeof(BaseEditBehavior), new PropertyMetadata(null));
 
-        private string _currentStatus;
+        private (string message, string formula, string molecularWeight) _currentStatus;
 
         private EditorCanvas _currentEditor;
 
@@ -61,7 +61,7 @@ namespace Chem4Word.ACME.Behaviors
             }
         }
 
-        public virtual string CurrentStatus
+        public virtual (string message, string formula, string molecularWeight) CurrentStatus
         {
             get
             {

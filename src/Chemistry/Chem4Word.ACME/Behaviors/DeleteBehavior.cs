@@ -42,7 +42,7 @@ namespace Chem4Word.ACME.Behaviors
             }
             //clear the current selection
             EditController.ClearSelection();
-            CurrentStatus = "Click to remove an atom or bond.";
+            CurrentStatus = ("Click to remove an atom or bond.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnPreviewMouseMove_CurrentEditor(object sender, MouseEventArgs e)
@@ -71,7 +71,7 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         var parent = gv.ParentMolecule;
                         EditController.DeleteMolecule(parent);
-                        CurrentStatus = "Group deleted";
+                        CurrentStatus = ("Group deleted", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
 
@@ -79,7 +79,7 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         var atom = atomVisual.ParentAtom;
                         EditController.DeleteAtoms(new[] { atom });
-                        CurrentStatus = "Atom deleted.";
+                        CurrentStatus = ("Atom deleted.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
 
@@ -87,7 +87,7 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         var bond = bondVisual.ParentBond;
                         EditController.DeleteBonds(new[] { bond });
-                        CurrentStatus = "Bond deleted";
+                        CurrentStatus = ("Bond deleted", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
 
@@ -95,14 +95,14 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         var reaction = reactionVisual.ParentReaction;
                         EditController.DeleteReactions(new[] { reaction });
-                        CurrentStatus = "Bond deleted";
+                        CurrentStatus = ("Bond deleted", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
                 case AnnotationVisual annotationVisual:
                     {
                         var annotation = annotationVisual.ParentAnnotation;
                         EditController.DeleteAnnotations(new[] { annotation });
-                        CurrentStatus = "Annotation deleted.";
+                        CurrentStatus = ("Annotation deleted.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
             }
@@ -119,7 +119,7 @@ namespace Chem4Word.ACME.Behaviors
                 CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
                 CurrentEditor.IsHitTestVisible = false;
                 CurrentEditor.Cursor = _cursor;
-                CurrentStatus = "";
+                CurrentStatus = ("", "", "");
             }
         }
     }

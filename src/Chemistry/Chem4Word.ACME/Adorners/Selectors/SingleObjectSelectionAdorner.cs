@@ -68,7 +68,6 @@ namespace Chem4Word.ACME.Adorners.Selectors
             IsHitTestVisible = true;
 
             Focusable = true;
-            Keyboard.Focus(this);
         }
 
         protected void DisableHandlers()

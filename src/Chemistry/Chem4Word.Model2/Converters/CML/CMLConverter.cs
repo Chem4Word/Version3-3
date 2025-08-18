@@ -264,6 +264,7 @@ namespace Chem4Word.Model2.Converters.CML
                     root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagExplicitH, model.ExplicitH));
                     root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagShowColouredAtoms, model.ShowColouredAtoms));
                     root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagShowMoleculeGrouping, model.ShowMoleculeGrouping));
+                    root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagMolecularWeight, SafeDouble.AsCMLString(model.MolecularWeight)));
 
                     // Build document
                     foreach (var molecule in model.Molecules.Values)

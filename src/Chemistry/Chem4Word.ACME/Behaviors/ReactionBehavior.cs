@@ -69,7 +69,7 @@ namespace Chem4Word.ACME.Behaviors
         public override void Abort()
         {
             CurrentEditor.ReleaseMouseCapture();
-            CurrentStatus = "";
+            CurrentStatus = ("", "", "");
             ClearTemporaries();
         }
 
@@ -102,7 +102,7 @@ namespace Chem4Word.ACME.Behaviors
         private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.ReleaseMouseCapture();
-            CurrentStatus = "";
+            CurrentStatus = ("", "", "");
             if (IsDrawing)
             {
                 var currentPos = e.GetPosition(CurrentEditor);
@@ -126,7 +126,7 @@ namespace Chem4Word.ACME.Behaviors
             }
             if (Dragging(e))
             {
-                CurrentStatus = "[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.";
+                CurrentStatus = ("[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 CurrentEditor.Cursor = CursorUtils.Pencil;
                 var pt = _angleSnapper.SnapBond(currentPos);
                 _adorner = new DrawReactionAdorner(CurrentEditor) { StartPoint = LastPos, EndPoint = pt, ReactionType = EditController.SelectedReactionType.Value };
@@ -151,7 +151,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.MouseLeftButtonUp -= OnMouseLeftButtonUp_CurrentEditor;
             CurrentEditor.MouseMove -= OnMouseMove_CurrentEditor;
 
-            CurrentStatus = "";
+            CurrentStatus = ("", "", "");
             CurrentEditor.Cursor = _lastCursor;
         }
     }

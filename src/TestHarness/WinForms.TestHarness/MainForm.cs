@@ -358,7 +358,7 @@ namespace WinForms.TestHarness
                     editorHost.ShowDialog(this);
                     if (editorHost.DialogResult == DialogResult.OK)
                     {
-                        HandleChangedCml(editorHost.OutputValue, "Labels Editor result");
+                        HandleChangedCml(editorHost.OutputCml, "Labels Editor result");
                     }
                 }
                 TopMost = true;
@@ -388,7 +388,7 @@ namespace WinForms.TestHarness
                 editorHost.ShowDialog(this);
                 if (editorHost.DialogResult == DialogResult.OK)
                 {
-                    HandleChangedCml(editorHost.OutputValue, "ACME result");
+                    HandleChangedCml(editorHost.OutputCml, "ACME result");
                 }
             }
             TopMost = true;
@@ -591,7 +591,7 @@ namespace WinForms.TestHarness
                         editorHost.ShowDialog(this);
                         if (editorHost.DialogResult == DialogResult.OK)
                         {
-                            HandleChangedCml(editorHost.OutputValue, "CML Editor result");
+                            HandleChangedCml(editorHost.OutputCml, "CML Editor result");
                         }
                     }
                     TopMost = true;

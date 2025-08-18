@@ -70,7 +70,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
                     if (showDialog == DialogResult.OK)
                     {
                         dialogResult = showDialog;
-                        Cml = host.OutputValue;
+                        Cml = host.OutputCml;
                     }
 
                     host.Close();

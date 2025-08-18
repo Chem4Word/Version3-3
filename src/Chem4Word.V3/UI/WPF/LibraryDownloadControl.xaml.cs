@@ -558,8 +558,7 @@ namespace Chem4Word.UI.WPF
         {
             var eventArgs = new WpfEventArgs
             {
-                Button = "Finished",
-                OutputValue = ""
+                Button = "Finished"
             };
 
             if (_userIsDirty)

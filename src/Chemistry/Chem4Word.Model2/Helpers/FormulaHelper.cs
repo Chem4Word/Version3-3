@@ -232,7 +232,7 @@ namespace Chem4Word.Model2.Helpers
 
                     var info = new MoleculeFormulaPart(type, idx, element, 0);
 
-                    // Convert dot to a Bullett
+                    // Convert dot to a Bullet
                     if (info.PartType == FormulaPartType.Separator && element.Equals("."))
                     {
                         // Bullet character <Alt>0183

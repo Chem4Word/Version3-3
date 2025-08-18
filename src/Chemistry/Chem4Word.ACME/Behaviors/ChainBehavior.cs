@@ -90,7 +90,7 @@ namespace Chem4Word.ACME.Behaviors
                 _parent.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
 
-            CurrentStatus = "Draw a ring by clicking on a bond, atom or free space.";
+            CurrentStatus = ("Draw a ring by clicking on a bond, atom or free space.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
@@ -126,7 +126,7 @@ namespace Chem4Word.ACME.Behaviors
                 }
                 else
                 {
-                    CurrentStatus = "Drag to start sizing chain: [Esc] to cancel.";
+                    CurrentStatus = ("Drag to start sizing chain: [Esc] to cancel.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     var endPoint = e.GetPosition(EditController.CurrentEditor);
 
                     MarkOutAtoms(endPoint, e);
@@ -183,11 +183,11 @@ namespace Chem4Word.ACME.Behaviors
                                                        endPoint, Target, Clashing);
                     if (!Clashing)
                     {
-                        CurrentStatus = "Click to draw chain";
+                        CurrentStatus = ("Click to draw chain", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     }
                     else
                     {
-                        CurrentStatus = "Can't draw over existing atoms";
+                        CurrentStatus = ("Can't draw over existing atoms", "", "");
                     }
                 }
             }

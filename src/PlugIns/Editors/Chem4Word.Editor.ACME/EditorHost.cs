@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Enums;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
@@ -15,6 +16,7 @@ using Chem4Word.Model2.Helpers;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -33,7 +35,7 @@ namespace Chem4Word.Editor.ACME
 
         public Size FormSize { get; set; }
 
-        public string OutputValue { get; set; }
+        public string OutputCml { get; set; }
 
         private readonly string _cml;
         private readonly List<string> _used1DProperties;
@@ -89,12 +91,6 @@ namespace Chem4Word.Editor.ACME
                     Height = FormSize.Height;
                 }
 
-                // Fix bottom panel
-                var margin = Buttons.Height - Save.Bottom;
-                splitContainer1.SplitterDistance = splitContainer1.Height - Save.Height - margin * 2;
-                splitContainer1.FixedPanel = FixedPanel.Panel2;
-                splitContainer1.IsSplitterFixed = true;
-
                 // Set Up WPF UC
                 if (elementHost1.Child is Chem4Word.ACME.Editor editor)
                 {
@@ -123,7 +119,21 @@ namespace Chem4Word.Editor.ACME
 
         private void OnFeedbackChange_AcmeEditor(object sender, WpfEventArgs e)
         {
-            MessageFromWpf.Text = e.OutputValue;
+            var activeController = ((Chem4Word.ACME.Editor)elementHost1.Child).ActiveController;
+            var activeModel = activeController.Model;
+            bool hasReactions = (activeModel.ReactionSchemes.Any() &&
+                                 activeModel.ReactionSchemes.First().Value.Reactions.Count > 0);
+            bool moleculesSelected = (activeController.SelectionType == SelectionTypeCode.Molecule);
+            if (hasReactions && moleculesSelected || !hasReactions)
+            {
+                MWTDisplay.Text = e.MolecularWeight;
+                FormulaDisplay.Text = e.Formula;
+            }
+            else
+            {
+                MWTDisplay.Text = "";
+                FormulaDisplay.Text = "";
+            }
         }
 
         private void OnClick_Save(object sender, EventArgs e)
@@ -137,7 +147,7 @@ namespace Chem4Word.Editor.ACME
                 && editor.IsDirty)
             {
                 DialogResult = DialogResult.OK;
-                OutputValue = cc.Export(editor.EditedModel);
+                OutputCml = cc.Export(editor.EditedModel);
             }
             Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
             Hide();
@@ -177,7 +187,7 @@ namespace Chem4Word.Editor.ACME
                             // Replace any temporary Ids which are Guids
                             model.ReLabelGuids();
                             var cc = new CMLConverter();
-                            OutputValue = cc.Export(model);
+                            OutputCml = cc.Export(model);
                             Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
                             Hide();
                             editor = null;

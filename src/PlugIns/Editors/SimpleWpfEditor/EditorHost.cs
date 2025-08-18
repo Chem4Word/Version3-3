@@ -24,7 +24,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
 
         public Size FormSize { get; set; }
 
-        public string OutputValue { get; set; }
+        public string OutputCml { get; set; }
         private string _cml;
 
         public EditorHost(string cml)
@@ -53,12 +53,6 @@ namespace Chem4Word.Editor.SimpleWpfEditor
                 Height = FormSize.Height;
             }
 
-            // Fix bottom panel
-            var margin = Buttons.Height - Save.Bottom;
-            splitContainer1.SplitterDistance = splitContainer1.Height - Save.Height - margin * 2;
-            splitContainer1.FixedPanel = FixedPanel.Panel2;
-            splitContainer1.IsSplitterFixed = true;
-
             // Set Up WPF UC
             if (elementHost1.Child is CmlEditor editor)
             {
@@ -76,7 +70,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
                 && editor.IsDirty)
             {
                 DialogResult = DialogResult.OK;
-                OutputValue = cc.Export(editor.EditedModel);
+                OutputCml = cc.Export(editor.EditedModel);
             }
             Hide();
         }
@@ -109,7 +103,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
                     case DialogResult.Yes:
                         DialogResult = DialogResult.OK;
                         var cc = new CMLConverter();
-                        OutputValue = cc.Export(editor.EditedModel);
+                        OutputCml = cc.Export(editor.EditedModel);
                         Hide();
                         break;
 

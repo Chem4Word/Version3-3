@@ -136,7 +136,6 @@ namespace Chem4Word.UI.WPF
 
             WpfEventArgs args = new WpfEventArgs();
             args.Button = "Ok";
-            args.OutputValue = "";
 
             OnButtonClick?.Invoke(this, args);
         }
@@ -148,7 +147,6 @@ namespace Chem4Word.UI.WPF
 
             WpfEventArgs args = new WpfEventArgs();
             args.Button = "Cancel";
-            args.OutputValue = "";
 
             OnButtonClick?.Invoke(this, args);
         }

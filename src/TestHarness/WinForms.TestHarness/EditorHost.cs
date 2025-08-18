@@ -14,16 +14,18 @@ using Chem4Word.Model2.Helpers;
 using Chem4Word.Telemetry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
+using Chem4Word.ACME.Enums;
 using Size = System.Drawing.Size;
 
 namespace WinForms.TestHarness
 {
     public partial class EditorHost : Form
     {
-        public string OutputValue { get; set; }
+        public string OutputCml { get; set; }
 
         private RenderingOptions DefaultRenderingOptions { get; set; } = new RenderingOptions();
 
@@ -99,7 +101,23 @@ namespace WinForms.TestHarness
 
         private void OnFeedbackChange_AcmeEditor(object sender, WpfEventArgs e)
         {
-            MessageFromWpf.Text = e.OutputValue;
+            MessageFromWpf.Text = e.Message;
+
+            var activeController = ((Editor)elementHost1.Child).ActiveController;
+            var activeModel = activeController.Model;
+            bool hasReactions = (activeModel.ReactionSchemes.Any() &&
+                                 activeModel.ReactionSchemes.First().Value.Reactions.Count > 0);
+            bool moleculesSelected = (activeController.SelectionType == SelectionTypeCode.Molecule);
+            if (hasReactions && moleculesSelected || !hasReactions)
+            {
+                MWTDisplay.Text = e.MolecularWeight;
+                FormulaDisplay.Text = e.Formula;
+            }
+            else
+            {
+                MWTDisplay.Text = "";
+                FormulaDisplay.Text = "";
+            }
         }
 
         private List<string> SimulateGetUsed1DLabels(string cml)
@@ -131,10 +149,10 @@ namespace WinForms.TestHarness
             MinimumSize = new Size(900, 600);
 
             // Fix bottom panel
-            var margin = Buttons.Height - Save.Bottom;
-            splitContainer1.SplitterDistance = splitContainer1.Height - Save.Height - margin * 2;
-            splitContainer1.FixedPanel = FixedPanel.Panel2;
-            splitContainer1.IsSplitterFixed = true;
+            var margin = StatusPanel.Height - Save.Bottom;
+            VerticalSplitter.SplitterDistance = VerticalSplitter.Height - Save.Height - margin * 2;
+            VerticalSplitter.FixedPanel = FixedPanel.Panel2;
+            VerticalSplitter.IsSplitterFixed = true;
 
             switch (_editorType)
             {
@@ -173,7 +191,7 @@ namespace WinForms.TestHarness
                         var model = acmeEditor.EditedModel;
                         // Replace any temporary Ids which are Guids
                         model.ReLabelGuids();
-                        OutputValue = cc.Export(model);
+                        OutputCml = cc.Export(model);
                     }
                     break;
 
@@ -182,7 +200,7 @@ namespace WinForms.TestHarness
                         && labelsEditor.IsDirty)
                     {
                         DialogResult = DialogResult.OK;
-                        OutputValue = cc.Export(labelsEditor.EditedModel);
+                        OutputCml = cc.Export(labelsEditor.EditedModel);
                     }
                     break;
 
@@ -191,7 +209,7 @@ namespace WinForms.TestHarness
                         && cmlEditor.IsDirty)
                     {
                         DialogResult = DialogResult.OK;
-                        OutputValue = cc.Export(cmlEditor.EditedModel);
+                        OutputCml = cc.Export(cmlEditor.EditedModel);
                     }
                     break;
             }
@@ -233,7 +251,7 @@ namespace WinForms.TestHarness
                                     var model = acmeEditor.EditedModel;
                                     // Replace any temporary Ids which are Guids
                                     model.ReLabelGuids();
-                                    OutputValue = cc.Export(model);
+                                    OutputCml = cc.Export(model);
                                     Hide();
                                     break;
 
@@ -256,7 +274,7 @@ namespace WinForms.TestHarness
 
                                 case DialogResult.Yes:
                                     DialogResult = DialogResult.OK;
-                                    OutputValue = cc.Export(labelsEditor.EditedModel);
+                                    OutputCml = cc.Export(labelsEditor.EditedModel);
                                     Hide();
                                     break;
 
@@ -279,7 +297,7 @@ namespace WinForms.TestHarness
 
                                 case DialogResult.Yes:
                                     DialogResult = DialogResult.OK;
-                                    OutputValue = cc.Export(editor.EditedModel);
+                                    OutputCml = cc.Export(editor.EditedModel);
                                     Hide();
                                     break;
 

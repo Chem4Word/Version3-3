@@ -3,6 +3,7 @@
   <c4w:explicitH>HeteroAndTerminal</c4w:explicitH>
   <c4w:showColouredAtoms>true</c4w:showColouredAtoms>
   <c4w:showMoleculeGrouping>true</c4w:showMoleculeGrouping>
+  <c4w:molecularWeight>24.022</c4w:molecularWeight>
   <cml:molecule id="m1">
     <cml:formula id="m1.f0" concise="C 2 H 6" />
     <cml:atomArray>

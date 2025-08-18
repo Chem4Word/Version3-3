@@ -97,11 +97,11 @@ namespace Chem4Word.ACME.Controls
 
                 if (ItemMode == ChemistryItemMode.Navigator)
                 {
-                    wpfEventArgs.OutputValue = $"Tag={chemistryObject.CustomControlTag}";
+                    wpfEventArgs.ButtonDetails = $"Tag={chemistryObject.CustomControlTag}";
                 }
                 else
                 {
-                    wpfEventArgs.OutputValue = $"Id={chemistryObject.Id}";
+                    wpfEventArgs.ButtonDetails = $"Id={chemistryObject.Id}";
                 }
 
                 eventArgs.Source = wpfEventArgs;
@@ -124,7 +124,7 @@ namespace Chem4Word.ACME.Controls
                 var wpfEventArgs = new WpfEventArgs
                 {
                     Button = "CheckBox",
-                    OutputValue = $"Id={chemistryObject.Id}"
+                    ButtonDetails = $"Id={chemistryObject.Id}"
                 };
 
                 eventArgs.Source = wpfEventArgs;
@@ -143,7 +143,7 @@ namespace Chem4Word.ACME.Controls
                 var wpfEventArgs = new WpfEventArgs
                 {
                     Button = "DisplayDoubleClick",
-                    OutputValue = $"Id={chemistryObject.Id}"
+                    ButtonDetails = $"Id={chemistryObject.Id}"
                 };
 
                 eventArgs.Source = wpfEventArgs;

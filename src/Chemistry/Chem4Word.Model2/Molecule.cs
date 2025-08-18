@@ -344,72 +344,56 @@ namespace Chem4Word.Model2
 
         #region Chemical properties
 
-        private CalculatedFormula _calculatedFormula;
-
         public string ConciseFormula
         {
             get
             {
-                if (_calculatedFormula == null)
+                var calculatedFormula = new CalculatedFormula();
+
+                var molecules = Molecules.Values.ToList();
+                if (Molecules.Count > 0)
                 {
-                    _calculatedFormula = new CalculatedFormula();
+                    calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, "[", 0));
 
-                    var molecules = Molecules.Values.ToList();
-                    if (Molecules.Count > 0)
+                    var i = molecules.Count - 1;
+
+                    foreach (var molecule in Molecules.Values)
                     {
-                        _calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, "[", 0));
-
-                        var i = molecules.Count - 1;
-
-                        foreach (var molecule in Molecules.Values)
+                        calculatedFormula.Parts.AddRange(molecule.CalculatedFormula.Parts);
+                        if (i-- > 0)
                         {
-                            _calculatedFormula.Parts.AddRange(molecule.CalculatedFormula.Parts);
-                            if (i-- > 0)
-                            {
-                                _calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, " · ", 0));
-                            }
-                        }
-
-                        _calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, "]", 0));
-
-                        if (FormalCharge != null)
-                        {
-                            var sign = "";
-                            var absCharge = Math.Abs(FormalCharge.Value);
-                            if (FormalCharge.Value > 0)
-                            {
-                                sign = "+";
-                            }
-                            if (FormalCharge.Value < 0)
-                            {
-                                sign = "-";
-                            }
-
-                            _calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Charge, sign, absCharge));
+                            calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, " · ", 0));
                         }
                     }
-                    else
+
+                    calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, "]", 0));
+
+                    if (FormalCharge != null)
                     {
-                        _calculatedFormula = new CalculatedFormula(GetFormulaParts());
+                        var sign = "";
+                        var absCharge = Math.Abs(FormalCharge.Value);
+                        if (FormalCharge.Value > 0)
+                        {
+                            sign = "+";
+                        }
+                        if (FormalCharge.Value < 0)
+                        {
+                            sign = "-";
+                        }
+
+                        calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Charge, sign, absCharge));
                     }
                 }
+                else
+                {
+                    calculatedFormula = new CalculatedFormula(GetFormulaParts());
+                }
 
-                return _calculatedFormula.ToString();
+                return calculatedFormula.ToString();
             }
         }
 
-        public CalculatedFormula CalculatedFormula
-        {
-            get
-            {
-                if (_calculatedFormula == null)
-                {
-                    _calculatedFormula = new CalculatedFormula(GetFormulaParts());
-                }
-
-                return _calculatedFormula;
-            }
-        }
+        public CalculatedFormula CalculatedFormula => new CalculatedFormula(GetFormulaParts());
 
         private List<MoleculeFormulaPart> GetFormulaParts()
         {
@@ -595,6 +579,25 @@ namespace Chem4Word.Model2
             {
                 _formalCharge = value;
                 OnPropertyChanged();
+            }
+        }
+
+        public double MolecularWeight
+        {
+            get
+            {
+                double weight = 0;
+
+                foreach (var atom in Atoms.Values)
+                {
+                    weight += atom.Element.AtomicWeight;
+                }
+
+                foreach (var molecule in Molecules.Values)
+                {
+                    weight += molecule.MolecularWeight;
+                }
+                return weight;
             }
         }
 

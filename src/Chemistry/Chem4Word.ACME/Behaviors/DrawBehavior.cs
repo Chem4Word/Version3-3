@@ -54,7 +54,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.PreviewMouseRightButtonUp += OnPreviewMouseRightButtonUp_CurrentEditor;
             CurrentEditor.IsHitTestVisible = true;
 
-            CurrentStatus = DefaultText;
+            CurrentStatus = (DefaultText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
@@ -83,7 +83,7 @@ namespace Chem4Word.ACME.Behaviors
 
                 if (Dragging(e))
                 {
-                    CurrentStatus = "[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.";
+                    CurrentStatus = ("[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     //are we already on top of an atom?
                     if (targetedVisual is GroupVisual)
                     {
@@ -151,17 +151,17 @@ namespace Chem4Word.ACME.Behaviors
                     switch (targetedVisual)
                     {
                         case ReactionVisual _:
-                            CurrentStatus = "Click to set reaction type";
+                            CurrentStatus = ("Click to set reaction type", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             CurrentEditor.Cursor = CursorUtils.Pencil;
                             break;
 
                         case GroupVisual _:
-                            CurrentStatus = "Ungroup before attempting to draw.";
+                            CurrentStatus = ("Ungroup before attempting to draw.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             CurrentEditor.Cursor = Cursors.No;
                             break;
 
                         case HydrogenVisual _:
-                            CurrentStatus = "Click to rotate hydrogen";
+                            CurrentStatus = ("Click to rotate hydrogen", "", "");
                             CurrentEditor.Cursor = Cursors.Hand;
                             break;
 
@@ -169,24 +169,24 @@ namespace Chem4Word.ACME.Behaviors
                             CurrentEditor.Cursor = CursorUtils.Pencil;
                             if (EditController.SelectedElement != av.ParentAtom.Element)
                             {
-                                CurrentStatus = "Click to set element.";
+                                CurrentStatus = ("Click to set element.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             }
                             else
                             {
-                                CurrentStatus = "Click to sprout chain";
+                                CurrentStatus = ("Click to sprout chain", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             }
                             break;
 
                         case BondVisual _:
                             CurrentEditor.Cursor = CursorUtils.Pencil;
-                            CurrentStatus = "Click to modify bond";
+                            CurrentStatus = ("Click to modify bond", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             break;
                     }
                 }
                 else
                 {
                     CurrentEditor.Cursor = CursorUtils.Pencil;
-                    CurrentStatus = "Click to draw atom";
+                    CurrentStatus = ("Click to draw atom", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 }
             }
         }
@@ -194,7 +194,7 @@ namespace Chem4Word.ACME.Behaviors
         private void OnPreviewMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.ReleaseMouseCapture();
-            CurrentStatus = "";
+            CurrentStatus = ("", "", "");
             if (_currentAtomVisual is HydrogenVisual) //just exit
             {
                 return;
@@ -311,7 +311,7 @@ namespace Chem4Word.ACME.Behaviors
         public override void Abort()
         {
             CurrentEditor.ReleaseMouseCapture();
-            CurrentStatus = "";
+            CurrentStatus = ("", "", "");
             ClearTemporaries();
         }
 
@@ -519,7 +519,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_CurrentEditor;
             CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
             CurrentEditor.PreviewMouseRightButtonUp -= OnPreviewMouseRightButtonUp_CurrentEditor;
-            CurrentStatus = "";
+            CurrentStatus = ("", "", "");
             CurrentEditor.Cursor = _lastCursor;
         }
     }

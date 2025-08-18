@@ -426,7 +426,7 @@ namespace Chem4Word.ACME
                 if (_activeMode != null)
                 {
                     _activeMode.Attach(CurrentEditor);
-                    SendStatus(_activeMode.CurrentStatus);
+                    SendStatus((_activeMode.CurrentStatus.message, TotUpMolFormulae(), TotUpSelectedMwt()));
                 }
                 OnPropertyChanged();
             }
@@ -440,6 +440,7 @@ namespace Chem4Word.ACME
         private AnnotationEditor _annotationEditor;
         private bool _isBlockEditing;
         private const string EditingTextStatus = "[Shift-Enter] = new line; [Enter] = save text; [Esc] = cancel editing. ";
+        private const string DefaultStatusMessage = "Drag to reposition; [Delete] to remove.";
 
         public AnnotationEditor ActiveBlockEditor
         {
@@ -473,12 +474,14 @@ namespace Chem4Word.ACME
 
         public event EventHandler<WpfEventArgs> OnFeedbackChange;
 
-        internal void SendStatus(string value)
+        internal void SendStatus((string message, string formula, string molecularWeight) value)
         {
             try
             {
                 var args = new WpfEventArgs();
-                args.OutputValue = value;
+                args.Message = value.message;
+                args.Formula = value.formula;
+                args.MolecularWeight = value.molecularWeight;
                 OnFeedbackChange?.Invoke(this, args);
             }
             catch
@@ -569,6 +572,7 @@ namespace Chem4Word.ACME
                 {
                     AddToSelection(mol);
                 }
+                SendStatus(("Set atoms/bonds using selectors; drag to reposition; [Delete] to remove.", TotUpMolFormulae(), TotUpSelectedMwt()));
             }
         }
 
@@ -2563,6 +2567,7 @@ namespace Chem4Word.ACME
                                   RemoveFromSelection(mol);
                                   Model.RemoveMolecule(mol);
                                   mol.Parent = null;
+                                  SendStatus(("Molecule(s) deleted", TotUpMolFormulae(), TotUpSelectedMwt()));
                               };
 
                 Action undo = () =>
@@ -3738,6 +3743,8 @@ namespace Chem4Word.ACME
 
             CheckModelIntegrity(module);
 
+            SendStatus(("Object(s) deleted", TotUpMolFormulae(), TotUpSelectedMwt()));
+
             // Local Function
             void RefreshRingBonds(int theoreticalRings, Molecule molecule, Bond deleteBond)
             {
@@ -4174,6 +4181,7 @@ namespace Chem4Word.ACME
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
+                ClearSelection();
                 // Match to current model's settings
                 buffer.Relabel(true);
                 // above should be buffer.StripLabels(true)
@@ -4298,6 +4306,7 @@ namespace Chem4Word.ACME
             }
 
             CheckModelIntegrity(module);
+            SendStatus(("Selection deleted", TotUpMolFormulae(), TotUpSelectedMwt()));
         }
 
         public void DeleteAnnotations(IEnumerable<Annotation> annotations)
@@ -4434,6 +4443,7 @@ namespace Chem4Word.ACME
                             AddToSelection(child);
                         }
                     }
+                    SendStatus((DefaultStatusMessage, TotUpMolFormulae(), TotUpSelectedMwt()));
                 };
 
                 Action undo = () =>
@@ -4457,6 +4467,7 @@ namespace Chem4Word.ACME
                     {
                         AddToSelection(parent);
                     }
+                    SendStatus((DefaultStatusMessage, TotUpMolFormulae(), TotUpSelectedMwt()));
                 };
 
                 UndoManager.BeginUndoBlock();
@@ -4522,6 +4533,7 @@ namespace Chem4Word.ACME
 
                     parent.UpdateVisual();
                     AddToSelection(parent);
+                    SendStatus((DefaultStatusMessage, TotUpMolFormulae(), TotUpSelectedMwt()));
                 };
 
                 Action undo = () =>
@@ -4543,6 +4555,7 @@ namespace Chem4Word.ACME
                             AddToSelection(child);
                         }
                     }
+                    SendStatus((DefaultStatusMessage, TotUpMolFormulae(), TotUpSelectedMwt()));
                 };
 
                 UndoManager.BeginUndoBlock();
@@ -4588,6 +4601,7 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetryException(module, exception);
             }
+            SendStatus((DefaultStatusMessage, TotUpMolFormulae(), TotUpSelectedMwt()));
         }
 
         private void WriteTelemetry(string source, string level, string message)
@@ -4901,7 +4915,6 @@ namespace Chem4Word.ACME
                     var a = reactionsToAlign[i];
                     transform.X = centre - (a.BoundingBox.Left + a.BoundingBox.Right) / 2;
                     reactionTransforms.Add(transform);
-
                 }
 
                 UndoManager.BeginUndoBlock();
@@ -5117,7 +5130,7 @@ namespace Chem4Word.ACME
             BlockEditor.Completed += OnEditorClosed_BlockEditor;
             BlockEditor.SelectionChanged += OnSelectionChanged_BlockEditor;
             IsBlockEditing = true;
-            SendStatus(EditingTextStatus);
+            SendStatus((EditingTextStatus, TotUpMolFormulae(), TotUpSelectedMwt()));
             BlockEditor.Focus();
         }
 
@@ -5386,5 +5399,71 @@ namespace Chem4Word.ACME
         }
 
         #endregion Methods
+
+        //totals up the mwt of all the molecules in the selection
+        public string TotUpSelectedMwt()
+        {
+            string selectedMWT = SafeDouble.AsCMLString(Model.MolecularWeight);
+            //set the molecular weight if you can
+
+            double mwt = 0;
+            foreach (Molecule molecule in SelectedItems.Where(m => m is Molecule))
+            {
+                mwt += molecule.MolecularWeight;
+            }
+
+            if (mwt > 0d)
+            {
+                selectedMWT = SafeDouble.AsCMLString(mwt);
+            }
+            else
+            {
+                if (Model.MolecularWeight > 0d)
+                {
+                    selectedMWT = SafeDouble.AsCMLString(Model.MolecularWeight);
+                }
+                else
+                {
+                    selectedMWT = "";
+                }
+            }
+
+            return selectedMWT;
+        }
+
+        //totals up all the formulae of all the selected molecules
+
+        public string TotUpMolFormulae()
+        {
+            Collection<string> formulae = new Collection<string>();
+
+            // Some molecules are selected
+            foreach (Molecule molecule in SelectedItems.Where(m => m is Molecule))
+            {
+                var parts = FormulaHelper.ParseFormulaIntoParts(molecule.ConciseFormula);
+                var formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
+                formulae.Add(formulaPartsAsUnicode);
+            }
+
+            if (formulae.Count > 0)
+            {
+                return string.Join(", ", formulae.ToArray());
+            }
+
+            // No molecules are selected
+            foreach (Molecule molecule in Model.Molecules.Values)
+            {
+                var parts = FormulaHelper.ParseFormulaIntoParts(molecule.ConciseFormula);
+                var formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
+                formulae.Add(formulaPartsAsUnicode);
+            }
+
+            if (formulae.Count > 0)
+            {
+                return string.Join(", ", formulae.ToArray());
+            }
+
+            return string.Empty;
+        }
     }
 }

@@ -148,8 +148,6 @@ namespace Chem4Word.Core.Helpers
 
                                     if (write)
                                     {
-                                        Debug.WriteLine($"Writing file {file}");
-                                        Debugger.Break();
                                         var json = JsonConvert.SerializeObject(jObject, Formatting.Indented);
                                         File.WriteAllText(file, json);
                                     }

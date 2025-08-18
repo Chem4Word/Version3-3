@@ -45,9 +45,9 @@ namespace Chem4Word.Navigator
                 if (Globals.Chem4WordV3.EventsEnabled
                     && e.OriginalSource is WpfEventArgs source)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Source: {source.Button} Data: {source.OutputValue}");
+                    Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Source: {source.Button} Data: {source.ButtonDetails}");
 
-                    var parts = source.OutputValue.Split('=');
+                    var parts = source.ButtonDetails.Split('=');
                     var item = parts[1];
 
                     if (DataContext is NavigatorController controller)

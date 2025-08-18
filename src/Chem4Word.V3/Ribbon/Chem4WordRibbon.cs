@@ -201,6 +201,11 @@ namespace Chem4Word
                                                         text = model.ConciseFormula;
                                                         isFormula = true;
                                                     }
+                                                    else if (chosenState.Equals("w0"))
+                                                    {
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Render structure as Molecular Weight");
+                                                        text = SafeDouble.AsCMLString(model.MolecularWeight);
+                                                    }
                                                     else
                                                     {
                                                         string source;
@@ -348,6 +353,17 @@ namespace Chem4Word
                                                     ribbonButtonF.SuperTip = "Render as " + (item.Id.EndsWith(".f0") ? "concise" : "") + " formula";
                                                 }
                                                 ShowAsMenu.Items.Add(ribbonButtonF);
+                                            }
+                                            break;
+
+                                        case "W": //Molecular weight
+                                            if (!addedNames.ContainsKey(compactValue))
+                                            {
+                                                addedNames.Add(compactValue, compactValue);
+
+                                                var ribbonButtonW = MakeRibbonButton(item, prefix);
+                                                ribbonButtonW.SuperTip = "Render as molecular weight";
+                                                ShowAsMenu.Items.Add(ribbonButtonW);
                                             }
                                             break;
                                     }

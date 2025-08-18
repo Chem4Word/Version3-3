@@ -137,7 +137,7 @@ namespace Chem4Word.UI.WPF
             if (e.OriginalSource is WpfEventArgs source
                 && DataContext is LibraryEditorViewModel viewModel)
             {
-                Debug.WriteLine($"{_class} -> {source.Button} {source.OutputValue}");
+                Debug.WriteLine($"{_class} -> {source.Button} {source.ButtonDetails}");
 
                 if (source.Button.StartsWith("CheckBox"))
                 {
@@ -150,7 +150,7 @@ namespace Chem4Word.UI.WPF
 
                 if (source.Button.StartsWith("DisplayDoubleClick"))
                 {
-                    var id = long.Parse(source.OutputValue.Split('=')[1]);
+                    var id = long.Parse(source.ButtonDetails.Split('=')[1]);
                     var item = viewModel.ChemistryItems.FirstOrDefault(o => o.Id == id);
                     if (item != null)
                     {
@@ -517,7 +517,7 @@ namespace Chem4Word.UI.WPF
                 var args = new WpfEventArgs
                 {
                     Button = "CatalogueView|SelectedItemChanged",
-                    OutputValue = $"Id={selected.Id}"
+                    ButtonDetails = $"Id={selected.Id}"
                 };
                 OnSelectionChange?.Invoke(this, args);
             }

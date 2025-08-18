@@ -29,6 +29,7 @@ namespace Chem4Word.Model2.Converters.CML
         public const string TagExplicitH = "explicitH";
         public const string TagShowColouredAtoms = "showColouredAtoms";
         public const string TagShowMoleculeGrouping = "showMoleculeGrouping";
+        public const string TagMolecularWeight = "molecularWeight";
 
         // General
         public const string AttributeId = "id";

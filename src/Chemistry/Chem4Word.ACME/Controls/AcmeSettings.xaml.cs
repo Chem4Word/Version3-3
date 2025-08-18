@@ -137,8 +137,7 @@ namespace Chem4Word.ACME.Controls
 
             var args = new WpfEventArgs
             {
-                Button = "CANCEL",
-                OutputValue = ""
+                Button = "CANCEL"
             };
             OnButtonClick?.Invoke(this, args);
         }
@@ -153,8 +152,7 @@ namespace Chem4Word.ACME.Controls
 
             var args = new WpfEventArgs
             {
-                Button = "SAVE",
-                OutputValue = ""
+                Button = "SAVE"
             };
             OnButtonClick?.Invoke(this, args);
         }

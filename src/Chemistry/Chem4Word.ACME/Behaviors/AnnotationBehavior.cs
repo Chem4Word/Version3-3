@@ -124,7 +124,7 @@ namespace Chem4Word.ACME.Behaviors
                 _window.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
 
-            CurrentStatus = StatusText;
+            CurrentStatus = (StatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnMouseMove_CurrentEditor(object sender, MouseEventArgs e)

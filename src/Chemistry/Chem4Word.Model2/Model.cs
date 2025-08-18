@@ -339,6 +339,14 @@ namespace Chem4Word.Model2
                         FullType = "ConciseFormula",
                         Value = ConciseFormula
                     });
+                    //add the molecular weight
+                    list.Add(new TextualProperty
+                    {
+                        Id = "w0",
+                        TypeCode = "W",
+                        FullType = "MolecularWeight",
+                        Value = SafeDouble.AsCMLString(MolecularWeight)
+                    });
                     list.Add(new TextualProperty
                     {
                         Id = "S",
@@ -654,12 +662,8 @@ namespace Chem4Word.Model2
         {
             get
             {
-                if (_calculatedFormulas == null)
-                {
-                    _calculatedFormulas = new Dictionary<string, int>();
-                    GatherFormulas(Molecules.Values.ToList());
-                }
-
+                _calculatedFormulas = new Dictionary<string, int>();
+                GatherFormulas(Molecules.Values.ToList());
                 return CalculatedFormulaAsString();
             }
         }
@@ -1228,7 +1232,7 @@ namespace Chem4Word.Model2
 
             foreach (var mol in GetAllMolecules())
             {
-                foreach (var property in mol.AllTextualProperties.Where(x => x.TypeCode.Equals("F")))
+                foreach (var property in mol.AllTextualProperties.Where(x => x.TypeCode.Equals("F") || x.TypeCode.Equals("W")))
                 {
                     if (!result.ContainsKey(property.Id))
                     {

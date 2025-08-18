@@ -20,6 +20,7 @@ namespace Chem4Word.ACME.Commands.Undo
         public override void Execute(object parameter)
         {
             EditController.UndoManager.Undo();
+            EditController.SendStatus(("Undo", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt()));
         }
 
         public override event EventHandler CanExecuteChanged;
