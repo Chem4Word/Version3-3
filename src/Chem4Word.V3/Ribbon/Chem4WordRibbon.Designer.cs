@@ -216,7 +216,7 @@ namespace Chem4Word
             // 
             this.ArrangeMolecules.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.ArrangeMolecules.Enabled = false;
-            this.ArrangeMolecules.Image = global::Chem4Word.Properties.Resources.Seperate_Molecules;
+            this.ArrangeMolecules.Image = global::Chem4Word.Properties.Resources.Separate_Molecules;
             this.ArrangeMolecules.Label = "Arrange";
             this.ArrangeMolecules.Name = "ArrangeMolecules";
             this.ArrangeMolecules.ScreenTip = "Arrange the structure so that the molecules do not overlap";
@@ -386,7 +386,7 @@ namespace Chem4Word
             this.Name = "CustomRibbon";
             this.RibbonType = "Microsoft.Word.Document";
             this.Tabs.Add(this.Chem4WordV3);
-            this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.OnLOad_CustomRibbon);
+            this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.OnLoad_CustomRibbon);
             this.Chem4WordV3.ResumeLayout(false);
             this.Chem4WordV3.PerformLayout();
             this.GroupInputOutput.ResumeLayout(false);

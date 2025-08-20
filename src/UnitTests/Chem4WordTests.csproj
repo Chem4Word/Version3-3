@@ -267,6 +267,18 @@
     <Analyzer Include="..\packages\xunit.analyzers.1.23.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
     <Analyzer Include="..\packages\xunit.analyzers.1.23.0\analyzers\dotnet\cs\xunit.analyzers.fixes.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CML\Pseudo-R.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CML\Pseudo-X.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CML\Pseudo-T.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CML\Pseudo-D.xml" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

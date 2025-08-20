@@ -36,15 +36,15 @@ namespace Chem4Word.Helpers
 
         public static DialogResult UpgradeIsRequired(Word.Document document)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            DialogResult result = DialogResult.Cancel;
+            var result = DialogResult.Cancel;
 
-            int count = LegacyChemistryCount(document);
+            var count = LegacyChemistryCount(document);
 
             if (count > 0)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.AppendLine($"We have detected {count} legacy Chemistry objects in this document.");
                 sb.AppendLine("Would you like them converted to the new format?");
                 sb.AppendLine("");
@@ -69,7 +69,7 @@ namespace Chem4Word.Helpers
         private static string DecodeContentControlType(Word.WdContentControlType? contentControlType)
         {
             // Date from https://msdn.microsoft.com/en-us/library/microsoft.office.interop.word.wdcontentcontroltype(v=office.14).aspx
-            string result = "";
+            var result = "";
 
             switch (contentControlType)
             {
@@ -123,13 +123,12 @@ namespace Chem4Word.Helpers
 
         public static int LegacyChemistryCount(Word.Document document)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            int count = 0;
+            var count = 0;
 
             foreach (Word.ContentControl cc in document.ContentControls)
             {
-                Word.WdContentControlType? contentControlType = cc.Type;
                 try
                 {
                     if (cc.Title != null && cc.Title.Equals(Constants.LegacyContentControlTitle))
@@ -149,17 +148,17 @@ namespace Chem4Word.Helpers
 
         public static void DoUpgrade(Word.Document document)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            int sel = Globals.Chem4WordV3.Application.Selection.Range.Start;
+            var sel = Globals.Chem4WordV3.Application.Selection.Range.Start;
             Globals.Chem4WordV3.DisableContentControlEvents();
 
             try
             {
-                string extension = document.FullName.Split('.').Last();
-                string guid = Guid.NewGuid().ToString("N");
-                string timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
-                string destination = Path.Combine(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath, "Backups", $"Chem4Word-{timestamp}-{guid}.{extension}");
+                var extension = document.FullName.Split('.').Last();
+                var guid = Guid.NewGuid().ToString("N");
+                var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
+                var destination = Path.Combine(Globals.Chem4WordV3.AddInInfo.ProductAppDataPath, "Backups", $"Chem4Word-{timestamp}-{guid}.{extension}");
                 File.Copy(document.FullName, destination);
             }
             catch (Exception ex)
@@ -168,10 +167,10 @@ namespace Chem4Word.Helpers
                 Debug.WriteLine(ex.Message);
             }
 
-            Dictionary<string, CustomXMLPart> customXmlParts = new Dictionary<string, CustomXMLPart>();
-            List<UpgradeTarget> targets = CollectData(document);
-            int upgradedCCs = 0;
-            int upgradedXml = 0;
+            var customXmlParts = new Dictionary<string, CustomXMLPart>();
+            var targets = CollectData(document);
+            var upgradedCCs = 0;
+            var upgradedXml = 0;
 
             var cmlConverter = new CMLConverter();
 
@@ -253,7 +252,7 @@ namespace Chem4Word.Helpers
                     }
                 }
 
-                CustomXMLPart cxml = document.CustomXMLParts.SelectByID(target.CxmlPartId);
+                var cxml = document.CustomXMLParts.SelectByID(target.CxmlPartId);
                 if (customXmlParts.ContainsKey(cxml.Id))
                 {
                     customXmlParts.Add(cxml.Id, cxml);
@@ -286,11 +285,11 @@ namespace Chem4Word.Helpers
 
         private static void EraseChemistryZones(Word.Document doc)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             foreach (CustomXMLPart xmlPart in doc.CustomXMLParts)
             {
-                string xml = xmlPart.XML;
+                var xml = xmlPart.XML;
                 if (xml.Contains("<ChemistryZone"))
                 {
                     xmlPart.Delete();
@@ -300,19 +299,19 @@ namespace Chem4Word.Helpers
 
         private static string GetDepictionValue(string cml, string xPath)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             string result = null;
 
-            XDocument xDocument = XDocument.Parse(cml);
+            var xDocument = XDocument.Parse(cml);
 
             if (xDocument.Root != null)
             {
                 var objects = (IEnumerable)xDocument.Root.XPathEvaluate(xPath);
                 var xObjects = objects.Cast<XObject>();
-                XObject xObject = xObjects.FirstOrDefault();
+                var xObject = xObjects.FirstOrDefault();
 
-                XElement xe = xObject as XElement;
+                var xe = xObject as XElement;
                 if (xe != null)
                 {
                     if (!xe.HasElements)
@@ -321,7 +320,7 @@ namespace Chem4Word.Helpers
                     }
                 }
 
-                XAttribute xa = xObject as XAttribute;
+                var xa = xObject as XAttribute;
                 if (xa != null)
                 {
                     result = xa.Value;
@@ -333,24 +332,24 @@ namespace Chem4Word.Helpers
 
         private static List<UpgradeTarget> CollectData(Word.Document document)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            List<UpgradeTarget> targets = new List<UpgradeTarget>();
+            var targets = new List<UpgradeTarget>();
 
-            Word.Selection sel = Globals.Chem4WordV3.Application.Selection;
+            var sel = Globals.Chem4WordV3.Application.Selection;
 
             // Step 1 find location of all content controls
             // Step 2 extract Cml
             // Step 3 find all Chemistry Zones
 
-            List<ContentControlInfo> listOfContentControls = new List<ContentControlInfo>();
+            var listOfContentControls = new List<ContentControlInfo>();
 
-            for (int i = 1; i <= document.ContentControls.Count; i++)
+            for (var i = 1; i <= document.ContentControls.Count; i++)
             {
                 Word.ContentControl cc = document.ContentControls[i];
                 if (cc.Title != null && cc.Title.Equals(Constants.LegacyContentControlTitle))
                 {
-                    ContentControlInfo cci = new ContentControlInfo();
+                    var cci = new ContentControlInfo();
                     cci.Id = cc.ID;
                     cci.Index = i;
                     cci.Location = cc.Range.Start;
@@ -360,13 +359,13 @@ namespace Chem4Word.Helpers
 
             foreach (CustomXMLPart xmlPart in document.CustomXMLParts)
             {
-                string xml = xmlPart.XML;
+                var xml = xmlPart.XML;
                 if (xml.Contains("<cml"))
                 {
-                    UpgradeTarget ut = new UpgradeTarget();
+                    var ut = new UpgradeTarget();
                     ut.CxmlPartId = xmlPart.Id;
                     ut.Cml = xmlPart.XML;
-                    CMLConverter converter = new CMLConverter();
+                    var converter = new CMLConverter();
                     ut.Model = converter.Import(ut.Cml);
                     ut.Model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
                     targets.Add(ut);
@@ -375,19 +374,19 @@ namespace Chem4Word.Helpers
 
             foreach (CustomXMLPart xmlPart in document.CustomXMLParts)
             {
-                string xml = xmlPart.XML;
+                var xml = xmlPart.XML;
 
                 if (xml.Contains("<ChemistryZone"))
                 {
-                    XmlDocument xmlDoc = new XmlDocument();
+                    var xmlDoc = new XmlDocument();
                     xmlDoc.LoadXml(xml);
 
                     string ccValue = null;
                     string cmlValue = null;
                     string ddValue = null;
 
-                    XmlNode refNode = xmlDoc.SelectSingleNode("//ref");
-                    XmlNode ddNode = xmlDoc.SelectSingleNode("//DocumentDepictionOptionXPath");
+                    var refNode = xmlDoc.SelectSingleNode("//ref");
+                    var ddNode = xmlDoc.SelectSingleNode("//DocumentDepictionOptionXPath");
 
                     if (ddNode != null)
                     {
@@ -399,14 +398,14 @@ namespace Chem4Word.Helpers
                         ccValue = refNode.Attributes["cc"].Value;
                         cmlValue = refNode.Attributes["cml"].Value;
 
-                        foreach (UpgradeTarget target in targets)
+                        foreach (var target in targets)
                         {
                             if (target.CxmlPartId.Equals(cmlValue))
                             {
-                                ContentControlInfo cci = new ContentControlInfo();
+                                var cci = new ContentControlInfo();
                                 cci.Id = ccValue;
 
-                                string dv = GetDepictionValue(target.Cml, ddValue);
+                                var dv = GetDepictionValue(target.Cml, ddValue);
 
                                 if (dv == null)
                                 {

@@ -493,7 +493,7 @@ namespace Chem4Word.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Seperate_Molecules {
+        internal static System.Drawing.Bitmap Separate_Molecules {
             get {
                 object obj = ResourceManager.GetObject("Seperate_Molecules", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

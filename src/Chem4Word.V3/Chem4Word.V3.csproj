@@ -376,6 +376,7 @@
     <Compile Include="Helpers\ApiHelper.cs" />
     <Compile Include="Helpers\ChemistryHelper.cs" />
     <Compile Include="Helpers\ChemistryObjectComparer.cs" />
+    <Compile Include="Helpers\ChemistryContentControl.cs" />
     <Compile Include="Helpers\DtoHelper.cs" />
     <Compile Include="Helpers\LibraryFileHelper.cs" />
     <Compile Include="Helpers\ReferenceKeeper.cs" />

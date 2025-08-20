@@ -44,6 +44,8 @@ namespace Chem4Word.Telemetry
 
         public List<AddInProperties> AllAddIns { get; set; }
 
+        public bool MultipleVersions { get; set; }
+
         public string AssemblyVersionNumber { get; set; }
 
         public string AddInLocation { get; set; }
@@ -255,6 +257,14 @@ namespace Chem4Word.Telemetry
 
                 AllAddIns = InfoHelper.GetListOfAddIns();
 
+                var uniqueManifests = AllAddIns
+                    .Select(p => p.Manifest.ToLower())
+                    .Distinct()
+                    .Where(s => !string.IsNullOrEmpty(s) && s.Contains("chem4word"))
+                    .ToList();
+
+                MultipleVersions = uniqueManifests.Count > 1;
+
                 GatherBootUpTimeEtc();
 
                 try
@@ -439,6 +449,7 @@ namespace Chem4Word.Telemetry
         {
             // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
             // https://en.wikipedia.org/wiki/Windows_10_version_history
+            // https://en.wikipedia.org/wiki/Windows_11_version_history
 
             using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(DotNetVersionKey))
             {
@@ -457,6 +468,7 @@ namespace Chem4Word.Telemetry
                         DotNetVersion = $".NET 4.8.1 (W11 2022) [{releaseKey}]";
                         return;
                     }
+
                     // .Net 4.8
                     if (releaseKey >= 528449)
                     {

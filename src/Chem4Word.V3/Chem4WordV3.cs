@@ -29,7 +29,6 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -124,7 +123,7 @@ namespace Chem4Word
                 }
                 catch
                 {
-                    //
+                    // Nothing to do here ...
                 }
 
                 try
@@ -136,7 +135,7 @@ namespace Chem4Word
                 }
                 catch
                 {
-                    //
+                    // Nothing to do here ...
                 }
 
                 return width;
@@ -158,7 +157,7 @@ namespace Chem4Word
                 }
                 catch
                 {
-                    //
+                    // Nothing to do here ...
                 }
                 return pp;
             }
@@ -193,7 +192,7 @@ namespace Chem4Word
                 }
                 catch
                 {
-                    //
+                    // Nothing to do here ...
                 }
 
                 return version;
@@ -273,6 +272,31 @@ namespace Chem4Word
                 Debug.WriteLine($"{module} {exception.Message}");
                 RegistryHelper.StoreException(module, exception);
             }
+        }
+
+        private bool DocumentHasChemistry(Word.Document document)
+        {
+            var xmlParts = document.CustomXMLParts.SelectByNamespace("http://www.xml-cml.org/schema");
+
+            var chemistryCount = 0;
+            foreach (Word.ContentControl cc in document.ContentControls)
+            {
+                try
+                {
+                    if (cc.Title != null
+                        && (cc.Title.Equals(Constants.LegacyContentControlTitle)
+                            || cc.Title.Equals(Constants.ContentControlTitle)))
+                    {
+                        chemistryCount++;
+                    }
+                }
+                catch
+                {
+                    // Nothing to do ...
+                }
+            }
+
+            return chemistryCount > 0 || xmlParts.Count > 0;
         }
 
         private void C4WAddIn_Shutdown(object sender, EventArgs e)
@@ -405,10 +429,20 @@ namespace Chem4Word
                     if (AddInInfo.DeploymentPath.ToLower().Contains("vso-ci"))
                     {
                         var sb = new StringBuilder();
-                        sb.AppendLine($"Hey {Environment.UserName}");
+                        sb.AppendLine($"Hello {Environment.UserName}");
                         sb.AppendLine("");
                         sb.AppendLine("You should not be running this build configuration");
                         sb.AppendLine("Please select Debug or Release build!");
+                        UserInteractions.StopUser(sb.ToString());
+                    }
+
+                    if (Helper.MultipleVersions)
+                    {
+                        var sb = new StringBuilder();
+                        sb.AppendLine($"Hello {Environment.UserName}");
+                        sb.AppendLine("");
+                        sb.AppendLine("Multiple versions of ChemWord detected as installed");
+                        sb.AppendLine("Please uninstall the older version!");
                         UserInteractions.StopUser(sb.ToString());
                     }
                 }
@@ -2303,7 +2337,12 @@ namespace Chem4Word
         private void OnDocumentBeforeSave(Word.Document document, ref bool saveAsUi, ref bool cancel)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            Telemetry.Write(module, "Information", $"About to save document [{document.DocID}]");
+#if DEBUG
+            if (DocumentHasChemistry(document))
+            {
+                Telemetry.Write(module, "Information", $"About to save document [{document.DocID}]");
+            }
+#endif
 
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
@@ -2393,7 +2432,12 @@ namespace Chem4Word
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            Telemetry.Write(module, "Information", $"Closing document [{document.DocID}]");
+#if DEBUG
+            if (DocumentHasChemistry(document))
+            {
+                Telemetry.Write(module, "Information", $"Closing document [{document.DocID}]");
+            }
+#endif
             if (VersionsBehind < Constants.MaximumVersionsBehind)
             {
                 try
@@ -3079,20 +3123,24 @@ namespace Chem4Word
                     LoadOptions();
                 }
 
+                var thisDocument = newContentControl.Application.ActiveDocument;
                 if (EventsEnabled)
                 {
-                    var thisDocument = newContentControl.Application.ActiveDocument;
                     var ccId = newContentControl.ID;
                     var ccTag = newContentControl.Tag;
-                    if (!inUndoRedo && !string.IsNullOrEmpty(ccTag))
-                    {
-                        var xmlPartFound = false;
+                    var ccTitle = newContentControl.Title;
 
+                    if (!inUndoRedo
+                        && !string.IsNullOrEmpty(ccTitle) && !string.IsNullOrEmpty(ccTag)
+                        && ccTitle.Equals(Constants.ContentControlTitle))
+                    {
                         // Check that tag looks like it might be a C4W Tag
                         var regex = @"^[0-9a-fmn.:]+$";
                         var match = Regex.Match(ccTag, regex, RegexOptions.IgnoreCase);
                         if (match.Success)
                         {
+                            var xmlPartFound = false;
+
                             var prefix = CustomXmlPartHelper.PrefixFromTag(ccTag);
                             var guid = CustomXmlPartHelper.GuidFromTag(ccTag);
 
@@ -3109,7 +3157,7 @@ namespace Chem4Word
                             {
                                 if (Globals.Chem4WordV3.Application.Documents.Count > 1)
                                 {
-                                    Telemetry.Write(module, "Information", $"Searching for structure {ccTag} in all documents [{Globals.Chem4WordV3.Application.Documents.Count}]");
+                                    Telemetry.Write(module, "Information", $"Searching for structure {ccTag} in all open documents [{Globals.Chem4WordV3.Application.Documents.Count}]");
                                     var foundIn = -1;
                                     cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(guid, thisDocument.DocID, ref foundIn);
                                     if (cxml != null)
@@ -3132,24 +3180,29 @@ namespace Chem4Word
                                         model.CustomXmlPartGuid = newGuid;
 
                                         thisDocument.CustomXMLParts.Add(XmlHelper.AddHeader(cmlConverter.Export(model)));
-                                        Telemetry.Write(module, "Information", $"Added CustomXmlPart {newGuid} in document [{thisDocument.DocID}]");
+                                        Telemetry.Write(module, "Information", $"Added CustomXmlPart {newGuid} in this document [{thisDocument.DocID}]");
                                         xmlPartFound = true;
                                     }
                                     else
                                     {
-                                        Telemetry.Write(module, "Error", $"Searching for structure {ccTag} in all documents failed to find a match.");
+                                        Telemetry.Write(module, "Error", $"Searching for structure {ccTag} in all other documents failed to find a match.");
                                     }
                                 }
                             }
-                        }
 
-                        if (!xmlPartFound)
-                        {
-                            Telemetry.Write(module, "Warning", $"CustomXmlPart with tag {ccTag} not found in any open document(s)");
-                            newContentControl.Title = $"{Constants.ContentControlTitle}-Missing";
+                            if (!xmlPartFound)
+                            {
+                                Telemetry.Write(module, "Warning", $"CustomXmlPart with tag {ccTag} not found in any open document(s)");
+                                newContentControl.Title = $"{Constants.ContentControlTitle}-Missing";
+                            }
                         }
                     }
                 }
+
+#if DEBUG
+                var listChemistryControls = CustomXmlPartHelper.ListChemistryControls(thisDocument);
+                Globals.Chem4WordV3.Telemetry.Write(module, "Information", string.Join(Environment.NewLine, listChemistryControls));
+#endif
             }
             catch (Exception ex)
             {

@@ -45,12 +45,16 @@ namespace Chem4WordTests
         }
 
         [Theory]
-        [InlineData("NoAtoms.xml", 1, 0, 0, 0, 0, 1, 0)]
-        [InlineData("Benzene.xml", 1, 6, 6, 1, 1, 2, 2)]
-        [InlineData("Testosterone.xml", 1, 25, 28, 4, 4, 4, 2)]
-        [InlineData("Phthalocyanine.xml", 1, 58, 66, 9, 8, 2, 3)]
-        [InlineData("CopperPhthalocyanine.xml", 1, 57, 68, 12, 12, 1, 0)]
-        public void CmlImport(string file, int molecules, int atoms, int bonds, int allRings, int placementRings, int names, int formulas)
+        [InlineData("NoAtoms.xml", 1, 0, 0, 0, 0, 0, 1, 0)]
+        [InlineData("Benzene.xml", 1, 6, 6, 1, 72.07, 1, 2, 2)]
+        [InlineData("Testosterone.xml", 1, 25, 28, 4, 264.24, 4, 4, 2)]
+        [InlineData("Phthalocyanine.xml", 1, 58, 66, 9, 514.55,8, 2, 3)]
+        [InlineData("CopperPhthalocyanine.xml", 1, 57, 68, 12, 576.08, 12, 1, 0)]
+        [InlineData("Pseudo-R.xml", 1, 7, 7, 1, 72.07, 1, 0, 0)]
+        [InlineData("Pseudo-X.xml", 1, 7, 7, 1, 72.07, 1, 0, 0)]
+        [InlineData("Pseudo-D.xml", 1, 7, 7, 1, 74.08, 1, 0, 0)]
+        [InlineData("Pseudo-T.xml", 1, 7, 7, 1, 75.08, 1, 0, 0)]
+        public void CmlImport(string file, int molecules, int atoms, int bonds, int allRings, double expectedWeight, int placementRings, int names, int formulas)
         {
             var mc = new CMLConverter();
             var model = mc.Import(ResourceHelper.GetStringResource(file));
@@ -58,6 +62,8 @@ namespace Chem4WordTests
             Assert.True(model.Molecules.Count == molecules, $"Expected {molecules} Molecules; Got {model.Molecules.Count}");
             Assert.True(model.TotalAtomsCount == atoms, $"Expected {atoms} Atoms; Got {model.TotalAtomsCount}");
             Assert.True(model.TotalBondsCount == bonds, $"Expected {bonds} Bonds; Got {model.TotalBondsCount}");
+
+            Assert.Equal(expectedWeight, model.MolecularWeight, 2);
 
             var molecule = model.Molecules.Values.First();
             Assert.True(molecule.Rings.Count == allRings, $"Expected {allRings} Rings; Got {molecule.Rings.Count}");

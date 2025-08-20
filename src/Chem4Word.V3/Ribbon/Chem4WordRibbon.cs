@@ -60,7 +60,7 @@ namespace Chem4Word
             http://www.codeproject.com/Articles/463282/Custom-Ribbon-Help-for-Office-VSTO-Add-ins
         */
 
-        private void OnLOad_CustomRibbon(object sender, RibbonUIEventArgs e)
+        private void OnLoad_CustomRibbon(object sender, RibbonUIEventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -670,14 +670,14 @@ namespace Chem4Word
                             {
                                 var fileType = Path.GetExtension(ofd.FileName).ToLower();
                                 Model model = null;
-                                var mol = string.Empty;
-                                var cml = string.Empty;
+                                string data;
+                                string cml;
 
                                 using (var fileStream = new FileStream(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
                                     using (var textReader = new StreamReader(fileStream, true))
                                     {
-                                        mol = textReader.ReadToEnd();
+                                        data = textReader.ReadToEnd();
                                     }
                                 }
 
@@ -685,8 +685,8 @@ namespace Chem4Word
                                 {
                                     case ".cml":
                                         var cmlConverter = new CMLConverter();
-                                        model = cmlConverter.Import(mol);
-                                        if (!mol.Contains("<c4w:showColouredAtoms>"))
+                                        model = cmlConverter.Import(data);
+                                        if (!data.Contains("<c4w:showColouredAtoms>"))
                                         {
                                             model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
                                             model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
@@ -698,7 +698,7 @@ namespace Chem4Word
                                     case ".mol":
                                     case ".sdf":
                                         var sdFileConverter = new SdFileConverter();
-                                        model = sdFileConverter.Import(mol);
+                                        model = sdFileConverter.Import(data);
 
                                         model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
                                         model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
@@ -709,7 +709,7 @@ namespace Chem4Word
 
                                     case ".el":
                                         var sketchElConverter = new SketchElConverter();
-                                        model = sketchElConverter.Import(mol);
+                                        model = sketchElConverter.Import(data);
 
                                         model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
                                         model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
@@ -763,7 +763,14 @@ namespace Chem4Word
 
                                         var cmlConverter = new CMLConverter();
                                         cml = cmlConverter.Export(model);
-                                        if (model.TotalAtomsCount > 0)
+
+                                        var has2D = model.HasReactions
+                                                        || model.HasAnnotations
+                                                        || model.TotalAtomsCount > 0
+                                                        && (model.TotalBondsCount == 0
+                                                            || model.MeanBondLength > Constants.BondLengthTolerance / 2);
+
+                                        if (has2D)
                                         {
                                             var cc = ChemistryHelper.Insert2DChemistry(activeDocument, cml, true);
                                             if (cc != null)
@@ -790,14 +797,14 @@ namespace Chem4Word
                                 }
                                 else
                                 {
-                                    if (mol.ToLower().Contains("v3000"))
+                                    if (data.ToLower().Contains("v3000"))
                                     {
                                         UserInteractions.InformUser("Sorry, V3000 molfiles are not supported");
                                     }
                                     else
                                     {
                                         var x = new Exception("Could not import file");
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", mol);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", data);
                                         using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, x))
                                         {
                                             form.ShowDialog();
@@ -968,7 +975,13 @@ namespace Chem4Word
                                                     Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, beforeModel.AllWarnings));
                                                 }
 
-                                                if (beforeModel.TotalAtomsCount == 0 && !beforeModel.HasReactions)
+                                                var has2D = beforeModel.HasReactions
+                                                            || beforeModel.HasAnnotations
+                                                            || beforeModel.TotalAtomsCount > 0
+                                                            && (beforeModel.TotalBondsCount == 0
+                                                                || beforeModel.MeanBondLength > Constants.BondLengthTolerance / 2);
+
+                                                if (!has2D)
                                                 {
                                                     UserInteractions.InformUser("This chemistry item has no 2D data to edit!\nPlease use the 'Edit Labels' button.");
                                                     return;
@@ -1137,7 +1150,8 @@ namespace Chem4Word
 
                                                 if (!isNewDrawing)
                                                 {
-                                                    contentControl = ChemistryHelper.GetContentControl(document, contentControl.ID);
+                                                    var id = contentControl.ID;
+                                                    contentControl = ChemistryHelper.GetContentControl(document, id);
                                                     if (contentControl != null)
                                                     {
                                                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Erasing old ContentControl {contentControl.ID}");
@@ -1157,7 +1171,7 @@ namespace Chem4Word
                                                     }
                                                     else
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Error", $"Can't find old ContentControl {contentControl.ID}");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Error", $"Can't find old ContentControl {id}");
 
                                                         readyToInsert = false;
                                                     }
@@ -1235,6 +1249,11 @@ namespace Chem4Word
                                             importErrors.Model = afterModel;
                                             importErrors.ShowDialog();
                                         }
+
+#if DEBUG
+                                        var listChemistryControls = CustomXmlPartHelper.ListChemistryControls(document);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", string.Join(Environment.NewLine, listChemistryControls));
+#endif
                                     }
                                     else
                                     {
@@ -1575,7 +1594,10 @@ namespace Chem4Word
                                                     // Delete the temporary file now we are finished with it
                                                     try
                                                     {
+#if !DEBUG
+                                                        // Only delete file in release mode
                                                         File.Delete(tempFileName);
+#endif
                                                     }
                                                     catch
                                                     {
@@ -1600,6 +1622,25 @@ namespace Chem4Word
 
                                         host.Close();
                                     }
+                                }
+                                else
+                                {
+                                    var message1 = $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]";
+                                    var listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
+                                    var message2 = string.Join(Environment.NewLine, listCustomXmlParts);
+
+                                    if (Globals.Chem4WordV3.Telemetry != null)
+                                    {
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception", message1);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", message2);
+                                    }
+                                    else
+                                    {
+                                        RegistryHelper.StoreMessage(module, message1);
+                                        RegistryHelper.StoreMessage(module, message2);
+                                    }
+                                    UserInteractions.WarnUser("The CML for this chemistry item can't be found!");
+
                                 }
                             }
                         }
@@ -2188,9 +2229,9 @@ namespace Chem4Word
                                     var cmlConverter = new CMLConverter();
                                     var model = cmlConverter.Import(beforeCml);
 
-                                    if (model.HasReactions)
+                                    if (model.HasReactions || model.HasAnnotations)
                                     {
-                                        UserInteractions.InformUser("It is not appropriate to run the arrange function on chemistry which has reactions!");
+                                        UserInteractions.InformUser("It is not appropriate to run the arrange function on chemistry which has reactions or annotations!");
                                         return;
                                     }
                                     else
@@ -2211,14 +2252,17 @@ namespace Chem4Word
                                             Globals.Chem4WordV3.LoadOptions();
                                         }
 
-                                        renderer.Properties = new Dictionary<string, string>();
-                                        renderer.Properties.Add("Guid", guidString);
+                                        renderer.Properties = new Dictionary<string, string> { { "Guid", guidString } };
                                         renderer.Cml = afterCml;
 
-                                        var tempfile = renderer.Render();
+                                        var tempFileName = renderer.Render();
 
-                                        if (File.Exists(tempfile))
+                                        if (File.Exists(tempFileName))
                                         {
+                                            // Stop Screen Updating and Disable Document Event Handlers
+                                            application.ScreenUpdating = false;
+                                            Globals.Chem4WordV3.DisableContentControlEvents();
+
                                             contentControl.LockContents = false;
                                             contentControl.Range.Delete();
                                             contentControl.Delete();
@@ -2229,7 +2273,7 @@ namespace Chem4Word
                                             contentControl.Title = Constants.ContentControlTitle;
                                             contentControl.Tag = fullTag;
 
-                                            ChemistryHelper.UpdateThisStructure(document, model, guidString, tempfile);
+                                            ChemistryHelper.UpdateThisStructure(document, model, guidString, tempFileName);
 
                                             if (Globals.Chem4WordV3.Telemetry != null)
                                             {
@@ -2245,14 +2289,50 @@ namespace Chem4Word
                                             // Delete the temporary file now we are finished with it
                                             try
                                             {
-                                                File.Delete(tempfile);
+#if !DEBUG
+                                                // Only delete file in release mode
+                                                File.Delete(tempFileName);
+#endif
                                             }
                                             catch
                                             {
                                                 // Not much we can do here
                                             }
                                         }
+                                        else
+                                        {
+                                            if (Globals.Chem4WordV3.Telemetry != null)
+                                            {
+                                                Globals.Chem4WordV3.Telemetry.Write(module, "Warning", $"Unable to insert structure into ContentControl Tag {contentControl.Tag}");
+                                            }
+                                            else
+                                            {
+                                                RegistryHelper.StoreMessage(module, $"Unable to insert structure into ContentControl Tag {contentControl.Tag}");
+                                            }
+                                            contentControl.Delete();
+                                            contentControl = null;
+                                        }
                                     }
+                                }
+                                else
+                                {
+                                    var message1 = $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]";
+                                    var listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
+                                    var message2 = string.Join(Environment.NewLine, listCustomXmlParts);
+
+                                    if (Globals.Chem4WordV3.Telemetry != null)
+                                    {
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception", message1);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", message2);
+                                    }
+                                    else
+                                    {
+                                        RegistryHelper.StoreMessage(module, message1);
+                                        RegistryHelper.StoreMessage(module, message2);
+                                    }
+                                    UserInteractions.WarnUser("The CML for this chemistry item can't be found!");
+                                    return;
+
                                 }
                             }
                         }

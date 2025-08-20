@@ -104,6 +104,11 @@ namespace Chem4Word.Helpers
                             {
                                 // Not much we can do here
                             }
+
+#if DEBUG
+                            var listChemistryControls = CustomXmlPartHelper.ListChemistryControls(document);
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", string.Join(Environment.NewLine, listChemistryControls));
+#endif
                         }
                     }
                     catch (Exception ex)

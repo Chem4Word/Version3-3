@@ -140,6 +140,56 @@ namespace Chem4Word.Helpers
             return result;
         }
 
+        public static List<string> ListChemistryControls(Word.Document document)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            var parts = new List<string>
+                        {
+                            $"Chemistry ContentControls in document [{document.DocID}] :-"
+                        };
+
+            var chemistryZones = new List<ChemistryContentControl>();
+
+            // Pass 1 collect list of all our content controls
+            foreach (Word.ContentControl cc in document.ContentControls)
+            {
+                if (cc.Title != null && cc.Title.Equals(Constants.ContentControlTitle))
+                {
+                    chemistryZones.Add(new ChemistryContentControl
+                    {
+                        Position = cc.Range.Start,
+                        Tag = cc.Tag
+                    });
+                }
+            }
+
+            // Pass 2 collect xmlpart ids
+            var allChemistryParts = AllChemistryParts(document);
+
+            foreach (var chemistryZone in chemistryZones)
+            {
+                var guid = GuidFromTag(chemistryZone.Tag);
+
+                foreach (CustomXMLPart customXmlPart in allChemistryParts)
+                {
+                    var molId = GetCmlId(customXmlPart);
+                    if (molId.Equals(guid))
+                    {
+                        chemistryZone.XmlPartId = customXmlPart.Id;
+                    }
+                }
+            }
+
+            // List results
+            foreach (var chemistryZone in chemistryZones)
+            {
+                parts.Add($"Position: {chemistryZone.Position} Tag: {chemistryZone.Tag} XmlPart: {chemistryZone.XmlPartId}");
+            }
+
+            return parts;
+        }
+
         public static int RemoveOrphanedXmlParts(Word.Document document)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
@@ -149,6 +199,7 @@ namespace Chem4Word.Helpers
             {
                 var referencedXmlParts = new Dictionary<string, int>();
 
+                // Pass 1 collect dictionary of our unique content controls
                 foreach (Word.ContentControl cc in document.ContentControls)
                 {
                     if (cc.Title != null && cc.Title.Equals(Constants.ContentControlTitle))
@@ -170,7 +221,7 @@ namespace Chem4Word.Helpers
                 var allChemistryParts = AllChemistryParts(document);
                 var carryOutPurge = true;
 
-                // Pass 1 save orphans
+                // Pass 2 save orphans
                 foreach (CustomXMLPart customXmlPart in allChemistryParts)
                 {
                     var molId = GetCmlId(customXmlPart);
@@ -197,7 +248,7 @@ namespace Chem4Word.Helpers
                     }
                 }
 
-                // Pass 2 purge orphans
+                // Pass 3 purge orphans
                 if (carryOutPurge)
                 {
                     foreach (CustomXMLPart customXmlPart in allChemistryParts)

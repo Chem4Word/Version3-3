@@ -60,7 +60,7 @@ namespace WiX.CustomAction.V6
                 if (Directory.Exists(c4wPath))
                 {
                     session.Log("  Found Chem4Word installation folder");
-                    string manifestFileLocation = Path.Combine(c4wPath, ManifestFile);
+                    var manifestFileLocation = Path.Combine(c4wPath, ManifestFile);
                     session.Log($"  Looking for file '{manifestFileLocation}'");
                     if (File.Exists(manifestFileLocation))
                     {
@@ -92,7 +92,7 @@ namespace WiX.CustomAction.V6
         [CustomAction]
         public static ActionResult SetupChem4WordUser(Session session)
         {
-            session.Log($"Begin {nameof(SetupChem4Word)}()");
+            session.Log($"Begin {nameof(SetupChem4WordUser)}()");
 
             session.Log($"  Running as {Environment.UserName}");
 
@@ -106,7 +106,7 @@ namespace WiX.CustomAction.V6
                     key = Registry.CurrentUser.CreateSubKey(baseKey);
                 }
 
-                string actionsKey = $@"{baseKey}\MsiActions";
+                var actionsKey = $@"{baseKey}\MsiActions";
                 key = Registry.CurrentUser.OpenSubKey(actionsKey, true);
                 if (key == null)
                 {
@@ -115,7 +115,7 @@ namespace WiX.CustomAction.V6
 
                 var versionNumber = "3.3.14.9313";
 
-                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 key.SetValue(timestamp, $"[-] V{versionNumber} - Installed");
             }
             catch (Exception ex)
@@ -123,7 +123,7 @@ namespace WiX.CustomAction.V6
                 session.Log($"** Exception: {ex.Message} **");
             }
 
-            session.Log($"End {nameof(SetupChem4Word)}()");
+            session.Log($"End {nameof(SetupChem4WordUser)}()");
 
             return ActionResult.Success;
         }
@@ -134,10 +134,10 @@ namespace WiX.CustomAction.V6
 
             try
             {
-                string programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                string folderPath = Path.Combine(programData, ProgramDataFolder);
-                DirectorySecurity sec = Directory.GetAccessControl(folderPath);
-                SecurityIdentifier users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+                var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                var folderPath = Path.Combine(programData, ProgramDataFolder);
+                var sec = Directory.GetAccessControl(folderPath);
+                var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
                 sec.AddAccessRule(new FileSystemAccessRule(users, FileSystemRights.Modify | FileSystemRights.Synchronize, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow));
                 Directory.SetAccessControl(folderPath, sec);
             }
@@ -197,11 +197,11 @@ namespace WiX.CustomAction.V6
                     listOfKeys.Clear();
 
                     // Now clear HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\Word\Addins on 64 bit machine
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                    var rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
                     if (rk != null)
                     {
-                        string keyName = $@"Software\{OfficeKey}\Word\Addins";
-                        RegistryKey rk2 = rk.OpenSubKey(keyName, true);
+                        var keyName = $@"Software\{OfficeKey}\Word\Addins";
+                        var rk2 = rk.OpenSubKey(keyName, true);
                         if (rk2 != null)
                         {
                             foreach (var subKeyName in rk2.GetSubKeyNames())
@@ -238,8 +238,8 @@ namespace WiX.CustomAction.V6
 
         private static void DeleteSystemKey64(Session session, string key)
         {
-            RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-            string keyName = $@"Software\{OfficeKey}\Word\Addins\{key}";
+            var rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            var keyName = $@"Software\{OfficeKey}\Word\Addins\{key}";
             rk.DeleteSubKeyTree(keyName);
         }
 
@@ -247,13 +247,13 @@ namespace WiX.CustomAction.V6
         {
             session.Log($"  {nameof(DeleteSystemKey32)}({nameOfKey}, {kkk})");
 
-            RegistryKey key = Registry.LocalMachine.OpenSubKey($"{nameOfKey}{kkk}", true);
+            var key = Registry.LocalMachine.OpenSubKey($"{nameOfKey}{kkk}", true);
             if (key != null)
             {
                 try
                 {
                     var values = key.GetValueNames();
-                    foreach (string value in values)
+                    foreach (var value in values)
                     {
                         session.Log($"    Deleting Value '{value}'");
                         key.DeleteValue(value);
@@ -319,7 +319,7 @@ namespace WiX.CustomAction.V6
         {
             session.Log($"  {nameof(EraseUserKey)}({nameOfKey})");
 
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(nameOfKey, true);
+            var key = Registry.CurrentUser.OpenSubKey(nameOfKey, true);
             if (key == null)
             {
                 key = Registry.CurrentUser.CreateSubKey(nameOfKey);
@@ -331,7 +331,7 @@ namespace WiX.CustomAction.V6
                 {
                     var values = key.GetValueNames();
                     // Erase previously stored Update Checks etc
-                    foreach (string value in values)
+                    foreach (var value in values)
                     {
                         session.Log($"Deleting Value '{value}'");
                         key.DeleteValue(value);
@@ -348,13 +348,13 @@ namespace WiX.CustomAction.V6
         {
             session.Log($"  {nameof(DeleteUserKey)}({nameOfKey}, {kkk})");
 
-            RegistryKey key = Registry.CurrentUser.OpenSubKey($"{nameOfKey}{kkk}", true);
+            var key = Registry.CurrentUser.OpenSubKey($"{nameOfKey}{kkk}", true);
             if (key != null)
             {
                 try
                 {
                     var values = key.GetValueNames();
-                    foreach (string value in values)
+                    foreach (var value in values)
                     {
                         session.Log($"    Deleting Value '{value}'");
                         key.DeleteValue(value);
@@ -396,7 +396,9 @@ namespace WiX.CustomAction.V6
         {
             session.Log($"Begin {nameof(FindWord)}()");
 
-            int officeVersion = OfficeHelper.GetWinWordVersionNumber();
+            session.Log($"  Running as {Environment.UserName}");
+
+            var officeVersion = OfficeHelper.GetWinWordVersionNumber();
             if (officeVersion >= 2010)
             {
                 // Must be UPPERCASE
@@ -413,10 +415,17 @@ namespace WiX.CustomAction.V6
         {
             session.Log($"Begin {nameof(WordProcessCount)}()");
 
-            Process[] processes = Process.GetProcessesByName("winword");
+            session.Log($"  Running as {Environment.UserName}");
+
+            var processes = Process.GetProcessesByName("winword");
 
             if (processes.Length > 0)
             {
+                foreach (var process in processes)
+                {
+                    session.Log($"  [{process.Id}] - {process.ProcessName}");
+                }
+
                 session["WINWORDPROCESSCOUNT"] = processes.Length.ToString();
             }
 
@@ -433,12 +442,12 @@ namespace WiX.CustomAction.V6
             {
                 if (Environment.Is64BitOperatingSystem)
                 {
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                    var rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
 
                     // A bit lazy here as I'm just blasting it to both possible locations
-                    string keyName = $@"Software\{OfficeKey}";
+                    var keyName = $@"Software\{OfficeKey}";
                     session.Log($"  Opening {keyName}");
-                    RegistryKey rk2 = rk.OpenSubKey(keyName, true);
+                    var rk2 = rk.OpenSubKey(keyName, true);
                     if (rk2 != null)
                     {
                         RegisterChem4WordAddIn(session, rk2, manifestLocation);
@@ -454,11 +463,11 @@ namespace WiX.CustomAction.V6
                 }
                 else
                 {
-                    RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+                    var rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
 
-                    string keyName = $@"Software\{OfficeKey}";
+                    var keyName = $@"Software\{OfficeKey}";
                     session.Log($"  Opening {keyName}");
-                    RegistryKey rk2 = rk.OpenSubKey(keyName, true);
+                    var rk2 = rk.OpenSubKey(keyName, true);
                     if (rk2 != null)
                     {
                         RegisterChem4WordAddIn(session, rk2, manifestLocation);
@@ -482,7 +491,7 @@ namespace WiX.CustomAction.V6
                 if (!string.IsNullOrEmpty(manifestLocation))
                 {
                     session.Log($"  Creating (or Opening) {WordAddinsKey}");
-                    RegistryKey rk2 = rk.CreateSubKey(WordAddinsKey);
+                    var rk2 = rk.CreateSubKey(WordAddinsKey);
                     if (rk2 != null)
                     {
                         session.Log(" Registering Chem4Word Add-In");
@@ -494,11 +503,11 @@ namespace WiX.CustomAction.V6
                 }
                 else
                 {
-                    string[] parts = WordAddinsKey.Split('\\');
-                    string keyName = parts.Last();
-                    string keyParent = string.Join(@"\", parts.Take(parts.Length - 1));
+                    var parts = WordAddinsKey.Split('\\');
+                    var keyName = parts.Last();
+                    var keyParent = string.Join(@"\", parts.Take(parts.Length - 1));
                     session.Log($"  Opening {keyParent}");
-                    RegistryKey rk2 = rk.OpenSubKey(keyParent, true);
+                    var rk2 = rk.OpenSubKey(keyParent, true);
                     if (rk2 != null)
                     {
                         session.Log(" UnRegistering Chem4Word Add-In");
