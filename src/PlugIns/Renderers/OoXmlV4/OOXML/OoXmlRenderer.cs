@@ -75,8 +75,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             _medianBondLength = model.MeanBondLength;
 
             LoadFont();
-
-            _boundingBoxOfAllAtoms = _chemistryModel.BoundingBoxOfCmlPoints;
         }
 
         public Run GenerateRun()
@@ -115,7 +113,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
             _positionerOutputs = positioner.Position();
 
-            SetCanvasSize();
+            _boundingBoxOfAllAtoms = _chemistryModel.BoundingBoxOfCmlPoints;
+            _boundingBoxOfEverything = OoXmlHelper.GetAllCharacterExtents(_chemistryModel, _positionerOutputs);
 
             // Create Base OoXml Objects
             var run = CreateRun();
@@ -259,8 +258,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                 // ToDo: [MAW] - Experimental code to add inner circles for aromatic rings
                 foreach (var innerCircle in _positionerOutputs.InnerCircles)
                 {
-                    var smallerCircle = new InnerCircle();
-                    smallerCircle.Centre = innerCircle.Centre;
+                    var smallerCircle = new InnerCircle
+                    {
+                        Centre = innerCircle.Centre
+                    };
                     // Move all points towards centre
                     foreach (var point in innerCircle.Points)
                     {
@@ -285,6 +286,27 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     var extents = new Rect(new Point(atom.Position.X - spotSize, atom.Position.Y - spotSize),
                                            new Point(atom.Position.X + spotSize, atom.Position.Y + spotSize));
                     DrawShape(extents, A.ShapeTypeValues.Ellipse, true, "ff0000");
+                }
+
+                foreach (var scheme in _chemistryModel.ReactionSchemes.Values)
+                {
+                    foreach (var reaction in scheme.Reactions.Values)
+                    {
+                        var head = new Rect(new Point(reaction.HeadPoint.X - spotSize, reaction.HeadPoint.Y - spotSize),
+                                               new Point(reaction.HeadPoint.X + spotSize, reaction.HeadPoint.Y + spotSize));
+                        DrawShape(head, A.ShapeTypeValues.Ellipse, true, "00ff00");
+
+                        var tail = new Rect(new Point(reaction.TailPoint.X - spotSize, reaction.TailPoint.Y - spotSize),
+                                               new Point(reaction.TailPoint.X + spotSize, reaction.TailPoint.Y + spotSize));
+                        DrawShape(tail, A.ShapeTypeValues.Ellipse, true, "00ff00");
+                    }
+                }
+
+                foreach (var annotation in _chemistryModel.Annotations.Values)
+                {
+                    var extents = new Rect(new Point(annotation.Position.X - spotSize, annotation.Position.Y - spotSize),
+                                           new Point(annotation.Position.X + spotSize, annotation.Position.Y + spotSize));
+                    DrawShape(extents, A.ShapeTypeValues.Ellipse, true, "0000ff");
                 }
             }
 
@@ -1567,8 +1589,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
         private void DrawSingleLinedReactionArrow(Reaction reaction)
         {
-            Point lineStart = reaction.TailPoint;
-            Point lineEnd = reaction.HeadPoint;
+            var lineStart = reaction.TailPoint;
+            var lineEnd = reaction.HeadPoint;
 
             var tuple = OffsetPoints(lineStart, lineEnd);
             var cmlStartPoint = tuple.Start;
@@ -2068,8 +2090,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         /// <summary>
         /// Sets the canvas size to accommodate any extra space required by label characters
         /// </summary>
-        private void SetCanvasSize()
+        private void SetCanvasSizeX()
         {
+            _boundingBoxOfAllAtoms = _chemistryModel.BoundingBoxOfCmlPoints;
+
             _boundingBoxOfEverything = _boundingBoxOfAllAtoms;
 
             foreach (var alc in _positionerOutputs.AtomLabelCharacters)

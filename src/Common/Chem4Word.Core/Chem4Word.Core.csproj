@@ -149,6 +149,12 @@
     <Compile Include="UI\Controls\CustomProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Controls\EditorHostStatusPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\EditorHostStatusPanel.Designer.cs">
+      <DependentUpon>EditorHostStatusPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Controls\TabControlEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -180,6 +186,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Controls\EditorHostStatusPanel.resx">
+      <DependentUpon>EditorHostStatusPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\ReportError.resx">
       <DependentUpon>ReportError.cs</DependentUpon>

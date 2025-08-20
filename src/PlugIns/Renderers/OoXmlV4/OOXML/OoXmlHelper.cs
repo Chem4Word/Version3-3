@@ -5,7 +5,10 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2;
+using Chem4Word.Renderer.OoXmlV4.Entities;
 using DocumentFormat.OpenXml;
+using System.Windows;
 
 namespace Chem4Word.Renderer.OoXmlV4.OOXML
 {
@@ -155,5 +158,47 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         }
 
         #endregion C# TTF
+
+        public static Rect GetAllCharacterExtents(Model model, PositionerOutputs outputs)
+        {
+            var characterExtents = model.BoundingBoxOfCmlPoints;
+
+            foreach (var alc in outputs.AtomLabelCharacters)
+            {
+                if (alc.IsSmaller)
+                {
+                    var r = new Rect(alc.Position,
+                                     new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength) * SubscriptScaleFactor,
+                                              ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength) * SubscriptScaleFactor));
+                    characterExtents.Union(r);
+                }
+                else
+                {
+                    var r = new Rect(alc.Position,
+                                     new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength),
+                                              ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength)));
+                    characterExtents.Union(r);
+                }
+            }
+
+            foreach (var group in outputs.AllMoleculeExtents)
+            {
+                characterExtents.Union(group.ExternalCharacterExtents);
+            }
+
+            // Bullet proofing - Error seen in telemetry :-
+            // System.InvalidOperationException: Cannot call this method on the Empty Rect.
+            //   at System.Windows.Rect.Inflate(Double width, Double height)
+            if (characterExtents == Rect.Empty)
+            {
+                characterExtents = new Rect(new Point(0, 0), new Size(DrawingMargin * 10, DrawingMargin * 10));
+            }
+            else
+            {
+                characterExtents.Inflate(DrawingMargin, DrawingMargin);
+            }
+
+            return characterExtents;
+        }
     }
 }

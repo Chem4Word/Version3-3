@@ -21,9 +21,6 @@ namespace Chem4Word.Renderer.OoXmlV4
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         [JsonProperty]
-        public bool ShowMoleculeCaptions { get; set; }
-
-        [JsonProperty]
         public bool ClipCrossingBonds { get; set; }
 
         // Debugging
@@ -173,7 +170,6 @@ namespace Chem4Word.Renderer.OoXmlV4
         private void SetValuesFromCopy(OoXmlV4Options copy)
         {
             // Main User Options
-            ShowMoleculeCaptions = copy.ShowMoleculeCaptions;
             ClipCrossingBonds = copy.ClipCrossingBonds;
 
             // Debugging Options
@@ -211,7 +207,6 @@ namespace Chem4Word.Renderer.OoXmlV4
         public void RestoreDefaults()
         {
             // Main User Options
-            ShowMoleculeCaptions = false;
             ClipCrossingBonds = false;
 
             // Debugging Options

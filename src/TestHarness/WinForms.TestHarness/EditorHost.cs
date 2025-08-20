@@ -14,11 +14,9 @@ using Chem4Word.Model2.Helpers;
 using Chem4Word.Telemetry;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Forms;
-using Chem4Word.ACME.Enums;
+using Point = System.Windows.Point;
 using Size = System.Drawing.Size;
 
 namespace WinForms.TestHarness
@@ -36,11 +34,11 @@ namespace WinForms.TestHarness
             InitializeComponent();
             _editorType = type;
 
-            Model model;
-
             var used1D = SimulateGetUsed1DLabels(cml);
 
-            MessageFromWpf.Text = "";
+            StatusPanel.Label1Text = "";
+            StatusPanel.Label2Text = "";
+            StatusPanel.Label3Text = "";
 
             var helper = new SystemHelper();
             var telemetry = new TelemetryWriter(true, true, helper);
@@ -60,7 +58,7 @@ namespace WinForms.TestHarness
                     var options = DefaultRenderingOptions.Copy();
                     options.DefaultBondLength = defaultBondLength;
                     acmeEditor.SetProperties(cml, used1D, options);
-                    model = acmeEditor.ActiveController.Model;
+                    var model = acmeEditor.ActiveController.Model;
 
                     if (model.Molecules.Count == 0)
                     {
@@ -85,6 +83,10 @@ namespace WinForms.TestHarness
                     labelsEditor.Used1D = used1D;
                     labelsEditor.PopulateTreeView(cml);
 
+                    HideOtherStatusPanels();
+
+                    Text = "Labels Editor";
+
                     break;
 
                 default:
@@ -95,29 +97,26 @@ namespace WinForms.TestHarness
                     // Configure Control
                     cmlEditor.Cml = cml;
 
+                    HideOtherStatusPanels();
+
+                    Text = "CML Editor";
+
                     break;
             }
         }
 
+        private void HideOtherStatusPanels()
+        {
+            StatusPanel.Label1ToolTip = "";
+            StatusPanel.Label2Visible = false;
+            StatusPanel.Label3Visible = false;
+        }
+
         private void OnFeedbackChange_AcmeEditor(object sender, WpfEventArgs e)
         {
-            MessageFromWpf.Text = e.Message;
-
-            var activeController = ((Editor)elementHost1.Child).ActiveController;
-            var activeModel = activeController.Model;
-            bool hasReactions = (activeModel.ReactionSchemes.Any() &&
-                                 activeModel.ReactionSchemes.First().Value.Reactions.Count > 0);
-            bool moleculesSelected = (activeController.SelectionType == SelectionTypeCode.Molecule);
-            if (hasReactions && moleculesSelected || !hasReactions)
-            {
-                MWTDisplay.Text = e.MolecularWeight;
-                FormulaDisplay.Text = e.Formula;
-            }
-            else
-            {
-                MWTDisplay.Text = "";
-                FormulaDisplay.Text = "";
-            }
+            StatusPanel.Label1Text = e.Message;
+            StatusPanel.Label2Text = e.MolecularWeight;
+            StatusPanel.Label3Text = e.Formula;
         }
 
         private List<string> SimulateGetUsed1DLabels(string cml)
@@ -148,12 +147,6 @@ namespace WinForms.TestHarness
         {
             MinimumSize = new Size(900, 600);
 
-            // Fix bottom panel
-            var margin = StatusPanel.Height - Save.Bottom;
-            VerticalSplitter.SplitterDistance = VerticalSplitter.Height - Save.Height - margin * 2;
-            VerticalSplitter.FixedPanel = FixedPanel.Panel2;
-            VerticalSplitter.IsSplitterFixed = true;
-
             switch (_editorType)
             {
                 case "ACME":
@@ -176,7 +169,7 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void OnClick_Save(object sender, EventArgs e)
+        private void OnClickOk_StatusPanel(object sender, EventArgs e)
         {
             var cc = new CMLConverter();
             DialogResult = DialogResult.Cancel;
@@ -216,7 +209,7 @@ namespace WinForms.TestHarness
             Hide();
         }
 
-        private void OnClick_Cancel(object sender, EventArgs e)
+        private void OnClickCancel_StatusPanel(object sender, EventArgs e)
         {
             Hide();
         }

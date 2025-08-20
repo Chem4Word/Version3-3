@@ -159,19 +159,19 @@ namespace Chem4Word.ACME.Controls
                 // Only need to do this on "small" structures
                 if (_controller.Model.TotalAtomsCount < 100)
                 {
-                    var abb = _controller.Model.BoundingBoxOfCmlPoints;
+                    var rect = _controller.Model.BoundingBoxOfCmlPoints;
 
                     double leftPadding = 0;
                     double topPadding = 0;
 
-                    if (size.Left < abb.Left)
+                    if (size.Left < rect.Left)
                     {
-                        leftPadding = abb.Left - size.Left;
+                        leftPadding = rect.Left - size.Left;
                     }
 
-                    if (size.Top < abb.Top)
+                    if (size.Top < rect.Top)
                     {
-                        topPadding = abb.Top - size.Top;
+                        topPadding = rect.Top - size.Top;
                     }
 
                     _controller.Model.RepositionAll(-leftPadding, -topPadding);

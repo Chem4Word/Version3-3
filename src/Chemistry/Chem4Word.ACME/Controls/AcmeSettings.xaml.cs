@@ -60,6 +60,8 @@ namespace Chem4Word.ACME.Controls
                         ShowMoleculeGrouping = _currentOptions.ShowMoleculeGrouping,
                         ExplicitH = _currentOptions.ExplicitH,
                         ShowColouredAtoms = _currentOptions.ShowColouredAtoms,
+                        ShowMolecularWeight = _currentOptions.ShowMolecularWeight,
+                        ShowMoleculeCaptions = _currentOptions.ShowMoleculeCaptions,
                         ExplicitC = _currentOptions.ExplicitC
                     };
 
@@ -123,6 +125,8 @@ namespace Chem4Word.ACME.Controls
             SettingsModel.ExplicitH = UserDefaultOptions.ExplicitH;
             SettingsModel.ShowColouredAtoms = UserDefaultOptions.ShowColouredAtoms;
             SettingsModel.ShowMoleculeGrouping = UserDefaultOptions.ShowMoleculeGrouping;
+            SettingsModel.ShowMolecularWeight = UserDefaultOptions.ShowMolecularWeight;
+            SettingsModel.ShowMoleculeCaptions = UserDefaultOptions.ShowMoleculeCaptions;
 
             Dirty = true;
             EnableButtons();
@@ -149,6 +153,8 @@ namespace Chem4Word.ACME.Controls
             CurrentOptions.ExplicitH = SettingsModel.ExplicitH;
             CurrentOptions.ShowColouredAtoms = SettingsModel.ShowColouredAtoms;
             CurrentOptions.ShowMoleculeGrouping = SettingsModel.ShowMoleculeGrouping;
+            CurrentOptions.ShowMolecularWeight = SettingsModel.ShowMolecularWeight;
+            CurrentOptions.ShowMoleculeCaptions = SettingsModel.ShowMoleculeCaptions;
 
             var args = new WpfEventArgs
             {
@@ -197,6 +203,26 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
+        private void OnClick_ShowMolecularWeight(object sender, RoutedEventArgs e)
+        {
+            if (!_loading)
+            {
+                CurrentOptions.ShowMolecularWeight = SettingsModel.ShowMolecularWeight;
+                Dirty = true;
+                EnableButtons();
+            }
+        }
+
+        private void OnClick_ShowMoleculeCaptions(object sender, RoutedEventArgs e)
+        {
+            if (!_loading)
+            {
+                CurrentOptions.ShowMoleculeCaptions = SettingsModel.ShowMoleculeCaptions;
+                Dirty = true;
+                EnableButtons();
+            }
+        }
+
         private void EnableButtons()
         {
             Ok.IsEnabled = Dirty;
@@ -204,6 +230,8 @@ namespace Chem4Word.ACME.Controls
             var settingsChanged = SettingsModel.ExplicitC != UserDefaultOptions.ExplicitC
                                   || SettingsModel.ExplicitH != UserDefaultOptions.ExplicitH
                                   || SettingsModel.ShowMoleculeGrouping != UserDefaultOptions.ShowMoleculeGrouping
+                                  || SettingsModel.ShowMolecularWeight != UserDefaultOptions.ShowMolecularWeight
+                                  || SettingsModel.ShowMoleculeCaptions != UserDefaultOptions.ShowMoleculeCaptions
                                   || SettingsModel.ShowColouredAtoms != UserDefaultOptions.ShowColouredAtoms;
 
             Defaults.IsEnabled = settingsChanged;

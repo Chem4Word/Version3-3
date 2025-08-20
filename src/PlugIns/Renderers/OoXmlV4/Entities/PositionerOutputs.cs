@@ -14,6 +14,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
     public class PositionerOutputs
     {
         public List<AtomLabelCharacter> AtomLabelCharacters { get; } = new List<AtomLabelCharacter>();
+        public Rect AllCharacterExtents { get; set; } = Rect.Empty;
         public Dictionary<string, List<Point>> ConvexHulls { get; } = new Dictionary<string, List<Point>>();
         public List<BondLine> BondLines { get; } = new List<BondLine>();
         public List<Point> RingCenters { get; } = new List<Point>();

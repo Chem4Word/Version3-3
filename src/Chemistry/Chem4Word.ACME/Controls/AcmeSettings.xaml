@@ -45,12 +45,14 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <!--  Show Atoms in Colour  -->
                             <CheckBox
                                 Grid.Row="0"
-                                Margin="5,0,5,0"
+                                Margin="5"
                                 VerticalAlignment="Center"
                                 d:IsLocked="True"
                                 Click="OnClick_ShowAtomsInColour"
@@ -105,8 +107,33 @@
                                 d:IsLocked="True"
                                 Click="OnClick_ShowMoleculeGroups"
                                 IsChecked="{Binding Path=ShowMoleculeGrouping, Mode=TwoWay}">
-                                Show grouping of molecules in Display
+                                Show grouping of molecules (in Display and Word)
                             </CheckBox>
+
+                            <!--  Show Molecular Weight  -->
+                            <CheckBox
+                                Grid.Row="5"
+                                Grid.Column="0"
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                d:IsLocked="True"
+                                Click="OnClick_ShowMolecularWeight"
+                                IsChecked="{Binding Path=ShowMolecularWeight, Mode=TwoWay}">
+                                Render Molecular Weight (in Word)
+                            </CheckBox>
+
+                            <!--  Show Molecule Captions  -->
+                            <CheckBox
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                d:IsLocked="True"
+                                Click="OnClick_ShowMoleculeCaptions"
+                                IsChecked="{Binding Path=ShowMoleculeCaptions, Mode=TwoWay}">
+                                Render Molecule Captions (in Word)
+                            </CheckBox>
+
                         </Grid>
                     </StackPanel>
                 </Grid>

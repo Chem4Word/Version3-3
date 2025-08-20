@@ -4,6 +4,8 @@
   <c4w:showColouredAtoms>true</c4w:showColouredAtoms>
   <c4w:showMoleculeGrouping>true</c4w:showMoleculeGrouping>
   <c4w:molecularWeight>48.044</c4w:molecularWeight>
+  <c4w:showMolecularWeight>false</c4w:showMolecularWeight>
+  <c4w:showMoleculeCaptions>false</c4w:showMoleculeCaptions>
   <cml:molecule id="m1">
     <cml:formula id="m1.f0" concise="C 2 H 8" />
     <cml:atomArray>

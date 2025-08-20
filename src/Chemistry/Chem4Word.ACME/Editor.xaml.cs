@@ -343,6 +343,8 @@ namespace Chem4Word.ACME
                 ActiveController.Model.ExplicitH = newOptions.ExplicitH;
                 ActiveController.Model.ShowColouredAtoms = newOptions.ShowColouredAtoms;
                 ActiveController.Model.ShowMoleculeGrouping = newOptions.ShowMoleculeGrouping;
+                ActiveController.Model.ShowMolecularWeight = newOptions.ShowMolecularWeight;
+                ActiveController.Model.ShowMoleculeCaptions = newOptions.ShowMoleculeCaptions;
 
                 ActiveController.HasChangedSettings = true;
 

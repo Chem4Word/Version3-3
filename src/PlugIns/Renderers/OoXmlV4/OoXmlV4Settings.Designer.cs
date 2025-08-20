@@ -34,7 +34,6 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.tabControlEx = new Chem4Word.Core.UI.Controls.TabControlEx();
             this.Rendering = new System.Windows.Forms.TabPage();
             this.ClipCrossingBonds = new System.Windows.Forms.CheckBox();
-            this.ShowMoleculeCaptions = new System.Windows.Forms.CheckBox();
             this.Debug = new System.Windows.Forms.TabPage();
             this.ShowBondCrossingPoints = new System.Windows.Forms.CheckBox();
             this.ShowCharacterGroupsBox = new System.Windows.Forms.CheckBox();
@@ -72,7 +71,6 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.Rendering.BackColor = System.Drawing.SystemColors.Control;
             this.Rendering.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Rendering.Controls.Add(this.ClipCrossingBonds);
-            this.Rendering.Controls.Add(this.ShowMoleculeCaptions);
             this.Rendering.Location = new System.Drawing.Point(0, 24);
             this.Rendering.Margin = new System.Windows.Forms.Padding(4);
             this.Rendering.Name = "Rendering";
@@ -86,7 +84,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ClipCrossingBonds.AutoSize = true;
             this.ClipCrossingBonds.Checked = true;
             this.ClipCrossingBonds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ClipCrossingBonds.Location = new System.Drawing.Point(7, 42);
+            this.ClipCrossingBonds.Location = new System.Drawing.Point(8, 9);
             this.ClipCrossingBonds.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ClipCrossingBonds.Name = "ClipCrossingBonds";
             this.ClipCrossingBonds.Size = new System.Drawing.Size(179, 23);
@@ -94,20 +92,6 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ClipCrossingBonds.Text = "Clip Crossing Bond Lines";
             this.ClipCrossingBonds.UseVisualStyleBackColor = true;
             this.ClipCrossingBonds.CheckedChanged += new System.EventHandler(this.OnCheckedChanged_ClipCrossingBonds);
-            // 
-            // ShowMoleculeCaptions
-            // 
-            this.ShowMoleculeCaptions.AutoSize = true;
-            this.ShowMoleculeCaptions.Checked = true;
-            this.ShowMoleculeCaptions.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowMoleculeCaptions.Location = new System.Drawing.Point(8, 9);
-            this.ShowMoleculeCaptions.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ShowMoleculeCaptions.Name = "ShowMoleculeCaptions";
-            this.ShowMoleculeCaptions.Size = new System.Drawing.Size(178, 23);
-            this.ShowMoleculeCaptions.TabIndex = 23;
-            this.ShowMoleculeCaptions.Text = "Show Molecule Captions";
-            this.ShowMoleculeCaptions.UseVisualStyleBackColor = true;
-            this.ShowMoleculeCaptions.CheckedChanged += new System.EventHandler(this.OnCheckedChanged_ShowMoleculeCaptions);
             // 
             // Debug
             // 
@@ -336,7 +320,6 @@ namespace Chem4Word.Renderer.OoXmlV4
         private System.Windows.Forms.CheckBox ShowMoleculeBox;
         private System.Windows.Forms.CheckBox ShowAtomPositions;
         private System.Windows.Forms.CheckBox ShowConvexHulls;
-        private System.Windows.Forms.CheckBox ShowMoleculeCaptions;
         private System.Windows.Forms.CheckBox ShowDoubleBondTrimmingLines;
         private System.Windows.Forms.CheckBox ShowBondDirection;
         private System.Windows.Forms.CheckBox ShowCharacterGroupsBox;

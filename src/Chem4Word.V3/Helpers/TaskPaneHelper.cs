@@ -76,10 +76,12 @@ namespace Chem4Word.Helpers
                             Globals.Chem4WordV3.Telemetry.Write(module, "Information", outcome);
                         }
 
-                        model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
-                        model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
                         model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
                         model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
+                        model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
+                        model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
+                        model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
+                        model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
                     }
 
                     contentControl = ChemistryHelper.Insert2DChemistry(document, cmlConverter.Export(model), isCopy);

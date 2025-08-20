@@ -40,7 +40,9 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             pbModel.ExplicitC = model.ExplicitC;
             pbModel.ExplicitH = (int?)model.ExplicitH;
             pbModel.ShowColouredAtoms = model.ShowColouredAtoms;
-            pbModel.ShowMoleculeBrackets = model.ShowMoleculeGrouping;
+            pbModel.ShowMoleculeGrouping = model.ShowMoleculeGrouping;
+            pbModel.ShowMolecularWeight = model.ShowMolecularWeight;
+            pbModel.ShowMoleculeCaptions = model.ShowMoleculeCaptions;
 
             //add annotations
             foreach (var ann in model.Annotations.Values)
@@ -258,9 +260,23 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             {
                 result.ShowColouredAtoms = protoBuffModel.ShowColouredAtoms.Value;
             }
+            // This is a legacy property which is imported only
             if (protoBuffModel.ShowMoleculeBrackets.HasValue)
             {
                 result.ShowMoleculeGrouping = protoBuffModel.ShowMoleculeBrackets.Value;
+            }
+            if (protoBuffModel.ShowMoleculeGrouping.HasValue)
+            {
+                result.ShowMoleculeGrouping = protoBuffModel.ShowMoleculeGrouping.Value;
+            }
+
+            if (protoBuffModel.ShowMolecularWeight.HasValue)
+            {
+                result.ShowMolecularWeight = protoBuffModel.ShowMolecularWeight.Value;
+            }
+            if (protoBuffModel.ShowMoleculeCaptions.HasValue)
+            {
+                result.ShowMoleculeCaptions = protoBuffModel.ShowMoleculeCaptions.Value;
             }
 
             ImportAnnotations(protoBuffModel, result);

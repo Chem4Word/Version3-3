@@ -59,8 +59,9 @@ namespace Chem4Word.ACME.Models
             if (_chemistry is byte[] bytes)
             {
                 var pbc = new ProtocolBufferConverter();
+                var model = pbc.Import(bytes);
                 var cc = new CMLConverter();
-                return cc.Export(pbc.Import(bytes));
+                return cc.Export(model);
             }
 
             return null;

@@ -10,7 +10,7 @@
             <Change>...</Change>
             <Change>...</Change>
             <Change>...</Change>
-            <Change>New Feature: persists Molecular Weight in CML and displays in ACME and document</Change>
+            <Change>New Feature: Persists Molecular Weight in CML and displays in ACME and Word document</Change>
             <Change>UX: Disable separate if structure has reactions or annotations</Change>
             <Change>BugFix: Improve handling of copy/paste of ContentControl(s)</Change>
             <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>

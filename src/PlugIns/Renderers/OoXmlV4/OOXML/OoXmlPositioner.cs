@@ -47,6 +47,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         /// 2. Position bond lines
         /// 3. Position brackets (molecules and groups)
         /// 4. Position molecule label characters
+        /// 4.1 Position molecular weight characters
         /// 5. Shrink bond lines to not clash with atom labels
         /// 6. Add mask underneath long bond lines of bonds detected as having crossing points
         /// </summary>
@@ -81,8 +82,44 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             ProcessReactionTexts();
             ProcessAnnotationTexts();
 
+            ProcessMolecularWeight();
+
             // We are done now so we can return the final values
             return Outputs;
+        }
+
+        private void ProcessMolecularWeight()
+        {
+            if (Inputs.Model.ShowMolecularWeight)
+            {
+                var point = new Point(Outputs.AllCharacterExtents.Left
+                                      + Outputs.AllCharacterExtents.Width / 2,
+                                      Outputs.AllCharacterExtents.Bottom
+                                      + Inputs.MeanBondLength * OoXmlHelper.MultipleBondOffsetPercentage / 2);
+
+                AddMolecularWeightAsCharacters(SafeDouble.AsCMLString(Inputs.Model.MolecularWeight), point, "molWeight");
+
+                Outputs.AllCharacterExtents = OoXmlHelper.GetAllCharacterExtents(Inputs.Model, Outputs);
+            }
+        }
+
+        private void AddMolecularWeightAsCharacters(string molecularWeight, Point centrePoint, string path)
+        {
+            var point = new Point(centrePoint.X, centrePoint.Y);
+
+            // Measure string
+            var boundingBox = MeasureString(molecularWeight, point);
+            // Move down by half the line's height
+            //point.Offset(0, boundingBox.Height / 2 + Inputs.MeanBondLength * OoXmlHelper.MultipleBondOffsetPercentage / 2);
+
+            // Place string characters such that they are hanging below the "line"
+            if (boundingBox != Rect.Empty)
+            {
+                var place = new Point(point.X - boundingBox.Width / 2, point.Y + (point.Y - boundingBox.Top));
+                PlaceString(molecularWeight, place, path);
+            }
+
+            Outputs.AllCharacterExtents = OoXmlHelper.GetAllCharacterExtents(Inputs.Model, Outputs);
         }
 
         private void AddMaskBehindCrossedBonds()
@@ -136,6 +173,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     }
                 }
             }
+
+            Outputs.AllCharacterExtents = OoXmlHelper.GetAllCharacterExtents(Inputs.Model, Outputs);
         }
 
         private void AddReactionCharacters(Reaction reaction, List<FunctionalGroupTerm> terms,
@@ -190,6 +229,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     AddAnnotationCharacters(annotation, annotation.Path, terms);
                 }
             }
+
+            Outputs.AllCharacterExtents = OoXmlHelper.GetAllCharacterExtents(Inputs.Model, Outputs);
         }
 
         private void AddAnnotationCharacters(Annotation annotation, string path, List<FunctionalGroupTerm> terms,
@@ -687,7 +728,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
             // Position Molecule Label Characters
             // Handle optional rendering of molecule labels centered on brackets (if any) and below any molecule property characters
-            if (Inputs.Options.ShowMoleculeCaptions && mol.Captions.Any())
+            if (Inputs.Model.ShowMoleculeCaptions && mol.Captions.Any())
             {
                 var point = new Point(thisMoleculeExtents.MoleculeBracketsExtents.Left
                                         + thisMoleculeExtents.MoleculeBracketsExtents.Width / 2,
@@ -1235,50 +1276,22 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
         private void AddMoleculeCaptionsAsCharacters(List<TextualProperty> labels, Point centrePoint, string moleculePath)
         {
-            var measure = new Point(centrePoint.X, centrePoint.Y);
+            var point = new Point(centrePoint.X, centrePoint.Y);
 
             foreach (var label in labels)
             {
                 // Measure string
-                var boundingBox = MeasureString(label.Value, measure);
+                var boundingBox = MeasureString(label.Value, point);
 
                 // Place string characters such that they are hanging below the "line"
                 if (boundingBox != Rect.Empty)
                 {
-                    var place = new Point(measure.X - boundingBox.Width / 2, measure.Y + (measure.Y - boundingBox.Top));
+                    var place = new Point(point.X - boundingBox.Width / 2, point.Y + (point.Y - boundingBox.Top));
                     PlaceString(label.Value, place, moleculePath);
                 }
 
                 // Move to next line
-                measure.Offset(0, boundingBox.Height + Inputs.MeanBondLength * OoXmlHelper.MultipleBondOffsetPercentage / 2);
-            }
-        }
-
-        // Do Not delete as we may yet end up using this ...
-        private void AddMoleculeCaptionsAsTextBox(List<TextualProperty> labels, Point centrePoint, string moleculePath)
-        {
-            var measure = new Point(centrePoint.X, centrePoint.Y);
-
-            // Adjust size to allow for text box to be bigger than the text
-
-            foreach (var label in labels)
-            {
-                // Measure string
-                var boundingBox = MeasureString(label.Value, measure);
-
-                // Adjustments to take into account text box margins
-                boundingBox.Width += OoXmlHelper.ScaleCsTtfToCml(_hydrogenCharacter.Width, Inputs.MeanBondLength) * 2.5;
-                boundingBox.Height *= 1.5;
-
-                // Place string characters such that they are hanging below the "line"
-                if (boundingBox != Rect.Empty)
-                {
-                    var place = new Point(measure.X - boundingBox.Width / 2, measure.Y);
-                    Outputs.MoleculeCaptions.Add(new OoXmlString(new Rect(place, boundingBox.Size), label.Value, moleculePath));
-                }
-
-                // Move to next line
-                measure.Offset(0, boundingBox.Height + Inputs.MeanBondLength * OoXmlHelper.MultipleBondOffsetPercentage / 2);
+                point.Offset(0, boundingBox.Height + Inputs.MeanBondLength * OoXmlHelper.MultipleBondOffsetPercentage / 2);
             }
         }
 

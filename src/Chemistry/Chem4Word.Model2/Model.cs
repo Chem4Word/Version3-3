@@ -194,6 +194,10 @@ namespace Chem4Word.Model2
         public bool ShowMoleculeGrouping { get; set; } = true;
         public bool ShowColouredAtoms { get; set; } = true;
 
+        public bool ShowMoleculeCaptions { get; set; } = false;
+        public bool ShowMolecularWeight { get; set; } = false;
+
+
         public bool InhibitEvents { get; set; }
 
         internal List<string> GeneralErrors { get; }
@@ -516,7 +520,7 @@ namespace Chem4Word.Model2
         }
 
         /// <summary>
-        /// Overall Cml bounding box for all atoms
+        /// Overall Cml bounding box for all atoms, reactions & annotations
         /// </summary>
         public Rect BoundingBoxOfCmlPoints
         {
@@ -1022,6 +1026,8 @@ namespace Chem4Word.Model2
             modelCopy.ExplicitH = ExplicitH;
             modelCopy.ShowColouredAtoms = ShowColouredAtoms;
             modelCopy.ShowMoleculeGrouping = ShowMoleculeGrouping;
+            modelCopy.ShowMolecularWeight = ShowMolecularWeight;
+            modelCopy.ShowMoleculeCaptions = ShowMoleculeCaptions;
 
             return modelCopy;
         }
@@ -1032,6 +1038,8 @@ namespace Chem4Word.Model2
             ExplicitH = options.ExplicitH;
             ShowColouredAtoms = options.ShowColouredAtoms;
             ShowMoleculeGrouping = options.ShowMoleculeGrouping;
+            ShowMolecularWeight = options.ShowMolecularWeight;
+            ShowMoleculeCaptions = options.ShowMoleculeCaptions;
         }
 
         public RenderingOptions GetCurrentOptions()

@@ -87,6 +87,20 @@ namespace Chem4Word.Model2.Converters.CML
             return id1.Union(id2).FirstOrDefault();
         }
 
+        internal static XElement GetShowMolecularWeightTag(XElement doc)
+        {
+            var id1 = from XElement xe in doc.Elements(CMLConstants.TagShowMolecularWeight) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagShowMolecularWeight) select xe;
+            return id1.Union(id2).FirstOrDefault();
+        }
+
+        internal static XElement GetShowMoleculeCaptionsTag(XElement doc)
+        {
+            var id1 = from XElement xe in doc.Elements(CMLConstants.TagShowMoleculeCaptions) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagShowMoleculeCaptions) select xe;
+            return id1.Union(id2).FirstOrDefault();
+        }
+
         internal static XElement GetCustomXmlPartGuid(XElement doc)
         {
             var id1 = from XElement xe in doc.Elements(CMLConstants.TagXmlPartGuid) select xe;

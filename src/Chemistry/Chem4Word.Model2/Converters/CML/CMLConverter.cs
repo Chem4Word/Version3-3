@@ -92,6 +92,26 @@ namespace Chem4Word.Model2.Converters.CML
                     }
 
                     // Only import if set
+                    XElement showMolecularWeight = CMLHelper.GetShowMolecularWeightTag(root);
+                    if (showMolecularWeight != null && !string.IsNullOrEmpty(showMolecularWeight.Value))
+                    {
+                        if (bool.TryParse(showMolecularWeight.Value, out bool result))
+                        {
+                            newModel.ShowMolecularWeight = result;
+                        }
+                    }
+
+                    // Only import if set
+                    XElement showMoleculeCaptions = CMLHelper.GetShowMoleculeCaptionsTag(root);
+                    if (showMoleculeCaptions != null && !string.IsNullOrEmpty(showMoleculeCaptions.Value))
+                    {
+                        if (bool.TryParse(showMoleculeCaptions.Value, out bool result))
+                        {
+                            newModel.ShowMoleculeCaptions = result;
+                        }
+                    }
+
+                    // Only import if set
                     XElement customXmlPartGuid = CMLHelper.GetCustomXmlPartGuid(root);
                     if (customXmlPartGuid != null && !string.IsNullOrEmpty(customXmlPartGuid.Value))
                     {
@@ -265,6 +285,8 @@ namespace Chem4Word.Model2.Converters.CML
                     root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagShowColouredAtoms, model.ShowColouredAtoms));
                     root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagShowMoleculeGrouping, model.ShowMoleculeGrouping));
                     root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagMolecularWeight, SafeDouble.AsCMLString(model.MolecularWeight)));
+                    root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagShowMolecularWeight, model.ShowMolecularWeight));
+                    root.Add(new XElement(CMLNamespaces.c4w + CMLConstants.TagShowMoleculeCaptions, model.ShowMoleculeCaptions));
 
                     // Build document
                     foreach (var molecule in model.Molecules.Values)

@@ -104,7 +104,6 @@ namespace Chem4Word.Renderer.OoXmlV4
         private void RestoreControls()
         {
             ClipCrossingBonds.Checked = RendererOptions.ClipCrossingBonds;
-            ShowMoleculeCaptions.Checked = RendererOptions.ShowMoleculeCaptions;
 
             // Debugging Options
             ClipBondLines.Checked = RendererOptions.ClipBondLines;
@@ -239,21 +238,6 @@ namespace Chem4Word.Renderer.OoXmlV4
             try
             {
                 RendererOptions.ShowHulls = ShowConvexHulls.Checked;
-                _dirty = true;
-            }
-            catch (Exception ex)
-            {
-                new ReportError(Telemetry, TopLeft, module, ex).ShowDialog();
-            }
-        }
-
-        private void OnCheckedChanged_ShowMoleculeCaptions(object sender, EventArgs e)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-
-            try
-            {
-                RendererOptions.ShowMoleculeCaptions = ShowMoleculeCaptions.Checked;
                 _dirty = true;
             }
             catch (Exception ex)

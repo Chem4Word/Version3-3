@@ -217,7 +217,9 @@ namespace Chem4Word.Helpers
                                         ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC,
                                         ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH,
                                         ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms,
-                                        ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping
+                                        ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping,
+                                        ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight,
+                                        ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions
                                     };
                                     var model = new Model();
                                     model.SetUserOptions(options);

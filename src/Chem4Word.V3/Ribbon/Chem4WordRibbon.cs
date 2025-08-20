@@ -693,6 +693,12 @@ namespace Chem4Word
                                             model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
                                             model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
                                         }
+                                        if (!data.Contains("<c4w:showMolecularWeight>"))
+                                        {
+                                            model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
+                                            model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
+                                        }
+
                                         break;
 
                                     case ".mol":
@@ -704,6 +710,8 @@ namespace Chem4Word
                                         model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
                                         model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
                                         model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
+                                        model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
+                                        model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
 
                                         break;
 
@@ -715,6 +723,8 @@ namespace Chem4Word
                                         model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
                                         model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
                                         model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
+                                        model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
+                                        model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
 
                                         break;
 
@@ -947,6 +957,8 @@ namespace Chem4Word
                                     {
                                         ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms,
                                         ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping,
+                                        ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight,
+                                        ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions,
                                         ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH,
                                         ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC,
                                         DefaultBondLength = Globals.Chem4WordV3.SystemOptions.BondLength
@@ -1782,6 +1794,8 @@ namespace Chem4Word
                                 model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
                                 model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
                                 model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
+                                model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
+                                model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
 
                                 // Remove Explicit Hydrogens if required
                                 if (Globals.Chem4WordV3.SystemOptions.RemoveExplicitHydrogensOnImportFromSearch)

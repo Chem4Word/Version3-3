@@ -422,6 +422,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <CheckBox
@@ -478,6 +480,26 @@
                             d:IsLocked="True"
                             Click="OnClick_ShowGroupingOfMolecules">
                             Show Grouping of Molecules
+                        </CheckBox>
+                        <CheckBox
+                            x:Name="ShowMolecularWeight"
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalContentAlignment="Center"
+                            d:IsLocked="True"
+                            Click="OnClick_ShowMolecularWeight">
+                            Show Molecular Weight
+                        </CheckBox>
+                        <CheckBox
+                            x:Name="ShowMoleculeCaptions"
+                            Grid.Row="5"
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalContentAlignment="Center"
+                            d:IsLocked="True"
+                            Click="OnClick_ShowMoleculeCaptions">
+                            Show Molecule Captions
                         </CheckBox>
                     </Grid>
                 </Grid>

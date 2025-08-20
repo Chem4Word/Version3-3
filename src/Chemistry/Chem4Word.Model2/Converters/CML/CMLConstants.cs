@@ -30,6 +30,8 @@ namespace Chem4Word.Model2.Converters.CML
         public const string TagShowColouredAtoms = "showColouredAtoms";
         public const string TagShowMoleculeGrouping = "showMoleculeGrouping";
         public const string TagMolecularWeight = "molecularWeight";
+        public const string TagShowMolecularWeight = "showMolecularWeight";
+        public const string TagShowMoleculeCaptions = "showMoleculeCaptions";
 
         // General
         public const string AttributeId = "id";

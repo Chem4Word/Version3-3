@@ -91,6 +91,12 @@ namespace Chem4Word
         [JsonProperty]
         public bool ShowMoleculeGrouping { get; set; } = true;
 
+        [JsonProperty]
+        public bool ShowMolecularWeight { get; set; } = false;
+
+        [JsonProperty]
+        public bool ShowMoleculeCaptions { get; set; } = false;
+
         #endregion Rendering Options
 
         // Not serialised
@@ -141,6 +147,9 @@ namespace Chem4Word
             ExplicitC = false;
             ExplicitH = HydrogenLabels.HeteroAndTerminal;
             ShowMoleculeGrouping = true;
+
+            ShowMolecularWeight = false;
+            ShowMoleculeCaptions = false;
 
             // Non serialised settings
             AutoUpdateEnabled = DefaultCheckingEnabled;
@@ -272,6 +281,9 @@ namespace Chem4Word
             ExplicitH = copy.ExplicitH;
             ShowMoleculeGrouping = copy.ShowMoleculeGrouping;
 
+            ShowMolecularWeight = copy.ShowMolecularWeight;
+            ShowMoleculeCaptions = copy.ShowMoleculeCaptions;
+
             // Non serialised settings
             AutoUpdateEnabled = copy.AutoUpdateEnabled;
             AutoUpdateFrequency = copy.AutoUpdateFrequency;
@@ -362,6 +374,9 @@ namespace Chem4Word
                          && !ExplicitC
                          && ExplicitH == HydrogenLabels.HeteroAndTerminal
                          && ShowMoleculeGrouping
+
+                         && !ShowMolecularWeight
+                         && !ShowMoleculeCaptions
 
                          && AutoUpdateEnabled
                          && AutoUpdateFrequency == 7;

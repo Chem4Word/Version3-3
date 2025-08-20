@@ -39,7 +39,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnLoad_EditLabelsHost(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 using (new WaitCursor())
@@ -56,12 +56,6 @@ namespace Chem4Word.UI.WPF
                         Top = (int)sensible.Y;
                     }
 
-                    // Fix bottom panel
-                    int margin = Buttons.Height - Save.Bottom;
-                    splitContainer1.SplitterDistance = splitContainer1.Height - Save.Height - margin * 2;
-                    splitContainer1.FixedPanel = FixedPanel.Panel2;
-                    splitContainer1.IsSplitterFixed = true;
-
                     var editor = new LabelsEditor();
                     editor.InitializeComponent();
                     elementHost1.Child = editor;
@@ -70,7 +64,7 @@ namespace Chem4Word.UI.WPF
                     editor.Used1D = Used1D;
                     editor.PopulateTreeView(Cml);
 
-                    Warning.Text = Message;
+                    StatusPanel.Label1Text = Message;
                 }
             }
             catch (Exception ex)
@@ -82,13 +76,13 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private void OnClick_Save(object sender, EventArgs e)
+        private void OnClick_Ok(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
             _closedInCode = true;
             if (elementHost1.Child is LabelsEditor editor)
             {
-                CMLConverter cc = new CMLConverter();
+                var cc = new CMLConverter();
                 DialogResult = DialogResult.OK;
                 editor.EditedModel.SetAnyMissingNameIds();
                 Cml = cc.Export(editor.EditedModel);
@@ -112,13 +106,13 @@ namespace Chem4Word.UI.WPF
                     {
                         if (DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
                         {
-                            StringBuilder sb = new StringBuilder();
+                            var sb = new StringBuilder();
                             sb.AppendLine("Do you wish to save your changes?");
                             sb.AppendLine("  Click 'Yes' to save your changes and exit.");
                             sb.AppendLine("  Click 'No' to discard your changes and exit.");
                             sb.AppendLine("  Click 'Cancel' to return to the form.");
 
-                            DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                            var dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
                             switch (dr)
                             {
                                 case DialogResult.Cancel:

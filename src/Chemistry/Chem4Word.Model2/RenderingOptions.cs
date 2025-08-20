@@ -19,6 +19,10 @@ namespace Chem4Word.Model2
 
         public bool ShowMoleculeGrouping { get; set; } = true;
 
+        public bool ShowMolecularWeight { get; set; } = false;
+
+        public bool ShowMoleculeCaptions { get; set; } = false;
+
         public bool ShowColouredAtoms { get; set; } = true;
 
         public double DefaultBondLength { get; set; } = Constants.StandardBondLength;
@@ -41,6 +45,8 @@ namespace Chem4Word.Model2
             ExplicitH = temp.ExplicitH;
             ShowColouredAtoms = temp.ShowColouredAtoms;
             ShowMoleculeGrouping = temp.ShowMoleculeGrouping;
+            ShowMolecularWeight = temp.ShowMolecularWeight;
+            ShowMoleculeCaptions = temp.ShowMoleculeCaptions;
             DefaultBondLength = temp.DefaultBondLength;
         }
 
@@ -54,6 +60,8 @@ namespace Chem4Word.Model2
             ExplicitH = model.ExplicitH;
             ShowColouredAtoms = model.ShowColouredAtoms;
             ShowMoleculeGrouping = model.ShowMoleculeGrouping;
+            ShowMolecularWeight = model.ShowMolecularWeight;
+            ShowMoleculeCaptions = model.ShowMoleculeCaptions;
             DefaultBondLength = model.MeanBondLength;
         }
 
@@ -75,6 +83,8 @@ namespace Chem4Word.Model2
             {
                 ShowColouredAtoms = ShowColouredAtoms,
                 ShowMoleculeGrouping = ShowMoleculeGrouping,
+                ShowMolecularWeight = ShowMolecularWeight,
+                ShowMoleculeCaptions = ShowMoleculeCaptions,
                 ExplicitC = ExplicitC,
                 ExplicitH = ExplicitH,
                 DefaultBondLength = DefaultBondLength
@@ -90,6 +100,8 @@ namespace Chem4Word.Model2
             && ExplicitH == options.ExplicitH
             && ShowMoleculeGrouping == options.ShowMoleculeGrouping
             && ShowColouredAtoms == options.ShowColouredAtoms
+            && ShowMoleculeCaptions == options.ShowMoleculeCaptions
+            && ShowMolecularWeight == options.ShowMolecularWeight
             && DefaultBondLength == options.DefaultBondLength;
     }
 }

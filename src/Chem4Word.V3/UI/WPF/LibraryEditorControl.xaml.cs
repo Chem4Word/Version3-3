@@ -185,6 +185,8 @@ namespace Chem4Word.UI.WPF
                             ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH,
                             ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms,
                             ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping,
+                            ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight,
+                            ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions,
                             DefaultBondLength = Constants.StandardBondLength
                         };
                         editor.DefaultRenderingOptions = renderingOptions.ToJson();

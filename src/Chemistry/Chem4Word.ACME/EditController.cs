@@ -476,17 +476,29 @@ namespace Chem4Word.ACME
 
         internal void SendStatus((string message, string formula, string molecularWeight) value)
         {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                var args = new WpfEventArgs();
-                args.Message = value.message;
-                args.Formula = value.formula;
-                args.MolecularWeight = value.molecularWeight;
+                var args = new WpfEventArgs
+                           {
+                               Message = value.message
+                           };
+
+                var hasReactions = (Model.ReactionSchemes.Any() &&
+                                    Model.ReactionSchemes.First().Value.Reactions.Count > 0);
+                var moleculesSelected = SelectionType == SelectionTypeCode.Molecule;
+
+                if (hasReactions && moleculesSelected || !hasReactions)
+                {
+                    args.Formula = value.formula;
+                    args.MolecularWeight = value.molecularWeight;
+                }
+
                 OnFeedbackChange?.Invoke(this, args);
             }
-            catch
+            catch (Exception exception)
             {
-                // We don't care if this fails
+                Telemetry.Write(module, "Exception", exception.ToString());
             }
         }
 

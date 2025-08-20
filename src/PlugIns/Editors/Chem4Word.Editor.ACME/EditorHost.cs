@@ -119,24 +119,12 @@ namespace Chem4Word.Editor.ACME
 
         private void OnFeedbackChange_AcmeEditor(object sender, WpfEventArgs e)
         {
-            var activeController = ((Chem4Word.ACME.Editor)elementHost1.Child).ActiveController;
-            var activeModel = activeController.Model;
-            bool hasReactions = (activeModel.ReactionSchemes.Any() &&
-                                 activeModel.ReactionSchemes.First().Value.Reactions.Count > 0);
-            bool moleculesSelected = (activeController.SelectionType == SelectionTypeCode.Molecule);
-            if (hasReactions && moleculesSelected || !hasReactions)
-            {
-                MWTDisplay.Text = e.MolecularWeight;
-                FormulaDisplay.Text = e.Formula;
-            }
-            else
-            {
-                MWTDisplay.Text = "";
-                FormulaDisplay.Text = "";
-            }
+            StatusPanel.Label1Text = e.Message;
+            StatusPanel.Label2Text = e.MolecularWeight;
+            StatusPanel.Label3Text = e.Formula;
         }
 
-        private void OnClick_Save(object sender, EventArgs e)
+        private void OnClick_Ok(object sender, EventArgs e)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -200,6 +188,11 @@ namespace Chem4Word.Editor.ACME
                     }
                 }
             }
+        }
+
+        private void OnClick_Save(object sender, EventArgs e)
+        {
+
         }
     }
 }

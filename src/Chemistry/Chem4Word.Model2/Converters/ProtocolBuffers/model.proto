@@ -22,5 +22,9 @@ message PBModel
 	google.protobuf.BoolValue ExplicitC = 4;
 	google.protobuf.Int32Value ExplicitH = 5;
 	google.protobuf.BoolValue ShowColouredAtoms = 6;
+	// Legacy Property - No longer set on export
 	google.protobuf.BoolValue ShowMoleculeBrackets = 7;
+	google.protobuf.BoolValue ShowMolecularWeight = 8;
+	google.protobuf.BoolValue ShowMoleculeCaptions = 9;
+	google.protobuf.BoolValue ShowMoleculeGrouping = 10;
 }

@@ -62,6 +62,31 @@ namespace Chem4Word.ACME.Models
             }
         }
 
+        private bool _showMolecularWeight;
+
+        public bool ShowMolecularWeight
+        {
+            get => _showMolecularWeight;
+            set
+            {
+                _showMolecularWeight = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private bool _showMoleculeCaptions;
+
+        public bool ShowMoleculeCaptions
+        {
+            get => _showMoleculeCaptions;
+            set
+            {
+                _showMoleculeCaptions = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

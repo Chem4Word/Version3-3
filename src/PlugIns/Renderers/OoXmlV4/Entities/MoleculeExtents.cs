@@ -70,10 +70,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
             _groupBracketsExtents = extents;
         }
 
-        public override string ToString()
-        {
-            return $"{Path}, {AtomExtents}";
-        }
+        public override string ToString() => $"{Path}, {AtomExtents}";
 
         public void SetInternalCharacterExtents(Rect extents)
         {
