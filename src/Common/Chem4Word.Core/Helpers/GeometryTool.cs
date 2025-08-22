@@ -17,6 +17,18 @@ namespace Chem4Word.Core.Helpers
 {
     public static class GeometryTool
     {
+        //returns the dot product of a and b
+        public static double Dot(this Vector a, Vector b) => a.X * b.X + a.Y + b.Y;
+
+        //projects vector a onto the axis defined by b
+        public static Vector Project(this Vector a, Vector b)
+        {
+            var projection =
+                a.Dot(b) / b.Dot(b) * b;
+
+            return projection;
+        }
+
         public static Vector Perpendicular(this Vector v) => new Vector(-v.Y, v.X);
 
         /// See https://www.topcoder.com/community/data-science/data-science-tutorials/geometry-concepts-line-intersection-and-its-applications/
@@ -44,10 +56,8 @@ namespace Chem4Word.Core.Helpers
             }
 
             // Move this point to the convex hull.
-            var hull = new List<Point>
-                       {
-                                      bestPt
-                                  };
+            var hull = new List<Point> { bestPt };
+
             points.Remove(bestPt);
 
             // Start wrapping up the other points.

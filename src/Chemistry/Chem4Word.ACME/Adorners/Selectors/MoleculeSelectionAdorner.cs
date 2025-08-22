@@ -17,10 +17,13 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
+// ReSharper disable once IdentifierTypo
 namespace Chem4Word.ACME.Adorners.Selectors
 {
     public class MoleculeSelectionAdorner : SingleObjectSelectionAdorner
     {
+        private const double MinTravelWidth = 10;
+
         //static as they need to be set only when the adorner is first created
         private static double? _thumbWidth;
 
@@ -28,19 +31,28 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private static double _rotateThumbWidth;
 
         //some things to grab hold of
-        protected readonly Thumb TopLeftHandle; //these do the resizing
 
-        protected readonly Thumb TopRightHandle;    //these do the resizing
-        protected readonly Thumb BottomLeftHandle;  //these do the resizing
-        protected readonly Thumb BottomRightHandle; //these do the resizing
+        //side handles
+        protected readonly DragHandle LeftHandle;
+
+        protected readonly DragHandle RightHandle;
+        protected readonly DragHandle BottomHandle;
+        protected readonly DragHandle TopHandle;
+
+        //corner handles
+        protected readonly DragHandle TopLeftHandle;
+
+        protected readonly DragHandle TopRightHandle;
+        protected readonly DragHandle BottomLeftHandle;
+        protected readonly DragHandle BottomRightHandle;
 
         //the rotator
-        protected readonly Thumb RotateHandle; //Grab hold of this to rotate the molecule
+        protected readonly DragHandle RotateHandle; //Grab hold of this to rotate the molecule
 
         //flags
         protected bool Resizing;
 
-        protected bool Rotating;
+        protected bool IsRotating;
 
         private double _rotateAngle;
         private Point _centroid;
@@ -48,15 +60,12 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private Snapper _rotateSnapper;
         private double _yPlacement;
         private double _xPlacement;
+        private ScaleOperationParams _scaleOperationParams;
+        private Point _newThumbPos;
 
         public MoleculeSelectionAdorner(EditorCanvas currentEditor, List<BaseObject> objects)
             : base(currentEditor, objects)
         {
-            if (objects is null)
-            {
-                throw new ArgumentNullException(nameof(objects));
-            }
-
             if (_thumbWidth == null)
             {
                 _thumbWidth = 15;
@@ -64,12 +73,17 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 _rotateThumbWidth = _thumbWidth.Value;
             }
 
+            BuildAdornerCorner(ref LeftHandle, Cursors.SizeWE);
+            BuildAdornerCorner(ref RightHandle, Cursors.SizeWE);
+            BuildAdornerCorner(ref BottomHandle, Cursors.SizeNS);
+            BuildAdornerCorner(ref TopHandle, Cursors.SizeNS);
+
             BuildAdornerCorner(ref TopLeftHandle, Cursors.SizeNWSE);
             BuildAdornerCorner(ref TopRightHandle, Cursors.SizeNESW);
             BuildAdornerCorner(ref BottomLeftHandle, Cursors.SizeNESW);
             BuildAdornerCorner(ref BottomRightHandle, Cursors.SizeNWSE);
 
-            BuildRotateThumb(ref RotateHandle);
+            BuildRotateThumb(out RotateHandle);
 
             SetCentroid();
             SetBoundingBox();
@@ -86,7 +100,8 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         public Rect BoundingBox { get; set; }
 
-        private new bool IsWorking => Dragging || Resizing || Rotating;
+        private new bool IsWorking => Dragging || Resizing || IsRotating;
+        public Point RotateThumbPosition { get; set; }
 
         #endregion Properties
 
@@ -98,38 +113,159 @@ namespace Chem4Word.ACME.Adorners.Selectors
             DisableHandlers();
 
             //wire up the event handling
+            //starting the drag
             TopLeftHandle.DragStarted += OnResizeStarted;
             TopRightHandle.DragStarted += OnResizeStarted;
             BottomLeftHandle.DragStarted += OnResizeStarted;
             BottomRightHandle.DragStarted += OnResizeStarted;
 
-            TopLeftHandle.DragDelta += TopLeftHandleDragDelta;
-            TopRightHandle.DragDelta += TopRightHandleDragDelta;
-            BottomLeftHandle.DragDelta += BottomLeftHandleDragDelta;
-            BottomRightHandle.DragDelta += BottomRightHandleDragDelta;
+            LeftHandle.DragStarted += OnResizeStarted;
+            RightHandle.DragStarted += OnResizeStarted;
+            TopHandle.DragStarted += OnResizeStarted;
+            BottomHandle.DragStarted += OnResizeStarted;
 
-            TopLeftHandle.DragCompleted += OnHandle_ResizeCompleted;
-            TopRightHandle.DragCompleted += OnHandle_ResizeCompleted;
-            BottomLeftHandle.DragCompleted += OnHandle_ResizeCompleted;
-            BottomRightHandle.DragCompleted += OnHandle_ResizeCompleted;
+            //side handles
+            LeftHandle.DragDelta += HandleDragDelta;
+            RightHandle.DragDelta += HandleDragDelta;
+            BottomHandle.DragDelta += HandleDragDelta;
+            TopHandle.DragDelta += HandleDragDelta;
+
+            //dragging
+            //corner handles
+            TopLeftHandle.DragDelta += HandleDragDelta;
+            TopRightHandle.DragDelta += HandleDragDelta;
+            BottomLeftHandle.DragDelta += HandleDragDelta;
+            BottomRightHandle.DragDelta += HandleDragDelta;
+
+            //completing the dragging
+            LeftHandle.DragCompleted += OnResizeCompleted;
+            RightHandle.DragCompleted += OnResizeCompleted;
+            BottomHandle.DragCompleted += OnResizeCompleted;
+            TopHandle.DragCompleted += OnResizeCompleted;
+
+            TopLeftHandle.DragCompleted += OnResizeCompleted;
+            TopRightHandle.DragCompleted += OnResizeCompleted;
+            BottomLeftHandle.DragCompleted += OnResizeCompleted;
+            BottomRightHandle.DragCompleted += OnResizeCompleted;
+        }
+
+        private void OnResizeCompleted(object sender, DragCompletedEventArgs e)
+        {
+            Resizing = false;
+
+            var xTravel = e.HorizontalChange;
+            var yTravel = e.VerticalChange;
+            var finalLocation = new Point(_scaleOperationParams.Finish.X + xTravel, _scaleOperationParams.Finish.Y + yTravel);
+            var projection = (finalLocation - _scaleOperationParams.Start).Project(_scaleOperationParams.OriginalSense);
+
+            SetScalingFactors(projection, out var xScale, out var yScale);
+            LastOperation = new ScaleTransform(xScale, yScale, _scaleOperationParams.Start.X, _scaleOperationParams.Start.Y);
+
+            EditController.TransformObjects(LastOperation, AdornedObjects);
+
+            SetBoundingBox();
+            ResizeCompleted?.Invoke(this, e);
+            SetCentroid();
+            InvalidateVisual();
+
+            (sender as DragHandle)?.ReleaseMouseCapture();
+
+            _scaleOperationParams = null;
+        }
+
+        private void SetScalingFactors(Vector projection, out double xScale, out double yScale)
+        {
+            if (projection.X == 0)
+            {
+                xScale = 1.0;
+            }
+            else
+            {
+                xScale = projection.X / _scaleOperationParams.OriginalSense.X;
+            }
+
+            if (projection.Y == 0)
+            {
+                yScale = 1.0;
+            }
+            else
+            {
+                yScale = projection.Y / _scaleOperationParams.OriginalSense.Y;
+            }
         }
 
         private void OnResizeStarted(object sender, DragStartedEventArgs e)
         {
+            DragHandle handle = (DragHandle)sender;
+            DragHandle counterpart = GetCounterpart(handle);
+
+            //get the midpoint of both thumbs
+            Point start = counterpart.MidPoint;// - offset;
+            Point finish = handle.MidPoint;// - offset;
+            _scaleOperationParams = new ScaleOperationParams { Start = start, Finish = finish, Origin = Mouse.GetPosition(CurrentEditor) };
             Resizing = true;
             Dragging = false;
             Keyboard.Focus(this);
-            Mouse.Capture((Thumb)sender);
+            Mouse.Capture((DragHandle)sender);
             SetBoundingBox();
             DragXTravel = 0.0d;
             DragYTravel = 0.0d;
         }
 
-        private void BuildRotateThumb(ref Thumb rotateThumb)
+        //used to determining the scale object
+        //the start point of the scale is the centre of the counterpart
+        //to the handle being dragged (which is the end)
+        private DragHandle GetCounterpart(DragHandle handle)
         {
-            rotateThumb = new Thumb();
+            if (handle == RightHandle)
+            {
+                return LeftHandle;
+            }
 
-            rotateThumb.IsHitTestVisible = true;
+            if (handle == LeftHandle)
+            {
+                return RightHandle;
+            }
+
+            if (handle == TopHandle)
+            {
+                return BottomHandle;
+            }
+
+            if (handle == BottomHandle)
+            {
+                return TopHandle;
+            }
+
+            if (handle == TopLeftHandle)
+            {
+                return BottomRightHandle;
+            }
+
+            if (handle == BottomRightHandle)
+            {
+                return TopLeftHandle;
+            }
+
+            if (handle == TopRightHandle)
+            {
+                return BottomLeftHandle;
+            }
+
+            if (handle == BottomLeftHandle)
+            {
+                return TopRightHandle;
+            }
+
+            return null;
+        }
+
+        private void BuildRotateThumb(out DragHandle rotateThumb)
+        {
+            rotateThumb = new DragHandle
+            {
+                IsHitTestVisible = true
+            };
 
             RotateHandle.Width = _rotateThumbWidth;
             RotateHandle.Height = _rotateThumbWidth;
@@ -137,33 +273,54 @@ namespace Chem4Word.ACME.Adorners.Selectors
             rotateThumb.Style = (Style)FindResource(Common.RotateThumbStyle);
             rotateThumb.DragStarted += OnRotateStarted;
             rotateThumb.DragDelta += OnDragDelta_RotateThumb;
-            rotateThumb.DragCompleted += OnHandle_ResizeCompleted;
-            rotateThumb.ToolTip = "Drag this to rotate molecule";
+            rotateThumb.DragCompleted += OnRotateCompleted;
 
             VisualChildren.Add(rotateThumb);
         }
 
+        private void OnRotateCompleted(object sender, DragCompletedEventArgs e)
+        {
+            if (LastOperation != null)
+            {
+                EditController.TransformObjects(LastOperation, AdornedObjects);
+                SetBoundingBox();
+                SetCentroid();
+
+                (sender as DragHandle)?.ReleaseMouseCapture();
+            }
+            InvalidateVisual();
+            _scaleOperationParams = null;
+            IsRotating = false;
+            Resizing = false;
+        }
+
         private void OnRotateStarted(object sender, DragStartedEventArgs e)
         {
-            Rotating = true;
+            IsRotating = true;
             if (_rotateAngle == 0.0d)
             {
                 //we have not yet rotated anything
                 //so take a snapshot of the centroid of the molecule
                 SetCentroid();
             }
+            else
+            {
+                //capture the starting point of the thumb
+                _rotateThumbPos = RotateHandle.Centroid;
+                RotateThumbPosition = _rotateThumbPos;
+            }
         }
 
         private void OnDragDelta_RotateThumb(object sender, DragDeltaEventArgs e)
         {
-            if (Rotating)
+            if (IsRotating)
             {
                 Point mouse = Mouse.GetPosition(CurrentEditor);
 
-                var originalDisplacement = mouse - _centroid;
+                var displacement = mouse - _centroid;
 
                 double snapAngle = Vector.AngleBetween(GeometryTool.ScreenNorth,
-                                                       _rotateSnapper.SnapVector(0, originalDisplacement));
+                                                       _rotateSnapper.SnapVector(0, displacement));
                 _rotateAngle = snapAngle;
                 LastOperation = new RotateTransform(snapAngle, _centroid.X, _centroid.Y);
 
@@ -179,22 +336,6 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         public event DragCompletedEventHandler ResizeCompleted;
 
-        private void OnHandle_ResizeCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
-        {
-            Resizing = false;
-
-            if (LastOperation != null)
-            {
-                EditController.TransformObjects(LastOperation, AdornedObjects);
-
-                SetBoundingBox();
-                ResizeCompleted?.Invoke(this, dragCompletedEventArgs);
-                SetCentroid();
-                InvalidateVisual();
-            }
-            (sender as Thumb)?.ReleaseMouseCapture();
-        }
-
         private void SetBoundingBox()
         {
             BoundingBox = CurrentEditor.GetCombinedBoundingBox(AdornedObjects);
@@ -202,7 +343,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             AspectRatio = BoundingBox.Width / BoundingBox.Height;
         }
 
-        private void BuildAdornerCorner(ref Thumb cornerThumb, Cursor customizedCursor)
+        private void BuildAdornerCorner(ref DragHandle cornerThumb, Cursor customizedCursor)
         {
             if (cornerThumb != null)
             {
@@ -210,12 +351,12 @@ namespace Chem4Word.ACME.Adorners.Selectors
             }
 
             cornerThumb = new DragHandle(cursor: customizedCursor);
-            cornerThumb.ToolTip = "Drag this to resize";
+
             SetThumbStyle(cornerThumb);
             VisualChildren.Add(cornerThumb);
         }
 
-        protected virtual void SetThumbStyle(Thumb cornerThumb)
+        protected virtual void SetThumbStyle(DragHandle cornerThumb)
         {
             cornerThumb.Style = (Style)FindResource(Common.GrabHandleStyle);
         }
@@ -236,27 +377,44 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 boundingBox = LastOperation.TransformBounds(boundingBox);
             }
 
+            double middle = (boundingBox.Left + boundingBox.Right) / 2;
+            double centre = (boundingBox.Top + boundingBox.Bottom) / 2;
+
+            TopHandle.Arrange(new Rect(middle - _halfThumbWidth, boundingBox.Top - _halfThumbWidth, _thumbWidth.Value,
+                                       _thumbWidth.Value));
+            TopHandle.MidPoint = new Point(middle, boundingBox.Top);
+
+            BottomHandle.Arrange(new Rect(middle - _halfThumbWidth, boundingBox.Bottom - _halfThumbWidth, _thumbWidth.Value,
+                                       _thumbWidth.Value));
+            BottomHandle.MidPoint = new Point(middle, boundingBox.Bottom);
+
+            RightHandle.Arrange(new Rect(boundingBox.Right - _halfThumbWidth, centre - _halfThumbWidth, _thumbWidth.Value,
+                                       _thumbWidth.Value));
+            RightHandle.MidPoint = new Point(boundingBox.Right, centre);
+
+            LeftHandle.Arrange(new Rect(boundingBox.Left - _halfThumbWidth, centre - _halfThumbWidth, _thumbWidth.Value,
+                                         _thumbWidth.Value));
+            LeftHandle.MidPoint = new Point(boundingBox.Left, centre);
+
             TopLeftHandle.Arrange(new Rect(boundingBox.Left - _halfThumbWidth, boundingBox.Top - _halfThumbWidth, _thumbWidth.Value,
                                            _thumbWidth.Value));
+            TopLeftHandle.MidPoint = boundingBox.TopLeft;
+
             TopRightHandle.Arrange(new Rect(boundingBox.Left + boundingBox.Width - _halfThumbWidth, boundingBox.Top - _halfThumbWidth,
                                             _thumbWidth.Value,
                                             _thumbWidth.Value));
+            TopRightHandle.MidPoint = boundingBox.TopRight;
+
             BottomLeftHandle.Arrange(new Rect(boundingBox.Left - _halfThumbWidth, boundingBox.Top + boundingBox.Height - _halfThumbWidth,
                                               _thumbWidth.Value, _thumbWidth.Value));
+            BottomLeftHandle.MidPoint = boundingBox.BottomLeft;
+
             BottomRightHandle.Arrange(new Rect(boundingBox.Left + boundingBox.Width - _halfThumbWidth,
                                                boundingBox.Height + boundingBox.Top - _halfThumbWidth, _thumbWidth.Value,
                                                _thumbWidth.Value));
+            BottomRightHandle.MidPoint = boundingBox.BottomRight;
 
-            //add the rotator
-            _xPlacement = (boundingBox.Left + boundingBox.Right) / 2;
-            _yPlacement = boundingBox.Top - RotateHandle.Height * 3;
-            _rotateThumbPos = new Point(_xPlacement, _yPlacement);
-
-            if (BigThumb.IsDragging
-                || TopLeftHandle.IsDragging
-                || TopRightHandle.IsDragging
-                || BottomLeftHandle.IsDragging
-                || BottomRightHandle.IsDragging)
+            if (IsDragging())
             {
                 RotateHandle.Visibility = Visibility.Hidden;
             }
@@ -266,36 +424,54 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 SetCentroid();
             }
 
-            if (Rotating && LastOperation != null)
-            {
-                _rotateThumbPos = LastOperation.Transform(_rotateThumbPos);
-            }
+            Vector rotateThumbTweak = new Vector(-RotateHandle.BoundingBox.Width / 2, -RotateHandle.BoundingBox.Height / 2);
 
-            Vector rotateThumbTweak = new Vector(-RotateHandle.Width / 2, -RotateHandle.Height / 2);
-            Point newLoc = _rotateThumbPos + rotateThumbTweak;
-
-            if (Rotating && LastOperation != null)
+            if (IsRotating && LastOperation != null)
             {
-                TopLeftHandle.Visibility = Visibility.Collapsed;
-                TopRightHandle.Visibility = Visibility.Collapsed;
-                BottomLeftHandle.Visibility = Visibility.Collapsed;
-                BottomRightHandle.Visibility = Visibility.Collapsed;
-                BigThumb.Visibility = Visibility.Collapsed;
+                _newThumbPos = LastOperation.Transform(_rotateThumbPos);
+                RotateHandle.Arrange(new Rect(_newThumbPos + rotateThumbTweak, new Size(RotateHandle.Width, RotateHandle.Height)));
+
+                RotateThumbPosition = _newThumbPos;
             }
             else
             {
-                TopLeftHandle.Visibility = Visibility.Visible;
-                TopRightHandle.Visibility = Visibility.Visible;
-                BottomLeftHandle.Visibility = Visibility.Visible;
-                BottomRightHandle.Visibility = Visibility.Visible;
-                BigThumb.Visibility = Visibility.Visible;
+                _xPlacement = (boundingBox.Left + boundingBox.Right) / 2;
+                _yPlacement = boundingBox.Top - RotateHandle.Height * 3;
+
+                _rotateThumbPos = new Point(_xPlacement, _yPlacement);
+
+                RotateThumbPosition = _rotateThumbPos;
+                RotateHandle.Arrange(new Rect(_rotateThumbPos + rotateThumbTweak, new Size(RotateHandle.Width, RotateHandle.Height)));
             }
 
-            RotateHandle.Arrange(new Rect(newLoc.X, newLoc.Y, RotateHandle.Width, RotateHandle.Height));
+            var visibility = (IsRotating && LastOperation != null) ? Visibility.Collapsed : Visibility.Visible;
+
+            TopHandle.Visibility = visibility;
+            BottomHandle.Visibility = visibility;
+            RightHandle.Visibility = visibility;
+            LeftHandle.Visibility = visibility;
+
+            TopLeftHandle.Visibility = visibility;
+            TopRightHandle.Visibility = visibility;
+            BottomLeftHandle.Visibility = visibility;
+            BottomRightHandle.Visibility = visibility;
+
+            BigThumb.Visibility = visibility;
 
             base.ArrangeOverride(finalSize);
             return finalSize;
         }
+
+        private bool IsDragging() =>
+            BigThumb.IsDragging
+            || TopLeftHandle.IsDragging
+            || TopRightHandle.IsDragging
+            || BottomLeftHandle.IsDragging
+            || BottomRightHandle.IsDragging
+            || TopHandle.IsDragging
+            || LeftHandle.IsDragging
+            || BottomHandle.IsDragging
+            || RightHandle.IsDragging;
 
         protected override void OnRender(DrawingContext drawingContext)
         {
@@ -303,10 +479,10 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
             var ghostBrush = (Brush)FindResource(Common.AdornerBorderBrush);
             var ghostPen = new Pen(ghostBrush, 1.0);
-            if (!(BigThumb.IsDragging || TopLeftHandle.IsDragging || TopRightHandle.IsDragging
-                  || BottomLeftHandle.IsDragging || BottomRightHandle.IsDragging))
+
+            if (!IsDragging())
             {
-                drawingContext.DrawLine(ghostPen, _centroid, _rotateThumbPos);
+                drawingContext.DrawLine(ghostPen, _centroid, RotateThumbPosition);
                 drawingContext.DrawEllipse(ghostBrush, ghostPen, _centroid, 2, 2);
             }
 
@@ -373,97 +549,40 @@ namespace Chem4Word.ACME.Adorners.Selectors
             DragYTravel += argsVerticalChange;
         }
 
-        private double GetScaleFactor(double left, double top, double right, double bottom)
-        {
-            double scaleFactor;
-            var newAspectRatio = Math.Abs(right - left) / Math.Abs(bottom - top);
-            if (newAspectRatio > AspectRatio) //it's wider now than it is deep
-            {
-                scaleFactor = Math.Abs(top - bottom) / BoundingBox.Height;
-            }
-            else //it's deeper than it's wide
-            {
-                scaleFactor = Math.Abs(right - left) / BoundingBox.Width;
-            }
-
-            return scaleFactor;
-        }
-
-        // Handler for resizing from the top-right.
-        private void TopRightHandleDragDelta(object sender, DragDeltaEventArgs args)
-        {
-            IncrementDragging(args);
-
-            if (NotDraggingBackwards())
-            {
-                var scaleFactor = GetScaleFactor(BoundingBox.Left,
-                                                 BoundingBox.Top + DragYTravel,
-                                                 BoundingBox.Right + DragXTravel,
-                                                 BoundingBox.Bottom);
-
-                LastOperation = new ScaleTransform(scaleFactor, scaleFactor, BoundingBox.Left, BoundingBox.Bottom);
-
-                InvalidateVisual();
-            }
-        }
-
-        // Handler for resizing from the top-left.
-        private void TopLeftHandleDragDelta(object sender, DragDeltaEventArgs args)
+        private void HandleDragDelta(object sender, DragDeltaEventArgs args)
         {
             IncrementDragging(args);
             if (NotDraggingBackwards())
             {
-                var scaleFactor = GetScaleFactor(
-                    BoundingBox.Left + DragXTravel,
-                    BoundingBox.Top + DragYTravel,
-                    BoundingBox.Right,
-                    BoundingBox.Bottom);
+                var currentPoint = new Point(_scaleOperationParams.Origin.X + DragXTravel, _scaleOperationParams.Origin.Y + DragYTravel);
 
-                LastOperation = new ScaleTransform(scaleFactor, scaleFactor, BoundingBox.Right, BoundingBox.Bottom);
+                //we need to project the drag operation along a specific axis
+                var projection = (currentPoint - _scaleOperationParams.Start).Project(_scaleOperationParams.OriginalSense);
+                //and the scale according to movement along that axis
 
-                InvalidateVisual();
+                SetScalingFactors(projection, out var xScale, out var yScale);
+
+                LastOperation = new ScaleTransform(xScale, yScale, _scaleOperationParams.Start.X, _scaleOperationParams.Start.Y);
             }
+            InvalidateVisual();
         }
 
-        // Handler for resizing from the bottom-left.
-        private void BottomLeftHandleDragDelta(object sender, DragDeltaEventArgs args)
-        {
-            IncrementDragging(args);
-            if (NotDraggingBackwards())
-            {
-                var scaleFactor = GetScaleFactor(BoundingBox.Left + DragXTravel,
-                                                 BoundingBox.Top,
-                                                 BoundingBox.Right,
-                                                 BoundingBox.Bottom + DragYTravel);
-
-                LastOperation = new ScaleTransform(scaleFactor, scaleFactor, BoundingBox.Right, BoundingBox.Top);
-
-                InvalidateVisual();
-            }
-        }
-
-        // Handler for resizing from the bottom-right.
-        private void BottomRightHandleDragDelta(object sender, DragDeltaEventArgs args)
-        {
-            IncrementDragging(args);
-            if (NotDraggingBackwards())
-            {
-                var scaleFactor = GetScaleFactor(BoundingBox.Left,
-                                                 BoundingBox.Top,
-                                                 BoundingBox.Right + DragXTravel,
-                                                 BoundingBox.Bottom + DragYTravel);
-
-                LastOperation = new ScaleTransform(scaleFactor, scaleFactor, BoundingBox.Left, BoundingBox.Top);
-
-                InvalidateVisual();
-            }
-        }
-
-        private bool NotDraggingBackwards()
-        {
-            return BigThumb.Height >= 10 && BigThumb.Width >= 10;
-        }
+        private bool NotDraggingBackwards() => BigThumb.Height >= MinTravelWidth && BigThumb.Width >= MinTravelWidth;
 
         #endregion Resizing
+
+        #region Nested Classes
+
+        private class ScaleOperationParams
+        {
+            public Point Start { get; set; }
+            public Point Finish { get; set; }
+
+            public Vector OriginalSense => Finish - Start;
+
+            public Point Origin { get; set; }
+        }
+
+        #endregion Nested Classes
     }
 }

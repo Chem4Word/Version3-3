@@ -2,8 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:acme="clr-namespace:Chem4Word.ACME"
-    xmlns:graphics="clr-namespace:Chem4Word.ACME.Graphics"
-    xmlns:selectors="clr-namespace:Chem4Word.ACME.Adorners.Selectors">
+    xmlns:selectors="clr-namespace:Chem4Word.ACME.Adorners.Selectors"
+    xmlns:graphics="clr-namespace:Chem4Word.ACME.Graphics">
 
     <!--  Simple shapes for use in menus, buttons etc  -->
     <ResourceDictionary.MergedDictionaries>
@@ -253,11 +253,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Ellipse Stroke="{StaticResource GrabHandleBorderBrush}">
-                        <Ellipse.Fill>
-                            <SolidColorBrush Opacity="0.25" Color="Orange" />
-                        </Ellipse.Fill>
-                    </Ellipse>
+                    <Ellipse Fill="{x:Static SystemColors.WindowBrush}" Stroke="{StaticResource GrabHandleBorderBrush}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -267,7 +263,6 @@
         x:Key="BigThumbStyle"
         BasedOn="{StaticResource GrabHandleStyle}"
         TargetType="Thumb">
-
         <Setter Property="Background" Value="{StaticResource ThumbFillBrush}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -818,7 +813,7 @@
                     <StackPanel>
                         <Label Style="{StaticResource ToolTipHeader}">Molecule selected</Label>
                         <ContentControl Template="{StaticResource BulletTemplate}">
-                            <TextBlock Padding="1">Grab a corner handle to resize the molecule</TextBlock>
+                            <TextBlock Padding="1">Grab a handle to resize the molecule</TextBlock>
                         </ContentControl>
                         <ContentControl Template="{StaticResource BulletTemplate}">
                             <TextBlock Padding="1">Grab the main area to move the molecule</TextBlock>
@@ -863,7 +858,7 @@
                     <StackPanel>
                         <Label Style="{StaticResource ToolTipHeader}">Group selected</Label>
                         <ContentControl Template="{StaticResource BulletTemplate}">
-                            <TextBlock Padding="1">Grab a corner handle to resize the Group</TextBlock>
+                            <TextBlock Padding="1">Grab a handle to resize the Group</TextBlock>
                         </ContentControl>
                         <ContentControl Template="{StaticResource BulletTemplate}">
                             <TextBlock Padding="1">Grab the main area to move the Group</TextBlock>

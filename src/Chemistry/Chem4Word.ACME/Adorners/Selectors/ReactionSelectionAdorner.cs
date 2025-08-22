@@ -23,8 +23,8 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private static double _halfThumbWidth;
 
         private static Snapper _resizeSnapper;
-        private readonly DrawingVisual HeadHandle = new DrawingVisual(); //these do the resizing
-        private readonly DrawingVisual TailHandle = new DrawingVisual();    //these do the resizing
+        private readonly DrawingVisual HeadHandle = new DrawingVisual();
+        private readonly DrawingVisual TailHandle = new DrawingVisual();
         private DrawingVisual _draggedVisual;
         private bool Resizing;
         private bool Dragging;
@@ -380,11 +380,11 @@ namespace Chem4Word.ACME.Adorners.Selectors
                     break;
 
                 case ReactionType.ReversibleBiasedForward:
-                    arrowVisual = new EquilibriumArrow { StartPoint = newStartPoint, EndPoint = newEndPoint, Bias = Graphics.EquilibriumBias.Forward };
+                    arrowVisual = new EquilibriumArrow { StartPoint = newStartPoint, EndPoint = newEndPoint, Bias = EquilibriumBias.Forward };
                     break;
 
                 case ReactionType.ReversibleBiasedReverse:
-                    arrowVisual = new EquilibriumArrow { StartPoint = newStartPoint, EndPoint = newEndPoint, Bias = Graphics.EquilibriumBias.Backward };
+                    arrowVisual = new EquilibriumArrow { StartPoint = newStartPoint, EndPoint = newEndPoint, Bias = EquilibriumBias.Backward };
                     break;
 
                 case ReactionType.Blocked:

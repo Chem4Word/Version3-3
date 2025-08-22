@@ -9,7 +9,7 @@
         <Changes>
             <Change>...</Change>
             <Change>...</Change>
-            <Change>...</Change>
+            <Change>New Feature: Molecule selectors now present eight, not four resize handles</Change>
             <Change>New Feature: Persists Molecular Weight in CML and displays in ACME and Word document</Change>
             <Change>UX: Disable separate if structure has reactions or annotations</Change>
             <Change>BugFix: Improve handling of copy/paste of ContentControl(s)</Change>

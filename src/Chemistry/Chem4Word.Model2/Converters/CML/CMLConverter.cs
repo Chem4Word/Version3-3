@@ -51,6 +51,12 @@ namespace Chem4Word.Model2.Converters.CML
                     XDocument modelDoc = XDocument.Parse(cml);
                     XElement root = modelDoc.Root;
 
+                    //test to see whether the model originates from Chem4Word
+                    var hasC4W = root.Attributes().Where(a => a.IsNamespaceDeclaration && a.Name.LocalName == "c4w")
+                                     .Any();
+
+                    newModel.FromChem4Word = hasC4W;
+
                     // Only import if set
                     XElement explicitC = CMLHelper.GetExplicitCarbonTag(root);
                     if (explicitC != null && !string.IsNullOrEmpty(explicitC.Value))

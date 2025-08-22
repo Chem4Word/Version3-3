@@ -197,7 +197,6 @@ namespace Chem4Word.Model2
         public bool ShowMoleculeCaptions { get; set; } = false;
         public bool ShowMolecularWeight { get; set; } = false;
 
-
         public bool InhibitEvents { get; set; }
 
         internal List<string> GeneralErrors { get; }
@@ -220,6 +219,9 @@ namespace Chem4Word.Model2
         /// Bond length used in Xaml
         /// </summary>
         public double XamlBondLength { get; internal set; }
+
+        //determines whether the model originates from Chem4Word
+        public bool FromChem4Word { get; set; }
 
         #endregion Properties
 

@@ -4179,7 +4179,7 @@ namespace Chem4Word.ACME
 
                 CMLConverter cc = new CMLConverter();
                 Model buffer = cc.Import(pastedCml);
-                PasteModel(buffer, true);
+                PasteModel(buffer, true, !buffer.FromChem4Word);
             }
             catch (Exception exception)
             {
@@ -4187,7 +4187,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        public void PasteModel(Model buffer, bool fromCML = false)
+        public void PasteModel(Model buffer, bool fromCML = false, bool rescale=true)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -4197,7 +4197,10 @@ namespace Chem4Word.ACME
                 // Match to current model's settings
                 buffer.Relabel(true);
                 // above should be buffer.StripLabels(true)
-                buffer.ScaleToAverageBondLength(Model.XamlBondLength);
+                if (rescale)
+                {
+                    buffer.ScaleToAverageBondLength(Model.XamlBondLength);
+                }
 
                 if (!fromCML && buffer.Molecules.Count > 1)
                 {

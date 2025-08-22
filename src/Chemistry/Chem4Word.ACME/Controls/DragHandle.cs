@@ -13,6 +13,8 @@ namespace Chem4Word.ACME.Controls
 {
     public class DragHandle : Thumb
     {
+        public Point MidPoint { get; set; }
+
         public DragHandle(string styleName = Common.GrabHandleStyle, Cursor cursor = null)
         {
             Style = (Style)FindResource(Common.GrabHandleStyle);
@@ -22,6 +24,25 @@ namespace Chem4Word.ACME.Controls
             }
             Cursor = cursor;
             IsHitTestVisible = true;
+        }
+
+        private Rect GetRectOfObject(FrameworkElement _element)
+        {
+            Rect rectangleBounds = _element.RenderTransform.TransformBounds(
+                new Rect(_element.RenderSize));
+
+            return rectangleBounds;
+        }
+
+        public Rect BoundingBox => GetRectOfObject(this);
+
+        public Point Centroid
+        {
+            get
+            {
+                var bb = BoundingBox;
+                return new Point((bb.Left + bb.Right) / 2, (bb.Top + bb.Bottom) / 2);
+            }
         }
     }
 }
