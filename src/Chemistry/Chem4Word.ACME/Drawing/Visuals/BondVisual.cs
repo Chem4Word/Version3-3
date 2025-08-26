@@ -36,7 +36,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         #endregion Fields
 
         private Geometry _hullGeometry;
-        public BondLayout BondDescriptor { get; private set; }
+        public BondLayout BondLayout { get; private set; }
 
         public Geometry HullGeometry
         {
@@ -65,7 +65,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         }
 
         /// <summary>
-        /// Returns a BondDescriptor object describing the visual layout of the visual
+        /// Returns a BondLayout object describing the physical layout of the visual
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="startAtomVisual"></param>
@@ -74,7 +74,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         /// <param name="standoff"></param>
         /// <param name="ignoreCentroid"></param>
         /// <returns></returns>
-        public static BondLayout GetBondDescriptor(Bond parent, AtomVisual startAtomVisual, AtomVisual endAtomVisual, double modelXamlBondLength, double standoff, bool ignoreCentroid = false)
+        public static BondLayout GetBondLayout(Bond parent, AtomVisual startAtomVisual, AtomVisual endAtomVisual, double modelXamlBondLength, double standoff, bool ignoreCentroid = false)
         {
             //check to see if it's a wedge or a hatch yet
             var startAtomPosition = parent.StartAtom.Position;
@@ -92,7 +92,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 else
                 {
                     centroid = parent.Centroid;
-                    secondaryCentroid = null;
                 }
             }
 
@@ -101,10 +100,10 @@ namespace Chem4Word.ACME.Drawing.Visuals
             var parentOrderValue = parent.OrderValue;
             var parentPlacement = parent.Placement;
 
-            return GetBondDescriptor(startAtomVisual, endAtomVisual, modelXamlBondLength, parentStereo, startAtomPosition, endAtomPosition, parentOrderValue, parentPlacement, centroid, secondaryCentroid, standoff);
+            return GetBondLayout(startAtomVisual, endAtomVisual, modelXamlBondLength, parentStereo, startAtomPosition, endAtomPosition, parentOrderValue, parentPlacement, centroid, secondaryCentroid, standoff);
         }
 
-        public static BondLayout GetBondDescriptor(AtomVisual startAtomVisual, AtomVisual endAtomVisual,
+        public static BondLayout GetBondLayout(AtomVisual startAtomVisual, AtomVisual endAtomVisual,
                                                         double modelXamlBondLength, BondStereo parentStereo,
                                                         Point startAtomPosition, Point endAtomPosition,
                                                         double? parentOrderValue, BondDirection parentPlacement,
@@ -121,10 +120,26 @@ namespace Chem4Word.ACME.Drawing.Visuals
             {
                 endAtomHull = endAtomVisual.Hull;
             }
+
+            //stereobond: thick bond
+            if (parentStereo == BondStereo.Thick && parentOrderValue == 1)
+            {
+                ThickBondLayout tbl = new ThickBondLayout
+                {
+                    Start = startAtomPosition,
+                    End = endAtomPosition,
+                    StartAtomHull = startAtomHull,
+                    EndAtomHull = endAtomHull
+                };
+                BondGeometry.GetThickBondGeometry(tbl, modelXamlBondLength, standoff);
+                return tbl;
+            }
+
+            //stereobonds: wedges and hatches
             if ((parentStereo == BondStereo.Wedge || parentStereo == BondStereo.Hatch)
                 && parentOrderValue == 1)
             {
-                WedgeBondLayout wbd = new WedgeBondLayout
+                WedgeBondLayout wedgeBondLayout = new WedgeBondLayout
                 {
                     Start = startAtomPosition,
                     End = endAtomPosition,
@@ -133,19 +148,20 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 };
 
                 var endAtom = endAtomVisual.ParentAtom;
-                var otherBonds = endAtom.Bonds.Except(new[] { startAtomVisual.ParentAtom.BondBetween(endAtom) }).ToList();
+                var otherBonds = endAtom.Bonds.Except(new[] { startAtomVisual.ParentAtom.BondBetween(endAtom) })
+                                        .ToList();
 
                 Bond bond = null;
                 bool oblique = true;
                 if (otherBonds.Any())
                 {
                     bond = otherBonds.ToArray()[0];
-                    Vector wedgevector = wbd.End - wbd.Start;
+
                     foreach (Bond b in otherBonds)
                     {
                         Atom otherAtom = b.OtherAtom(endAtom);
-                        Vector v = wbd.End - otherAtom.Position;
-                        double angle = System.Math.Abs(Vector.AngleBetween(wedgevector, v));
+                        Vector v = wedgeBondLayout.End - otherAtom.Position;
+                        double angle = System.Math.Abs(Vector.AngleBetween(wedgeBondLayout.PrincipleVector, v));
 
                         if (angle < 109.5 || angle > 130.5)
                         {
@@ -155,37 +171,58 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     }
                 }
 
-                bool chamferBond = otherBonds.Any()
-                                   && oblique
-                                   && otherBonds.All(b => b.Order == Globals.OrderSingle)
-                                   && bond.Order == Globals.OrderSingle
-                                   && endAtom.Element as Element == Globals.PeriodicTable.C
-                                   && endAtom.SymbolText == "";
+                wedgeBondLayout.Outlined = true;
+                var joiningThickBonds = (from b in otherBonds where b.Stereo == BondStereo.Thick select b).ToList();
+                var joiningWedgeBonds = (from b in otherBonds where b.Stereo == BondStereo.Wedge select b).ToList();
 
-                if (!chamferBond)
+                bool joiningBondIsThick = joiningThickBonds.Any();
+                bool joiningBondIsWedge = joiningWedgeBonds.Any();
+
+                if (joiningBondIsThick && endAtom.IsCarbon)
+                //it's a thick bond it terminates at
                 {
-                    wbd.CappedOff = false;
-                    BondGeometry.GetWedgeBondGeometry(wbd, modelXamlBondLength, standoff);
+                    var otb = joiningThickBonds.First();
+                    BondGeometry.GetWedgeBondGeometry(wedgeBondLayout, modelXamlBondLength, standoff);
+                    BondGeometry.GetWedgeToThickGeometry(wedgeBondLayout, modelXamlBondLength, otb);
                 }
-                else
+                else if (joiningBondIsWedge && endAtom.IsCarbon && joiningWedgeBonds.First().EndAtom == endAtom)
                 {
-                    var nonHPs = (from b in otherBonds
-                                  select b.OtherAtom(endAtom).Position).ToList();
-                    if (nonHPs.Any())
+                    var jwb = joiningWedgeBonds.First();
+                    BondGeometry.GetWedgeBondGeometry(wedgeBondLayout, modelXamlBondLength, standoff);
+                    BondGeometry.GetWedgeToWedgeGeometry(wedgeBondLayout, modelXamlBondLength, jwb);
+                }
+                else //don't try to mitre a wedge onto a heteroatom
+                {
+                    bool chamferBond = otherBonds.Any()
+                                       && oblique
+                                       && otherBonds.All(b => b.Order == Globals.OrderSingle)
+                                       && bond.Order == Globals.OrderSingle
+                                       && endAtom.Element as Element == Globals.PeriodicTable.C
+                                       && endAtom.SymbolText == "";
+
+                    if (chamferBond)
                     {
-                        wbd.CappedOff = true;
-                        BondGeometry.GetChamferedWedgeGeometry(wbd, modelXamlBondLength, nonHPs, standoff);
+                        var otherAtomPoints = (from b in otherBonds
+                                      select b.OtherAtom(endAtom).Position).ToList();
+
+                        if (otherAtomPoints.Any())
+                        {
+                            BondGeometry.GetChamferedWedgeGeometry(wedgeBondLayout, modelXamlBondLength, otherAtomPoints, standoff);
+                        }
+                        else
+                        {
+                            BondGeometry.GetWedgeBondGeometry(wedgeBondLayout, modelXamlBondLength, standoff);
+                        }
                     }
                     else
                     {
-                        wbd.CappedOff = false;
-                        BondGeometry.GetWedgeBondGeometry(wbd, modelXamlBondLength, standoff);
+                        wedgeBondLayout.Outlined = true;
+                        BondGeometry.GetWedgeBondGeometry(wedgeBondLayout, modelXamlBondLength, standoff);
                     }
                 }
 
-                return wbd;
+                return wedgeBondLayout;
             }
-
             //wavy bond
             if (parentStereo == BondStereo.Indeterminate && parentOrderValue == 1.0)
             {
@@ -312,7 +349,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             Point startPoint = startAtom.Position;
             Point endPoint = endAtom.Position;
 
-            double bondLength = ParentBond.Model.XamlBondLength;
+            double standardBondLength = ParentBond.Model.XamlBondLength;
 
             // Only continue if bond length is not zero
             if (startPoint != endPoint)
@@ -322,15 +359,15 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 AtomVisual endVisual = (AtomVisual)ChemicalVisuals[endAtom];
 
                 //first grab the main descriptor
-                BondDescriptor = GetBondDescriptor(ParentBond, startVisual, endVisual, bondLength, Standoff);
+                BondLayout = GetBondLayout(ParentBond, startVisual, endVisual, standardBondLength, Standoff);
 
-                _enclosingPoly = BondDescriptor.Boundary;
+                _enclosingPoly = BondLayout.Boundary;
                 //set up the default pens for rendering
                 _mainBondPen = new Pen(Brushes.Black, BondThickness)
                 {
                     StartLineCap = PenLineCap.Round,
                     EndLineCap = PenLineCap.Round,
-                    LineJoin = PenLineJoin.Miter
+                    LineJoin = PenLineJoin.Round
                 };
 
                 _subsidiaryBondPen = _mainBondPen.Clone();
@@ -345,7 +382,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
                         using (DrawingContext dc = RenderOpen())
                         {
-                            dc.DrawGeometry(Brushes.Black, _mainBondPen, BondDescriptor.DefiningGeometry);
+                            dc.DrawGeometry(Brushes.Black, _mainBondPen, BondLayout.DefiningGeometry);
                             //we need to draw another transparent rectangle to expand the bounding box
                             DrawHitTestOverlay(dc);
                             dc.Close();
@@ -358,7 +395,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             Placement = ParentBond.Placement
                         };
 
-                        BondGeometry.GetDoubleBondPoints(dbd, bondLength);
+                        BondGeometry.GetDoubleBondPoints(dbd, standardBondLength);
                         _enclosingPoly = dbd.Boundary;
                         break;
 
@@ -367,7 +404,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
                         using (DrawingContext dc = RenderOpen())
                         {
-                            dc.DrawGeometry(Brushes.Black, _mainBondPen, BondDescriptor.DefiningGeometry);
+                            dc.DrawGeometry(Brushes.Black, _mainBondPen, BondLayout.DefiningGeometry);
                             //we need to draw another transparent thicker line on top of the existing one
                             DrawHitTestOverlay(dc);
                             dc.Close();
@@ -381,7 +418,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             Placement = ParentBond.Placement
                         };
 
-                        BondGeometry.GetDoubleBondPoints(dbd2, bondLength);
+                        BondGeometry.GetDoubleBondPoints(dbd2, standardBondLength);
                         _enclosingPoly = dbd2.Boundary;
 
                         break;
@@ -396,7 +433,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             case BondStereo.Wedge:
                                 using (DrawingContext dc = RenderOpen())
                                 {
-                                    dc.DrawGeometry(Brushes.Black, _mainBondPen, BondDescriptor.DefiningGeometry);
+                                    dc.DrawGeometry(Brushes.Black, _mainBondPen, BondLayout.DefiningGeometry);
                                     //we need to draw another transparent rectangle to expand the bounding box
                                     DrawHitTestOverlay(dc);
                                     dc.Close();
@@ -407,9 +444,22 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             case BondStereo.Hatch:
                                 using (DrawingContext dc = RenderOpen())
                                 {
-                                    dc.DrawGeometry(GetHatchBrush(ParentBond.Angle), _mainBondPen,
-                                                    BondDescriptor.DefiningGeometry);
+                                    var hatchBrush = GetHatchBrush(ParentBond.Angle);
+                                    Pen _hatchBondPen = new Pen(hatchBrush, _mainBondPen.Thickness);
+
+                                    dc.DrawGeometry(hatchBrush, _hatchBondPen,
+                                                    BondLayout.DefiningGeometry);
                                     //we need to draw another transparent rectangle to expand the bounding box
+                                    DrawHitTestOverlay(dc);
+                                    dc.Close();
+                                }
+
+                                break;
+
+                            case BondStereo.Thick:
+                                using (DrawingContext dc = RenderOpen())
+                                {
+                                    dc.DrawGeometry(Brushes.Black, _mainBondPen, BondLayout.DefiningGeometry);
                                     DrawHitTestOverlay(dc);
                                     dc.Close();
                                 }
@@ -423,7 +473,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     case Globals.OrderAromatic:
                     case "2":
                     case Globals.OrderDouble:
-                        DoubleBondLayout dbd3 = (DoubleBondLayout)BondDescriptor;
+                        DoubleBondLayout dbd3 = (DoubleBondLayout)BondLayout;
                         Point? centroid = ParentBond.Centroid;
                         dbd3.PrimaryCentroid = centroid;
 
@@ -439,7 +489,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                         {
                             using (DrawingContext dc = RenderOpen())
                             {
-                                dc.DrawLine(_mainBondPen, BondDescriptor.Start, BondDescriptor.End);
+                                dc.DrawLine(_mainBondPen, BondLayout.Start, BondLayout.End);
                                 dc.DrawLine(_subsidiaryBondPen,
                                             dbd3.SecondaryStart,
                                             dbd3.SecondaryEnd);
@@ -450,7 +500,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                         {
                             using (DrawingContext dc = RenderOpen())
                             {
-                                dc.DrawGeometry(_mainBondPen.Brush, _mainBondPen, BondDescriptor.DefiningGeometry);
+                                dc.DrawGeometry(_mainBondPen.Brush, _mainBondPen, BondLayout.DefiningGeometry);
 
                                 dc.Close();
                             }
@@ -466,7 +516,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             _subsidiaryBondPen.DashStyle = DashStyles.Dash;
                         }
 
-                        var tbd = BondDescriptor as TripleBondLayout;
+                        var tbd = BondLayout as TripleBondLayout;
                         using (DrawingContext dc = RenderOpen())
                         {
                             if (ParentBond.Placement == BondDirection.Clockwise)
@@ -488,7 +538,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
                         break;
                 }
             }
-
             //local function
             void DrawHitTestOverlay(DrawingContext dc)
             {
@@ -504,7 +553,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 #endif
 
                 Pen outlinePen = new Pen(outliner, BondThickness * 5);
-                dc.DrawGeometry(outliner, outlinePen, BondDescriptor.DefiningGeometry);
+                dc.DrawGeometry(outliner, outlinePen, BondLayout.DefiningGeometry);
             }
         }
 
@@ -520,7 +569,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             else
             {
                 var widepen = new Pen(Brushes.Black, BondThickness * 10.0);
-                if (BondDescriptor.DefiningGeometry.StrokeContains(widepen, hitTestParameters.HitPoint))
+                if (BondLayout.DefiningGeometry.StrokeContains(widepen, hitTestParameters.HitPoint))
                 {
                     return new PointHitTestResult(this, hitTestParameters.HitPoint);
                 }

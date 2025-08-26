@@ -121,7 +121,7 @@ namespace Chem4Word.ACME.Adorners
                 if (bond.OrderValue != 1.0 ||
                     !(bond.Stereo == BondStereo.Hatch || bond.Stereo == BondStereo.Wedge))
                 {
-                    var descriptor = BondVisual.GetBondDescriptor(CurrentEditor.GetAtomVisual(bond.StartAtom),
+                    var descriptor = BondVisual.GetBondLayout(CurrentEditor.GetAtomVisual(bond.StartAtom),
                                                                   CurrentEditor.GetAtomVisual(bond.EndAtom),
                                                                   modelXamlBondLength,
                                                                   bond.Stereo, startAtomPosition, endAtomPosition,

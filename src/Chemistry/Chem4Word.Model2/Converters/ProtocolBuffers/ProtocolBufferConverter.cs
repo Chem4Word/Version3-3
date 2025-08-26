@@ -240,7 +240,8 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
         /// </summary>
         /// <param name="protoBuffModel"></param>
         /// <returns></returns>
-        public Model Import(byte[] bytes)
+        public Model 
+            Import(byte[] bytes)
         {
             var protoBuffModel = PBModel.Parser.ParseFrom(bytes);
 

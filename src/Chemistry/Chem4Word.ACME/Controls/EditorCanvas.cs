@@ -150,7 +150,7 @@ namespace Chem4Word.ACME.Controls
                     var endAtomPosition = transformedPositions[bond.EndAtom];
                     var startAtomVisual = (AtomVisual)(ChemicalVisuals[bond.StartAtom]);
                     var endAtomVisual = (AtomVisual)(ChemicalVisuals[bond.EndAtom]);
-                    var descriptor = BondVisual.GetBondDescriptor(startAtomVisual, endAtomVisual, Controller.Model.XamlBondLength,
+                    var descriptor = BondVisual.GetBondLayout(startAtomVisual, endAtomVisual, Controller.Model.XamlBondLength,
                                                        bond.Stereo, startAtomPosition, endAtomPosition, bond.OrderValue,
                                                        bond.Placement, bond.Centroid, bond.SubsidiaryRing?.Centroid, Controller.Standoff);
                     descriptor.Start = startAtomPosition;

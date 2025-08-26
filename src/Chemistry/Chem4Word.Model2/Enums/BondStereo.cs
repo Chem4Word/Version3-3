@@ -14,6 +14,7 @@ namespace Chem4Word.Model2.Enums
         Hatch,
         Indeterminate,
         Cis,
-        Trans
+        Trans,
+        Thick
     }
 }

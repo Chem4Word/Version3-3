@@ -4,17 +4,15 @@
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
+using System.Windows;
 
-namespace Chem4Word.ACME.Enums
+namespace Chem4Word.ACME.Drawing.LayoutSupport
 {
-    public enum SingleBondType
+    public class ThickBondLayout: BondLayout
     {
-        None = 0,
-        Wedge,
-        Hatch,
-        BackWedge,
-        BackHatch,
-        Indeterminate,
-        Thick
+        public Point FirstCorner; 
+        public Point SecondCorner;
+        public Point ThirdCorner;
+        public Point FourthCorner;
     }
 }

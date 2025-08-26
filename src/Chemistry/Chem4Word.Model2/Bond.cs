@@ -846,6 +846,9 @@ namespace Chem4Word.Model2
                 case BondStereo.Indeterminate:
                     return "S";
 
+                case BondStereo.Thick:
+                    return "Thick";
+
                 default:
                     return null;
             }
@@ -879,6 +882,10 @@ namespace Chem4Word.Model2
 
                 case "T":
                     result = BondStereo.Trans;
+                    break;
+
+                case "Thick":
+                    result = BondStereo.Thick;
                     break;
 
                 default:

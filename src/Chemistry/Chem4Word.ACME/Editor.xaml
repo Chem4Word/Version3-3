@@ -437,6 +437,7 @@
                                 <Image
                                     Width="40"
                                     Height="14"
+                                    Margin="3"
                                     HorizontalAlignment="Left"
                                     Stretch="None">
                                     <Image.Source>
@@ -451,6 +452,11 @@
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
                     </ComboBox.ItemContainerStyle>
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3"/>
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
                 </ComboBox>
 
                 <Separator Margin="5" d:IsLocked="True" />

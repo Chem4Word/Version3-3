@@ -18,4 +18,5 @@ enum PBBondStereo
 	Indeterminate = 3;
 	Cis = 4;
 	Trans = 5;
+	Thick = 6;
 }

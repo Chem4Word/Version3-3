@@ -19,7 +19,7 @@ namespace Chem4Word.ACME.Drawing.LayoutSupport
     {
         public Point FirstCorner;
         public Point SecondCorner;
-        public bool CappedOff; //is the bond end drawn as a line?
+        public bool Outlined; //is the bond end drawn as a line?
 
         public StreamGeometry GetOutline()
         {
@@ -27,10 +27,10 @@ namespace Chem4Word.ACME.Drawing.LayoutSupport
 
             using (var sgc = streamGeometry.Open())
             {
-                sgc.BeginFigure(Start, true, false);
-                sgc.LineTo(FirstCorner, false, true);
-                sgc.LineTo(End, CappedOff, true);
-                sgc.LineTo(SecondCorner, CappedOff, true);
+                sgc.BeginFigure(Start, true, true);
+                sgc.LineTo(FirstCorner, Outlined, true);
+                sgc.LineTo(End, Outlined, true);
+                sgc.LineTo(SecondCorner, Outlined, true);
 
                 sgc.Close();
             }

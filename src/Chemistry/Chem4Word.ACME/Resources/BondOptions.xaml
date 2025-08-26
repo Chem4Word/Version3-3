@@ -282,5 +282,26 @@
                 </DrawingGroup>
             </acme:BondOption.BondGraphic>
         </acme:BondOption>
+
+        <acme:BondOption
+            Id="12"
+            Order="S"
+            Stereo="Thick">
+            <acme:BondOption.BondGraphic>
+                <DrawingGroup>
+                    <GeometryDrawing>
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0, 50 5"/>
+                        </GeometryDrawing.Geometry>
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Thickness="2" />
+                        </GeometryDrawing.Pen>
+                        <GeometryDrawing.Brush>
+                            <SolidColorBrush Color="{x:Static SystemColors.WindowTextColor}"></SolidColorBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </acme:BondOption.BondGraphic>
+        </acme:BondOption>
     </x:Array>
 </ResourceDictionary>
