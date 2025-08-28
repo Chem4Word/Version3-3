@@ -108,13 +108,8 @@ namespace Chem4Word.Model2
         }
 
         public Point MidPoint
-        {
-            get
-            {
-                return new Point((StartAtom.Position.X + EndAtom.Position.X) / 2,
-                                 (StartAtom.Position.Y + EndAtom.Position.Y) / 2);
-            }
-        }
+            => new Point((StartAtom.Position.X + EndAtom.Position.X) / 2,
+                         (StartAtom.Position.Y + EndAtom.Position.Y) / 2);
 
         public string Id { get; set; }
 

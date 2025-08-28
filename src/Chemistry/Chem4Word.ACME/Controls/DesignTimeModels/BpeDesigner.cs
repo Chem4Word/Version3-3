@@ -27,7 +27,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
 
         public BpeDesigner()
         {
-            BondOrderValue = 2;
+            BondOrderValue = 1;
 
             if (BondOrderValue <= 3)
             {

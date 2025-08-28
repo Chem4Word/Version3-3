@@ -93,7 +93,7 @@
             // 
             this.Undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Undo.Enabled = false;
-            this.Undo.Location = new System.Drawing.Point(93, 530);
+            this.Undo.Location = new System.Drawing.Point(186, 501);
             this.Undo.Name = "Undo";
             this.Undo.Size = new System.Drawing.Size(75, 23);
             this.Undo.TabIndex = 11;
@@ -106,7 +106,7 @@
             // 
             this.Redo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Redo.Enabled = false;
-            this.Redo.Location = new System.Drawing.Point(93, 559);
+            this.Redo.Location = new System.Drawing.Point(186, 559);
             this.Redo.Name = "Redo";
             this.Redo.Size = new System.Drawing.Size(75, 23);
             this.Redo.TabIndex = 12;
@@ -279,7 +279,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox2.Controls.Add(this.ChangeOoXmlSettings);
-            this.groupBox2.Location = new System.Drawing.Point(255, 501);
+            this.groupBox2.Location = new System.Drawing.Point(279, 501);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(108, 81);
             this.groupBox2.TabIndex = 17;
@@ -302,9 +302,9 @@
             // 
             this.ShowCml.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ShowCml.Enabled = false;
-            this.ShowCml.Location = new System.Drawing.Point(174, 559);
+            this.ShowCml.Location = new System.Drawing.Point(12, 530);
             this.ShowCml.Name = "ShowCml";
-            this.ShowCml.Size = new System.Drawing.Size(75, 23);
+            this.ShowCml.Size = new System.Drawing.Size(156, 23);
             this.ShowCml.TabIndex = 18;
             this.ShowCml.Text = "Show CML";
             this.ShowCml.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -315,7 +315,7 @@
             // 
             this.SaveStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SaveStructure.Enabled = false;
-            this.SaveStructure.Location = new System.Drawing.Point(12, 530);
+            this.SaveStructure.Location = new System.Drawing.Point(93, 501);
             this.SaveStructure.Name = "SaveStructure";
             this.SaveStructure.Size = new System.Drawing.Size(75, 23);
             this.SaveStructure.TabIndex = 19;
@@ -328,7 +328,7 @@
             // 
             this.ClearChemistry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ClearChemistry.Enabled = false;
-            this.ClearChemistry.Location = new System.Drawing.Point(12, 559);
+            this.ClearChemistry.Location = new System.Drawing.Point(186, 530);
             this.ClearChemistry.Name = "ClearChemistry";
             this.ClearChemistry.Size = new System.Drawing.Size(75, 23);
             this.ClearChemistry.TabIndex = 0;
@@ -340,11 +340,11 @@
             // 
             this.RenderOoXml.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RenderOoXml.Enabled = false;
-            this.RenderOoXml.Location = new System.Drawing.Point(174, 530);
+            this.RenderOoXml.Location = new System.Drawing.Point(12, 559);
             this.RenderOoXml.Name = "RenderOoXml";
-            this.RenderOoXml.Size = new System.Drawing.Size(75, 23);
+            this.RenderOoXml.Size = new System.Drawing.Size(156, 23);
             this.RenderOoXml.TabIndex = 21;
-            this.RenderOoXml.Text = "OoXml (raw)";
+            this.RenderOoXml.Text = "Show OoXml in Word";
             this.RenderOoXml.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.RenderOoXml.UseVisualStyleBackColor = true;
             this.RenderOoXml.Click += new System.EventHandler(this.OnClick_RenderOoXml);

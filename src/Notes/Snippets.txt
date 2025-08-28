@@ -67,10 +67,6 @@ private void OnClick_WpfButton(object sender, RibbonControlEventArgs e)
     }
 }
 
-// Insert / Update Chemistry into document
-
-public static string InsertChemistry(in out ContentControl cc string cml, )
-
 // https://stackoverflow.com/questions/19147/what-is-the-correct-way-to-create-a-single-instance-application
 
 static class Program
@@ -86,24 +82,6 @@ static class Program
         } 
     }
 }
-
-app.config removals
-
-<!-- Commented out this Junk
-<sectionGroup name="Chem4Word">
-    <section name="plugins" type="Chem4Word.Model.Converters.ConverterSection, Chem4Word.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-</sectionGroup>
-<Chem4Word>
-    <plugins>
-        <converters>
-        <add name="CML" path="Chem4Word.Model.Converters.CMLConverter, Chem4Word.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-        <add name="JSON" path="Chem4Word.Model.Converters.JSONConverter, Chem4Word.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-        <add name="Molfile" path="Chem4Word.Model.Converters.MolfileConverter, Chem4Word.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-        <add name="MDL" path="Chem4Word.Model.Converters.MDLConverter, Chem4Word.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-        </converters>
-    </plugins>
-</Chem4Word>
--->
 
 // Disable double Click
 if (Globals.Chem4WordV3.EventsEnabled)

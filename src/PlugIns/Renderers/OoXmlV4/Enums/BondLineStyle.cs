@@ -16,6 +16,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Enums
         Wedge,
         Hatch,
         Dotted,
-        Dashed
+        Dashed,
+        Thick
     }
 }

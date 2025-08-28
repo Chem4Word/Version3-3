@@ -4,15 +4,14 @@
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
-using System.Windows;
 
-namespace Chem4Word.ACME.Drawing.LayoutSupport
+namespace Chem4Word.Renderer.OoXmlV4.Enums
 {
-    public class ThickBondLayout : BondLayout
+    public enum ClippingLineType
     {
-        public Point FirstCorner;
-        public Point SecondCorner;
-        public Point ThirdCorner;
-        public Point FourthCorner;
+        Standard,
+        ExtendStart,
+        ExtendEnd,
+        ExtendBoth
     }
 }

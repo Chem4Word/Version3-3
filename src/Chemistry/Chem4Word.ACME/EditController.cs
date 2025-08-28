@@ -480,9 +480,9 @@ namespace Chem4Word.ACME
             try
             {
                 var args = new WpfEventArgs
-                           {
-                               Message = value.message
-                           };
+                {
+                    Message = value.message
+                };
 
                 var hasReactions = (Model.ReactionSchemes.Any() &&
                                     Model.ReactionSchemes.First().Value.Reactions.Count > 0);
@@ -4030,6 +4030,10 @@ namespace Chem4Word.ACME
                             stereoAfter = BondStereo.Indeterminate;
                             break;
 
+                        case SingleBondType.Thick:
+                            stereoAfter = BondStereo.Thick;
+                            break;
+
                         default:
                             stereoAfter = BondStereo.None;
                             break;
@@ -4187,7 +4191,7 @@ namespace Chem4Word.ACME
             }
         }
 
-        public void PasteModel(Model buffer, bool fromCML = false, bool rescale=true)
+        public void PasteModel(Model buffer, bool fromCML = false, bool rescale = true)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try

@@ -291,13 +291,13 @@
                 <DrawingGroup>
                     <GeometryDrawing>
                         <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,0, 50 5"/>
+                            <RectangleGeometry Rect="0,0, 50 5" />
                         </GeometryDrawing.Geometry>
                         <GeometryDrawing.Pen>
                             <Pen Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Thickness="2" />
                         </GeometryDrawing.Pen>
                         <GeometryDrawing.Brush>
-                            <SolidColorBrush Color="{x:Static SystemColors.WindowTextColor}"></SolidColorBrush>
+                            <SolidColorBrush Color="{x:Static SystemColors.WindowTextColor}" />
                         </GeometryDrawing.Brush>
                     </GeometryDrawing>
                 </DrawingGroup>

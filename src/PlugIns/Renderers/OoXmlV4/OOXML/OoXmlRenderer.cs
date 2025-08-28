@@ -12,7 +12,6 @@ using Chem4Word.Renderer.OoXmlV4.Entities;
 using Chem4Word.Renderer.OoXmlV4.Enums;
 using Chem4Word.Renderer.OoXmlV4.TTF;
 using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Wordprocessing;
 using IChem4Word.Contracts;
 using Newtonsoft.Json;
 using System;
@@ -319,48 +318,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                 }
             }
 
-            // Calculate and tweak Wedge and Hatch bonds
-            var wedges =
-                _positionerOutputs.BondLines.Where(t => t.Style == BondLineStyle.Wedge
-                                                            || t.Style == BondLineStyle.Hatch).ToList();
-            if (wedges.Any())
-            {
-                // Pass 1 Calculate basic outline
-                foreach (var line in wedges)
-                {
-                    line.CalculateWedgeOutline(_medianBondLength);
-                }
-
-                // Pass 2 Adjust if touching another wedge or hatch
-                foreach (var wedge in wedges)
-                {
-                    var tailSharedWith = wedges.Where(t => !t.BondPath.Equals(wedge.BondPath)
-                                                           && t.Tail == wedge.Tail).ToList();
-                    if (tailSharedWith.Count == 1)
-                    {
-                        var shared = tailSharedWith[0];
-
-                        var angle = Math.Abs(Vector.AngleBetween(wedge.Nose - wedge.Tail, shared.Nose - shared.Tail));
-                        if (Math.Abs(angle) > 100)
-                        {
-                            var v1 = (wedge.Nose - wedge.LeftTail) * 2;
-                            var p1 = wedge.Nose - v1;
-                            //_positionerOutputs.Diagnostics.Lines.Add(new DiagnosticLine(wedge.Nose, p1, BondLineStyle.Dotted, "ff0000"))
-
-                            var v2 = (shared.Nose - shared.RightTail) * 2;
-                            var p2 = shared.Nose - v2;
-                            //_positionerOutputs.Diagnostics.Lines.Add(new DiagnosticLine(shared.Nose, p2, BondLineStyle.Dotted, "ff0000"))
-
-                            var intersection = GeometryTool.GetIntersection(wedge.Nose, p1, shared.Nose, p2);
-                            if (intersection != null)
-                            {
-                                wedge.LeftTail = intersection.Value;
-                                shared.RightTail = intersection.Value;
-                            }
-                        }
-                    }
-                }
-            }
+            BeautifyStereoBondLines();
 
             // Render Bond Lines
             foreach (var bondLine in _positionerOutputs.BondLines)
@@ -368,16 +326,22 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                 switch (bondLine.Style)
                 {
                     case BondLineStyle.Wedge:
-                        //_positionerOutputs.Diagnostics.Polygons.Add(bondLine.WedgeOutline())
-                        DrawWedgeBond(bondLine.WedgeOutline(), bondLine.BondPath, bondLine.Colour);
+                        DrawFilledBond(bondLine.Outline, bondLine.BondPath, bondLine.Colour);
+                        //_positionerOutputs.Diagnostics.Polygons.Add(bondLine.Outline);
                         break;
 
                     case BondLineStyle.Hatch:
-                        //_positionerOutputs.Diagnostics.Polygons.Add(bondLine.WedgeOutline())
-                        DrawHatchBond(bondLine.WedgeOutline(), bondLine.BondPath, bondLine.Colour);
+                        DrawHatchBond(bondLine.Outline, bondLine.BondPath, bondLine.Colour);
+                        //_positionerOutputs.Diagnostics.Polygons.Add(bondLine.Outline);
+                        break;
+
+                    case BondLineStyle.Thick:
+                        DrawFilledBond(bondLine.Outline, bondLine.BondPath, bondLine.Colour);
+                        //_positionerOutputs.Diagnostics.Polygons.Add(bondLine.Outline);
                         break;
 
                     default:
+                        // These should be all other single stroke lines for bonds
                         DrawBondLine(bondLine.Start, bondLine.End, bondLine.BondPath, bondLine.Style, bondLine.Colour, bondLine.Width);
                         break;
                 }
@@ -416,6 +380,214 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
             return run;
         }
+
+        private void BeautifyStereoBondLines()
+        {
+            var thickBondLines = _positionerOutputs.BondLines.Where(t => t.Style == BondLineStyle.Thick).ToList();
+            GenerateInitialOutlinePoints(thickBondLines);
+
+            var wedgeOrHatchBondLines = _positionerOutputs.BondLines.Where(t => t.Style == BondLineStyle.Wedge || t.Style == BondLineStyle.Hatch).ToList();
+            GenerateInitialOutlinePoints(wedgeOrHatchBondLines);
+
+            BeautifyWedgeOrHatchBondLines(wedgeOrHatchBondLines);
+            BeautifyThickBondLines(thickBondLines);
+        }
+
+        private void BeautifyWedgeOrHatchBondLines(List<BondLine> wedgeOrHatchBondLines)
+        {
+            foreach (var thisBondLine in wedgeOrHatchBondLines)
+            {
+                var otherBondLines = _positionerOutputs.BondLines
+                    .Where(l => l.Style != BondLineStyle.Thick
+                                && (l.Start == thisBondLine.Tail || l.End == thisBondLine.Tail))
+                    .ToList();
+
+                otherBondLines.Remove(thisBondLine);
+
+                if (otherBondLines.Any())
+                {
+                    var thisLeftClip = new ClippingLine(thisBondLine.Start, thisBondLine.LeftTail, ClippingLineType.ExtendEnd);
+                    var thisRightClip = new ClippingLine(thisBondLine.Start, thisBondLine.RightTail, ClippingLineType.ExtendEnd);
+
+                    foreach (var otherBondLine in otherBondLines)
+                    {
+                        var otherClip = otherBondLine.Start == thisBondLine.Tail
+                            ? new ClippingLine(otherBondLine.End, otherBondLine.Start, ClippingLineType.ExtendEnd)
+                            : new ClippingLine(otherBondLine.Start, otherBondLine.End, ClippingLineType.ExtendEnd);
+
+                        if (otherBondLines.Count == 1)
+                        {
+                            UpdateTailIfIntersecting(thisBondLine, thisLeftClip, otherClip, isLeft: true);
+                            UpdateTailIfIntersecting(thisBondLine, thisRightClip, otherClip, isLeft: false);
+                        }
+                        else
+                        {
+                            UpdateTailIfIntersectingAndLonger(thisBondLine, thisLeftClip, otherClip, isLeft: true);
+                            UpdateTailIfIntersectingAndLonger(thisBondLine, thisRightClip, otherClip, isLeft: false);
+                        }
+
+                        if ((otherBondLine.Style == BondLineStyle.Wedge || otherBondLine.Style == BondLineStyle.Hatch)
+                            && otherBondLine.Tail == thisBondLine.Tail)
+                        {
+                            UpdatedTailPointsOfSharedWedges(thisBondLine, otherBondLine, thisLeftClip, thisRightClip);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void UpdatedTailPointsOfSharedWedges(BondLine thisBondLine, BondLine otherBondLine, ClippingLine thisLeftClip, ClippingLine thisRightClip)
+        {
+            var otherLeftTail = otherBondLine.GetOriginalPoint(nameof(otherBondLine.LeftTail));
+            var otherRightTail = otherBondLine.GetOriginalPoint(nameof(otherBondLine.RightTail));
+
+            var otherLeftClip = new ClippingLine(otherBondLine.Nose, otherLeftTail, ClippingLineType.ExtendEnd);
+            var otherRightClip = new ClippingLine(otherBondLine.Nose, otherRightTail, ClippingLineType.ExtendEnd);
+
+            UpdateTailIfIntersectingAndLonger(otherBondLine, otherLeftClip, thisLeftClip, isLeft: true);
+            UpdateTailIfIntersectingAndLonger(otherBondLine, otherRightClip, thisRightClip, isLeft: false);
+            UpdateTailIfIntersectingAndLonger(thisBondLine, thisLeftClip, otherRightClip, isLeft: true);
+            UpdateTailIfIntersectingAndLonger(thisBondLine, thisRightClip, otherLeftClip, isLeft: false);
+        }
+
+        private void BeautifyThickBondLines(List<BondLine> thickBondLines)
+        {
+            foreach (var thickBondLine in thickBondLines)
+            {
+                var wedgeBondLines = _positionerOutputs.BondLines
+                    .Where(l => (l.Style == BondLineStyle.Wedge || l.Style == BondLineStyle.Hatch)
+                                && (l.Tail == thickBondLine.Start || l.Tail == thickBondLine.End))
+                    .ToList();
+
+                wedgeBondLines.Remove(thickBondLine);
+
+                if (wedgeBondLines.Any())
+                {
+                    var innerClip = new ClippingLine(thickBondLine.InnerStart, thickBondLine.InnerEnd, ClippingLineType.ExtendBoth);
+                    var outerClip = new ClippingLine(thickBondLine.OuterStart, thickBondLine.OuterEnd, ClippingLineType.ExtendBoth);
+
+                    foreach (var wedgeBondLine in wedgeBondLines)
+                    {
+                        var leftClip = new ClippingLine(wedgeBondLine.Start, wedgeBondLine.LeftTail, ClippingLineType.ExtendEnd);
+                        var rightClip = new ClippingLine(wedgeBondLine.Start, wedgeBondLine.RightTail, ClippingLineType.ExtendEnd);
+
+                        UpdateTailIfIntersectingAndLonger(wedgeBondLine, leftClip, outerClip, isLeft: true);
+                        UpdateTailIfIntersectingAndLonger(wedgeBondLine, rightClip, innerClip, isLeft: false);
+                        UpdateTailIfIntersectingAndLonger(wedgeBondLine, rightClip, outerClip, isLeft: false);
+                        UpdateTailIfIntersectingAndLonger(wedgeBondLine, leftClip, innerClip, isLeft: true);
+
+                        HandleThickIntersections(thickBondLine, leftClip, rightClip, innerClip, outerClip);
+                    }
+                }
+            }
+        }
+
+        private void HandleThickIntersections(BondLine thickBondLine,
+                              ClippingLine leftWedgeClippingLine, ClippingLine rightWedgeClippingLine,
+                              ClippingLine innerClippingLine, ClippingLine outerClippingLine)
+        {
+            var originalPoints = new Dictionary<string, Point>
+            {
+                { nameof(thickBondLine.InnerStart), thickBondLine.GetOriginalPoint(nameof(thickBondLine.InnerStart)) },
+                { nameof(thickBondLine.InnerEnd), thickBondLine.GetOriginalPoint(nameof(thickBondLine.InnerEnd)) },
+                { nameof(thickBondLine.OuterStart), thickBondLine.GetOriginalPoint(nameof(thickBondLine.OuterStart)) },
+                { nameof(thickBondLine.OuterEnd), thickBondLine.GetOriginalPoint(nameof(thickBondLine.OuterEnd)) }
+            };
+
+            HandleIntersection(thickBondLine, leftWedgeClippingLine, outerClippingLine, nameof(thickBondLine.OuterStart), nameof(thickBondLine.OuterEnd), originalPoints);
+            HandleIntersection(thickBondLine, rightWedgeClippingLine, innerClippingLine, nameof(thickBondLine.InnerStart), nameof(thickBondLine.InnerEnd), originalPoints);
+            HandleIntersection(thickBondLine, leftWedgeClippingLine, innerClippingLine, nameof(thickBondLine.InnerStart), nameof(thickBondLine.InnerEnd), originalPoints);
+            HandleIntersection(thickBondLine, rightWedgeClippingLine, outerClippingLine, nameof(thickBondLine.OuterStart), nameof(thickBondLine.OuterEnd), originalPoints);
+        }
+
+        private void HandleIntersection(BondLine bondLine, ClippingLine line1, ClippingLine line2,
+                                               string startPropName, string endPropName,
+                                               Dictionary<string, Point> originalPoints)
+        {
+            var intersection = GeometryTool.GetIntersection(line1.Start, line1.End, line2.Start, line2.End);
+            if (!intersection.HasValue) return;
+
+            var originalStart = originalPoints[startPropName];
+            var originalEnd = originalPoints[endPropName];
+
+            if (IsLonger(originalStart - intersection.Value, originalStart - originalEnd))
+            {
+                SetBondLinePoint(bondLine, endPropName, intersection.Value);
+            }
+            if (IsLonger(originalEnd - intersection.Value, originalEnd - originalStart))
+            {
+                SetBondLinePoint(bondLine, startPropName, intersection.Value);
+            }
+        }
+
+        private void SetBondLinePoint(BondLine bondLine, string propertyName, Point newPoint)
+        {
+            switch (propertyName)
+            {
+                case nameof(bondLine.InnerStart):
+                    bondLine.InnerStart = newPoint;
+                    break;
+
+                case nameof(bondLine.InnerEnd):
+                    bondLine.InnerEnd = newPoint;
+                    break;
+
+                case nameof(bondLine.OuterStart):
+                    bondLine.OuterStart = newPoint;
+                    break;
+
+                case nameof(bondLine.OuterEnd):
+                    bondLine.OuterEnd = newPoint;
+                    break;
+            }
+        }
+
+        private void UpdateTailIfIntersecting(BondLine bondLine, ClippingLine bondClip, ClippingLine otherClip, bool isLeft)
+        {
+            var intersection = GeometryTool.GetIntersection(bondClip.Start, bondClip.End, otherClip.Start, otherClip.End);
+            if (intersection.HasValue)
+            {
+                if (isLeft)
+                {
+                    bondLine.LeftTail = intersection.Value;
+                }
+                else
+                {
+                    bondLine.RightTail = intersection.Value;
+                }
+            }
+        }
+
+        private void UpdateTailIfIntersectingAndLonger(BondLine bondLine, ClippingLine bondClip, ClippingLine otherClip, bool isLeft)
+        {
+            var intersection = GeometryTool.GetIntersection(bondClip.Start, bondClip.End, otherClip.Start, otherClip.End);
+            if (intersection.HasValue)
+            {
+                var currentTail = isLeft ? bondLine.LeftTail : bondLine.RightTail;
+                if (IsLonger(bondLine.Start - intersection.Value, bondLine.Start - currentTail))
+                {
+                    if (isLeft)
+                    {
+                        bondLine.LeftTail = intersection.Value;
+                    }
+                    else
+                    {
+                        bondLine.RightTail = intersection.Value;
+                    }
+                }
+            }
+        }
+
+        private void GenerateInitialOutlinePoints(List<BondLine> bondLines)
+        {
+            foreach (var bondLine in bondLines)
+            {
+                bondLine.CalculateInitialOutlinePoints(_medianBondLength);
+            }
+        }
+
+        private static bool IsLonger(Vector v1, Vector v2)
+            => v1.Length > v2.Length;
 
         private void DrawReversibleArrow(Reaction reaction)
         {
@@ -667,7 +839,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     DrawWavyLine(bondStart, bondEnd, bondPath, colour);
                     break;
 
+                case BondLineStyle.Thick:
+                    // Do Nothing this is implemented elsewhere
+                    break;
+
                 default:
+                    // Diagnostic dotted green lines
                     DrawStraightLine(bondStart, bondEnd, bondPath, BondLineStyle.Zero, "00ff00", lineWidth);
                     break;
             }
@@ -726,95 +903,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             lines.Add(new SimpleLine(wedgeEndMiddle, points[3]));
 
             return lines;
-        }
-
-        private void DrawTextBox(Rect cmlExtents, string value, string colour)
-        {
-            var emuWidth = OoXmlHelper.ScaleCmlToEmu(cmlExtents.Width);
-            var emuHeight = OoXmlHelper.ScaleCmlToEmu(cmlExtents.Height);
-            var emuTop = OoXmlHelper.ScaleCmlToEmu(cmlExtents.Top);
-            var emuLeft = OoXmlHelper.ScaleCmlToEmu(cmlExtents.Left);
-
-            var location = new Point(emuLeft, emuTop);
-            var size = new Size(emuWidth, emuHeight);
-            location.Offset(OoXmlHelper.ScaleCmlToEmu(-_boundingBoxOfEverything.Left), OoXmlHelper.ScaleCmlToEmu(-_boundingBoxOfEverything.Top));
-            var boundingBox = new Rect(location, size);
-
-            emuWidth = (Int64Value)boundingBox.Width;
-            emuHeight = (Int64Value)boundingBox.Height;
-            emuTop = (Int64Value)boundingBox.Top;
-            emuLeft = (Int64Value)boundingBox.Left;
-
-            var id = UInt32Value.FromUInt32((uint)_ooxmlId++);
-            var shapeName = "String " + id;
-            var wordprocessingShape = CreateShape(id, shapeName);
-
-            var shapeProperties = new Wps.ShapeProperties();
-
-            var transform2D = new A.Transform2D();
-            var offset = new A.Offset { X = emuLeft, Y = emuTop };
-            var extents = new A.Extents { Cx = emuWidth, Cy = emuHeight };
-            transform2D.Append(offset);
-            transform2D.Append(extents);
-            shapeProperties.Append(transform2D);
-
-            var adjustValueList = new A.AdjustValueList();
-            var presetGeometry = new A.PresetGeometry { Preset = A.ShapeTypeValues.Rectangle };
-            presetGeometry.Append(adjustValueList);
-            shapeProperties.Append(presetGeometry);
-
-            // The TextBox
-
-            var textBoxInfo2 = new Wps.TextBoxInfo2();
-            var textBoxContent = new TextBoxContent();
-            textBoxInfo2.Append(textBoxContent);
-
-            // The Paragrah
-            var paragraph = new Paragraph();
-            textBoxContent.Append(paragraph);
-
-            var paragraphProperties = new ParagraphProperties();
-            var justification = new Justification { Val = JustificationValues.Center };
-            paragraphProperties.Append(justification);
-
-            paragraph.Append(paragraphProperties);
-
-            // Now for the text Run
-            var run = new Run();
-            paragraph.Append(run);
-            var runProperties = new RunProperties();
-            runProperties.Append(CommonRunProperties());
-
-            run.Append(runProperties);
-
-            var text = new Text(value);
-            run.Append(text);
-
-            wordprocessingShape.Append(shapeProperties);
-            wordprocessingShape.Append(textBoxInfo2);
-
-            var textBodyProperties = new Wps.TextBodyProperties { LeftInset = 0, TopInset = 0, RightInset = 0, BottomInset = 0 };
-            wordprocessingShape.Append(textBodyProperties);
-
-            _wordprocessingGroup.Append(wordprocessingShape);
-
-            OpenXmlElement[] CommonRunProperties()
-            {
-                var result = new List<OpenXmlElement>();
-
-                var pointSize = OoXmlHelper.EmusPerCsTtfPoint(_medianBondLength) * 2;
-
-                var runFonts = new RunFonts { Ascii = "Arial", HighAnsi = "Arial" };
-                result.Add(runFonts);
-
-                var color = new Color { Val = colour };
-                result.Add(color);
-
-                var fontSize1 = new FontSize { Val = pointSize.ToString("0") };
-                result.Add(fontSize1);
-
-                return result.ToArray();
-            }
         }
 
         private void DrawShape(Rect cmlExtents, A.ShapeTypeValues shape, bool filled, string colour,
@@ -990,7 +1078,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             };
         }
 
-        private void DrawWedgeBond(List<Point> points, string bondPath,
+        private void DrawFilledBond(List<Point> points, string bondPath,
                                    string colour = OoXmlHelper.Black)
         {
             var cmlExtents = new Rect(points[0], points[points.Count - 1]);
@@ -2133,11 +2221,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         }
 
         private double BondOffset()
-        {
-            return _medianBondLength * OoXmlHelper.MultipleBondOffsetPercentage;
-        }
+            => _medianBondLength * OoXmlHelper.MultipleBondOffsetPercentage;
 
-        private static void ShutDownProgress(Progress pb)
+        private void ShutDownProgress(Progress pb)
         {
             pb.Value = 0;
             pb.Hide();

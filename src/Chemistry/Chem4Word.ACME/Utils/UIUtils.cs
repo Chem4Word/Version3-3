@@ -338,6 +338,10 @@ namespace Chem4Word.ACME.Utils
                                     model.SingleBondChoice = SingleBondType.Indeterminate;
                                     break;
 
+                                case BondStereo.Thick:
+                                    model.SingleBondChoice = SingleBondType.Thick;
+                                    break;
+
                                 default:
                                     model.SingleBondChoice = SingleBondType.None;
                                     break;

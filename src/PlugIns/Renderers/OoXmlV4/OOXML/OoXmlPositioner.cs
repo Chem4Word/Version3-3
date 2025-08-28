@@ -47,8 +47,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         /// 2. Position bond lines
         /// 3. Position brackets (molecules and groups)
         /// 4. Position molecule label characters
-        /// 4.1 Position molecular weight characters
         /// 5. Shrink bond lines to not clash with atom labels
+        /// 5.1 Position molecular weight characters
         /// 6. Add mask underneath long bond lines of bonds detected as having crossing points
         /// </summary>
         /// <returns>PositionerOutputs a class to hold all of the required output types</returns>
@@ -65,10 +65,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
             foreach (var mol in Inputs.Model.Molecules.Values)
             {
+                // Operations 1 to 4
                 ProcessMolecule(mol, Inputs.Progress, ref moleculeNo);
             }
 
-            // Shrink Bond Lines
+            // 5. Shrink Bond Lines
             if (Inputs.Options.ClipBondLines)
             {
                 ShrinkBondLinesPass1(Inputs.Progress);
@@ -82,6 +83,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             ProcessReactionTexts();
             ProcessAnnotationTexts();
 
+            // 5.1 Add molecular weight
             ProcessMolecularWeight();
 
             // We are done now so we can return the final values
@@ -109,8 +111,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
             // Measure string
             var boundingBox = MeasureString(molecularWeight, point);
-            // Move down by half the line's height
-            //point.Offset(0, boundingBox.Height / 2 + Inputs.MeanBondLength * OoXmlHelper.MultipleBondOffsetPercentage / 2);
 
             // Place string characters such that they are hanging below the "line"
             if (boundingBox != Rect.Empty)
@@ -591,10 +591,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         {
             molNumber++;
 
-            // Position Atom Label Characters
+            // 1. Position Atom Label Characters
             ProcessAtoms(mol, pb, molNumber);
 
-            // Position Bond Lines
+            // 2. Position Bond Lines
             ProcessBonds(mol, pb, molNumber);
 
             // Populate diagnostic data
@@ -651,7 +651,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                 }
             }
 
-            // Add required Brackets
+            // 3. Add required Brackets
             var showBrackets = mol.ShowMoleculeBrackets.HasValue && mol.ShowMoleculeBrackets.Value
                                || mol.Count.HasValue && mol.Count.Value > 0
                                || mol.FormalCharge.HasValue && mol.FormalCharge.Value != 0
@@ -726,7 +726,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                 thisMoleculeExtents.SetExternalCharacterExtents(CharacterExtents(mol, thisMoleculeExtents.MoleculeBracketsExtents));
             }
 
-            // Position Molecule Label Characters
+            // 4. Position Molecule Label Characters
             // Handle optional rendering of molecule labels centered on brackets (if any) and below any molecule property characters
             if (Inputs.Model.ShowMoleculeCaptions && mol.Captions.Any())
             {
@@ -1338,8 +1338,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                             Outputs.BondLines.Add(new BondLine(BondLineStyle.Wavy, bond));
                             break;
 
-                        default:
+                        case BondStereo.Thick:
+                            Outputs.BondLines.Add(new BondLine(BondLineStyle.Thick, bond));
+                            break;
 
+                        default:
                             Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, bond));
                             break;
                     }

@@ -203,7 +203,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     if (chamferBond)
                     {
                         var otherAtomPoints = (from b in otherBonds
-                                      select b.OtherAtom(endAtom).Position).ToList();
+                                               select b.OtherAtom(endAtom).Position).ToList();
 
                         if (otherAtomPoints.Any())
                         {

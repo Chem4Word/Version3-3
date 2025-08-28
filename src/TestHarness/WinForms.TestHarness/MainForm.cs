@@ -857,16 +857,18 @@ namespace WinForms.TestHarness
 
         private void OnClick_RenderOoXml(object sender, EventArgs e)
         {
-            var renderer = new Renderer();
-            renderer.Telemetry = _telemetry;
-            renderer.TopLeft = new Point(Left + 24, Top + 24);
-            renderer.Cml = _lastCml;
-            renderer.Properties = new Dictionary<string, string>
-                                  {
-                                      {
-                                          "Guid", Guid.NewGuid().ToString("N")
-                                      }
-                                  };
+            var renderer = new Renderer
+                           {
+                               Telemetry = _telemetry,
+                               TopLeft = new Point(Left + 24, Top + 24),
+                               Cml = _lastCml,
+                               Properties = new Dictionary<string, string>
+                                            {
+                                                {
+                                                    "Guid", Guid.NewGuid().ToString("N")
+                                                }
+                                            }
+                           };
             var tempFileName = renderer.Render();
             if (string.IsNullOrEmpty(tempFileName))
             {
@@ -876,7 +878,7 @@ namespace WinForms.TestHarness
             {
                 Debug.WriteLine($"File {tempFileName} was created, opening it in Word");
                 // Start word in quiet mode [/q] without any add ins loaded [/a]
-                Process.Start(OfficeHelper.GetWinWordPath(), $"/q /a {tempFileName}");
+                Process.Start(OfficeHelper.GetWinWordPath(), $" {tempFileName}");
             }
         }
 

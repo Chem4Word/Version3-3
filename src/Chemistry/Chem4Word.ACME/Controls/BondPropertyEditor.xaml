@@ -455,6 +455,54 @@
                     </RadioButton>
                     <RadioButton
                         d:IsLocked="True"
+                        IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.Thick}}"
+                        ToolTip="Thick">
+                        <Canvas d:IsLocked="True">
+                            <Canvas.RenderTransform>
+                                <RotateTransform Angle="{Binding Path=Angle}" CenterX="24" CenterY="24" />
+                            </Canvas.RenderTransform>
+                            <Line
+                                d:IsLocked="True"
+                                Stroke="Red"
+                                StrokeDashArray="1,1"
+                                StrokeThickness="1"
+                                X1="24"
+                                X2="24"
+                                Y1="6"
+                                Y2="42" />
+                            <Path
+                                Width="30"
+                                Height="30"
+                                Margin="9"
+                                d:IsLocked="True"
+                                Data="M10 30 10 0 20 0 20 30Z"
+                                Fill="Black"
+                                Stretch="Uniform" />
+                            <Ellipse
+                                Width="4"
+                                Height="4"
+                                Margin="22,1,0,0"
+                                d:IsLocked="True"
+                                Fill="Red" />
+                            <Ellipse
+                                Width="4"
+                                Height="4"
+                                Margin="22,43,0,0"
+                                d:IsLocked="True"
+                                Fill="Red" />
+                            <Line
+                                d:IsLocked="True"
+                                Stroke="Black"
+                                StrokeThickness="2"
+                                X1="24"
+                                X2="24"
+                                Y1="10"
+                                Y2="38" />
+                        </Canvas>
+                    </RadioButton>
+
+                    <RadioButton
+                        d:IsLocked="True"
                         IsChecked="{Binding Path=SingleBondChoice, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static enums:SingleBondType.Hatch}}"
                         ToolTip="Hatch">
                         <Canvas d:IsLocked="True">
