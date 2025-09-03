@@ -12,10 +12,6 @@ namespace Chem4Word.ACME.Drawing.Text
 {
     public class LabelTextRunTypographyProperties : TextRunTypographyProperties
     {
-        public LabelTextRunTypographyProperties()
-        {
-        }
-
         public override int AnnotationAlternates
         {
             get { return 0; }

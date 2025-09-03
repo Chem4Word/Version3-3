@@ -30,6 +30,8 @@ namespace Chem4Word.ACME.Commands.BlockEditing
             Editor.ToggleSuperscript(Editor.Selection);
         }
 
+        public event EventHandler CanExecuteChanged;
+
         public void RaiseCanExecChanged()
         {
             if (CanExecuteChanged != null)
@@ -37,7 +39,5 @@ namespace Chem4Word.ACME.Commands.BlockEditing
                 CanExecuteChanged.Invoke(this, new EventArgs());
             }
         }
-
-        public event EventHandler CanExecuteChanged;
     }
 }

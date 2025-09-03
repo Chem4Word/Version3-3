@@ -80,7 +80,7 @@ namespace Chem4Word.ACME.Behaviors
                 _parent.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
 
-            CurrentStatus = ("Draw a ring by clicking on a bond, atom or free space.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DefaultDrawRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         public override void Abort()
@@ -107,11 +107,11 @@ namespace Chem4Word.ACME.Behaviors
                                                               preferredPlacements, Unsaturated);
                         if (av.ParentAtom.Degree >= 2)
                         {
-                            CurrentStatus = ("Click atom to spiro-fuse.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentStatus = (AcmeConstants.RingSpiroFuseMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         }
                         else
                         {
-                            CurrentStatus = ("Click atom to draw a terminating ring.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentStatus = (AcmeConstants.RingTerminatingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         }
                     }
                     break;
@@ -122,7 +122,7 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         CurrentAdorner = new FixedRingAdorner(CurrentEditor, EditController.EditBondThickness,
                                                               preferredPlacements ?? altPlacements, Unsaturated);
-                        CurrentStatus = ("Click bond to fuse a ring", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = (AcmeConstants.RingFuseOnBondMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     }
                     break;
 
@@ -147,13 +147,13 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         CurrentAdorner = new FixedRingAdorner(CurrentEditor, EditController.EditBondThickness,
                                                             preferredPlacements, Unsaturated);
-                        CurrentStatus = ("Click to draw a standalone ring", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = (AcmeConstants.RingDrawStandaloneMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     }
                     else
                     {
                         CurrentAdorner = new FixedRingAdorner(CurrentEditor, EditController.EditBondThickness,
                                                               preferredPlacements, Unsaturated, greyedOut: true);
-                        CurrentStatus = ("Can't fuse ring here - hover pencil over atom or bond to place ring", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = (AcmeConstants.CantDrawRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     }
                     break;
             }
@@ -189,7 +189,7 @@ namespace Chem4Word.ACME.Behaviors
                     IdentifyPlacements(hitAtom, xamlBondSize, out preferredPlacements, RingSize);
                     if (preferredPlacements == null)
                     {
-                        UserInteractions.AlertUser("No room left to draw any more rings!");
+                        UserInteractions.AlertUser(AcmeConstants.RingNoRoomMessage);
                     }
                     else if (preferredPlacements.Count % 2 == 1)
                     {
@@ -201,7 +201,7 @@ namespace Chem4Word.ACME.Behaviors
                     IdentifyPlacements(hitBond, out altPlacements, out preferredPlacements, RingSize, position);
                     if ((altPlacements == null) && (preferredPlacements == null))
                     {
-                        UserInteractions.AlertUser("No room left to draw any more rings!");
+                        UserInteractions.AlertUser(AcmeConstants.RingNoRoomMessage);
                     }
                 }
                 else //clicked on empty space

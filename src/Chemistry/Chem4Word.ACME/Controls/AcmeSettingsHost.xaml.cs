@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Utils;
+using Chem4Word.Core;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using IChem4Word.Contracts;
@@ -66,7 +67,7 @@ namespace Chem4Word.ACME.Controls
             Top = p2.Y;
             if (UcSettings != null)
             {
-                UcSettings.TopLeft = new Point(p2.X + Core.Helpers.Constants.TopLeftOffset, p2.Y + Core.Helpers.Constants.TopLeftOffset);
+                UcSettings.TopLeft = new Point(p2.X + CoreConstants.TopLeftOffset, p2.Y + CoreConstants.TopLeftOffset);
             }
         }
     }

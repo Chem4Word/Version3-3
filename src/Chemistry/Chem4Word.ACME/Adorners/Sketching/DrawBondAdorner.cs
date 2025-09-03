@@ -5,18 +5,16 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media;
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing;
 using Chem4Word.ACME.Drawing.LayoutSupport;
-using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
 
 namespace Chem4Word.ACME.Adorners.Sketching
 {
@@ -57,7 +55,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
         public DrawBondAdorner([NotNull] UIElement adornedElement, double bondThickness, Point startPoint) : base(adornedElement)
         {
-            _solidColorBrush = (SolidColorBrush)FindResource(Common.DrawAdornerBrush);
+            _solidColorBrush = (SolidColorBrush)FindResource(AcmeConstants.DrawAdornerBrush);
             _dashPen = new Pen(_solidColorBrush, bondThickness);
             StartPoint = startPoint;
 
@@ -120,8 +118,8 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
             switch (BondOrder)
             {
-                case Globals.OrderZero:
-                case Globals.OrderOther:
+                case ModelConstants.OrderZero:
+                case ModelConstants.OrderOther:
                 case "unknown":
 
                     pen = pen.Clone();
@@ -129,14 +127,14 @@ namespace Chem4Word.ACME.Adorners.Sketching
                     drawingContext.DrawGeometry(brush, pen, layout.DefiningGeometry);
                     break;
 
-                case Globals.OrderPartial01:
+                case ModelConstants.OrderPartial01:
                     pen = pen.Clone();
                     pen.DashStyle = DashStyles.Dash;
                     drawingContext.DrawGeometry(brush, pen, layout.DefiningGeometry);
                     break;
 
-                case Globals.OrderAromatic:
-                case Globals.OrderPartial12:
+                case ModelConstants.OrderAromatic:
+                case ModelConstants.OrderPartial12:
                     var secondPen = pen.Clone();
                     secondPen.DashStyle = DashStyles.Dash;
                     drawingContext.DrawLine(pen, layout.Start, layout.End);
@@ -146,7 +144,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
                                             doubleBondDescriptor.SecondaryEnd);
                     break;
 
-                case Globals.OrderPartial23:
+                case ModelConstants.OrderPartial23:
                     var tbd = layout as TripleBondLayout;
                     secondPen = pen.Clone();
                     secondPen.DashStyle = DashStyles.Dash;
@@ -155,7 +153,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
                     drawingContext.DrawLine(secondPen, tbd.TertiaryStart, tbd.TertiaryEnd);
                     break;
 
-                case Globals.OrderTriple:
+                case ModelConstants.OrderTriple:
                     tbd = layout as TripleBondLayout;
                     drawingContext.DrawLine(pen, tbd.SecondaryStart, tbd.SecondaryEnd);
                     drawingContext.DrawLine(pen, tbd.Start, tbd.End);
@@ -172,7 +170,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
                                          BondStereo stereo, string order, Ring existingRing = null,
                                          Ring subsidiaryRing = null)
         {
-            BondLayout descriptor = null;
+            BondLayout layout = null;
             //check to see if it's a wedge or a hatch yet
             if (stereo == BondStereo.Wedge || stereo == BondStereo.Hatch)
             {
@@ -181,19 +179,19 @@ namespace Chem4Word.ACME.Adorners.Sketching
                 return wbd;
             }
 
-            if (stereo == BondStereo.Indeterminate && order == Globals.OrderSingle)
+            if (stereo == BondStereo.Indeterminate && order == ModelConstants.OrderSingle)
             {
-                descriptor = new BondLayout { Start = startPoint, End = endPoint };
-                BondGeometry.GetWavyBondGeometry(descriptor, bondLength, CurrentEditor.Controller.Standoff);
-                return descriptor;
+                layout = new BondLayout { Start = startPoint, End = endPoint };
+                BondGeometry.GetWavyBondGeometry(layout, bondLength, CurrentEditor.Controller.Standoff);
+                return layout;
             }
 
             var orderValue = Bond.OrderToOrderValue(order);
             // single or dotted bond
             if (orderValue <= 1)
             {
-                descriptor = new BondLayout { Start = startPoint, End = endPoint };
-                BondGeometry.GetSingleBondGeometry(descriptor, CurrentEditor.Controller.Standoff);
+                layout = new BondLayout { Start = startPoint, End = endPoint };
+                BondGeometry.GetSingleBondGeometry(layout, CurrentEditor.Controller.Standoff);
             }
 
             // double bond
@@ -211,7 +209,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
                     BondGeometry.GetDoubleBondGeometry(dbd, bondLength, CurrentEditor.Controller.Standoff);
                 }
 
-                descriptor = dbd;
+                layout = dbd;
             }
 
             //tripe bond
@@ -219,10 +217,10 @@ namespace Chem4Word.ACME.Adorners.Sketching
             {
                 var tbd = new TripleBondLayout { Start = startPoint, End = endPoint };
                 BondGeometry.GetTripleBondGeometry(tbd, bondLength, CurrentEditor.Controller.Standoff);
-                descriptor = tbd;
+                layout = tbd;
             }
 
-            return descriptor;
+            return layout;
         }
     }
 }

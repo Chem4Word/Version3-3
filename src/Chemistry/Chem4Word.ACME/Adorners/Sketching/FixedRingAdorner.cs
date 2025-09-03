@@ -31,11 +31,11 @@ namespace Chem4Word.ACME.Adorners.Sketching
             Cursor = CursorUtils.Pencil;
             if (!greyedOut)
             {
-                BondPen = new Pen((SolidColorBrush)FindResource(Common.DrawAdornerBrush), bondThickness);
+                BondPen = new Pen((SolidColorBrush)FindResource(AcmeConstants.DrawAdornerBrush), bondThickness);
             }
             else
             {
-                BondPen = new Pen((SolidColorBrush)FindResource(Common.BlockedAdornerBrush), bondThickness);
+                BondPen = new Pen((SolidColorBrush)FindResource(AcmeConstants.BlockedAdornerBrush), bondThickness);
             }
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);

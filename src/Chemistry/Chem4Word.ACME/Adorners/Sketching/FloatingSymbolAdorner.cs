@@ -7,7 +7,6 @@
 
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing.Text;
-using Chem4Word.ACME.Utils;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -27,7 +26,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             CurrentEditor = (EditorCanvas)currentEditor;
             _defaultText = defaultText;
             _pos = pos;
-            _brush = (Brush)FindResource(Common.AdornerBorderBrush);
+            _brush = (Brush)FindResource(AcmeConstants.AdornerBorderBrush);
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(currentEditor);
             myAdornerLayer.Add(this);

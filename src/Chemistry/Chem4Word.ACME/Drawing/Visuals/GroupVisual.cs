@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME.Utils;
 using Chem4Word.Model2;
 using System.Windows;
 using System.Windows.Media;
@@ -32,18 +31,18 @@ namespace Chem4Word.ACME.Drawing.Visuals
         {
             //first work out the angle bracket size
             double bondLength = ParentMolecule.Model.XamlBondLength;
-            double bracketLength = Common.BracketFactor * bondLength;
+            double bracketLength = AcmeConstants.BracketFactor * bondLength;
             //now work out the main area
             Brush mainArea = new SolidColorBrush(Colors.Gray);
             mainArea.Opacity = MainAreaOpacity;
-            Brush bracketBrush = ShowInColour ? new SolidColorBrush(Utils.Common.GroupBracketColor) : new SolidColorBrush(Colors.Black);
-            Pen bracketPen = new Pen(bracketBrush, Common.BracketThickness);
+            Brush bracketBrush = ShowInColour ? new SolidColorBrush(ACMEGlobals.GroupBracketColor) : new SolidColorBrush(Colors.Black);
+            Pen bracketPen = new Pen(bracketBrush, AcmeConstants.BracketThickness);
             bracketPen.StartLineCap = PenLineCap.Round;
             bracketPen.EndLineCap = PenLineCap.Round;
 
             using (DrawingContext dc = RenderOpen())
             {
-                var inflateFactor = ParentMolecule.Model.XamlBondLength * Common.GroupInflateFactor;
+                var inflateFactor = ParentMolecule.Model.XamlBondLength * AcmeConstants.GroupInflateFactor;
                 var bb = BoundingBox;
 
                 bb.Inflate(new Size(inflateFactor, inflateFactor));

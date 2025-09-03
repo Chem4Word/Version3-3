@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2.Enums;
 using System.IO;
 
 namespace Chem4Word.Model2.Converters.MDL

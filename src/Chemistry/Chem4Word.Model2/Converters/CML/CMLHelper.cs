@@ -24,7 +24,7 @@ namespace Chem4Word.Model2.Converters.CML
         {
             int isotopeNumber;
 
-            if (int.TryParse(cmlElement.Attribute(CMLConstants.AttributeIsotopeNumber)?.Value, out isotopeNumber))
+            if (int.TryParse(cmlElement.Attribute(ModelConstants.AttributeIsotopeNumber)?.Value, out isotopeNumber))
             {
                 return isotopeNumber;
             }
@@ -37,7 +37,7 @@ namespace Chem4Word.Model2.Converters.CML
         internal static ElementBase GetElementOrFunctionalGroup(XElement cmlElement, out string message)
         {
             message = "";
-            var xa = cmlElement.Attribute(CMLConstants.AttributeElementType);
+            var xa = cmlElement.Attribute(ModelConstants.AttributeElementType);
             if (xa != null)
             {
                 var symbol = xa.Value;
@@ -61,50 +61,50 @@ namespace Chem4Word.Model2.Converters.CML
 
         internal static XElement GetExplicitCarbonTag(XElement doc)
         {
-            var id1 = from XElement xe in doc.Elements(CMLConstants.TagExplicitC) select xe;
-            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagExplicitC) select xe;
+            var id1 = from XElement xe in doc.Elements(ModelConstants.TagExplicitC) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagExplicitC) select xe;
             return id1.Union(id2).FirstOrDefault();
         }
 
         internal static XElement GetExplicitHydrogenTag(XElement doc)
         {
-            var id1 = from XElement xe in doc.Elements(CMLConstants.TagExplicitH) select xe;
-            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagExplicitH) select xe;
+            var id1 = from XElement xe in doc.Elements(ModelConstants.TagExplicitH) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagExplicitH) select xe;
             return id1.Union(id2).FirstOrDefault();
         }
 
         internal static XElement GetColouredAtomsTag(XElement doc)
         {
-            var id1 = from XElement xe in doc.Elements(CMLConstants.TagShowColouredAtoms) select xe;
-            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagShowColouredAtoms) select xe;
+            var id1 = from XElement xe in doc.Elements(ModelConstants.TagShowColouredAtoms) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagShowColouredAtoms) select xe;
             return id1.Union(id2).FirstOrDefault();
         }
 
         internal static XElement GetShowMoleculeGroupingTag(XElement doc)
         {
-            var id1 = from XElement xe in doc.Elements(CMLConstants.TagShowMoleculeGrouping) select xe;
-            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagShowMoleculeGrouping) select xe;
+            var id1 = from XElement xe in doc.Elements(ModelConstants.TagShowMoleculeGrouping) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagShowMoleculeGrouping) select xe;
             return id1.Union(id2).FirstOrDefault();
         }
 
         internal static XElement GetShowMolecularWeightTag(XElement doc)
         {
-            var id1 = from XElement xe in doc.Elements(CMLConstants.TagShowMolecularWeight) select xe;
-            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagShowMolecularWeight) select xe;
+            var id1 = from XElement xe in doc.Elements(ModelConstants.TagShowMolecularWeight) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagShowMolecularWeight) select xe;
             return id1.Union(id2).FirstOrDefault();
         }
 
         internal static XElement GetShowMoleculeCaptionsTag(XElement doc)
         {
-            var id1 = from XElement xe in doc.Elements(CMLConstants.TagShowMoleculeCaptions) select xe;
-            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagShowMoleculeCaptions) select xe;
+            var id1 = from XElement xe in doc.Elements(ModelConstants.TagShowMoleculeCaptions) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagShowMoleculeCaptions) select xe;
             return id1.Union(id2).FirstOrDefault();
         }
 
         internal static XElement GetCustomXmlPartGuid(XElement doc)
         {
-            var id1 = from XElement xe in doc.Elements(CMLConstants.TagXmlPartGuid) select xe;
-            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagXmlPartGuid) select xe;
+            var id1 = from XElement xe in doc.Elements(ModelConstants.TagXmlPartGuid) select xe;
+            var id2 = from XElement xe in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagXmlPartGuid) select xe;
             return id1.Union(id2).FirstOrDefault();
         }
 
@@ -114,14 +114,14 @@ namespace Chem4Word.Model2.Converters.CML
             List<XElement> result = new List<XElement>();
 
             // Task 736 - Handle ChemDraw 19.1 cml variant
-            if (doc.Document.Root.Name.LocalName == CMLConstants.TagMolecule)
+            if (doc.Document.Root.Name.LocalName == ModelConstants.TagMolecule)
             {
                 result.Add(doc);
             }
             else
             {
-                var mols = from XElement xe in doc.Elements(CMLConstants.TagMolecule) select xe;
-                var mols2 = from XElement xe2 in doc.Elements(CMLNamespaces.cml + CMLConstants.TagMolecule) select xe2;
+                var mols = from XElement xe in doc.Elements(ModelConstants.TagMolecule) select xe;
+                var mols2 = from XElement xe2 in doc.Elements(CMLNamespaces.cml + ModelConstants.TagMolecule) select xe2;
                 result = mols.Union(mols2).ToList();
             }
 
@@ -131,22 +131,22 @@ namespace Chem4Word.Model2.Converters.CML
         internal static List<XElement> GetAtoms(XElement mol)
         {
             // Task 336
-            var aa1 = from a in mol.Elements(CMLConstants.TagAtomArray) select a;
-            var aa2 = from a in mol.Elements(CMLNamespaces.cml + CMLConstants.TagAtomArray) select a;
+            var aa1 = from a in mol.Elements(ModelConstants.TagAtomArray) select a;
+            var aa2 = from a in mol.Elements(CMLNamespaces.cml + ModelConstants.TagAtomArray) select a;
             var aa = aa1.Union(aa2);
 
             if (aa.Count() == 0)
             {
                 // Bare Atoms without AtomArray
-                var atoms1 = from a in mol.Elements(CMLConstants.TagAtom) select a;
-                var atoms2 = from a in mol.Elements(CMLNamespaces.cml + CMLConstants.TagAtom) select a;
+                var atoms1 = from a in mol.Elements(ModelConstants.TagAtom) select a;
+                var atoms2 = from a in mol.Elements(CMLNamespaces.cml + ModelConstants.TagAtom) select a;
                 return atoms1.Union(atoms2).ToList();
             }
             else
             {
                 // Atoms inside AtomArray
-                var atoms1 = from a in aa.Elements(CMLConstants.TagAtom) select a;
-                var atoms2 = from a in aa.Elements(CMLNamespaces.cml + CMLConstants.TagAtom) select a;
+                var atoms1 = from a in aa.Elements(ModelConstants.TagAtom) select a;
+                var atoms2 = from a in aa.Elements(CMLNamespaces.cml + ModelConstants.TagAtom) select a;
                 return atoms1.Union(atoms2).ToList();
             }
         }
@@ -154,51 +154,51 @@ namespace Chem4Word.Model2.Converters.CML
         internal static List<XElement> GetBonds(XElement mol)
         {
             // Task 336
-            var ba1 = from b in mol.Elements(CMLConstants.TagBondArray) select b;
-            var ba2 = from b in mol.Elements(CMLNamespaces.cml + CMLConstants.TagBondArray) select b;
+            var ba1 = from b in mol.Elements(ModelConstants.TagBondArray) select b;
+            var ba2 = from b in mol.Elements(CMLNamespaces.cml + ModelConstants.TagBondArray) select b;
             var ba = ba1.Union(ba2);
 
             if (ba.Count() == 0)
             {
                 // Bare bonds without BondArray
-                var bonds1 = from b in mol.Elements(CMLConstants.TagBond) select b;
-                var bonds2 = from b in mol.Elements(CMLNamespaces.cml + CMLConstants.TagBond) select b;
+                var bonds1 = from b in mol.Elements(ModelConstants.TagBond) select b;
+                var bonds2 = from b in mol.Elements(CMLNamespaces.cml + ModelConstants.TagBond) select b;
                 return bonds1.Union(bonds2).ToList();
             }
             else
             {
                 // Bonds inside BondArray
-                var bonds1 = from b in ba.Elements(CMLConstants.TagBond) select b;
-                var bonds2 = from b in ba.Elements(CMLNamespaces.cml + CMLConstants.TagBond) select b;
+                var bonds1 = from b in ba.Elements(ModelConstants.TagBond) select b;
+                var bonds2 = from b in ba.Elements(CMLNamespaces.cml + ModelConstants.TagBond) select b;
                 return bonds1.Union(bonds2).ToList();
             }
         }
 
         internal static List<XElement> GetStereo(XElement bond)
         {
-            var stereo = from s in bond.Elements(CMLConstants.TagBondStereo) select s;
-            var stereo2 = from s in bond.Elements(CMLNamespaces.cml + CMLConstants.TagBondStereo) select s;
+            var stereo = from s in bond.Elements(ModelConstants.TagBondStereo) select s;
+            var stereo2 = from s in bond.Elements(CMLNamespaces.cml + ModelConstants.TagBondStereo) select s;
             return stereo.Union(stereo2).ToList();
         }
 
         internal static List<XElement> GetNames(XElement mol)
         {
-            var names1 = from n1 in mol.Elements(CMLConstants.TagName) select n1;
-            var names2 = from n2 in mol.Elements(CMLNamespaces.cml + CMLConstants.TagName) select n2;
+            var names1 = from n1 in mol.Elements(ModelConstants.TagName) select n1;
+            var names2 = from n2 in mol.Elements(CMLNamespaces.cml + ModelConstants.TagName) select n2;
             return names1.Union(names2).ToList();
         }
 
         internal static List<XElement> GetFormulas(XElement mol)
         {
-            var formulae1 = from f1 in mol.Elements(CMLConstants.TagFormula) select f1;
-            var formulae2 = from f2 in mol.Elements(CMLNamespaces.cml + CMLConstants.TagFormula) select f2;
+            var formulae1 = from f1 in mol.Elements(ModelConstants.TagFormula) select f1;
+            var formulae2 = from f2 in mol.Elements(CMLNamespaces.cml + ModelConstants.TagFormula) select f2;
             return formulae1.Union(formulae2).ToList();
         }
 
         internal static List<XElement> GetMoleculeLabels(XElement mol)
         {
-            var labels1 = from f1 in mol.Elements(CMLConstants.TagLabel) select f1;
-            var labels2 = from f2 in mol.Elements(CMLNamespaces.cml + CMLConstants.TagLabel) select f2;
+            var labels1 = from f1 in mol.Elements(ModelConstants.TagLabel) select f1;
+            var labels2 = from f2 in mol.Elements(CMLNamespaces.cml + ModelConstants.TagLabel) select f2;
             return labels1.Union(labels2).ToList();
         }
 
@@ -206,8 +206,8 @@ namespace Chem4Word.Model2.Converters.CML
         {
             List<XElement> result = new List<XElement>();
 
-            var rschemes = from XElement xe in doc.Elements(CMLConstants.TagReactionScheme) select xe;
-            var rschemes2 = from XElement xe2 in doc.Elements(CMLNamespaces.cml + CMLConstants.TagReactionScheme) select xe2;
+            var rschemes = from XElement xe in doc.Elements(ModelConstants.TagReactionScheme) select xe;
+            var rschemes2 = from XElement xe2 in doc.Elements(CMLNamespaces.cml + ModelConstants.TagReactionScheme) select xe2;
             result = rschemes.Union(rschemes2).ToList();
 
             return result;
@@ -217,8 +217,8 @@ namespace Chem4Word.Model2.Converters.CML
         {
             List<XElement> result = new List<XElement>();
 
-            var ann = from XElement xe in doc.Elements(CMLConstants.TagAnnotation) select xe;
-            var ann2 = from XElement xe2 in doc.Elements(CMLNamespaces.c4w + CMLConstants.TagAnnotation) select xe2;
+            var ann = from XElement xe in doc.Elements(ModelConstants.TagAnnotation) select xe;
+            var ann2 = from XElement xe2 in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagAnnotation) select xe2;
             result = ann.Union(ann2).ToList();
 
             return result;
@@ -226,7 +226,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         internal static int? GetFormalCharge(XElement cmlElement)
         {
-            if (int.TryParse(cmlElement.Attribute(CMLConstants.AttributeFormalCharge)?.Value, out var formalCharge))
+            if (int.TryParse(cmlElement.Attribute(ModelConstants.AttributeFormalCharge)?.Value, out var formalCharge))
             {
                 return formalCharge;
             }
@@ -244,31 +244,31 @@ namespace Chem4Word.Model2.Converters.CML
         internal static Point GetPosition(XElement cmlElement, out string message)
         {
             message = "";
-            string symbol = cmlElement.Attribute(CMLConstants.AttributeElementType)?.Value;
-            string id = cmlElement.Attribute(CMLConstants.AttributeId)?.Value;
+            string symbol = cmlElement.Attribute(ModelConstants.AttributeElementType)?.Value;
+            string id = cmlElement.Attribute(ModelConstants.AttributeId)?.Value;
 
             Point result = new Point();
             bool found = false;
 
             // Try first with 2D Co-ordinate scheme
-            if (cmlElement.Attribute(CMLConstants.AttributeX2) != null
-                && cmlElement.Attribute(CMLConstants.AttributeY2) != null)
+            if (cmlElement.Attribute(ModelConstants.AttributeX2) != null
+                && cmlElement.Attribute(ModelConstants.AttributeY2) != null)
             {
                 result = new Point(
-                    SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeX2).Value),
-                    SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeY2).Value));
+                    SafeDouble.Parse(cmlElement.Attribute(ModelConstants.AttributeX2).Value),
+                    SafeDouble.Parse(cmlElement.Attribute(ModelConstants.AttributeY2).Value));
                 found = true;
             }
 
             if (!found)
             {
                 // Try again with 3D Co-ordinate scheme
-                if (cmlElement.Attribute(CMLConstants.AttributeX3) != null
-                    && cmlElement.Attribute(CMLConstants.AttributeY3) != null)
+                if (cmlElement.Attribute(ModelConstants.AttributeX3) != null
+                    && cmlElement.Attribute(ModelConstants.AttributeY3) != null)
                 {
                     result = new Point(
-                        SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeX3).Value),
-                        SafeDouble.Parse(cmlElement.Attribute(CMLConstants.AttributeY3).Value));
+                        SafeDouble.Parse(cmlElement.Attribute(ModelConstants.AttributeX3).Value),
+                        SafeDouble.Parse(cmlElement.Attribute(ModelConstants.AttributeY3).Value));
                     found = true;
                 }
             }
@@ -282,12 +282,12 @@ namespace Chem4Word.Model2.Converters.CML
 
         public static bool? GetExplicit(XElement cmlElement)
         {
-            if (bool.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicit)?.Value, out var explicitC))
+            if (bool.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeExplicit)?.Value, out var explicitC))
             {
                 return explicitC;
             }
 
-            if (bool.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitC)?.Value, out explicitC))
+            if (bool.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeExplicitC)?.Value, out explicitC))
             {
                 return explicitC;
             }
@@ -297,7 +297,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         public static HydrogenLabels? GetExplicitH(XElement cmlElement)
         {
-            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeExplicitH)?.Value, out HydrogenLabels explicitH))
+            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeExplicitH)?.Value, out HydrogenLabels explicitH))
             {
                 return explicitH;
             }
@@ -307,7 +307,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         public static CompassPoints? GetExplicitHPlacement(XElement cmlElement)
         {
-            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeHydrogenPlacement)?.Value, out CompassPoints explicitHPlacement))
+            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeHydrogenPlacement)?.Value, out CompassPoints explicitHPlacement))
             {
                 return explicitHPlacement;
             }
@@ -317,7 +317,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         public static CompassPoints? GetExplicitGroupPlacement(XElement cmlElement)
         {
-            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + CMLConstants.AttributeFunctionalGroupPlacement)?.Value, out CompassPoints explicitGroupPlacement))
+            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeFunctionalGroupPlacement)?.Value, out CompassPoints explicitGroupPlacement))
             {
                 return explicitGroupPlacement;
             }
@@ -328,8 +328,8 @@ namespace Chem4Word.Model2.Converters.CML
         public static List<XElement> GetReactions(XElement doc)
         {
             List<XElement> result = new List<XElement>();
-            var reacts = from XElement xe in doc.Elements(CMLConstants.TagReaction) select xe;
-            var reacts2 = from XElement xe2 in doc.Elements(CMLNamespaces.cml + CMLConstants.TagReaction) select xe2;
+            var reacts = from XElement xe in doc.Elements(ModelConstants.TagReaction) select xe;
+            var reacts2 = from XElement xe2 in doc.Elements(CMLNamespaces.cml + ModelConstants.TagReaction) select xe2;
             result = reacts.Union(reacts2).ToList();
             return result;
         }

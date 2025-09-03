@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
@@ -95,7 +94,7 @@ namespace Chem4Word.Core
 
             try
             {
-                var key = Registry.CurrentUser.OpenSubKey(Constants.Chem4WordAzureSettingsRegistryKey, true);
+                var key = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordAzureSettingsRegistryKey, true);
                 if (key != null)
                 {
                     var names = key.GetValueNames();
@@ -174,14 +173,14 @@ namespace Chem4Word.Core
             var securityProtocol = ServicePointManager.SecurityProtocol;
             try
             {
-                var file = $"{Constants.Chem4WordVersionFiles}/AzureSettings.json";
+                var file = $"{CoreConstants.Chem4WordVersionFiles}/AzureSettings.json";
 
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 var found = false;
                 var temp = string.Empty;
 
-                foreach (var domain in Constants.OurDomains)
+                foreach (var domain in CoreConstants.OurDomains)
                 {
                     using (var client = new HttpClient())
                     {
@@ -239,7 +238,7 @@ namespace Chem4Word.Core
         {
             try
             {
-                var key = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordAzureSettingsRegistryKey);
+                var key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordAzureSettingsRegistryKey);
                 if (key != null)
                 {
                     key.SetValue(nameof(ChemicalServicesUri), ChemicalServicesUri);

@@ -7,11 +7,11 @@
 
 using Chem4Word.ACME.Behaviors;
 using Chem4Word.ACME.Utils;
+using Chem4Word.Core;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Helpers;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
@@ -60,8 +60,8 @@ namespace Chem4Word.ACME
 
         public IChem4WordTelemetry Telemetry
         {
-            get { return Common.Telemetry; }
-            set { Common.Telemetry = value; }
+            get { return ACMEGlobals.Telemetry; }
+            set { ACMEGlobals.Telemetry = value; }
         }
 
         public bool ShowFeedback
@@ -110,7 +110,7 @@ namespace Chem4Word.ACME
                 }
                 else
                 {
-                    var mean = ActiveController.Model.MeanBondLength / Globals.ScaleFactorForXaml;
+                    var mean = ActiveController.Model.MeanBondLength / ModelConstants.ScaleFactorForXaml;
                     var average = Math.Round(mean / 5.0) * 5;
                     ActiveController.CurrentBondLength = average;
                 }
@@ -328,8 +328,8 @@ namespace Chem4Word.ACME
         private void OnClick_Settings(object sender, RoutedEventArgs e)
         {
             Point locationFromScreen = AcmeControl.PointToScreen(new Point(0, 0));
-            Point dialogueTopLeft = new Point(locationFromScreen.X + Core.Helpers.Constants.TopLeftOffset,
-                                              locationFromScreen.Y + Core.Helpers.Constants.TopLeftOffset);
+            Point dialogueTopLeft = new Point(locationFromScreen.X + CoreConstants.TopLeftOffset,
+                                              locationFromScreen.Y + CoreConstants.TopLeftOffset);
 
             var currentOptions = ActiveController.Model.GetCurrentOptions();
 

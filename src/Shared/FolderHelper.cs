@@ -17,7 +17,7 @@ namespace Chem4Word.Shared
         // Source https://stackoverflow.com/questions/10667012/getting-downloads-folder-in-c
         // Full version available at https://www.codeproject.com/Articles/878605/Getting-all-Special-Folders-in-NET
 
-        private static string[] _knownFolderGuids =
+        private static readonly string[] _knownFolderGuids =
         {
             "{56784854-C6CB-462B-8169-88E350ACB882}", // Contacts
             "{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}", // Desktop

@@ -33,8 +33,6 @@ namespace Chem4Word.ACME.Behaviors
         private NRingAdorner _currentAdorner;
         private List<Point> _preferredPlacements;
 
-        private const string DefaultStatusText = "Drag on atom, bond or free space to draw ring.";
-
         public NRingBehavior()
         {
         }
@@ -77,13 +75,13 @@ namespace Chem4Word.ACME.Behaviors
             Target = null;
             MouseIsDown = false;
             IsDrawing = false;
-            CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DefaultDrawRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnMouseMove_CurrentAdorner(object sender, MouseEventArgs e)
         {
             OnMouseMove_CurrentEditor(sender, e);
-            CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DefaultDrawRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void RemoveRingAdorner()
@@ -112,7 +110,7 @@ namespace Chem4Word.ACME.Behaviors
             //check to see whether we've dragged off the target first
             if (MouseIsDown && IsDrawing)
             {
-                CurrentStatus = ("Drag along arrow to size ring: [Esc] to cancel", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                CurrentStatus = (AcmeConstants.ResizeRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 double xamlBondSize = EditController.Model.XamlBondLength;
                 if (Target != null && GetTargetedVisual(e) != Target) //dragging off a bond or atom
                 {
@@ -186,7 +184,7 @@ namespace Chem4Word.ACME.Behaviors
 
                     if (Clashing)
                     {
-                        CurrentStatus = ("Can't draw ring here - drag over atom or bond to draw fused ring", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = (AcmeConstants.CantDrawRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     }
                     CurrentAdorner = new NRingAdorner(CurrentEditor, EditController.EditBondThickness,
                                                       _preferredPlacements, FirstPoint, CurrentPoint, Clashing);
@@ -196,15 +194,15 @@ namespace Chem4Word.ACME.Behaviors
                     switch (CurrentEditor.ActiveVisual)
                     {
                         case AtomVisual av:
-                            CurrentStatus = ("Drag from atom to size ring.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentStatus = (AcmeConstants.DragRingFromAtomMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             break;
 
                         case BondVisual bv:
-                            CurrentStatus = ("Drag from bond to size ring.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentStatus = (AcmeConstants.DragRingFromBondMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             break;
 
                         default:
-                            CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentStatus = (AcmeConstants.DefaultDrawRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             break;
                     }
                 }
@@ -310,7 +308,7 @@ namespace Chem4Word.ACME.Behaviors
             Target = null;
             MouseIsDown = false;
             IsDrawing = false;
-            CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DefaultDrawRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnMouseLeftButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
@@ -322,7 +320,7 @@ namespace Chem4Word.ACME.Behaviors
             Keyboard.Focus(CurrentEditor);
             MouseIsDown = true;
             IsDrawing = true;
-            CurrentStatus = ("Drag to start sizing ring.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.ResizeRingMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         protected override void OnAttached()

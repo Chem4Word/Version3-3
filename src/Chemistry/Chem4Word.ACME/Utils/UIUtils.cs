@@ -11,7 +11,6 @@ using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Models;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using IChem4Word.Contracts;
 using System;
 using System.Linq;
@@ -229,7 +228,7 @@ namespace Chem4Word.ACME.Utils
                         {
                             Atom ac = new Atom();
                             ac.Id = $"aa{atomId++}";
-                            ac.Element = Globals.PeriodicTable.C;
+                            ac.Element = ModelGlobals.PeriodicTable.C;
                             ac.ExplicitC = false;
                             ac.ExplicitH = HydrogenLabels.None;
                             ac.Position = bond.OtherAtom(atom).Position;
@@ -294,12 +293,12 @@ namespace Chem4Word.ACME.Utils
                             Centre = screenPosition,
                             Path = bond.Path,
                             Angle = bond.Angle,
-                            Length = bond.BondLength / Globals.ScaleFactorForXaml,
+                            Length = bond.BondLength / ModelConstants.ScaleFactorForXaml,
                             BondOrderValue = bond.OrderValue.Value,
-                            IsSingle = bond.Order.Equals(Globals.OrderSingle),
-                            IsDouble = bond.Order.Equals(Globals.OrderDouble),
-                            Is1Point5 = bond.Order.Equals(Globals.OrderPartial12),
-                            Is2Point5 = bond.Order.Equals(Globals.OrderPartial23)
+                            IsSingle = bond.Order.Equals(ModelConstants.OrderSingle),
+                            IsDouble = bond.Order.Equals(ModelConstants.OrderDouble),
+                            Is1Point5 = bond.Order.Equals(ModelConstants.OrderPartial12),
+                            Is2Point5 = bond.Order.Equals(ModelConstants.OrderPartial23)
                         };
 
                         model.BondAngle = model.AngleString;

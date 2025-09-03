@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Helpers;
 using Chem4Word.Model2.Enums;
@@ -130,10 +131,10 @@ namespace Chem4Word
         {
             TelemetryEnabled = true;
 
-            SelectedEditorPlugIn = Constants.DefaultEditorPlugIn;
-            SelectedRendererPlugIn = Constants.DefaultRendererPlugIn;
+            SelectedEditorPlugIn = CoreConstants.DefaultEditorPlugIn;
+            SelectedRendererPlugIn = CoreConstants.DefaultRendererPlugIn;
 
-            BondLength = (int)Constants.StandardBondLength;
+            BondLength = (int)CoreConstants.StandardBondLength;
 
             SetBondLengthOnImportFromFile = true;
             SetBondLengthOnImportFromSearch = true;
@@ -153,7 +154,7 @@ namespace Chem4Word
 
             // Non serialised settings
             AutoUpdateEnabled = DefaultCheckingEnabled;
-            AutoUpdateFrequency = Constants.DefaultCheckInterval;
+            AutoUpdateFrequency = CoreConstants.DefaultCheckInterval;
         }
 
         public Chem4WordOptions Clone()
@@ -357,10 +358,10 @@ namespace Chem4Word
         {
             var result = TelemetryEnabled
 
-                         && SelectedEditorPlugIn == Constants.DefaultEditorPlugIn
-                         && SelectedRendererPlugIn == Constants.DefaultRendererPlugIn
+                         && SelectedEditorPlugIn == CoreConstants.DefaultEditorPlugIn
+                         && SelectedRendererPlugIn == CoreConstants.DefaultRendererPlugIn
 
-                         && BondLength == (int)Constants.StandardBondLength
+                         && BondLength == (int)CoreConstants.StandardBondLength
 
                          && SetBondLengthOnImportFromFile
                          && SetBondLengthOnImportFromSearch

@@ -5,8 +5,8 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using System.Windows;
 
 namespace Chem4Word.ACME
@@ -34,7 +34,7 @@ namespace Chem4Word.ACME
 
         public static readonly DependencyProperty OrderProperty =
             DependencyProperty.Register("Order", typeof(string), typeof(BondOption),
-                                        new PropertyMetadata(Globals.OrderSingle));
+                                        new PropertyMetadata(ModelConstants.OrderSingle));
 
         public BondStereo? Stereo
         {
@@ -66,56 +66,56 @@ namespace Chem4Word.ACME
             {
                 switch (Order)
                 {
-                    case Globals.OrderZero:
-                        return "Agostic / Hydrogen bond";
+                    case ModelConstants.OrderZero:
+                        return AcmeConstants.AgosticHydrogenBondDesc;
 
-                    case Globals.OrderSingle:
+                    case ModelConstants.OrderSingle:
                         {
                             switch (Stereo)
                             {
                                 case BondStereo.Wedge:
-                                    return "Wedge";
+                                    return AcmeConstants.WedgeDesc;
 
                                 case BondStereo.Hatch:
-                                    return "Hatch";
+                                    return AcmeConstants.HatchDesc;
 
                                 case BondStereo.Indeterminate:
-                                    return "Indeterminate";
+                                    return AcmeConstants.IndeterminateDesc;
 
                                 default:
-                                    return "Single";
+                                    return AcmeConstants.SingleDesc;
                             }
                         }
 
-                    case Globals.OrderDouble:
+                    case ModelConstants.OrderDouble:
                         {
                             switch (Stereo)
                             {
                                 case BondStereo.Indeterminate:
                                     {
-                                        return "Indeterminate";
+                                        return AcmeConstants.IndeterminateDesc;
                                     }
                                 default:
-                                    return "Double";
+                                    return AcmeConstants.DoubleDesc;
                             }
                         }
-                    case Globals.OrderAromatic:
-                        return "Aromatic / Delocalised";
+                    case ModelConstants.OrderAromatic:
+                        return AcmeConstants.AromaticDelocalisedDesc;
 
-                    case Globals.OrderOther:
-                        return "Unspecified";
+                    case ModelConstants.OrderOther:
+                        return AcmeConstants.UnspecifiedDesc;
 
-                    case Globals.OrderPartial01:
-                        return "0.5";
+                    case ModelConstants.OrderPartial01:
+                        return AcmeConstants.Point5Desc;
 
-                    case Globals.OrderPartial12:
-                        return "1.5";
+                    case ModelConstants.OrderPartial12:
+                        return AcmeConstants.OnePoint5Desc;
 
-                    case Globals.OrderPartial23:
-                        return "2.5";
+                    case ModelConstants.OrderPartial23:
+                        return AcmeConstants.TwoPoint5Desc;
 
-                    case Globals.OrderTriple:
-                        return "Triple";
+                    case ModelConstants.OrderTriple:
+                        return AcmeConstants.TripleDesc;
 
                     default:
                         return "";

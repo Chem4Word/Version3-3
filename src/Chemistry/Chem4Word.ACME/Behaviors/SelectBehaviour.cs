@@ -23,10 +23,6 @@ namespace Chem4Word.ACME.Behaviors
 {
     public class SelectBehaviour : BaseEditBehavior
     {
-        private const string DefaultStatusText =
-            "Click to select; [Shift]-click to multselect; drag to select range; double-click to select molecule.";
-
-        private const string ActiveSelStatusText = "Set atoms/bonds using selectors; drag to reposition; [Delete] to remove.";
         private List<Atom> _atomList;
 
         private double _bondLength;
@@ -70,7 +66,7 @@ namespace Chem4Word.ACME.Behaviors
 
             CurrentEditor.IsHitTestVisible = true;
             _bondLength = CurrentEditor.Controller.Model.MeanBondLength;
-            CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
@@ -126,7 +122,7 @@ namespace Chem4Word.ACME.Behaviors
             if (EditController.SelectedItems.Any())
             {
                 EditController.ClearSelection();
-                CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
             }
 
             if (_lassoAdorner != null)
@@ -138,7 +134,7 @@ namespace Chem4Word.ACME.Behaviors
             _mouseTrack = null;
 
             CurrentEditor.ReleaseMouseCapture();
-            CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnPreviewMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
@@ -184,7 +180,7 @@ namespace Chem4Word.ACME.Behaviors
                 }
                 if (EditController.SelectedItems.Any())
                 {
-                    CurrentStatus = (ActiveSelStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 }
 
                 if (_lassoAdorner != null)
@@ -202,7 +198,7 @@ namespace Chem4Word.ACME.Behaviors
             var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
             layer?.Update();
 
-            CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void GatherSelection(StreamGeometry lassoAdornerOutline)
@@ -258,7 +254,7 @@ namespace Chem4Word.ACME.Behaviors
 
             if (MouseIsDown(e) && !IsDragging)
             {
-                CurrentStatus = ("Draw around atoms and bonds to select.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                CurrentStatus = (AcmeConstants.SelDrawAroundMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 if (_initialTarget == null)
                 {
                     if (_mouseTrack == null)
@@ -323,7 +319,7 @@ namespace Chem4Word.ACME.Behaviors
                     && EditController.SelectionType == SelectionTypeCode.Bond
                     && EditController.SelectedItems.Count == 1) //i.e. we have one bond selected
                 {
-                    CurrentStatus = ("Drag bond to reposition.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.SelDragBondMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     _atomList = new List<Atom> { b.StartAtom, b.EndAtom };
                     shift = pos - StartPoint;
                     var tt = new TranslateTransform(shift.X, shift.Y);
@@ -360,7 +356,7 @@ namespace Chem4Word.ACME.Behaviors
             //if we are then we can invoke the bond snapper to limit the movement
             if (immediateNeighbours.Count == 1) //we are moving an atom attached by a single bond
             {
-                CurrentStatus = ("[Shift] = unlock length; [Ctrl] = unlock angle; [Alt] = pivot.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                CurrentStatus = (AcmeConstants.SelUnlockPivotMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 //so invoke the snapper!
                 //grab the atom in the static fragment
                 var staticAtom = immediateNeighbours[0];
@@ -423,7 +419,7 @@ namespace Chem4Word.ACME.Behaviors
             else //moving an atom linked to two other neighbours
             {
                 shift = pos - StartPoint;
-                CurrentStatus = ("Drag atom to reposition", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                CurrentStatus = (AcmeConstants.SelDragAtomMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 var tt = new TranslateTransform(shift.X, shift.Y);
                 _shift = new TransformGroup();
                 _shift.Children.Add(tt);
@@ -593,7 +589,7 @@ namespace Chem4Word.ACME.Behaviors
                         var atom = av.ParentAtom;
                         Debug.WriteLine($"Hit Atom {atom.Id} at ({atom.Position.X},{atom.Position.Y})");
                         EditController.AddToSelection(atom);
-                        CurrentStatus = (ActiveSelStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
 
@@ -602,13 +598,13 @@ namespace Chem4Word.ACME.Behaviors
                         var bond = bv.ParentBond;
                         Debug.WriteLine($"Hit Bond {bond.Id} at ({e.GetPosition(CurrentEditor).X},{e.GetPosition(CurrentEditor).Y})");
                         EditController.AddToSelection(bond);
-                        CurrentStatus = (ActiveSelStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
 
                 default:
                     EditController.ClearSelection();
-                    CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     break;
             }
         }
@@ -631,7 +627,7 @@ namespace Chem4Word.ACME.Behaviors
                         EditController.RemoveFromSelection(mol);
                     }
 
-                    CurrentStatus = (ActiveSelStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     break;
 
                 case AtomVisual av:
@@ -658,7 +654,7 @@ namespace Chem4Word.ACME.Behaviors
                             }
                         }
 
-                        CurrentStatus = (ActiveSelStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
 
@@ -680,7 +676,7 @@ namespace Chem4Word.ACME.Behaviors
                             EditController.RemoveFromSelection(bond);
                         }
 
-                        CurrentStatus = (ActiveSelStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
                 case ReactionVisual rv:
@@ -711,7 +707,7 @@ namespace Chem4Word.ACME.Behaviors
                     }
                 default:
                     EditController.ClearSelection();
-                    CurrentStatus = (DefaultStatusText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     break;
             }
         }

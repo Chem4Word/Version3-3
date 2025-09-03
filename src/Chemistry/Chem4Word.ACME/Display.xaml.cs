@@ -159,7 +159,7 @@ namespace Chem4Word.ACME
                     sw.Start();
 
                     chemistryModel.EnsureBondLength(20, false);
-                    chemistryModel.RescaleForXaml(true, Constants.StandardBondLength);
+                    chemistryModel.RescaleForXaml(true, CoreConstants.StandardBondLength);
 
                     CurrentController = new Controller(chemistryModel);
                     CurrentController.SetTextParams(chemistryModel.XamlBondLength);

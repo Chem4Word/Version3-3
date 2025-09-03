@@ -8,10 +8,10 @@
 using Chem4Word.ACME.Drawing.Text;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Enums;
+using Chem4Word.Model2;
 using System;
 using System.Windows;
 using System.Windows.Media;
-using static Chem4Word.Model2.Helpers.Globals;
 
 namespace Chem4Word.ACME.Drawing.Visuals
 {
@@ -84,7 +84,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                         //hydrogen is out of the way
                         default:
                             {
-                                if (chargeString == EnDashSymbol)
+                                if (chargeString == ModelConstants.EnDashSymbol)
                                 {
                                     chargeCenter.Y -= (parentBoundingBox.Height + chargeBoundingBox.Width * 1.1) / 2;
                                 }

@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Forms;
@@ -206,7 +207,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     CMLConverter conv = new CMLConverter();
 
                     double before = _lastModel.MeanBondLength;
-                    _lastModel.ScaleToAverageBondLength(Core.Helpers.Constants.StandardBondLength);
+                    _lastModel.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
                     double after = _lastModel.MeanBondLength;
                     Telemetry.Write(module, "Information", $"Structure rescaled from {before.ToString("#0.00")} to {after.ToString("#0.00")}");
                     _lastModel.Relabel(true);
@@ -263,7 +264,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
         {
             if (_lastModel != null)
             {
-                MolFileViewer tv = new MolFileViewer(new System.Windows.Point(TopLeft.X + Core.Helpers.Constants.TopLeftOffset, TopLeft.Y + Core.Helpers.Constants.TopLeftOffset), _lastMolfile);
+                MolFileViewer tv = new MolFileViewer(new System.Windows.Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), _lastMolfile);
                 tv.ShowDialog();
                 ResultsListView.Focus();
             }
@@ -431,7 +432,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                         }
 
                         var copy = _lastModel.Copy();
-                        copy.ScaleToAverageBondLength(Core.Helpers.Constants.StandardBondLength);
+                        copy.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
                         display1.Chemistry = copy;
                     }
                     else

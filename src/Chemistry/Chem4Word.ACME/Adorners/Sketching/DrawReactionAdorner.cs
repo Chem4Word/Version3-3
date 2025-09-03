@@ -5,13 +5,13 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME.Annotations;
-using Chem4Word.ACME.Controls;
-using Chem4Word.ACME.Utils;
-using Chem4Word.Model2;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Chem4Word.ACME.Annotations;
+using Chem4Word.ACME.Controls;
+using Chem4Word.ACME.Utils;
+using Chem4Word.Model2.Enums;
 
 namespace Chem4Word.ACME.Adorners.Sketching
 {
@@ -28,7 +28,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
         public DrawReactionAdorner([NotNull] UIElement adornedElement) : base(adornedElement)
         {
-            _solidColorBrush = (SolidColorBrush)FindResource(Common.DrawAdornerBrush);
+            _solidColorBrush = (SolidColorBrush)FindResource(AcmeConstants.DrawAdornerBrush);
             _dashPen = new Pen(_solidColorBrush, 1);
 
             CurrentEditor = (EditorCanvas)adornedElement;

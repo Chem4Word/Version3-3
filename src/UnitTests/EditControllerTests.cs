@@ -10,7 +10,6 @@ using Chem4Word.ACME.Models;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -68,7 +67,7 @@ namespace Chem4WordTests
             var atom = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule = new Molecule();
@@ -110,13 +109,13 @@ namespace Chem4WordTests
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Position = new Point(10, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule = new Molecule();
@@ -126,7 +125,7 @@ namespace Chem4WordTests
             atom2.Parent = molecule;
 
             var bond = new Bond(atom1, atom2);
-            bond.Order = Globals.OrderSingle;
+            bond.Order = ModelConstants.OrderSingle;
             molecule.AddBond(bond);
             bond.Parent = molecule;
 
@@ -167,13 +166,13 @@ namespace Chem4WordTests
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Position = new Point(10, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule1 = new Molecule();
@@ -222,13 +221,13 @@ namespace Chem4WordTests
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Position = new Point(0, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule1 = new Molecule();
@@ -277,7 +276,7 @@ namespace Chem4WordTests
                                 };
 
             // Act
-            var atoms = model.GetAllAtoms().Where(a => (Element)a.Element == Globals.PeriodicTable.H);
+            var atoms = model.GetAllAtoms().Where(a => (Element)a.Element == ModelGlobals.PeriodicTable.H);
             editController.DeleteAtoms(atoms);
             var undoStack1 = editController.UndoManager.ReadUndoStack();
             editController.UndoManager.Undo();
@@ -375,7 +374,7 @@ namespace Chem4WordTests
 
             // Act
             // find double bond connecting the two rings
-            var targetBond = model.GetAllBonds().First(b => b.Order == Globals.OrderDouble);
+            var targetBond = model.GetAllBonds().First(b => b.Order == ModelConstants.OrderDouble);
             editController.DeleteBonds(new List<Bond> { targetBond });
             var undoStack1 = editController.UndoManager.ReadUndoStack();
             editController.UndoManager.Undo();
@@ -578,13 +577,13 @@ namespace Chem4WordTests
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Position = new Point(10, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule = new Molecule();
@@ -594,7 +593,7 @@ namespace Chem4WordTests
             atom2.Parent = molecule;
 
             var bond = new Bond(atom1, atom2);
-            bond.Order = Globals.OrderSingle;
+            bond.Order = ModelConstants.OrderSingle;
             molecule.AddBond(bond);
             bond.Parent = molecule;
 
@@ -637,13 +636,13 @@ namespace Chem4WordTests
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Position = new Point(10, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule = new Molecule();
@@ -653,7 +652,7 @@ namespace Chem4WordTests
             atom2.Parent = molecule;
 
             var bond = new Bond(atom1, atom2);
-            bond.Order = Globals.OrderSingle;
+            bond.Order = ModelConstants.OrderSingle;
             molecule.AddBond(bond);
             bond.Parent = molecule;
 
@@ -740,7 +739,7 @@ namespace Chem4WordTests
             var atom = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule = new Molecule();
@@ -909,14 +908,14 @@ namespace Chem4WordTests
             {
                 Id = "a1",
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Id = "a2",
                 Position = new Point(10, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule = new Molecule();
@@ -932,19 +931,19 @@ namespace Chem4WordTests
             switch (existingOrder)
             {
                 case 1:
-                    bond.Order = Globals.OrderSingle;
+                    bond.Order = ModelConstants.OrderSingle;
                     break;
 
                 case 2:
-                    bond.Order = Globals.OrderDouble;
+                    bond.Order = ModelConstants.OrderDouble;
                     break;
 
                 case 3:
-                    bond.Order = Globals.OrderTriple;
+                    bond.Order = ModelConstants.OrderTriple;
                     break;
 
                 default:
-                    bond.Order = Globals.OrderZero;
+                    bond.Order = ModelConstants.OrderZero;
                     break;
             }
             molecule.AddBond(bond);
@@ -989,7 +988,7 @@ namespace Chem4WordTests
             var a4 = model.GetAllAtoms().First(a => a.Id == "a4");
 
             // Act
-            editController.JoinMolecules(a1, a4, Globals.OrderDouble, BondStereo.None);
+            editController.JoinMolecules(a1, a4, ModelConstants.OrderDouble, BondStereo.None);
             var undoStack1 = editController.UndoManager.ReadUndoStack();
             editController.UndoManager.Undo();
             editController.UndoManager.Redo();
@@ -1085,13 +1084,13 @@ namespace Chem4WordTests
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Position = new Point(0, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule = new Molecule();
@@ -1101,7 +1100,7 @@ namespace Chem4WordTests
             atom2.Parent = molecule;
 
             var bond = new Bond(atom1, atom2);
-            bond.Order = Globals.OrderSingle;
+            bond.Order = ModelConstants.OrderSingle;
             molecule.AddBond(bond);
             bond.Parent = molecule;
 
@@ -1144,14 +1143,14 @@ namespace Chem4WordTests
             {
                 Id = "a1",
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Id = "a2",
                 Position = new Point(10, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule = new Molecule();
@@ -1163,7 +1162,7 @@ namespace Chem4WordTests
             var bond = new Bond(atom1, atom2)
             {
                 Id = "b1",
-                Order = Globals.OrderSingle
+                Order = ModelConstants.OrderSingle
             };
             molecule.AddBond(bond);
             bond.Parent = molecule;
@@ -1377,7 +1376,7 @@ namespace Chem4WordTests
 
             // Act
             // AddAtomChain
-            editController.AddAtomChain(null, new Point(872, 709.5), ClockDirections.Nothing, Globals.PeriodicTable.C);
+            editController.AddAtomChain(null, new Point(872, 709.5), ClockDirections.Nothing, ModelGlobals.PeriodicTable.C);
 
             // DrawRing Isolated
             var ring1Points = new List<NewAtomPlacement>

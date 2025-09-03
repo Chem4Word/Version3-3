@@ -305,7 +305,7 @@ namespace WinForms.TestHarness
                         var maxAtoms = allAtoms.Count;
                         var targetAtom = rnd.Next(0, maxAtoms);
 
-                        var elements = Globals.PeriodicTable.Elements;
+                        var elements = ModelGlobals.PeriodicTable.Elements;
                         var newElement = rnd.Next(0, elements.Values.Max(v => v.AtomicNumber));
                         var x = elements.Values.FirstOrDefault(v => v.AtomicNumber == newElement);
 
@@ -858,17 +858,17 @@ namespace WinForms.TestHarness
         private void OnClick_RenderOoXml(object sender, EventArgs e)
         {
             var renderer = new Renderer
-                           {
-                               Telemetry = _telemetry,
-                               TopLeft = new Point(Left + 24, Top + 24),
-                               Cml = _lastCml,
-                               Properties = new Dictionary<string, string>
+            {
+                Telemetry = _telemetry,
+                TopLeft = new Point(Left + 24, Top + 24),
+                Cml = _lastCml,
+                Properties = new Dictionary<string, string>
                                             {
                                                 {
                                                     "Guid", Guid.NewGuid().ToString("N")
                                                 }
                                             }
-                           };
+            };
             var tempFileName = renderer.Render();
             if (string.IsNullOrEmpty(tempFileName))
             {

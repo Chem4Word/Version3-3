@@ -6,9 +6,9 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Helpers;
+using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using System.Linq;
 using Xunit;
 
@@ -320,7 +320,7 @@ namespace Chem4WordTests
             var atom5 = model.GetAllAtoms().First(a => a.Id.Equals("a5"));
 
             // Act
-            atom3.Element = Globals.PeriodicTable.N;
+            atom3.Element = ModelGlobals.PeriodicTable.N;
 
             // Assert
             Assert.False(atom1.IsInRing);

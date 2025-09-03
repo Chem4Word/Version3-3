@@ -10,7 +10,6 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,7 +37,7 @@ namespace Wpf.UI.Sandbox
         {
             var model = new List<FgItem>();
 
-            var groupsToShow = Globals.FunctionalGroupsList
+            var groupsToShow = ModelGlobals.FunctionalGroupsList
                                       .Where(g => g.GroupType == GroupType.SuperAtom)
                                       .OrderBy(g => g.AtomicWeight)
                                       .ThenBy(g => g.Name);
@@ -78,7 +77,7 @@ namespace Wpf.UI.Sandbox
                 {
                     if (Editor.IsDirty)
                     {
-                        var fge = Globals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
+                        var fge = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
                         if (fge != null)
                         {
                             var temp = Editor.ActiveController.Model.Copy();
@@ -99,7 +98,7 @@ namespace Wpf.UI.Sandbox
 
                 _lastFunctionalGroup = item.Name;
 
-                var fg = Globals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(item.Name));
+                var fg = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(item.Name));
 
                 if (fg == null || string.IsNullOrEmpty(fg.Expansion))
                 {
@@ -123,7 +122,7 @@ namespace Wpf.UI.Sandbox
         {
             if (Editor.IsDirty)
             {
-                var fg = Globals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
+                var fg = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
                 if (fg != null)
                 {
                     var temp = Editor.ActiveController.Model.Copy();
@@ -144,7 +143,7 @@ namespace Wpf.UI.Sandbox
 
             // Seems a bit of an overkill, but allows the exported list to be sorted by a) GroupType, b) AtomicWeight, c) Comment, d) Name
 
-            Globals.FunctionalGroupsList.Sort(delegate (FunctionalGroup x, FunctionalGroup y)
+            ModelGlobals.FunctionalGroupsList.Sort(delegate (FunctionalGroup x, FunctionalGroup y)
                                               {
                                                   var xType = (int)x.GroupType;
                                                   var yType = (int)y.GroupType;

@@ -7,7 +7,6 @@
 
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using Chem4Word.Model2.Interfaces;
 using Google.Protobuf;
 using System.Collections.Generic;
@@ -240,7 +239,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
         /// </summary>
         /// <param name="protoBuffModel"></param>
         /// <returns></returns>
-        public Model 
+        public Model
             Import(byte[] bytes)
         {
             var protoBuffModel = PBModel.Parser.ParseFrom(bytes);
@@ -408,12 +407,12 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 switch (atom.SymbolCase)
                 {
                     case PBAtom.SymbolOneofCase.Element:
-                        newAtom.Element = Globals.PeriodicTable.Elements[atom.Element.Symbol];
+                        newAtom.Element = ModelGlobals.PeriodicTable.Elements[atom.Element.Symbol];
                         newAtom.ExplicitHPlacement = (CompassPoints?)atom.Element.PlacementH;
                         break;
 
                     case PBAtom.SymbolOneofCase.FunctionalGroup:
-                        newAtom.Element = Globals.FunctionalGroupsList.FirstOrDefault(n => n.Name.Equals(atom.FunctionalGroup.ShortCode));
+                        newAtom.Element = ModelGlobals.FunctionalGroupsList.FirstOrDefault(n => n.Name.Equals(atom.FunctionalGroup.ShortCode));
                         newAtom.ExplicitFunctionalGroupPlacement = (CompassPoints?)atom.FunctionalGroup.PlacementFG;
                         break;
                 }

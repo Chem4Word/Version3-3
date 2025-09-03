@@ -74,7 +74,6 @@ namespace Chem4Word.ACME.Models
             }
         }
 
-
         private bool _showMoleculeCaptions;
 
         public bool ShowMoleculeCaptions

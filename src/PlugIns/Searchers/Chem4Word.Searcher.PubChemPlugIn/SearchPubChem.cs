@@ -8,7 +8,6 @@
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
-using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
 using IChem4Word.Contracts;
@@ -477,7 +476,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                                 var cmlConverter = new CMLConverter();
                                 Cml = cmlConverter.Export(model);
 
-                                model.ScaleToAverageBondLength(Core.Helpers.Constants.StandardBondLength);
+                                model.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
                                 this.display1.Chemistry = model;
 
                                 if (model.AllWarnings.Count > 0 || model.AllErrors.Count > 0)

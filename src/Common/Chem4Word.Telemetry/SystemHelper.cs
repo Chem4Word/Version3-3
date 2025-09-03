@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Shared;
 using Microsoft.Win32;
@@ -228,9 +229,9 @@ namespace Chem4Word.Telemetry
                 // These can be tested via http://www.ipv6proxy.net/
 
                 // Our locations
-                _placesToTry.Add($"https://www.chem4word.co.uk/{Constants.Chem4WordVersionFiles}/client-ip-date.php");
-                _placesToTry.Add($"http://www.chem4word.com/{Constants.Chem4WordVersionFiles}/client-ip-date.php");
-                _placesToTry.Add($"https://chem4word.azurewebsites.net/{Constants.Chem4WordVersionFiles}/client-ip-date.php");
+                _placesToTry.Add($"https://www.chem4word.co.uk/{CoreConstants.Chem4WordVersionFiles}/client-ip-date.php");
+                _placesToTry.Add($"http://www.chem4word.com/{CoreConstants.Chem4WordVersionFiles}/client-ip-date.php");
+                _placesToTry.Add($"https://chem4word.azurewebsites.net/{CoreConstants.Chem4WordVersionFiles}/client-ip-date.php");
 
                 // Other Locations
                 _placesToTry.Add("https://api.my-ip.io/ip");

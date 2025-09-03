@@ -18,7 +18,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
-using static Chem4Word.Model2.Helpers.Globals;
 
 namespace Chem4Word.ACME.Behaviors
 {
@@ -37,8 +36,6 @@ namespace Chem4Word.ACME.Behaviors
         private AtomVisual _lastAtomVisual;
         private Cursor _lastCursor;
 
-        private const string DefaultText = "Click existing atom to sprout a chain or modify element.";
-
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -54,7 +51,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.PreviewMouseRightButtonUp += OnPreviewMouseRightButtonUp_CurrentEditor;
             CurrentEditor.IsHitTestVisible = true;
 
-            CurrentStatus = (DefaultText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DefaultDrawText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
@@ -83,7 +80,7 @@ namespace Chem4Word.ACME.Behaviors
 
                 if (Dragging(e))
                 {
-                    CurrentStatus = ("[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.UnlockStandardMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     //are we already on top of an atom?
                     if (targetedVisual is GroupVisual)
                     {
@@ -102,17 +99,17 @@ namespace Chem4Word.ACME.Behaviors
                         if (_lastAtomVisual != null &&
                             existingBond != null)
                         {
-                            if (existingBond.Order == OrderSingle)
+                            if (existingBond.Order == ModelConstants.OrderSingle)
                             {
-                                bondOrder = OrderDouble;
+                                bondOrder = ModelConstants.OrderDouble;
                             }
-                            else if (existingBond.Order == OrderDouble)
+                            else if (existingBond.Order == ModelConstants.OrderDouble)
                             {
-                                bondOrder = OrderTriple;
+                                bondOrder = ModelConstants.OrderTriple;
                             }
-                            else if (existingBond.Order == OrderTriple)
+                            else if (existingBond.Order == ModelConstants.OrderTriple)
                             {
-                                bondOrder = OrderSingle;
+                                bondOrder = ModelConstants.OrderSingle;
                             }
                         }
                     }
@@ -132,7 +129,7 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         if (_adorner is null)
                         {
-                            _adorner = new DrawBondAdorner(CurrentEditor, Common.BondThickness, _currentAtomVisual.Position);
+                            _adorner = new DrawBondAdorner(CurrentEditor, AcmeConstants.BondThickness, _currentAtomVisual.Position);
                         }
 
                         _adorner.Stereo = EditController.CurrentStereo;
@@ -151,17 +148,17 @@ namespace Chem4Word.ACME.Behaviors
                     switch (targetedVisual)
                     {
                         case ReactionVisual _:
-                            CurrentStatus = ("Click to set reaction type", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentStatus = (AcmeConstants.ReactionTypeStdMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             CurrentEditor.Cursor = CursorUtils.Pencil;
                             break;
 
                         case GroupVisual _:
-                            CurrentStatus = ("Ungroup before attempting to draw.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentStatus = (AcmeConstants.UngroupWarningMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             CurrentEditor.Cursor = Cursors.No;
                             break;
 
                         case HydrogenVisual _:
-                            CurrentStatus = ("Click to rotate hydrogen", "", "");
+                            CurrentStatus = (AcmeConstants.DefaultRotateHydrogenMessage, "", "");
                             CurrentEditor.Cursor = Cursors.Hand;
                             break;
 
@@ -169,24 +166,24 @@ namespace Chem4Word.ACME.Behaviors
                             CurrentEditor.Cursor = CursorUtils.Pencil;
                             if (EditController.SelectedElement != av.ParentAtom.Element)
                             {
-                                CurrentStatus = ("Click to set element.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                                CurrentStatus = (AcmeConstants.DefaultSetElementMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             }
                             else
                             {
-                                CurrentStatus = ("Click to sprout chain", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                                CurrentStatus = (AcmeConstants.DrawSproutChainMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             }
                             break;
 
                         case BondVisual _:
                             CurrentEditor.Cursor = CursorUtils.Pencil;
-                            CurrentStatus = ("Click to modify bond", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentStatus = (AcmeConstants.DrawModifyBondMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             break;
                     }
                 }
                 else
                 {
                     CurrentEditor.Cursor = CursorUtils.Pencil;
-                    CurrentStatus = ("Click to draw atom", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.DrawAtomMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 }
             }
         }
@@ -329,25 +326,12 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.Focus();
         }
 
-        private bool CrowdingOut(Point p)
-        {
-            return CurrentEditor.GetTargetedVisual(p) is AtomVisual;
-        }
-
         private void RemoveAdorner(ref DrawBondAdorner adorner)
         {
             var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
 
             layer.Remove(adorner);
             adorner = null;
-        }
-
-        private static ClockDirections GetGeneralDir(Vector bondVector)
-        {
-            double bondAngle = Vector.AngleBetween(GeometryTool.ScreenNorth, bondVector);
-
-            ClockDirections hour = (ClockDirections)GeometryTool.SnapToClock(bondAngle);
-            return hour;
         }
 
         /// <summary>
@@ -361,7 +345,7 @@ namespace Chem4Word.ACME.Behaviors
             Vector newDirection;
 
             ClockDirections newTag;
-            var newBondLength = EditController.CurrentBondLength * ScaleFactorForXaml;
+            var newBondLength = EditController.CurrentBondLength * ModelConstants.ScaleFactorForXaml;
             if (lastAtom.Degree == 0) //isolated atom
             {
                 newDirection = ClockDirections.II.ToVector() * newBondLength;

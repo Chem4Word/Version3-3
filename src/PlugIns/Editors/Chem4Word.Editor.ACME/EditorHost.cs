@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME.Enums;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
@@ -16,7 +15,6 @@ using Chem4Word.Model2.Helpers;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -59,7 +57,7 @@ namespace Chem4Word.Editor.ACME
         {
             if (!IsLoading)
             {
-                TopLeft = new Point(Left + Constants.TopLeftOffset / 2, Top + Constants.TopLeftOffset / 2);
+                TopLeft = new Point(Left + CoreConstants.TopLeftOffset / 2, Top + CoreConstants.TopLeftOffset / 2);
                 if (elementHost1.Child is Chem4Word.ACME.Editor editor)
                 {
                     editor.TopLeft = TopLeft;
@@ -192,7 +190,6 @@ namespace Chem4Word.Editor.ACME
 
         private void OnClick_Save(object sender, EventArgs e)
         {
-
         }
     }
 }

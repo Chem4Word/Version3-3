@@ -454,7 +454,7 @@
                     </ComboBox.ItemContainerStyle>
                     <ComboBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="3"/>
+                            <UniformGrid Columns="3" />
                         </ItemsPanelTemplate>
                     </ComboBox.ItemsPanel>
                 </ComboBox>

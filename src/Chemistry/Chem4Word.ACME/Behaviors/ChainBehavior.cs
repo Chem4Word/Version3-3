@@ -90,7 +90,7 @@ namespace Chem4Word.ACME.Behaviors
                 _parent.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
 
-            CurrentStatus = ("Draw a ring by clicking on a bond, atom or free space.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DefaultChainMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
@@ -126,7 +126,7 @@ namespace Chem4Word.ACME.Behaviors
                 }
                 else
                 {
-                    CurrentStatus = ("Drag to start sizing chain: [Esc] to cancel.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.DragChainMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     var endPoint = e.GetPosition(EditController.CurrentEditor);
 
                     MarkOutAtoms(endPoint, e);
@@ -141,7 +141,7 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         //first test to see if the user is drawing over the adorner
                         overWritingSelf =
-                            CurrentAdorner.Geometry.StrokeContains(new Pen(Brushes.Black, Common.AtomRadius * 2),
+                            CurrentAdorner.Geometry.StrokeContains(new Pen(Brushes.Black, AcmeConstants.AtomRadius * 2),
                                                                    endPoint);
                     }
 

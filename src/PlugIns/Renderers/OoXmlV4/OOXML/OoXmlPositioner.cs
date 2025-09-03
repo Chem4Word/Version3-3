@@ -10,7 +10,6 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using Chem4Word.Renderer.OoXmlV4.Entities;
 using Chem4Word.Renderer.OoXmlV4.Entities.Diagnostic;
 using Chem4Word.Renderer.OoXmlV4.Enums;
@@ -541,7 +540,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                         if (!bClipped && bl.Bond != null)
                         {
                             // Only convert to two bond lines if not wedge or hatch
-                            var ignoreWedgeOrHatch = bl.Bond.Order == Globals.OrderSingle
+                            var ignoreWedgeOrHatch = bl.Bond.Order == ModelConstants.OrderSingle
                                                      && bl.Bond.Stereo == BondStereo.Wedge
                                                      || bl.Bond.Stereo == BondStereo.Hatch;
                             if (!ignoreWedgeOrHatch)
@@ -837,7 +836,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         private void BeautifyLines(Atom atom, string bondPath)
         {
             if (atom.Element is Element element
-                && element == Globals.PeriodicTable.C
+                && element == ModelGlobals.PeriodicTable.C
                 && atom.Bonds.ToList().Count == 3)
             {
                 var isInRing = atom.IsInRing;
@@ -851,7 +850,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     }
                     else
                     {
-                        otherLines = atom.Bonds.Where(b => !b.Path.Equals(bondPath) && b.Order.Equals(Globals.OrderSingle)).ToList();
+                        otherLines = atom.Bonds.Where(b => !b.Path.Equals(bondPath) && b.Order.Equals(ModelConstants.OrderSingle)).ToList();
                     }
 
                     if (lines.Count == 2 && otherLines.Count == 2)
@@ -1309,17 +1308,17 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
 
             switch (bond.Order)
             {
-                case Globals.OrderZero:
+                case ModelConstants.OrderZero:
                 case "unknown":
                     Outputs.BondLines.Add(new BondLine(BondLineStyle.Zero, bond));
                     break;
 
-                case Globals.OrderPartial01:
+                case ModelConstants.OrderPartial01:
                     Outputs.BondLines.Add(new BondLine(BondLineStyle.Half, bond));
                     break;
 
                 case "1":
-                case Globals.OrderSingle:
+                case ModelConstants.OrderSingle:
                     switch (bond.Stereo)
                     {
                         case BondStereo.None:
@@ -1348,8 +1347,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     }
                     break;
 
-                case Globals.OrderPartial12:
-                case Globals.OrderAromatic:
+                case ModelConstants.OrderPartial12:
+                case ModelConstants.OrderAromatic:
 
                     BondLine onePointFive;
                     BondLine onePointFiveDashed;
@@ -1391,7 +1390,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     break;
 
                 case "2":
-                case Globals.OrderDouble:
+                case ModelConstants.OrderDouble:
                     if (bond.Stereo == BondStereo.Indeterminate) //crossing bonds
                     {
                         // Crossed lines
@@ -1576,7 +1575,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     }
                     break;
 
-                case Globals.OrderPartial23:
+                case ModelConstants.OrderPartial23:
                     BondLine twoPointFive;
                     BondLine twoPointFiveDashed;
                     BondLine twoPointFiveParallel;
@@ -1636,7 +1635,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                     break;
 
                 case "3":
-                case Globals.OrderTriple:
+                case ModelConstants.OrderTriple:
                     var triple = new BondLine(BondLineStyle.Solid, bond);
                     Outputs.BondLines.Add(triple);
                     Outputs.BondLines.Add(triple.GetParallel(BondOffset()));

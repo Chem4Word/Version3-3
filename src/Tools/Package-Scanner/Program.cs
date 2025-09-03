@@ -8,8 +8,8 @@ namespace PackageScanner
 {
     internal class Program
     {
-        static string baseDirectory = @"..\..\..\..\..";
-        static string readMeFile = "README.MD";
+        private static string baseDirectory = @"..\..\..\..\..";
+        private static string readMeFile = "README.MD";
 
         private static List<string> before = new List<string>();
         private static List<string> middle = new List<string>();
@@ -69,6 +69,7 @@ namespace PackageScanner
                     case 0:
                         before.Add(line);
                         break;
+
                     case 1:
                         if (line.StartsWith("## List of NuGet packages")
                             || line.StartsWith("| Package |")
@@ -83,16 +84,17 @@ namespace PackageScanner
                                 var parts = line.Split('|');
 
                                 var details = new PackageDetails
-                                              {
-                                                  PackageName = parts[1],
-                                                  PackageVersion = parts[2],
-                                                  PackageLicence = parts[3]
-                                              };
+                                {
+                                    PackageName = parts[1],
+                                    PackageVersion = parts[2],
+                                    PackageLicence = parts[3]
+                                };
 
                                 packages.Add($"{details.PackageName}|{details.PackageVersion}", details);
                             }
                         }
                         break;
+
                     case 2:
                         after.Add(line);
                         break;
@@ -125,7 +127,6 @@ namespace PackageScanner
                 Console.ReadLine();
             }
         }
-
 
         private static void ProcessPackages(List<string> files, SortedDictionary<string, PackageDetails> packages)
         {

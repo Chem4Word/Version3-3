@@ -5,7 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
+using Chem4Word.Core;
 using Microsoft.Office.Interop.Word;
 using Microsoft.Office.Tools;
 
@@ -19,7 +19,7 @@ namespace Chem4Word.Navigator
             foreach (CustomTaskPane taskPane in Globals.Chem4WordV3.CustomTaskPanes)
             {
                 Application app = Globals.Chem4WordV3.Application;
-                if (app.ActiveWindow == taskPane.Window && taskPane.Title == Constants.NavigatorTaskPaneTitle)
+                if (app.ActiveWindow == taskPane.Window && taskPane.Title == CoreConstants.NavigatorTaskPaneTitle)
                 {
                     custTaskPane = taskPane;
                 }

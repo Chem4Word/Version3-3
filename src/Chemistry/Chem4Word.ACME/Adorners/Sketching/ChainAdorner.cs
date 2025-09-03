@@ -5,15 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME.Controls;
-using Chem4Word.ACME.Utils;
-using Chem4Word.Model2;
-using Chem4Word.Model2.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Chem4Word.ACME.Controls;
+using Chem4Word.Model2;
+using Chem4Word.Model2.Annotations;
 
 namespace Chem4Word.ACME.Adorners.Sketching
 {
@@ -23,7 +22,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
     /// </summary>
     public class ChainAdorner : Adorner
     {
-        public PathGeometry Geometry { get; private set; }
+        public PathGeometry Geometry { get; }
 
         public ChainAdorner(Point firstPoint, [NotNull] UIElement adornedElement, double bondThickness,
                             List<Point> placements, Point currentPoint, Atom target, bool greyedOut = false) : base(adornedElement)
@@ -31,11 +30,11 @@ namespace Chem4Word.ACME.Adorners.Sketching
             SolidColorBrush bondBrush;
             if (greyedOut)
             {
-                bondBrush = (SolidColorBrush)FindResource(Common.BlockedAdornerBrush);
+                bondBrush = (SolidColorBrush)FindResource(AcmeConstants.BlockedAdornerBrush);
             }
             else
             {
-                bondBrush = (SolidColorBrush)FindResource(Common.DrawAdornerBrush);
+                bondBrush = (SolidColorBrush)FindResource(AcmeConstants.DrawAdornerBrush);
             }
 
             BondPen = new Pen(bondBrush, bondThickness);
@@ -67,7 +66,6 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
         public Pen BondPen { get; }
         public List<Point> Placements { get; }
-        public bool Unsaturated { get; }
         public EditorCanvas CurrentEditor { get; }
         public Point FirstPoint { get; set; }
 

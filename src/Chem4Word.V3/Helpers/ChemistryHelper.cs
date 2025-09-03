@@ -5,17 +5,18 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using Microsoft.Office.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace Chem4Word.Helpers
@@ -150,7 +151,7 @@ namespace Chem4Word.Helpers
             wordSettings.RestoreSettings(app);
 
             cc.Tag = tag;
-            cc.Title = Constants.ContentControlTitle;
+            cc.Title = CoreConstants.ContentControlTitle;
             cc.LockContents = true;
 
             return cc;
@@ -199,7 +200,7 @@ namespace Chem4Word.Helpers
             // Using $"{}" to coerce null to empty string
             var targets = (from Word.ContentControl ccs in document.ContentControls
                            orderby ccs.Range.Start
-                           where $"{ccs.Title}" == Constants.ContentControlTitle
+                           where $"{ccs.Title}" == CoreConstants.ContentControlTitle
                                  && $"{ccs.Tag}".Contains(cxmlId)
                            select new KeyValuePair<string, string>(ccs.ID, ccs.Tag)).ToList();
 
@@ -224,16 +225,18 @@ namespace Chem4Word.Helpers
                         case "c0":
                             Update1D(document, target.Key, model.ConciseFormula, true, $"{prefix}:{cxmlId}");
                             break;
+
                         case "w0":
                             Update1D(document, target.Key, SafeDouble.AsCMLString(model.MolecularWeight), false, $"{prefix}:{cxmlId}");
                             break;
+
                         default:
-                        {
-                            var isFormula = false;
-                            var text = GetInlineText(model, prefix, ref isFormula, out _);
-                            Update1D(document, target.Key, text, isFormula, $"{prefix}:{cxmlId}");
-                            break;
-                        }
+                            {
+                                var isFormula = false;
+                                var text = GetInlineText(model, prefix, ref isFormula, out _);
+                                Update1D(document, target.Key, text, isFormula, $"{prefix}:{cxmlId}");
+                                break;
+                            }
                     }
                 }
             }
@@ -251,7 +254,7 @@ namespace Chem4Word.Helpers
 
             var contentControl = GetContentControl(document, ccId);
 
-            var bookmarkName = Constants.OoXmlBookmarkPrefix + guid;
+            var bookmarkName = CoreConstants.OoXmlBookmarkPrefix + guid;
 
             contentControl.Range.InsertFile(tempfileName, bookmarkName);
             if (document.Bookmarks.Exists(bookmarkName))
@@ -262,7 +265,7 @@ namespace Chem4Word.Helpers
             wordSettings.RestoreSettings(application);
 
             contentControl.Tag = guid;
-            contentControl.Title = Constants.ContentControlTitle;
+            contentControl.Title = CoreConstants.ContentControlTitle;
             contentControl.LockContents = true;
         }
 
@@ -286,7 +289,7 @@ namespace Chem4Word.Helpers
                     cc.Delete();
                     cc = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, range);
                     cc.Tag = guid;
-                    cc.Title = Constants.ContentControlTitle;
+                    cc.Title = CoreConstants.ContentControlTitle;
                     cc.Range.Delete();
                 }
                 else
@@ -294,7 +297,7 @@ namespace Chem4Word.Helpers
                     cc.Range.Delete();
                 }
 
-                var bookmarkName = Constants.OoXmlBookmarkPrefix + guid;
+                var bookmarkName = CoreConstants.OoXmlBookmarkPrefix + guid;
                 cc.Range.InsertFile(tempfileName, bookmarkName);
                 if (document.Bookmarks.Exists(bookmarkName))
                 {
@@ -304,7 +307,7 @@ namespace Chem4Word.Helpers
                 wordSettings.RestoreSettings(app);
 
                 cc.Tag = guid;
-                cc.Title = Constants.ContentControlTitle;
+                cc.Title = CoreConstants.ContentControlTitle;
                 cc.LockContents = true;
                 Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"ContentControl updated at position {cc.Range.Start}");
             }
@@ -333,7 +336,7 @@ namespace Chem4Word.Helpers
                 wordSettings.RestoreSettings(app);
 
                 cc.Tag = tag;
-                cc.Title = Constants.ContentControlTitle;
+                cc.Title = CoreConstants.ContentControlTitle;
                 cc.LockContents = true;
             }
         }
@@ -360,7 +363,7 @@ namespace Chem4Word.Helpers
                 wordSettings.RestoreSettings(app);
 
                 cc.Tag = tag;
-                cc.Title = Constants.ContentControlTitle;
+                cc.Title = CoreConstants.ContentControlTitle;
                 cc.LockContents = true;
             }
         }
@@ -510,7 +513,7 @@ namespace Chem4Word.Helpers
             // Using $"{}" to coerce null to empty string
             var targets = (from Word.ContentControl ccs in document.ContentControls
                            orderby ccs.Range.Start
-                           where $"{ccs.Title}" == Constants.ContentControlTitle
+                           where $"{ccs.Title}" == CoreConstants.ContentControlTitle
                                  && $"{ccs.Tag}".Contains(guidString)
                                  && !$"{ccs.Tag}".Equals(guidString)
                            select ccs.Tag).Distinct().ToList();
@@ -525,7 +528,7 @@ namespace Chem4Word.Helpers
             // Using $"{}" to coerce null to empty string
             var targets = (from Word.ContentControl ccs in document.ContentControls
                            orderby ccs.Range.Start
-                           where $"{ccs.Title}" == Constants.ContentControlTitle
+                           where $"{ccs.Title}" == CoreConstants.ContentControlTitle
                                  && $"{ccs.Tag}".Equals(guidString)
                            select ccs.Tag).Distinct().ToList();
 

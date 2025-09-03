@@ -172,15 +172,15 @@ namespace Chem4Word.Model2.Converters.SketchEl
 
             switch (bond.Order)
             {
-                case Globals.OrderSingle:
+                case ModelConstants.OrderSingle:
                     bondOrder = "1";
                     break;
 
-                case Globals.OrderDouble:
+                case ModelConstants.OrderDouble:
                     bondOrder = "2";
                     break;
 
-                case Globals.OrderTriple:
+                case ModelConstants.OrderTriple:
                     bondOrder = "3";
                     break;
 
@@ -257,7 +257,7 @@ namespace Chem4Word.Model2.Converters.SketchEl
                 }
                 else
                 {
-                    atom.Element = Globals.FunctionalGroupsList.FirstOrDefault(n => n.Name.Equals("??"));
+                    atom.Element = ModelGlobals.FunctionalGroupsList.FirstOrDefault(n => n.Name.Equals("??"));
                     molecule.Warnings.Add($"Atom line #{index} - Element or Functional Group {element}, replaced with '??'");
                 }
 

@@ -85,7 +85,7 @@ namespace Chem4Word.Model2.Converters.MDL
             WriteAtoms(writer, atoms);
             WriteBonds(writer, bonds);
             WriteProperties(writer, atoms);
-            writer.WriteLine(MDLConstants.M_END);
+            writer.WriteLine(ModelConstants.M_END);
         }
 
         #region Reading Into Model
@@ -161,14 +161,14 @@ namespace Chem4Word.Model2.Converters.MDL
                 string line = SdFileConverter.GetNextLine(reader);
                 if (!string.IsNullOrEmpty(line))
                 {
-                    if (line.StartsWith(MDLConstants.M_CHG)
-                        || line.StartsWith(MDLConstants.M_ISO)
-                        || line.StartsWith(MDLConstants.M_RAD))
+                    if (line.StartsWith(ModelConstants.M_CHG)
+                        || line.StartsWith(ModelConstants.M_ISO)
+                        || line.StartsWith(ModelConstants.M_RAD))
                     {
                         ReadAtomPropertyLine(line);
                     }
 
-                    if (line.Equals(MDLConstants.M_END))
+                    if (line.Equals(ModelConstants.M_END))
                     {
                         result = SdfState.EndOfCtab;
                         break;
@@ -545,36 +545,36 @@ namespace Chem4Word.Model2.Converters.MDL
 
             switch (bondOrder)
             {
-                case Globals.OrderZero:
-                case Globals.OrderOther:
+                case ModelConstants.OrderZero:
+                case ModelConstants.OrderOther:
                     result = 0;
                     break;
 
-                case Globals.OrderPartial01:
+                case ModelConstants.OrderPartial01:
                     result = 0;
                     break;
 
-                case Globals.OrderSingle:
+                case ModelConstants.OrderSingle:
                     result = 1;
                     break;
 
-                case Globals.OrderPartial12:
+                case ModelConstants.OrderPartial12:
                     result = 0;
                     break;
 
-                case Globals.OrderAromatic:
+                case ModelConstants.OrderAromatic:
                     result = 4;
                     break;
 
-                case Globals.OrderDouble:
+                case ModelConstants.OrderDouble:
                     result = 2;
                     break;
 
-                case Globals.OrderPartial23:
+                case ModelConstants.OrderPartial23:
                     result = 0;
                     break;
 
-                case Globals.OrderTriple:
+                case ModelConstants.OrderTriple:
                     result = 3;
                     break;
 
@@ -646,17 +646,17 @@ namespace Chem4Word.Model2.Converters.MDL
 
         private void WriteProperties(StreamWriter writer, List<Atom> atoms)
         {
-            string p = CreateAtomPropertyLines(MDLConstants.M_CHG, atoms);
+            string p = CreateAtomPropertyLines(ModelConstants.M_CHG, atoms);
             if (!string.IsNullOrEmpty(p))
             {
                 writer.WriteLine(p);
             }
-            p = CreateAtomPropertyLines(MDLConstants.M_ISO, atoms);
+            p = CreateAtomPropertyLines(ModelConstants.M_ISO, atoms);
             if (!string.IsNullOrEmpty(p))
             {
                 writer.WriteLine(p);
             }
-            p = CreateAtomPropertyLines(MDLConstants.M_RAD, atoms);
+            p = CreateAtomPropertyLines(ModelConstants.M_RAD, atoms);
             if (!string.IsNullOrEmpty(p))
             {
                 writer.WriteLine(p);
@@ -690,17 +690,17 @@ namespace Chem4Word.Model2.Converters.MDL
                     spin = atom.SpinMultiplicity.Value;
                 }
 
-                if (propertyType == MDLConstants.M_CHG && fCharge != 0)
+                if (propertyType == ModelConstants.M_CHG && fCharge != 0)
                 {
                     values.Add(atom.FormalCharge.Value);
                     atomNumbers.Add(atomNumber);
                 }
-                else if (propertyType == MDLConstants.M_ISO && isotope > 0.0001)
+                else if (propertyType == ModelConstants.M_ISO && isotope > 0.0001)
                 {
                     values.Add(atom.IsotopeNumber.Value);
                     atomNumbers.Add(atomNumber);
                 }
-                else if (propertyType == MDLConstants.M_RAD && spin > 0.0001)
+                else if (propertyType == ModelConstants.M_RAD && spin > 0.0001)
                 {
                     values.Add(atom.SpinMultiplicity.Value);
                     atomNumbers.Add(atomNumber);
@@ -748,15 +748,15 @@ namespace Chem4Word.Model2.Converters.MDL
                 int value = ParseInteger(line, startAt + 4, 3);
 
                 // update the relevant property of the atom
-                if (propertyType.Equals(MDLConstants.M_CHG))
+                if (propertyType.Equals(ModelConstants.M_CHG))
                 {
                     atomByNumber[atomNumber].FormalCharge = value;
                 }
-                else if (propertyType.Equals(MDLConstants.M_ISO))
+                else if (propertyType.Equals(ModelConstants.M_ISO))
                 {
                     atomByNumber[atomNumber].IsotopeNumber = value;
                 }
-                else if (propertyType.Equals(MDLConstants.M_RAD))
+                else if (propertyType.Equals(ModelConstants.M_RAD))
                 {
                     atomByNumber[atomNumber].SpinMultiplicity = value;
                 }
@@ -817,7 +817,7 @@ namespace Chem4Word.Model2.Converters.MDL
 
         private static bool ElementExists(String element)
         {
-            bool result = Globals.PeriodicTable.Elements.ContainsKey(element);
+            bool result = ModelGlobals.PeriodicTable.Elements.ContainsKey(element);
             return result;
         }
 

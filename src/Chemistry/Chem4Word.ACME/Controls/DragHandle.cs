@@ -4,7 +4,6 @@
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
-using Chem4Word.ACME.Utils;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -15,9 +14,9 @@ namespace Chem4Word.ACME.Controls
     {
         public Point MidPoint { get; set; }
 
-        public DragHandle(string styleName = Common.GrabHandleStyle, Cursor cursor = null)
+        public DragHandle(string styleName = AcmeConstants.GrabHandleStyle, Cursor cursor = null)
         {
-            Style = (Style)FindResource(Common.GrabHandleStyle);
+            Style = (Style)FindResource(AcmeConstants.GrabHandleStyle);
             if (cursor is null)
             {
                 cursor = Cursors.Hand;

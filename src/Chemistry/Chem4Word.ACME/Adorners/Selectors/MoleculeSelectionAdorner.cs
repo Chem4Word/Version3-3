@@ -10,7 +10,6 @@ using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
-using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -270,7 +269,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             RotateHandle.Width = _rotateThumbWidth;
             RotateHandle.Height = _rotateThumbWidth;
             RotateHandle.Cursor = Cursors.Hand;
-            rotateThumb.Style = (Style)FindResource(Common.RotateThumbStyle);
+            rotateThumb.Style = (Style)FindResource(AcmeConstants.RotateThumbStyle);
             rotateThumb.DragStarted += OnRotateStarted;
             rotateThumb.DragDelta += OnDragDelta_RotateThumb;
             rotateThumb.DragCompleted += OnRotateCompleted;
@@ -358,7 +357,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         protected virtual void SetThumbStyle(DragHandle cornerThumb)
         {
-            cornerThumb.Style = (Style)FindResource(Common.GrabHandleStyle);
+            cornerThumb.Style = (Style)FindResource(AcmeConstants.GrabHandleStyle);
         }
 
         #endregion Methods
@@ -477,7 +476,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
         {
             base.OnRender(drawingContext);
 
-            var ghostBrush = (Brush)FindResource(Common.AdornerBorderBrush);
+            var ghostBrush = (Brush)FindResource(AcmeConstants.AdornerBorderBrush);
             var ghostPen = new Pen(ghostBrush, 1.0);
 
             if (!IsDragging())
@@ -511,7 +510,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
                     var rv = new ReactionVisual(tempReaction)
                     {
                         TextSize = EditController.BlockTextSize,
-                        ScriptSize = EditController.BlockTextSize * Controller.ScriptScalingFactor
+                        ScriptSize = EditController.BlockTextSize * AcmeConstants.ScriptScalingFactor
                     };
                     rv.RenderFullGeometry(r.ReactionType, newStartPoint,
                                           newEndPoint,

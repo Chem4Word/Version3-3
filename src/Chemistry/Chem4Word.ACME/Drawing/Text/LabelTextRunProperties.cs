@@ -5,7 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Model2.Helpers;
+using Chem4Word.Model2;
 using System;
 using System.Globalization;
 using System.Windows.Media;
@@ -54,7 +54,7 @@ namespace Chem4Word.ACME.Drawing.Text
                 {
                     if (string.IsNullOrEmpty(_colour))
                     {
-                        brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Globals.PeriodicTable.C.Colour));
+                        brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ModelGlobals.PeriodicTable.C.Colour));
                     }
                     else
                     {

@@ -126,7 +126,7 @@
     <Compile Include="Helpers\RestApiResult.cs" />
     <Compile Include="Helpers\AzureRestApi.cs" />
     <Compile Include="Helpers\CohenSutherland.cs" />
-    <Compile Include="Helpers\Constants.cs" />
+    <Compile Include="CoreConstants.cs" />
     <Compile Include="Helpers\DebugHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\FileSystemHelper.cs" />

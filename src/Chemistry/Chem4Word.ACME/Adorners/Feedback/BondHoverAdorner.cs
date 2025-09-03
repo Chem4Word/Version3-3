@@ -8,7 +8,6 @@
 using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Helpers;
 using System.Windows;
 using System.Windows.Media;
 
@@ -40,7 +39,7 @@ namespace Chem4Word.ACME.Adorners.Feedback
             {
                 orderValue = TargetedBond.OrderValue.Value;
             }
-            double offset = Globals.BondOffsetPercentage * TargetedBond.BondLength * orderValue;
+            double offset = ModelConstants.BondOffsetPercentage * TargetedBond.BondLength * orderValue;
 
             //this tells us how much to rotate the brackets at the end of the bond
             double bondAngle = TargetedBond.Angle;

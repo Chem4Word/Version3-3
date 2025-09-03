@@ -5,9 +5,9 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-namespace Chem4Word.Core.Helpers
+namespace Chem4Word.Core
 {
-    public static class Constants
+    public static class CoreConstants
     {
         public const string Chem4WordVersion = "3.3";
         public const string Chem4WordVersionFiles = "files3-3";
@@ -61,5 +61,6 @@ namespace Chem4Word.Core.Helpers
         public const double BondLengthTolerance = 1;
 
         public static readonly string[] OurDomains = { "https://www.chem4word.co.uk", "http://www.chem4word.com", "https://chem4word.azurewebsites.net" };
+        public const string MessageBoxTitle = "Chemistry Add-In for Word";
     }
 }

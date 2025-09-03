@@ -31,11 +31,11 @@ namespace Chem4Word.ACME.Drawing.Visuals
         {
             //draw the bracket first
             var bb = _boundingBox;
-            var serifSize = _molecule.Model.XamlBondLength * Common.BracketFactor;
+            var serifSize = _molecule.Model.XamlBondLength * AcmeConstants.BracketFactor;
             bb.Inflate(new Size(serifSize, serifSize));
             Vector horizontal = new Vector(serifSize, 0.0);
             Brush bracketBrush = new SolidColorBrush(Colors.Black);
-            Pen bracketPen = new Pen(bracketBrush, Common.BracketThickness);
+            Pen bracketPen = new Pen(bracketBrush, AcmeConstants.BracketThickness);
             StreamGeometry sg = new StreamGeometry();
 
             using (DrawingContext dc = RenderOpen())
@@ -66,11 +66,11 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     switch (_molecule.SpinMultiplicity.Value)
                     {
                         case 2:
-                            chargeString += "•";
+                            chargeString += AcmeConstants.SingleRadical;
                             break;
 
                         case 3:
-                            chargeString += "••";
+                            chargeString += AcmeConstants.DoubleRadical;
                             break;
                     }
                 }

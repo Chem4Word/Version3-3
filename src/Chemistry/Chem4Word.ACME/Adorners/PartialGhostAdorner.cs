@@ -7,7 +7,6 @@
 
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing.Visuals;
-using Chem4Word.ACME.Utils;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Enums;
@@ -82,8 +81,8 @@ namespace Chem4Word.ACME.Adorners
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            _ghostBrush = (SolidColorBrush)FindResource(Common.GhostBrush);
-            _ghostPen = new Pen(_ghostBrush, Common.BondThickness);
+            _ghostBrush = (SolidColorBrush)FindResource(AcmeConstants.GhostBrush);
+            _ghostPen = new Pen(_ghostBrush, AcmeConstants.BondThickness);
 
             HashSet<Bond> bondSet = new HashSet<Bond>();
             Dictionary<Atom, Point> transformedPositions = new Dictionary<Atom, Point>();

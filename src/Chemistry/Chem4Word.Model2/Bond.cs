@@ -141,30 +141,30 @@ namespace Chem4Word.Model2
             {
                 if (value.Equals("0.5"))
                 {
-                    value = Globals.OrderPartial01;
+                    value = ModelConstants.OrderPartial01;
                     ResetStereo();
                 }
                 if (value.Equals("1") || value.Equals("S"))
                 {
-                    value = Globals.OrderSingle;
+                    value = ModelConstants.OrderSingle;
                 }
                 if (value.Equals("1.5"))
                 {
-                    value = Globals.OrderPartial12;
+                    value = ModelConstants.OrderPartial12;
                     ResetStereo();
                 }
                 if (value.Equals("2") || value.Equals("D"))
                 {
-                    value = Globals.OrderDouble;
+                    value = ModelConstants.OrderDouble;
                 }
                 if (value.Equals("3") || value.Equals("T"))
                 {
-                    value = Globals.OrderTriple;
+                    value = ModelConstants.OrderTriple;
                     ResetStereo();
                 }
                 if (value.Equals("0"))
                 {
-                    value = Globals.OrderZero;
+                    value = ModelConstants.OrderZero;
                     ResetStereo();
                 }
 
@@ -193,29 +193,29 @@ namespace Chem4Word.Model2
         {
             switch (order)
             {
-                case Globals.OrderZero:
-                case Globals.OrderOther:
+                case ModelConstants.OrderZero:
+                case ModelConstants.OrderOther:
                     return 0;
 
-                case Globals.OrderPartial01:
+                case ModelConstants.OrderPartial01:
                     return 0.5;
 
-                case Globals.OrderSingle:
+                case ModelConstants.OrderSingle:
                     return 1;
 
-                case Globals.OrderPartial12:
+                case ModelConstants.OrderPartial12:
                     return 1.5;
 
-                case Globals.OrderAromatic:
+                case ModelConstants.OrderAromatic:
                     return 1.5;
 
-                case Globals.OrderDouble:
+                case ModelConstants.OrderDouble:
                     return 2;
 
-                case Globals.OrderPartial23:
+                case ModelConstants.OrderPartial23:
                     return 2.5;
 
-                case Globals.OrderTriple:
+                case ModelConstants.OrderTriple:
                     return 3;
 
                 default:
@@ -283,7 +283,7 @@ namespace Chem4Word.Model2
                 Point posEndPoint = endAtom.Position + posDisplacementVector;
                 Point negEndPoint = endAtom.Position + negDisplacementVector;
 
-                Atom nonHAtom = startAtom.Neighbours.FirstOrDefault(n => n != endAtom && n.Element as Element != Globals.PeriodicTable.H);
+                Atom nonHAtom = startAtom.Neighbours.FirstOrDefault(n => n != endAtom && n.Element as Element != ModelGlobals.PeriodicTable.H);
                 if (nonHAtom != null)
                 {
                     Point nonHAtomLoc = nonHAtom.Position;
@@ -361,11 +361,11 @@ namespace Chem4Word.Model2
             bool endAtomIsH = false;
             if (StartAtom.Element is Element e1)
             {
-                startAtomIsH = e1 == Globals.PeriodicTable.H;
+                startAtomIsH = e1 == ModelGlobals.PeriodicTable.H;
             }
             if (EndAtom.Element is Element e2)
             {
-                endAtomIsH = e2 == Globals.PeriodicTable.H;
+                endAtomIsH = e2 == ModelGlobals.PeriodicTable.H;
             }
             return startAtomIsH || endAtomIsH;
         }
@@ -895,44 +895,44 @@ namespace Chem4Word.Model2
         {
             if (val == 0)
             {
-                return Globals.OrderZero;
+                return ModelConstants.OrderZero;
             }
             if (val == 0.5)
             {
-                return Globals.OrderPartial01;
+                return ModelConstants.OrderPartial01;
             }
             if (val == 1)
             {
-                return Globals.OrderSingle;
+                return ModelConstants.OrderSingle;
             }
             if (val == 1.5)
             {
                 if (isAromatic)
                 {
-                    return Globals.OrderAromatic;
+                    return ModelConstants.OrderAromatic;
                 }
                 else
                 {
-                    return Globals.OrderPartial12;
+                    return ModelConstants.OrderPartial12;
                 }
             }
             if (val == 2)
             {
-                return Globals.OrderDouble;
+                return ModelConstants.OrderDouble;
             }
             if (val == 2.5)
             {
-                return Globals.OrderPartial23;
+                return ModelConstants.OrderPartial23;
             }
             if (val == 3)
             {
-                return Globals.OrderTriple;
+                return ModelConstants.OrderTriple;
             }
             if (val == 4)
             {
-                return Globals.OrderAromatic;
+                return ModelConstants.OrderAromatic;
             }
-            return Globals.OrderZero;
+            return ModelConstants.OrderZero;
         }
 
         #endregion Methods

@@ -49,11 +49,6 @@ namespace Chem4Word.ACME.Drawing.Text
                                                                              FontWeights.Normal,
                                                                              FontStretches.Normal);
 
-        public static Typeface FloatingSymbolTypeface => new Typeface(new FontFamily(FamilyName),
-                                                                             FontStyles.Normal,
-                                                                             FontWeights.SemiBold,
-                                                                             FontStretches.Normal);
-
         static GlyphUtils()
         {
             if (!SymbolTypeface.TryGetGlyphTypeface(out _glyphTypeface))

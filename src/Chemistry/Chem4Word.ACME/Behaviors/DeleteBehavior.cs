@@ -42,7 +42,7 @@ namespace Chem4Word.ACME.Behaviors
             }
             //clear the current selection
             EditController.ClearSelection();
-            CurrentStatus = ("Click to remove an atom or bond.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DeleteStandardMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
         private void OnPreviewMouseMove_CurrentEditor(object sender, MouseEventArgs e)

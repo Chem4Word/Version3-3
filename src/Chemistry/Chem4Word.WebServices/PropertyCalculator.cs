@@ -7,7 +7,6 @@
 
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
 using IChem4Word.Contracts;
 using System;
@@ -101,12 +100,12 @@ namespace Chem4Word.WebServices
                     else
                     {
                         // Signify now that we are not going to try these ones
-                        changed += UpsertProperty(molecule.Names, CMLConstants.ValueChem4WordInchiName, "Unable to calculate");
-                        changed += UpsertProperty(molecule.Names, CMLConstants.ValueChem4WordInchiKeyName, "Unable to calculate");
-                        changed += UpsertProperty(molecule.Names, CMLConstants.ValueChem4WordResolverIupacName, "Not requested");
+                        changed += UpsertProperty(molecule.Names, ModelConstants.ValueChem4WordInchiName, "Unable to calculate");
+                        changed += UpsertProperty(molecule.Names, ModelConstants.ValueChem4WordInchiKeyName, "Unable to calculate");
+                        changed += UpsertProperty(molecule.Names, ModelConstants.ValueChem4WordResolverIupacName, "Not requested");
 
-                        changed += UpsertProperty(molecule.Formulas, CMLConstants.ValueChem4WordResolverFormulaName, "Not requested");
-                        changed += UpsertProperty(molecule.Formulas, CMLConstants.ValueChem4WordResolverSmilesName, "Not requested");
+                        changed += UpsertProperty(molecule.Formulas, ModelConstants.ValueChem4WordResolverFormulaName, "Not requested");
+                        changed += UpsertProperty(molecule.Formulas, ModelConstants.ValueChem4WordResolverSmilesName, "Not requested");
                     }
                 }
             }
@@ -147,19 +146,19 @@ namespace Chem4Word.WebServices
                     if (target != null)
                     {
                         var inchi = string.IsNullOrEmpty(properties.Inchi) ? "Not found" : properties.Inchi;
-                        changed += UpsertProperty(target.Names, CMLConstants.ValueChem4WordInchiName, inchi);
+                        changed += UpsertProperty(target.Names, ModelConstants.ValueChem4WordInchiName, inchi);
 
                         var inchiKey = string.IsNullOrEmpty(properties.InchiKey) ? "Not found" : properties.InchiKey;
-                        changed += UpsertProperty(target.Names, CMLConstants.ValueChem4WordInchiKeyName, inchiKey);
+                        changed += UpsertProperty(target.Names, ModelConstants.ValueChem4WordInchiKeyName, inchiKey);
 
                         var name = string.IsNullOrEmpty(properties.Name) ? "Not found" : properties.Name;
-                        changed += UpsertProperty(target.Names, CMLConstants.ValueChem4WordResolverIupacName, name);
+                        changed += UpsertProperty(target.Names, ModelConstants.ValueChem4WordResolverIupacName, name);
 
                         var formula = string.IsNullOrEmpty(properties.Formula) ? "Not found" : properties.Formula;
-                        changed += UpsertProperty(target.Formulas, CMLConstants.ValueChem4WordResolverFormulaName, formula);
+                        changed += UpsertProperty(target.Formulas, ModelConstants.ValueChem4WordResolverFormulaName, formula);
 
                         var smiles = string.IsNullOrEmpty(properties.Smiles) ? "Not found" : properties.Smiles;
-                        changed += UpsertProperty(target.Formulas, CMLConstants.ValueChem4WordResolverSmilesName, smiles);
+                        changed += UpsertProperty(target.Formulas, ModelConstants.ValueChem4WordResolverSmilesName, smiles);
                     }
 
                     index++;

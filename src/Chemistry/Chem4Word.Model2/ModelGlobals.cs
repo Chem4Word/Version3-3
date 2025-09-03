@@ -5,14 +5,13 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-namespace Chem4Word.Model2.Converters.MDL
+using System.Collections.Generic;
+
+namespace Chem4Word.Model2
 {
-    public enum SdfState
+    public static class ModelGlobals
     {
-        Null,
-        EndOfCtab,
-        EndOfData,
-        Error,
-        Unsupported
+        public static PeriodicTable PeriodicTable = new PeriodicTable();
+        public static List<FunctionalGroup> FunctionalGroupsList = FunctionalGroups.ShortcutList;
     }
 }

@@ -171,7 +171,7 @@ namespace Chem4Word.UI.WPF
             {
                 if (editor.CanEditReactions && editor.CanEditFunctionalGroups && editor.CanEditNestedMolecules)
                 {
-                    var topLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
+                    var topLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
                     editor.TopLeft = topLeft;
                     var beforeCml = item.CmlFromChemistry();
                     editor.Cml = beforeCml;
@@ -187,7 +187,7 @@ namespace Chem4Word.UI.WPF
                             ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping,
                             ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight,
                             ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions,
-                            DefaultBondLength = Constants.StandardBondLength
+                            DefaultBondLength = CoreConstants.StandardBondLength
                         };
                         editor.DefaultRenderingOptions = renderingOptions.ToJson();
                     }
@@ -213,7 +213,7 @@ namespace Chem4Word.UI.WPF
                         }
                         else
                         {
-                            afterModel.CreatorGuid = Constants.DummyMachineGuid;
+                            afterModel.CreatorGuid = CoreConstants.DummyMachineGuid;
                         }
                         pc.CalculateProperties(afterModel);
 
@@ -238,7 +238,7 @@ namespace Chem4Word.UI.WPF
                             editLabelsHost.Close();
                         }
 
-                        var dto = DtoHelper.CreateFromModel(afterModel, Constants.DefaultSaveFormat);
+                        var dto = DtoHelper.CreateFromModel(afterModel, CoreConstants.DefaultSaveFormat);
                         if (item.Id == 0)
                         {
                             dto.Name = afterModel.QuickName;
@@ -648,7 +648,7 @@ namespace Chem4Word.UI.WPF
             try
             {
                 _telemetry.Write(module, "Action", "Editing structure meta data");
-                var topLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
+                var topLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
 
                 using (var editLabelsHost =
                        new EditLabelsHost())
@@ -665,7 +665,7 @@ namespace Chem4Word.UI.WPF
                             var cmlConverter = new CMLConverter();
                             var afterModel = cmlConverter.Import(editLabelsHost.Cml);
 
-                            var dto = DtoHelper.CreateFromModel(afterModel, Constants.DefaultSaveFormat);
+                            var dto = DtoHelper.CreateFromModel(afterModel, CoreConstants.DefaultSaveFormat);
                             dto.Id = item.Id;
                             dto.Name = item.Name;
 
@@ -854,7 +854,7 @@ namespace Chem4Word.UI.WPF
 
                                             model.Relabel(true);
 
-                                            var dto = DtoHelper.CreateFromModel(model, Constants.DefaultSaveFormat);
+                                            var dto = DtoHelper.CreateFromModel(model, CoreConstants.DefaultSaveFormat);
                                             _driver.AddChemistry(dto);
                                         }
 
@@ -985,7 +985,7 @@ namespace Chem4Word.UI.WPF
                         }
                         else
                         {
-                            model.CreatorGuid = Constants.DummyMachineGuid;
+                            model.CreatorGuid = CoreConstants.DummyMachineGuid;
                         }
 
                         var changed = pc.CalculateProperties(model, showProgress: false);
@@ -1124,7 +1124,7 @@ namespace Chem4Word.UI.WPF
 
                                     model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength, false);
 
-                                    var contents = Constants.XmlFileHeader + Environment.NewLine
+                                    var contents = CoreConstants.XmlFileHeader + Environment.NewLine
                                                                            + cmlConverter.Export(model);
                                     File.WriteAllText(filename, contents);
                                     exported++;

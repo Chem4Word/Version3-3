@@ -9,7 +9,6 @@ using Chem4Word.ACME.Drawing.LayoutSupport;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +49,7 @@ namespace Chem4Word.ACME.Drawing
             var bondVector = desc.PrincipleVector;
             var perpVector = bondVector.Perpendicular();
             perpVector.Normalize();
-            perpVector *= standardBondLength * Globals.BondOffsetPercentage;
+            perpVector *= standardBondLength * ModelConstants.BondOffsetPercentage;
 
             // shrink the bond so it doesn't overlap any AtomVisuals
             AdjustTerminus(ref desc.Start, desc.End, desc.StartAtomHull, standoff);
@@ -109,7 +108,7 @@ namespace Chem4Word.ACME.Drawing
             normal.Normalize();
 
             //offset the secondaries
-            var distance = standardBondLength * Globals.BondOffsetPercentage;
+            var distance = standardBondLength * ModelConstants.BondOffsetPercentage;
             descriptor.SecondaryStart = descriptor.Start + normal * distance;
             descriptor.SecondaryEnd = descriptor.SecondaryStart + v;
 
@@ -333,7 +332,7 @@ namespace Chem4Word.ACME.Drawing
             var normal = v.Perpendicular();
             normal.Normalize();
 
-            var distance = standardBondLength * Globals.BondOffsetPercentage;
+            var distance = standardBondLength * ModelConstants.BondOffsetPercentage;
             //first, calculate the default bond points as if there were no rings involved
             var tempStart = descriptor.Start;
             //offset according to placement
@@ -379,7 +378,7 @@ namespace Chem4Word.ACME.Drawing
 
             Point point1, point2, point3, point4;
 
-            var distance = standardBondLength * Globals.BondOffsetPercentage;
+            var distance = standardBondLength * ModelConstants.BondOffsetPercentage;
 
             point1 = descriptor.Start + normal * distance;
             point2 = point1 + v;
@@ -511,7 +510,7 @@ namespace Chem4Word.ACME.Drawing
                 var bondVector = descriptor.PrincipleVector;
                 //come up with a number of wiggles that looks aesthetically sensible
                 var noOfWiggles =
-                    (int)Math.Ceiling(bondVector.Length / (standardBondLength * Globals.BondOffsetPercentage * 2));
+                    (int)Math.Ceiling(bondVector.Length / (standardBondLength * ModelConstants.BondOffsetPercentage * 2));
                 if (noOfWiggles < 3)
                 {
                     noOfWiggles = 3;
@@ -658,7 +657,7 @@ namespace Chem4Word.ACME.Drawing
         {
             Vector perp = thickBond.BondVector.Perpendicular();
             perp.Normalize();
-            double perpDistance = standardBondLength * Globals.BondOffsetPercentage;
+            double perpDistance = standardBondLength * ModelConstants.BondOffsetPercentage;
             Vector offset = perp * perpDistance;
 
             var sg = new StreamGeometry();
@@ -748,7 +747,7 @@ namespace Chem4Word.ACME.Drawing
             var normal = v.Perpendicular();
             normal.Normalize();
 
-            double perpDistance = standardBondLength * Globals.BondOffsetPercentage;
+            double perpDistance = standardBondLength * ModelConstants.BondOffsetPercentage;
 
             tbl.Start = bl.Start;
             tbl.End = bl.End;

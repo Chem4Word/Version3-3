@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Converters.CML;
 using IChem4Word.Contracts;
@@ -126,10 +127,10 @@ namespace Chem4Word.Searcher.OpsinPlugIn
 
                     CMLConverter cmlConverter = new CMLConverter();
                     var model = cmlConverter.Import(temp);
-                    if (model.MeanBondLength < Core.Helpers.Constants.MinimumBondLength - Core.Helpers.Constants.BondLengthTolerance
-                        || model.MeanBondLength > Core.Helpers.Constants.MaximumBondLength + Core.Helpers.Constants.BondLengthTolerance)
+                    if (model.MeanBondLength < CoreConstants.MinimumBondLength - CoreConstants.BondLengthTolerance
+                        || model.MeanBondLength > CoreConstants.MaximumBondLength + CoreConstants.BondLengthTolerance)
                     {
-                        model.ScaleToAverageBondLength(Core.Helpers.Constants.StandardBondLength);
+                        model.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
                     }
 
                     Cml = cmlConverter.Export(model);

@@ -87,8 +87,6 @@ namespace Chem4Word.ACME.Behaviors
         {
             if (AssociatedObject?.DataContext == null)
             {
-                //ScaleTransform.ScaleX = 1d;
-                //ScaleTransform.ScaleY = 1d;
                 return;
             }
 
@@ -107,7 +105,6 @@ namespace Chem4Word.ACME.Behaviors
                 ratio = AssociatedObject.ActualHeight / ContentHeight;
             }
 
-            //ratio *= 0.85; //give it an extra bit of breathing space
             ScaleTransform.ScaleX = ratio;
             ScaleTransform.ScaleY = ratio;
         }

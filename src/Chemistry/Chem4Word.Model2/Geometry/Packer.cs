@@ -39,10 +39,7 @@ namespace Chem4Word.Model2.Geometry
                     nodes.Add(new Node(molecule.Id, 0, 0, molecule.BoundingBox.Width, molecule.BoundingBox.Height));
                 }
 
-                //nodes.Sort((a, b) => b.Area.CompareTo(a.Area));
                 nodes.Sort((a, b) => b.W.CompareTo(a.W));
-                //nodes.Sort((a, b) => b.H.CompareTo(a.H));
-                //nodes.Sort((a, b) => b.Perimeter.CompareTo(a.Perimeter));
 
                 for (int i = 0; i < nodes.Count; ++i)
                 {

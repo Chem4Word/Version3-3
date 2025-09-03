@@ -186,7 +186,7 @@ namespace Chem4Word.UI.WPF
 
             var editor = Globals.Chem4WordV3.GetEditorPlugIn(SelectEditorPlugIn.SelectedItem.ToString());
             editor.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
-            editor.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
+            editor.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
         }
 
         private void OnClick_SelectedRendererSettings(object sender, RoutedEventArgs e)
@@ -196,7 +196,7 @@ namespace Chem4Word.UI.WPF
 
             var renderer = Globals.Chem4WordV3.GetRendererPlugIn(SelectRendererPlugIn.SelectedItem.ToString());
             renderer.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
-            renderer.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
+            renderer.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
         }
 
         private void OnClick_SelectedSearcherSettings(object sender, RoutedEventArgs e)
@@ -206,7 +206,7 @@ namespace Chem4Word.UI.WPF
 
             var searcher = Globals.Chem4WordV3.GetSearcherPlugIn(SelectSearcherPlugIn.SelectedItem.ToString());
             searcher.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
-            searcher.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + Constants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + Constants.TopLeftOffset * 2));
+            searcher.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
         }
 
         private void OnSelectionChanged_SelectEditorPlugIn(object sender, SelectionChangedEventArgs e)
@@ -399,7 +399,6 @@ namespace Chem4Word.UI.WPF
             Dirty = true;
             EnableButtons();
         }
-
 
         #endregion General Tab Events
 
@@ -629,12 +628,12 @@ namespace Chem4Word.UI.WPF
                 if (Directory.Exists(fileInfo.DirectoryName)
                     && File.Exists(browser.FileName))
                 {
-                    var driver = (IChem4WordLibraryReader)Globals.Chem4WordV3.GetDriverPlugIn(Constants.SQLiteStandardDriver);
+                    var driver = (IChem4WordLibraryReader)Globals.Chem4WordV3.GetDriverPlugIn(CoreConstants.SQLiteStandardDriver);
                     if (driver != null)
                     {
                         var details = new DatabaseDetails
                         {
-                            Driver = Constants.SQLiteStandardDriver,
+                            Driver = CoreConstants.SQLiteStandardDriver,
                             DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
                             Connection = browser.FileName,
                             ShortFileName = fileInfo.Name
@@ -718,12 +717,12 @@ namespace Chem4Word.UI.WPF
 
                     if (existing == null)
                     {
-                        var driver = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn(Constants.SQLiteStandardDriver);
+                        var driver = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn(CoreConstants.SQLiteStandardDriver);
                         if (driver != null)
                         {
                             var details = new DatabaseDetails
                             {
-                                Driver = Constants.SQLiteStandardDriver,
+                                Driver = CoreConstants.SQLiteStandardDriver,
                                 DisplayName = displayName,
                                 Connection = fileName,
                                 ShortFileName = fileInfo.Name
@@ -754,7 +753,7 @@ namespace Chem4Word.UI.WPF
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
             var host = new LibraryDownloadHost();
-            host.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
+            host.TopLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
             host.ShowDialog();
 
             ReloadGlobalListOfLibraries();
@@ -792,7 +791,7 @@ namespace Chem4Word.UI.WPF
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{library.Name}'");
 
                 var editor = new LibraryEditorHost();
-                editor.TopLeft = new Point(TopLeft.X + Constants.TopLeftOffset, TopLeft.Y + Constants.TopLeftOffset);
+                editor.TopLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
                 editor.Telemetry = Globals.Chem4WordV3.Telemetry;
                 editor.SelectedDatabase = library.Name;
                 editor.ShowDialog();
@@ -837,7 +836,7 @@ namespace Chem4Word.UI.WPF
         private string GetDriverFromLicense(string filename)
         {
             // // http://xpather.com/
-            var result = Constants.SQLiteStandardDriver;
+            var result = CoreConstants.SQLiteStandardDriver;
 
             // Read driver name from license file if present
             var licenseFile = filename.Replace(".db", ".lic");

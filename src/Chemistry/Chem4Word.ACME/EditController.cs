@@ -47,8 +47,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using static Chem4Word.Model2.Helpers.Globals;
-using Constants = Chem4Word.ACME.Resources.Constants;
+using static Chem4Word.Model2.ModelGlobals;
 
 namespace Chem4Word.ACME
 {
@@ -59,7 +58,6 @@ namespace Chem4Word.ACME
     /// </summary>
     public class EditController : Controller, INotifyPropertyChanged
     {
-        private const int BlockTextPadding = 10;
         private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static readonly string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
@@ -94,7 +92,7 @@ namespace Chem4Word.ACME
 
         public double EditBondThickness
         {
-            get { return Common.BondThickness * Common.DefaultBondLineFactor; }
+            get { return AcmeConstants.BondThickness * AcmeConstants.DefaultBondLineFactor; }
         }
 
         public SelectionTypeCode SelectionType
@@ -143,7 +141,7 @@ namespace Chem4Word.ACME
             {
                 _currentBondLength = value;
                 OnPropertyChanged();
-                var scaled = value * ScaleFactorForXaml;
+                var scaled = value * ModelConstants.ScaleFactorForXaml;
                 // Decide if we need to rescale to current drawing
                 if (!Loading && Math.Abs(Model.MeanBondLength - scaled) > 2.5)
                 {
@@ -684,7 +682,7 @@ namespace Chem4Word.ACME
         {
             _selectedBondOptionId = 1;
             _selectedReactionType = ReactionType.Normal;
-            _selectedElement = Globals.PeriodicTable.C;
+            _selectedElement = ModelGlobals.PeriodicTable.C;
             SelectionIsSubscript = false;
             SelectionIsSuperscript = false;
         }
@@ -767,7 +765,7 @@ namespace Chem4Word.ACME
                                  orderby a.SymbolText
                                  select a.Element).Distinct();
 
-            var newOptions = from e in Globals.PeriodicTable.ElementsSource
+            var newOptions = from e in ModelGlobals.PeriodicTable.ElementsSource
                              join me in modelElements
                                  on e equals me
                              select new AtomOption(e);
@@ -785,12 +783,12 @@ namespace Chem4Word.ACME
 
         private void LoadStandardAtomOptions()
         {
-            foreach (var atom in Constants.StandardAtoms)
+            foreach (var atom in AcmeConstants.StandardAtoms)
             {
-                AtomOptions.Add(new AtomOption(Globals.PeriodicTable.Elements[atom]));
+                AtomOptions.Add(new AtomOption(ModelGlobals.PeriodicTable.Elements[atom]));
             }
 
-            foreach (var fg in Constants.StandardFunctionalGroups)
+            foreach (var fg in AcmeConstants.StandardFunctionalGroups)
             {
                 AtomOptions.Add(new AtomOption(FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(fg))));
             }
@@ -817,7 +815,7 @@ namespace Chem4Word.ACME
                                    new BondOption
                                    {
                                        Id = 1,
-                                       Order = OrderSingle,
+                                       Order = ModelConstants.OrderSingle,
                                        Stereo = BondStereo.None
                                    }
                                },
@@ -826,7 +824,7 @@ namespace Chem4Word.ACME
                                    new BondOption
                                    {
                                        Id = 2,
-                                       Order = OrderDouble,
+                                       Order = ModelConstants.OrderDouble,
                                        Stereo = BondStereo.None
                                    }
                                },
@@ -835,7 +833,7 @@ namespace Chem4Word.ACME
                                    new BondOption
                                    {
                                        Id = 3,
-                                       Order = OrderTriple,
+                                       Order = ModelConstants.OrderTriple,
                                        Stereo = BondStereo.None
                                    }
                                }
@@ -1006,20 +1004,20 @@ namespace Chem4Word.ACME
                                   existingBond.Stereo = BondStereo.None;
                                   switch (existingBond.Order)
                                   {
-                                      case OrderZero:
-                                          existingBond.Order = OrderSingle;
+                                      case ModelConstants.OrderZero:
+                                          existingBond.Order = ModelConstants.OrderSingle;
                                           break;
 
-                                      case OrderSingle:
-                                          existingBond.Order = OrderDouble;
+                                      case ModelConstants.OrderSingle:
+                                          existingBond.Order = ModelConstants.OrderDouble;
                                           break;
 
-                                      case OrderDouble:
-                                          existingBond.Order = OrderTriple;
+                                      case ModelConstants.OrderDouble:
+                                          existingBond.Order = ModelConstants.OrderTriple;
                                           break;
 
-                                      case OrderTriple:
-                                          existingBond.Order = OrderSingle;
+                                      case ModelConstants.OrderTriple:
+                                          existingBond.Order = ModelConstants.OrderSingle;
                                           break;
                                   }
 
@@ -1861,10 +1859,10 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Length {newLength / ScaleFactorForXaml}");
+                WriteTelemetry(module, "Debug", $"Length {newLength / ModelConstants.ScaleFactorForXaml}");
 
                 var currentLength = Model.MeanBondLength;
-                var currentSelection = Math.Round(currentLength / ScaleFactorForXaml / 5.0) * 5 * ScaleFactorForXaml;
+                var currentSelection = Math.Round(currentLength / ModelConstants.ScaleFactorForXaml / 5.0) * 5 * ModelConstants.ScaleFactorForXaml;
 
                 var centre = new Point(Model.BoundingBoxWithFontSize.Left + Model.BoundingBoxWithFontSize.Width / 2,
                                        Model.BoundingBoxWithFontSize.Top + Model.BoundingBoxWithFontSize.Height / 2);
@@ -1873,24 +1871,24 @@ namespace Chem4Word.ACME
                                     {
                                         Model.ScaleToAverageBondLength(newLength, centre);
                                         SetTextParams(newLength);
-                                        Model.SetAnnotationSize(newLength / ScaleFactorForXaml);
+                                        Model.SetAnnotationSize(newLength / ModelConstants.ScaleFactorForXaml);
                                         RefreshMolecules(Model.Molecules.Values.ToList());
                                         RefreshReactions(Model.DefaultReactionScheme.Reactions.Values.ToList());
                                         RefreshAnnotations(Model.Annotations.Values.ToList());
                                         Loading = true;
-                                        CurrentBondLength = newLength / ScaleFactorForXaml;
+                                        CurrentBondLength = newLength / ModelConstants.ScaleFactorForXaml;
                                         Loading = false;
                                     };
                 Action undo = () =>
                                     {
                                         Model.ScaleToAverageBondLength(currentLength, centre);
                                         SetTextParams(currentSelection);
-                                        Model.SetAnnotationSize(currentSelection / ScaleFactorForXaml);
+                                        Model.SetAnnotationSize(currentSelection / ModelConstants.ScaleFactorForXaml);
                                         RefreshMolecules(Model.Molecules.Values.ToList());
                                         RefreshReactions(Model.DefaultReactionScheme.Reactions.Values.ToList());
                                         RefreshAnnotations(Model.Annotations.Values.ToList());
                                         Loading = true;
-                                        CurrentBondLength = currentSelection / ScaleFactorForXaml;
+                                        CurrentBondLength = currentSelection / ModelConstants.ScaleFactorForXaml;
                                         Loading = false;
                                     };
 
@@ -2029,7 +2027,7 @@ namespace Chem4Word.ACME
                     var export = converter.Export(tempModel);
                     Clipboard.Clear();
                     IDataObject ido = new DataObject();
-                    ido.SetData(FormatCML, export);
+                    ido.SetData(ModelConstants.FormatCML, export);
                     ido.SetData(DataFormats.Text, XmlHelper.AddHeader(export));
                     Clipboard.SetDataObject(ido, true);
                 }
@@ -2379,8 +2377,8 @@ namespace Chem4Word.ACME
 
                     if (currentAtom == null)
                     {
-                        Atom insertedAtom = AddAtomChain(previousAtom, currentPlacement.Position, ClockDirections.Nothing, Globals.PeriodicTable.C,
-                                                  OrderSingle, BondStereo.None);
+                        Atom insertedAtom = AddAtomChain(previousAtom, currentPlacement.Position, ClockDirections.Nothing, ModelGlobals.PeriodicTable.C,
+                                                  ModelConstants.OrderSingle, BondStereo.None);
                         if (insertedAtom == null)
                         {
                             WriteTelemetry(module, "Warning", "Inserted Atom is null");
@@ -2392,7 +2390,7 @@ namespace Chem4Word.ACME
                     }
                     else if (previousAtom != null && previousAtom.BondBetween(currentAtom) == null)
                     {
-                        AddNewBond(previousAtom, currentAtom, previousAtom.Parent, OrderSingle, BondStereo.None);
+                        AddNewBond(previousAtom, currentAtom, previousAtom.Parent, ModelConstants.OrderSingle, BondStereo.None);
                     }
                 }
 
@@ -2401,7 +2399,7 @@ namespace Chem4Word.ACME
                 Atom nextAtom = newAtomPlacements[1].ExistingAtom;
                 if (firstAtom.BondBetween(nextAtom) == null)
                 {
-                    AddNewBond(firstAtom, nextAtom, firstAtom.Parent, OrderSingle, BondStereo.None);
+                    AddNewBond(firstAtom, nextAtom, firstAtom.Parent, ModelConstants.OrderSingle, BondStereo.None);
                 }
                 //set the alternating single and double bonds if unsaturated
                 if (unsaturated)
@@ -2451,7 +2449,7 @@ namespace Chem4Word.ACME
                             if (bondBetween != null)
                             {
                                 // Only do this if a bond was created / exists
-                                SetBondAttributes(bondBetween, OrderDouble, BondStereo.None);
+                                SetBondAttributes(bondBetween, ModelConstants.OrderDouble, BondStereo.None);
                                 bondBetween.ExplicitPlacement = null;
                                 bondBetween.UpdateVisual();
                             }
@@ -2500,7 +2498,7 @@ namespace Chem4Word.ACME
                 Atom lastAtom = startAtom;
                 if (startAtom == null) //we're drawing an isolated chain
                 {
-                    lastAtom = AddAtomChain(null, placements[0], ClockDirections.Nothing, bondOrder: OrderSingle,
+                    lastAtom = AddAtomChain(null, placements[0], ClockDirections.Nothing, bondOrder: ModelConstants.OrderSingle,
                                             stereo: BondStereo.None);
                     if (lastAtom == null)
                     {
@@ -2512,7 +2510,7 @@ namespace Chem4Word.ACME
 
                 foreach (Point placement in placements.Skip(1))
                 {
-                    lastAtom = AddAtomChain(lastAtom, placement, ClockDirections.Nothing, bondOrder: OrderSingle,
+                    lastAtom = AddAtomChain(lastAtom, placement, ClockDirections.Nothing, bondOrder: ModelConstants.OrderSingle,
                                             stereo: BondStereo.None);
                     if (lastAtom == null)
                     {
@@ -2606,7 +2604,7 @@ namespace Chem4Word.ACME
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var newBondLength = CurrentBondLength * ScaleFactorForXaml;
+            var newBondLength = CurrentBondLength * ModelConstants.ScaleFactorForXaml;
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -2688,9 +2686,9 @@ namespace Chem4Word.ACME
 
                             var aa = new Atom
                             {
-                                Element = Globals.PeriodicTable.H,
+                                Element = ModelGlobals.PeriodicTable.H,
                                 Position = atom.Position +
-                                                    vector * (newBondLength * Common.ExplicitHydrogenBondPercentage)
+                                                    vector * (newBondLength * AcmeConstants.ExplicitHydrogenBondPercentage)
                             };
                             newAtoms.Add(aa);
                             if (!parents.ContainsKey(aa.InternalId))
@@ -5129,7 +5127,7 @@ namespace Chem4Word.ACME
             }
 
             //make the block a bit bigger
-            block.Inflate(BlockTextPadding, BlockTextPadding);
+            block.Inflate(AcmeConstants.BlockTextPadding, AcmeConstants.BlockTextPadding);
 
             //locate the editor properly
             BlockEditor.Controller = this;

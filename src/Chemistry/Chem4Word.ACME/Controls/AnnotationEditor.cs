@@ -105,6 +105,7 @@ namespace Chem4Word.ACME.Controls
         private void OnSelectionChanged_AnnotationEditor(object sender, RoutedEventArgs e)
         {
             MakeSubscriptCommand.RaiseCanExecChanged();
+            MakeSuperscriptCommand.RaiseCanExecChanged();
         }
 
         private void OnTextChanged_AnnotationEditor(object sender, TextChangedEventArgs e)

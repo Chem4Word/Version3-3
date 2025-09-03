@@ -5,14 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
-using Microsoft.Office.Core;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using Chem4Word.Core;
+using Microsoft.Office.Core;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace Chem4Word.Helpers
@@ -154,7 +154,7 @@ namespace Chem4Word.Helpers
             // Pass 1 collect list of all our content controls
             foreach (Word.ContentControl cc in document.ContentControls)
             {
-                if (cc.Title != null && cc.Title.Equals(Constants.ContentControlTitle))
+                if (cc.Title != null && cc.Title.Equals(CoreConstants.ContentControlTitle))
                 {
                     chemistryZones.Add(new ChemistryContentControl
                     {
@@ -202,7 +202,7 @@ namespace Chem4Word.Helpers
                 // Pass 1 collect dictionary of our unique content controls
                 foreach (Word.ContentControl cc in document.ContentControls)
                 {
-                    if (cc.Title != null && cc.Title.Equals(Constants.ContentControlTitle))
+                    if (cc.Title != null && cc.Title.Equals(CoreConstants.ContentControlTitle))
                     {
                         var guid = GuidFromTag(cc.Tag);
 

@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Controls;
-using Chem4Word.ACME.Utils;
 using Chem4Word.Model2;
 using System.Collections.Generic;
 using System.Windows;
@@ -22,7 +21,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         protected override void SetThumbStyle(DragHandle cornerThumb)
         {
-            cornerThumb.Style = (Style)FindResource(Common.GroupHandleStyle);
+            cornerThumb.Style = (Style)FindResource(AcmeConstants.GroupHandleStyle);
         }
     }
 }

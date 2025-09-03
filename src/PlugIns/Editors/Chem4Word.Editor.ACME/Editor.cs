@@ -5,7 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
+using Chem4Word.Core;
 using Chem4Word.Core.UI.Forms;
 using IChem4Word.Contracts;
 using System;
@@ -22,7 +22,7 @@ namespace Chem4Word.Editor.ACME
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        public string Name => Constants.DefaultEditorPlugIn;
+        public string Name => CoreConstants.DefaultEditorPlugIn;
 
         public string Description => "This is the standard editor for Chem4Word 2025. ACME stands for Advanced CML-based Molecule Editor.";
 

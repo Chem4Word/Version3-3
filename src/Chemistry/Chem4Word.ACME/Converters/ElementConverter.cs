@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2;
-using Chem4Word.Model2.Helpers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -39,7 +38,7 @@ namespace Chem4Word.ACME.Converters
                 }
                 else
                 {
-                    return Globals.PeriodicTable.Elements[s];
+                    return ModelGlobals.PeriodicTable.Elements[s];
                 }
             }
             catch

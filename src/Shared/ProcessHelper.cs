@@ -28,11 +28,11 @@ namespace Chem4Word.Shared
             var arguments = $"/i {fileName}.msi /l*v {logFile}";
 
             var processStartInfo = new ProcessStartInfo
-                        {
-                            WorkingDirectory = fileInfo.DirectoryName,
-                            FileName = "msiexec",
-                            Arguments = arguments
-                        };
+            {
+                WorkingDirectory = fileInfo.DirectoryName,
+                FileName = "msiexec",
+                Arguments = arguments
+            };
             using (var process = Process.Start(processStartInfo))
             {
                 process.WaitForExit();

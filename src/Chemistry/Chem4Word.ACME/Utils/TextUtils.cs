@@ -5,7 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Model2.Helpers;
+using Chem4Word.Model2;
 using System;
 
 namespace Chem4Word.ACME.Utils
@@ -41,7 +41,7 @@ namespace Chem4Word.ACME.Utils
             //use the en-rule for single negative charges - it makes them more distinct
             else if (chargeVal < 0)
             {
-                chargeString = Globals.EnDashSymbol;
+                chargeString = ModelConstants.EnDashSymbol;
             }
 
             int abscharge;

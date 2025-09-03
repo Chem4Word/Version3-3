@@ -137,7 +137,7 @@ namespace Chem4Word.Model2.Helpers
         {
             var allParts = new List<MoleculeFormulaPart>();
 
-            var elements = Globals.PeriodicTable.ValidElements.Split('|').ToList();
+            var elements = ModelGlobals.PeriodicTable.ValidElements.Split('|').ToList();
             // Add charge and special characters so we can detect them
             elements.AddRange(new[] { "+", "-", "[", "]", "." });
 

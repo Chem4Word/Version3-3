@@ -8,7 +8,6 @@
 using Chem4Word.ACME.Entities;
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
 
 namespace Chem4Word.ACME.Controls.DesignTimeModels
@@ -66,7 +65,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
 
             if (IsElement)
             {
-                Element = Globals.PeriodicTable.C;
+                Element = ModelGlobals.PeriodicTable.C;
                 Charge = -1;
 
                 HasIsotopes = true;
@@ -81,7 +80,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
             }
             else
             {
-                Element = Globals.FunctionalGroupsList.Find(fg => fg.Name == "CH2CH2OH");
+                Element = ModelGlobals.FunctionalGroupsList.Find(fg => fg.Name == "CH2CH2OH");
                 ExplicitFunctionalGroupPlacement = CompassPoints.East;
                 ShowHydrogenLabels = false;
             }

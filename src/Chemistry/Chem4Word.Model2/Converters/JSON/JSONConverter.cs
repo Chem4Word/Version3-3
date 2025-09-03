@@ -155,7 +155,7 @@ namespace Chem4Word.Model2.Converters.JSON
                     {
                         mj.b[iBond].s = Ambiguous;
                     }
-                    if (bond.Order != Globals.OrderSingle)
+                    if (bond.Order != ModelConstants.OrderSingle)
                     {
                         mj.b[iBond].o = bond.OrderValue;
                     }
@@ -192,7 +192,7 @@ namespace Chem4Word.Model2.Converters.JSON
         {
             Dictionary<int, Guid> atoms = new Dictionary<int, Guid>();
             var newMol = new Molecule();
-            ElementBase ce = Globals.PeriodicTable.C;
+            ElementBase ce = ModelGlobals.PeriodicTable.C;
             int atomCount = 0;
 
             // GitHub: Issue #13 https://github.com/Chem4Word/Version3/issues/13
@@ -213,7 +213,7 @@ namespace Chem4Word.Model2.Converters.JSON
                     }
                     else
                     {
-                        ce = Globals.PeriodicTable.C;
+                        ce = ModelGlobals.PeriodicTable.C;
                     }
 
                     Atom atom = new Atom()
@@ -244,13 +244,13 @@ namespace Chem4Word.Model2.Converters.JSON
                     }
                     else
                     {
-                        o = Globals.OrderSingle;
+                        o = ModelConstants.OrderSingle;
                     }
 
                     BondStereo s;
                     if (!string.IsNullOrEmpty(b.s))
                     {
-                        if (o == Globals.OrderDouble)
+                        if (o == ModelConstants.OrderDouble)
                         {
                             if (b.s.Equals(Ambiguous))
                             {

@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2.Annotations;
-using Chem4Word.Model2.Converters.CML;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -68,9 +67,9 @@ namespace Chem4Word.Model2
         {
             if (!string.IsNullOrEmpty(_fullType))
             {
-                IsReadOnly = !(_fullType.Equals(CMLConstants.ValueChem4WordCaption)
-                               || _fullType.Equals(CMLConstants.ValueChem4WordFormula)
-                               || _fullType.Equals(CMLConstants.ValueChem4WordSynonym));
+                IsReadOnly = !(_fullType.Equals(ModelConstants.ValueChem4WordCaption)
+                               || _fullType.Equals(ModelConstants.ValueChem4WordFormula)
+                               || _fullType.Equals(ModelConstants.ValueChem4WordSynonym));
             }
         }
 

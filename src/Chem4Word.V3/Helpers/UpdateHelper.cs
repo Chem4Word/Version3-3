@@ -5,11 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
-using Chem4Word.Core.UI;
-using Chem4Word.Core.UI.Forms;
-using Chem4Word.UI;
-using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -19,6 +14,12 @@ using System.Net.Http;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Chem4Word.Core;
+using Chem4Word.Core.Helpers;
+using Chem4Word.Core.UI;
+using Chem4Word.Core.UI.Forms;
+using Chem4Word.UI;
+using Microsoft.Win32;
 
 namespace Chem4Word.Helpers
 {
@@ -60,8 +61,8 @@ namespace Chem4Word.Helpers
                         {
                             Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Last check {delta.TotalDays:0} day(s) ago; Check frequency {frequency} days.");
                             Debug.WriteLine("Saving date last checked in Registry as Today");
-                            RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordRegistryKey);
-                            registryKey?.SetValue(Constants.RegistryValueNameLastCheck, DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                            RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordRegistryKey);
+                            registryKey?.SetValue(CoreConstants.RegistryValueNameLastCheck, DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                         }
                     }
 
@@ -105,16 +106,16 @@ namespace Chem4Word.Helpers
 
             try
             {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(Constants.Chem4WordRegistryKey);
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordRegistryKey);
                 if (key != null)
                 {
                     var names = key.GetValueNames();
 
-                    if (names.Contains(Constants.RegistryValueNameLastCheck))
+                    if (names.Contains(CoreConstants.RegistryValueNameLastCheck))
                     {
                         try
                         {
-                            var lastChecked = key.GetValue(Constants.RegistryValueNameLastCheck).ToString();
+                            var lastChecked = key.GetValue(CoreConstants.RegistryValueNameLastCheck).ToString();
                             if (!string.IsNullOrEmpty(lastChecked))
                             {
                                 DateTime last = SafeDate.Parse(lastChecked);
@@ -131,11 +132,11 @@ namespace Chem4Word.Helpers
                         Globals.Chem4WordV3.VersionLastChecked = DateTime.UtcNow.AddDays(-30);
                     }
 
-                    if (names.Contains(Constants.RegistryValueNameVersionsBehind))
+                    if (names.Contains(CoreConstants.RegistryValueNameVersionsBehind))
                     {
                         try
                         {
-                            var behind = key.GetValue(Constants.RegistryValueNameVersionsBehind).ToString();
+                            var behind = key.GetValue(CoreConstants.RegistryValueNameVersionsBehind).ToString();
                             Globals.Chem4WordV3.VersionsBehind = string.IsNullOrEmpty(behind) ? 0 : int.Parse(behind);
                         }
                         catch
@@ -148,11 +149,11 @@ namespace Chem4Word.Helpers
                         Globals.Chem4WordV3.VersionsBehind = 0;
                     }
 
-                    if (names.Contains(Constants.RegistryValueNameAvailableVersion))
+                    if (names.Contains(CoreConstants.RegistryValueNameAvailableVersion))
                     {
                         try
                         {
-                            Globals.Chem4WordV3.VersionAvailable = key.GetValue(Constants.RegistryValueNameAvailableVersion).ToString();
+                            Globals.Chem4WordV3.VersionAvailable = key.GetValue(CoreConstants.RegistryValueNameAvailableVersion).ToString();
                         }
                         catch
                         {
@@ -164,11 +165,11 @@ namespace Chem4Word.Helpers
                         Globals.Chem4WordV3.VersionAvailable = string.Empty;
                     }
 
-                    if (names.Contains(Constants.RegistryValueNameAvailableIsBeta))
+                    if (names.Contains(CoreConstants.RegistryValueNameAvailableIsBeta))
                     {
                         try
                         {
-                            var isBeta = key.GetValue(Constants.RegistryValueNameAvailableIsBeta).ToString();
+                            var isBeta = key.GetValue(CoreConstants.RegistryValueNameAvailableIsBeta).ToString();
                             if (!bool.TryParse(isBeta, out Globals.Chem4WordV3.VersionAvailableIsBeta))
                             {
                                 Globals.Chem4WordV3.VersionAvailableIsBeta = true;
@@ -184,11 +185,11 @@ namespace Chem4Word.Helpers
                         Globals.Chem4WordV3.VersionAvailableIsBeta = true;
                     }
 
-                    if (names.Contains(Constants.RegistryValueNameEndOfLife))
+                    if (names.Contains(CoreConstants.RegistryValueNameEndOfLife))
                     {
                         try
                         {
-                            var isEndOfLife = key.GetValue(Constants.RegistryValueNameEndOfLife).ToString();
+                            var isEndOfLife = key.GetValue(CoreConstants.RegistryValueNameEndOfLife).ToString();
                             Globals.Chem4WordV3.IsEndOfLife = bool.Parse(isEndOfLife);
                         }
                         catch
@@ -249,7 +250,7 @@ namespace Chem4Word.Helpers
                     #region Got Our File
 
                     Globals.Chem4WordV3.AllVersions = XDocument.Parse(xml);
-                    RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordRegistryKey);
+                    RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordRegistryKey);
 
                     var expires = Globals.Chem4WordV3.AllVersions.XPathSelectElements("//EndOfLife").FirstOrDefault();
                     if (expires != null)
@@ -258,7 +259,7 @@ namespace Chem4Word.Helpers
                         if (DateTime.UtcNow > expiryDate)
                         {
                             Globals.Chem4WordV3.IsEndOfLife = true;
-                            registryKey?.SetValue(Constants.RegistryValueNameEndOfLife, "true");
+                            registryKey?.SetValue(CoreConstants.RegistryValueNameEndOfLife, "true");
                         }
                     }
 
@@ -278,11 +279,11 @@ namespace Chem4Word.Helpers
                         if (mostRecent)
                         {
                             Globals.Chem4WordV3.VersionAvailable = thisVersionNumber;
-                            registryKey?.SetValue(Constants.RegistryValueNameAvailableVersion, thisVersionNumber);
+                            registryKey?.SetValue(CoreConstants.RegistryValueNameAvailableVersion, thisVersionNumber);
 
                             var isBeta = version.Element("IsBeta")?.Value;
                             Globals.Chem4WordV3.VersionAvailableIsBeta = bool.Parse(isBeta);
-                            registryKey?.SetValue(Constants.RegistryValueNameAvailableIsBeta, isBeta);
+                            registryKey?.SetValue(CoreConstants.RegistryValueNameAvailableIsBeta, isBeta);
 
                             mostRecent = false;
                         }
@@ -290,7 +291,7 @@ namespace Chem4Word.Helpers
 
                     // Save VersionsBehind and Last Checked for next start up
                     Debug.WriteLine($"Saving Versions Behind in Registry: {Globals.Chem4WordV3.VersionsBehind}");
-                    registryKey?.SetValue(Constants.RegistryValueNameVersionsBehind, Globals.Chem4WordV3.VersionsBehind.ToString());
+                    registryKey?.SetValue(CoreConstants.RegistryValueNameVersionsBehind, Globals.Chem4WordV3.VersionsBehind.ToString());
 
                     #endregion Got Our File
                 }
@@ -322,10 +323,10 @@ namespace Chem4Word.Helpers
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            string primaryDomain = Constants.OurDomains.FirstOrDefault();
+            string primaryDomain = CoreConstants.OurDomains.FirstOrDefault();
             string versionsFileMarker = "<Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>";
 
-            string versionsFile = $"{Constants.Chem4WordVersionFiles}/Chem4Word-Versions.xml";
+            string versionsFile = $"{CoreConstants.Chem4WordVersionFiles}/Chem4Word-Versions.xml";
 
             string contents = null;
 
@@ -333,7 +334,7 @@ namespace Chem4Word.Helpers
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             bool foundOurXmlFile = false;
-            foreach (var domain in Constants.OurDomains)
+            foreach (var domain in CoreConstants.OurDomains)
             {
                 using (HttpClient client = new HttpClient())
                 {
@@ -410,11 +411,11 @@ namespace Chem4Word.Helpers
 
             try
             {
-                RegistryKey key = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordRegistryKey);
+                RegistryKey key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordRegistryKey);
                 if (key != null)
                 {
-                    key.DeleteValue(Constants.RegistryValueNameLastCheck, false);
-                    key.DeleteValue(Constants.RegistryValueNameVersionsBehind, false);
+                    key.DeleteValue(CoreConstants.RegistryValueNameLastCheck, false);
+                    key.DeleteValue(CoreConstants.RegistryValueNameVersionsBehind, false);
                 }
             }
             catch (Exception ex)

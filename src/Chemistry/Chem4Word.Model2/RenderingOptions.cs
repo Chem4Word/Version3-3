@@ -5,7 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
+using Chem4Word.Core;
 using Chem4Word.Model2.Enums;
 using Newtonsoft.Json;
 
@@ -25,7 +25,7 @@ namespace Chem4Word.Model2
 
         public bool ShowColouredAtoms { get; set; } = true;
 
-        public double DefaultBondLength { get; set; } = Constants.StandardBondLength;
+        public double DefaultBondLength { get; set; } = CoreConstants.StandardBondLength;
 
         /// <summary>
         /// Creates Rendering Options with system defaults

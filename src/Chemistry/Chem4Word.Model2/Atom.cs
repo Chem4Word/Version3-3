@@ -9,7 +9,6 @@ using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -200,7 +199,7 @@ namespace Chem4Word.Model2
                 switch (_element)
                 {
                     case Element element:
-                        return element == Globals.PeriodicTable.C;
+                        return element == ModelGlobals.PeriodicTable.C;
 
                     default:
                         return false;
@@ -215,7 +214,7 @@ namespace Chem4Word.Model2
                 switch (_element)
                 {
                     case Element _:
-                        return Globals.PeriodicTable.HeteroAtomList.Contains($"|{Element.Symbol}|");
+                        return ModelGlobals.PeriodicTable.HeteroAtomList.Contains($"|{Element.Symbol}|");
 
                     default:
                         return false;
@@ -517,7 +516,7 @@ namespace Chem4Word.Model2
 
                     if (_isAllenic)
                     {
-                        result = Globals.AllenicCarbonSymbol;
+                        result = ModelConstants.AllenicCarbonSymbol;
                     }
                 }
 
@@ -578,11 +577,11 @@ namespace Chem4Word.Model2
 
                 if (Element != null)
                 {
-                    if (Globals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{Element.Symbol}|"))
+                    if (ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{Element.Symbol}|"))
                     {
                         int bondCount = (int)Math.Truncate(BondOrders);
                         int charge = FormalCharge ?? 0;
-                        int availableElectrons = Globals.PeriodicTable.SpareValencies(Element as Element, bondCount, charge);
+                        int availableElectrons = ModelGlobals.PeriodicTable.SpareValencies(Element as Element, bondCount, charge);
                         iHydrogenCount = availableElectrons <= 0 ? 0 : availableElectrons;
                     }
                 }
@@ -845,7 +844,7 @@ namespace Chem4Word.Model2
             {
                 int bondCount = (int)Math.Truncate(BondOrders);
                 int charge = FormalCharge ?? 0;
-                int availableElectrons = Globals.PeriodicTable.SpareValencies(Element as Element, bondCount, charge);
+                int availableElectrons = ModelGlobals.PeriodicTable.SpareValencies(Element as Element, bondCount, charge);
                 bool result = availableElectrons < 0;
                 return result;
             }

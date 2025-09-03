@@ -20,7 +20,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
         public double Width { get; set; }
         public Annotation ParentAnnotation { get; }
         public BlockTextSource TextSource { get; set; }
-        private const string BlockColour = "#000000";
 
         public AnnotationVisual(Model2.Annotation annotation, bool isEditable = true) : base()
         {
@@ -44,8 +43,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         private void RenderXaml(string xaml)
         {
-            TextSource = XamlTextSource(xaml, BlockColour);
-            var runProps = new BlockTextRunProperties(BlockColour, TextSize);
+            TextSource = XamlTextSource(xaml, AcmeConstants.BlockColour);
+            var runProps = new BlockTextRunProperties(AcmeConstants.BlockColour, TextSize);
             using (DrawingContext dc = RenderOpen())
             {
                 var props = new GenericTextParagraphProperties(

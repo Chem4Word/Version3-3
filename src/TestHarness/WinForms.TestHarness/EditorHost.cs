@@ -131,9 +131,9 @@ namespace WinForms.TestHarness
                 foreach (var property in model.AllTextualProperties)
                 {
                     if (property.FullType != null
-                        && (property.FullType.Equals(CMLConstants.ValueChem4WordCaption)
-                            || property.FullType.Equals(CMLConstants.ValueChem4WordFormula)
-                            || property.FullType.Equals(CMLConstants.ValueChem4WordSynonym)))
+                        && (property.FullType.Equals(ModelConstants.ValueChem4WordCaption)
+                            || property.FullType.Equals(ModelConstants.ValueChem4WordFormula)
+                            || property.FullType.Equals(ModelConstants.ValueChem4WordSynonym)))
                     {
                         used1D.Add($"{property.Id}:{model.CustomXmlPartGuid}");
                     }
@@ -152,14 +152,14 @@ namespace WinForms.TestHarness
                 case "ACME":
                     if (elementHost1.Child is Editor acmeEditor)
                     {
-                        acmeEditor.TopLeft = new Point(Location.X + Chem4Word.Core.Helpers.Constants.TopLeftOffset, Location.Y + Chem4Word.Core.Helpers.Constants.TopLeftOffset);
+                        acmeEditor.TopLeft = new Point(Location.X + CoreConstants.TopLeftOffset, Location.Y + CoreConstants.TopLeftOffset);
                     }
                     break;
 
                 case "LABELS":
                     if (elementHost1.Child is LabelsEditor labelsEditor)
                     {
-                        labelsEditor.TopLeft = new Point(Location.X + Chem4Word.Core.Helpers.Constants.TopLeftOffset, Location.Y + Chem4Word.Core.Helpers.Constants.TopLeftOffset);
+                        labelsEditor.TopLeft = new Point(Location.X + CoreConstants.TopLeftOffset, Location.Y + CoreConstants.TopLeftOffset);
                     }
                     break;
 

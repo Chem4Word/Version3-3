@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2.Enums;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -39,7 +40,7 @@ namespace Chem4Word.Model2.Converters.MDL
 
                     if (!string.IsNullOrEmpty(line))
                     {
-                        if (line.Equals(MDLConstants.SDF_END))
+                        if (line.Equals(ModelConstants.SDF_END))
                         {
                             // End of SDF Section
                             result = SdfState.EndOfData;
@@ -154,7 +155,7 @@ namespace Chem4Word.Model2.Converters.MDL
                 }
             }
 
-            writer.WriteLine(MDLConstants.SDF_END);
+            writer.WriteLine(ModelConstants.SDF_END);
         }
     }
 }

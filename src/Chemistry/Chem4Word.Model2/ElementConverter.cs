@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Model2.Helpers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -38,7 +37,7 @@ namespace Chem4Word.Model2
                 }
                 else
                 {
-                    return Globals.PeriodicTable.Elements[s];
+                    return ModelGlobals.PeriodicTable.Elements[s];
                 }
             }
             catch

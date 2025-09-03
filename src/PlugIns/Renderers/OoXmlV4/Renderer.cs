@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core;
-using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Renderer.OoXmlV4.OOXML;
 using IChem4Word.Contracts;
@@ -24,7 +23,7 @@ namespace Chem4Word.Renderer.OoXmlV4
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        public string Name => Constants.DefaultRendererPlugIn;
+        public string Name => CoreConstants.DefaultRendererPlugIn;
         public string Description => "This is the standard renderer for Chem4Word 2025";
         public bool HasSettings => true;
 

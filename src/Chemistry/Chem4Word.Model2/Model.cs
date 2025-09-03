@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
@@ -650,11 +651,11 @@ namespace Chem4Word.Model2
             get
             {
                 var allBonds = GetAllBonds();
-                double fontSize = Globals.DefaultFontSize * Globals.ScaleFactorForXaml;
+                double fontSize = ModelConstants.DefaultFontSize * ModelConstants.ScaleFactorForXaml;
 
                 if (allBonds.Any())
                 {
-                    fontSize = XamlBondLength * Globals.FontSizePercentageBond;
+                    fontSize = XamlBondLength * ModelConstants.FontSizePercentageBond;
                 }
 
                 return fontSize;
@@ -1145,8 +1146,8 @@ namespace Chem4Word.Model2
                     }
                     else
                     {
-                        if (MeanBondLength < Constants.MinimumBondLength - Constants.BondLengthTolerance
-                            || MeanBondLength > Constants.MaximumBondLength + Constants.BondLengthTolerance)
+                        if (MeanBondLength < CoreConstants.MinimumBondLength - CoreConstants.BondLengthTolerance
+                            || MeanBondLength > CoreConstants.MaximumBondLength + CoreConstants.BondLengthTolerance)
                         {
                             result = $"Adjusted BondLength from {SafeDouble.AsString(MeanBondLength)} to {SafeDouble.AsString(target)}";
                             ScaleToAverageBondLength(target);
@@ -1359,11 +1360,11 @@ namespace Chem4Word.Model2
         {
             if (ScaledForXaml)
             {
-                double newLength = Constants.StandardBondLength / Globals.ScaleFactorForXaml;
+                double newLength = CoreConstants.StandardBondLength / ModelConstants.ScaleFactorForXaml;
 
                 if (TotalBondsCount > 0 && MeanBondLength > 0)
                 {
-                    newLength = MeanBondLength / Globals.ScaleFactorForXaml;
+                    newLength = MeanBondLength / ModelConstants.ScaleFactorForXaml;
                 }
 
                 ScaleToAverageBondLength(newLength);
@@ -1380,11 +1381,11 @@ namespace Chem4Word.Model2
 
                 if (TotalBondsCount > 0 && MeanBondLength > 0)
                 {
-                    newLength = MeanBondLength * Globals.ScaleFactorForXaml;
+                    newLength = MeanBondLength * ModelConstants.ScaleFactorForXaml;
                 }
                 else
                 {
-                    newLength = preferredBondLength * Globals.ScaleFactorForXaml;
+                    newLength = preferredBondLength * ModelConstants.ScaleFactorForXaml;
                 }
 
                 ScaleToAverageBondLength(newLength);
@@ -1420,7 +1421,7 @@ namespace Chem4Word.Model2
             var atoms = GetAllAtoms().ToList();
             foreach (var atom in atoms)
             {
-                var matches = atoms.Where(a => a.Id != atom.Id && SamePoint(atom.Position, a.Position, MeanBondLength * Globals.BondOffsetPercentage)).ToList();
+                var matches = atoms.Where(a => a.Id != atom.Id && SamePoint(atom.Position, a.Position, MeanBondLength * ModelConstants.BondOffsetPercentage)).ToList();
                 if (matches.Any())
                 {
                     var plural = matches.Count > 1 ? "s" : "";

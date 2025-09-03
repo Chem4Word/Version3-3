@@ -15,6 +15,7 @@ namespace Chem4Word.ACME.Adorners.Feedback
 {
     public class ReactionHoverAdorner : BaseHoverAdorner
     {
+        private const double Offset = 6d;
         private Reaction TargetedReaction { get; }
 
         public ReactionHoverAdorner(UIElement adornedElement, ReactionVisual targetedVisual) : base(adornedElement, targetedVisual)
@@ -31,14 +32,12 @@ namespace Chem4Word.ACME.Adorners.Feedback
             base.OnRender(drawingContext);
             StreamGeometry sg = new StreamGeometry();
 
-            double offset = 6d;
-
             //this tells us how much to rotate the brackets at the end of the bond
             double bondAngle = TargetedReaction.Angle;
 
             Matrix rotator = new Matrix();
             rotator.Rotate(bondAngle);
-            Vector offsetVector1 = new Vector(offset, 0d) * rotator;
+            Vector offsetVector1 = new Vector(Offset, 0d) * rotator;
 
             Vector twiddle = -offsetVector1.Perpendicular();
             twiddle.Normalize();

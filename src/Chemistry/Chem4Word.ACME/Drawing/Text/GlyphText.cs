@@ -209,11 +209,13 @@ namespace Chem4Word.ACME.Drawing.Text
         {
             get
             {
-                List<Point> corners = new List<Point>();
-                corners.Add(TotalBoundingBox.BottomLeft);
-                corners.Add(TotalBoundingBox.BottomRight);
-                corners.Add(TotalBoundingBox.TopLeft);
-                corners.Add(TotalBoundingBox.TopRight);
+                List<Point> corners = new List<Point>
+                                      {
+                                          TotalBoundingBox.BottomLeft,
+                                          TotalBoundingBox.BottomRight,
+                                          TotalBoundingBox.TopLeft,
+                                          TotalBoundingBox.TopRight
+                                      };
                 return corners;
             }
         }
@@ -237,11 +239,13 @@ namespace Chem4Word.ACME.Drawing.Text
         {
             get
             {
-                List<Point> corners = new List<Point>();
-                corners.Add(BoundingBox.BottomLeft);
-                corners.Add(BoundingBox.BottomRight);
-                corners.Add(BoundingBox.TopLeft);
-                corners.Add(BoundingBox.TopRight);
+                List<Point> corners = new List<Point>
+                                      {
+                                          BoundingBox.BottomLeft,
+                                          BoundingBox.BottomRight,
+                                          BoundingBox.TopLeft,
+                                          BoundingBox.TopRight
+                                      };
                 return corners;
             }
         }

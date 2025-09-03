@@ -10,6 +10,7 @@ using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Graphics;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Enums;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
@@ -19,37 +20,31 @@ namespace Chem4Word.ACME.Adorners.Selectors
 {
     public class ReactionSelectionAdorner : BaseSelectionAdorner
     {
-        private const double ThumbWidth = 22;
         private static double _halfThumbWidth;
 
         private static Snapper _resizeSnapper;
-        private readonly DrawingVisual HeadHandle = new DrawingVisual();
-        private readonly DrawingVisual TailHandle = new DrawingVisual();
+        private readonly DrawingVisual _headHandle = new DrawingVisual();
+        private readonly DrawingVisual _tailHandle = new DrawingVisual();
         private DrawingVisual _draggedVisual;
-        private bool Resizing;
-        private bool Dragging;
-        private SolidColorBrush _solidColorBrush;
-        private Pen _dashPen;
-
-        private const string UnlockStatusText = "[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.";
-        private const string DefaultStatusText = "Drag a handle to resize; drag shaft to reposition.";
-        private const string EditReagentsStatusText = "Double-click box to edit reagents.";
-        private const string EditConditionsStatusText = "Double-click box to edit conditions";
+        private bool _resizing;
+        private bool _dragging;
+        private readonly SolidColorBrush _solidColorBrush;
+        private readonly Pen _dashPen;
 
         private Point OriginalLocation { get; set; }
         private Point CurrentLocation { get; set; }
 
         public ReactionSelectionAdorner(EditorCanvas currentEditor, ReactionVisual reactionVisual) : base(currentEditor)
         {
-            _solidColorBrush = (SolidColorBrush)FindResource(Common.DrawAdornerBrush);
+            _solidColorBrush = (SolidColorBrush)FindResource(AcmeConstants.DrawAdornerBrush);
             _dashPen = new Pen(_solidColorBrush, 1);
 
-            _halfThumbWidth = ThumbWidth / 2;
+            _halfThumbWidth = AcmeConstants.ThumbWidth / 2;
             AdornedReactionVisual = reactionVisual;
             AdornedReaction = reactionVisual.ParentReaction;
 
             AttachHandlers();
-            EditController.SendStatus((DefaultStatusText, "", ""));
+            EditController.SendStatus((AcmeConstants.DefaultStatusText, "", ""));
         }
 
         private ReactionVisual AdornedReactionVisual { get; }
@@ -108,39 +103,39 @@ namespace Chem4Word.ACME.Adorners.Selectors
             DrawingVisual dv = null;
 
             //get rid of the original handles
-            RemoveHandle(HeadHandle);
-            RemoveHandle(TailHandle);
+            RemoveHandle(_headHandle);
+            RemoveHandle(_tailHandle);
 
             if ((CurrentLocation - AdornedReaction.HeadPoint).LengthSquared <= _halfThumbWidth * _halfThumbWidth)
             {
-                dv = HeadHandle;
+                dv = _headHandle;
             }
             else if ((OriginalLocation - AdornedReaction.TailPoint).LengthSquared <= _halfThumbWidth * _halfThumbWidth)
             {
-                dv = TailHandle;
+                dv = _tailHandle;
             }
 
-            if (dv == HeadHandle)
+            if (dv == _headHandle)
             {
                 TailDisplacement = new Vector(0d, 0d);
-                _draggedVisual = HeadHandle;
-                Resizing = true;
-                Dragging = false;
+                _draggedVisual = _headHandle;
+                _resizing = true;
+                _dragging = false;
                 _resizeSnapper = new Snapper(AdornedReaction.HeadPoint, EditController, 15);
             }
-            else if (dv == TailHandle)
+            else if (dv == _tailHandle)
             {
                 HeadDisplacement = new Vector(0d, 0d);
-                _draggedVisual = TailHandle;
-                Resizing = true;
-                Dragging = false;
+                _draggedVisual = _tailHandle;
+                _resizing = true;
+                _dragging = false;
                 _resizeSnapper = new Snapper(AdornedReaction.TailPoint, EditController, 15);
             }
             else
             {
                 //don't drag if we're on the text blocks
-                Dragging = !(AdornedReactionVisual.ReagentsBlockRect.Contains(OriginalLocation) | AdornedReactionVisual.ConditionsBlockRect.Contains(OriginalLocation));
-                Resizing = false;
+                _dragging = !(AdornedReactionVisual.ReagentsBlockRect.Contains(OriginalLocation) | AdornedReactionVisual.ConditionsBlockRect.Contains(OriginalLocation));
+                _resizing = false;
             }
             e.Handled = true;
         }
@@ -148,26 +143,26 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private void OnMouseMove_ReactionSelectionAdorner(object sender, MouseEventArgs e)
         {
             CurrentLocation = e.GetPosition(CurrentEditor);
-            if (Resizing || Dragging)
+            if (_resizing || _dragging)
             {
                 Keyboard.Focus(this);
 
-                if (Resizing)
+                if (_resizing)
                 {
                     Mouse.Capture((ReactionSelectionAdorner)sender);
-                    if (_draggedVisual == HeadHandle)
+                    if (_draggedVisual == _headHandle)
                     {
                         CurrentLocation = AdornedReaction.TailPoint + _resizeSnapper.SnapVector(AdornedReaction.Angle, CurrentLocation - AdornedReaction.TailPoint);
                         HeadDisplacement = CurrentLocation - AdornedReaction.HeadPoint;
                     }
-                    else if (_draggedVisual == TailHandle)
+                    else if (_draggedVisual == _tailHandle)
                     {
                         CurrentLocation = AdornedReaction.HeadPoint + _resizeSnapper.SnapVector(AdornedReaction.Angle, CurrentLocation - AdornedReaction.HeadPoint);
                         TailDisplacement = CurrentLocation - AdornedReaction.TailPoint;
                     }
-                    EditController.SendStatus((UnlockStatusText, "", ""));
+                    EditController.SendStatus((AcmeConstants.UnlockStatusText, "", ""));
                 }
-                else if (Dragging)
+                else if (_dragging)
                 {
                     HeadDisplacement = CurrentLocation - OriginalLocation;
                     TailDisplacement = HeadDisplacement;
@@ -179,11 +174,11 @@ namespace Chem4Word.ACME.Adorners.Selectors
             {
                 if (AdornedReactionVisual.ReagentsBlockRect.Contains(CurrentLocation))
                 {
-                    EditController.SendStatus((EditReagentsStatusText, "", ""));
+                    EditController.SendStatus((AcmeConstants.EditReagentsStatusText, "", ""));
                 }
                 else if (AdornedReactionVisual.ConditionsBlockRect.Contains(CurrentLocation))
                 {
-                    EditController.SendStatus((EditConditionsStatusText, "", ""));
+                    EditController.SendStatus((AcmeConstants.EditConditionsStatusText, "", ""));
                 }
             }
             e.Handled = true;
@@ -191,33 +186,33 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         private void OnMouseLeftButtonUp_ReactionSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
-            if (Resizing || Dragging)
+            if (_resizing || _dragging)
             {
                 EditController.MoveReaction(AdornedReaction, AdornedReaction.TailPoint + TailDisplacement, AdornedReaction.HeadPoint + HeadDisplacement);
             }
 
-            Resizing = false;
-            Dragging = false;
+            _resizing = false;
+            _dragging = false;
 
             ReleaseMouseCapture();
             InvalidateVisual();
             e.Handled = true;
-            EditController.SendStatus((DefaultStatusText, "", ""));
+            EditController.SendStatus((AcmeConstants.DefaultStatusText, "", ""));
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            Brush handleFillBrush = (Brush)FindResource(Common.AdornerFillBrush);
-            Pen handleBorderPen = (Pen)FindResource(Common.AdornerBorderPen);
+            Brush handleFillBrush = (Brush)FindResource(AcmeConstants.AdornerFillBrush);
+            Pen handleBorderPen = (Pen)FindResource(AcmeConstants.AdornerBorderPen);
 
-            RemoveHandle(HeadHandle);
-            RemoveHandle(TailHandle);
+            RemoveHandle(_headHandle);
+            RemoveHandle(_tailHandle);
 
             Point newTailPoint = AdornedReaction.TailPoint;
             Point newHeadPoint = AdornedReaction.HeadPoint;
 
             base.OnRender(drawingContext);
-            if (Resizing || Dragging)
+            if (_resizing || _dragging)
             {
                 newTailPoint = AdornedReaction.TailPoint + TailDisplacement;
                 newHeadPoint = AdornedReaction.HeadPoint + HeadDisplacement;
@@ -232,7 +227,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 };
                 var rv = new ReactionVisual(tempReaction);
                 rv.TextSize = EditController.BlockTextSize;
-                rv.ScriptSize = EditController.BlockTextSize * Controller.ScriptScalingFactor;
+                rv.ScriptSize = EditController.BlockTextSize * AcmeConstants.ScriptScalingFactor;
                 rv.RenderFullGeometry(AdornedReaction.ReactionType, AdornedReaction.TailPoint,
                                       AdornedReaction.HeadPoint,
                                       drawingContext, AdornedReaction.ReagentText, AdornedReaction.ConditionsText,
@@ -241,8 +236,8 @@ namespace Chem4Word.ACME.Adorners.Selectors
             }
             else
             {
-                BuildHandle(drawingContext, HeadHandle, newHeadPoint, handleFillBrush, handleBorderPen);
-                BuildHandle(drawingContext, TailHandle, newTailPoint, handleFillBrush, handleBorderPen);
+                BuildHandle(drawingContext, _headHandle, newHeadPoint, handleFillBrush, handleBorderPen);
+                BuildHandle(drawingContext, _tailHandle, newTailPoint, handleFillBrush, handleBorderPen);
 
                 foreach (var reactant in AdornedReaction.Reactants.Values)
                 {
@@ -271,10 +266,10 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         private void BuildRoleIndicator(DrawingContext drawingContext, Molecule mol, bool isProduct)
         {
-            Brush productBrush = (Brush)FindResource("ProductIndicatorBrush");
-            Brush reactantBrush = (Brush)FindResource("ReactantIndicatorBrush");
-            Brush arrowBrush = (Brush)FindResource("ArrowIndicatorBrush");
-            Brush background = (Brush)FindResource("IndicatorBackgroundBrush");
+            Brush productBrush = (Brush)FindResource(AcmeConstants.ResourceKeyProductIndicatorBrush);
+            Brush reactantBrush = (Brush)FindResource(AcmeConstants.ResourceKeyReactantIndicatorBrush);
+            Brush arrowBrush = (Brush)FindResource(AcmeConstants.ResourceKeyArrowIndicatorBrush);
+            Brush background = (Brush)FindResource(AcmeConstants.ResourceKeyIndicatorBackgroundBrush);
             //set up metrics
             var bondLength = CurrentEditor.Controller.Model.XamlBondLength;
             var linelength = bondLength;
@@ -338,8 +333,8 @@ namespace Chem4Word.ACME.Adorners.Selectors
         /// <param name="blockBounds">Rectangle describing the layout of the block</param>
         private void DrawBlockRect(DrawingContext drawingContext, Rect blockBounds)
         {
-            Pen handleBorderPen = new Pen { Brush = (Brush)FindResource(Common.AdornerBorderBrush), DashStyle = DashStyles.Dash };
-            drawingContext.DrawRectangle((Brush)FindResource(Common.AdornerFillBrush), handleBorderPen, blockBounds);
+            Pen handleBorderPen = new Pen { Brush = (Brush)FindResource(AcmeConstants.AdornerBorderBrush), DashStyle = DashStyles.Dash };
+            drawingContext.DrawRectangle((Brush)FindResource(AcmeConstants.AdornerFillBrush), handleBorderPen, blockBounds);
         }
 
         /// <summary>

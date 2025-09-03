@@ -17,14 +17,14 @@ namespace Chem4Word.Model2.Helpers
             bool success = false;
             result = null;
 
-            if (Globals.PeriodicTable.HasElement(text))
+            if (ModelGlobals.PeriodicTable.HasElement(text))
             {
-                result = Globals.PeriodicTable.Elements[text];
+                result = ModelGlobals.PeriodicTable.Elements[text];
                 success = true;
             }
             else
             {
-                result = Globals.FunctionalGroupsList.FirstOrDefault(n => n.Name.Equals(text));
+                result = ModelGlobals.FunctionalGroupsList.FirstOrDefault(n => n.Name.Equals(text));
                 success = result != null;
 
                 if (success && fixInternalOrLegacy)
@@ -35,9 +35,9 @@ namespace Chem4Word.Model2.Helpers
 
                     if ((fg.GroupType == GroupType.Internal
                          || fg.GroupType == GroupType.Legacy)
-                        && Globals.PeriodicTable.HasElement(fg.Components[0].Component))
+                        && ModelGlobals.PeriodicTable.HasElement(fg.Components[0].Component))
                     {
-                        result = Globals.PeriodicTable.Elements[fg.Components[0].Component];
+                        result = ModelGlobals.PeriodicTable.Elements[fg.Components[0].Component];
                     }
                 }
             }

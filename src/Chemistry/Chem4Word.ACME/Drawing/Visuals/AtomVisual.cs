@@ -6,12 +6,10 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Drawing.Text;
-using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Geometry;
-using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -287,13 +285,13 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     //if it's over bonded draw the warning circle
                     if (DisplayOverbonding && ParentAtom.Overbonded)
                     {
-                        double radius = ParentAtom.Parent.Model.XamlBondLength * Globals.FontSizePercentageBond / 2;
+                        double radius = ParentAtom.Parent.Model.XamlBondLength * ModelConstants.FontSizePercentageBond / 2;
                         EllipseGeometry eg = new EllipseGeometry(ParentAtom.Position, radius, radius);
 
                         Brush warningFill = new SolidColorBrush(Colors.Salmon);
                         warningFill.Opacity = 0.75;
 
-                        dc.DrawGeometry(warningFill, new Pen(new SolidColorBrush(Colors.OrangeRed), Common.BondThickness), eg);
+                        dc.DrawGeometry(warningFill, new Pen(new SolidColorBrush(Colors.OrangeRed), AcmeConstants.BondThickness), eg);
                     }
 
                     if (AtomSymbol == "")
@@ -328,7 +326,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         /// <param name="dc">DrawingContext to render the atom to</param>
         private void RenderAsVertex(DrawingContext dc)
         {
-            EllipseGeometry eg = new EllipseGeometry(ParentAtom.Position, Common.AtomRadius, Common.AtomRadius);
+            EllipseGeometry eg = new EllipseGeometry(ParentAtom.Position, AcmeConstants.AtomRadius, AcmeConstants.AtomRadius);
 
             dc.DrawGeometry(Brushes.Transparent, new Pen(Brushes.Transparent, 1.0), eg);
             //very simple hull definition

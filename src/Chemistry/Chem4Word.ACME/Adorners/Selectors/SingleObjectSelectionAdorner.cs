@@ -7,7 +7,6 @@
 
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing.Visuals;
-using Chem4Word.ACME.Utils;
 using Chem4Word.Model2;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,7 +98,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             VisualChildren.Add(BigThumb);
             BigThumb.IsHitTestVisible = true;
 
-            BigThumb.Style = (Style)FindResource(Common.ThumbStyle);
+            BigThumb.Style = (Style)FindResource(AcmeConstants.ThumbStyle);
             BigThumb.Cursor = Cursors.Hand;
             BigThumb.DragStarted += OnDragStarted_BigThumb;
             BigThumb.DragCompleted += OnDragCompleted_BigThumb;
@@ -116,8 +115,8 @@ namespace Chem4Word.ACME.Adorners.Selectors
         /// <param name="drawingContext"></param>
         protected override void OnRender(DrawingContext drawingContext)
         {
-            var ghostPen = (Pen)FindResource(Common.AdornerBorderPen);
-            var ghostBrush = (Brush)FindResource(Common.AdornerFillBrush);
+            var ghostPen = (Pen)FindResource(AcmeConstants.AdornerBorderPen);
+            var ghostBrush = (Brush)FindResource(AcmeConstants.AdornerFillBrush);
             if (IsWorking)
             {
                 //take a snapshot of the molecule

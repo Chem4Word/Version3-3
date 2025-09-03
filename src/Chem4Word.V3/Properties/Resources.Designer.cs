@@ -495,7 +495,7 @@ namespace Chem4Word.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Separate_Molecules {
             get {
-                object obj = ResourceManager.GetObject("Seperate_Molecules", resourceCulture);
+                object obj = ResourceManager.GetObject("Separate_Molecules", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -82,7 +82,7 @@ namespace Chem4Word.Helpers
                         {
                             Connection = library,
                             DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
-                            Driver = Constants.SQLiteStandardDriver,
+                            Driver = CoreConstants.SQLiteStandardDriver,
                             ShortFileName = fileInfo.Name
                         };
                         result.AvailableDatabases.Add(details);
@@ -109,7 +109,7 @@ namespace Chem4Word.Helpers
                 {
                     Connection = starterPath,
                     DisplayName = "Starter Library",
-                    Driver = Constants.SQLiteStandardDriver,
+                    Driver = CoreConstants.SQLiteStandardDriver,
                     ShortFileName = "Starter Library.db"
                 };
                 result.AvailableDatabases.Add(starterDetails);
@@ -133,7 +133,7 @@ namespace Chem4Word.Helpers
                 {
                     Connection = essentialOilsPath,
                     DisplayName = "Plant Essential Oils",
-                    Driver = Constants.SQLiteStandardDriver,
+                    Driver = CoreConstants.SQLiteStandardDriver,
                     ShortFileName = "Plant Essential Oils.db"
                 };
                 result.AvailableDatabases.Add(essentialOilsDetails);

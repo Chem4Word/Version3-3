@@ -5,9 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Enums;
 using Chem4Word.Renderer.OoXmlV4.Entities;
 using Chem4Word.Renderer.OoXmlV4.Enums;
 using Chem4Word.Renderer.OoXmlV4.TTF;
@@ -91,7 +93,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             _medianBondLength = _chemistryModel.MeanBondLength;
             if (_chemistryModel.GetAllBonds().Count == 0)
             {
-                _medianBondLength = Constants.StandardBondLength;
+                _medianBondLength = CoreConstants.StandardBondLength;
             }
 
             // Initialise progress monitoring

@@ -277,7 +277,7 @@ namespace Chem4Word.ACME
                 molecule.Formulas.Add(new TextualProperty
                 {
                     Id = molecule.GetNextId(molecule.Formulas, "f"),
-                    FullType = CMLConstants.ValueChem4WordFormula,
+                    FullType = ModelConstants.ValueChem4WordFormula,
                     Value = "?",
                     CanBeDeleted = true
                 });
@@ -293,7 +293,7 @@ namespace Chem4Word.ACME
                 molecule.Names.Add(new TextualProperty
                 {
                     Id = molecule.GetNextId(molecule.Names, "n"),
-                    FullType = CMLConstants.ValueChem4WordSynonym,
+                    FullType = ModelConstants.ValueChem4WordSynonym,
                     Value = "?",
                     CanBeDeleted = true
                 });
@@ -309,7 +309,7 @@ namespace Chem4Word.ACME
                 molecule.Captions.Add(new TextualProperty
                 {
                     Id = molecule.GetNextId(molecule.Captions, "l"),
-                    FullType = CMLConstants.ValueChem4WordCaption,
+                    FullType = ModelConstants.ValueChem4WordCaption,
                     Value = "?",
                     CanBeDeleted = true
                 });

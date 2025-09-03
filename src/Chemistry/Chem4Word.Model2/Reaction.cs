@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Helpers;
+using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

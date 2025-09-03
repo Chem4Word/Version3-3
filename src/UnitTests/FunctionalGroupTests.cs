@@ -7,7 +7,6 @@
 
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -39,7 +38,7 @@ namespace Chem4WordTests
         public void ShortcutListDoesNotContainElements()
         {
             var names = FunctionalGroups.ShortcutList.Select(s => s.Name).ToList();
-            var elements = Globals.PeriodicTable.Elements.Keys.ToList();
+            var elements = ModelGlobals.PeriodicTable.Elements.Keys.ToList();
             var mixed = names.Intersect(elements).ToList();
 
             Assert.True(mixed.Count == 0);

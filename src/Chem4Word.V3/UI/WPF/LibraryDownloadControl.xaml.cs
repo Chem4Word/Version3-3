@@ -149,7 +149,7 @@ namespace Chem4Word.UI.WPF
                             Sku = entry.Id,
                             Name = entry.Name,
                             Description = entry.Description,
-                            RequiresPayment = !entry.Driver.Equals(Constants.SQLiteStandardDriver)
+                            RequiresPayment = !entry.Driver.Equals(CoreConstants.SQLiteStandardDriver)
                         };
                         data.Add(obj);
                     }
@@ -587,7 +587,7 @@ namespace Chem4Word.UI.WPF
                 {
                     RefreshPaidFor();
                     Download.IsEnabled = true;
-                    if (!library.Driver.Equals(Constants.SQLiteStandardDriver))
+                    if (!library.Driver.Equals(CoreConstants.SQLiteStandardDriver))
                     {
                         Buy.IsEnabled = true;
                         Download.IsEnabled = _paidFor.Contains(library.Id);

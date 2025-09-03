@@ -13,7 +13,6 @@ using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -259,16 +258,16 @@ namespace Chem4Word.ACME.Controls
         private void LoadAtomItems()
         {
             AtomPicker.Items.Clear();
-            foreach (var item in ACME.Resources.Constants.StandardAtoms)
+            foreach (var item in AcmeConstants.StandardAtoms)
             {
-                AtomPicker.Items.Add(new AtomOption(Globals.PeriodicTable.Elements[item]));
+                AtomPicker.Items.Add(new AtomOption(ModelGlobals.PeriodicTable.Elements[item]));
             }
 
             if (AtomPropertiesModel.Element is Element el)
             {
-                if (!ACME.Resources.Constants.StandardAtoms.Contains(el.Symbol))
+                if (!AcmeConstants.StandardAtoms.Contains(el.Symbol))
                 {
-                    AtomPicker.Items.Add(new AtomOption(Globals.PeriodicTable.Elements[el.Symbol]));
+                    AtomPicker.Items.Add(new AtomOption(ModelGlobals.PeriodicTable.Elements[el.Symbol]));
                 }
 
                 AtomPicker.SelectedItem = new AtomOption(AtomPropertiesModel.Element as Element);
@@ -278,7 +277,7 @@ namespace Chem4Word.ACME.Controls
         private void LoadFunctionalGroups()
         {
             FunctionalGroupPicker.Items.Clear();
-            foreach (var item in Globals.FunctionalGroupsList)
+            foreach (var item in ModelGlobals.FunctionalGroupsList)
             {
                 if (item.ShowInDropDown)
                 {
@@ -397,7 +396,7 @@ namespace Chem4Word.ACME.Controls
         {
             ExplicitCheckBox.IsEnabled = !atom.IsSingleton;
 
-            var canShowHydrogen = Globals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{atom.Element.Symbol}|");
+            var canShowHydrogen = ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{atom.Element.Symbol}|");
 
             AtomPropertiesModel.ShowHydrogenLabels = canShowHydrogen
                                                      || atom.IsHetero

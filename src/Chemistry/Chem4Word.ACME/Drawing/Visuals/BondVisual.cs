@@ -8,7 +8,6 @@
 using Chem4Word.ACME.Drawing.LayoutSupport;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -195,9 +194,9 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 {
                     bool chamferBond = otherBonds.Any()
                                        && oblique
-                                       && otherBonds.All(b => b.Order == Globals.OrderSingle)
-                                       && bond.Order == Globals.OrderSingle
-                                       && endAtom.Element as Element == Globals.PeriodicTable.C
+                                       && otherBonds.All(b => b.Order == ModelConstants.OrderSingle)
+                                       && bond.Order == ModelConstants.OrderSingle
+                                       && endAtom.Element as Element == ModelGlobals.PeriodicTable.C
                                        && endAtom.SymbolText == "";
 
                     if (chamferBond)
@@ -374,8 +373,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
                 switch (ParentBond.Order)
                 {
-                    case Globals.OrderZero:
-                    case Globals.OrderOther:
+                    case ModelConstants.OrderZero:
+                    case ModelConstants.OrderOther:
                     case "unknown":
                         // Handle Zero Bond
                         _mainBondPen.DashStyle = DashStyles.Dot;
@@ -399,7 +398,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                         _enclosingPoly = dbd.Boundary;
                         break;
 
-                    case Globals.OrderPartial01:
+                    case ModelConstants.OrderPartial01:
                         _mainBondPen.DashStyle = DashStyles.Dash;
 
                         using (DrawingContext dc = RenderOpen())
@@ -424,7 +423,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                         break;
 
                     case "1":
-                    case Globals.OrderSingle:
+                    case ModelConstants.OrderSingle:
                         // Handle Single bond
                         switch (ParentBond.Stereo)
                         {
@@ -469,15 +468,15 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
                         break;
 
-                    case Globals.OrderPartial12:
-                    case Globals.OrderAromatic:
+                    case ModelConstants.OrderPartial12:
+                    case ModelConstants.OrderAromatic:
                     case "2":
-                    case Globals.OrderDouble:
+                    case ModelConstants.OrderDouble:
                         DoubleBondLayout dbd3 = (DoubleBondLayout)BondLayout;
                         Point? centroid = ParentBond.Centroid;
                         dbd3.PrimaryCentroid = centroid;
 
-                        if (ParentBond.Order == Globals.OrderPartial12 || ParentBond.Order == Globals.OrderAromatic
+                        if (ParentBond.Order == ModelConstants.OrderPartial12 || ParentBond.Order == ModelConstants.OrderAromatic
                         ) // Handle 1.5 bond
                         {
                             _subsidiaryBondPen.DashStyle = DashStyles.Dash;
@@ -508,10 +507,10 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
                         break;
 
-                    case Globals.OrderPartial23:
+                    case ModelConstants.OrderPartial23:
                     case "3":
-                    case Globals.OrderTriple:
-                        if (ParentBond.Order == Globals.OrderPartial23) // Handle 2.5 bond
+                    case ModelConstants.OrderTriple:
+                        if (ParentBond.Order == ModelConstants.OrderPartial23) // Handle 2.5 bond
                         {
                             _subsidiaryBondPen.DashStyle = DashStyles.Dash;
                         }

@@ -5,13 +5,12 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System;
+using System.Reflection;
 using Chem4Word.Core;
-using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Model2.Converters.CML;
 using Microsoft.Office.Interop.Word;
-using System;
-using System.Reflection;
 
 namespace Chem4Word.Helpers
 {
@@ -42,7 +41,7 @@ namespace Chem4Word.Helpers
                 if (selection.ContentControls.Count > 0)
                 {
                     contentControl = selection.ContentControls[1];
-                    if (contentControl.Title != null && contentControl.Title.Equals(Constants.ContentControlTitle))
+                    if (contentControl.Title != null && contentControl.Title.Equals(CoreConstants.ContentControlTitle))
                     {
                         reason = "a chemistry object is selected";
                         allowed = false;

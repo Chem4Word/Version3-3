@@ -18,25 +18,25 @@ namespace Chem4Word.ACME.Adorners.Feedback
 {
     public class HRotatorAdorner : AtomHoverAdorner
     {
-        private Rect Bounds;
+        private Rect _bounds;
         private HydrogenVisual HydrogenVisual { get; }
 
         public HRotatorAdorner([NotNull] UIElement adornedElement, HydrogenVisual targetedVisual) :
             base(adornedElement, targetedVisual)
         {
             HydrogenVisual = targetedVisual;
-            Bounds = HydrogenVisual.Bounds;
+            _bounds = HydrogenVisual.Bounds;
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
 
-            Vector baseVector = new Vector(0, -Math.Max(Bounds.Height, Bounds.Width) * 1.5);
+            Vector baseVector = new Vector(0, -Math.Max(_bounds.Height, _bounds.Width) * 1.5);
 
             var parentAtom = HydrogenVisual.ParentVisual.ParentAtom;
 
-            var hloc = new Point((Bounds.Right + Bounds.Left) / 2, (Bounds.Top + Bounds.Bottom) / 2);
+            var hloc = new Point((_bounds.Right + _bounds.Left) / 2, (_bounds.Top + _bounds.Bottom) / 2);
             var radiusVector = hloc - parentAtom.Position;
             var newPlacementAngle = Vector.AngleBetween(GeometryTool.ScreenNorth, radiusVector);
 

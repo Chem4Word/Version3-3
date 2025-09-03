@@ -9,7 +9,6 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
-using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -48,7 +47,7 @@ namespace Chem4WordTests
         [InlineData("NoAtoms.xml", 1, 0, 0, 0, 0, 0, 1, 0)]
         [InlineData("Benzene.xml", 1, 6, 6, 1, 72.07, 1, 2, 2)]
         [InlineData("Testosterone.xml", 1, 25, 28, 4, 264.24, 4, 4, 2)]
-        [InlineData("Phthalocyanine.xml", 1, 58, 66, 9, 514.55,8, 2, 3)]
+        [InlineData("Phthalocyanine.xml", 1, 58, 66, 9, 514.55, 8, 2, 3)]
         [InlineData("CopperPhthalocyanine.xml", 1, 57, 68, 12, 576.08, 12, 1, 0)]
         [InlineData("Pseudo-R.xml", 1, 7, 7, 1, 72.07, 1, 0, 0)]
         [InlineData("Pseudo-X.xml", 1, 7, 7, 1, 72.07, 1, 0, 0)]
@@ -266,13 +265,13 @@ namespace Chem4WordTests
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Position = new Point(10, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var molecule1 = new Molecule();
@@ -283,7 +282,7 @@ namespace Chem4WordTests
 
             var bond1 = new Bond(atom1, atom2)
             {
-                Order = Globals.OrderSingle
+                Order = ModelConstants.OrderSingle
             };
             molecule1.AddBond(bond1);
             bond1.Parent = molecule1;
@@ -302,18 +301,18 @@ namespace Chem4WordTests
             var atom1 = new Atom
             {
                 Position = new Point(0, 0),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom2 = new Atom
             {
                 Position = new Point(10, 10),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var bond1 = new Bond(atom1, atom2)
             {
-                Order = Globals.OrderSingle
+                Order = ModelConstants.OrderSingle
             };
 
             var molecule1 = new Molecule();
@@ -327,18 +326,18 @@ namespace Chem4WordTests
             var atom3 = new Atom
             {
                 Position = new Point(20, 20),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var atom4 = new Atom
             {
                 Position = new Point(30, 30),
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
 
             var bond2 = new Bond(atom3, atom4)
             {
-                Order = Globals.OrderSingle
+                Order = ModelConstants.OrderSingle
             };
 
             var molecule2 = new Molecule();

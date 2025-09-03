@@ -85,13 +85,13 @@ namespace Chem4Word.ACME.Drawing.Text
         public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit)
         {
             // Never called, but must be implemented
-            throw new Exception("The method or operation is not implemented.");
+            throw new Exception(AcmeConstants.NotImplementedErrMessage);
         }
 
         public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex)
         {
             // Never called, but must be implemented
-            throw new Exception("The method or operation is not implemented.");
+            throw new Exception(AcmeConstants.NotImplementedErrMessage);
         }
     }
 }

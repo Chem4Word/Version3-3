@@ -101,7 +101,7 @@ namespace Chem4Word.Model2
             var xDocument = new XDocument();
 
             var root = new XElement(ElementNameRoot);
-            root.Add(new XAttribute(XNamespace.Xmlns + CMLConstants.TagCml, CMLNamespaces.cml));
+            root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.NSCML, CMLNamespaces.cml));
             xDocument.Add(root);
 
             foreach (var functionalGroup in ShortcutList)

@@ -5,16 +5,15 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-namespace Chem4Word.Model2
+namespace Chem4Word.Model2.Enums
 {
-    public enum ReactionType
+    public enum SubstanceRole
     {
-        Normal,
-        Reversible,
-        ReversibleBiasedForward,
-        ReversibleBiasedReverse,
-        Blocked,
-        Resonance,
-        Retrosynthetic
+        reactant,
+        product,
+        reagent,
+        solvent,
+        catalyst,
+        spectator
     }
 }

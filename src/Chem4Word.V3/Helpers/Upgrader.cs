@@ -131,7 +131,7 @@ namespace Chem4Word.Helpers
             {
                 try
                 {
-                    if (cc.Title != null && cc.Title.Equals(Constants.LegacyContentControlTitle))
+                    if (cc.Title != null && cc.Title.Equals(CoreConstants.LegacyContentControlTitle))
                     {
                         count++;
                     }
@@ -196,7 +196,7 @@ namespace Chem4Word.Helpers
                             {
                                 case "2D":
                                     cc.LockContents = false;
-                                    cc.Title = Constants.ContentControlTitle;
+                                    cc.Title = CoreConstants.ContentControlTitle;
                                     cc.Tag = target.Model.CustomXmlPartGuid;
                                     cc.LockContents = true;
 
@@ -224,7 +224,7 @@ namespace Chem4Word.Helpers
                                     var model = new Model();
                                     model.SetUserOptions(options);
                                     var molecule = new Molecule();
-                                    molecule.Names.Add(new TextualProperty { Id = "m1.n1", Value = cci.Text, FullType = CMLConstants.ValueChem4WordSynonym });
+                                    molecule.Names.Add(new TextualProperty { Id = "m1.n1", Value = cci.Text, FullType = ModelConstants.ValueChem4WordSynonym });
                                     model.AddMolecule(molecule);
                                     molecule.Parent = model;
                                     model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
@@ -349,7 +349,7 @@ namespace Chem4Word.Helpers
             for (var i = 1; i <= document.ContentControls.Count; i++)
             {
                 Word.ContentControl cc = document.ContentControls[i];
-                if (cc.Title != null && cc.Title.Equals(Constants.LegacyContentControlTitle))
+                if (cc.Title != null && cc.Title.Equals(CoreConstants.LegacyContentControlTitle))
                 {
                     var cci = new ContentControlInfo();
                     cci.Id = cc.ID;

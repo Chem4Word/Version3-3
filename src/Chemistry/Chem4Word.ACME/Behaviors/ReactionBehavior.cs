@@ -126,7 +126,7 @@ namespace Chem4Word.ACME.Behaviors
             }
             if (Dragging(e))
             {
-                CurrentStatus = ("[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                CurrentStatus = (AcmeConstants.UnlockStandardMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                 CurrentEditor.Cursor = CursorUtils.Pencil;
                 var pt = _angleSnapper.SnapBond(currentPos);
                 _adorner = new DrawReactionAdorner(CurrentEditor) { StartPoint = LastPos, EndPoint = pt, ReactionType = EditController.SelectedReactionType.Value };

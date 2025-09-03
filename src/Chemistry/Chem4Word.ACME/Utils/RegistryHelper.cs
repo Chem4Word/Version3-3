@@ -5,7 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
+using Chem4Word.Core;
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
@@ -19,7 +19,7 @@ namespace Chem4Word.ACME.Utils
 
         public static void StoreException(string module, Exception exception)
         {
-            RegistryKey key = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordExceptionsRegistryKey);
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordExceptionsRegistryKey);
             if (key != null)
             {
                 int procId = 0;

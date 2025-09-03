@@ -626,10 +626,10 @@ namespace Chem4WordSetup
             var exitCode = -1;
 
             var processStartInfo = new ProcessStartInfo
-                        {
-                            Arguments = arguments,
-                            FileName = exePath
-                        };
+            {
+                Arguments = arguments,
+                FileName = exePath
+            };
             using (var process = Process.Start(processStartInfo))
             {
                 process.WaitForExit();

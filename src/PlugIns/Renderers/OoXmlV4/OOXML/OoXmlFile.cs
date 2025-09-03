@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using DocumentFormat.OpenXml;
@@ -61,13 +62,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
                             || model.HasAnnotations
                             || model.TotalAtomsCount > 0
                             && (model.TotalBondsCount == 0
-                                || model.MeanBondLength > Core.Helpers.Constants.BondLengthTolerance / 2);
+                                || model.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
 
             if (canRender)
             {
                 fileName = Path.Combine(Path.GetTempPath(), $"Chem4Word-V3-{guid}.docx");
 
-                var bookmarkName = Core.Helpers.Constants.OoXmlBookmarkPrefix + guid;
+                var bookmarkName = CoreConstants.OoXmlBookmarkPrefix + guid;
 
                 // Create a Wordprocessing document.
                 using (var document = WordprocessingDocument.Create(fileName, WordprocessingDocumentType.Document))

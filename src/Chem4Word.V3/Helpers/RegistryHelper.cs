@@ -5,14 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using Chem4Word.Core;
+using Microsoft.Win32;
 
 namespace Chem4Word.Helpers
 {
@@ -25,7 +25,7 @@ namespace Chem4Word.Helpers
 
         public static void StoreMessage(string module, string message)
         {
-            var key = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordMessagesRegistryKey);
+            var key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordMessagesRegistryKey);
             if (key != null)
             {
                 var procId = 0;
@@ -45,7 +45,7 @@ namespace Chem4Word.Helpers
 
         public static void StoreException(string module, Exception exception)
         {
-            var key = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordExceptionsRegistryKey);
+            var key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordExceptionsRegistryKey);
             if (key != null)
             {
                 var procId = 0;
@@ -67,7 +67,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(Constants.Chem4WordSetupRegistryKey, true);
+            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordSetupRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Setup", registryKey);
@@ -78,7 +78,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(Constants.Chem4WordUpdateRegistryKey, true);
+            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordUpdateRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Update", registryKey);
@@ -89,7 +89,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(Constants.Chem4WordMsiActionsRegistryKey, true);
+            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMsiActionsRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Setup", registryKey);
@@ -100,7 +100,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(Constants.Chem4WordMessagesRegistryKey, true);
+            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMessagesRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Information", registryKey);
@@ -111,7 +111,7 @@ namespace Chem4Word.Helpers
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(Constants.Chem4WordExceptionsRegistryKey, true);
+            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordExceptionsRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Exception", registryKey);

@@ -91,6 +91,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ACMEConstants.cs" />
     <Compile Include="Adorners\Feedback\ReactionHoverAdorner.cs" />
     <Compile Include="Adorners\Sketching\FloatingSymbolAdorner.cs" />
     <Compile Include="Adorners\Sketching\DrawReactionAdorner.cs" />
@@ -99,7 +100,6 @@
     <Compile Include="Adorners\Selectors\MultiAtomBondAdorner.cs" />
     <Compile Include="Adorners\Selectors\ReactionSelectionAdorner.cs" />
     <Compile Include="Behaviors\AnnotationBehavior.cs" />
-    <Compile Include="Behaviors\CandidatePlacement.cs" />
     <Compile Include="Behaviors\IgnoreMouseWheelBehavior.cs" />
     <Compile Include="Behaviors\ReactionBehavior.cs" />
     <Compile Include="Commands\BlockEditing\InsertTextCommand.cs" />
@@ -150,7 +150,6 @@
     <Compile Include="Adorners\Selectors\MoleculeSelectionAdorner.cs" />
     <Compile Include="Adorners\Selectors\MultiObjectAdorner.cs" />
     <Compile Include="Adorners\Selectors\SingleObjectSelectionAdorner.cs" />
-    <Compile Include="Adorners\Selectors\SingleChemistryAdorner.cs" />
     <Compile Include="Controls\TaggingControl.xaml.cs">
       <DependentUpon>TaggingControl.xaml</DependentUpon>
     </Compile>
@@ -277,11 +276,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\Constants.cs" />
     <Compile Include="UndoHandler.cs" />
     <Compile Include="Utils\BindingProxy.cs" />
     <Compile Include="Utils\ClipboardMonitor.cs" />
-    <Compile Include="Utils\Common.cs" />
+    <Compile Include="ACMEGlobals.cs" />
     <Compile Include="Utils\CursorUtils.cs" />
     <Compile Include="Utils\Geometry.cs" />
     <Compile Include="Utils\GraphicsHelpers.cs" />

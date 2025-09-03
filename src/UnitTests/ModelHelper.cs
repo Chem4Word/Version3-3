@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2;
-using Chem4Word.Model2.Helpers;
 
 namespace Chem4WordTests
 {
@@ -138,7 +137,7 @@ namespace Chem4WordTests
             var atom = new Atom
             {
                 Id = id,
-                Element = Globals.PeriodicTable.C
+                Element = ModelGlobals.PeriodicTable.C
             };
             molecule.AddAtom(atom);
             atom.Parent = molecule;
@@ -151,7 +150,7 @@ namespace Chem4WordTests
             var bond = new Bond(atom1, atom2)
             {
                 Id = id,
-                Order = Globals.OrderSingle
+                Order = ModelConstants.OrderSingle
             };
             molecule.AddBond(bond);
             bond.Parent = molecule;

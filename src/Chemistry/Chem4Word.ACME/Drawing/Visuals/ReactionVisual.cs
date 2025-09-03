@@ -9,7 +9,7 @@ using Chem4Word.ACME.Drawing.Text;
 using Chem4Word.ACME.Graphics;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Helpers;
+using Chem4Word.Model2.Enums;
 using System.Windows;
 using System.Windows.Media;
 
@@ -183,7 +183,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             Model model = ParentReaction?.Parent?.Parent;
             if (model != null)
             {
-                nudge *= model.MeanBondLength * Globals.BondOffsetPercentage;
+                nudge *= model.MeanBondLength * ModelConstants.BondOffsetPercentage;
             }
             else
             {

@@ -9,7 +9,6 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.SketchEl;
-using Chem4Word.Model2.Helpers;
 using System;
 using System.Linq;
 using System.Windows;
@@ -24,7 +23,7 @@ namespace Chem4Word.ACME.Commands.Editing
 
         public override bool CanExecute(object parameter)
         {
-            var canExecute = Clipboard.ContainsData(Globals.FormatCML) || Clipboard.ContainsData(Globals.FormatSDFile) || Clipboard.ContainsText();
+            var canExecute = Clipboard.ContainsData(ModelConstants.FormatCML) || Clipboard.ContainsData(ModelConstants.FormatSDFile) || Clipboard.ContainsText();
             return canExecute;
         }
 
@@ -34,9 +33,9 @@ namespace Chem4Word.ACME.Commands.Editing
             var sdfConverter = new SdFileConverter();
             var sketchElConverter = new SketchElConverter();
 
-            if (Clipboard.ContainsData(Globals.FormatCML))
+            if (Clipboard.ContainsData(ModelConstants.FormatCML))
             {
-                string pastedCML = (string)Clipboard.GetData(Globals.FormatCML);
+                string pastedCML = (string)Clipboard.GetData(ModelConstants.FormatCML);
                 EditController.PasteCML(pastedCML);
             }
             else if (Clipboard.ContainsText())
@@ -57,7 +56,7 @@ namespace Chem4Word.ACME.Commands.Editing
 
                 if (failedCML)
                 {
-                    if (pastedText.Contains(MDLConstants.M_END))
+                    if (pastedText.Contains(ModelConstants.M_END))
                     {
                         buffer = sdfConverter.Import(pastedText);
                         failedOther = buffer.AllErrors.Any();

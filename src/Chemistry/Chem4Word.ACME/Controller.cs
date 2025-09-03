@@ -7,7 +7,6 @@
 
 using Chem4Word.ACME.Annotations;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Helpers;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -20,7 +19,7 @@ namespace Chem4Word.ACME
             Model = chemistryModel;
 
             double xamlBondLength = chemistryModel.XamlBondLength == 0
-                ? Globals.DefaultFontSize * 2
+                ? ModelConstants.DefaultFontSize * 2
                 : chemistryModel.XamlBondLength;
 
             SetTextParams(xamlBondLength);
@@ -61,10 +60,8 @@ namespace Chem4Word.ACME
 
         public double ScriptSize
         {
-            get => BlockTextSize * ScriptScalingFactor;
+            get => BlockTextSize * AcmeConstants.ScriptScalingFactor;
         }
-
-        public const double ScriptScalingFactor = 0.6;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -74,8 +71,6 @@ namespace Chem4Word.ACME
         /// This model is the model being actively edited
         /// </summary>
         public Model Model { get; }
-
-        public double SymbolScalingFactor => 1.5;
 
         #endregion Properties
 

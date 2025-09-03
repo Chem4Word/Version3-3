@@ -6,9 +6,7 @@
 // ---------------------------------------------------------------------------
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing.Visuals;
-using Chem4Word.ACME.Utils;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Helpers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
@@ -23,7 +21,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
     public class MultiAtomBondAdorner : MultiObjectAdorner
     {
         public CombinedGeometry OverallGeometry { get; }
-        private double RenderRadius => (EditController.Model.XamlBondLength * Globals.FontSizePercentageBond) / 4;
+        private double RenderRadius => (EditController.Model.XamlBondLength * ModelConstants.FontSizePercentageBond) / 4;
 
         public MultiAtomBondAdorner(EditorCanvas currentEditor, List<BaseObject> chemistries) : base(currentEditor, chemistries)
         {
@@ -147,7 +145,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            SolidColorBrush renderBrush = (SolidColorBrush)FindResource(Common.AtomBondSelectorBrush);
+            SolidColorBrush renderBrush = (SolidColorBrush)FindResource(AcmeConstants.AtomBondSelectorBrush);
             drawingContext.DrawGeometry(renderBrush, null, OverallGeometry);
         }
 
