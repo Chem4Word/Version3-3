@@ -584,18 +584,18 @@ namespace Chem4Word.Core.Helpers
         /// <param name="segment1End">what it says</param>
         /// <param name="segment2Start">what it says</param>
         /// <param name="segment2End">what it says</param>
-        /// <param name="t">proportion along the line of the first segment</param>
-        /// <param name="u">proportion along the line of the second segment</param>
+        /// <param name="firstProp">proportion along the line of the first segment</param>
+        /// <param name="secondProp">proportion along the line of the second segment</param>
         public static void IntersectLines(Point segment1Start,
                                           Point segment1End,
                                           Point segment2Start,
                                           Point segment2End,
-                                          out double t,
-                                          out double u)
+                                          out double firstProp,
+                                          out double secondProp)
         {
             double det = Determinant(segment1End - segment1Start, segment2Start - segment2End);
-            t = Determinant(segment2Start - segment1Start, segment2Start - segment2End) / det;
-            u = Determinant(segment1End - segment1Start, segment2Start - segment1Start) / det;
+            firstProp = Determinant(segment2Start - segment1Start, segment2Start - segment2End) / det;
+            secondProp = Determinant(segment1End - segment1Start, segment2Start - segment1Start) / det;
         }
 
         public static Point GetCentroid(Rect rectangle) => rectangle.TopLeft + (rectangle.BottomRight - rectangle.TopLeft) * 0.5;

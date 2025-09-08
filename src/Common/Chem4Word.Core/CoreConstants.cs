@@ -62,5 +62,6 @@ namespace Chem4Word.Core
 
         public static readonly string[] OurDomains = { "https://www.chem4word.co.uk", "http://www.chem4word.com", "https://chem4word.azurewebsites.net" };
         public const string MessageBoxTitle = "Chemistry Add-In for Word";
+        public const double ThickToDoubleScaleFactor = 0.6;
     }
 }

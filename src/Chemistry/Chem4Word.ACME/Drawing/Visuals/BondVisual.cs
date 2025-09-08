@@ -130,11 +130,35 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     StartAtomHull = startAtomHull,
                     EndAtomHull = endAtomHull
                 };
+
+                var endWedges = from Atom a in new List<Atom> { startAtomVisual.ParentAtom, endAtomVisual.ParentAtom }
+                                where a.IsCarbon
+                                from Bond b in a.Bonds
+                                where b.Stereo == BondStereo.Wedge
+                                select b;
+
                 BondGeometry.GetThickBondGeometry(tbl, modelXamlBondLength, standoff);
+                foreach (Bond wedge in endWedges)
+                {
+                    WedgeBondLayout wbl = new WedgeBondLayout()
+                    {
+                        Start = wedge.StartAtom.Position,
+                        End = wedge.EndAtom.Position
+                    };
+                    BondGeometry.GetWedgeBondGeometry(wbl, modelXamlBondLength, standoff);
+                    BondGeometry.GetWedgeToThickGeometry(wbl, tbl, modelXamlBondLength);
+                }
+
                 return tbl;
             }
 
             //stereobonds: wedges and hatches
+            var endAtom = endAtomVisual.ParentAtom;
+            var otherBonds = endAtom.Bonds.Except(new[] { startAtomVisual.ParentAtom.BondBetween(endAtom) })
+                                    .ToList();
+            var joiningThickBonds = (from b in otherBonds where b.Stereo == BondStereo.Thick select b).ToList();
+            var joiningWedgeBonds = (from b in otherBonds where b.Stereo == BondStereo.Wedge select b).ToList();
+
             if ((parentStereo == BondStereo.Wedge || parentStereo == BondStereo.Hatch)
                 && parentOrderValue == 1)
             {
@@ -145,10 +169,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     StartAtomHull = startAtomHull,
                     EndAtomHull = endAtomHull
                 };
-
-                var endAtom = endAtomVisual.ParentAtom;
-                var otherBonds = endAtom.Bonds.Except(new[] { startAtomVisual.ParentAtom.BondBetween(endAtom) })
-                                        .ToList();
 
                 Bond bond = null;
                 bool oblique = true;
@@ -171,8 +191,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 }
 
                 wedgeBondLayout.Outlined = true;
-                var joiningThickBonds = (from b in otherBonds where b.Stereo == BondStereo.Thick select b).ToList();
-                var joiningWedgeBonds = (from b in otherBonds where b.Stereo == BondStereo.Wedge select b).ToList();
 
                 bool joiningBondIsThick = joiningThickBonds.Any();
                 bool joiningBondIsWedge = joiningWedgeBonds.Any();
@@ -181,8 +199,14 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 //it's a thick bond it terminates at
                 {
                     var otb = joiningThickBonds.First();
+                    ThickBondLayout tbl = new ThickBondLayout();
+
+                    tbl.Start = otb.StartAtom.Position;
+                    tbl.End = otb.EndAtom.Position;
+
                     BondGeometry.GetWedgeBondGeometry(wedgeBondLayout, modelXamlBondLength, standoff);
-                    BondGeometry.GetWedgeToThickGeometry(wedgeBondLayout, modelXamlBondLength, otb);
+                    BondGeometry.GetThickBondGeometry(tbl, modelXamlBondLength, standoff);
+                    BondGeometry.GetWedgeToThickGeometry(wedgeBondLayout, tbl, modelXamlBondLength);
                 }
                 else if (joiningBondIsWedge && endAtom.IsCarbon && joiningWedgeBonds.First().EndAtom == endAtom)
                 {

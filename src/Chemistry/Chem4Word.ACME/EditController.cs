@@ -1513,19 +1513,15 @@ namespace Chem4Word.ACME
                 foreach (var a in b.StartAtom.NeighboursExcept(b.EndAtom))
                 {
                     var otherBond = b.StartAtom.BondBetween(a);
-                    if (otherBond.Stereo == BondStereo.Wedge || otherBond.Stereo == BondStereo.Hatch)
-                    {
-                        otherBond.UpdateVisual();
-                    }
+
+                    otherBond.UpdateVisual();
                 }
 
                 foreach (var a in b.EndAtom.NeighboursExcept(b.StartAtom))
                 {
                     var otherBond = b.EndAtom.BondBetween(a);
-                    if (otherBond.Stereo == BondStereo.Wedge || otherBond.Stereo == BondStereo.Hatch)
-                    {
-                        otherBond.UpdateVisual();
-                    }
+
+                    otherBond.UpdateVisual();
                 }
             }
         }

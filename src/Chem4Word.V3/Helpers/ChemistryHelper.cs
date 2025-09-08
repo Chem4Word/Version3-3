@@ -5,11 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
@@ -17,6 +12,11 @@ using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using Microsoft.Office.Core;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace Chem4Word.Helpers

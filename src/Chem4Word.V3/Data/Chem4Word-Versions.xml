@@ -7,6 +7,7 @@
 		<IsBeta>false</IsBeta>
 		<Released>01-Jul-2025</Released>
 		<Changes>
+			<Change>BugFix: thick and wedge bond mitre together evenly in ACME</Change>
 			<Change>Rationalised globals and constants.</Change>
 			<Change>New Feature: Thick bond type now supported</Change>
 			<Change>New Feature: Molecule selectors now present eight, not four resize handles</Change>
