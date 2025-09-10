@@ -13,24 +13,22 @@ namespace Chem4Word.Core.Helpers
     {
         // Fixed with help from https://gist.github.com/oliverheilig/7777382 http://jsil.org/try/#7717256
 
-        public const int Left = 1;
-        public const int Right = 2;
-        public const int Top = 8;
-        public const int Bottom = 4;
-
-        private const double Epsilon = 1e-4;
+        private const int Left = 1;
+        private const int Right = 2;
+        private const int Top = 8;
+        private const int Bottom = 4;
 
         private static int ComputeOutCode(Rect rect, double x, double y)
         {
             int code = 0;
 
-            if (y - rect.Bottom > Epsilon)  // y > rect.Bottom
+            if (y - rect.Bottom > CoreConstants.Epsilon)  // y > rect.Bottom
                 code |= Bottom;
-            if (rect.Top - y > Epsilon)     // y < rect.Top
+            if (rect.Top - y > CoreConstants.Epsilon)     // y < rect.Top
                 code |= Top;
-            if (x - rect.Right > Epsilon)   // x > rect.Right
+            if (x - rect.Right > CoreConstants.Epsilon)   // x > rect.Right
                 code |= Right;
-            if (rect.Left - x > Epsilon)    // x < rect.Left
+            if (rect.Left - x > CoreConstants.Epsilon)    // x < rect.Left
                 code |= Left;
 
             return code;
@@ -40,13 +38,13 @@ namespace Chem4Word.Core.Helpers
         {
             int code = 0;
 
-            if (rect.Bottom - y > Epsilon)  // y < rect.Bottom
+            if (rect.Bottom - y > CoreConstants.Epsilon)  // y < rect.Bottom
                 code |= Bottom;
-            if (y - rect.Top > Epsilon)     // y > rect.Top
+            if (y - rect.Top > CoreConstants.Epsilon)     // y > rect.Top
                 code |= Top;
-            if (rect.Right - x > Epsilon)   // x < rect.Right
+            if (rect.Right - x > CoreConstants.Epsilon)   // x < rect.Right
                 code |= Right;
-            if (x - rect.Left > Epsilon)    // x > rect.Left
+            if (x - rect.Left > CoreConstants.Epsilon)    // x > rect.Left
                 code |= Left;
 
             return code;

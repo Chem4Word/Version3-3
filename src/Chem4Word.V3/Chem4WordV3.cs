@@ -347,7 +347,7 @@ namespace Chem4Word
 
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                // ToDo: Check if we still need the config watcher
+                // ToDo: [MAW] Check if we still need the config watcher
                 _configWatcher = new ConfigWatcher(AddInInfo.ProductAppDataPath);
 
                 Telemetry = new TelemetryWriter(true, true, Helper);

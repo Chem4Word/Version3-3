@@ -10,47 +10,54 @@ using Chem4Word.Renderer.OoXmlV4.Entities;
 using DocumentFormat.OpenXml;
 using System.Windows;
 
-namespace Chem4Word.Renderer.OoXmlV4.OOXML
+namespace Chem4Word.Renderer.OoXmlV4.OoXml
 {
     public static class OoXmlHelper
     {
-        // https://startbigthinksmall.wordpress.com/2010/02/05/unit-converter-and-specification-search-for-ooxmlwordml-development/
-        // http://lcorneliussen.de/raw/dashboards/ooxml/
+        public static double BracketOffset(double bondLength)
+            => bondLength * OoXmlConstants.BracketOffsetPercentage;
 
-        // Fixed values
-        public const int EmusPerWordPoint = 12700;
+        public static Rect GetAllCharacterExtents(Model model, RendererOutputs outputs)
+        {
+            var characterExtents = model.BoundingBoxOfCmlPoints;
 
-        public const string Black = "000000";
+            foreach (var alc in outputs.AtomLabelCharacters)
+            {
+                if (alc.IsSmaller)
+                {
+                    var r = new Rect(alc.Position,
+                                     new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor,
+                                              ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor));
+                    characterExtents.Union(r);
+                }
+                else
+                {
+                    var r = new Rect(alc.Position,
+                                     new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength),
+                                              ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength)));
+                    characterExtents.Union(r);
+                }
+            }
 
-        // This character is used to replace any which have not been extracted to Arial.json
-        public const char DefaultCharacter = '⊠'; // https://www.compart.com/en/unicode/U+22A0
+            foreach (var group in outputs.AllMoleculeExtents)
+            {
+                characterExtents.Union(group.ExternalCharacterExtents);
+            }
 
-        // Margins are in CML Points
-        public const double DrawingMargin = 5; // 5 is a good value to use (Use 0 to compare with AMC diagrams)
+            // Bullet proofing - Error seen in telemetry :-
+            // System.InvalidOperationException: Cannot call this method on the Empty Rect.
+            //   at System.Windows.Rect.Inflate(Double width, Double height)
+            if (characterExtents == Rect.Empty)
+            {
+                characterExtents = new Rect(new Point(0, 0), new Size(OoXmlConstants.DrawingMargin * 10, OoXmlConstants.DrawingMargin * 10));
+            }
+            else
+            {
+                characterExtents.Inflate(OoXmlConstants.DrawingMargin, OoXmlConstants.DrawingMargin);
+            }
 
-        public const double CmlCharacterMargin = 1.25; // margin in cml pixels
-
-        public const double SubscriptScaleFactor = 0.6;
-        public const double SubscriptDropFactor = 0.75;
-        public const double CsSuperscriptRaiseFactor = 0.3;
-
-        private const double BracketOffsetPercentage = 0.2;
-
-        // Percentage of average (median) bond length
-        // V3 == 0.2 -> ACS == 0.18
-        public const double MultipleBondOffsetPercentage = 0.18;
-
-        public const double LineShrinkPixels = 1.75; // cml pixels
-
-        // V3 == 0.75 -> ACS == 0.6
-        // This makes bond line width equal to ACS Guide of 0.6pt
-        public const double AcsLineWidth = 0.6;
-
-        public const double AcsLineWidthEmus = AcsLineWidth * EmusPerWordPoint;
-
-        // V3 == 9500 -> V3.1 [ACS] == 9144
-        // This makes cml bond length of 20 equal ACS guide 0.2" (0.508cm)
-        private const double EmusPerCmlPoint = 9144;
+            return characterExtents;
+        }
 
         /// <summary>
         /// Scales a CML X or Y co-ordinate to DrawingML Units (EMU)
@@ -59,36 +66,15 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         /// <returns></returns>
         public static Int64Value ScaleCmlToEmu(double XorY)
         {
-            var scaled = XorY * EmusPerCmlPoint;
+            var scaled = XorY * OoXmlConstants.EmusPerCmlPoint;
             return Int64Value.FromInt64((long)scaled);
-        }
-
-        public static double BracketOffset(double bondLength)
-        {
-            return bondLength * BracketOffsetPercentage;
         }
 
         #region C# TTF
 
-        /// <summary>
-        /// Scales a C# TTF X or Y co-ordinate to DrawingML Units (EMU)
-        /// </summary>
-        /// <param name="XorY"></param>
-        /// <param name="bondLength"></param>
-        /// <returns></returns>
-        public static Int64Value ScaleCsTtfToEmu(double XorY, double bondLength)
-        {
-            if (bondLength > 0.1)
-            {
-                var scaled = XorY * EmusPerCsTtfPoint(bondLength);
-                return Int64Value.FromInt64((long)scaled);
-            }
-            else
-            {
-                var scaled = XorY * EmusPerCsTtfPoint(20);
-                return Int64Value.FromInt64((long)scaled);
-            }
-        }
+        // These calculations yield a font which has a point size of 8 at a bond length of 20
+        private static double EmusPerCsTtfPoint(double bondLength)
+            => bondLength / 2.5;
 
         /// <summary>
         /// Scales a CS TTF SubScript X or Y co-ordinate to DrawingML Units (EMU)
@@ -127,21 +113,23 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
             }
         }
 
-        // These calculations yield a font which has a point size of 8 at a bond length of 20
-        public static double EmusPerCsTtfPoint(double bondLength)
-        {
-            return bondLength / 2.5;
-        }
-
-        private static double EmusPerCsTtfPointSubscript(double bondLength)
+        /// <summary>
+        /// Scales a C# TTF X or Y co-ordinate to DrawingML Units (EMU)
+        /// </summary>
+        /// <param name="XorY"></param>
+        /// <param name="bondLength"></param>
+        /// <returns></returns>
+        public static Int64Value ScaleCsTtfToEmu(double XorY, double bondLength)
         {
             if (bondLength > 0.1)
             {
-                return EmusPerCsTtfPoint(bondLength) * SubscriptScaleFactor;
+                var scaled = XorY * EmusPerCsTtfPoint(bondLength);
+                return Int64Value.FromInt64((long)scaled);
             }
             else
             {
-                return EmusPerCsTtfPoint(20) * SubscriptScaleFactor;
+                var scaled = XorY * EmusPerCsTtfPoint(20);
+                return Int64Value.FromInt64((long)scaled);
             }
         }
 
@@ -149,56 +137,26 @@ namespace Chem4Word.Renderer.OoXmlV4.OOXML
         {
             if (bondLength > 0.1)
             {
-                return EmusPerCmlPoint / EmusPerCsTtfPoint(bondLength);
+                return OoXmlConstants.EmusPerCmlPoint / EmusPerCsTtfPoint(bondLength);
             }
             else
             {
-                return EmusPerCmlPoint / EmusPerCsTtfPoint(20);
+                return OoXmlConstants.EmusPerCmlPoint / EmusPerCsTtfPoint(20);
+            }
+        }
+
+        private static double EmusPerCsTtfPointSubscript(double bondLength)
+        {
+            if (bondLength > 0.1)
+            {
+                return EmusPerCsTtfPoint(bondLength) * OoXmlConstants.SubscriptScaleFactor;
+            }
+            else
+            {
+                return EmusPerCsTtfPoint(20) * OoXmlConstants.SubscriptScaleFactor;
             }
         }
 
         #endregion C# TTF
-
-        public static Rect GetAllCharacterExtents(Model model, PositionerOutputs outputs)
-        {
-            var characterExtents = model.BoundingBoxOfCmlPoints;
-
-            foreach (var alc in outputs.AtomLabelCharacters)
-            {
-                if (alc.IsSmaller)
-                {
-                    var r = new Rect(alc.Position,
-                                     new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength) * SubscriptScaleFactor,
-                                              ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength) * SubscriptScaleFactor));
-                    characterExtents.Union(r);
-                }
-                else
-                {
-                    var r = new Rect(alc.Position,
-                                     new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength),
-                                              ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength)));
-                    characterExtents.Union(r);
-                }
-            }
-
-            foreach (var group in outputs.AllMoleculeExtents)
-            {
-                characterExtents.Union(group.ExternalCharacterExtents);
-            }
-
-            // Bullet proofing - Error seen in telemetry :-
-            // System.InvalidOperationException: Cannot call this method on the Empty Rect.
-            //   at System.Windows.Rect.Inflate(Double width, Double height)
-            if (characterExtents == Rect.Empty)
-            {
-                characterExtents = new Rect(new Point(0, 0), new Size(DrawingMargin * 10, DrawingMargin * 10));
-            }
-            else
-            {
-                characterExtents.Inflate(DrawingMargin, DrawingMargin);
-            }
-
-            return characterExtents;
-        }
     }
 }

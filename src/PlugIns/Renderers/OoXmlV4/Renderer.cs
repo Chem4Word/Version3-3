@@ -7,10 +7,11 @@
 
 using Chem4Word.Core;
 using Chem4Word.Core.UI.Forms;
-using Chem4Word.Renderer.OoXmlV4.OOXML;
+using Chem4Word.Renderer.OoXmlV4.OoXml;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -25,7 +26,8 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         public string Name => CoreConstants.DefaultRendererPlugIn;
         public string Description => "This is the standard renderer for Chem4Word 2025";
-        public bool HasSettings => true;
+
+        public bool HasSettings => Debugger.IsAttached;
 
         public Point TopLeft { get; set; }
         public IChem4WordTelemetry Telemetry { get; set; }

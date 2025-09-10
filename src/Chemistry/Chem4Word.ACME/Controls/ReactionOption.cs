@@ -89,9 +89,9 @@ namespace Chem4Word.ACME
                         }
 
                     case ReactionType.Resonance:
-                    {
-                        return "Resonance arrow";
-                    }
+                        {
+                            return "Resonance arrow";
+                        }
 
                     default:
                         return "";

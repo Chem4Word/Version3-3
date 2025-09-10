@@ -5,7 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Renderer.OoXmlV4.OOXML;
+using Chem4Word.Renderer.OoXmlV4.OoXml;
 using System.Windows;
 
 namespace Chem4Word.Renderer.OoXmlV4.Entities
@@ -15,7 +15,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public string ParentMolecule { get; set; }
         public Rect Extents { get; set; }
         public string Value { get; set; }
-        public string Colour { get; set; } = OoXmlHelper.Black;
+        public string Colour { get; set; } = OoXmlColours.Black;
 
         public OoXmlString(Rect extents, string value, string parentMolecule)
         {

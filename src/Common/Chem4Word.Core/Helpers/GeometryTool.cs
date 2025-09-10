@@ -480,7 +480,7 @@ namespace Chem4Word.Core.Helpers
         /// AngleBetween - the angle between 2 vectors
         /// </summary>
         /// <returns>
-        /// Returns the the angle in degrees between vector1 and vector2
+        /// Returns the angle in degrees between vector1 and vector2
         /// </returns>
         /// <param name="vector1"> The first Vector </param>
         /// <param name="vector2"> The second Vector </param>

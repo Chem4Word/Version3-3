@@ -8,7 +8,7 @@
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
-using Chem4Word.Renderer.OoXmlV4.OOXML;
+using Chem4Word.Renderer.OoXmlV4.OoXml;
 using Chem4Word.Renderer.OoXmlV4.TTF;
 using System.Collections.Generic;
 using System.Text;
@@ -105,7 +105,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
             var knownCharacter = characterIn;
             if (!_characterSet.ContainsKey(characterIn))
             {
-                knownCharacter = OoXmlHelper.DefaultCharacter;
+                knownCharacter = OoXmlConstants.DefaultCharacter;
             }
 
             Text += knownCharacter;
@@ -126,7 +126,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (isSmaller)
                 {
                     // Assume that it's SubScript so move it down by drop factor
-                    thisCharacterPosition.Offset(0, OoXmlHelper.ScaleCsTtfToCml(_hydrogenCharacter.Height * OoXmlHelper.SubscriptDropFactor, _bondLength));
+                    thisCharacterPosition.Offset(0, OoXmlHelper.ScaleCsTtfToCml(_hydrogenCharacter.Height * OoXmlConstants.SubscriptDropFactor, _bondLength));
 
                     // If it is SuperScript move it back up by height of 'H'
                     if (isSuperScript)
@@ -146,8 +146,8 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
                 if (isSmaller)
                 {
-                    size.Width *= OoXmlHelper.SubscriptScaleFactor;
-                    size.Height *= OoXmlHelper.SubscriptScaleFactor;
+                    size.Width *= OoXmlConstants.SubscriptScaleFactor;
+                    size.Height *= OoXmlConstants.SubscriptScaleFactor;
                 }
 
                 var thisBoundingBox = new Rect(thisCharacterPosition, size);
@@ -156,7 +156,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 // Move to next Character position
                 if (isSmaller)
                 {
-                    _cursor.Offset(OoXmlHelper.ScaleCsTtfToCml(ttfCharacter.IncrementX, _bondLength) * OoXmlHelper.SubscriptScaleFactor, 0);
+                    _cursor.Offset(OoXmlHelper.ScaleCsTtfToCml(ttfCharacter.IncrementX, _bondLength) * OoXmlConstants.SubscriptScaleFactor, 0);
                 }
                 else
                 {

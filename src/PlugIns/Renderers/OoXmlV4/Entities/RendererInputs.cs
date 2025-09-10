@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 namespace Chem4Word.Renderer.OoXmlV4.Entities
 {
-    public class PositionerInputs
+    public class RendererInputs
     {
         public Model Model { get; set; }
         public OoXmlV4Options Options { get; set; }

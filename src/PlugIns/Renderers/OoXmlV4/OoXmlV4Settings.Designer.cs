@@ -33,7 +33,6 @@ namespace Chem4Word.Renderer.OoXmlV4
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OoXmlV4Settings));
             this.tabControlEx = new Chem4Word.Core.UI.Controls.TabControlEx();
             this.Rendering = new System.Windows.Forms.TabPage();
-            this.ClipCrossingBonds = new System.Windows.Forms.CheckBox();
             this.Debug = new System.Windows.Forms.TabPage();
             this.ShowBondCrossingPoints = new System.Windows.Forms.CheckBox();
             this.ShowCharacterGroupsBox = new System.Windows.Forms.CheckBox();
@@ -47,9 +46,13 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ClipBondLines = new System.Windows.Forms.CheckBox();
             this.SetDefaults = new System.Windows.Forms.Button();
             this.Ok = new System.Windows.Forms.Button();
+            this.ClipCrossingBonds = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tabControlEx.SuspendLayout();
-            this.Rendering.SuspendLayout();
             this.Debug.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlEx
@@ -63,14 +66,13 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.tabControlEx.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlEx.Name = "tabControlEx";
             this.tabControlEx.SelectedIndex = 0;
-            this.tabControlEx.Size = new System.Drawing.Size(536, 218);
+            this.tabControlEx.Size = new System.Drawing.Size(718, 477);
             this.tabControlEx.TabIndex = 0;
             // 
             // Rendering
             // 
             this.Rendering.BackColor = System.Drawing.SystemColors.Control;
             this.Rendering.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Rendering.Controls.Add(this.ClipCrossingBonds);
             this.Rendering.Location = new System.Drawing.Point(0, 24);
             this.Rendering.Margin = new System.Windows.Forms.Padding(4);
             this.Rendering.Name = "Rendering";
@@ -79,39 +81,19 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.Rendering.TabIndex = 0;
             this.Rendering.Text = "Rendering";
             // 
-            // ClipCrossingBonds
-            // 
-            this.ClipCrossingBonds.AutoSize = true;
-            this.ClipCrossingBonds.Checked = true;
-            this.ClipCrossingBonds.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ClipCrossingBonds.Location = new System.Drawing.Point(8, 9);
-            this.ClipCrossingBonds.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ClipCrossingBonds.Name = "ClipCrossingBonds";
-            this.ClipCrossingBonds.Size = new System.Drawing.Size(179, 23);
-            this.ClipCrossingBonds.TabIndex = 26;
-            this.ClipCrossingBonds.Text = "Clip Crossing Bond Lines";
-            this.ClipCrossingBonds.UseVisualStyleBackColor = true;
-            this.ClipCrossingBonds.CheckedChanged += new System.EventHandler(this.OnCheckedChanged_ClipCrossingBonds);
-            // 
             // Debug
             // 
             this.Debug.BackColor = System.Drawing.SystemColors.Control;
             this.Debug.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Debug.Controls.Add(this.ShowBondCrossingPoints);
-            this.Debug.Controls.Add(this.ShowCharacterGroupsBox);
-            this.Debug.Controls.Add(this.ShowBondDirection);
-            this.Debug.Controls.Add(this.ShowDoubleBondTrimmingLines);
-            this.Debug.Controls.Add(this.ShowConvexHulls);
-            this.Debug.Controls.Add(this.ShowAtomPositions);
+            this.Debug.Controls.Add(this.groupBox2);
+            this.Debug.Controls.Add(this.groupBox1);
             this.Debug.Controls.Add(this.ShowRingCentres);
-            this.Debug.Controls.Add(this.ShowCharacterBox);
             this.Debug.Controls.Add(this.ShowMoleculeBox);
-            this.Debug.Controls.Add(this.ClipBondLines);
             this.Debug.Location = new System.Drawing.Point(0, 24);
             this.Debug.Margin = new System.Windows.Forms.Padding(4);
             this.Debug.Name = "Debug";
             this.Debug.Padding = new System.Windows.Forms.Padding(4);
-            this.Debug.Size = new System.Drawing.Size(536, 194);
+            this.Debug.Size = new System.Drawing.Size(718, 453);
             this.Debug.TabIndex = 1;
             this.Debug.Text = "Debug";
             // 
@@ -120,7 +102,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowBondCrossingPoints.AutoSize = true;
             this.ShowBondCrossingPoints.Checked = true;
             this.ShowBondCrossingPoints.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowBondCrossingPoints.Location = new System.Drawing.Point(287, 117);
+            this.ShowBondCrossingPoints.Location = new System.Drawing.Point(7, 59);
             this.ShowBondCrossingPoints.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowBondCrossingPoints.Name = "ShowBondCrossingPoints";
             this.ShowBondCrossingPoints.Size = new System.Drawing.Size(243, 23);
@@ -134,7 +116,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowCharacterGroupsBox.AutoSize = true;
             this.ShowCharacterGroupsBox.Checked = true;
             this.ShowCharacterGroupsBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowCharacterGroupsBox.Location = new System.Drawing.Point(8, 117);
+            this.ShowCharacterGroupsBox.Location = new System.Drawing.Point(17, 127);
             this.ShowCharacterGroupsBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowCharacterGroupsBox.Name = "ShowCharacterGroupsBox";
             this.ShowCharacterGroupsBox.Size = new System.Drawing.Size(269, 23);
@@ -148,7 +130,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowBondDirection.AutoSize = true;
             this.ShowBondDirection.Checked = true;
             this.ShowBondDirection.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowBondDirection.Location = new System.Drawing.Point(287, 83);
+            this.ShowBondDirection.Location = new System.Drawing.Point(7, 158);
             this.ShowBondDirection.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowBondDirection.Name = "ShowBondDirection";
             this.ShowBondDirection.Size = new System.Drawing.Size(154, 23);
@@ -162,7 +144,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowDoubleBondTrimmingLines.AutoSize = true;
             this.ShowDoubleBondTrimmingLines.Checked = true;
             this.ShowDoubleBondTrimmingLines.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowDoubleBondTrimmingLines.Location = new System.Drawing.Point(287, 49);
+            this.ShowDoubleBondTrimmingLines.Location = new System.Drawing.Point(7, 125);
             this.ShowDoubleBondTrimmingLines.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowDoubleBondTrimmingLines.Name = "ShowDoubleBondTrimmingLines";
             this.ShowDoubleBondTrimmingLines.Size = new System.Drawing.Size(234, 23);
@@ -176,7 +158,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowConvexHulls.AutoSize = true;
             this.ShowConvexHulls.Checked = true;
             this.ShowConvexHulls.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowConvexHulls.Location = new System.Drawing.Point(8, 83);
+            this.ShowConvexHulls.Location = new System.Drawing.Point(17, 93);
             this.ShowConvexHulls.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowConvexHulls.Name = "ShowConvexHulls";
             this.ShowConvexHulls.Size = new System.Drawing.Size(216, 23);
@@ -190,7 +172,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowAtomPositions.AutoSize = true;
             this.ShowAtomPositions.Checked = true;
             this.ShowAtomPositions.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowAtomPositions.Location = new System.Drawing.Point(8, 15);
+            this.ShowAtomPositions.Location = new System.Drawing.Point(17, 25);
             this.ShowAtomPositions.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowAtomPositions.Name = "ShowAtomPositions";
             this.ShowAtomPositions.Size = new System.Drawing.Size(156, 23);
@@ -204,7 +186,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowRingCentres.AutoSize = true;
             this.ShowRingCentres.Checked = true;
             this.ShowRingCentres.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowRingCentres.Location = new System.Drawing.Point(287, 151);
+            this.ShowRingCentres.Location = new System.Drawing.Point(24, 231);
             this.ShowRingCentres.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowRingCentres.Name = "ShowRingCentres";
             this.ShowRingCentres.Size = new System.Drawing.Size(210, 23);
@@ -218,7 +200,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowCharacterBox.AutoSize = true;
             this.ShowCharacterBox.Checked = true;
             this.ShowCharacterBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowCharacterBox.Location = new System.Drawing.Point(8, 49);
+            this.ShowCharacterBox.Location = new System.Drawing.Point(17, 59);
             this.ShowCharacterBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowCharacterBox.Name = "ShowCharacterBox";
             this.ShowCharacterBox.Size = new System.Drawing.Size(228, 23);
@@ -232,7 +214,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowMoleculeBox.AutoSize = true;
             this.ShowMoleculeBox.Checked = true;
             this.ShowMoleculeBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowMoleculeBox.Location = new System.Drawing.Point(8, 151);
+            this.ShowMoleculeBox.Location = new System.Drawing.Point(24, 264);
             this.ShowMoleculeBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowMoleculeBox.Name = "ShowMoleculeBox";
             this.ShowMoleculeBox.Size = new System.Drawing.Size(234, 23);
@@ -246,7 +228,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ClipBondLines.AutoSize = true;
             this.ClipBondLines.Checked = true;
             this.ClipBondLines.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ClipBondLines.Location = new System.Drawing.Point(287, 15);
+            this.ClipBondLines.Location = new System.Drawing.Point(7, 92);
             this.ClipBondLines.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ClipBondLines.Name = "ClipBondLines";
             this.ClipBondLines.Size = new System.Drawing.Size(241, 23);
@@ -258,7 +240,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             // SetDefaults
             // 
             this.SetDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SetDefaults.Location = new System.Drawing.Point(340, 246);
+            this.SetDefaults.Location = new System.Drawing.Point(522, 505);
             this.SetDefaults.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.SetDefaults.Name = "SetDefaults";
             this.SetDefaults.Size = new System.Drawing.Size(102, 37);
@@ -270,7 +252,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             // Ok
             // 
             this.Ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Ok.Location = new System.Drawing.Point(450, 246);
+            this.Ok.Location = new System.Drawing.Point(632, 505);
             this.Ok.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Ok.Name = "Ok";
             this.Ok.Size = new System.Drawing.Size(102, 37);
@@ -279,11 +261,51 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.Ok.UseVisualStyleBackColor = true;
             this.Ok.Click += new System.EventHandler(this.OnClick_Ok);
             // 
+            // ClipCrossingBonds
+            // 
+            this.ClipCrossingBonds.AutoSize = true;
+            this.ClipCrossingBonds.Checked = true;
+            this.ClipCrossingBonds.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ClipCrossingBonds.Location = new System.Drawing.Point(7, 26);
+            this.ClipCrossingBonds.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ClipCrossingBonds.Name = "ClipCrossingBonds";
+            this.ClipCrossingBonds.Size = new System.Drawing.Size(179, 23);
+            this.ClipCrossingBonds.TabIndex = 27;
+            this.ClipCrossingBonds.Text = "Clip Crossing Bond Lines";
+            this.ClipCrossingBonds.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.ShowCharacterGroupsBox);
+            this.groupBox1.Controls.Add(this.ShowCharacterBox);
+            this.groupBox1.Controls.Add(this.ShowAtomPositions);
+            this.groupBox1.Controls.Add(this.ShowConvexHulls);
+            this.groupBox1.Location = new System.Drawing.Point(7, 7);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(297, 204);
+            this.groupBox1.TabIndex = 28;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Atoms / Characters";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.ClipCrossingBonds);
+            this.groupBox2.Controls.Add(this.ClipBondLines);
+            this.groupBox2.Controls.Add(this.ShowBondDirection);
+            this.groupBox2.Controls.Add(this.ShowDoubleBondTrimmingLines);
+            this.groupBox2.Controls.Add(this.ShowBondCrossingPoints);
+            this.groupBox2.Location = new System.Drawing.Point(321, 7);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(286, 204);
+            this.groupBox2.TabIndex = 29;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Bonds";
+            // 
             // OoXmlV4Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(564, 299);
+            this.ClientSize = new System.Drawing.Size(746, 558);
             this.Controls.Add(this.SetDefaults);
             this.Controls.Add(this.Ok);
             this.Controls.Add(this.tabControlEx);
@@ -299,10 +321,12 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing_Settings);
             this.Load += new System.EventHandler(this.OnLoad_Settings);
             this.tabControlEx.ResumeLayout(false);
-            this.Rendering.ResumeLayout(false);
-            this.Rendering.PerformLayout();
             this.Debug.ResumeLayout(false);
             this.Debug.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -323,7 +347,9 @@ namespace Chem4Word.Renderer.OoXmlV4
         private System.Windows.Forms.CheckBox ShowDoubleBondTrimmingLines;
         private System.Windows.Forms.CheckBox ShowBondDirection;
         private System.Windows.Forms.CheckBox ShowCharacterGroupsBox;
-        private System.Windows.Forms.CheckBox ClipCrossingBonds;
         private System.Windows.Forms.CheckBox ShowBondCrossingPoints;
+        private System.Windows.Forms.CheckBox ClipCrossingBonds;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }

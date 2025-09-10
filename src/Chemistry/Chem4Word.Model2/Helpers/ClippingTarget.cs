@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using System;
 using System.Windows;
 
@@ -12,8 +13,6 @@ namespace Chem4Word.Model2.Helpers
 {
     public class ClippingTarget : IComparable
     {
-        private static double EPSILON = 0.000001;
-
         // Required by constructor;
         public string Name { get; }
 
@@ -58,7 +57,7 @@ namespace Chem4Word.Model2.Helpers
                 var thisFirstX = Start.X < End.X ? Start.X : End.X;
                 var otherFirstX = line.Start.X < line.End.X ? line.Start.X : line.End.X;
 
-                if (Math.Abs(thisFirstX - otherFirstX) < EPSILON)
+                if (Math.Abs(thisFirstX - otherFirstX) < CoreConstants.Epsilon)
                 {
                     result = 0;
                 }

@@ -11,19 +11,33 @@ using System.Windows;
 
 namespace Chem4Word.Renderer.OoXmlV4.Entities
 {
-    public class PositionerOutputs
+    public class RendererOutputs
     {
+        // Atom / Annotation / Molecular Weight characters
         public List<AtomLabelCharacter> AtomLabelCharacters { get; } = new List<AtomLabelCharacter>();
-        public Rect AllCharacterExtents { get; set; } = Rect.Empty;
+
         public Dictionary<string, List<Point>> ConvexHulls { get; } = new Dictionary<string, List<Point>>();
+
+        public Rect AllCharacterExtents { get; set; } = Rect.Empty;
+
+        // Bond Lines
         public List<BondLine> BondLines { get; } = new List<BondLine>();
-        public List<Point> RingCenters { get; } = new List<Point>();
+
         public List<Point> CrossingPoints { get; } = new List<Point>();
+
+        // Rings
+        public List<Point> RingCenters { get; } = new List<Point>();
+
         public List<InnerCircle> InnerCircles { get; } = new List<InnerCircle>();
-        public List<MoleculeExtents> AllMoleculeExtents { get; } = new List<MoleculeExtents>();
+
+        // Brackets
         public List<Rect> GroupBrackets { get; } = new List<Rect>();
+
         public List<Rect> MoleculeBrackets { get; } = new List<Rect>();
-        public List<OoXmlString> MoleculeCaptions { get; } = new List<OoXmlString>();
+
+        // Drawing Extents
+        public List<MoleculeExtents> AllMoleculeExtents { get; } = new List<MoleculeExtents>();
+
         public Diagnostics Diagnostics { get; } = new Diagnostics();
     }
 }

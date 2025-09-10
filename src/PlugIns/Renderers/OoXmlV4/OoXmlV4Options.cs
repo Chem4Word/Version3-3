@@ -20,10 +20,12 @@ namespace Chem4Word.Renderer.OoXmlV4
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
+        // Standard - None
+
+        // Debugging
         [JsonProperty]
         public bool ClipCrossingBonds { get; set; }
 
-        // Debugging
         [JsonProperty]
         public bool ClipBondLines { get; set; }
 

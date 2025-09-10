@@ -50,6 +50,13 @@ namespace Chem4Word.Renderer.OoXmlV4
                     Left = (int)sensible.X;
                     Top = (int)sensible.Y;
                 }
+
+                var tab1 = tabControlEx.TabPages[nameof(Rendering)];
+                if (!tab1.HasChildren)
+                {
+                    tabControlEx.TabPages.Remove(Rendering);
+                }
+
                 RestoreControls();
 
 #if DEBUG

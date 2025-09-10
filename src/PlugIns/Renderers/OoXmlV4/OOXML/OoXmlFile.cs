@@ -19,14 +19,14 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 
-namespace Chem4Word.Renderer.OoXmlV4.OOXML
+namespace Chem4Word.Renderer.OoXmlV4.OoXml
 {
     // ReSharper disable PossiblyMistakenUseOfParamsMethod
     [SuppressMessage("Minor Code Smell", "S3220:Method calls should not resolve ambiguously to overloads with \"params\"", Justification = "<OoXml>")]
     public static class OoXmlFile
     {
-        private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         /// <summary>
         /// Create an OpenXml Word Document from the CML

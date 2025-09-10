@@ -1,167 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This file must be uploaded to https://www.chem4word.co.uk/files3-3/ folder as Chem4Word-Versions.xml -->
 <ChangeLog>
-	<Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>
-	<Version>
-		<Number>3.3.14 Release 11</Number>
-		<IsBeta>false</IsBeta>
-		<Released>01-Jul-2025</Released>
-		<Changes>
-			<Change>New Feature: Theoretical reaction type added</Change>
-			<Change>BugFix: thick and wedge bond mitre together evenly in ACME</Change>
-			<Change>Rationalised globals and constants</Change>
-			<Change>New Feature: Thick bond type now supported</Change>
-			<Change>New Feature: Molecule selectors now present eight, not four resize handles</Change>
-			<Change>New Feature: Persists Molecular Weight in CML and displays in ACME and Word document</Change>
-			<Change>UX: Disable separate if structure has reactions or annotations</Change>
-			<Change>BugFix: Improve handling of copy/paste of ContentControl(s)</Change>
-			<Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
-			<Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
-			<Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
-		</Changes>
-		<Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.14.Release.11.msi</Url>
-	</Version>
-	<Version>
-		<Number>3.3.12 Release 10</Number>
-		<IsBeta>false</IsBeta>
-		<Released>14-May-2025</Released>
-		<Changes>
-			<Change>BugFix: Fix implementation for hiding of C atoms</Change>
-			<Change>BugFix: Fix alignment of reaction arrows</Change>
-			<Change>UX: Prevent import of CDXML files</Change>
-			<Change>BugFix: In setup bootstrapper - Prevent download and install of msi if word is running</Change>
-			<Change>Internal: Upgrade WiX installer</Change>
-			<Change>BugFix: In setup bootstrapper - add Chem4Word installer re-tries (max 3) if msi ExitCode is 1602 or 1603</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.11 Release 9</Number>
-		<IsBeta>false</IsBeta>
-		<Released>14-Apr-2025</Released>
-		<Changes>
-			<Change>BugFix: Broken installer repaired</Change>
-			<Change>BugFix: Bond length is now set properly on sprout and copy/paste</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.10 Release 8</Number>
-		<IsBeta>false</IsBeta>
-		<Released>19-Feb-2025</Released>
-		<Changes>
-			<Change>New Feature: Showing of Implicit Hydrogen labels and Showing of Carbon labels is now hierarchical</Change>
-			<Change>Prohibit search for empty string</Change>
-			<Change>Tweaking of list of names to be shown and deduplicate dropdown list for ShowAs</Change>
-			<Change>BugFix: Copy/Paste of structure into another document - Pasted structure sometimes not editable. (Warning: The CML for this chemistry item can't be found!)</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.9 Release 7</Number>
-		<IsBeta>false</IsBeta>
-		<Released>09-Oct-2024</Released>
-		<Changes>
-			<Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-43485 [System.Text.Json])</Change>
-			<Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-43483 [System.IO.Packaging])</Change>
-			<Change>BugFix: Ensure strings for doubles are converted using InvariantCulture</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.8 Release 6</Number>
-		<IsBeta>false</IsBeta>
-		<Released>21-Aug-2024</Released>
-		<Changes>
-			<Change>BugFix: 'System.NullReferenceException: Object reference not set to an instance of an object' sometimes seen after editing a structure to combine two molecules</Change>
-			<Change>BugFix: 'System.ArgumentNullException: Value cannot be null' sometimes seen after creating/editing a structure in a library</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.7 Release 5</Number>
-		<IsBeta>false</IsBeta>
-		<Released>14-Aug-2024</Released>
-		<Changes>
-			<Change>UX: Improve RightClick "Convert To Chemistry" context menu</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.6 Release 4</Number>
-		<IsBeta>false</IsBeta>
-		<Released>07-Aug-2024</Released>
-		<Changes>
-			<Change>BugFix: Prevent html input in searchers</Change>
-			<Change>UX: Prohibit import of binary files</Change>
-			<Change>BugFix: User unable to hide Hydrogens in Renderer (seen in Word document)</Change>
-			<Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-30105)</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.5 Release 3</Number>
-		<IsBeta>false</IsBeta>
-		<Released>20-Mar-2024</Released>
-		<Changes>
-			<Change>Correct Facebook url in Help -> About</Change>
-			<Change>Add detection of Office 2024</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.4 Release 2</Number>
-		<IsBeta>false</IsBeta>
-		<Released>29-Feb-2024</Released>
-		<Changes>
-			<Change>Internal: Update NuGet Packages</Change>
-			<Change>BugFix: Prevent exception during save to library if structure has '+' annotation</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.3 Release 1</Number>
-		<IsBeta>false</IsBeta>
-		<Released>14-Feb-2024</Released>
-		<Changes>
-			<Change>UX: Add better instructions regarding purchase and download of a library</Change>
-			<Change>UX: Allow user to cancel bulk calculate properties of a library</Change>
-			<Change>Internal: Replace seed libraries with patched versions</Change>
-			<Change>I/O: Remove invalid bond(s) which have the same start and end atoms on import</Change>
-			<Change>ACME: Prevent creation of new invalid bond(s) which have the same start and end atoms</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.2 Beta 2</Number>
-		<IsBeta>true</IsBeta>
-		<Released>12-Oct-2023</Released>
-		<Changes>
-			<Change>Ensure Help button is never disabled.</Change>
-			<Change>Add SketchEl file format support.</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.1 Beta 1</Number>
-		<IsBeta>true</IsBeta>
-		<Released>04-Oct-2023</Released>
-		<Changes>
-			<Change>Add AV Warning</Change>
-			<Change>Add missing file to installer</Change>
-			<Change>Fix Right Click Convert to chemistry issues</Change>
-			<Change>Fix Windows 11 detection issue</Change>
-			<Change>Update user manual</Change>
-			<Change>Private Beta of Chem4Word 2025 (V3.3)</Change>
-		</Changes>
-	</Version>
-	<Version>
-		<Number>3.3.0 Alpha 0</Number>
-		<IsBeta>true</IsBeta>
-		<Released>31-Aug-2023</Released>
-		<Changes>
-			<Change>Users can download extra libraries</Change>
-			<Change>Add detection of ReadOnly and System databases, enabling UI buttons as appropriate</Change>
-			<Change>Internal: Add better tool tips in ACME</Change>
-			<Change>BugFix: Prevent import of structures which have duplicate bonds</Change>
-			<Change>Copied changes from V3.2.*</Change>
-			<Change>Stability: Improved method to purge old V2 installations to increase system stability</Change>
-			<Change>Internal: Update NuGet packages</Change>
-			<Change>Internal: Fetch location of web services from our website</Change>
-			<Change>Added basic library manager</Change>
-			<Change>Add new Plug-In type (Driver) to manage multiple libraries</Change>
-			<Change>Add new converter to model which reads/writes byte[] from Google protocol buffer of model</Change>
-			<Change>Private Alpha of Chem4Word 2025 (V3.3)</Change>
-		</Changes>
-	</Version>
-	<EndOfLife>31-Dec-2345</EndOfLife>
+    <Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>
+    <Version>
+        <Number>3.3.14 Release 11</Number>
+        <IsBeta>false</IsBeta>
+        <Released>01-Jul-2025</Released>
+        <Changes>
+            <Change>Internal: Refactor of OoXml renderer</Change>
+            <Change>New Feature: Theoretical reaction type added</Change>
+            <Change>BugFix: Thick and Wedge bond mitre together evenly in ACME</Change>
+            <Change>Rationalised globals and constants</Change>
+            <Change>New Feature: Thick bond type now supported</Change>
+            <Change>New Feature: Molecule selectors now present eight, not four resize handles</Change>
+            <Change>New Feature: Persists Molecular Weight in CML and displays in ACME and Word document</Change>
+            <Change>UX: Disable separate if structure has reactions or annotations</Change>
+            <Change>BugFix: Improve handling of copy/paste of ContentControl(s)</Change>
+            <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
+            <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
+            <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
+        </Changes>
+        <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.14.Release.11.msi</Url>
+    </Version>
+    <Version>
+        <Number>3.3.12 Release 10</Number>
+        <IsBeta>false</IsBeta>
+        <Released>14-May-2025</Released>
+        <Changes>
+            <Change>BugFix: Fix implementation for hiding of C atoms</Change>
+            <Change>BugFix: Fix alignment of reaction arrows</Change>
+            <Change>UX: Prevent import of CDXML files</Change>
+            <Change>BugFix: In setup bootstrapper - Prevent download and install of msi if word is running</Change>
+            <Change>Internal: Upgrade WiX installer</Change>
+            <Change>BugFix: In setup bootstrapper - add Chem4Word installer re-tries (max 3) if msi ExitCode is 1602 or 1603</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.11 Release 9</Number>
+        <IsBeta>false</IsBeta>
+        <Released>14-Apr-2025</Released>
+        <Changes>
+            <Change>BugFix: Broken installer repaired</Change>
+            <Change>BugFix: Bond length is now set properly on sprout and copy/paste</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.10 Release 8</Number>
+        <IsBeta>false</IsBeta>
+        <Released>19-Feb-2025</Released>
+        <Changes>
+            <Change>New Feature: Showing of Implicit Hydrogen labels and Showing of Carbon labels is now hierarchical</Change>
+            <Change>Prohibit search for empty string</Change>
+            <Change>Tweaking of list of names to be shown and deduplicate dropdown list for ShowAs</Change>
+            <Change>BugFix: Copy/Paste of structure into another document - Pasted structure sometimes not editable. (Warning: The CML for this chemistry item can't be found!)</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.9 Release 7</Number>
+        <IsBeta>false</IsBeta>
+        <Released>09-Oct-2024</Released>
+        <Changes>
+            <Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-43485 [System.Text.Json])</Change>
+            <Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-43483 [System.IO.Packaging])</Change>
+            <Change>BugFix: Ensure strings for doubles are converted using InvariantCulture</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.8 Release 6</Number>
+        <IsBeta>false</IsBeta>
+        <Released>21-Aug-2024</Released>
+        <Changes>
+            <Change>BugFix: 'System.NullReferenceException: Object reference not set to an instance of an object' sometimes seen after editing a structure to combine two molecules</Change>
+            <Change>BugFix: 'System.ArgumentNullException: Value cannot be null' sometimes seen after creating/editing a structure in a library</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.7 Release 5</Number>
+        <IsBeta>false</IsBeta>
+        <Released>14-Aug-2024</Released>
+        <Changes>
+            <Change>UX: Improve RightClick "Convert To Chemistry" context menu</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.6 Release 4</Number>
+        <IsBeta>false</IsBeta>
+        <Released>07-Aug-2024</Released>
+        <Changes>
+            <Change>BugFix: Prevent html input in searchers</Change>
+            <Change>UX: Prohibit import of binary files</Change>
+            <Change>BugFix: User unable to hide Hydrogens in Renderer (seen in Word document)</Change>
+            <Change>Security: Update NuGet packages (Microsoft Security Advisory CVE-2024-30105)</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.5 Release 3</Number>
+        <IsBeta>false</IsBeta>
+        <Released>20-Mar-2024</Released>
+        <Changes>
+            <Change>Correct Facebook url in Help -> About</Change>
+            <Change>Add detection of Office 2024</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.4 Release 2</Number>
+        <IsBeta>false</IsBeta>
+        <Released>29-Feb-2024</Released>
+        <Changes>
+            <Change>Internal: Update NuGet Packages</Change>
+            <Change>BugFix: Prevent exception during save to library if structure has '+' annotation</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.3 Release 1</Number>
+        <IsBeta>false</IsBeta>
+        <Released>14-Feb-2024</Released>
+        <Changes>
+            <Change>UX: Add better instructions regarding purchase and download of a library</Change>
+            <Change>UX: Allow user to cancel bulk calculate properties of a library</Change>
+            <Change>Internal: Replace seed libraries with patched versions</Change>
+            <Change>I/O: Remove invalid bond(s) which have the same start and end atoms on import</Change>
+            <Change>ACME: Prevent creation of new invalid bond(s) which have the same start and end atoms</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.2 Beta 2</Number>
+        <IsBeta>true</IsBeta>
+        <Released>12-Oct-2023</Released>
+        <Changes>
+            <Change>Ensure Help button is never disabled.</Change>
+            <Change>Add SketchEl file format support.</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.1 Beta 1</Number>
+        <IsBeta>true</IsBeta>
+        <Released>04-Oct-2023</Released>
+        <Changes>
+            <Change>Add AV Warning</Change>
+            <Change>Add missing file to installer</Change>
+            <Change>Fix Right Click Convert to chemistry issues</Change>
+            <Change>Fix Windows 11 detection issue</Change>
+            <Change>Update user manual</Change>
+            <Change>Private Beta of Chem4Word 2025 (V3.3)</Change>
+        </Changes>
+    </Version>
+    <Version>
+        <Number>3.3.0 Alpha 0</Number>
+        <IsBeta>true</IsBeta>
+        <Released>31-Aug-2023</Released>
+        <Changes>
+            <Change>Users can download extra libraries</Change>
+            <Change>Add detection of ReadOnly and System databases, enabling UI buttons as appropriate</Change>
+            <Change>Internal: Add better tool tips in ACME</Change>
+            <Change>BugFix: Prevent import of structures which have duplicate bonds</Change>
+            <Change>Copied changes from V3.2.*</Change>
+            <Change>Stability: Improved method to purge old V2 installations to increase system stability</Change>
+            <Change>Internal: Update NuGet packages</Change>
+            <Change>Internal: Fetch location of web services from our website</Change>
+            <Change>Added basic library manager</Change>
+            <Change>Add new Plug-In type (Driver) to manage multiple libraries</Change>
+            <Change>Add new converter to model which reads/writes byte[] from Google protocol buffer of model</Change>
+            <Change>Private Alpha of Chem4Word 2025 (V3.3)</Change>
+        </Changes>
+    </Version>
+    <EndOfLife>31-Dec-2345</EndOfLife>
 </ChangeLog>

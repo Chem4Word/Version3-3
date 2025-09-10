@@ -6,14 +6,20 @@
 // ---------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Windows;
 
 namespace Chem4Word.Renderer.OoXmlV4.Entities.Diagnostic
 {
-    public class Diagnostics
+    public class DiagnosticPolygon
     {
-        public List<DiagnosticLine> Lines { get; } = new List<DiagnosticLine>();
-        public List<DiagnosticPolygon> Polygons { get; } = new List<DiagnosticPolygon>();
-        public List<DiagnosticSpot> Points { get; } = new List<DiagnosticSpot>();
-        public List<DiagnosticRectangle> Rectangles { get; } = new List<DiagnosticRectangle>();
+        public string Colour { get; }
+
+        public List<Point> Points { get; }
+
+        public DiagnosticPolygon(List<Point> points, string colour)
+        {
+            Points = points;
+            Colour = colour;
+        }
     }
 }

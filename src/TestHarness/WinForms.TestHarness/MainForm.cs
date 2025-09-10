@@ -470,6 +470,9 @@ namespace WinForms.TestHarness
             LayoutStructure.Enabled = true;
             RenderOoXml.Enabled = true;
 
+            var renderer = new Renderer();
+            ChangeOoXmlSettings.Enabled = renderer.HasSettings;
+
             ListStacks();
         }
 
@@ -724,7 +727,7 @@ namespace WinForms.TestHarness
             UndoStack = new StackViewer();
             UndoHost.Child = UndoStack;
 
-            // ToDo: Check if we still need the config watcher
+            // ToDo: [MAW] Check if we still need the config watcher
             var location = Assembly.GetExecutingAssembly().Location;
             var path = Path.GetDirectoryName(location);
             _configWatcher = new ConfigWatcher(path);
@@ -732,7 +735,7 @@ namespace WinForms.TestHarness
 
         private void OptionsChanged()
         {
-            // Allow time for FileSytemWatcher to fire
+            // Allow time for FileSystemWatcher to fire
             Thread.Sleep(250);
 
             _renderOptions = new OoXmlV4Options(null);

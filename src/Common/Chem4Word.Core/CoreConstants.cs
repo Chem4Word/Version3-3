@@ -9,10 +9,15 @@ namespace Chem4Word.Core
 {
     public static class CoreConstants
     {
+        public static readonly string[] OurDomains = { "https://www.chem4word.co.uk", "http://www.chem4word.com", "https://chem4word.azurewebsites.net" };
+        public const string MessageBoxTitle = "Chemistry Add-In for Word";
+
         public const string Chem4WordVersion = "3.3";
         public const string Chem4WordVersionFiles = "files3-3";
+
         public const string ContentControlTitle = "Chemistry";
         public const string LegacyContentControlTitle = "chemistry";
+
         public const string NavigatorTaskPaneTitle = "Navigator";
         public const string LibraryTaskPaneTitle = "Library";
 
@@ -25,7 +30,14 @@ namespace Chem4Word.Core
         public const string DefaultEditorPlugIn = "ACME Structure Editor";
         public const string DefaultRendererPlugIn = "Open Office Xml Renderer V4";
 
+        // Update Checks
+        public const int MaximumVersionsBehind = 7;
+
         public const int DefaultCheckInterval = 7;
+        public const string Chem4WordTooOld = "Chem4Word is too many versions old.";
+        public const string Chem4WordIsBeta = "Chem4Word Beta testing is now closed.";
+
+        public const string WordIsNotActivated = "Micrsoft Word is not activated.";
 
         // Registry Locations
         public const string Chem4WordRegistryKey = @"SOFTWARE\Chem4Word V3";
@@ -46,13 +58,6 @@ namespace Chem4Word.Core
         public const string XmlFileHeader = "<?xml version='1.0' encoding='utf-8'?>";
         public const string DummyMachineGuid = "90160000-000F-0000-0000-0000000FF1CE";
 
-        // Update Checks
-        public const int MaximumVersionsBehind = 7;
-
-        public const string Chem4WordTooOld = "Chem4Word is too many versions old.";
-        public const string Chem4WordIsBeta = "Chem4Word Beta testing is now closed.";
-        public const string WordIsNotActivated = "Micrsoft Word is not activated.";
-
         // Bond length limits etc
         public const double MinimumBondLength = 5;
 
@@ -60,8 +65,8 @@ namespace Chem4Word.Core
         public const double MaximumBondLength = 95;
         public const double BondLengthTolerance = 1;
 
-        public static readonly string[] OurDomains = { "https://www.chem4word.co.uk", "http://www.chem4word.com", "https://chem4word.azurewebsites.net" };
-        public const string MessageBoxTitle = "Chemistry Add-In for Word";
         public const double ThickToDoubleScaleFactor = 0.6;
+
+        public const double Epsilon = 1e-6;
     }
 }

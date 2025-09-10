@@ -10,7 +10,12 @@ namespace Chem4Word.Model2.Enums
     public enum BondDirection
     {
         Anticlockwise = -1,
+
+        /// <summary>
+        /// Automatic
+        /// </summary>
         None = 0,
+
         Clockwise = 1
     }
 }

@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\ClippingLine.cs" />
+    <Compile Include="Entities\Diagnostic\DiagnosticPolygon.cs" />
     <Compile Include="Entities\Diagnostic\DiagnosticRectangle.cs" />
     <Compile Include="Entities\GroupOfCharacters.cs" />
     <Compile Include="Entities\InnerCircle.cs" />
@@ -88,13 +89,16 @@
     <Compile Include="Entities\AtomLabelCharacter.cs" />
     <Compile Include="Entities\BondLine.cs" />
     <Compile Include="Entities\MoleculeExtents.cs" />
-    <Compile Include="OOXML\OoXmlFile.cs" />
-    <Compile Include="OOXML\OoXmlHelper.cs" />
-    <Compile Include="OOXML\OoXmlPositioner.cs" />
+    <Compile Include="OoXml\OoXmlBeautifier.cs" />
+    <Compile Include="OoXml\OoXmlColours.cs" />
+    <Compile Include="OoXml\OoXmlConstants.cs" />
+    <Compile Include="OoXml\OoXmlFile.cs" />
+    <Compile Include="OoXml\OoXmlHelper.cs" />
+    <Compile Include="OoXml\OoXmlPositioner.cs" />
     <Compile Include="OoXmlV4Options.cs" />
-    <Compile Include="OOXML\OoXmlRenderer.cs" />
-    <Compile Include="Entities\PositionerInputs.cs" />
-    <Compile Include="Entities\PositionerOutputs.cs" />
+    <Compile Include="OoXml\OoXmlRenderer.cs" />
+    <Compile Include="Entities\RendererInputs.cs" />
+    <Compile Include="Entities\RendererOutputs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="OoXmlV4Settings.cs">
