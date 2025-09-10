@@ -15,6 +15,7 @@ namespace Chem4Word.Model2.Enums
         ReversibleBiasedReverse,
         Blocked,
         Resonance,
-        Retrosynthetic
+        Retrosynthetic,
+        Theoretical
     }
 }

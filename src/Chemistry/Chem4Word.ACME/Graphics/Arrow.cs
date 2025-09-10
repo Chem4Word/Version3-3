@@ -240,29 +240,24 @@ namespace Chem4Word.ACME.Graphics
             GetOverlayPen(out overlayBrush, out Pen overlayPen);
 
             base.OnRender(drawingContext);
-            var mainLine = Shaft();
-            PathFigureCollection pfc1 = new PathFigureCollection() { mainLine };
-            outlinePen.StartLineCap = PenLineCap.Round;
-            outlinePen.EndLineCap = PenLineCap.Round;
-            PathGeometry lineGeometry = new PathGeometry(pfc1);
-            drawingContext.DrawGeometry(null, outlinePen, lineGeometry);
 
-            var overlay = lineGeometry.GetWidenedPathGeometry(overlayPen);
+            PathGeometry overlay;
 
-            drawingContext.DrawGeometry(overlayBrush, null, overlay);
+            var shaftFigure = DrawTheShaft(drawingContext, outlinePen, overlayPen, overlayBrush);
+
             PathFigureCollection pfc2 = new PathFigureCollection();
 
             // Draw the arrow at the start of the line.
             if ((ArrowEnds & ArrowEnds.Start) == ArrowEnds.Start)
             {
-                PathFigure value = ArrowHeadGeometry(mainLine, true);
+                PathFigure value = ArrowHeadGeometry(shaftFigure, true);
                 pfc2.Add(value);
             }
 
             // Draw the arrow at the end of the line.
             if ((ArrowEnds & ArrowEnds.End) == ArrowEnds.End)
             {
-                pfc2.Add(ArrowHeadGeometry(mainLine));
+                pfc2.Add(ArrowHeadGeometry(shaftFigure));
             }
 
             PathGeometry geometry = new PathGeometry(pfc2);
@@ -270,6 +265,29 @@ namespace Chem4Word.ACME.Graphics
             overlay = geometry.GetWidenedPathGeometry(overlayPen);
 
             drawingContext.DrawGeometry(overlayBrush, overlayPen, overlay);
+        }
+
+        /// <summary>
+        /// Draws the shaft. Override this if you want to apply a different pen effect
+        /// </summary>
+        /// <param name="drawingContext"></param>
+        /// <param name="outlinePen"></param>
+        /// <param name="overlayPen"></param>
+        /// <param name="overlayBrush"></param>
+        /// <returns></returns>
+        protected virtual PathFigure DrawTheShaft(DrawingContext drawingContext, Pen outlinePen, Pen overlayPen, Brush overlayBrush)
+        {
+            var shaftFigure = Shaft();
+            var shaftFigures = new PathFigureCollection() { shaftFigure };
+            outlinePen.StartLineCap = PenLineCap.Round;
+            outlinePen.EndLineCap = PenLineCap.Round;
+            var lineGeometry = new PathGeometry(shaftFigures);
+            drawingContext.DrawGeometry(null, outlinePen, lineGeometry);
+
+            var overlay = lineGeometry.GetWidenedPathGeometry(overlayPen);
+
+            drawingContext.DrawGeometry(overlayBrush, null, overlay);
+            return shaftFigure;
         }
 
         public void GetOverlayPen(out Brush overlayBrush, out Pen pen)

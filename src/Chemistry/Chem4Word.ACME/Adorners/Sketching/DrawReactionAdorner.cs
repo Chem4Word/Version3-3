@@ -85,6 +85,10 @@ namespace Chem4Word.ACME.Adorners.Sketching
                     arrowVisual = new Graphics.RetrosyntheticArrow { StartPoint = StartPoint, EndPoint = EndPoint };
                     break;
 
+                case ReactionType.Theoretical:
+                    arrowVisual = new Graphics.DashedArrow() { StartPoint = StartPoint, EndPoint = EndPoint };
+                    break;
+
                 default:
                     arrowVisual = new Graphics.StraightArrow { StartPoint = StartPoint, EndPoint = EndPoint };
                     break;

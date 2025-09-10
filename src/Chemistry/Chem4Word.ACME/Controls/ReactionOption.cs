@@ -47,10 +47,6 @@ namespace Chem4Word.ACME
             DependencyProperty.Register("ReactionGraphic", typeof(System.Windows.Media.Drawing), typeof(ReactionOption),
                                         new PropertyMetadata(default(System.Windows.Media.Drawing)));
 
-        public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register("Description", typeof(string), typeof(ReactionOption),
-                                        new PropertyMetadata(default(string)));
-
         public string Description
         {
             get
@@ -86,6 +82,16 @@ namespace Chem4Word.ACME
                         {
                             return "Retrosynthesis step";
                         }
+
+                    case ReactionType.Theoretical:
+                        {
+                            return "Theoretical reaction";
+                        }
+
+                    case ReactionType.Resonance:
+                    {
+                        return "Resonance arrow";
+                    }
 
                     default:
                         return "";

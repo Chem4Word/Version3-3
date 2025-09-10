@@ -700,6 +700,10 @@ namespace Chem4Word.Model2.Converters.CML
                 case ReactionType.Retrosynthetic:
                     reactionElement.Add(new XAttribute(CMLNamespaces.cml + ModelConstants.AttributeReactionType, ModelConstants.AttrValueRetrosynthetic));
                     break;
+
+                case ReactionType.Theoretical:
+                    reactionElement.Add(new XAttribute(CMLNamespaces.cml + ModelConstants.AttributeReactionType, ModelConstants.AttrValueTheoretical));
+                    break;
             }
 
             //do the reagents and conditions
@@ -1227,6 +1231,10 @@ namespace Chem4Word.Model2.Converters.CML
 
                     case ModelConstants.AttrValueRetrosynthetic:
                         reaction.ReactionType = ReactionType.Retrosynthetic;
+                        break;
+
+                    case ModelConstants.AttrValueTheoretical:
+                        reaction.ReactionType = ReactionType.Theoretical;
                         break;
                 }
             }

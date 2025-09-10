@@ -1,8 +1,8 @@
 ﻿<Window
     x:Class="Wpf.UI.Sandbox.ShapesUI"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:shapes="clr-namespace:Chem4Word.ACME.Graphics;assembly=Chem4Word.ACME"
     Title="Shapes UI Test"
@@ -227,5 +227,11 @@
             StrokeThickness="3"
             StartPoint="450,450"
             EndPoint="550, 450" />
+        <shapes:DashedArrow
+            av:IsLocked="True"
+            Stroke="DarkRed"
+            StrokeThickness="3"
+            StartPoint="450,550"
+            EndPoint="550, 550" />
     </Canvas>
 </Window>

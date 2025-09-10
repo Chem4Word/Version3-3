@@ -394,6 +394,10 @@ namespace Chem4Word.ACME.Adorners.Selectors
                     arrowVisual = new RetrosyntheticArrow { StartPoint = newStartPoint, EndPoint = newEndPoint };
                     break;
 
+                case ReactionType.Theoretical:
+                    arrowVisual = new DashedArrow { StartPoint = newStartPoint, EndPoint = newEndPoint };
+                    break;
+
                 default:
                     arrowVisual = new StraightArrow { StartPoint = newStartPoint, EndPoint = newEndPoint };
                     break;

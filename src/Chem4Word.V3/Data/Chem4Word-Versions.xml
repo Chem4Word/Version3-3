@@ -7,8 +7,9 @@
 		<IsBeta>false</IsBeta>
 		<Released>01-Jul-2025</Released>
 		<Changes>
+			<Change>New Feature: Theoretical reaction type added</Change>
 			<Change>BugFix: thick and wedge bond mitre together evenly in ACME</Change>
-			<Change>Rationalised globals and constants.</Change>
+			<Change>Rationalised globals and constants</Change>
 			<Change>New Feature: Thick bond type now supported</Change>
 			<Change>New Feature: Molecule selectors now present eight, not four resize handles</Change>
 			<Change>New Feature: Persists Molecular Weight in CML and displays in ACME and Word document</Change>

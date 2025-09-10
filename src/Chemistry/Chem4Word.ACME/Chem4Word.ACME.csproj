@@ -137,6 +137,7 @@
     <Compile Include="Drawing\Visuals\ReactionVisual.cs" />
     <Compile Include="Drawing\Visuals\AnnotationVisual.cs" />
     <Compile Include="Graphics\BlockedArrow.cs" />
+    <Compile Include="Graphics\DashedArrow.cs" />
     <Compile Include="Graphics\EquilibriumArrow.cs" />
     <Compile Include="Graphics\Harpoon.cs" />
     <Compile Include="Graphics\RetrosyntheticArrow.cs" />

@@ -20,4 +20,5 @@ enum PBReactionType
 	Blocked = 4;
 	Resonance = 5;
 	Retrosynthetic = 6;
+	Theoretical = 7;
 }

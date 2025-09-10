@@ -56,6 +56,7 @@ namespace Chem4Word.Model2
         public const string AttrValueResonance = "resonance";
         public const string AttrValueRetrosynthetic = "retrosynthetic";
         public const string AttrValueReversible = "reversible";
+        public const string AttrValueTheoretical = "theoretical";
         public const string TagAnnotation = "annotation";
         public const string TagAtom = "atom";
         public const string TagAtomArray = "atomArray";

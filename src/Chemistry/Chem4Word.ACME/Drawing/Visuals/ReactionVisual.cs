@@ -124,6 +124,10 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     arrow = new RetrosyntheticArrow { StartPoint = tailPoint, EndPoint = headPoint };
                     break;
 
+                case ReactionType.Theoretical:
+                    arrow = new DashedArrow { StartPoint = tailPoint, EndPoint = headPoint };
+                    break;
+
                 default:
                     arrow = new StraightArrow { StartPoint = tailPoint, EndPoint = headPoint };
                     break;
