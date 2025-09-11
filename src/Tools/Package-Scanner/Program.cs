@@ -138,7 +138,7 @@ namespace PackageScanner
                 {
                     foreach (var line in lines)
                     {
-                        // <package id="DocumentFormat.OpenXml" version="2.11.3" targetFramework="net462" />
+                        // <package id="DocumentFormat.OpenXml" version="2.11.3" targetFramework="net71" />
                         if (line.Trim().StartsWith("<package id"))
                         {
                             var packageId = string.Empty;
