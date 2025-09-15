@@ -1525,7 +1525,7 @@ namespace Chem4Word.Model2
         /// Removes side chain atoms from the working set
         /// DOES NOT MODIFY the original molecule!
         /// Assumes we don't have any degree zero atoms
-        /// (i.e this isn't a single atom Molecule)
+        /// (i.e. this isn't a single atom Molecule)
         /// </summary>
         /// <param name="projection">Molecule to prune</param>
         private static void PruneSideChains(Dictionary<Atom, int> projection)

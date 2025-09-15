@@ -29,7 +29,7 @@ namespace Chem4Word.ACME.Graphics
         // Using a DependencyProperty as the backing store for SecondControlPoint.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SecondControlPointProperty =
             DependencyProperty.Register("SecondControlPoint", typeof(Point),
-                                        typeof(QuadraticArrow), new FrameworkPropertyMetadata(new Point(0, 0), FrameworkPropertyMetadataOptions.AffectsRender
+                                        typeof(BezierArrow), new FrameworkPropertyMetadata(new Point(0, 0), FrameworkPropertyMetadataOptions.AffectsRender
                                             | FrameworkPropertyMetadataOptions.AffectsArrange
                                             | FrameworkPropertyMetadataOptions.AffectsMeasure));
 

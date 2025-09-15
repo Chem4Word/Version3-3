@@ -197,7 +197,7 @@
         <shapes:BezierArrow
             av:IsLocked="True"
             ArrowEnds="Both"
-            ArrowHeadClosed="True"
+            ArrowHeadClosed="False"
             Fill="{Binding Stroke, RelativeSource={RelativeSource Mode=Self}}"
             FirstControlPoint="200,300"
             SecondControlPoint="300,700"
@@ -231,7 +231,7 @@
             av:IsLocked="True"
             Stroke="DarkRed"
             StrokeThickness="3"
-            StartPoint="450,550"
-            EndPoint="550, 550" />
+            StartPoint="600,450"
+            EndPoint="750, 450" />
     </Canvas>
 </Window>

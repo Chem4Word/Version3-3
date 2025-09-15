@@ -51,7 +51,8 @@ namespace Chem4Word.ACME.Graphics
             var perp = vector.Perpendicular();
             perp.Normalize();
 
-            Vector bottomOffset = new Vector(0, 0), topOffset = new Vector(0, 0);
+            Vector bottomOffset = new Vector(0, 0);
+            Vector topOffset = new Vector(0, 0);
             double topScale = 1d, bottomScale = 1d;
             if (Bias == EquilibriumBias.Forward)
             {

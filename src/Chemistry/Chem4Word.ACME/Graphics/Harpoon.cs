@@ -32,7 +32,7 @@ namespace Chem4Word.ACME.Graphics
                 barbVector *= HeadLength;
                 Matrix rotator = new Matrix();
                 rotator.Rotate(HeadAngle);
-                barbVector = barbVector * rotator;
+                barbVector *= rotator;
                 LineSegment barb = new LineSegment(EndPoint + barbVector, true);
                 barb.IsSmoothJoin = true;
                 main.Segments.Add(barb);

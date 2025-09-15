@@ -133,6 +133,7 @@ namespace Chem4Word.ACME.Graphics
             var headAngleInRadians = HeadAngle / 360 * 2 * Math.PI;
 
             //work out how far back the arrowhead extends
+            //project the arrowhead barb onto the shaft
             double offset = HeadLength * Math.Cos(headAngleInRadians);
 
             var length = GetPathFigureLength(line);
@@ -148,42 +149,54 @@ namespace Chem4Word.ACME.Graphics
             }
 
             //create a simple geometry so we can use a wpf trick to determine the length
-            var tempPG = new PathGeometry();
-            tempPG.Figures.Add(line);
+            var tempPathGeometry = new PathGeometry();
+            tempPathGeometry.Figures.Add(line);
 
             Point endPoint;
 
             //this is a really cool method to get the angle at the end of a line of any shape.
             //we need to get the actual angle at the very point the arrow line enters the head
-            tempPG.GetPointAtFractionLength(fraction, out Point intersection, out Point tangent);
+            tempPathGeometry.GetPointAtFractionLength(fraction, out _, out Point tangent);
             //get the ends
+
             if (reverse)
             {
-                tempPG.GetPointAtFractionLength(0.0, out endPoint, out _);
+                tempPathGeometry.GetPointAtFractionLength(0.0, out endPoint, out Point _);
             }
             else
             {
-                tempPG.GetPointAtFractionLength(1.0, out endPoint, out _);
+                tempPathGeometry.GetPointAtFractionLength(1.0, out endPoint, out Point _);
             }
 
-            //get the perpendicular to the tangent and offset appropriately
-            Vector perp = new Vector(tangent.X, tangent.Y).Perpendicular();
-            perp.Normalize();
-            perp *= Math.Sin(headAngleInRadians);
-            perp *= HeadLength;
+            //tangent vector seems to protrude from the end of the line
+            Vector tangentVector = new Vector(tangent.X, tangent.Y);
+            //reverse it so it points backwards for a barb
+            if (!reverse)
+            {
+                tangentVector = -tangentVector;
+            }
+            tangentVector.Normalize();
+            tangentVector *= HeadLength;
 
             PolyLineSegment polyseg = new PolyLineSegment();
 
-            var pointa = intersection + perp;
+            Matrix barbMatrix = new Matrix();
+            barbMatrix.Rotate(HeadAngle);
+
+            var firstBarb = tangentVector * barbMatrix;
+            var pointA = endPoint + firstBarb;
 
             polyseg.Points.Add(endPoint);
 
-            var pointb = intersection - perp;
-            polyseg.Points.Add(pointb);
+            barbMatrix.Rotate(-2 * HeadAngle);
+            var secondBarb = tangentVector * barbMatrix;
+            var pointB = endPoint + secondBarb;
+
+            polyseg.Points.Add(pointB);
 
             PathSegmentCollection psc = new PathSegmentCollection { polyseg };
 
-            PathFigure pathfig = new PathFigure(pointa, psc, ArrowHeadClosed);
+            PathFigure pathfig = new PathFigure(pointA, psc, ArrowHeadClosed);
 
             return pathfig;
         }
