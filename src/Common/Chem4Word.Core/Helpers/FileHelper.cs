@@ -6,13 +6,18 @@
 // ---------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Chem4Word.Core.Helpers
 {
     public static class FileHelper
     {
+        // Remove any illegal windows characters
+        static readonly char[] InvalidChars = Path.GetInvalidFileNameChars();
+
         /// <summary>
         /// Backs up a file
         /// </summary>
@@ -123,6 +128,60 @@ namespace Chem4Word.Core.Helpers
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Suggests a file name based on Chem4Word Guid (or Library id), Formula, Quick Name
+        /// </summary>
+        /// <param name="properties">dictionary of properties</param>
+        /// <returns>string with suggested file name</returns>
+        public static string SuggestedFileName(Dictionary<string, string> properties)
+        {
+            // ToDo: Add some bullet proofing
+
+            List<string> parts = new List<string> { "Chem4Word" };
+
+            if (properties.TryGetValue("Id", out string id))
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    id = Guid.NewGuid().ToString("N");
+                }
+
+                if (!string.IsNullOrEmpty(id))
+                {
+                    parts.Add(id);
+                }
+            }
+
+            if (properties.TryGetValue("Formula", out string formula))
+            {
+                formula = formula.Replace(" ", "");
+                formula = formula.Replace(".", "");
+                formula = new string(formula.Where(c => !InvalidChars.Contains(c)).ToArray());
+
+                if (!string.IsNullOrEmpty(formula))
+                {
+                    parts.Add(formula);
+                }
+            }
+
+            if (properties.TryGetValue("QuickName", out string quickName))
+            {
+                quickName = quickName.Replace(".", "");
+                quickName = quickName.Replace(@"\", "");
+
+                quickName = new string(quickName.Where(c => !InvalidChars.Contains(c)).ToArray());
+                if (!string.IsNullOrEmpty(quickName))
+                {
+                    parts.Add(quickName);
+                }
+            }
+
+            string result = string.Join("-", parts);
+
+            // ToDo: Make this check the full file path
+            return result.Substring(0, Math.Min(result.Length, 200));
         }
     }
 }

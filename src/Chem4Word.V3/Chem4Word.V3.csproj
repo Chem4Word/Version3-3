@@ -251,6 +251,7 @@
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=9.0.0.9, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.9.0.9\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Formats.Nrbf, Version=9.0.0.9, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -529,6 +530,7 @@
     <Content Include="Resources\Button Images\DocumentFind.png" />
     <Content Include="Resources\Button Images\DocumentMake.png" />
     <Content Include="Resources\Button Images\Export.png" />
+    <Content Include="Resources\Button Images\ExportAll.png" />
     <Content Include="Resources\Button Images\Help.png" />
     <Content Include="Resources\Button Images\Home.png" />
     <Content Include="Resources\Button Images\Import.png" />
@@ -659,6 +661,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Content Include="Resources\Button Images\YouTube.png" />
+    <None Include="Resources\Button Images\SDFile.png" />
     <Content Include="Resources\SingleCarbon.xml">
       <SubType>Designer</SubType>
     </Content>

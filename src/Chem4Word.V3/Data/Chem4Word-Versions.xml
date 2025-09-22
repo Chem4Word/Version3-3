@@ -7,6 +7,7 @@
     <IsBeta>false</IsBeta>
     <Released>01-Jul-2025</Released>
     <Changes>
+      <Change>New Feature: Export all structures in document to CML/SD Files</Change>
       <Change>Internal: Update to .Net Framework 4.7.1</Change>
       <Change>Internal: Refactor of OoXml renderer</Change>
       <Change>New Feature: Theoretical reaction type added</Change>

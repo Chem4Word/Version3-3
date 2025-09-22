@@ -24,6 +24,7 @@ using Chem4Word.UI.WPF;
 using IChem4Word.Contracts;
 using Microsoft.Office.Core;
 using Microsoft.Office.Tools.Ribbon;
+using Ookii.Dialogs.WinForms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -2759,6 +2760,164 @@ namespace Chem4Word
                 {
                     form.ShowDialog();
                 }
+            }
+
+            AfterButtonChecks(sender as RibbonButton);
+        }
+
+        private void OnClick_ExportAllToCML(object sender, RibbonControlEventArgs e)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            BeforeButtonChecks();
+
+            if (Globals.Chem4WordV3.Telemetry != null)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            }
+            else
+            {
+                RegistryHelper.StoreMessage(module, "Triggered");
+            }
+
+            if (Globals.Chem4WordV3.EventsEnabled && Globals.Chem4WordV3.ChemistryAllowed)
+            {
+                Globals.Chem4WordV3.EventsEnabled = false;
+
+                ExportMultipleFiles("cml");
+
+                Globals.Chem4WordV3.EventsEnabled = true;
+            }
+
+            AfterButtonChecks(sender as RibbonButton);
+        }
+
+        private static void ExportMultipleFiles(string format)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
+            try
+            {
+                var application = Globals.Chem4WordV3.Application;
+                var activeDocument = application.ActiveDocument;
+
+                CustomXMLPart customXmlPart;
+
+                List<Model> aggregatedCML = new List<Model>();
+
+                SdFileConverter sdConverter = new SdFileConverter();
+                CMLConverter cmlConverter = new CMLConverter();
+
+                if (activeDocument.ContentControls.Count > 0)
+                {
+                    foreach (dynamic contentControl in activeDocument.ContentControls)
+                    {
+                        if (contentControl.Title != null &&
+                            contentControl.Title.Equals(CoreConstants.ContentControlTitle))
+                        {
+                            customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(activeDocument, contentControl.Tag);
+                            if (customXmlPart != null)
+                            {
+                                var model = cmlConverter.Import(customXmlPart.XML);
+                                aggregatedCML.Add(model);
+                            }
+                        }
+                    }
+
+                    if (aggregatedCML.Any())
+                    {
+                        var browserDialog = new VistaFolderBrowserDialog();
+                        browserDialog.Description = "Export All Chemistry to Files";
+                        browserDialog.UseDescriptionForTitle = true;
+
+                        var dr = browserDialog.ShowDialog();
+                        if (dr == DialogResult.OK)
+                        {
+                            var folderInfo = new DirectoryInfo(browserDialog.SelectedPath);
+
+                            if (folderInfo.GetFiles($"*.{format}").Any())
+                            {
+                                if (UserInteractions.AskUserYesNo(
+                                        $"The folder '{browserDialog.SelectedPath}' contains {format.ToUpper()} files. These might be overwritten.\nDo you want to continue?",
+                                        defaultButton: MessageBoxDefaultButton.Button2) == DialogResult.No)
+                                {
+                                    return;
+                                }
+                            }
+
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information",
+                                                                $"Exporting to '{folderInfo.FullName}'");
+                            int tempCount = 1;
+                            foreach (Model model in aggregatedCML)
+                            {
+                                string fileName = FileHelper.SuggestedFileName(new Dictionary<string, string>
+                                                                        {
+                                                                            {"Id", model.CustomXmlPartGuid},
+                                                                            {"Formula", model.ConciseFormula},
+                                                                            {"QuickName", model.QuickName}
+                                                                        });
+
+                                if (string.IsNullOrEmpty(fileName))
+                                {
+                                    fileName = $"Chem4Word_Structure_{tempCount.ToString()}.{format}";
+                                    tempCount++;
+                                }
+                                else
+                                {
+                                    fileName += $".{format}";
+                                }
+
+                                fileName = Path.Combine(folderInfo.FullName, fileName);
+
+                                string output = format == "sdf"
+                                    ? sdConverter.Export(model)
+                                    : XmlHelper.AddHeader(cmlConverter.Export(model));
+
+                                File.WriteAllText(fileName, output);
+                            }
+
+                            UserInteractions.InformUser($"{aggregatedCML.Count} Structures written to folder '{folderInfo.FullName}'.");
+                        }
+                    }
+                    else
+                    {
+                        UserInteractions.InformUser("No chemistry in document!");
+                    }
+                }
+                else
+                {
+                    UserInteractions.InformUser("No chemistry in document!");
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                {
+                    form.ShowDialog();
+                }
+            }
+        }
+
+        private void OnClick_ExportAllToSDFiles(object sender, RibbonControlEventArgs e)
+        {
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            BeforeButtonChecks();
+
+            if (Globals.Chem4WordV3.Telemetry != null)
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            }
+            else
+            {
+                RegistryHelper.StoreMessage(module, "Triggered");
+            }
+
+            if (Globals.Chem4WordV3.EventsEnabled && Globals.Chem4WordV3.ChemistryAllowed)
+            {
+                Globals.Chem4WordV3.EventsEnabled = false;
+
+                ExportMultipleFiles("sdf");
+
+                Globals.Chem4WordV3.EventsEnabled = true;
             }
 
             AfterButtonChecks(sender as RibbonButton);

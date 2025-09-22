@@ -118,152 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Find" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\find.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="DocumentFind" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\documentfind.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\xml.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Library_Edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Button Images\Office-2016\Library-Edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="FileOpen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\button images\fileopen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Trash" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\trash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ChemDoodleBadge" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\about images\chemdoodlewebbadge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SmallTick" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\smalltick.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="FileSave" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\filesave.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DocumentMake" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\documentmake.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EmptyStructure_cml" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\emptystructure.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Show" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\show.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="About" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\about.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ms_word_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\ms-word-16.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TrashRed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\trashred.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Xaml" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\xaml.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="LabelAdd" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\labeladd.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Options" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="LabelError" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\labelerror.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="LabelValid" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\labelvalid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Search" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Cml" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\cml.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Label" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\label.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DocumentFind" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\documentfind.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Draw" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\draw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Preferences" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\preferences.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Gear" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\gear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Navigation_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\navigation-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ArrowLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\arrowleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ArrowRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\arrowright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Upgrade" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\upgrade.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Edit_Labels" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\office-2016\edit-labels.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="File_Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\office-2016\file-open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="File_Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\office-2016\file-save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Navigator_Toggle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\office-2016\navigator-toggle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="View_As" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\view as.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="WebSearch" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\office-2016\websearch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Separate_Molecules" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\office-2016\separate-molecules.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Export" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\export.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Import" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\import.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Shield_Danger" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\shield-danger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Shield_Good" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\shield-good.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Shield_Warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\shield-warning.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="C4W_Background_512" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\about images\c4w background 512.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Help" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\help.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Home" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\home.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Library_Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Button Images\Office-2016\Library-Delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Information" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\button images\information.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Manual" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\manual.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="File_Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\office-2016\file-open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="YouTube" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\youtube.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ArrowLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\arrowleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Locked" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\locked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\xml.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Code" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\button images\code.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Library_Find" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Button Images\Office-2016\Library-Find.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Libraries_Manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Button Images\Office-2016\Libraries-Manage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SingleCarbon_cml" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\singlecarbon.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -271,28 +154,151 @@
   <data name="Settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Button Images\Settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Library_Buy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Button Images\Office-2016\Library-Buy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Find" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\find.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Library_Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Button Images\Office-2016\Library-Delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="LabelAdd" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\labeladd.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Library_Find" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Button Images\Office-2016\Library-Find.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Library_Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Button Images\Office-2016\Library-Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Upgrade" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\upgrade.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Library_Toggle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Button Images\Office-2016\Library-Toggle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Libraries_Manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Button Images\Office-2016\Libraries-Manage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Trash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\trash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Library_Edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Button Images\Office-2016\Library-Edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ChemDoodleBadge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\about images\chemdoodlewebbadge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Label" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\label.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Pound" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Button Images\Pound.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Locked" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\locked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Draw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\draw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="View_As" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\view as.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ms_word_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\ms-word-16.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="C4W_Background_512" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\about images\c4w background 512.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Navigator_Toggle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\office-2016\navigator-toggle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WebSearch" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\office-2016\websearch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FileSave" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\filesave.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="File_Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\office-2016\file-save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YouTube" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\youtube.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DocumentMake" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\documentmake.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EmptyStructure_cml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\emptystructure.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Separate_Molecules" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\office-2016\separate-molecules.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Export" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\export.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="About" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\about.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Import" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\import.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TrashRed" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\trashred.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Navigation_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\navigation-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ArrowRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\arrowright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit_Labels" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\office-2016\edit-labels.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Code" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\code.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Shield_Danger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\shield-danger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LabelError" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\labelerror.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LabelValid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\labelvalid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Library_Buy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Button Images\Office-2016\Library-Buy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Home" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\home.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Search" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Cml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\cml.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Help" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\help.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Options" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Show" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\show.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Shield_Good" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\shield-good.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Manual" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\manual.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Gear" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\gear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SmallTick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\smalltick.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Preferences" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\preferences.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Library_Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Button Images\Office-2016\Library-Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Xaml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\xaml.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Shield_Warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\button images\shield-warning.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SDFile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Button Images\SDFile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExportAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Button Images\ExportAll.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

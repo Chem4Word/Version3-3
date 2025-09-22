@@ -193,6 +193,16 @@ namespace Chem4Word.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ExportAll {
+            get {
+                object obj = ResourceManager.GetObject("ExportAll", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap File_Open {
             get {
                 object obj = ResourceManager.GetObject("File_Open", resourceCulture);
@@ -476,6 +486,16 @@ namespace Chem4Word.Properties {
         internal static System.Drawing.Bitmap Preferences {
             get {
                 object obj = ResourceManager.GetObject("Preferences", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SDFile {
+            get {
+                object obj = ResourceManager.GetObject("SDFile", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

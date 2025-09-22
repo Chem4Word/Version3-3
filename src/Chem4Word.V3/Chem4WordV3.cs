@@ -1391,6 +1391,7 @@ namespace Chem4Word
                             Ribbon.ViewCml.Enabled = false;
                             Ribbon.ImportFromFile.Enabled = false;
                             Ribbon.ExportToFile.Enabled = false;
+                            Ribbon.ExportAll.Enabled = false;
                             Ribbon.ShowAsMenu.Enabled = false;
                             Ribbon.ShowNavigator.Enabled = false;
                             Ribbon.ShowLibrary.Enabled = false;
@@ -1410,6 +1411,7 @@ namespace Chem4Word
                             Ribbon.ViewCml.Enabled = true;
                             Ribbon.ImportFromFile.Enabled = false;
                             Ribbon.ExportToFile.Enabled = true;
+                            Ribbon.ExportAll.Enabled = DocumentHasChemistry(Application.ActiveDocument);
                             Ribbon.ShowAsMenu.Enabled = true;
                             Ribbon.ShowNavigator.Enabled = true;
                             Ribbon.ShowLibrary.Enabled = true;
@@ -1434,6 +1436,7 @@ namespace Chem4Word
                             Ribbon.ViewCml.Enabled = false;
                             Ribbon.ImportFromFile.Enabled = plugInsLoaded;
                             Ribbon.ExportToFile.Enabled = false;
+                            Ribbon.ExportAll.Enabled = DocumentHasChemistry(Application.ActiveDocument);
                             Ribbon.ShowAsMenu.Enabled = false;
                             Ribbon.ShowNavigator.Enabled = true;
                             Ribbon.ShowLibrary.Enabled = true;
@@ -1463,6 +1466,7 @@ namespace Chem4Word
                         Ribbon.ViewCml.Enabled = false;
                         Ribbon.ImportFromFile.Enabled = false;
                         Ribbon.ExportToFile.Enabled = false;
+                        Ribbon.ExportAll.Enabled = false;
                         Ribbon.ShowAsMenu.Enabled = false;
                         Ribbon.ShowNavigator.Enabled = false;
                         Ribbon.ShowLibrary.Enabled = false;

@@ -41,6 +41,9 @@ namespace Chem4Word
             this.ImportFromFile = this.Factory.CreateRibbonButton();
             this.WebSearchMenu = this.Factory.CreateRibbonMenu();
             this.ExportToFile = this.Factory.CreateRibbonButton();
+            this.ExportAll = this.Factory.CreateRibbonMenu();
+            this.ExportAllToCML = this.Factory.CreateRibbonButton();
+            this.ExportAllToSDfiles = this.Factory.CreateRibbonButton();
             this.GroupLibrary = this.Factory.CreateRibbonGroup();
             this.ShowLibrary = this.Factory.CreateRibbonToggleButton();
             this.ManageLibraries = this.Factory.CreateRibbonButton();
@@ -87,6 +90,7 @@ namespace Chem4Word
             this.GroupInputOutput.Items.Add(this.ImportFromFile);
             this.GroupInputOutput.Items.Add(this.WebSearchMenu);
             this.GroupInputOutput.Items.Add(this.ExportToFile);
+            this.GroupInputOutput.Items.Add(this.ExportAll);
             this.GroupInputOutput.Label = "External";
             this.GroupInputOutput.Name = "GroupInputOutput";
             // 
@@ -123,6 +127,35 @@ namespace Chem4Word
             this.ExportToFile.ScreenTip = "Export the selected structure to a chemistry file";
             this.ExportToFile.ShowImage = true;
             this.ExportToFile.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_Export);
+            // 
+            // ExportAll
+            // 
+            this.ExportAll.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.ExportAll.Enabled = false;
+            this.ExportAll.Image = global::Chem4Word.Properties.Resources.ExportAll;
+            this.ExportAll.Items.Add(this.ExportAllToCML);
+            this.ExportAll.Items.Add(this.ExportAllToSDfiles);
+            this.ExportAll.Label = "Export All";
+            this.ExportAll.Name = "ExportAll";
+            this.ExportAll.ShowImage = true;
+            // 
+            // ExportAllToCML
+            // 
+            this.ExportAllToCML.Image = global::Chem4Word.Properties.Resources.Cml;
+            this.ExportAllToCML.Label = "CML Files";
+            this.ExportAllToCML.Name = "ExportAllToCML";
+            this.ExportAllToCML.ScreenTip = "Export all structures as CML";
+            this.ExportAllToCML.ShowImage = true;
+            this.ExportAllToCML.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_ExportAllToCML);
+            // 
+            // ExportAllToSDfiles
+            // 
+            this.ExportAllToSDfiles.Image = global::Chem4Word.Properties.Resources.SDFile;
+            this.ExportAllToSDfiles.Label = "SD Files";
+            this.ExportAllToSDfiles.Name = "ExportAllToSDfiles";
+            this.ExportAllToSDfiles.ScreenTip = "Export all structures as SDF";
+            this.ExportAllToSDfiles.ShowImage = true;
+            this.ExportAllToSDfiles.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OnClick_ExportAllToSDFiles);
             // 
             // GroupLibrary
             // 
@@ -433,6 +466,9 @@ namespace Chem4Word
         internal Microsoft.Office.Tools.Ribbon.RibbonButton BuyLibrary;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton EditLibrary;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton Donate;
+        internal Microsoft.Office.Tools.Ribbon.RibbonMenu ExportAll;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ExportAllToCML;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ExportAllToSDfiles;
     }
 
     partial class ThisRibbonCollection

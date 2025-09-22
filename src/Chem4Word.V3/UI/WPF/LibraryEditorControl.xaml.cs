@@ -1111,7 +1111,6 @@ namespace Chem4Word.UI.WPF
                                     progress++;
                                     ShowProgress(progress, $"Structure #{obj.Id} [{progress}/{total}]");
 
-                                    var filename = Path.Combine(browser.SelectedPath, $"Chem4Word-{obj.Id:000000000}.cml");
                                     Model model;
                                     if (obj.DataType.Equals("cml"))
                                     {
@@ -1121,6 +1120,16 @@ namespace Chem4Word.UI.WPF
                                     {
                                         model = protocolBufferConverter.Import(obj.Chemistry);
                                     }
+
+                                    var filename = Path.Combine(browser.SelectedPath,
+                                                            FileHelper.SuggestedFileName(
+                                                                new Dictionary<string, string>
+                                                                {
+                                                                    { "Id", $"{obj.Id:000000000}" },
+                                                                    { "Formula", model.ConciseFormula },
+                                                                    { "QuickName", model.QuickName }
+                                                                }))
+                                                   + ".cml";
 
                                     model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength, false);
 

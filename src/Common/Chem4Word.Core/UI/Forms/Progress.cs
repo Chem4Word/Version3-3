@@ -96,7 +96,7 @@ namespace Chem4Word.Core.UI.Forms
                 CreateParams myCp = base.CreateParams;
 #if DEBUG
 #else
-                myCp.ClassStyle = myCp.ClassStyle | CP_NOCLOSE_BUTTON;
+                myCp.ClassStyle |= CoreConstants.CpNoCloseButton;
 #endif
                 return myCp;
             }

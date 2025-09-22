@@ -9,6 +9,9 @@ namespace Chem4Word.Core
 {
     public static class CoreConstants
     {
+        // Set ClassStyle in Progress.cs
+        public const int CpNoCloseButton = 0x200;
+
         public static readonly string[] OurDomains = { "https://www.chem4word.co.uk", "http://www.chem4word.com", "https://chem4word.azurewebsites.net" };
         public const string MessageBoxTitle = "Chemistry Add-In for Word";
 
