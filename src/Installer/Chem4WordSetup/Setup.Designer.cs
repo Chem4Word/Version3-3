@@ -34,12 +34,12 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.Information = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.WordRunning = new Chem4WordSetup.TaskIndicator();
             this.WindowsInstalled = new Chem4WordSetup.TaskIndicator();
             this.WordInstalled = new Chem4WordSetup.TaskIndicator();
             this.AddInInstalled = new Chem4WordSetup.TaskIndicator();
             this.VstoInstalled = new Chem4WordSetup.TaskIndicator();
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // Action
@@ -74,6 +74,11 @@
             // 
             this.timer1.Interval = 250;
             this.timer1.Tick += new System.EventHandler(this.OnTick_timer1);
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 250;
+            this.timer2.Tick += new System.EventHandler(this.OnTick_timer2);
             // 
             // WordRunning
             // 
@@ -134,11 +139,6 @@
             this.VstoInstalled.Name = "VstoInstalled";
             this.VstoInstalled.Size = new System.Drawing.Size(306, 34);
             this.VstoInstalled.TabIndex = 2;
-            // 
-            // timer2
-            // 
-            this.timer2.Interval = 250;
-            this.timer2.Tick += new System.EventHandler(this.OnTick_timer2);
             // 
             // Setup
             // 

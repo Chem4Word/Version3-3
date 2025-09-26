@@ -18,10 +18,10 @@ namespace Chem4WordUpdater
 
         public static void WriteAction(string action)
         {
-            var key = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordUpdateRegistryKey);
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(Constants.Chem4WordUpdateRegistryKey);
             if (key != null)
             {
-                var procId = 0;
+                int procId = 0;
                 try
                 {
                     procId = Process.GetCurrentProcess().Id;
@@ -30,7 +30,7 @@ namespace Chem4WordUpdater
                 {
                     //
                 }
-                var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 key.SetValue($"{timestamp} [{procId}.{_counter++.ToString("000")}]", $"[{procId}] {action}");
             }
         }

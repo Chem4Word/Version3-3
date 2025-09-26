@@ -22,15 +22,5 @@ namespace Chem4Word.Searcher.ChEBIPlugin.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.ebi.ac.uk:80/webservices/chebi/2.0/webservice")]
-        public string Chem4Word_Searcher_ChEBIPlugin_uk_ac_ebi_www_ChebiWebServiceService {
-            get {
-                return ((string)(this["Chem4Word_Searcher_ChEBIPlugin_uk_ac_ebi_www_ChebiWebServiceService"]));
-            }
-        }
     }
 }

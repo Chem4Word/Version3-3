@@ -123,7 +123,7 @@
             this.ChebiWsUri.Name = "ChebiWsUri";
             this.ChebiWsUri.Size = new System.Drawing.Size(422, 27);
             this.ChebiWsUri.TabIndex = 35;
-            this.ChebiWsUri.Text = "https://www.ebi.ac.uk/webservices/chebi/2.0/webservice";
+            this.ChebiWsUri.Text = "https://www.ebi.ac.uk/chebi";
             this.ChebiWsUri.TextChanged += new System.EventHandler(this.OnTextChanged_ChebiWsUri);
             // 
             // SetDefaults

@@ -3,236 +3,236 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:acme="clr-namespace:Chem4Word.ACME">
 
-    <Pen
+  <Pen
         x:Key="ArrowPen"
         Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
         LineJoin="Miter"
         Thickness="0.75" />
-    <Pen
+  <Pen
         x:Key="DashPen"
         Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
         LineJoin="Miter"
         Thickness="0.75">
-        <Pen.DashStyle>
-            <DashStyle Dashes="2,4" />
-        </Pen.DashStyle>
-    </Pen>
+    <Pen.DashStyle>
+      <DashStyle Dashes="2,4" />
+    </Pen.DashStyle>
+  </Pen>
 
-    <x:Array x:Key="ReactionOptions" Type="acme:ReactionOption">
-        <acme:ReactionOption Id="1" ReactionType="Normal">
-            <acme:ReactionOption.ReactionGraphic>
-                <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry>
-                            <PathFigure IsClosed="False" StartPoint="0,5">
-                                <LineSegment Point="30,5" />
-                            </PathFigure>
-                            <PathFigure
+  <x:Array x:Key="ReactionOptions" Type="acme:ReactionOption">
+    <acme:ReactionOption Id="1" ReactionType="Normal">
+      <acme:ReactionOption.ReactionGraphic>
+        <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
+          <GeometryDrawing.Geometry>
+            <PathGeometry>
+              <PathFigure IsClosed="False" StartPoint="0,5">
+                <LineSegment Point="30,5" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="True"
                                 IsFilled="True"
                                 StartPoint="35,5">
-                                <LineSegment Point="30,3" />
-                                <LineSegment Point="30, 7" />
-                            </PathFigure>
-                        </PathGeometry>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </acme:ReactionOption.ReactionGraphic>
-        </acme:ReactionOption>
+                <LineSegment Point="30,3" />
+                <LineSegment Point="30, 7" />
+              </PathFigure>
+            </PathGeometry>
+          </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+      </acme:ReactionOption.ReactionGraphic>
+    </acme:ReactionOption>
 
-        <acme:ReactionOption Id="2" ReactionType="Reversible">
-            <acme:ReactionOption.ReactionGraphic>
-                <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry>
-                            <PathFigure
+    <acme:ReactionOption Id="2" ReactionType="Reversible">
+      <acme:ReactionOption.ReactionGraphic>
+        <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
+          <GeometryDrawing.Geometry>
+            <PathGeometry>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="0,3">
-                                <LineSegment Point="35,3" />
-                                <LineSegment Point="30,1" />
-                            </PathFigure>
-                            <PathFigure
+                <LineSegment Point="35,3" />
+                <LineSegment Point="30,1" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="35,7">
-                                <LineSegment Point="0,7" />
-                                <LineSegment Point="5,9" />
-                            </PathFigure>
-                        </PathGeometry>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </acme:ReactionOption.ReactionGraphic>
-        </acme:ReactionOption>
+                <LineSegment Point="0,7" />
+                <LineSegment Point="5,9" />
+              </PathFigure>
+            </PathGeometry>
+          </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+      </acme:ReactionOption.ReactionGraphic>
+    </acme:ReactionOption>
 
-        <acme:ReactionOption Id="3" ReactionType="ReversibleBiasedForward">
-            <acme:ReactionOption.ReactionGraphic>
-                <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry>
-                            <PathFigure
+    <acme:ReactionOption Id="3" ReactionType="ReversibleBiasedForward">
+      <acme:ReactionOption.ReactionGraphic>
+        <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
+          <GeometryDrawing.Geometry>
+            <PathGeometry>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="0,3">
-                                <LineSegment Point="35,3" />
-                                <LineSegment Point="30,1" />
-                            </PathFigure>
-                            <PathFigure
+                <LineSegment Point="35,3" />
+                <LineSegment Point="30,1" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="25,7">
-                                <LineSegment Point="10,7" />
-                                <LineSegment Point="15,9" />
-                            </PathFigure>
-                        </PathGeometry>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </acme:ReactionOption.ReactionGraphic>
-        </acme:ReactionOption>
+                <LineSegment Point="10,7" />
+                <LineSegment Point="15,9" />
+              </PathFigure>
+            </PathGeometry>
+          </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+      </acme:ReactionOption.ReactionGraphic>
+    </acme:ReactionOption>
 
-        <acme:ReactionOption Id="4" ReactionType="ReversibleBiasedReverse">
-            <acme:ReactionOption.ReactionGraphic>
-                <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry>
-                            <PathFigure
+    <acme:ReactionOption Id="4" ReactionType="ReversibleBiasedReverse">
+      <acme:ReactionOption.ReactionGraphic>
+        <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
+          <GeometryDrawing.Geometry>
+            <PathGeometry>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="10,3">
-                                <LineSegment Point="25,3" />
-                                <LineSegment Point="20,1" />
-                            </PathFigure>
-                            <PathFigure
+                <LineSegment Point="25,3" />
+                <LineSegment Point="20,1" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="35,7">
-                                <LineSegment Point="0,7" />
-                                <LineSegment Point="5,9" />
-                            </PathFigure>
-                        </PathGeometry>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </acme:ReactionOption.ReactionGraphic>
-        </acme:ReactionOption>
+                <LineSegment Point="0,7" />
+                <LineSegment Point="5,9" />
+              </PathFigure>
+            </PathGeometry>
+          </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+      </acme:ReactionOption.ReactionGraphic>
+    </acme:ReactionOption>
 
-        <acme:ReactionOption Id="5" ReactionType="Blocked">
-            <acme:ReactionOption.ReactionGraphic>
-                <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry>
-                            <PathFigure IsClosed="False" StartPoint="0,5">
-                                <LineSegment Point="30,5" />
-                            </PathFigure>
-                            <PathFigure
+    <acme:ReactionOption Id="5" ReactionType="Blocked">
+      <acme:ReactionOption.ReactionGraphic>
+        <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
+          <GeometryDrawing.Geometry>
+            <PathGeometry>
+              <PathFigure IsClosed="False" StartPoint="0,5">
+                <LineSegment Point="30,5" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="True"
                                 IsFilled="True"
                                 StartPoint="35,5">
-                                <LineSegment Point="30,3" />
-                                <LineSegment Point="30,7" />
-                            </PathFigure>
-                            <PathFigure
+                <LineSegment Point="30,3" />
+                <LineSegment Point="30,7" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="14,2">
-                                <LineSegment Point="20,8" />
-                            </PathFigure>
-                            <PathFigure
+                <LineSegment Point="20,8" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="20,2">
-                                <LineSegment Point="14,8" />
-                            </PathFigure>
-                        </PathGeometry>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </acme:ReactionOption.ReactionGraphic>
-        </acme:ReactionOption>
+                <LineSegment Point="14,8" />
+              </PathFigure>
+            </PathGeometry>
+          </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+      </acme:ReactionOption.ReactionGraphic>
+    </acme:ReactionOption>
 
-        <acme:ReactionOption Id="6" ReactionType="Resonance">
-            <acme:ReactionOption.ReactionGraphic>
-                <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry>
-                            <PathFigure IsClosed="False" StartPoint="0,5">
-                                <LineSegment Point="30,5" />
-                            </PathFigure>
-                            <PathFigure
+    <acme:ReactionOption Id="6" ReactionType="Resonance">
+      <acme:ReactionOption.ReactionGraphic>
+        <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
+          <GeometryDrawing.Geometry>
+            <PathGeometry>
+              <PathFigure IsClosed="False" StartPoint="0,5">
+                <LineSegment Point="30,5" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="True"
                                 IsFilled="True"
                                 StartPoint="35,5">
-                                <LineSegment Point="30,3" />
-                                <LineSegment Point="30,7" />
-                            </PathFigure>
-                            <PathFigure
+                <LineSegment Point="30,3" />
+                <LineSegment Point="30,7" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="True"
                                 IsFilled="True"
                                 StartPoint="0,5">
-                                <LineSegment Point="5,3" />
-                                <LineSegment Point="5,7" />
-                            </PathFigure>
-                        </PathGeometry>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </acme:ReactionOption.ReactionGraphic>
-        </acme:ReactionOption>
+                <LineSegment Point="5,3" />
+                <LineSegment Point="5,7" />
+              </PathFigure>
+            </PathGeometry>
+          </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+      </acme:ReactionOption.ReactionGraphic>
+    </acme:ReactionOption>
 
-        <acme:ReactionOption Id="7" ReactionType="Retrosynthetic">
-            <acme:ReactionOption.ReactionGraphic>
-                <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry>
-                            <PathFigure
+    <acme:ReactionOption Id="7" ReactionType="Retrosynthetic">
+      <acme:ReactionOption.ReactionGraphic>
+        <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
+          <GeometryDrawing.Geometry>
+            <PathGeometry>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="0,3">
-                                <LineSegment Point="35,3" />
-                            </PathFigure>
-                            <PathFigure
+                <LineSegment Point="35,3" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="0,7">
-                                <LineSegment Point="35,7" />
-                            </PathFigure>
-                            <PathFigure
+                <LineSegment Point="35,7" />
+              </PathFigure>
+              <PathFigure
                                 IsClosed="False"
                                 IsFilled="False"
                                 StartPoint="33,1">
-                                <LineSegment Point="37,5" />
-                                <LineSegment Point="33,9" />
-                            </PathFigure>
-                        </PathGeometry>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </acme:ReactionOption.ReactionGraphic>
-        </acme:ReactionOption>
+                <LineSegment Point="37,5" />
+                <LineSegment Point="33,9" />
+              </PathFigure>
+            </PathGeometry>
+          </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+      </acme:ReactionOption.ReactionGraphic>
+    </acme:ReactionOption>
 
-        <acme:ReactionOption Id="8" ReactionType="Theoretical">
-            <acme:ReactionOption.ReactionGraphic>
-                <DrawingGroup>
-                    <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource DashPen}">
-                        <GeometryDrawing.Geometry>
-                            <PathGeometry>
-                                <PathFigure IsClosed="False" StartPoint="0,5">
-                                    <LineSegment Point="30,5" />
-                                </PathFigure>
-                            </PathGeometry>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
-                        <GeometryDrawing.Geometry>
-                            <PathGeometry>
-                                <PathFigure
+    <acme:ReactionOption Id="8" ReactionType="Theoretical">
+      <acme:ReactionOption.ReactionGraphic>
+        <DrawingGroup>
+          <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource DashPen}">
+            <GeometryDrawing.Geometry>
+              <PathGeometry>
+                <PathFigure IsClosed="False" StartPoint="0,5">
+                  <LineSegment Point="30,5" />
+                </PathFigure>
+              </PathGeometry>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+          <GeometryDrawing Brush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" Pen="{StaticResource ArrowPen}">
+            <GeometryDrawing.Geometry>
+              <PathGeometry>
+                <PathFigure
                                     IsClosed="True"
                                     IsFilled="True"
                                     StartPoint="35,5">
-                                    <LineSegment Point="30,3" />
-                                    <LineSegment Point="30, 7" />
-                                </PathFigure>
-                            </PathGeometry>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                </DrawingGroup>
-            </acme:ReactionOption.ReactionGraphic>
-        </acme:ReactionOption>
-    </x:Array>
+                  <LineSegment Point="30,3" />
+                  <LineSegment Point="30, 7" />
+                </PathFigure>
+              </PathGeometry>
+            </GeometryDrawing.Geometry>
+          </GeometryDrawing>
+        </DrawingGroup>
+      </acme:ReactionOption.ReactionGraphic>
+    </acme:ReactionOption>
+  </x:Array>
 </ResourceDictionary>

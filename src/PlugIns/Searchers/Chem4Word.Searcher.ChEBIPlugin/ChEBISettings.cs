@@ -48,7 +48,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         public void RestoreControls()
         {
-            ChebiWsUri.Text = SearcherOptions.ChEBIWebServiceUri;
+            ChebiWsUri.Text = SearcherOptions.ChEBIWebService2Uri;
             DisplayOrder.Value = SearcherOptions.DisplayOrder;
             ResultsPerCall.Value = SearcherOptions.MaximumResults;
         }
@@ -186,7 +186,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                SearcherOptions.ChEBIWebServiceUri = ChebiWsUri.Text;
+                SearcherOptions.ChEBIWebService2Uri = ChebiWsUri.Text;
                 _dirty = true;
             }
             catch (Exception ex)

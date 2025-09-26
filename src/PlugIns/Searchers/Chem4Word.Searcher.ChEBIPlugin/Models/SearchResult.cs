@@ -5,17 +5,20 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-namespace Chem4Word.Searcher.ChEBIPlugin
+using Newtonsoft.Json;
+using System.Collections.Generic;
+
+namespace Chem4Word.Searcher.ChEBIPlugin.Models
 {
-    public class Constants
+    public class SearchResult
     {
-        #region Fields
+        [JsonProperty("results")]
+        public List<Result> Results { get; set; }
 
-        public static string DefaultChEBIWebServiceUri = "https://www.ebi.ac.uk/chebi";
+        [JsonProperty("total")]
+        public int Total { get; set; }
 
-        public static int DefaultDisplayOrder = 30;
-        public static int DefaultMaximumSearchResults = 20;
-
-        #endregion Fields
+        [JsonProperty("number_pages")]
+        public int NumberPages { get; set; }
     }
 }
