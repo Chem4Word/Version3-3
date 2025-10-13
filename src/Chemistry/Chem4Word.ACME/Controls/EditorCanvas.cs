@@ -195,6 +195,32 @@ namespace Chem4Word.ACME.Controls
             return result;
         }
 
+        public SingleObjectSelectionAdorner GetSingleObjectAdorner(Point p)
+        {
+            SingleObjectSelectionAdorner result = null;
+
+            var layer = AdornerLayer.GetAdornerLayer(this);
+            var children = layer.GetAdorners(this);
+            if (children != null)
+            {
+                foreach (var adorner in children)
+                {
+                    if (adorner is SingleObjectSelectionAdorner singleObjectSelectionAdorner && !(adorner is MoleculeSelectionAdorner))
+                    {
+                        var bb = singleObjectSelectionAdorner.BoundingBox;
+                        if (bb.Contains(p))
+                        {
+                            result = singleObjectSelectionAdorner;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         #endregion Methods
 
         #region Overrides

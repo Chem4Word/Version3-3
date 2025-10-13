@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Enums;
-using Chem4Word.Core.Helpers;
 using System;
 using System.Windows;
 using System.Windows.Media;

@@ -46,7 +46,11 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         protected bool IsWorking => Dragging;
 
+        public Rect BoundingBox => _bigBoundingBox;
+        private Rect _bigBoundingBox;
+
         private Geometry _ghostMolecule;
+        
 
         public SingleObjectSelectionAdorner(EditorCanvas currentEditor, Molecule molecule)
             : this(currentEditor, new List<BaseObject> { molecule })
@@ -156,19 +160,19 @@ namespace Chem4Word.ACME.Adorners.Selectors
         {
             // desiredWidth and desiredHeight are the width and height of the element that's being adorned.
             // These will be used to place the ResizingAdorner at the corners of the adorned element.
-            var bigBoundingBox = CurrentEditor.GetCombinedBoundingBox(AdornedObjects);
+            _bigBoundingBox = CurrentEditor.GetCombinedBoundingBox(AdornedObjects);
 
             if (LastOperation != null)
             {
-                bigBoundingBox = LastOperation.TransformBounds(bigBoundingBox);
+                _bigBoundingBox = LastOperation.TransformBounds(BoundingBox);
             }
 
             //put a box right around the entire shebang
-            BigThumb.Arrange(bigBoundingBox);
-            Canvas.SetLeft(BigThumb, bigBoundingBox.Left);
-            Canvas.SetTop(BigThumb, bigBoundingBox.Top);
-            BigThumb.Height = bigBoundingBox.Height;
-            BigThumb.Width = bigBoundingBox.Width;
+            BigThumb.Arrange(BoundingBox);
+            Canvas.SetLeft(BigThumb, BoundingBox.Left);
+            Canvas.SetTop(BigThumb, BoundingBox.Top);
+            BigThumb.Height = BoundingBox.Height;
+            BigThumb.Width = BoundingBox.Width;
 
             // Return the final size.
             return finalSize;

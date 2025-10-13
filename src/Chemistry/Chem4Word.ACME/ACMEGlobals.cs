@@ -17,5 +17,9 @@ namespace Chem4Word.ACME
         public static Color HoverAdornerColor => (Color)ColorConverter.ConvertFromString(AcmeConstants.HoverAdornerColorDef);
         public static Color Chem4WordColor => (Color)ColorConverter.ConvertFromString(AcmeConstants.Chem4WordColorDef);
         public static Color GroupBracketColor => (Color)ColorConverter.ConvertFromString(AcmeConstants.GroupBracketColorDef);
+        public const int MinAtomCharge = -5;
+        public const int MaxAtomCharge = 9;
+        public const int MinMoleculeCharge = -8;
+        public const int MaxMoleculeCharge = 8;
     }
 }

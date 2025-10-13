@@ -96,6 +96,9 @@
       <DependentUpon>Ticker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\TickerItem.cs" />
+    <Compile Include="Menus.xaml.cs">
+      <DependentUpon>Menus.xaml</DependentUpon>
+    </Compile>
     <Page Include="Animation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -155,6 +158,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Ticker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Menus.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -91,7 +91,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
         private void SetUpCharges()
         {
             Charges = new List<ChargeValue>();
-            for (int charge = -8; charge < 9; charge++)
+            for (int charge = ACMEGlobals.MinAtomCharge; charge <= ACMEGlobals.MaxAtomCharge; charge++)
             {
                 Charges.Add(new ChargeValue { Value = charge, Label = charge.ToString() });
             }

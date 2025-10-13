@@ -66,6 +66,11 @@ namespace Wpf.UI.Sandbox
                         window = new FunctionalGroupExpansionTesting();
                         window.ShowDialog();
                         break;
+
+                    case "Menus":
+                        window = new Menus();
+                        window.ShowDialog();
+                        break;
                 }
             }
         }

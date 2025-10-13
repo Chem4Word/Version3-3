@@ -16,7 +16,7 @@ namespace Chem4Word.Core.Helpers
     public static class FileHelper
     {
         // Remove any illegal windows characters
-        static readonly char[] InvalidChars = Path.GetInvalidFileNameChars();
+        private static readonly char[] InvalidChars = Path.GetInvalidFileNameChars();
 
         /// <summary>
         /// Backs up a file

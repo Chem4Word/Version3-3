@@ -97,7 +97,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         public double AspectRatio { get; set; }
 
-        public Rect BoundingBox { get; set; }
+        public new Rect BoundingBox { get; set; }
 
         private new bool IsWorking => Dragging || Resizing || IsRotating;
         public Point RotateThumbPosition { get; set; }

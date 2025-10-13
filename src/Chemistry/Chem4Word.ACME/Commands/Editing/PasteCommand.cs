@@ -36,7 +36,7 @@ namespace Chem4Word.ACME.Commands.Editing
             if (Clipboard.ContainsData(ModelConstants.FormatCML))
             {
                 string pastedCML = (string)Clipboard.GetData(ModelConstants.FormatCML);
-                EditController.PasteCML(pastedCML);
+                EditController.PasteCML(pastedCML, parameter as Point?);
             }
             else if (Clipboard.ContainsText())
             {
@@ -85,7 +85,7 @@ namespace Chem4Word.ACME.Commands.Editing
                 }
                 else
                 {
-                    EditController.PasteModel(buffer);
+                    EditController.PasteModel(buffer, pasteAt: (Point)parameter);
                 }
             }
         }

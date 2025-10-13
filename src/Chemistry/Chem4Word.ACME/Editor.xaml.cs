@@ -57,6 +57,7 @@ namespace Chem4Word.ACME
         private List<string> _used1DProperties;
 
         private RenderingOptions _userDefaultOptions;
+        private Bond _lastBond;
 
         public IChem4WordTelemetry Telemetry
         {
@@ -273,11 +274,6 @@ namespace Chem4Word.ACME
             return DrawingArea.TranslatePoint(p, ChemCanvas);
         }
 
-        private void OnClick_Popup(object sender, RoutedEventArgs e)
-        {
-            RingButton.IsChecked = true;
-        }
-
         private void OnClick_RingDropdown(object sender, RoutedEventArgs e)
         {
             RingPopup.IsOpen = true;
@@ -296,11 +292,8 @@ namespace Chem4Word.ACME
         {
             if (sender is Button button)
             {
-                var currentFace = new VisualBrush();
-                currentFace.AutoLayoutContent = true;
-                currentFace.Stretch = Stretch.Uniform;
+                var currentFace = new VisualBrush { AutoLayoutContent = true, Stretch = Stretch.Uniform, Visual = button.Content as Visual };
 
-                currentFace.Visual = button.Content as Visual;
                 RingPanel.Background = currentFace;
                 RingButton.Tag = button.Tag;
             }
@@ -313,7 +306,7 @@ namespace Chem4Word.ACME
         /// <param name="controller">EditController for ACME</param>
         private void BindControls(EditController controller)
         {
-            controller.CurrentEditor = ChemCanvas;
+            controller.EditingCanvas = ChemCanvas;
         }
 
         /// <summary>
@@ -433,10 +426,6 @@ namespace Chem4Word.ACME
             SelectionButton.Tag = selButton.Tag;
         }
 
-        private void OnClick_Reagents(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void OnClick_SymbolDropdown(object sender, RoutedEventArgs e)
         {
             SymbolPopup.IsOpen = true;
@@ -455,5 +444,39 @@ namespace Chem4Word.ACME
             SymbolButton.Tag = panelButton.Tag;
             SymbolButton.Content = panelButton.Tag;
         }
+
+        private void OnClick_PasteMenuItem(object sender, RoutedEventArgs e)
+        {
+            ActiveController.PasteCommand.Execute(Mouse.GetPosition(ChemCanvas));
+        }
+
+        private void OnClick_MoleculeRadicalMenu(object sender, RoutedEventArgs e)
+        {
+            MenuItem radicalMI = (MenuItem)sender;
+            int? spin = ToNullableInt((string)radicalMI.Tag);
+            ActiveController.SetSelectedMoleculeRadical(spin);
+        }
+
+        private int? ToNullableInt(string s)
+        {
+            if (int.TryParse(s, out int i)) return i;
+            return null;
+        }
+
+        private void OnClick_BondTypeMenu(object sender, RoutedEventArgs e)
+        {
+            MenuItem cmi = (MenuItem)sender;
+
+            if (cmi.Tag != null)
+            {
+                ActiveController.SetBondOption((int)cmi.Tag, new[] { _lastBond });
+            }
+        }
+
+        private void OnContextMenuOpening_BondContextMenu(object sender, ContextMenuEventArgs e)
+        {
+            _lastBond = ActiveController.EditingCanvas.ActiveBondVisual?.ParentBond;
+        }
     }
 }
+;

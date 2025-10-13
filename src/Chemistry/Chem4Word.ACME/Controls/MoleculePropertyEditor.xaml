@@ -48,8 +48,7 @@
                 d:IsLocked="True"
                 Foreground="Black"
                 Visibility="Collapsed">
-                Molecule Path
-            </TextBlock>
+                <Run d:IsLocked="True" Text="Molecule Path" /></TextBlock>
 
             <!--  Tabs for properties and labels  -->
             <TabControl
@@ -242,7 +241,8 @@
                                     Click="OnClick_ShowBrackets"
                                     IsChecked="{Binding ShowMoleculeBrackets}"
                                     IsThreeState="True">
-                                    <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">Show Molecule Brackets</TextBlock>
+                                    <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
+                                        <Run d:IsLocked="True" Text="Show Molecule Brackets" /></TextBlock>
                                 </CheckBox>
                                 <CheckBox
                                     x:Name="ShowAllCarbonAtoms"
@@ -253,7 +253,8 @@
                                     Click="OnClick_ExplicitC"
                                     IsChecked="{Binding Path=ExplicitC, Mode=TwoWay}"
                                     IsThreeState="True">
-                                    <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">Show All Carbon Atoms</TextBlock>
+                                    <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
+                                        <Run d:IsLocked="True" Text="Show All Carbon Atoms" /></TextBlock>
                                 </CheckBox>
                             </Grid>
                             <Grid
@@ -269,8 +270,7 @@
                                         Grid.Column="0"
                                         d:IsLocked="True"
                                         Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
-                                        Implicit Hydrogen Mode
-                                    </TextBlock>
+                                        <Run d:IsLocked="True" Text="Implicit Hydrogen Mode" /></TextBlock>
                                     <ComboBox
                                         x:Name="ImplicitHydrogenMode"
                                         Grid.Column="1"

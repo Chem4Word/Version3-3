@@ -36,6 +36,11 @@ namespace Chem4Word.ACME.Behaviors
         private AtomVisual _lastAtomVisual;
         private Cursor _lastCursor;
 
+        //used in right-click events with menus to grab the last object hit
+        private Bond _lastBond;
+
+        private Atom _lastAtom;
+
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -45,21 +50,50 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.Cursor = CursorUtils.Pencil;
             EditController.ClearSelection();
 
+            //if you connect a new event here, you must disconnect it in OnDetaching()
             CurrentEditor.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             CurrentEditor.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp_CurrentEditor;
             CurrentEditor.PreviewMouseMove += OnPreviewMouseMove_CurrentEditor;
+            CurrentEditor.PreviewMouseRightButtonDown += OnPreviewMouseRightButtonDown_CurrentEditor;
             CurrentEditor.PreviewMouseRightButtonUp += OnPreviewMouseRightButtonUp_CurrentEditor;
             CurrentEditor.IsHitTestVisible = true;
 
             CurrentStatus = (AcmeConstants.DefaultDrawText, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
-        private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseRightButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             if (CurrentEditor.ActiveVisual != null)
             {
-                UIUtils.DoPropertyEdit(e, CurrentEditor);
+                if (CurrentEditor.ActiveVisual is BondVisual bv)
+                {
+                    _lastBond = bv.ParentBond;
+                }
+                else if (CurrentEditor.ActiveVisual is AtomVisual av)
+                {
+                    _lastAtom = av.ParentAtom;
+                }
+                else
+                {
+                    _lastBond = null;
+                    _lastAtom = null;
+                }
             }
+        }
+
+        private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
+        {
+            if (!(_lastAtom is null))
+            {
+                UIUtils.HandleAtomContextMenuClick(CurrentEditor, _lastAtom);
+            }
+            else if (!(_lastBond is null))
+            {
+                UIUtils.HandleBondContextMenuClick(CurrentEditor, _lastBond);
+            }
+
+            _lastAtom = null;
+            _lastBond = null;
         }
 
         private void OnPreviewMouseMove_CurrentEditor(object sender, MouseEventArgs e)
@@ -71,7 +105,7 @@ namespace Chem4Word.ACME.Behaviors
                 RemoveAdorner(ref _adorner);
             }
 
-            var targetedVisual = CurrentEditor.ActiveVisual;
+            ChemicalVisual targetedVisual = CurrentEditor.ActiveVisual;
             string bondOrder = EditController.CurrentBondOrder;
             //check to see if we have already got an atom remembered
             if (_currentAtomVisual != null && !(_currentAtomVisual is HydrogenVisual))
@@ -201,9 +235,10 @@ namespace Chem4Word.ACME.Behaviors
                 var newPos = e.GetPosition(CurrentEditor);
 
                 //first get the current active visuals
-                var landedGroupVisual = CurrentEditor.GetTargetedVisual(newPos) as GroupVisual;
-                var landedAtomVisual = CurrentEditor.GetTargetedVisual(newPos) as AtomVisual;
-                var landedBondVisual = CurrentEditor.GetTargetedVisual(newPos) as BondVisual;
+                ChemicalVisual targetedVisual = CurrentEditor.GetTargetedVisual(newPos);
+                var landedGroupVisual = targetedVisual as GroupVisual;
+                var landedAtomVisual = targetedVisual as AtomVisual;
+                var landedBondVisual = targetedVisual as BondVisual;
                 if (landedAtomVisual is HydrogenVisual) //just exit
                 {
                     return;
@@ -266,8 +301,8 @@ namespace Chem4Word.ACME.Behaviors
                             }
                             else
                             {
-                                var atomMetrics = GetNewChainEndPos(landedAtomVisual);
-                                EditController.AddAtomChain(lastAtom, atomMetrics.NewPos, atomMetrics.sproutDir);
+                                (Point point, ClockDirections sproutDir) = GetNewChainEndPos(landedAtomVisual);
+                                EditController.AddAtomChain(lastAtom, point, sproutDir);
                                 parentAtom.UpdateVisual();
                             }
                         }
@@ -502,6 +537,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
             CurrentEditor.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_CurrentEditor;
             CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
+            CurrentEditor.PreviewMouseRightButtonDown -= OnPreviewMouseRightButtonDown_CurrentEditor;
             CurrentEditor.PreviewMouseRightButtonUp -= OnPreviewMouseRightButtonUp_CurrentEditor;
             CurrentStatus = ("", "", "");
             CurrentEditor.Cursor = _lastCursor;

@@ -127,14 +127,14 @@ namespace Chem4Word.ACME.Behaviors
                 else
                 {
                     CurrentStatus = (AcmeConstants.DragChainMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
-                    var endPoint = e.GetPosition(EditController.CurrentEditor);
+                    var endPoint = e.GetPosition(EditController.EditingCanvas);
 
                     MarkOutAtoms(endPoint, e);
                     CurrentAdorner =
                         new ChainAdorner(FirstPoint, CurrentEditor, EditController.EditBondThickness, Placements,
                                          endPoint, Target);
 
-                    var targetedVisual = EditController.CurrentEditor.GetTargetedVisual(endPoint);
+                    var targetedVisual = EditController.EditingCanvas.GetTargetedVisual(endPoint);
                     //check to see we're not overwriting
                     bool overWritingSelf = false;
                     if (CurrentAdorner.Geometry != null)

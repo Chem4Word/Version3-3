@@ -62,65 +62,8 @@ namespace Chem4Word.ACME
 
         public string Description
         {
-            get
-            {
-                switch (Order)
-                {
-                    case ModelConstants.OrderZero:
-                        return AcmeConstants.AgosticHydrogenBondDesc;
-
-                    case ModelConstants.OrderSingle:
-                        {
-                            switch (Stereo)
-                            {
-                                case BondStereo.Wedge:
-                                    return AcmeConstants.WedgeDesc;
-
-                                case BondStereo.Hatch:
-                                    return AcmeConstants.HatchDesc;
-
-                                case BondStereo.Indeterminate:
-                                    return AcmeConstants.IndeterminateDesc;
-
-                                default:
-                                    return AcmeConstants.SingleDesc;
-                            }
-                        }
-
-                    case ModelConstants.OrderDouble:
-                        {
-                            switch (Stereo)
-                            {
-                                case BondStereo.Indeterminate:
-                                    {
-                                        return AcmeConstants.IndeterminateDesc;
-                                    }
-                                default:
-                                    return AcmeConstants.DoubleDesc;
-                            }
-                        }
-                    case ModelConstants.OrderAromatic:
-                        return AcmeConstants.AromaticDelocalisedDesc;
-
-                    case ModelConstants.OrderOther:
-                        return AcmeConstants.UnspecifiedDesc;
-
-                    case ModelConstants.OrderPartial01:
-                        return AcmeConstants.Point5Desc;
-
-                    case ModelConstants.OrderPartial12:
-                        return AcmeConstants.OnePoint5Desc;
-
-                    case ModelConstants.OrderPartial23:
-                        return AcmeConstants.TwoPoint5Desc;
-
-                    case ModelConstants.OrderTriple:
-                        return AcmeConstants.TripleDesc;
-
-                    default:
-                        return "";
-                }
-            }
+            get { return (string)GetValue(DescriptionProperty); }
+            set { SetValue(DescriptionProperty, value); }
         }
 
         public override string ToString()

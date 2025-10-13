@@ -199,10 +199,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 //it's a thick bond it terminates at
                 {
                     var otb = joiningThickBonds.First();
-                    ThickBondLayout tbl = new ThickBondLayout();
-
-                    tbl.Start = otb.StartAtom.Position;
-                    tbl.End = otb.EndAtom.Position;
+                    ThickBondLayout tbl = new ThickBondLayout { Start = otb.StartAtom.Position, End = otb.EndAtom.Position };
 
                     BondGeometry.GetWedgeBondGeometry(wedgeBondLayout, modelXamlBondLength, standoff);
                     BondGeometry.GetThickBondGeometry(tbl, modelXamlBondLength, standoff);
@@ -571,8 +568,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     Opacity = 0.4d
                 };
 #else
-                outliner = new SolidColorBrush(Colors.Transparent);
-                outliner.Opacity = 0d;
+                outliner = new SolidColorBrush(Colors.Transparent) { Opacity = 0d };
 #endif
 
                 Pen outlinePen = new Pen(outliner, BondThickness * 5);

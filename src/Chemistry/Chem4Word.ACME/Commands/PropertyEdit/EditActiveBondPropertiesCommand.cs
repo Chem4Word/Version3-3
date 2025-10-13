@@ -5,35 +5,24 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME.Enums;
-using System;
+using Chem4Word.Model2;
 
-namespace Chem4Word.ACME.Commands.Editing
+namespace Chem4Word.ACME.Commands.PropertyEdit
 {
-    public class CopyCommand : BaseCommand
+    public class EditActiveBondPropertiesCommand : BaseCommand
     {
-        public CopyCommand(EditController controller) : base(controller)
+        public EditActiveBondPropertiesCommand(EditController controller) : base(controller)
         {
         }
 
         public override bool CanExecute(object parameter)
         {
-            return EditController.SelectionType != SelectionTypeCode.None;
+            return true;
         }
 
         public override void Execute(object parameter)
         {
-            EditController.CopySelection();
+            EditController.EditBondProperties(parameter as Bond);
         }
-
-        public override void RaiseCanExecChanged()
-        {
-            if (CanExecuteChanged != null)
-            {
-                CanExecuteChanged.Invoke(this, new EventArgs());
-            }
-        }
-
-        public override event EventHandler CanExecuteChanged;
     }
 }

@@ -28,7 +28,7 @@ namespace Chem4Word.ACME.Commands.Editing
             PTPopup popupPicker = new PTPopup();
             var mosusePosition = System.Windows.Forms.Control.MousePosition;
             popupPicker.CentrePoint = new Point(mosusePosition.X, mosusePosition.Y);
-            UIUtils.ShowDialog(popupPicker, _controller.CurrentEditor);
+            UIUtils.ShowDialog(popupPicker, _controller.EditingCanvas);
             var popupPickerSelectedElement = popupPicker.SelectedElement;
             if (popupPickerSelectedElement != null)
             {

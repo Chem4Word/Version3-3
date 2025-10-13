@@ -6,8 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:shapes="clr-namespace:Chem4Word.ACME.Graphics;assembly=Chem4Word.ACME"
     Title="Shapes UI Test"
-    Width="800"
-    Height="600"
+    Width="1089"
+    Height="766"
     mc:Ignorable="av">
     <Canvas av:IsLocked="True">
         <!--  H Rotators +30 to +100  -->
@@ -233,5 +233,21 @@
             StrokeThickness="3"
             StartPoint="600,450"
             EndPoint="750, 450" />
+        <Viewbox
+            Canvas.Left="600"
+            Canvas.Top="500"
+            Width="100"
+            Height="100"
+            Stretch="Uniform">
+            <shapes:QuadraticArrow
+                ArrowEnds="Both"
+                ArrowHeadClosed="True"
+                Fill="{Binding Stroke, RelativeSource={RelativeSource Mode=Self}}"
+                FirstControlPoint="550,150"
+                Stroke="OrangeRed"
+                StrokeThickness="3"
+                StartPoint="400,200"
+                EndPoint="500,300" />
+        </Viewbox>
     </Canvas>
 </Window>

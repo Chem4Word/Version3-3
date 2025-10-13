@@ -824,6 +824,10 @@
                         <ContentControl Template="{StaticResource BulletTemplate}">
                             <TextBlock Padding="1">Use the toolbar buttons to cut/copy/paste or group molecules</TextBlock>
                         </ContentControl>
+                        <Separator />
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Right-click to access properties</TextBlock>
+                        </ContentControl>
                     </StackPanel>
                 </ToolTip>
             </Setter.Value>

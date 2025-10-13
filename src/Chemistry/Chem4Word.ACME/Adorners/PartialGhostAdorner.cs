@@ -48,35 +48,35 @@ namespace Chem4Word.ACME.Adorners
             }
         }
 
-        public EditorCanvas CurrentEditor { get; }
+        public EditorCanvas CurrentEditingCanvas { get; }
         public EditController CurrentController { get; }
 
         public PartialGhostAdorner(EditController controller) : base(
-            controller.CurrentEditor)
+            controller.EditingCanvas)
         {
-            var myAdornerLayer = AdornerLayer.GetAdornerLayer(controller.CurrentEditor);
+            var myAdornerLayer = AdornerLayer.GetAdornerLayer(controller.EditingCanvas);
             myAdornerLayer.Add(this);
             PreviewMouseMove += OnPreviewMouseMove_PartialGhostAdorner;
             PreviewMouseUp += OnPreviewMouseUp_PartialGhostAdorner;
             MouseUp += OnMouseUp_PartialGhostAdorner;
             CurrentController = controller;
 
-            CurrentEditor = CurrentController.CurrentEditor;
+            CurrentEditingCanvas = CurrentController.EditingCanvas;
         }
 
         private void OnMouseUp_PartialGhostAdorner(object sender, MouseButtonEventArgs e)
         {
-            CurrentEditor.RaiseEvent(e);
+            CurrentEditingCanvas.RaiseEvent(e);
         }
 
         private void OnPreviewMouseUp_PartialGhostAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            CurrentEditor.RaiseEvent(e);
+            CurrentEditingCanvas.RaiseEvent(e);
         }
 
         private void OnPreviewMouseMove_PartialGhostAdorner(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            CurrentEditor.RaiseEvent(e);
+            CurrentEditingCanvas.RaiseEvent(e);
         }
 
         protected override void OnRender(DrawingContext drawingContext)
@@ -120,14 +120,14 @@ namespace Chem4Word.ACME.Adorners
                 if (bond.OrderValue != 1.0 ||
                     !(bond.Stereo == BondStereo.Hatch || bond.Stereo == BondStereo.Wedge))
                 {
-                    var descriptor = BondVisual.GetBondLayout(CurrentEditor.GetAtomVisual(bond.StartAtom),
-                                                                  CurrentEditor.GetAtomVisual(bond.EndAtom),
+                    var descriptor = BondVisual.GetBondLayout(CurrentEditingCanvas.GetAtomVisual(bond.StartAtom),
+                                                                  CurrentEditingCanvas.GetAtomVisual(bond.EndAtom),
                                                                   modelXamlBondLength,
                                                                   bond.Stereo, startAtomPosition, endAtomPosition,
                                                                   bond.OrderValue,
                                                                   bond.Placement, bond.Centroid,
                                                                   bond.SubsidiaryRing?.Centroid,
-                                                                  CurrentEditor.Controller.Standoff);
+                                                                  CurrentEditingCanvas.Controller.Standoff);
                     descriptor.Start = startAtomPosition;
                     descriptor.End = endAtomPosition;
                     var bondGeometry = descriptor.DefiningGeometry;

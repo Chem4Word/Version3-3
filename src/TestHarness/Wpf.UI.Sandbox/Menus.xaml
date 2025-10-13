@@ -1,0 +1,76 @@
+﻿<Window
+    x:Class="Wpf.UI.Sandbox.Menus"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Wpf.UI.Sandbox"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Menus"
+    Width="500"
+    Height="250"
+    mc:Ignorable="d">
+    <Window.ContextMenu>
+        <ContextMenu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New">
+                    <MenuItem.Template>
+                        <ControlTemplate TargetType="{x:Type MenuItem}">
+                            <ControlTemplate.Resources>
+                                <SolidColorBrush x:Key="&#347;" Color="#FFF0F0F0" />
+                                <SolidColorBrush x:Key="&#348;" Color="#FF999999" />
+                                <SolidColorBrush x:Key="&#349;" Color="#FF212121" />
+
+                                <SolidColorBrush x:Key="&#350;" Color="#FFD7D7D7" />
+
+                                <SolidColorBrush x:Key="&#351;" Color="#3DDADADA" />
+                                <SolidColorBrush x:Key="&#352;" Color="#FFDADADA" />
+                                <SolidColorBrush x:Key="&#353;" Color="#FF707070" />
+
+                                <SolidColorBrush x:Key="&#354;" Color="#3D26A0DA" />
+                                <SolidColorBrush x:Key="&#355;" Color="#FF26A0DA" />
+
+                                <SolidColorBrush x:Key="&#356;" Color="#3D26A0DA" />
+                                <SolidColorBrush x:Key="&#357;" Color="#FF26A0DA" />
+
+                                <SolidColorBrush x:Key="&#358;" Color="#0A000000" />
+                                <SolidColorBrush x:Key="&#359;" Color="#21000000" />
+                            </ControlTemplate.Resources>
+                            <Border
+                                x:Name="templateRoot"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter
+                                    x:Name="menuHeaderContainer"
+                                    Margin="{TemplateBinding MenuItem.Padding}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    ContentSource="Header"
+                                    RecognizesAccessKey="True"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsHighlighted" Value="True">
+                                    <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource &#356;}" />
+                                    <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource &#357;}" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{StaticResource &#353;}" />
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsHighlighted" Value="True" />
+                                        <Condition Property="IsEnabled" Value="False" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource &#358;}" />
+                                    <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource &#359;}" />
+                                </MultiTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </MenuItem.Template>
+                </MenuItem>
+            </MenuItem>
+        </ContextMenu>
+    </Window.ContextMenu>
+</Window>

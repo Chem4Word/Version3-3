@@ -100,7 +100,7 @@ namespace Chem4Word.ACME.Models
             get
             {
                 var charges = new List<ChargeValue>();
-                for (var charge = -8; charge < 9; charge++)
+                for (var charge = ACMEGlobals.MinMoleculeCharge; charge <= ACMEGlobals.MaxMoleculeCharge; charge++)
                 {
                     charges.Add(new ChargeValue { Value = charge, Label = charge.ToString() });
                 }

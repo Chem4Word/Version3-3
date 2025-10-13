@@ -114,6 +114,10 @@
     <Compile Include="Commands\Layout\Alignment\AlignRightsCommand.cs" />
     <Compile Include="Commands\Layout\Alignment\AlignTopsCommand.cs" />
     <Compile Include="Commands\Editing\PickElementCommand.cs" />
+    <Compile Include="Commands\PropertyEdit\EditActiveAtomPropertiesCommand.cs" />
+    <Compile Include="Commands\PropertyEdit\EditActiveBondPropertiesCommand.cs" />
+    <Compile Include="Commands\PropertyEdit\EditSelectionPropertiesCommand.cs" />
+    <Compile Include="Commands\PropertyEdit\FlipBondStereoCommand.cs" />
     <Compile Include="Commands\Reactions\AssignReactionRolesCommand.cs" />
     <Compile Include="Commands\Reactions\ClearReactionRolesCommand.cs" />
     <Compile Include="Commands\Reactions\EditAnnotationCommand.cs" />

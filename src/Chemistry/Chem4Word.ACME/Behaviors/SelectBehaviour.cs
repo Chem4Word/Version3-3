@@ -56,10 +56,11 @@ namespace Chem4Word.ACME.Behaviors
             base.OnAttached();
 
             CurrentEditor = (EditorCanvas)AssociatedObject;
-
+            //if you connect a new event here, you must disconnect it in OnDetaching()
             CurrentEditor.PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown_CurrentEditor;
             CurrentEditor.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp_CurrentEditor;
             CurrentEditor.PreviewMouseMove += OnPreviewMouseMove_CurrentEditor;
+            CurrentEditor.PreviewMouseRightButtonDown += OnPreviewMouseRightButtonDown_CurrentEditor;
             CurrentEditor.PreviewMouseRightButtonUp += OnPreviewMouseRightButtonUp_CurrentEditor;
 
             CurrentEditor.Cursor = Cursors.Arrow;
@@ -69,14 +70,43 @@ namespace Chem4Word.ACME.Behaviors
             CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
         }
 
-        private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseRightButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
-            UIUtils.DoPropertyEdit(e, CurrentEditor);
+            DoSelectionClick(e, true);
         }
 
-        private void DoSelectionClick(MouseButtonEventArgs e)
+        private void OnPreviewMouseRightButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
-            if (!(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
+            EditController controller = (EditController)CurrentEditor.Controller;
+
+            if (controller.SelectedItems.Any(si => si is Atom || si is Bond || si is Molecule))
+            {
+                switch (controller.SelectedItems[0])
+                {
+                    case Atom a:
+                        UIUtils.HandleAtomContextMenuClick(CurrentEditor, a);
+                        break;
+
+                    case Bond b:
+                        UIUtils.HandleBondContextMenuClick(CurrentEditor, b);
+                        break;
+
+                    case Molecule m:
+                        bool singleAtomSelected =
+                            CurrentEditor.GetSingleObjectAdorner(e.GetPosition(CurrentEditor)) != null;
+                        UIUtils.HandleMoleculeContextMenuClick(CurrentEditor, singleAtomSelected);
+                        break;
+                }
+            }
+        }
+
+        private void DoSelectionClick(MouseButtonEventArgs e, bool clearSelection = false)
+        {
+            if (clearSelection)
+            {
+                EditController.ClearSelection();
+            }
+            else if (!(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
             {
                 EditController.ClearSelection();
             }
@@ -101,7 +131,7 @@ namespace Chem4Word.ACME.Behaviors
 
             if (e.ClickCount == 1) //single click
             {
-                ToggleSelect(e);
+                ToggleSelect();
             }
         }
 
@@ -333,8 +363,7 @@ namespace Chem4Word.ACME.Behaviors
 
                 if (_ghostAdorner is null)
                 {
-                    _ghostAdorner = new PartialGhostAdorner(EditController);
-                    _ghostAdorner.AtomList = _atomList;
+                    _ghostAdorner = new PartialGhostAdorner(EditController) { AtomList = _atomList };
                 }
 
                 _ghostAdorner.Shear = _shift;
@@ -459,7 +488,7 @@ namespace Chem4Word.ACME.Behaviors
         {
             var visual = CurrentEditor.GetTargetedVisual(e.GetPosition(CurrentEditor));
 
-            object currentObject = null;
+            object currentObject;
 
             switch (visual)
             {
@@ -571,10 +600,8 @@ namespace Chem4Word.ACME.Behaviors
 
                 return geo;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         private void DoMolSelect(MouseButtonEventArgs e)
@@ -609,107 +636,12 @@ namespace Chem4Word.ACME.Behaviors
             }
         }
 
-        private void ToggleSelect(MouseButtonEventArgs e)
+        private void ToggleSelect()
         {
             var activeVisual = CurrentEditor.ActiveVisual;
             CurrentEditor.ActiveVisual = null;
 
-            switch (activeVisual)
-            {
-                case GroupVisual gv:
-                    var mol = gv.ParentMolecule;
-                    if (!EditController.SelectedItems.Contains(mol))
-                    {
-                        EditController.AddToSelection(mol);
-                    }
-                    else
-                    {
-                        EditController.RemoveFromSelection(mol);
-                    }
-
-                    CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
-                    break;
-
-                case AtomVisual av:
-                    {
-                        var atom = av.ParentAtom;
-                        //check just in case the parent atom is null -- can happen occasionally
-                        if (atom != null)
-                        {
-                            var rootMolecule = atom.Parent.RootMolecule;
-                            if (rootMolecule.IsGrouped)
-                            {
-                                EditController.AddToSelection(rootMolecule);
-                            }
-                            else
-                            {
-                                if (!EditController.SelectedItems.Contains(atom))
-                                {
-                                    EditController.AddToSelection(atom);
-                                }
-                                else
-                                {
-                                    EditController.RemoveFromSelection(atom);
-                                }
-                            }
-                        }
-
-                        CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
-                        break;
-                    }
-
-                case BondVisual bv:
-                    {
-                        var bond = bv.ParentBond;
-                        var rootMolecule = bond.Parent.RootMolecule;
-                        if (rootMolecule.IsGrouped)
-                        {
-                            EditController.AddToSelection(rootMolecule);
-                        }
-
-                        if (!EditController.SelectedItems.Contains(bond))
-                        {
-                            EditController.AddToSelection(bond);
-                        }
-                        else
-                        {
-                            EditController.RemoveFromSelection(bond);
-                        }
-
-                        CurrentStatus = (AcmeConstants.SelStatusMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
-                        break;
-                    }
-                case ReactionVisual rv:
-                    {
-                        var reaction = rv.ParentReaction;
-                        if (!EditController.SelectedItems.Contains(reaction))
-                        {
-                            EditController.AddToSelection(reaction);
-                        }
-                        else
-                        {
-                            EditController.RemoveFromSelection(reaction);
-                        }
-                        break;
-                    }
-                case AnnotationVisual anv:
-                    {
-                        var annotation = anv.ParentAnnotation;
-                        if (!EditController.SelectedItems.Contains(anv))
-                        {
-                            EditController.AddToSelection(annotation);
-                        }
-                        else
-                        {
-                            EditController.RemoveFromSelection(annotation);
-                        }
-                        break;
-                    }
-                default:
-                    EditController.ClearSelection();
-                    CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
-                    break;
-            }
+            CurrentStatus = UIUtils.ToggleSelect(activeVisual, EditController);
         }
 
         protected override void OnDetaching()
@@ -720,6 +652,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.MouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_CurrentEditor;
             CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
             CurrentEditor.PreviewMouseRightButtonUp -= OnPreviewMouseRightButtonUp_CurrentEditor;
+            CurrentEditor.PreviewMouseRightButtonDown -= OnPreviewMouseRightButtonDown_CurrentEditor;
 
             _lassoAdorner = null;
         }
