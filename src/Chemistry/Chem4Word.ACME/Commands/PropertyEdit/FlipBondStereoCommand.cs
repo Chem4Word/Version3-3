@@ -28,7 +28,7 @@ namespace Chem4Word.ACME.Commands.PropertyEdit
 
         public override void Execute(object parameter)
         {
-            EditController.SwapBondDirection(parameter as Bond);
+            EditController.InvertStereobond(parameter as Bond);
         }
     }
 }

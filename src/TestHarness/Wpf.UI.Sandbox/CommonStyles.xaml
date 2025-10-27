@@ -1,10 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
 
-        <ResourceDictionary Source="Chem4WordComboBox.xaml" />
-        <ResourceDictionary Source="Chem4WordTreeViewItem.xaml" />
-    </ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="Chem4WordComboBox.xaml" />
+    <ResourceDictionary Source="Chem4WordTreeViewItem.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

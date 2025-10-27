@@ -67,7 +67,7 @@ namespace Chem4Word.Model2.Annotations
     { }
 
     /// <summary>
-    /// Can be appplied to symbols of types derived from IEnumerable as well as to symbols of Task
+    /// Can be applied to symbols of types derived from IEnumerable as well as to symbols of Task
     /// and Lazy classes to indicate that the value of a collection item, of the Task.Result property
     /// or of the Lazy.Value property can never be null.
     /// </summary>
@@ -78,7 +78,7 @@ namespace Chem4Word.Model2.Annotations
     { }
 
     /// <summary>
-    /// Can be appplied to symbols of types derived from IEnumerable as well as to symbols of Task
+    /// Can be applied to symbols of types derived from IEnumerable as well as to symbols of Task
     /// and Lazy classes to indicate that the value of a collection item, of the Task.Result property
     /// or of the Lazy.Value property can be null.
     /// </summary>

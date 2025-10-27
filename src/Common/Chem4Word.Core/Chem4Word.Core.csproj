@@ -124,6 +124,7 @@
     <Compile Include="Enums\CompassPoints.cs" />
     <Compile Include="Helpers\ConfigWatcher.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="Helpers\HttpErrorStatusCodeException.cs" />
     <Compile Include="Helpers\RestApiResult.cs" />
     <Compile Include="Helpers\AzureRestApi.cs" />
     <Compile Include="Helpers\CohenSutherland.cs" />

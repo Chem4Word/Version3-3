@@ -448,7 +448,7 @@ namespace Chem4Word.UI.WPF
             try
             {
                 CheckedFilterButton.IsChecked = false;
-                var searchFor = TextHelper.StripControlCharacters(SearchBox.Text).Trim();
+                var searchFor = TextHelper.StripAsciiControlCharacters(SearchBox.Text).Trim();
                 if (!string.IsNullOrWhiteSpace(searchFor)
                     && DataContext != null)
                 {

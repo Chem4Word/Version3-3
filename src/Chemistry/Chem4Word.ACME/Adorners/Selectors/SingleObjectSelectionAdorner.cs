@@ -50,7 +50,6 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private Rect _bigBoundingBox;
 
         private Geometry _ghostMolecule;
-        
 
         public SingleObjectSelectionAdorner(EditorCanvas currentEditor, Molecule molecule)
             : this(currentEditor, new List<BaseObject> { molecule })

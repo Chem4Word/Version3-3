@@ -232,7 +232,7 @@ namespace Chem4Word.Library
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             try
             {
-                var searchFor = TextHelper.StripControlCharacters(SearchBox.Text).Trim();
+                var searchFor = TextHelper.StripAsciiControlCharacters(SearchBox.Text).Trim();
                 if (!string.IsNullOrEmpty(searchFor)
                     && DataContext != null)
                 {

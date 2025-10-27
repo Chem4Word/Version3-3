@@ -1,0 +1,5 @@
+{
+    "baseUrl": "https://www.ebi.ac.uk/chebi/",
+    "searchUri": "backend/api/public/es_search/?term={{searchTerm}}&page=1&size={{maxResults}}"
+    "MolfileUri": "backend/api/public/molfile/{{compoundId}}"
+}

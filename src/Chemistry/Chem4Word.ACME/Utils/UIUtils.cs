@@ -185,7 +185,7 @@ namespace Chem4Word.ACME.Utils
                 controller.ClearSelection();
 
                 bond.Order = Bond.OrderValueToOrder(model.BondOrderValue);
-                if (controller.ActiveMode is SelectBehaviour)
+                if (controller.ActiveBehavior is SelectBehaviour)
                 {
                     controller.AddToSelection(bond);
                 }
@@ -297,7 +297,7 @@ namespace Chem4Word.ACME.Utils
                 controller.UpdateAtom(atom, atomPropertiesModel);
 
                 controller.ClearSelection();
-                if (controller.ActiveMode is SelectBehaviour)
+                if (controller.ActiveBehavior is SelectBehaviour)
                 {
                     controller.AddToSelection(atom);
                 }

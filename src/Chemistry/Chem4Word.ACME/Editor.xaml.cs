@@ -39,7 +39,7 @@ namespace Chem4Word.ACME
                 //clear the current behaviour on the old controller
                 if (_activeController != null)
                 {
-                    _activeController.ActiveMode = null;
+                    _activeController.ActiveBehavior = null;
                 }
                 //now set the new controller
                 _activeController = value;
@@ -353,7 +353,7 @@ namespace Chem4Word.ACME
         /// <param name="e"></param>
         private void OnChecked_Mode(object sender, RoutedEventArgs e)
         {
-            ActiveController.ActiveMode = null;
+            ActiveController.ActiveBehavior = null;
 
             if (ActiveController != null)
             {
@@ -361,7 +361,7 @@ namespace Chem4Word.ACME
 
                 if (radioButton.Tag is BaseEditBehavior bh)
                 {
-                    ActiveController.ActiveMode = bh;
+                    ActiveController.ActiveBehavior = bh;
                 }
             }
         }

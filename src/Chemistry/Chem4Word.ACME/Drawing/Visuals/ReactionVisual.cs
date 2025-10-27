@@ -49,10 +49,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 {
                     return GetDefaultBlockRect(false);
                 }
-                else
-                {
-                    return _conditionsBlockRect.Value;
-                }
+
+                return _conditionsBlockRect.Value;
             }
             private set { _conditionsBlockRect = value; }
         }

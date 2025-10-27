@@ -10,6 +10,10 @@ using System.Windows.Input;
 
 namespace Chem4Word.ACME.Commands
 {
+    /// <summary>
+    /// The class form which all the ACME Commands derive.
+    /// Wraps itself around an EditController instance.
+    /// </summary>
     public abstract class BaseCommand : ICommand
     {
         protected EditController EditController { get; }

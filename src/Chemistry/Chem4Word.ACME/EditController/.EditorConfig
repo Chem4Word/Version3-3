@@ -1,0 +1,6 @@
+# C# files
+# tame IDE0039 warnings
+[*.cs]
+dotnet_diagnostic.IDE0039.severity = none
+csharp_style_prefer_local_over_anonymous_function = false
+resharper_convert_to_local_function_highlighting = none

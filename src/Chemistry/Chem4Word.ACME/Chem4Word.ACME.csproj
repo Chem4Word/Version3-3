@@ -140,6 +140,17 @@
     <Compile Include="Drawing\Text\TextSupport.cs" />
     <Compile Include="Drawing\Visuals\ReactionVisual.cs" />
     <Compile Include="Drawing\Visuals\AnnotationVisual.cs" />
+    <Compile Include="EditController\EditController.AlignmentOperations.cs" />
+    <Compile Include="EditController\EditController.AtomEditing.cs" />
+    <Compile Include="EditController\EditController.BasicEditing.cs" />
+    <Compile Include="EditController\EditController.BondEditing.cs" />
+    <Compile Include="EditController\EditController.Constructors.cs" />
+    <Compile Include="EditController\EditController.Drawing.cs" />
+    <Compile Include="EditController\EditController.MoleculeEditing.cs" />
+    <Compile Include="EditController\EditController.Properties.cs" />
+    <Compile Include="EditController\EditController.Reactions.cs" />
+    <Compile Include="EditController\EditController.Selection.cs" />
+    <Compile Include="EditController\EditController.StateManagement.cs" />
     <Compile Include="Graphics\BlockedArrow.cs" />
     <Compile Include="Graphics\DashedArrow.cs" />
     <Compile Include="Graphics\EquilibriumArrow.cs" />
@@ -316,7 +327,7 @@
     <Compile Include="Editor.xaml.cs">
       <DependentUpon>Editor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EditController.cs" />
+    <Compile Include="EditController\EditController.cs" />
     <Compile Include="Graphics\ArcArrow.cs" />
     <Compile Include="Graphics\Arrow.cs" />
     <Compile Include="Graphics\RegularPolygon.cs" />
@@ -432,6 +443,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="EditController\Readme.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

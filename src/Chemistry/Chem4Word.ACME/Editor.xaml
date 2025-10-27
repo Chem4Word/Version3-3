@@ -1880,7 +1880,7 @@
                             Height="26"
                             Data="M19,4.8000002L32.000001,4.8000002 32.000001,8.0999999 19,8.0999999z M4.8000011,0L8.1000004,0 8.1000004,4.8000002 13.000001,4.8000002 13.000001,8.0999999 8.2000008,8.0999999 8.2000008,13 4.8000011,13 4.8000011,8.2000003 0,8.2000003 0,4.8000002 4.8000011,4.8000002z"
                             Fill="Black"
-                            Stretch="Uniform"/>
+                            Stretch="Uniform" />
           </Grid>
         </Viewbox>
         <Viewbox x:Key="RadicalDoubleMenuItemIcon" x:Shared="False">
@@ -2274,7 +2274,7 @@
                 d:IsLocked="True"
                 FontFamily="Arial"
                 Foreground="Black"
-                Text="{Binding ElementName=AcmeControl, Path=ActiveController.ActiveMode.CurrentStatus}" />
+                Text="{Binding ElementName=AcmeControl, Path=ActiveController.ActiveBehavior.CurrentStatus}" />
     </StatusBar>
   </Grid>
 </UserControl>

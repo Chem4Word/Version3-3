@@ -14,6 +14,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -72,8 +73,8 @@ namespace Chem4Word.ACME.Controls
 
         private void OnLoaded_AtomPropertyEditor(object sender, RoutedEventArgs e)
         {
-            // This moves the window off screen while it renders
-            var point = UIUtils.GetOffScreenPoint();
+            // This moves the window off-screen while it renders
+            Point point = UIUtils.GetOffScreenPoint();
             Left = point.X;
             Top = point.Y;
 
@@ -88,19 +89,19 @@ namespace Chem4Word.ACME.Controls
 
         private void SetupHydrogenLabelsDropDown()
         {
-            var atoms = _atomPropertiesModel.MicroModel.GetAllAtoms();
-            var atom = atoms[0];
+            List<Atom> atoms = _atomPropertiesModel.MicroModel.GetAllAtoms();
+            Atom atom = atoms[0];
 
             ImplicitHydrogenMode.Items.Clear();
 
-            var inherited = new TextBlock
+            TextBlock inherited = new TextBlock
             {
                 Text = "Inherited from parent",
                 FontStyle = FontStyles.Italic,
                 Foreground = new SolidColorBrush(Colors.Gray)
             };
 
-            var notSet = new ComboBoxItem
+            ComboBoxItem notSet = new ComboBoxItem
             {
                 Content = inherited,
                 Tag = null
@@ -111,9 +112,9 @@ namespace Chem4Word.ACME.Controls
                 ImplicitHydrogenMode.SelectedItem = notSet;
             }
 
-            foreach (var keyValuePair in EnumHelper.GetEnumValuesWithDescriptions<HydrogenLabels>())
+            foreach (KeyValuePair<HydrogenLabels, string> keyValuePair in EnumHelper.GetEnumValuesWithDescriptions<HydrogenLabels>())
             {
-                var cbi = new ComboBoxItem
+                ComboBoxItem cbi = new ComboBoxItem
                 {
                     Content = keyValuePair.Value,
                     Tag = keyValuePair.Key
@@ -131,7 +132,7 @@ namespace Chem4Word.ACME.Controls
         private void OnContentRendered_AtomPropertyEditor(object sender, EventArgs e)
         {
             // This moves the window to the correct position
-            var point = UIUtils.GetOnScreenCentrePoint(_atomPropertiesModel.Centre, ActualWidth, ActualHeight);
+            Point point = UIUtils.GetOnScreenCentrePoint(_atomPropertiesModel.Centre, ActualWidth, ActualHeight);
             Left = point.X;
             Top = point.Y;
 
@@ -162,14 +163,14 @@ namespace Chem4Word.ACME.Controls
         private void OnElementSelected_AtomTable(object sender, VisualPeriodicTable.ElementEventArgs e)
         {
             AtomOption newOption = null;
-            var selElement = e.SelectedElement as Element;
+            Element selElement = e.SelectedElement as Element;
             AtomPropertiesModel.Element = selElement;
             PeriodicTableExpander.IsExpanded = false;
             bool found = false;
 
-            foreach (var item in AtomPicker.Items)
+            foreach (object item in AtomPicker.Items)
             {
-                var option = (AtomOption)item;
+                AtomOption option = (AtomOption)item;
                 if (option.Element is Element el
                     && el == selElement)
                 {
@@ -191,7 +192,7 @@ namespace Chem4Word.ACME.Controls
                 AtomPropertiesModel.AddedElement = selElement;
             }
 
-            var atomPickerSelectedItem = newOption;
+            AtomOption atomPickerSelectedItem = newOption;
             AtomPicker.SelectedItem = atomPickerSelectedItem;
             ShowPreview();
         }
@@ -228,16 +229,16 @@ namespace Chem4Word.ACME.Controls
 
         private void SetStateOfExplicitCarbonCheckbox()
         {
-            var atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
-            var atom = atoms[0];
+            List<Atom> atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
+            Atom atom = atoms[0];
             if (atom.Parent.AtomCount == 1)
             {
                 ExplicitCheckBox.IsEnabled = false;
             }
             else
             {
-                var chargeValue = ChargeCombo.SelectedItem as ChargeValue;
-                var isotopeValue = IsotopePicker.SelectedItem as IsotopeValue;
+                ChargeValue chargeValue = ChargeCombo.SelectedItem as ChargeValue;
+                IsotopeValue isotopeValue = IsotopePicker.SelectedItem as IsotopeValue;
 
                 if (chargeValue?.Value == 0 && isotopeValue?.Mass == null)
                 {
@@ -258,7 +259,7 @@ namespace Chem4Word.ACME.Controls
         private void LoadAtomItems()
         {
             AtomPicker.Items.Clear();
-            foreach (var item in AcmeConstants.StandardAtoms)
+            foreach (string item in AcmeConstants.StandardAtoms)
             {
                 AtomPicker.Items.Add(new AtomOption(ModelGlobals.PeriodicTable.Elements[item]));
             }
@@ -277,7 +278,7 @@ namespace Chem4Word.ACME.Controls
         private void LoadFunctionalGroups()
         {
             FunctionalGroupPicker.Items.Clear();
-            foreach (var item in ModelGlobals.FunctionalGroupsList)
+            foreach (FunctionalGroup item in ModelGlobals.FunctionalGroupsList)
             {
                 if (item.ShowInDropDown)
                 {
@@ -294,8 +295,8 @@ namespace Chem4Word.ACME.Controls
 
         private void ShowPreview()
         {
-            var atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
-            var atom = atoms[0];
+            List<Atom> atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
+            Atom atom = atoms[0];
 
             AtomPropertiesModel.ShowCompass = false;
 
@@ -382,8 +383,8 @@ namespace Chem4Word.ACME.Controls
 
         private void OnClick_Element(object sender, RoutedEventArgs e)
         {
-            var atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
-            var atom = atoms[0];
+            List<Atom> atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
+            Atom atom = atoms[0];
 
             if (AtomPropertiesModel.IsElement
                 && AtomPropertiesModel.Element is Element)
@@ -396,14 +397,14 @@ namespace Chem4Word.ACME.Controls
         {
             ExplicitCheckBox.IsEnabled = !atom.IsSingleton;
 
-            var canShowHydrogen = ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{atom.Element.Symbol}|");
+            bool canShowHydrogen = ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{atom.Element.Symbol}|");
 
             AtomPropertiesModel.ShowHydrogenLabels = canShowHydrogen
                                                      || atom.IsHetero
                                                      || atom.IsTerminal;
 
-            var showHydrogenLabels = atom.ShowImplicitHydrogenCharacters;
-            var atomSymbol = atom.AtomSymbol;
+            bool showHydrogenLabels = atom.ShowImplicitHydrogenCharacters;
+            string atomSymbol = atom.AtomSymbol;
 
             AtomPropertiesModel.ShowCompass = showHydrogenLabels && atom.ImplicitHydrogenCount > 0 && atomSymbol != "";
         }
@@ -434,8 +435,8 @@ namespace Chem4Word.ACME.Controls
                     if (Enum.TryParse(cbi.Tag.ToString(), out HydrogenLabels hydrogenLabels))
                     {
                         AtomPropertiesModel.ExplicitH = hydrogenLabels;
-                        var atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
-                        var atom = atoms[0];
+                        List<Atom> atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
+                        Atom atom = atoms[0];
                         if (atom.IsCarbon && hydrogenLabels == HydrogenLabels.All)
                         {
                             ExplicitCheckBox.IsEnabled = false;

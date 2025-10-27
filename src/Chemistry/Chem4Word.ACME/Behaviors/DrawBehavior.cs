@@ -264,7 +264,7 @@ namespace Chem4Word.ACME.Behaviors
                     if (parentBond.Stereo == BondStereo.Hatch && EditController.CurrentStereo == BondStereo.Hatch
                         || parentBond.Stereo == BondStereo.Wedge && EditController.CurrentStereo == BondStereo.Wedge)
                     {
-                        EditController.SwapBondDirection(parentBond);
+                        EditController.InvertStereobond(parentBond);
                     }
                     else
                     {

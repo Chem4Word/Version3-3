@@ -1135,7 +1135,7 @@ namespace Chem4WordTests
             var expectedStack = new List<string>
                                 {
                                     "0 - #end#",
-                                    $"1 - {nameof(EditController.SwapBondDirection)}",
+                                    $"1 - {nameof(EditController.InvertStereobond)}",
                                     "0 - #start#"
                                 };
 
@@ -1171,7 +1171,7 @@ namespace Chem4WordTests
             molecule.Parent = model;
 
             // Act
-            editController.SwapBondDirection(bond);
+            editController.InvertStereobond(bond);
 
             var undoStack1 = editController.UndoManager.ReadUndoStack();
             editController.UndoManager.Undo();
