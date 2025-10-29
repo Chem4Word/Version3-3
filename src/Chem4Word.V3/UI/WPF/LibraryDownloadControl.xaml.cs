@@ -66,7 +66,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnLoaded_LibraryDownloadControl(object sender, RoutedEventArgs e)
         {
-            UserErrorMessage.Visibility = Visibility.Collapsed;
+            UserErrorDisplay.Visibility = Visibility.Collapsed;
             EmailErrorMessage.Visibility = Visibility.Collapsed;
 
             RefreshListOfLibraries();
@@ -202,13 +202,13 @@ namespace Chem4Word.UI.WPF
 
             if (UserName.Text.Trim().Length == 0)
             {
-                UserErrorMessage.Visibility = Visibility.Visible;
-                UserErrorMessage.Text = "Please enter your name.";
+                UserErrorDisplay.Visibility = Visibility.Visible;
+                UserErrorDisplay.Text = "Please enter your name.";
                 validated = false;
             }
             else
             {
-                UserErrorMessage.Visibility = Visibility.Collapsed;
+                UserErrorDisplay.Visibility = Visibility.Collapsed;
             }
 
             if (UserEmail.Text.Trim().Length == 0 || !StringHelper.IsValidEmail(UserEmail.Text.Trim()))
@@ -290,32 +290,6 @@ namespace Chem4Word.UI.WPF
                     }
                 }
             }
-        }
-
-        private void InstallDriver(string driverName, string downloadPath)
-        {
-            var driversPath = Path.Combine(Globals.Chem4WordV3.AddInInfo.ProgramDataPath, "Plugins");
-
-            var zipFileName = Path.Combine(downloadPath, $"{driverName}.zip");
-            var zipStream = File.OpenRead(zipFileName);
-            var archive = new ZipArchive(zipStream);
-
-            var entries = archive.Entries;
-            foreach (var entry in entries)
-            {
-                var completeFileName = Path.Combine(driversPath, entry.FullName);
-                if (!File.Exists(completeFileName))
-                {
-                    entry.ExtractToFile(completeFileName);
-                }
-                else
-                {
-                    entry.ExtractToFile(Path.Combine(driversPath, "Updates", entry.FullName), overwrite: true);
-                }
-            }
-
-            archive.Dispose();
-            File.Delete(zipFileName);
         }
 
         private void InstallLibrary(CatalogueEntry library, string downloadPath)
@@ -461,46 +435,6 @@ namespace Chem4Word.UI.WPF
         {
             var helper = new ApiHelper(_settings.LibrariesUri, Globals.Chem4WordV3.Telemetry);
             helper.DownloadLibrary((Dictionary<string, string>)e.Argument, _downloadPath, 60);
-        }
-
-        private void DownloadDriver(Dictionary<string, string> formData)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            StatusMessage.Text = "Downloading driver";
-            StartProgressIndicator();
-
-            var worker = new BackgroundWorker();
-            worker.DoWork += OnDoWork_DownloadDriver;
-            worker.RunWorkerCompleted += OnRunWorkerCompleted;
-
-            worker.RunWorkerAsync(formData);
-
-            while (worker.IsBusy)
-            {
-                Thread.Sleep(1);
-                DoWpfEvents();
-            }
-
-            stopwatch.Stop();
-            Debug.WriteLine($"{stopwatch.Elapsed}");
-
-            var downloadedFile = Path.Combine(_downloadPath, $"{formData["Driver"]}.zip");
-            if (File.Exists(downloadedFile))
-            {
-                var fileInfo = new FileInfo(downloadedFile);
-
-                Globals.Chem4WordV3.Telemetry.Write(module, "Timing", $"Downloading of '{fileInfo.Name}' took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)}ms");
-            }
-        }
-
-        private void OnDoWork_DownloadDriver(object sender, DoWorkEventArgs e)
-        {
-            var helper = new ApiHelper(_settings.LibrariesUri, Globals.Chem4WordV3.Telemetry);
-            helper.DownloadDriver((Dictionary<string, string>)e.Argument, _downloadPath, 15);
         }
 
         private static void DoWpfEvents()

@@ -162,7 +162,7 @@
                     TextChanged="OnTextChanged_UserNameOrEmail"
                     ToolTip="Please enter the name that you wish us to use" />
                 <TextBlock
-                    x:Name="UserErrorMessage"
+                    x:Name="UserErrorDisplay"
                     Grid.Row="2"
                     Grid.Column="1"
                     Margin="10,-5,0,0"

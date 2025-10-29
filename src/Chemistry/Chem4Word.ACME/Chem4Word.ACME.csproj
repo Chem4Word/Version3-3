@@ -443,6 +443,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="EditController\.EditorConfig" />
     <None Include="EditController\Readme.md" />
     <None Include="packages.config" />
   </ItemGroup>
