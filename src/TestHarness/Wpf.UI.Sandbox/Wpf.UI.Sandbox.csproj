@@ -76,50 +76,50 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Animation.xaml.cs">
+    <Compile Include="Forms\Animation.xaml.cs">
       <DependentUpon>Animation.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ComboBoxAndTreeViewStyles.xaml.cs">
+    <Compile Include="Forms\ComboBoxAndTreeViewStyles.xaml.cs">
       <DependentUpon>ComboBoxAndTreeViewStyles.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FunctionalGroupExpansionTesting.xaml.cs">
+    <Compile Include="Forms\FunctionalGroupExpansionTesting.xaml.cs">
       <DependentUpon>FunctionalGroupExpansionTesting.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FunctionalGroupExpansionEditor.xaml.cs">
+    <Compile Include="Forms\FunctionalGroupExpansionEditor.xaml.cs">
       <DependentUpon>FunctionalGroupExpansionEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Marquee.xaml.cs">
       <DependentUpon>Marquee.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\FgItem.cs" />
-    <Compile Include="Ticker.xaml.cs">
+    <Compile Include="Forms\Ticker.xaml.cs">
       <DependentUpon>Ticker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\TickerItem.cs" />
-    <Compile Include="Menus.xaml.cs">
+    <Compile Include="Forms\Menus.xaml.cs">
       <DependentUpon>Menus.xaml</DependentUpon>
     </Compile>
-    <Page Include="Animation.xaml">
+    <Page Include="Forms\Animation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="C4wMenuItemStyle.xaml">
+    <Page Include="Styles\C4wMenuItemStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Chem4WordComboBox.xaml">
+    <Page Include="Styles\Chem4WordComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ComboBoxAndTreeViewStyles.xaml">
+    <Page Include="Forms\ComboBoxAndTreeViewStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Chem4WordTreeViewItem.xaml">
+    <Page Include="Styles\Chem4WordTreeViewItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="FunctionalGroupExpansionTesting.xaml">
+    <Page Include="Forms\FunctionalGroupExpansionTesting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,11 +127,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CommonStyles.xaml">
+    <Page Include="Styles\CommonStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="FunctionalGroupExpansionEditor.xaml">
+    <Page Include="Forms\FunctionalGroupExpansionEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -139,11 +139,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ShapesUI.xaml">
+    <Page Include="Forms\ShapesUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="StylesUI.xaml">
+    <Page Include="Forms\StylesUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -154,18 +154,18 @@
     <Compile Include="Launcher.xaml.cs">
       <DependentUpon>Launcher.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ShapesUI.xaml.cs">
+    <Compile Include="Forms\ShapesUI.xaml.cs">
       <DependentUpon>ShapesUI.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StylesUI.xaml.cs">
+    <Compile Include="Forms\StylesUI.xaml.cs">
       <DependentUpon>StylesUI.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Ticker.xaml">
+    <Page Include="Forms\Ticker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Menus.xaml">
+    <Page Include="Forms\Menus.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

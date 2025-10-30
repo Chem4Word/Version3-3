@@ -7,14 +7,14 @@
 
 using System.Windows;
 
-namespace Wpf.UI.Sandbox
+namespace Wpf.UI.Sandbox.Forms
 {
     /// <summary>
-    /// Interaction logic for ShapesUI.xaml
+    /// Interaction logic for StylesUI.xaml
     /// </summary>
-    public partial class ShapesUI : Window
+    public partial class StylesUI : Window
     {
-        public ShapesUI()
+        public StylesUI()
         {
             InitializeComponent();
         }

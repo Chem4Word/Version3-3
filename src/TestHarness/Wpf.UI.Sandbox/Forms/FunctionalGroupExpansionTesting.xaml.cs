@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
@@ -14,7 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
-namespace Wpf.UI.Sandbox
+namespace Wpf.UI.Sandbox.Forms
 {
     /// <summary>
     /// Interaction logic for FunctionalGroupExpansionTesting.xaml

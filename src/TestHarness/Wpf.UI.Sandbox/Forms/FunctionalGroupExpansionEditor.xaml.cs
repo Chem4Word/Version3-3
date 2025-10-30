@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
@@ -19,7 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Wpf.UI.Sandbox.Models;
 
-namespace Wpf.UI.Sandbox
+namespace Wpf.UI.Sandbox.Forms
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

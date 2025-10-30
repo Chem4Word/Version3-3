@@ -1,6 +1,6 @@
 @echo off
 
-set release=Chem4Word-Setup.3.3.15.Release.12.msi
+set release=Chem4Word-Setup.3.3.16.Release.14.msi
 set working=C:\Temp
 set signtoolpath=C:\Tools\Azure\SignTool\sign.exe
 

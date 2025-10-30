@@ -12,7 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using Wpf.UI.Sandbox.Models;
 
-namespace Wpf.UI.Sandbox
+namespace Wpf.UI.Sandbox.Forms
 {
     /// <summary>
     /// Interaction logic for Ticker.xaml

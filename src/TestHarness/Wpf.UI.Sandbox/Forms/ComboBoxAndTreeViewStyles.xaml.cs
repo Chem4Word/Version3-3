@@ -9,7 +9,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Wpf.UI.Sandbox
+namespace Wpf.UI.Sandbox.Forms
 {
     /// <summary>
     /// Interaction logic for ComboBoxAndTreeViewStyles.xaml

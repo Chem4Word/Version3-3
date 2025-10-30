@@ -7,6 +7,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using Wpf.UI.Sandbox.Forms;
 
 namespace Wpf.UI.Sandbox
 {

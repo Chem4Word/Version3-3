@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Wpf.UI.Sandbox
+namespace Wpf.UI.Sandbox.Forms
 {
     /// <summary>
     /// Interaction logic for Window1.xaml
