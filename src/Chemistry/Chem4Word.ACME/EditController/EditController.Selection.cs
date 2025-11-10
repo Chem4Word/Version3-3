@@ -304,9 +304,9 @@ namespace Chem4Word.ACME
                     MultiAdorner = null;
                 }
 
-                List<BaseObject> selAtomBonds = (from BaseObject sel in _selectedItems
-                                                 where sel is Atom || sel is Bond
-                                                 select sel).ToList();
+                List<StructuralObject> selAtomBonds = (from StructuralObject sel in _selectedItems
+                                                      where sel is Atom || sel is Bond
+                                                      select sel).ToList();
 
                 if (selAtomBonds.Any())
                 {
@@ -389,7 +389,7 @@ namespace Chem4Word.ACME
                 {
                     RemoveAllAdorners();
                     GroupSelectionAdorner groupAdorner = new GroupSelectionAdorner(EditingCanvas,
-                                                                 groupMols.Cast<BaseObject>().ToList());
+                                                                 groupMols.Cast<StructuralObject>().ToList());
                     foreach (Molecule mol in groupMols)
                     {
                         SelectionAdorners[mol] = groupAdorner;
@@ -402,7 +402,7 @@ namespace Chem4Word.ACME
                 {
                     RemoveAllAdorners();
                     AddMixed(allMolecules,
-                             allReactions.Union(allAnnotations.Cast<BaseObject>()).ToList());
+                             allReactions.Union(allAnnotations.Cast<StructuralObject>()).ToList());
                 }
             }
             else if (allMolecules.Any())
@@ -411,7 +411,7 @@ namespace Chem4Word.ACME
                 {
                     RemoveAllAdorners();
                     MoleculeSelectionAdorner molAdorner = new MoleculeSelectionAdorner(EditingCanvas,
-                                                                  allMolecules.Cast<BaseObject>().ToList());
+                                                                  allMolecules.Cast<StructuralObject>().ToList());
                     foreach (Molecule mol in allMolecules)
                     {
                         SelectionAdorners[mol] = molAdorner;
@@ -424,7 +424,7 @@ namespace Chem4Word.ACME
                 {
                     RemoveAllAdorners();
                     AddMixed(allMolecules,
-                             allReactions.Union(allAnnotations.Cast<BaseObject>()).ToList());
+                             allReactions.Union(allAnnotations.Cast<StructuralObject>()).ToList());
                 }
             }
             else //just reactions or annotations
@@ -433,7 +433,7 @@ namespace Chem4Word.ACME
                 if (allReactions.Count + allAnnotations.Count > 1)
                 {
                     AddMixed(allMolecules,
-                             allReactions.Union(allAnnotations.Cast<BaseObject>()).ToList());
+                             allReactions.Union(allAnnotations.Cast<StructuralObject>()).ToList());
                 }
                 else
                 {
@@ -451,7 +451,7 @@ namespace Chem4Word.ACME
                     {
                         Annotation a = allAnnotations.First();
                         SingleObjectSelectionAdorner annotationAdorner =
-                            new SingleObjectSelectionAdorner(EditingCanvas, new List<BaseObject> { a });
+                            new SingleObjectSelectionAdorner(EditingCanvas, new List<StructuralObject> { a });
                         SelectionAdorners[a] = annotationAdorner;
                         annotationAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_SelAdorner;
                     }
@@ -459,9 +459,9 @@ namespace Chem4Word.ACME
             }
 
             //local function
-            void AddMixed(List<Molecule> mols, List<BaseObject> selObjects)
+            void AddMixed(List<Molecule> mols, List<StructuralObject> selObjects)
             {
-                List<BaseObject> objects = mols.Cast<BaseObject>().ToList();
+                List<StructuralObject> objects = mols.Cast<StructuralObject>().ToList();
                 objects = objects.Union(selObjects).ToList();
                 MoleculeSelectionAdorner selector;
                 if (mols.Any(m => m.IsGrouped))
@@ -517,11 +517,11 @@ namespace Chem4Word.ACME
         /// Adds a chemical object to the current selection
         /// </summary>
         /// <param name="thingToAdd"></param>
-        public void AddToSelection(BaseObject thingToAdd)
+        public void AddToSelection(StructuralObject thingToAdd)
         {
             Molecule parent = (thingToAdd as Atom)?.Parent ?? (thingToAdd as Bond)?.Parent;
 
-            List<BaseObject> thingsToAdd = new List<BaseObject> { thingToAdd };
+            List<StructuralObject> thingsToAdd = new List<StructuralObject> { thingToAdd };
             if (parent != null)
             {
                 if (!SelectedItems.Contains(parent))
@@ -546,7 +546,7 @@ namespace Chem4Word.ACME
         /// Atoms into Molecules, Molecules into Groups
         /// </summary>
         /// <param name="thingsToAdd"></param>
-        public void AddObjectListToSelection(List<BaseObject> thingsToAdd)
+        public void AddObjectListToSelection(List<StructuralObject> thingsToAdd)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -812,7 +812,7 @@ namespace Chem4Word.ACME
             try
             {
                 ClearSelection();
-                List<BaseObject> selection = new List<BaseObject>();
+                List<StructuralObject> selection = new List<StructuralObject>();
                 foreach (Molecule mol in Model.Molecules.Values)
                 {
                     selection.Add(mol);

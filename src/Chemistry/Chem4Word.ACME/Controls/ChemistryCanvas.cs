@@ -69,7 +69,7 @@ namespace Chem4Word.ACME.Controls
         public ReactionVisual ActiveReactionVisual => ActiveVisual as ReactionVisual;
         public BondVisual ActiveBondVisual => ActiveVisual as BondVisual;
 
-        public BaseObject ActiveChemistry
+        public StructuralObject ActiveChemistry
         {
             get
             {

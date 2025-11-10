@@ -147,6 +147,7 @@
     <Compile Include="ResourceHelper.cs" />
     <Compile Include="EditControllerTests.cs" />
     <Compile Include="SupportRoutinesTests.cs" />
+    <Compile Include="PathTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Chemistry\Chem4Word.ACME\Chem4Word.ACME.csproj">

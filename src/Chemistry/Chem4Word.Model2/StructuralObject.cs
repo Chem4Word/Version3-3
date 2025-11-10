@@ -7,8 +7,10 @@
 
 namespace Chem4Word.Model2
 {
-    public abstract class BaseObject
+    public abstract class StructuralObject
     {
         public abstract string Path { get; }
+
+        public abstract StructuralObject GetByPath(string path);
     }
 }

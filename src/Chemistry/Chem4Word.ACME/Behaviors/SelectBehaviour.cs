@@ -206,7 +206,7 @@ namespace Chem4Word.ACME.Behaviors
                     _lassoHits = new List<object>();
                     GatherSelection(_lassoAdorner.Outline);
                     _lassoHits = _lassoHits.Distinct().ToList();
-                    EditController.AddObjectListToSelection(_lassoHits.Cast<BaseObject>().ToList());
+                    EditController.AddObjectListToSelection(_lassoHits.Cast<StructuralObject>().ToList());
                 }
                 if (EditController.SelectedItems.Any())
                 {

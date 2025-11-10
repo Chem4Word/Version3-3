@@ -16,10 +16,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
 {
-    public class Bond : BaseObject, INotifyPropertyChanged, IEquatable<Bond>
+    public class Bond : StructuralObject, INotifyPropertyChanged, IEquatable<Bond>
     {
         #region Properties
 
@@ -125,7 +126,7 @@ namespace Chem4Word.Model2
                 }
                 else
                 {
-                    return Parent.Path + "/" + Id;
+                    return Parent.Path + MoleculePathSeparator + Id;
                 }
             }
         }
@@ -893,46 +894,38 @@ namespace Chem4Word.Model2
 
         public static string OrderValueToOrder(double val, bool isAromatic = false)
         {
-            if (val == 0)
+            switch (val)
             {
-                return ModelConstants.OrderZero;
-            }
-            if (val == 0.5)
-            {
-                return ModelConstants.OrderPartial01;
-            }
-            if (val == 1)
-            {
-                return ModelConstants.OrderSingle;
-            }
-            if (val == 1.5)
-            {
-                if (isAromatic)
-                {
+                case 0:
+                    return ModelConstants.OrderZero;
+
+                case 0.5:
+                    return ModelConstants.OrderPartial01;
+
+                case 1:
+                    return ModelConstants.OrderSingle;
+
+                case 1.5 when isAromatic:
                     return ModelConstants.OrderAromatic;
-                }
-                else
-                {
+
+                case 1.5:
                     return ModelConstants.OrderPartial12;
-                }
+
+                case 2:
+                    return ModelConstants.OrderDouble;
+
+                case 2.5:
+                    return ModelConstants.OrderPartial23;
+
+                case 3:
+                    return ModelConstants.OrderTriple;
+
+                case 4:
+                    return ModelConstants.OrderAromatic;
+
+                default:
+                    return ModelConstants.OrderZero;
             }
-            if (val == 2)
-            {
-                return ModelConstants.OrderDouble;
-            }
-            if (val == 2.5)
-            {
-                return ModelConstants.OrderPartial23;
-            }
-            if (val == 3)
-            {
-                return ModelConstants.OrderTriple;
-            }
-            if (val == 4)
-            {
-                return ModelConstants.OrderAromatic;
-            }
-            return ModelConstants.OrderZero;
         }
 
         #endregion Methods
@@ -985,6 +978,13 @@ namespace Chem4Word.Model2
                 return false;
             }
             return other.InternalId == this.InternalId;
+        }
+
+        public override StructuralObject GetByPath(string path)
+        {
+            //Bonds do not support child objects, yet.
+            //We will revisit this when we add electrons to bonds
+            return null;
         }
     }
 }

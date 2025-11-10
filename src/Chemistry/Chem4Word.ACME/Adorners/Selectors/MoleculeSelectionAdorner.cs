@@ -62,7 +62,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private ScaleOperationParams _scaleOperationParams;
         private Point _newThumbPos;
 
-        public MoleculeSelectionAdorner(EditorCanvas currentEditor, List<BaseObject> objects)
+        public MoleculeSelectionAdorner(EditorCanvas currentEditor, List<StructuralObject> objects)
             : base(currentEditor, objects)
         {
             if (_thumbWidth == null)

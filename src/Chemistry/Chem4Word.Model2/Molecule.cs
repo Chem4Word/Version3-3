@@ -19,11 +19,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using static Chem4Word.Model2.ModelConstants;
 using Point = System.Windows.Point;
 
 namespace Chem4Word.Model2
 {
-    public class Molecule : BaseObject, IChemistryContainer, INotifyPropertyChanged
+    public class Molecule : StructuralObject, IChemistryContainer, INotifyPropertyChanged
     {
         #region Fields
 
@@ -331,7 +332,7 @@ namespace Chem4Word.Model2
 
                 if (Parent is Molecule molecule)
                 {
-                    path = molecule.Path + "/" + Id;
+                    path = molecule.Path + MoleculePathSeparator + Id;
                 }
 
                 return path;
@@ -2168,6 +2169,74 @@ namespace Chem4Word.Model2
             }
 
             return result;
+        }
+
+        public override StructuralObject GetByPath(string path)
+        {
+            if (path.StartsWith(MoleculePathSeparator))
+            {
+                path = path.Substring(1);
+                return Model.GetByPath(path);
+            }
+
+            int nextSlashPos = path.IndexOf(MoleculePathSeparator, StringComparison.Ordinal);
+            if (nextSlashPos == -1)
+            {
+                // No more slashes so must be a direct child of the molecule
+                foreach (Molecule molecule in Molecules.Values)
+                {
+                    if (molecule.Id == path)
+                    {
+                        return molecule;
+                    }
+                }
+
+                foreach (Atom atom in Atoms.Values)
+                {
+                    if (atom.Id == path)
+                    {
+                        return atom;
+                    }
+                }
+
+                foreach (Bond bond in Bonds)
+                {
+                    if (bond.Id == path)
+                    {
+                        return bond;
+                    }
+                }
+                //haven't found anything so degrade gracefully
+                return null;
+            }
+
+            // There are more slashes so must be a child of a molecule or reaction scheme
+            var firstId = path.Substring(0, nextSlashPos);
+            var remainder = path.Substring(nextSlashPos + 1);
+
+            foreach (Molecule molecule in Molecules.Values)
+            {
+                if (molecule.Id == firstId)
+                {
+                    return molecule.GetByPath(remainder);
+                }
+            }
+            foreach (Atom atom in Atoms.Values)
+            {
+                if (atom.Id == firstId)
+                {
+                    return atom.GetByPath(remainder);
+                }
+            }
+            foreach (Bond bond in Bonds)
+            {
+                if (bond.Id == path)
+                {
+                    return bond.GetByPath(remainder);
+                }
+            }
+
+            return null;
         }
     }
 }

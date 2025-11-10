@@ -14,10 +14,11 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
 {
-    public class Reaction : BaseObject, INotifyPropertyChanged
+    public class Reaction : StructuralObject, INotifyPropertyChanged
     {
         #region Internal Constructs
 
@@ -123,7 +124,7 @@ namespace Chem4Word.Model2
                 }
                 else
                 {
-                    return Parent.Path + "/" + Id;
+                    return Parent.Path + MoleculePathSeparator + Id;
                 }
             }
         }
@@ -324,5 +325,60 @@ namespace Chem4Word.Model2
         }
 
         #endregion Methods
+
+        public override StructuralObject GetByPath(string path)
+        {
+            if (path.StartsWith(MoleculePathSeparator))
+            {
+                path = path.Substring(1);
+                return Parent.Parent.GetByPath(path);
+            }
+
+            int nextSlashPos = path.IndexOf(MoleculePathSeparator);
+            if (nextSlashPos == -1)
+            {
+                // No more slashes so must be a direct child of the model
+                foreach (Molecule reactant in Reactants.Values)
+                {
+                    if (reactant.Id == path)
+                    {
+                        return reactant;
+                    }
+                }
+
+                foreach (Molecule product in Reactants.Values)
+                {
+                    if (product.Id == path)
+                    {
+                        return product;
+                    }
+                }
+
+                //haven't found anything so degrade gracefully
+                return null;
+            }
+
+            // There are more slashes so must be a child of a molecule or reaction scheme
+            var firstId = path.Substring(0, nextSlashPos);
+            var remainder = path.Substring(nextSlashPos + 1);
+
+            foreach (Molecule reactant in Reactants.Values)
+            {
+                if (reactant.Id == firstId)
+                {
+                    return reactant.GetByPath(remainder);
+                }
+            }
+
+            foreach (Molecule product in Products.Values)
+            {
+                if (product.Id == firstId)
+                {
+                    return product.GetByPath(remainder);
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -12,13 +12,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Xml.Linq;
+using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
 {
     /// <summary>
     /// A textual annotation. Can be free floating or attached to an object
     /// </summary>
-    public class Annotation : BaseObject, INotifyPropertyChanged
+    public class Annotation : StructuralObject, INotifyPropertyChanged
     {
         private string _xaml;
         private bool _isEditable;
@@ -44,7 +45,7 @@ namespace Chem4Word.Model2
 
                 if (Parent is Molecule molecule)
                 {
-                    path = molecule.Path + "/" + Id;
+                    path = molecule.Path + MoleculePathSeparator + Id;
                 }
 
                 return path;
@@ -147,6 +148,12 @@ namespace Chem4Word.Model2
         public void UpdateVisual()
         {
             OnPropertyChanged(nameof(Position));
+        }
+
+        public override StructuralObject GetByPath(string path)
+        {
+            //Annotations do not support child objects, period.
+            return null;
         }
     }
 }

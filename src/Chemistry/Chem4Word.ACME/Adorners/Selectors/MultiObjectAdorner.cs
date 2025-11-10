@@ -16,15 +16,15 @@ namespace Chem4Word.ACME.Adorners.Selectors
     {
         #region Shared Properties
 
-        public List<BaseObject> AdornedObjects { get; }
+        public List<StructuralObject> AdornedObjects { get; }
 
         #endregion Shared Properties
 
         #region Constructors
 
-        protected MultiObjectAdorner(EditorCanvas currentEditor, List<BaseObject> chemistries) : base(currentEditor)
+        protected MultiObjectAdorner(EditorCanvas currentEditor, List<StructuralObject> chemistries) : base(currentEditor)
         {
-            AdornedObjects = new List<BaseObject>();
+            AdornedObjects = new List<StructuralObject>();
             AdornedObjects.AddRange(chemistries.Distinct());
         }
 

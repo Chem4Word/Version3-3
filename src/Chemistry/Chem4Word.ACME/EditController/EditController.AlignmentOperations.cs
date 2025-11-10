@@ -24,7 +24,7 @@ namespace Chem4Word.ACME
         /// along a horizontal line
         /// </summary>
         /// <param name="objects"></param>
-        public void AlignMiddles(List<BaseObject> objects)
+        public void AlignMiddles(List<StructuralObject> objects)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -103,7 +103,7 @@ namespace Chem4Word.ACME
         /// along a horizontal line
         /// </summary>
         /// <param name="objects"></param>
-        public void AlignTops(List<BaseObject> objects)
+        public void AlignTops(List<StructuralObject> objects)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -132,9 +132,9 @@ namespace Chem4Word.ACME
                 foreach (var annotation in annotationsToAlign)
                 {
                     TranslateTransform transform = new TranslateTransform
-                                                   {
-                                                       Y = top - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Top
-                                                   };
+                    {
+                        Y = top - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Top
+                    };
                     annotationTransforms.Add(transform);
                 }
 
@@ -179,7 +179,7 @@ namespace Chem4Word.ACME
                 UndoManager.RecordAction(undo, redo);
                 UndoManager.EndUndoBlock();
                 redo();
-                AddObjectListToSelection(annotationsToAlign.Cast<BaseObject>().ToList());
+                AddObjectListToSelection(annotationsToAlign.Cast<StructuralObject>().ToList());
             }
             catch (Exception exception)
             {
@@ -192,7 +192,7 @@ namespace Chem4Word.ACME
         /// along a horizontal line
         /// </summary>
         /// <param name="objects"></param>
-        public void AlignBottoms(List<BaseObject> objects)
+        public void AlignBottoms(List<StructuralObject> objects)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -242,7 +242,7 @@ namespace Chem4Word.ACME
         /// along a vertical line
         /// </summary>
         /// <param name="objects"></param>
-        public void AlignCentres(List<BaseObject> objects)
+        public void AlignCentres(List<StructuralObject> objects)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -353,7 +353,7 @@ namespace Chem4Word.ACME
                 UndoManager.RecordAction(undo, redo);
                 UndoManager.EndUndoBlock();
                 redo();
-                AddObjectListToSelection(reactionsToAlign.Cast<BaseObject>().ToList());
+                AddObjectListToSelection(reactionsToAlign.Cast<StructuralObject>().ToList());
             }
             catch (Exception exception)
             {
@@ -366,7 +366,7 @@ namespace Chem4Word.ACME
         /// along a vertical line
         /// </summary>
         /// <param name="objects"></param>
-        public void AlignLefts(List<BaseObject> objects)
+        public void AlignLefts(List<StructuralObject> objects)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -417,7 +417,7 @@ namespace Chem4Word.ACME
         /// along a vertical line
         /// </summary>
         /// <param name="objects"></param>
-        public void AlignRights(List<BaseObject> objects)
+        public void AlignRights(List<StructuralObject> objects)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
@@ -477,7 +477,7 @@ namespace Chem4Word.ACME
             {
                 UndoManager.BeginUndoBlock();
                 MultiTransformMolecules(transforms, molsToAlign);
-                AddObjectListToSelection(molsToAlign.Cast<BaseObject>().ToList());
+                AddObjectListToSelection(molsToAlign.Cast<StructuralObject>().ToList());
                 UndoManager.EndUndoBlock();
             }
             else

@@ -52,16 +52,16 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private Geometry _ghostMolecule;
 
         public SingleObjectSelectionAdorner(EditorCanvas currentEditor, Molecule molecule)
-            : this(currentEditor, new List<BaseObject> { molecule })
+            : this(currentEditor, new List<StructuralObject> { molecule })
         {
         }
 
         public SingleObjectSelectionAdorner(EditorCanvas currentEditor, List<Molecule> mols)
-            : this(currentEditor, mols.ConvertAll(m => (BaseObject)m))
+            : this(currentEditor, mols.ConvertAll(m => (StructuralObject)m))
         {
         }
 
-        public SingleObjectSelectionAdorner(EditorCanvas currentEditor, List<BaseObject> molecules) : base(currentEditor, molecules)
+        public SingleObjectSelectionAdorner(EditorCanvas currentEditor, List<StructuralObject> molecules) : base(currentEditor, molecules)
         {
             BuildBigDragArea();
 

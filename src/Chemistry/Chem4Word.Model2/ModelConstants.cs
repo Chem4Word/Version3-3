@@ -7,7 +7,7 @@
 
 namespace Chem4Word.Model2
 {
-    public class ModelConstants
+    public static class ModelConstants
     {
         // CML Constants
         public const string NSCML = "cml";
@@ -124,5 +124,7 @@ namespace Chem4Word.Model2
         public const string OrderSingle = "S";
         public const string OrderTriple = "T";
         public const string OrderZero = "hbond";
+
+        public const string MoleculePathSeparator = "/";
     }
 }

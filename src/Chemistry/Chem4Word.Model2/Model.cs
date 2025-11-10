@@ -19,10 +19,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
 {
-    public class Model : IChemistryContainer, INotifyPropertyChanged
+    public class Model : StructuralObject, IChemistryContainer, INotifyPropertyChanged
     {
         #region Events
 
@@ -205,7 +206,7 @@ namespace Chem4Word.Model2
 
         public Dictionary<string, CrossedBonds> CrossedBonds { get; set; } = new Dictionary<string, CrossedBonds>();
 
-        public string Path => "/";
+        public override string Path => MoleculePathSeparator;
         public IChemistryContainer Root => null;
 
         public bool ScaledForXaml { get; set; }
@@ -1795,6 +1796,67 @@ namespace Chem4Word.Model2
             // These are required to be preserved to allow matching of molecules after silent expansion (for fetching properties from property calculator)
 
             return result;
+        }
+
+        public override StructuralObject GetByPath(string path)
+        {
+            int nextSlashPos = path.IndexOf(MoleculePathSeparator);
+
+            if (path.StartsWith(MoleculePathSeparator))
+            {
+                path = path.Substring(1);
+                nextSlashPos = path.IndexOf(MoleculePathSeparator);
+            }
+
+            if (nextSlashPos == -1)
+            {
+                // No more slashes so must be a direct child of the model
+                foreach (Molecule molecule in Molecules.Values)
+                {
+                    if (molecule.Id == path)
+                    {
+                        return molecule;
+                    }
+                }
+
+                foreach (ReactionScheme reactionScheme in ReactionSchemes.Values)
+                {
+                    if (reactionScheme.Id == path)
+                    {
+                        return reactionScheme;
+                    }
+                }
+
+                foreach (Annotation annotation in Annotations.Values)
+                {
+                    if (annotation.Id == path)
+                    {
+                        return annotation;
+                    }
+                }
+                //haven't found anything so degrade gracefully
+                return null;
+            }
+
+            // There are more slashes so must be a child of a molecule or reaction scheme
+            var firstId = path.Substring(0, nextSlashPos);
+            var remainder = path.Substring(nextSlashPos + 1);
+
+            foreach (Molecule molecule in Molecules.Values)
+            {
+                if (molecule.Id == firstId)
+                {
+                    return molecule.GetByPath(remainder);
+                }
+            }
+            foreach (ReactionScheme reactionScheme in ReactionSchemes.Values)
+            {
+                if (reactionScheme.Id == firstId)
+                {
+                    return reactionScheme.GetByPath(remainder);
+                }
+            }
+            return null;
         }
 
         #endregion Methods

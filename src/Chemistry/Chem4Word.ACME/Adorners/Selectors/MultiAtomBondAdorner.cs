@@ -23,13 +23,13 @@ namespace Chem4Word.ACME.Adorners.Selectors
         public CombinedGeometry OverallGeometry { get; }
         private double RenderRadius => (EditController.Model.XamlBondLength * ModelConstants.FontSizePercentageBond) / 4;
 
-        public MultiAtomBondAdorner(EditorCanvas currentEditor, List<BaseObject> chemistries) : base(currentEditor, chemistries)
+        public MultiAtomBondAdorner(EditorCanvas currentEditor, List<StructuralObject> chemistries) : base(currentEditor, chemistries)
         {
             //first, create an empty PathGeometry to hold the summed-up atoms and bonds
             OverallGeometry = new CombinedGeometry();
 
             //iterate through each of the adorned atoms and bonds
-            foreach (BaseObject adornedChemistry in AdornedObjects)
+            foreach (StructuralObject adornedChemistry in AdornedObjects)
             {
                 switch (adornedChemistry)
                 {

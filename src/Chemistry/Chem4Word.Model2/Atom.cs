@@ -15,10 +15,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
 {
-    public class Atom : BaseObject, INotifyPropertyChanged, IEquatable<Atom>
+    public class Atom : StructuralObject, INotifyPropertyChanged, IEquatable<Atom>
     {
         #region Fields
 
@@ -358,7 +359,7 @@ namespace Chem4Word.Model2
                 }
                 else
                 {
-                    return Parent.Path + "/" + Id;
+                    return Parent.Path + MoleculePathSeparator + Id;
                 }
             }
         }
@@ -848,6 +849,13 @@ namespace Chem4Word.Model2
                 bool result = availableElectrons < 0;
                 return result;
             }
+        }
+
+        public override StructuralObject GetByPath(string path)
+        {
+            //Atoms do not support child objects, yet.
+            //We will revisit this when we add electrons to atoms
+            return null;
         }
     }
 }

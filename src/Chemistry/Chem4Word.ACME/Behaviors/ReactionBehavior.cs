@@ -20,7 +20,6 @@ namespace Chem4Word.ACME.Behaviors
         private Window _parent;
         private Cursor _lastCursor;
 
-        public static bool MouseIsDown { get; private set; }
         public static bool IsDrawing { get; private set; }
 
         private Snapper _angleSnapper;
@@ -29,13 +28,6 @@ namespace Chem4Word.ACME.Behaviors
 
         private Adorner _adorner;
         private const double DRAW_TOLERANCE = 20d;
-
-        public Point FirstPoint { get; set; }
-        public Point CurrentPoint { get; set; }
-
-        public ReactionBehavior()
-        {
-        }
 
         protected override void OnAttached()
         {

@@ -256,7 +256,7 @@ namespace Chem4Word.ACME
         /// </summary>
         /// <param name="operation">Transform to apply to the selection</param>
         /// <param name="objectsToTransform">List<BaseObject> to transform</param>
-        public void TransformObjects(Transform operation, List<BaseObject> objectsToTransform)
+        public void TransformObjects(Transform operation, List<StructuralObject> objectsToTransform)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             List<Molecule> molecules = objectsToTransform.OfType<Molecule>().ToList();
@@ -321,9 +321,9 @@ namespace Chem4Word.ACME
                         ann.UpdateVisual();
                     }
 
-                    AddObjectListToSelection(molecules.Cast<BaseObject>().ToList());
-                    AddObjectListToSelection(reactions.Cast<BaseObject>().ToList());
-                    AddObjectListToSelection(annotations.Cast<BaseObject>().ToList());
+                    AddObjectListToSelection(molecules.Cast<StructuralObject>().ToList());
+                    AddObjectListToSelection(reactions.Cast<StructuralObject>().ToList());
+                    AddObjectListToSelection(annotations.Cast<StructuralObject>().ToList());
                 };
 
                 Action redo = () =>
@@ -370,9 +370,9 @@ namespace Chem4Word.ACME
                         ann.UpdateVisual();
                     }
 
-                    AddObjectListToSelection(molecules.Cast<BaseObject>().ToList());
-                    AddObjectListToSelection(reactions.Cast<BaseObject>().ToList());
-                    AddObjectListToSelection(annotations.Cast<BaseObject>().ToList());
+                    AddObjectListToSelection(molecules.Cast<StructuralObject>().ToList());
+                    AddObjectListToSelection(reactions.Cast<StructuralObject>().ToList());
+                    AddObjectListToSelection(annotations.Cast<StructuralObject>().ToList());
                 };
                 UndoManager.BeginUndoBlock();
                 UndoManager.RecordAction(undo, redo);
@@ -450,7 +450,7 @@ namespace Chem4Word.ACME
                         mol.UpdateVisual();
                     }
 
-                    AddObjectListToSelection(moleculesToTransform.Cast<BaseObject>().ToList());
+                    AddObjectListToSelection(moleculesToTransform.Cast<StructuralObject>().ToList());
                 };
 
                 Action redo = () =>
@@ -472,7 +472,7 @@ namespace Chem4Word.ACME
                         mol.UpdateVisual();
                     }
 
-                    AddObjectListToSelection(moleculesToTransform.Cast<BaseObject>().ToList());
+                    AddObjectListToSelection(moleculesToTransform.Cast<StructuralObject>().ToList());
                 };
 
                 UndoManager.BeginUndoBlock();
@@ -526,7 +526,7 @@ namespace Chem4Word.ACME
                             mol.UpdateVisual();
                         }
 
-                        AddObjectListToSelection(molecules.Cast<BaseObject>().ToList());
+                        AddObjectListToSelection(molecules.Cast<StructuralObject>().ToList());
                     };
 
                     Action redo = () =>

@@ -10,14 +10,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
 {
     /* NB: the Model currently supports only one reaction scheme. This should *always* be
-     * access by the DefaultReactionScheme property. Do not add more schemes to the Model!
+     * accessed by the DefaultReactionScheme property. Do not add more schemes to the Model!
      * We will review support for additional schemes as and when appropriate */
 
-    public class ReactionScheme : INotifyPropertyChanged
+    public class ReactionScheme : StructuralObject, INotifyPropertyChanged
     {
         public readonly ReadOnlyDictionary<Guid, Reaction> Reactions;
         private readonly Dictionary<Guid, Reaction> _reactions;
@@ -25,7 +26,7 @@ namespace Chem4Word.Model2
         public Guid InternalId { get; internal set; }
         public Model Parent { get; set; }
 
-        public string Path
+        public override string Path
         {
             get
             {
@@ -185,6 +186,44 @@ namespace Chem4Word.Model2
                     // Don't do anything for now
                 }
             }
+        }
+
+        public override StructuralObject GetByPath(string path)
+        {
+            if (path.StartsWith(MoleculePathSeparator))
+            {
+                path = path.Substring(1);
+                return Parent.GetByPath(path);
+            }
+
+            int nextSlashPos = path.IndexOf(MoleculePathSeparator);
+            if (nextSlashPos == -1)
+            {
+                foreach (Reaction reaction in Reactions.Values)
+                {
+                    if (reaction.Id == path)
+                    {
+                        return reaction;
+                    }
+                }
+
+                //haven't found anything so degrade gracefully
+                return null;
+            }
+
+            // There are more slashes so must be a child of a molecule or reaction
+            var firstId = path.Substring(0, nextSlashPos);
+            var remainder = path.Substring(nextSlashPos + 1);
+
+            foreach (Reaction reaction in Reactions.Values)
+            {
+                if (reaction.Id == firstId)
+                {
+                    return reaction.GetByPath(remainder);
+                }
+            }
+
+            return null;
         }
     }
 }

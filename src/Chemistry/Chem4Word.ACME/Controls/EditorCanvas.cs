@@ -41,13 +41,13 @@ namespace Chem4Word.ACME.Controls
             return union;
         }
 
-        public Rect GetCombinedBoundingBox(List<BaseObject> chemistries)
+        public Rect GetCombinedBoundingBox(List<StructuralObject> chemistries)
         {
             Rect union = Rect.Empty;
-            foreach (BaseObject cb in chemistries)
+            foreach (StructuralObject structuralObject in chemistries)
             {
                 Rect boundingBox = Rect.Empty;
-                if (cb is Molecule molecule)
+                if (structuralObject is Molecule molecule)
                 {
                     if (molecule.IsGrouped)
                     {
@@ -58,11 +58,11 @@ namespace Chem4Word.ACME.Controls
                         boundingBox = GetMoleculeBoundingBox(molecule);
                     }
                 }
-                else if (cb is Annotation annotation)
+                else if (structuralObject is Annotation annotation)
                 {
                     boundingBox = GetDrawnBoundingBox(annotation);
                 }
-                else if (cb is Reaction reaction)
+                else if (structuralObject is Reaction reaction)
                 {
                     boundingBox = GetReactionBoundingBox(new List<Reaction> { reaction });
                 }
