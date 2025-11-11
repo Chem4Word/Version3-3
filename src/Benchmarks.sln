@@ -1,0 +1,119 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D4427174-46F5-4058-8934-4CEAFDBAF60D}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlugIns", "PlugIns", "{B7F29690-10BF-4CC2-AD00-9FD0D42ED765}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Core", "Common\Chem4Word.Core\Chem4Word.Core.csproj", "{2E7B1308-8149-4B03-9CB9-48E0B7151560}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4WordTests", "UnitTests\Chem4WordTests.csproj", "{6C85CD96-6C59-4172-9C9E-62D216D40ED1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{2E9CE94F-9664-44CB-90B5-D1E0253E528C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Telemetry", "Common\Chem4Word.Telemetry\Chem4Word.Telemetry.csproj", "{C89BC92A-4183-48A6-B039-AD76AA1DF48F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{914705CC-C9EF-4F33-8412-080D84924CE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chemistry", "Chemistry", "{0A7C66AA-7788-4EA5-AC94-8CBB354010CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Contracts", "PlugIns\Contracts\Chem4Word.Contracts.csproj", "{BDFEE6C1-3F34-4200-9100-C543BF4C3783}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.ACME", "Chemistry\Chem4Word.ACME\Chem4Word.ACME.csproj", "{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Model2", "Chemistry\Chem4Word.Model2\Chem4Word.Model2.csproj", "{C69BAB8F-4881-4D5F-9929-FC8470DF1E48}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{AFCDC027-D0AE-48B4-A0B6-DB80B7D82D16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Driver.Dummy", "PlugIns\Drivers\Chem4Word.Driver.Dummy\Chem4Word.Driver.Dummy.csproj", "{AF2BA859-7A5A-4B36-B20D-E2603F070EE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Driver.Open", "PlugIns\Drivers\Chem4Word.Driver.Open\Chem4Word.Driver.Open.csproj", "{7A4F7024-DFBF-416F-A7E3-E2D04F971ABE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "TestHarness\Benchmarks\Benchmarks.csproj", "{5A3B3FA0-1355-4991-A9FD-B4DA343D0229}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E7B1308-8149-4B03-9CB9-48E0B7151560}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E7B1308-8149-4B03-9CB9-48E0B7151560}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E7B1308-8149-4B03-9CB9-48E0B7151560}.Release|x64.ActiveCfg = Release|Any CPU
+		{2E7B1308-8149-4B03-9CB9-48E0B7151560}.Release|x64.Build.0 = Release|Any CPU
+		{2E7B1308-8149-4B03-9CB9-48E0B7151560}.Release|x86.ActiveCfg = Release|Any CPU
+		{2E7B1308-8149-4B03-9CB9-48E0B7151560}.Release|x86.Build.0 = Release|Any CPU
+		{6C85CD96-6C59-4172-9C9E-62D216D40ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C85CD96-6C59-4172-9C9E-62D216D40ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C85CD96-6C59-4172-9C9E-62D216D40ED1}.Release|x64.ActiveCfg = Release|Any CPU
+		{6C85CD96-6C59-4172-9C9E-62D216D40ED1}.Release|x64.Build.0 = Release|Any CPU
+		{6C85CD96-6C59-4172-9C9E-62D216D40ED1}.Release|x86.ActiveCfg = Release|Any CPU
+		{6C85CD96-6C59-4172-9C9E-62D216D40ED1}.Release|x86.Build.0 = Release|Any CPU
+		{C89BC92A-4183-48A6-B039-AD76AA1DF48F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C89BC92A-4183-48A6-B039-AD76AA1DF48F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C89BC92A-4183-48A6-B039-AD76AA1DF48F}.Release|x64.ActiveCfg = Release|Any CPU
+		{C89BC92A-4183-48A6-B039-AD76AA1DF48F}.Release|x64.Build.0 = Release|Any CPU
+		{C89BC92A-4183-48A6-B039-AD76AA1DF48F}.Release|x86.ActiveCfg = Release|Any CPU
+		{C89BC92A-4183-48A6-B039-AD76AA1DF48F}.Release|x86.Build.0 = Release|Any CPU
+		{BDFEE6C1-3F34-4200-9100-C543BF4C3783}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDFEE6C1-3F34-4200-9100-C543BF4C3783}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDFEE6C1-3F34-4200-9100-C543BF4C3783}.Release|x64.ActiveCfg = Release|Any CPU
+		{BDFEE6C1-3F34-4200-9100-C543BF4C3783}.Release|x64.Build.0 = Release|Any CPU
+		{BDFEE6C1-3F34-4200-9100-C543BF4C3783}.Release|x86.ActiveCfg = Release|Any CPU
+		{BDFEE6C1-3F34-4200-9100-C543BF4C3783}.Release|x86.Build.0 = Release|Any CPU
+		{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}.Release|x64.ActiveCfg = Release|Any CPU
+		{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}.Release|x64.Build.0 = Release|Any CPU
+		{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}.Release|x86.ActiveCfg = Release|Any CPU
+		{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7}.Release|x86.Build.0 = Release|Any CPU
+		{C69BAB8F-4881-4D5F-9929-FC8470DF1E48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C69BAB8F-4881-4D5F-9929-FC8470DF1E48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C69BAB8F-4881-4D5F-9929-FC8470DF1E48}.Release|x64.ActiveCfg = Release|Any CPU
+		{C69BAB8F-4881-4D5F-9929-FC8470DF1E48}.Release|x64.Build.0 = Release|Any CPU
+		{C69BAB8F-4881-4D5F-9929-FC8470DF1E48}.Release|x86.ActiveCfg = Release|Any CPU
+		{C69BAB8F-4881-4D5F-9929-FC8470DF1E48}.Release|x86.Build.0 = Release|Any CPU
+		{AF2BA859-7A5A-4B36-B20D-E2603F070EE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF2BA859-7A5A-4B36-B20D-E2603F070EE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF2BA859-7A5A-4B36-B20D-E2603F070EE0}.Release|x64.ActiveCfg = Release|Any CPU
+		{AF2BA859-7A5A-4B36-B20D-E2603F070EE0}.Release|x64.Build.0 = Release|Any CPU
+		{AF2BA859-7A5A-4B36-B20D-E2603F070EE0}.Release|x86.ActiveCfg = Release|Any CPU
+		{AF2BA859-7A5A-4B36-B20D-E2603F070EE0}.Release|x86.Build.0 = Release|Any CPU
+		{7A4F7024-DFBF-416F-A7E3-E2D04F971ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A4F7024-DFBF-416F-A7E3-E2D04F971ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A4F7024-DFBF-416F-A7E3-E2D04F971ABE}.Release|x64.ActiveCfg = Release|Any CPU
+		{7A4F7024-DFBF-416F-A7E3-E2D04F971ABE}.Release|x64.Build.0 = Release|Any CPU
+		{7A4F7024-DFBF-416F-A7E3-E2D04F971ABE}.Release|x86.ActiveCfg = Release|Any CPU
+		{7A4F7024-DFBF-416F-A7E3-E2D04F971ABE}.Release|x86.Build.0 = Release|Any CPU
+		{5A3B3FA0-1355-4991-A9FD-B4DA343D0229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A3B3FA0-1355-4991-A9FD-B4DA343D0229}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A3B3FA0-1355-4991-A9FD-B4DA343D0229}.Release|x64.ActiveCfg = Release|Any CPU
+		{5A3B3FA0-1355-4991-A9FD-B4DA343D0229}.Release|x64.Build.0 = Release|Any CPU
+		{5A3B3FA0-1355-4991-A9FD-B4DA343D0229}.Release|x86.ActiveCfg = Release|Any CPU
+		{5A3B3FA0-1355-4991-A9FD-B4DA343D0229}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2E7B1308-8149-4B03-9CB9-48E0B7151560} = {914705CC-C9EF-4F33-8412-080D84924CE0}
+		{6C85CD96-6C59-4172-9C9E-62D216D40ED1} = {2E9CE94F-9664-44CB-90B5-D1E0253E528C}
+		{C89BC92A-4183-48A6-B039-AD76AA1DF48F} = {914705CC-C9EF-4F33-8412-080D84924CE0}
+		{BDFEE6C1-3F34-4200-9100-C543BF4C3783} = {B7F29690-10BF-4CC2-AD00-9FD0D42ED765}
+		{1E3FC1F1-06CC-44BD-8004-3EF0CE7EEAA7} = {0A7C66AA-7788-4EA5-AC94-8CBB354010CD}
+		{C69BAB8F-4881-4D5F-9929-FC8470DF1E48} = {0A7C66AA-7788-4EA5-AC94-8CBB354010CD}
+		{AFCDC027-D0AE-48B4-A0B6-DB80B7D82D16} = {B7F29690-10BF-4CC2-AD00-9FD0D42ED765}
+		{AF2BA859-7A5A-4B36-B20D-E2603F070EE0} = {AFCDC027-D0AE-48B4-A0B6-DB80B7D82D16}
+		{7A4F7024-DFBF-416F-A7E3-E2D04F971ABE} = {AFCDC027-D0AE-48B4-A0B6-DB80B7D82D16}
+		{5A3B3FA0-1355-4991-A9FD-B4DA343D0229} = {2E9CE94F-9664-44CB-90B5-D1E0253E528C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E59A5EC-4690-42FA-8DBE-E152256F1D44}
+	EndGlobalSection
+EndGlobal

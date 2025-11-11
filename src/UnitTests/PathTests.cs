@@ -65,6 +65,7 @@ namespace Chem4WordTests
 
             // Act
             Bond bond = multiLevel.GetByPath(path) as Bond;
+            //assert
 
             // Assert
             Assert.NotNull(bond);
