@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Xml.Linq;
@@ -66,7 +67,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     Left = (int)TopLeft.X;
                     Top = (int)TopLeft.Y;
                     var screen = Screen.FromControl(this);
-                    var sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+                    var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                     Left = (int)sensible.X;
                     Top = (int)sensible.Y;
                 }

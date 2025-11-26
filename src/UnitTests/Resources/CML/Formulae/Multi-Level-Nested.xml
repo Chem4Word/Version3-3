@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cml:cml xmlns:conventions="http://www.xml-cml.org/convention/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:c4w="http://www.chem4word.com/cml" conventions="convention:molecular">
+	<c4w:explicitC>false</c4w:explicitC>
+	<c4w:explicitH>HeteroAndTerminal</c4w:explicitH>
+	<c4w:showColouredAtoms>true</c4w:showColouredAtoms>
+	<c4w:showMoleculeGrouping>true</c4w:showMoleculeGrouping>
+	<c4w:molecularWeight>384.352</c4w:molecularWeight>
+	<c4w:showMolecularWeight>false</c4w:showMolecularWeight>
+	<c4w:showMoleculeCaptions>false</c4w:showMoleculeCaptions>
+	<cml:molecule id="m1">
+		<cml:molecule id="m2">
+			<cml:molecule id="m3">
+				<cml:formula id="m3.f0" concise="C 6 H 6" />
+				<cml:formula id="m3.f1" convention="chem4word:ResolvedFormula" inline="C6H6" concise="C 6 H 6" />
+				<cml:formula id="m3.f2" convention="chem4word:ResolvedSmiles" inline="C1=CC=CC=C1" concise="C 6 H 6" />
+				<cml:name id="m3.n1" dictRef="chem4word:CalculatedInchi">1S/C6H6/c1-2-4-6-5-3-1/h1-6H</cml:name>
+				<cml:name id="m3.n2" dictRef="chem4word:CalculatedInchikey">UHOVQNZJYSORNB-UHFFFAOYSA-N</cml:name>
+				<cml:name id="m3.n3" dictRef="chem4word:ResolvedIupacname">benzene</cml:name>
+				<cml:atomArray>
+					<cml:atom id="a1" elementType="C" x2="615.1795" y2="580.0719" />
+					<cml:atom id="a2" elementType="C" x2="615.1795" y2="560.0719" />
+					<cml:atom id="a3" elementType="C" x2="632.5" y2="550.0719" />
+					<cml:atom id="a4" elementType="C" x2="649.8205" y2="560.0719" />
+					<cml:atom id="a5" elementType="C" x2="649.8205" y2="580.0719" />
+					<cml:atom id="a6" elementType="C" x2="632.5" y2="590.0719" />
+				</cml:atomArray>
+				<cml:bondArray>
+					<cml:bond id="b1" atomRefs2="a1 a2" order="S" />
+					<cml:bond id="b2" atomRefs2="a2 a3" order="D" />
+					<cml:bond id="b3" atomRefs2="a3 a4" order="S" />
+					<cml:bond id="b4" atomRefs2="a4 a5" order="D" />
+					<cml:bond id="b5" atomRefs2="a5 a6" order="S" />
+					<cml:bond id="b6" atomRefs2="a6 a1" order="D" />
+				</cml:bondArray>
+			</cml:molecule>
+			<cml:molecule id="m4">
+				<cml:formula id="m4.f0" concise="C 6 H 6" />
+				<cml:formula id="m4.f1" convention="chem4word:ResolvedFormula" inline="C6H6" concise="C 6 H 6" />
+				<cml:formula id="m4.f2" convention="chem4word:ResolvedSmiles" inline="C1=CC=CC=C1" concise="C 6 H 6" />
+				<cml:name id="m4.n1" dictRef="chem4word:CalculatedInchi">1S/C6H6/c1-2-4-6-5-3-1/h1-6H</cml:name>
+				<cml:name id="m4.n2" dictRef="chem4word:CalculatedInchikey">UHOVQNZJYSORNB-UHFFFAOYSA-N</cml:name>
+				<cml:name id="m4.n3" dictRef="chem4word:ResolvedIupacname">benzene</cml:name>
+				<cml:atomArray>
+					<cml:atom id="a7" elementType="C" x2="550.1795" y2="580.0719" />
+					<cml:atom id="a8" elementType="C" x2="550.1795" y2="560.0719" />
+					<cml:atom id="a9" elementType="C" x2="567.5" y2="550.0719" />
+					<cml:atom id="a10" elementType="C" x2="584.8205" y2="560.0719" />
+					<cml:atom id="a11" elementType="C" x2="584.8205" y2="580.0719" />
+					<cml:atom id="a12" elementType="C" x2="567.5" y2="590.0719" />
+				</cml:atomArray>
+				<cml:bondArray>
+					<cml:bond id="b7" atomRefs2="a7 a8" order="S" />
+					<cml:bond id="b8" atomRefs2="a8 a9" order="D" />
+					<cml:bond id="b9" atomRefs2="a9 a10" order="S" />
+					<cml:bond id="b10" atomRefs2="a10 a11" order="D" />
+					<cml:bond id="b11" atomRefs2="a11 a12" order="S" />
+					<cml:bond id="b12" atomRefs2="a12 a7" order="D" />
+				</cml:bondArray>
+			</cml:molecule>
+		</cml:molecule>
+		<cml:molecule id="m5">
+			<cml:molecule id="m6">
+				<cml:formula id="m6.f0" concise="C 6 H 6" />
+				<cml:formula id="m6.f1" convention="chem4word:ResolvedFormula" inline="C6H6" concise="C 6 H 6" />
+				<cml:formula id="m6.f2" convention="chem4word:ResolvedSmiles" inline="C1=CC=CC=C1" concise="C 6 H 6" />
+				<cml:name id="m6.n1" dictRef="chem4word:CalculatedInchi">1S/C6H6/c1-2-4-6-5-3-1/h1-6H</cml:name>
+				<cml:name id="m6.n2" dictRef="chem4word:CalculatedInchikey">UHOVQNZJYSORNB-UHFFFAOYSA-N</cml:name>
+				<cml:name id="m6.n3" dictRef="chem4word:ResolvedIupacname">benzene</cml:name>
+				<cml:atomArray>
+					<cml:atom id="a13" elementType="C" x2="616.4295" y2="635.0719" />
+					<cml:atom id="a14" elementType="C" x2="616.4295" y2="615.0719" />
+					<cml:atom id="a15" elementType="C" x2="633.75" y2="605.0719" />
+					<cml:atom id="a16" elementType="C" x2="651.0705" y2="615.0719" />
+					<cml:atom id="a17" elementType="C" x2="651.0705" y2="635.0719" />
+					<cml:atom id="a18" elementType="C" x2="633.75" y2="645.0719" />
+				</cml:atomArray>
+				<cml:bondArray>
+					<cml:bond id="b13" atomRefs2="a13 a14" order="S" />
+					<cml:bond id="b14" atomRefs2="a14 a15" order="D" />
+					<cml:bond id="b15" atomRefs2="a15 a16" order="S" />
+					<cml:bond id="b16" atomRefs2="a16 a17" order="D" />
+					<cml:bond id="b17" atomRefs2="a17 a18" order="S" />
+					<cml:bond id="b18" atomRefs2="a18 a13" order="D" />
+				</cml:bondArray>
+			</cml:molecule>
+			<cml:molecule id="m7">
+				<cml:formula id="m7.f0" concise="C 6 H 6" />
+				<cml:formula id="m7.f1" convention="chem4word:ResolvedFormula" inline="C6H6" concise="C 6 H 6" />
+				<cml:formula id="m7.f2" convention="chem4word:ResolvedSmiles" inline="C1=CC=CC=C1" concise="C 6 H 6" />
+				<cml:name id="m7.n1" dictRef="chem4word:CalculatedInchi">1S/C6H6/c1-2-4-6-5-3-1/h1-6H</cml:name>
+				<cml:name id="m7.n2" dictRef="chem4word:CalculatedInchikey">UHOVQNZJYSORNB-UHFFFAOYSA-N</cml:name>
+				<cml:name id="m7.n3" dictRef="chem4word:ResolvedIupacname">benzene</cml:name>
+				<cml:atomArray>
+					<cml:atom id="a19" elementType="C" x2="548.9295" y2="635.0719" />
+					<cml:atom id="a20" elementType="C" x2="548.9295" y2="615.0719" />
+					<cml:atom id="a21" elementType="C" x2="566.25" y2="605.0719" />
+					<cml:atom id="a22" elementType="C" x2="583.5705" y2="615.0719" />
+					<cml:atom id="a23" elementType="C" x2="583.5705" y2="635.0719" />
+					<cml:atom id="a24" elementType="C" x2="566.25" y2="645.0719" />
+				</cml:atomArray>
+				<cml:bondArray>
+					<cml:bond id="b19" atomRefs2="a19 a20" order="S" />
+					<cml:bond id="b20" atomRefs2="a20 a21" order="D" />
+					<cml:bond id="b21" atomRefs2="a21 a22" order="S" />
+					<cml:bond id="b22" atomRefs2="a22 a23" order="D" />
+					<cml:bond id="b23" atomRefs2="a23 a24" order="S" />
+					<cml:bond id="b24" atomRefs2="a24 a19" order="D" />
+				</cml:bondArray>
+			</cml:molecule>
+		</cml:molecule>
+	</cml:molecule>
+	<cml:molecule id="m8">
+		<cml:formula id="m8.f0" concise="C 4 H 8" />
+		<cml:formula id="m8.f1" convention="chem4word:ResolvedFormula" inline="C4H8" concise="C 4 H 8" />
+		<cml:formula id="m8.f2" convention="chem4word:ResolvedSmiles" inline="C1CCC1" concise="C 4 H 8" />
+		<cml:name id="m8.n1" dictRef="chem4word:CalculatedInchi">1S/C4H8/c1-2-4-3-1/h1-4H2</cml:name>
+		<cml:name id="m8.n2" dictRef="chem4word:CalculatedInchikey">PMPVIKIVABFJJI-UHFFFAOYSA-N</cml:name>
+		<cml:name id="m8.n3" dictRef="chem4word:ResolvedIupacname">cyclobutane</cml:name>
+		<cml:atomArray>
+			<cml:atom id="a25" elementType="C" x2="480.3579" y2="597.5719" />
+			<cml:atom id="a26" elementType="C" x2="494.5" y2="583.4298" />
+			<cml:atom id="a27" elementType="C" x2="508.6421" y2="597.5719" />
+			<cml:atom id="a28" elementType="C" x2="494.5" y2="611.714" />
+		</cml:atomArray>
+		<cml:bondArray>
+			<cml:bond id="b25" atomRefs2="a25 a26" order="S" />
+			<cml:bond id="b26" atomRefs2="a26 a27" order="S" />
+			<cml:bond id="b27" atomRefs2="a27 a28" order="S" />
+			<cml:bond id="b28" atomRefs2="a28 a25" order="S" />
+		</cml:bondArray>
+	</cml:molecule>
+	<cml:molecule id="m9">
+		<cml:formula id="m9.f0" concise="C 4 H 8" />
+		<cml:formula id="m9.f1" convention="chem4word:ResolvedFormula" inline="C4H8" concise="C 4 H 8" />
+		<cml:formula id="m9.f2" convention="chem4word:ResolvedSmiles" inline="C1CCC1" concise="C 4 H 8" />
+		<cml:name id="m9.n1" dictRef="chem4word:CalculatedInchi">1S/C4H8/c1-2-4-3-1/h1-4H2</cml:name>
+		<cml:name id="m9.n2" dictRef="chem4word:CalculatedInchikey">PMPVIKIVABFJJI-UHFFFAOYSA-N</cml:name>
+		<cml:name id="m9.n3" dictRef="chem4word:ResolvedIupacname">cyclobutane</cml:name>
+		<cml:atomArray>
+			<cml:atom id="a29" elementType="C" x2="691.3579" y2="597.5719" />
+			<cml:atom id="a30" elementType="C" x2="705.5" y2="583.4298" />
+			<cml:atom id="a31" elementType="C" x2="719.6421" y2="597.5719" />
+			<cml:atom id="a32" elementType="C" x2="705.5" y2="611.714" />
+		</cml:atomArray>
+		<cml:bondArray>
+			<cml:bond id="b29" atomRefs2="a29 a30" order="S" />
+			<cml:bond id="b30" atomRefs2="a30 a31" order="S" />
+			<cml:bond id="b31" atomRefs2="a31 a32" order="S" />
+			<cml:bond id="b32" atomRefs2="a32 a29" order="S" />
+		</cml:bondArray>
+	</cml:molecule>
+</cml:cml>

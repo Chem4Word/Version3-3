@@ -82,6 +82,9 @@
     <Compile Include="Forms\ComboBoxAndTreeViewStyles.xaml.cs">
       <DependentUpon>ComboBoxAndTreeViewStyles.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormulaTesting.xaml.cs">
+      <DependentUpon>FormulaTesting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FunctionalGroupExpansionTesting.xaml.cs">
       <DependentUpon>FunctionalGroupExpansionTesting.xaml</DependentUpon>
     </Compile>
@@ -100,6 +103,10 @@
       <DependentUpon>Menus.xaml</DependentUpon>
     </Compile>
     <Page Include="Forms\Animation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\FormulaTesting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

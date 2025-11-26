@@ -186,6 +186,7 @@ namespace Chem4Word.UI.WPF
 
             var editor = Globals.Chem4WordV3.GetEditorPlugIn(SelectEditorPlugIn.SelectedItem.ToString());
             editor.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
+            // ToDo: Fix top left
             editor.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
         }
 
@@ -196,6 +197,7 @@ namespace Chem4Word.UI.WPF
 
             var renderer = Globals.Chem4WordV3.GetRendererPlugIn(SelectRendererPlugIn.SelectedItem.ToString());
             renderer.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
+            // ToDo: Fix top left
             renderer.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
         }
 
@@ -206,6 +208,7 @@ namespace Chem4Word.UI.WPF
 
             var searcher = Globals.Chem4WordV3.GetSearcherPlugIn(SelectSearcherPlugIn.SelectedItem.ToString());
             searcher.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
+            // ToDo: Fix top left
             searcher.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
         }
 

@@ -5,8 +5,10 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Windows;
+using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
+using Point = System.Windows.Point;
 
 namespace Chem4Word.Core.Helpers
 {
@@ -25,39 +27,46 @@ namespace Chem4Word.Core.Helpers
         /// <returns></returns>
         public static Point SensibleTopLeft(Point point, Screen screen, int width, int height)
         {
-            var left = Clamp((int)point.X, width, screen.WorkingArea.Left, screen.WorkingArea.Left + screen.WorkingArea.Width);
-            var top = Clamp((int)point.Y, height, screen.WorkingArea.Top, screen.WorkingArea.Top + screen.WorkingArea.Height);
+            Debug.WriteLine($"Point: {AsString0(point)} Screen WorkingArea: {screen.WorkingArea}");
+            Rectangle bounds = screen.WorkingArea;
 
-            return new Point(left, top);
-        }
+            int x = (int)point.X;
+            int y = (int)point.Y;
 
-        private static int Clamp(int leftOrTop, int widthOrHeight, int workingAreaLeftOrTop, int workingAreaWidthOrHeight)
-        {
-            var result = leftOrTop;
-
-            var loops = 0;
-            while (loops < 16 && result + widthOrHeight > workingAreaWidthOrHeight)
+            // Clamp X so form fits horizontally
+            if (x + width > bounds.Right)
             {
-                loops++;
-                result -= 24;
-                if (result < workingAreaLeftOrTop)
-                {
-                    result = workingAreaLeftOrTop;
-                }
+                x = bounds.Right - width;
             }
 
-            loops = 0;
-            while (loops < 16 && result < workingAreaLeftOrTop)
+            if (x < bounds.Left)
             {
-                loops++;
-                result += 24;
+                x = bounds.Left;
             }
+
+            // Clamp Y so form fits vertically
+            if (y + height > bounds.Bottom)
+            {
+                y = bounds.Bottom - height;
+            }
+
+            if (y < bounds.Top)
+            {
+                y = bounds.Top;
+            }
+
+            Point result = new Point(x, y);
+
+            Debug.WriteLine($"  Result: {AsString0(result)}");
 
             return result;
         }
 
         public static string AsString(Point p)
             => $"{SafeDouble.AsString4(p.X)},{SafeDouble.AsString4(p.Y)}";
+
+        public static string AsString0(Point p)
+            => $"X: {SafeDouble.AsString0(p.X)} Y:{SafeDouble.AsString0(p.Y)}";
 
         public static object AsCMLString(Point p) =>
             $"{SafeDouble.AsCMLString(p.X)},{SafeDouble.AsCMLString(p.Y)}";

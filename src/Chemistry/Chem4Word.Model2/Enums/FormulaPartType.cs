@@ -12,6 +12,7 @@ namespace Chem4Word.Model2.Enums
         Element,
         Charge,
         Separator,
-        Multiplier
+        Multiplier,
+        ChildMolecule
     }
 }

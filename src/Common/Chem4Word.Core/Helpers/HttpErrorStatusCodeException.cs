@@ -16,6 +16,7 @@ namespace Chem4Word.Core.Helpers
         {
             ErrorStatusCode = errorStatusCode;
         }
+
         public HttpStatusCode ErrorStatusCode { get; set; }
     }
 }

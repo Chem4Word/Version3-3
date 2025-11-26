@@ -189,7 +189,6 @@ namespace Chem4Word.Helpers
                         if (cc.ID.Equals(cci.Id))
                         {
                             int start;
-                            bool isFormula;
                             string text;
 
                             switch (cci.Type)
@@ -232,7 +231,7 @@ namespace Chem4Word.Helpers
                                     document.CustomXMLParts.Add(XmlHelper.AddHeader(cmlConverter.Export(model)));
 
                                     var ccn = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
-                                    ChemistryHelper.Insert1D(document, ccn.ID, cci.Text, false, $"m1.n1:{model.CustomXmlPartGuid}");
+                                    ChemistryHelper.Insert1D(document, ccn.ID, cci.Text, $"m1.n1:{model.CustomXmlPartGuid}");
                                     ccn.LockContents = true;
                                     break;
 
@@ -243,10 +242,9 @@ namespace Chem4Word.Helpers
                                     cc.Delete();
 
                                     Globals.Chem4WordV3.Application.Selection.SetRange(start - 1, start - 1);
-                                    isFormula = false;
-                                    text = ChemistryHelper.GetInlineText(target.Model, cci.Type, ref isFormula, out _);
+                                    text = ChemistryHelper.GetInlineText(target.Model, cci.Type, out _);
                                     var ccr = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
-                                    ChemistryHelper.Insert1D(document, ccr.ID, text, isFormula, $"{cci.Type}:{target.Model.CustomXmlPartGuid}");
+                                    ChemistryHelper.Insert1D(document, ccr.ID, text, $"{cci.Type}:{target.Model.CustomXmlPartGuid}");
                                     ccr.LockContents = true;
                                     break;
                             }
@@ -314,12 +312,9 @@ namespace Chem4Word.Helpers
                 var xObject = xObjects.FirstOrDefault();
 
                 var xe = xObject as XElement;
-                if (xe != null)
+                if (xe != null && !xe.HasElements)
                 {
-                    if (!xe.HasElements)
-                    {
-                        result = xe.Value;
-                    }
+                    result = xe.Value;
                 }
 
                 var xa = xObject as XAttribute;

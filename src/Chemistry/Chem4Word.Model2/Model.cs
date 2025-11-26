@@ -9,6 +9,7 @@ using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Formula;
 using Chem4Word.Model2.Helpers;
 using Chem4Word.Model2.Interfaces;
 using System;
@@ -215,7 +216,7 @@ namespace Chem4Word.Model2
 
         public string CreatorGuid { get; set; }
 
-        private Dictionary<string, int> _calculatedFormulas;
+        //private Dictionary<string, int> _calculatedFormulas;
 
         /// <summary>
         /// Bond length used in Xaml
@@ -344,8 +345,8 @@ namespace Chem4Word.Model2
                     {
                         Id = "c0",
                         TypeCode = "F",
-                        FullType = "ConciseFormula",
-                        Value = ConciseFormula
+                        FullType = "UnicodeFormula",
+                        Value = UnicodeFormula
                     });
                     //add the molecular weight
                     list.Add(new TextualProperty
@@ -670,87 +671,98 @@ namespace Chem4Word.Model2
         {
             get
             {
-                _calculatedFormulas = new Dictionary<string, int>();
-                GatherFormulas(Molecules.Values.ToList());
-                return CalculatedFormulaAsString();
+                var helper = new FormulaHelperV2(this);
+                return helper.Concise();
             }
         }
 
-        private void GatherFormulas(List<Molecule> molecules)
+        /// <summary>
+        /// Unicode formula for the model
+        /// </summary>
+        public string UnicodeFormula
         {
-            foreach (var molecule in molecules)
+            get
             {
-                if (molecule.Atoms.Count > 0)
-                {
-                    // Add into running totals
-                    if (_calculatedFormulas.ContainsKey(molecule.ConciseFormula))
-                    {
-                        _calculatedFormulas[molecule.ConciseFormula]++;
-                    }
-                    else
-                    {
-                        _calculatedFormulas.Add(molecule.ConciseFormula, 1);
-                    }
-                }
-                else
-                {
-                    // Gather the formulas of the children
-                    var children = new List<string>();
-                    foreach (var childMolecule in molecule.Molecules.Values.ToList())
-                    {
-                        children.Add(childMolecule.ConciseFormula);
-                    }
-
-                    // Add Brackets and join using Bullet character <Alt>0183
-                    var combined = "[" + string.Join(" · ", children) + "]";
-
-                    // Add charge here
-                    if (molecule.FormalCharge != null)
-                    {
-                        var charge = molecule.FormalCharge.Value;
-                        var absCharge = Math.Abs(charge);
-
-                        if (charge > 0)
-                        {
-                            combined += $" + {absCharge}";
-                        }
-                        if (charge < 0)
-                        {
-                            combined += $" - {absCharge}";
-                        }
-                    }
-
-                    // Add combined value into running totals
-                    if (_calculatedFormulas.ContainsKey(combined))
-                    {
-                        _calculatedFormulas[combined]++;
-                    }
-                    else
-                    {
-                        _calculatedFormulas.Add(combined, 1);
-                    }
-                }
+                var helper = new FormulaHelperV2(this);
+                return helper.Unicode();
             }
         }
 
-        private string CalculatedFormulaAsString()
-        {
-            var strings = new List<string>();
-            foreach (var calculatedFormula in _calculatedFormulas)
-            {
-                if (calculatedFormula.Value > 1)
-                {
-                    strings.Add($"{calculatedFormula.Value} {calculatedFormula.Key}");
-                }
-                else
-                {
-                    strings.Add(calculatedFormula.Key);
-                }
-            }
+        //private void GatherFormulas(List<Molecule> molecules)
+        //{
+        //    foreach (var molecule in molecules)
+        //    {
+        //        if (molecule.Atoms.Count > 0)
+        //        {
+        //            // Add into running totals
+        //            if (_calculatedFormulas.ContainsKey(molecule.ConciseFormula))
+        //            {
+        //                _calculatedFormulas[molecule.ConciseFormula]++;
+        //            }
+        //            else
+        //            {
+        //                _calculatedFormulas.Add(molecule.ConciseFormula, 1);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            // Gather the formulas of the children
+        //            var children = new List<string>();
+        //            foreach (var childMolecule in molecule.Molecules.Values.ToList())
+        //            {
+        //                children.Add(childMolecule.ConciseFormula);
+        //            }
 
-            // Join using Bullet character <Alt>0183
-            return string.Join(" · ", strings);
-        }
+        //            // Add Brackets and join using Bullet character <Alt>0183
+        //            var combined = "[" + string.Join(" · ", children) + "]";
+
+        //            // Add charge here
+        //            if (molecule.FormalCharge != null)
+        //            {
+        //                var charge = molecule.FormalCharge.Value;
+        //                var absCharge = Math.Abs(charge);
+
+        //                if (charge > 0)
+        //                {
+        //                    combined += $" + {absCharge}";
+        //                }
+        //                if (charge < 0)
+        //                {
+        //                    combined += $" - {absCharge}";
+        //                }
+        //            }
+
+        //            // Add combined value into running totals
+        //            if (_calculatedFormulas.ContainsKey(combined))
+        //            {
+        //                _calculatedFormulas[combined]++;
+        //            }
+        //            else
+        //            {
+        //                _calculatedFormulas.Add(combined, 1);
+        //            }
+        //        }
+        //    }
+        //}
+
+        //private string CalculatedFormulaAsString()
+        //{
+        //    var strings = new List<string>();
+        //    foreach (var calculatedFormula in _calculatedFormulas)
+        //    {
+        //        if (calculatedFormula.Value > 1)
+        //        {
+        //            strings.Add($"{calculatedFormula.Value} {calculatedFormula.Key}");
+        //        }
+        //        else
+        //        {
+        //            strings.Add(calculatedFormula.Key);
+        //        }
+        //    }
+
+        //    // Join using Bullet character <Alt>0183
+        //    return string.Join(" · ", strings);
+        //}
 
         public ReactionScheme DefaultReactionScheme
         {
@@ -1317,7 +1329,7 @@ namespace Chem4Word.Model2
                         tp = new TextualProperty
                         {
                             Id = $"{molecule.Id}.f0",
-                            Value = molecule.ConciseFormula,
+                            Value = molecule.UnicodeFormula,
                             FullType = "ConciseFormula"
                         };
                         break;

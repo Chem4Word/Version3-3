@@ -22,15 +22,6 @@ namespace Chem4Word.ACME.Controls
             DependencyProperty.Register("Formula", typeof(string), typeof(FormulaBlock),
                                         new FrameworkPropertyMetadata("",
                                                                       FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsMeasure,
-                                                                      FormulaChangedCallback));
-
-        private static void FormulaChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs args)
-        {
-            if (d is FormulaBlock formulaBlock)
-            {
-                var newFormula = args.NewValue.ToString();
-                _ = (FormulaBlock)TextBlockHelper.FromFormula((TextBlock)formulaBlock, newFormula);
-            }
-        }
+                                                                      null));
     }
 }

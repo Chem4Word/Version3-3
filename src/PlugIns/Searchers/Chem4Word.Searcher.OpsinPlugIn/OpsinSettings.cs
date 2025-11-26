@@ -12,6 +12,7 @@ using IChem4Word.Contracts;
 using System;
 using System.Reflection;
 using System.Text;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace Chem4Word.Searcher.OpsinPlugIn
@@ -48,7 +49,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
                     Left = (int)TopLeft.X;
                     Top = (int)TopLeft.Y;
                     var screen = Screen.FromControl(this);
-                    var sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+                    var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                     Left = (int)sensible.X;
                     Top = (int)sensible.Y;
                 }

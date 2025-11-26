@@ -22,7 +22,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
+using Chem4Word.Model2.Formula;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
@@ -272,8 +272,8 @@ namespace Chem4Word.ACME
             {
                 WpfEventArgs args = new WpfEventArgs { Message = value.message };
 
-                bool hasReactions = (Model.ReactionSchemes.Any() &&
-                                     Model.ReactionSchemes.First().Value.Reactions.Count > 0);
+                bool hasReactions = Model.ReactionSchemes.Any() &&
+                                     Model.ReactionSchemes.First().Value.Reactions.Count > 0;
                 bool moleculesSelected = SelectionType == SelectionTypeCode.Molecule;
 
                 if (hasReactions && moleculesSelected || !hasReactions)
@@ -568,9 +568,10 @@ namespace Chem4Word.ACME
             // Some molecules are selected
             foreach (Molecule molecule in SelectedItems.Where(m => m is Molecule))
             {
-                List<MoleculeFormulaPart> parts = FormulaHelper.ParseFormulaIntoParts(molecule.ConciseFormula);
-                string formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
-                formulae.Add(formulaPartsAsUnicode);
+                var helper = new FormulaHelperV2(molecule);
+                //List<MoleculeFormulaPart> parts = FormulaHelper.ParseFormulaIntoParts(molecule.ConciseFormula);
+                //string formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
+                formulae.Add(helper.Unicode());
             }
 
             if (formulae.Count > 0)
@@ -581,9 +582,11 @@ namespace Chem4Word.ACME
             // No molecules are selected
             foreach (Molecule molecule in Model.Molecules.Values)
             {
-                List<MoleculeFormulaPart> parts = FormulaHelper.ParseFormulaIntoParts(molecule.ConciseFormula);
-                string formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
-                formulae.Add(formulaPartsAsUnicode);
+                var helper = new FormulaHelperV2(molecule);
+                //List<MoleculeFormulaPart> parts = FormulaHelper.ParseFormulaIntoParts(molecule.ConciseFormula);
+                //string formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
+                //formulae.Add(formulaPartsAsUnicode);
+                formulae.Add(helper.Unicode());
             }
 
             if (formulae.Count > 0)

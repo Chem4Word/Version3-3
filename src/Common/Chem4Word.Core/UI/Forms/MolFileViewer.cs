@@ -7,6 +7,7 @@
 
 using Chem4Word.Core.Helpers;
 using System;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace Chem4Word.Core.UI.Forms
@@ -15,13 +16,15 @@ namespace Chem4Word.Core.UI.Forms
     {
         public string Message { get; set; }
         public System.Windows.Point TopLeft { get; set; }
+        private Screen _screen;
 
-        public MolFileViewer(System.Windows.Point topLeft, string text)
+        public MolFileViewer(System.Windows.Point topLeft, Screen screen, string sdFile)
         {
             InitializeComponent();
+            _screen = screen;
 
             TopLeft = topLeft;
-            Message = text;
+            Message = sdFile;
         }
 
         private void OnLoad_TextViewer(object sender, EventArgs e)
@@ -30,8 +33,9 @@ namespace Chem4Word.Core.UI.Forms
             {
                 Left = (int)TopLeft.X;
                 Top = (int)TopLeft.Y;
-                var screen = Screen.FromControl(this);
-                var sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+
+                Point sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), _screen, Width, Height);
+
                 Left = (int)sensible.X;
                 Top = (int)sensible.Y;
             }

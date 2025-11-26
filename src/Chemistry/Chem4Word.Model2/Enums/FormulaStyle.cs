@@ -5,19 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
-
-namespace Chem4Word.Model2.Helpers
+namespace Chem4Word.Model2.Enums
 {
-    public class ModelFormulaPart
+    public enum FormulaStyle
     {
-        public List<MoleculeFormulaPart> Parts { get; }
-        public int Count { get; set; }
-
-        public ModelFormulaPart(List<MoleculeFormulaPart> parts, int count)
-        {
-            Parts = parts;
-            Count = count;
-        }
+        Concise,
+        Unicode
     }
 }

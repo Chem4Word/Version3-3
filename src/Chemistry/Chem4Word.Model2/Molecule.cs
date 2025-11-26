@@ -8,7 +8,7 @@
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
+using Chem4Word.Model2.Formula;
 using Chem4Word.Model2.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -349,190 +349,18 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var calculatedFormula = new CalculatedFormula();
-
-                var molecules = Molecules.Values.ToList();
-                if (Molecules.Count > 0)
-                {
-                    calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, "[", 0));
-
-                    var i = molecules.Count - 1;
-
-                    foreach (var molecule in Molecules.Values)
-                    {
-                        calculatedFormula.Parts.AddRange(molecule.CalculatedFormula.Parts);
-                        if (i-- > 0)
-                        {
-                            calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, " · ", 0));
-                        }
-                    }
-
-                    calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Separator, "]", 0));
-
-                    if (FormalCharge != null)
-                    {
-                        var sign = "";
-                        var absCharge = Math.Abs(FormalCharge.Value);
-                        if (FormalCharge.Value > 0)
-                        {
-                            sign = "+";
-                        }
-                        if (FormalCharge.Value < 0)
-                        {
-                            sign = "-";
-                        }
-
-                        calculatedFormula.Parts.Add(new MoleculeFormulaPart(FormulaPartType.Charge, sign, absCharge));
-                    }
-                }
-                else
-                {
-                    calculatedFormula = new CalculatedFormula(GetFormulaParts());
-                }
-
-                return calculatedFormula.ToString();
+                var helper = new FormulaHelperV2(this);
+                return helper.Concise();
             }
         }
 
-        public CalculatedFormula CalculatedFormula => new CalculatedFormula(GetFormulaParts());
-
-        private List<MoleculeFormulaPart> GetFormulaParts()
+        public string UnicodeFormula
         {
-            var cPart = new MoleculeFormulaPart(FormulaPartType.Element, "C", 0);
-            var hPart = new MoleculeFormulaPart(FormulaPartType.Element, "H", 0);
-            var otherParts = new Dictionary<string, MoleculeFormulaPart>();
-            var chargePart = new MoleculeFormulaPart(FormulaPartType.Charge, "", 0);
-
-            var sumOfParts = new List<MoleculeFormulaPart>();
-
-            #region Gather counts
-
-            foreach (var atom in Atoms.Values)
+            get
             {
-                // Add this element
-                if (atom.Element is Element e)
-                {
-                    // Obtain sum of charge on all atoms as we go round the loop
-                    if (atom.FormalCharge != null)
-                    {
-                        chargePart.Count += atom.FormalCharge.Value;
-                    }
-
-                    var symbol = e.Symbol;
-
-                    switch (symbol)
-                    {
-                        case "C":
-                            cPart.Count++;
-                            break;
-
-                        case "H":
-                            hPart.Count++;
-                            break;
-
-                        default:
-                            if (otherParts.ContainsKey(symbol))
-                            {
-                                otherParts[symbol].Count++;
-                            }
-                            else
-                            {
-                                otherParts.Add(symbol, new MoleculeFormulaPart(FormulaPartType.Element, symbol, 1));
-                            }
-
-                            break;
-                    }
-
-                    var hCount = atom.ImplicitHydrogenCount;
-                    if (hCount > 0)
-                    {
-                        hPart.Count += hCount;
-                    }
-                }
-
-                // Expand functional group
-                if (atom.Element is FunctionalGroup fg)
-                {
-                    var parts = fg.FormulaParts;
-                    foreach (var part in parts)
-                    {
-                        switch (part.Key)
-                        {
-                            case "C":
-                                cPart.Count += part.Value;
-                                break;
-
-                            case "H":
-                                hPart.Count += part.Value;
-                                break;
-
-                            case "R":
-                                // Ignore pseudo Element(s)
-                                break;
-
-                            default:
-                                if (otherParts.ContainsKey(part.Key))
-                                {
-                                    otherParts[part.Key].Count += part.Value;
-                                }
-                                else
-                                {
-                                    otherParts.Add(part.Key, new MoleculeFormulaPart(FormulaPartType.Element, part.Key, part.Value));
-                                }
-                                break;
-                        }
-                    }
-                }
+                var helper = new FormulaHelperV2(this);
+                return helper.Unicode();
             }
-
-            #endregion Gather counts
-
-            #region Construct Hill Notation
-
-            // Now add the parts in in the correct order (Hill Notation) C then H then the rest in alphabetical order then the charge
-            if (cPart.Count > 0)
-            {
-                sumOfParts.Add(cPart);
-            }
-
-            if (hPart.Count > 0)
-            {
-                sumOfParts.Add(hPart);
-            }
-
-            if (otherParts.Any())
-            {
-                sumOfParts.AddRange(otherParts.Values);
-            }
-
-            #endregion Construct Hill Notation
-
-            #region Add molecule charge if present
-
-            // Get charge for the molecule
-            if (FormalCharge != null)
-            {
-                // Add the molecule's charge to what's been calculated from the atoms
-                chargePart.Count += FormalCharge.Value;
-            }
-
-            #endregion Add molecule charge if present
-
-            if (chargePart.Count != 0)
-            {
-                if (chargePart.Count > 0)
-                {
-                    chargePart.Text = "+";
-                }
-                if (chargePart.Count < 0)
-                {
-                    chargePart.Text = "-";
-                }
-
-                sumOfParts.Add(chargePart);
-            }
-
-            return sumOfParts;
         }
 
         private bool? _showMoleculeBrackets;
@@ -805,8 +633,8 @@ namespace Chem4Word.Model2
                         {
                             Id = $"{molecule.Id}.f0",
                             TypeCode = "F",
-                            FullType = "MoleculeConciseFormula",
-                            Value = molecule.ConciseFormula
+                            FullType = "MoleculeUnicodeFormula",
+                            Value = molecule.UnicodeFormula
                         });
 
                         foreach (TextualProperty name in molecule.Names)
@@ -848,71 +676,6 @@ namespace Chem4Word.Model2
                     }
 
                     return properties;
-                }
-            }
-        }
-
-        public string CalculatedFormulaOfChildren
-        {
-            get
-            {
-                // Phase #1 Collect data
-                var calculateFormulas = new List<string>();
-
-                calculateFormulas.AddRange(GetChildFormulas(this));
-
-                // Phase #2 - Collate the values
-                var result = "";
-                var dictionary = new Dictionary<string, int>();
-                foreach (string formula in calculateFormulas)
-                {
-                    if (dictionary.ContainsKey(formula))
-                    {
-                        dictionary[formula]++;
-                    }
-                    else
-                    {
-                        dictionary.Add(formula, 1);
-                    }
-                }
-
-                foreach (KeyValuePair<string, int> kvp in dictionary)
-                {
-                    if (kvp.Value == 1)
-                    {
-                        result += $"{kvp.Key} . ";
-                    }
-                    else
-                    {
-                        result += $"{kvp.Value} {kvp.Key} . ";
-                    }
-                }
-
-                if (result.EndsWith(" . "))
-                {
-                    result = result.Substring(0, result.Length - 3);
-                }
-
-                return result;
-
-                // Local Function
-                List<string> GetChildFormulas(Molecule molecule)
-                {
-                    var childFormulae = new List<string>();
-
-                    foreach (Molecule child in molecule.Molecules.Values)
-                    {
-                        if (child.Molecules.Count == 0)
-                        {
-                            childFormulae.Add(child.ConciseFormula);
-                        }
-                        else
-                        {
-                            childFormulae.AddRange(GetChildFormulas(child));
-                        }
-                    }
-
-                    return childFormulae;
                 }
             }
         }

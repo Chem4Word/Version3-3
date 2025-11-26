@@ -155,9 +155,13 @@ namespace Chem4Word.ACME
 
         public event EventHandler<WpfEventArgs> OnFeedbackChange;
 
-        private void OnFeedbackChangeActiveController(object sender, WpfEventArgs e)
+        private void OnFeedbackChangeActiveController(object sender, WpfEventArgs wpfEventArgs)
         {
-            OnFeedbackChange?.Invoke(this, e);
+            if (ShowFeedback)
+            {
+                // ToDo: Figure this out ...
+            }
+            OnFeedbackChange?.Invoke(this, wpfEventArgs);
         }
 
         public bool IsDirty

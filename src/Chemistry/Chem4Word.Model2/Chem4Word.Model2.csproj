@@ -89,6 +89,9 @@
     <Compile Include="Atom.cs" />
     <Compile Include="AtomData.cs" />
     <Compile Include="Bond.cs" />
+    <Compile Include="Formula\FormulaHelperV2.cs" />
+    <Compile Include="Formula\FormulaPartV2.cs" />
+    <Compile Include="Enums\FormulaStyle.cs" />
     <Compile Include="StructuralObject.cs" />
     <Compile Include="BondLengthStatistics.cs" />
     <Compile Include="Converters\CML\CmlFormat.cs" />
@@ -125,12 +128,9 @@
     <Compile Include="Converters\CML\CMLHelper.cs" />
     <Compile Include="Converters\CML\CMLConverter.cs" />
     <Compile Include="Helpers\AtomHelpers.cs" />
-    <Compile Include="Helpers\CalculatedFormula.cs" />
-    <Compile Include="Helpers\FormulaHelper.cs" />
     <Compile Include="Helpers\MoleculeFormulaPart.cs" />
     <Compile Include="ModelConstants.cs" />
     <Compile Include="ModelGlobals.cs" />
-    <Compile Include="Helpers\ModelFormulaPart.cs" />
     <Compile Include="Helpers\ClippingTarget.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="HydrogenTargets.cs" />
@@ -186,6 +186,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\FunctionalGroups.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

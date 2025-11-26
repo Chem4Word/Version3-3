@@ -13,6 +13,7 @@ using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Point = System.Windows.Point;
 
 namespace Chem4Word.Editor.SimpleWpfEditor
 {
@@ -40,7 +41,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
                 Left = (int)TopLeft.X;
                 Top = (int)TopLeft.Y;
                 var screen = Screen.FromControl(this);
-                var sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+                var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                 Left = (int)sensible.X;
                 Top = (int)sensible.Y;
             }

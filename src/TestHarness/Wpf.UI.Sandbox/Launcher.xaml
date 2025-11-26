@@ -91,5 +91,13 @@
             Tag="FunctionalGroupExpansionTesting">
             Functional Group Expansion Testing
         </Button>
+        <Button
+            Grid.Row="2"
+            Grid.Column="2"
+            d:IsLocked="True"
+            Click="OnClick_Button"
+            Content="Formula Testing"
+            Style="{StaticResource LauncherButtons}"
+            Tag="FormulaTesting" />
     </Grid>
 </Window>

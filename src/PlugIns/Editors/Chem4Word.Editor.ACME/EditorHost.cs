@@ -11,7 +11,7 @@ using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Helpers;
+using Chem4Word.Model2.Formula;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
@@ -76,7 +76,7 @@ namespace Chem4Word.Editor.ACME
                     Left = (int)TopLeft.X;
                     Top = (int)TopLeft.Y;
                     var screen = Screen.FromControl(this);
-                    var sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+                    var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                     Left = (int)sensible.X;
                     Top = (int)sensible.Y;
                 }
@@ -105,9 +105,10 @@ namespace Chem4Word.Editor.ACME
                     }
                     else
                     {
-                        var parts = FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula);
-                        var formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
-                        Text = "ACME - Editing " + formulaPartsAsUnicode;
+                        var helper = new FormulaHelperV2(model);
+                        //var parts = FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula);
+                        //var formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
+                        Text = "ACME - Editing " + helper.Unicode();
                     }
                 }
 

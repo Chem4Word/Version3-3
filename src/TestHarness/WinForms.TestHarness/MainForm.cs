@@ -13,7 +13,7 @@ using Chem4Word.Model2.Converters.JSON;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Model2.Converters.SketchEl;
-using Chem4Word.Model2.Helpers;
+using Chem4Word.Model2.Formula;
 using Chem4Word.Renderer.OoXmlV4;
 using Chem4Word.Searcher.ChEBIPlugin;
 using Chem4Word.Searcher.OpsinPlugIn;
@@ -278,8 +278,8 @@ namespace WinForms.TestHarness
                     }
 
                     model.Refresh();
-                    Information.Text =
-                        $"Formula: {model.ConciseFormula} BondLength: {model.MeanBondLength.ToString("#,##0.00")}";
+                    Information1.Text = $"Formula: {model.ConciseFormula} ({model.UnicodeFormula})";
+                    Information2.Text = $"BondLength: {model.MeanBondLength.ToString("#,##0.00")}";
                 }
             }
             catch (Exception exception)
@@ -328,8 +328,8 @@ namespace WinForms.TestHarness
                         }
 
                         model.Refresh();
-                        Information.Text =
-                            $"Formula: {model.ConciseFormula} BondLength: {model.MeanBondLength.ToString("#,##0.00")}";
+                        Information1.Text = $"Formula: {model.ConciseFormula} ({model.UnicodeFormula})";
+                        Information2.Text = $"BondLength: {model.MeanBondLength.ToString("#,##0.00")}";
                     }
                 }
             }
@@ -433,9 +433,9 @@ namespace WinForms.TestHarness
                     var statistics1 = model.GetBondLengthStatistics();
                     var statistics2 = model.GetBondLengthStatistics(false);
 
-                    var stringBuilder = new StringBuilder();
+                    Information1.Text = $"Formula: {model.ConciseFormula} ({model.UnicodeFormula})";
 
-                    stringBuilder.Append($"Formula: {model.ConciseFormula} ");
+                    var stringBuilder = new StringBuilder();
 
                     stringBuilder.Append($"BL+H: Mean {SafeDouble.AsString(statistics1.Mean)} ");
                     stringBuilder.Append($"Mode {SafeDouble.AsString(statistics1.Mode)} ");
@@ -445,7 +445,7 @@ namespace WinForms.TestHarness
                     stringBuilder.Append($"Mode {SafeDouble.AsString(statistics2.Mode)} ");
                     stringBuilder.Append($"Median {SafeDouble.AsString(statistics2.Median)} ");
 
-                    Information.Text = stringBuilder.ToString();
+                    Information2.Text = stringBuilder.ToString();
 
                     Display.Chemistry = model;
 
@@ -517,7 +517,8 @@ namespace WinForms.TestHarness
                 }
 
                 SetDisplayOptions();
-                ShowChemistry($"Undo -> {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
+                var helper = new FormulaHelperV2(model);
+                ShowChemistry($"Undo -> {helper.Concise()}", model);
             }
             catch (Exception exception)
             {
@@ -548,7 +549,8 @@ namespace WinForms.TestHarness
                 }
 
                 SetDisplayOptions();
-                ShowChemistry($"Redo -> {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
+                var helper = new FormulaHelperV2(model);
+                ShowChemistry($"Redo -> {helper.Concise()}", model);
             }
             catch (Exception exception)
             {
@@ -965,7 +967,8 @@ namespace WinForms.TestHarness
 
                 SetDisplayOptions();
 
-                ShowChemistry($"{captionPrefix} {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
+                var helper = new FormulaHelperV2(model);
+                ShowChemistry($"{captionPrefix} {helper.Concise()}", model);
             }
             else
             {
@@ -1006,7 +1009,8 @@ namespace WinForms.TestHarness
 
             SetDisplayOptions();
 
-            ShowChemistry($"{changedProperties} changed properties; {FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula))}", model);
+            var helper = new FormulaHelperV2(model);
+            ShowChemistry($"{changedProperties} changed properties; {helper.Concise()}", model);
         }
     }
 }

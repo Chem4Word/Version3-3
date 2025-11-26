@@ -6,7 +6,9 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Helpers;
+using System.Windows;
 using System.Windows.Forms;
+using Application = System.Windows.Forms.Application;
 
 namespace Chem4Word.Core.UI.Forms
 {
@@ -109,7 +111,7 @@ namespace Chem4Word.Core.UI.Forms
                 Left = (int)TopLeft.X;
                 Top = (int)TopLeft.Y;
                 var screen = Screen.FromControl(this);
-                var sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+                var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                 Left = (int)sensible.X;
                 Top = (int)sensible.Y;
             }

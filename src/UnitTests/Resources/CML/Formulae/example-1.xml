@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cml:cml xmlns:conventions="http://www.xml-cml.org/convention/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:c4w="http://www.chem4word.com/cml" conventions="convention:molecular">
+  <c4w:explicitC>false</c4w:explicitC>
+  <c4w:explicitH>HeteroAndTerminal</c4w:explicitH>
+  <c4w:showColouredAtoms>true</c4w:showColouredAtoms>
+  <c4w:showMoleculeGrouping>true</c4w:showMoleculeGrouping>
+  <cml:molecule id="m1">
+    <cml:formula id="m1.f0" concise="C 3 H 4 - 4" />
+    <cml:atomArray>
+      <cml:atom id="a1" elementType="C" x2="587.5" y2="610.8253" />
+      <cml:atom id="a2" elementType="C" x2="612.5" y2="610.8253" />
+      <cml:atom id="a3" elementType="C" x2="600.0" y2="589.1747" formalCharge="-4" />
+    </cml:atomArray>
+    <cml:bondArray>
+      <cml:bond id="b1" atomRefs2="a1 a2" order="S" />
+      <cml:bond id="b2" atomRefs2="a2 a3" order="S" />
+      <cml:bond id="b3" atomRefs2="a3 a1" order="S" />
+    </cml:bondArray>
+  </cml:molecule>
+</cml:cml>

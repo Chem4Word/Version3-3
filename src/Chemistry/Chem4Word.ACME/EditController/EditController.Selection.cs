@@ -305,8 +305,8 @@ namespace Chem4Word.ACME
                 }
 
                 List<StructuralObject> selAtomBonds = (from StructuralObject sel in _selectedItems
-                                                      where sel is Atom || sel is Bond
-                                                      select sel).ToList();
+                                                       where sel is Atom || sel is Bond
+                                                       select sel).ToList();
 
                 if (selAtomBonds.Any())
                 {

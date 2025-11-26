@@ -72,6 +72,11 @@ namespace Wpf.UI.Sandbox
                         window = new Menus();
                         window.ShowDialog();
                         break;
+
+                    case "FormulaTesting":
+                        window = new FormulaTesting();
+                        window.ShowDialog();
+                        break;
                 }
             }
         }

@@ -16,7 +16,6 @@ using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.SketchEl;
 using Chem4Word.Model2.Geometry;
-using Chem4Word.Model2.Helpers;
 using Chem4Word.Navigator;
 using Chem4Word.Telemetry;
 using Chem4Word.UI;
@@ -194,13 +193,11 @@ namespace Chem4Word
                                                     var conv = new CMLConverter();
                                                     var model = conv.Import(customXmlPart.XML, used1D);
 
-                                                    var isFormula = false;
                                                     string text;
                                                     if (chosenState.Equals("c0"))
                                                     {
                                                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Render structure as Overall ConciseFormula");
-                                                        text = model.ConciseFormula;
-                                                        isFormula = true;
+                                                        text = model.UnicodeFormula;
                                                     }
                                                     else if (chosenState.Equals("w0"))
                                                     {
@@ -210,10 +207,10 @@ namespace Chem4Word
                                                     else
                                                     {
                                                         string source;
-                                                        text = ChemistryHelper.GetInlineText(model, chosenState, ref isFormula, out source);
+                                                        text = ChemistryHelper.GetInlineText(model, chosenState, out source);
                                                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Render structure as {source}");
                                                     }
-                                                    ChemistryHelper.Insert1D(document, contentControl.ID, text, isFormula, chosenState + ":" + guid);
+                                                    ChemistryHelper.Insert1D(document, contentControl.ID, text, chosenState + ":" + guid);
                                                 }
                                             }
                                         }
@@ -340,10 +337,7 @@ namespace Chem4Word
                                                 var ribbonButtonF = MakeRibbonButton(item, prefix);
                                                 if (item.FullType.ToLower().Contains("formula"))
                                                 {
-                                                    var parts = FormulaHelper.ParseFormulaIntoParts(item.Value);
-                                                    ribbonButtonF.Label = parts.Count == 0
-                                                        ? item.Value
-                                                        : FormulaHelper.FormulaPartsAsUnicode(parts);
+                                                    ribbonButtonF.Label = item.Value;
                                                 }
                                                 if (item.Id.Equals("c0"))
                                                 {
@@ -891,12 +885,9 @@ namespace Chem4Word
                     checkForUpdates = !button.Label.ToLower().Contains("update");
                 }
 
-                if (checkForUpdates)
+                if (checkForUpdates && Globals.Chem4WordV3.SystemOptions != null)
                 {
-                    if (Globals.Chem4WordV3.SystemOptions != null)
-                    {
-                        UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency);
-                    }
+                    UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency);
                 }
 
                 if (Globals.Chem4WordV3.PlugInsHaveBeenLoaded)
@@ -2834,14 +2825,12 @@ namespace Chem4Word
                         {
                             var folderInfo = new DirectoryInfo(browserDialog.SelectedPath);
 
-                            if (folderInfo.GetFiles($"*.{format}").Any())
+                            if (folderInfo.GetFiles($"*.{format}").Any()
+                                && UserInteractions.AskUserYesNo(
+                                    $"The folder '{browserDialog.SelectedPath}' contains {format.ToUpper()} files. These might be overwritten.\nDo you want to continue?",
+                                    defaultButton: MessageBoxDefaultButton.Button2) == DialogResult.No)
                             {
-                                if (UserInteractions.AskUserYesNo(
-                                        $"The folder '{browserDialog.SelectedPath}' contains {format.ToUpper()} files. These might be overwritten.\nDo you want to continue?",
-                                        defaultButton: MessageBoxDefaultButton.Button2) == DialogResult.No)
-                                {
-                                    return;
-                                }
+                                return;
                             }
 
                             Globals.Chem4WordV3.Telemetry.Write(module, "Information",

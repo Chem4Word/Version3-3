@@ -225,6 +225,5 @@ namespace Chem4Word.Model2
 
             return null;
         }
-
     }
 }

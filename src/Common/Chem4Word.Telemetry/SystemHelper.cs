@@ -406,26 +406,33 @@ namespace Chem4Word.Telemetry
 
         private List<string> RunCommand(string exeName, string args, string folder)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo(exeName);
-
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = false;
-            startInfo.WorkingDirectory = folder;
-            startInfo.RedirectStandardInput = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.Arguments = args;
-
-            Process process = new Process();
-            process.StartInfo = startInfo;
-            process.Start();
-
             var results = new List<string>();
-            while (!process.StandardOutput.EndOfStream)
+            try
             {
-                results.Add(process.StandardOutput.ReadLine());
-            }
+                ProcessStartInfo startInfo = new ProcessStartInfo(exeName)
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    WorkingDirectory = folder,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    Arguments = args
+                };
 
+                Process process = new Process();
+                process.StartInfo = startInfo;
+                process.Start();
+
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    results.Add(process.StandardOutput.ReadLine());
+                }
+            }
+            catch (Exception exception)
+            {
+                results.Add(exception.Message);
+            }
             return results;
         }
 

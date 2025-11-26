@@ -13,6 +13,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
+using Point = System.Windows.Point;
 
 namespace Chem4Word.Core.UI.Forms
 {
@@ -59,7 +60,7 @@ namespace Chem4Word.Core.UI.Forms
                 Left = (int)TopLeft.X;
                 Top = (int)TopLeft.Y;
                 var screen = Screen.FromControl(this);
-                var sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+                var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                 Left = (int)sensible.X;
                 Top = (int)sensible.Y;
             }

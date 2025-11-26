@@ -9,8 +9,6 @@ using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Helpers;
 using Microsoft.Office.Core;
 using System;
 using System.Collections.Generic;
@@ -114,7 +112,8 @@ namespace Chem4Word.Helpers
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Error in Insert2DChemistry; See InnerException for details", ex);
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception", ex.Message);
+                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception", ex.StackTrace);
                     }
                     finally
                     {
@@ -144,7 +143,7 @@ namespace Chem4Word.Helpers
 
             var cc = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
 
-            SetRichText(document, cc.ID, text, isFormula);
+            SetRichText(document, cc.ID, text);
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"ContentControl inserted at position {cc.Range.Start}");
 
@@ -223,18 +222,17 @@ namespace Chem4Word.Helpers
                     {
                         // 1D Structures
                         case "c0":
-                            Update1D(document, target.Key, model.ConciseFormula, true, $"{prefix}:{cxmlId}");
+                            Update1D(document, target.Key, model.ConciseFormula, $"{prefix}:{cxmlId}");
                             break;
 
                         case "w0":
-                            Update1D(document, target.Key, SafeDouble.AsCMLString(model.MolecularWeight), false, $"{prefix}:{cxmlId}");
+                            Update1D(document, target.Key, SafeDouble.AsCMLString(model.MolecularWeight), $"{prefix}:{cxmlId}");
                             break;
 
                         default:
                             {
-                                var isFormula = false;
-                                var text = GetInlineText(model, prefix, ref isFormula, out _);
-                                Update1D(document, target.Key, text, isFormula, $"{prefix}:{cxmlId}");
+                                var text = GetInlineText(model, prefix, out _);
+                                Update1D(document, target.Key, text, $"{prefix}:{cxmlId}");
                                 break;
                             }
                     }
@@ -317,7 +315,7 @@ namespace Chem4Word.Helpers
             }
         }
 
-        public static void Insert1D(Word.Document document, string ccId, string text, bool isFormula, string tag)
+        public static void Insert1D(Word.Document document, string ccId, string text, string tag)
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -329,7 +327,7 @@ namespace Chem4Word.Helpers
                 var app = Globals.Chem4WordV3.Application;
                 var wordSettings = new WordSettings(app);
 
-                SetRichText(document, cc.ID, text, isFormula);
+                SetRichText(document, cc.ID, text);
 
                 Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"ContentControl updated at position {cc.Range.Start}");
 
@@ -341,7 +339,7 @@ namespace Chem4Word.Helpers
             }
         }
 
-        private static void Update1D(Word.Document document, string ccId, string text, bool isFormula, string tag)
+        private static void Update1D(Word.Document document, string ccId, string text, string tag)
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -356,7 +354,7 @@ namespace Chem4Word.Helpers
                 cc.LockContents = false;
                 cc.Range.Delete();
 
-                SetRichText(document, cc.ID, text, isFormula);
+                SetRichText(document, cc.ID, text);
 
                 Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"ContentControl updated at position {cc.Range.Start}");
 
@@ -368,7 +366,7 @@ namespace Chem4Word.Helpers
             }
         }
 
-        public static string GetInlineText(Model model, string prefix, ref bool isFormula, out string source)
+        public static string GetInlineText(Model model, string prefix, out string source)
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -381,19 +379,15 @@ namespace Chem4Word.Helpers
                 text = tp.Value;
                 if (tp.Id.EndsWith("f0"))
                 {
-                    source = "ConciseFormula";
-                    isFormula = true;
+                    source = "UnicodeFormula";
                 }
                 else if (tp.Id.EndsWith("w0"))
                 {
                     source = "MolecularWeight";
-                    isFormula = false;
                 }
                 else
                 {
                     source = tp.FullType;
-                    var parts = FormulaHelper.ParseFormulaIntoParts(tp.Value);
-                    isFormula = parts.Count > 0;
                 }
             }
             else
@@ -420,89 +414,14 @@ namespace Chem4Word.Helpers
             return result;
         }
 
-        private static void SetRichText(Word.Document document, string ccId, string text, bool isFormula)
+        private static void SetRichText(Word.Document document, string ccId, string text)
         {
             var module = $"{Product}.{Class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var cc = GetContentControl(document, ccId);
             if (cc != null)
             {
-                if (isFormula)
-                {
-                    var r = cc.Range;
-                    var parts = FormulaHelper.ParseFormulaIntoParts(text);
-                    foreach (var part in parts)
-                    {
-                        switch (part.PartType)
-                        {
-                            case FormulaPartType.Separator:
-                            case FormulaPartType.Multiplier:
-                                if (!string.IsNullOrEmpty(part.Text))
-                                {
-                                    r.InsertAfter(part.Text);
-                                    r.Font.Subscript = 0;
-                                    r.Font.Superscript = 0;
-                                    r.Start = cc.Range.End;
-                                }
-                                break;
-
-                            case FormulaPartType.Element:
-                                switch (part.Count)
-                                {
-                                    case 1: // No Subscript
-                                        if (!string.IsNullOrEmpty(part.Text))
-                                        {
-                                            r.InsertAfter(part.Text);
-                                            r.Font.Subscript = 0;
-                                            r.Font.Superscript = 0;
-                                            r.Start = cc.Range.End;
-                                        }
-                                        break;
-
-                                    default: // With Subscript
-                                        if (!string.IsNullOrEmpty(part.Text))
-                                        {
-                                            r.InsertAfter(part.Text);
-                                            r.Font.Subscript = 0;
-                                            r.Font.Superscript = 0;
-                                            r.Start = cc.Range.End;
-                                        }
-
-                                        if (part.Count > 0)
-                                        {
-                                            r.InsertAfter($"{part.Count}");
-                                            r.Font.Superscript = 0;
-                                            r.Font.Subscript = 1;
-                                            r.Start = cc.Range.End;
-                                        }
-                                        break;
-                                }
-                                break;
-
-                            case FormulaPartType.Charge:
-                                int absCharge = Math.Abs(part.Count);
-                                if (absCharge > 1)
-                                {
-                                    r.InsertAfter($"{absCharge}");
-                                    r.Font.Subscript = 0;
-                                    r.Font.Superscript = 1;
-                                    r.Start = cc.Range.End;
-                                }
-                                if (!string.IsNullOrEmpty(part.Text))
-                                {
-                                    r.InsertAfter(part.Text);
-                                    r.Font.Subscript = 0;
-                                    r.Font.Superscript = 1;
-                                    r.Start = cc.Range.End;
-                                }
-                                break;
-                        }
-                    }
-                }
-                else
-                {
-                    cc.Range.Text = text;
-                }
+                cc.Range.Text = text;
             }
         }
 

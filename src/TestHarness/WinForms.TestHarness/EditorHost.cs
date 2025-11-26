@@ -10,7 +10,7 @@ using Chem4Word.Core;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Helpers;
+using Chem4Word.Model2.Formula;
 using Chem4Word.Telemetry;
 using System;
 using System.Collections.Generic;
@@ -66,7 +66,9 @@ namespace WinForms.TestHarness
                     }
                     else
                     {
-                        Text = "ACME - Editing " + FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula));
+                        var helper2 = new FormulaHelperV2(model);
+                        //Text = "ACME - Editing " + FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula));
+                        Text = "ACME - Editing " + helper2.Unicode();
                     }
 
                     acmeEditor.OnFeedbackChange += OnFeedbackChange_AcmeEditor;

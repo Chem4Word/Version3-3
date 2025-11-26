@@ -11,10 +11,14 @@ namespace Chem4Word.Core.UI.Wpf
 {
     public class WpfEventArgs : EventArgs
     {
+        // General properties
         public string Button { get; set; }
+
         public string ButtonDetails { get; set; }
 
+        // Properties used for ACME Status Bar
         public string Message { get; set; }
+
         public string Formula { get; set; }
         public string MolecularWeight { get; set; }
     }

@@ -10,6 +10,7 @@ using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Forms;
 using System;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace Chem4Word.UI.WPF
@@ -39,7 +40,7 @@ namespace Chem4Word.UI.WPF
                         Left = (int)TopLeft.X;
                         Top = (int)TopLeft.Y;
                         var screen = Screen.FromControl(this);
-                        var sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+                        var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                         Left = (int)sensible.X;
                         Top = (int)sensible.Y;
                     }

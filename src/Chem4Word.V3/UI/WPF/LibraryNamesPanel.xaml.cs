@@ -196,7 +196,7 @@ namespace Chem4Word.UI.WPF
                                 && !dataObject.Name.ToLower().Equals("not requested")
                                 && !dataObject.Name.ToLower().Equals("unable to calculate"))
                             {
-                                node.Header = TextBlockHelper.FromFormula(dataObject.Name);
+                                node.Header = TextBlockHelper.FromUnicode(dataObject.Name);
                             }
                             else
                             {

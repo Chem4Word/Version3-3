@@ -42,7 +42,7 @@
             this.RedoStack = new WinForms.TestHarness.StackViewer();
             this.UndoHost = new System.Windows.Forms.Integration.ElementHost();
             this.UndoStack = new WinForms.TestHarness.StackViewer();
-            this.Information = new System.Windows.Forms.Label();
+            this.Information1 = new System.Windows.Forms.Label();
             this.EditCml = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.CalculateProperties = new System.Windows.Forms.Button();
@@ -57,6 +57,7 @@
             this.SaveStructure = new System.Windows.Forms.Button();
             this.ClearChemistry = new System.Windows.Forms.Button();
             this.RenderOoXml = new System.Windows.Forms.Button();
+            this.Information2 = new System.Windows.Forms.Label();
             this.LayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -132,7 +133,7 @@
             this.LayoutPanel.Name = "LayoutPanel";
             this.LayoutPanel.RowCount = 1;
             this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.LayoutPanel.Size = new System.Drawing.Size(1113, 462);
+            this.LayoutPanel.Size = new System.Drawing.Size(1113, 444);
             this.LayoutPanel.TabIndex = 13;
             // 
             // DisplayHost
@@ -141,7 +142,7 @@
             this.DisplayHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DisplayHost.Location = new System.Drawing.Point(278, 3);
             this.DisplayHost.Name = "DisplayHost";
-            this.DisplayHost.Size = new System.Drawing.Size(557, 456);
+            this.DisplayHost.Size = new System.Drawing.Size(557, 438);
             this.DisplayHost.TabIndex = 1;
             this.DisplayHost.Text = "centreHost";
             this.DisplayHost.Child = this.Display;
@@ -151,7 +152,7 @@
             this.RedoHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RedoHost.Location = new System.Drawing.Point(841, 3);
             this.RedoHost.Name = "RedoHost";
-            this.RedoHost.Size = new System.Drawing.Size(269, 456);
+            this.RedoHost.Size = new System.Drawing.Size(269, 438);
             this.RedoHost.TabIndex = 2;
             this.RedoHost.Text = "rightHost";
             this.RedoHost.Child = this.RedoStack;
@@ -161,20 +162,20 @@
             this.UndoHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.UndoHost.Location = new System.Drawing.Point(3, 3);
             this.UndoHost.Name = "UndoHost";
-            this.UndoHost.Size = new System.Drawing.Size(269, 456);
+            this.UndoHost.Size = new System.Drawing.Size(269, 438);
             this.UndoHost.TabIndex = 3;
             this.UndoHost.Text = "leftHost";
             this.UndoHost.Child = this.UndoStack;
             // 
-            // Information
+            // Information1
             // 
-            this.Information.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Information.AutoSize = true;
-            this.Information.Location = new System.Drawing.Point(12, 477);
-            this.Information.Name = "Information";
-            this.Information.Size = new System.Drawing.Size(16, 13);
-            this.Information.TabIndex = 14;
-            this.Information.Text = "...";
+            this.Information1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Information1.AutoSize = true;
+            this.Information1.Location = new System.Drawing.Point(12, 463);
+            this.Information1.Name = "Information1";
+            this.Information1.Size = new System.Drawing.Size(16, 13);
+            this.Information1.TabIndex = 14;
+            this.Information1.Text = "...";
             // 
             // EditCml
             // 
@@ -349,18 +350,29 @@
             this.RenderOoXml.UseVisualStyleBackColor = true;
             this.RenderOoXml.Click += new System.EventHandler(this.OnClick_RenderOoXml);
             // 
+            // Information2
+            // 
+            this.Information2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Information2.AutoSize = true;
+            this.Information2.Location = new System.Drawing.Point(12, 480);
+            this.Information2.Name = "Information2";
+            this.Information2.Size = new System.Drawing.Size(16, 13);
+            this.Information2.TabIndex = 22;
+            this.Information2.Text = "...";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1137, 587);
+            this.Controls.Add(this.Information2);
             this.Controls.Add(this.RenderOoXml);
             this.Controls.Add(this.ClearChemistry);
             this.Controls.Add(this.SaveStructure);
             this.Controls.Add(this.ShowCml);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.Information);
+            this.Controls.Add(this.Information1);
             this.Controls.Add(this.LayoutPanel);
             this.Controls.Add(this.Redo);
             this.Controls.Add(this.Undo);
@@ -391,7 +403,7 @@
         private System.Windows.Forms.TableLayoutPanel LayoutPanel;
         private System.Windows.Forms.Integration.ElementHost RedoHost;
         private System.Windows.Forms.Integration.ElementHost UndoHost;
-        private System.Windows.Forms.Label Information;
+        private System.Windows.Forms.Label Information1;
         private System.Windows.Forms.Button EditCml;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -408,6 +420,7 @@
         private System.Windows.Forms.Button SearchOpsin;
         private System.Windows.Forms.Button SearchPubChem;
         private System.Windows.Forms.Button CalculateProperties;
+        private System.Windows.Forms.Label Information2;
     }
 }
 

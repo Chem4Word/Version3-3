@@ -314,8 +314,10 @@ namespace Chem4Word.Searcher.ChEBIPlugin
         {
             if (_lastModel != null)
             {
-                MolFileViewer tv = new MolFileViewer(new System.Windows.Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), _lastMolfile);
-                tv.ShowDialog();
+                Screen screen = Screen.FromControl(ShowMolfile);
+                MolFileViewer viewer = new MolFileViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, _lastMolfile);
+                viewer.ShowDialog(this);
+
                 ResultsListView.Focus();
             }
         }
@@ -415,7 +417,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     Left = (int)TopLeft.X;
                     Top = (int)TopLeft.Y;
                     Screen screen = Screen.FromControl(this);
-                    Point sensible = PointHelper.SensibleTopLeft(TopLeft, screen, Width, Height);
+                    Point sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                     Left = (int)sensible.X;
                     Top = (int)sensible.Y;
                 }
