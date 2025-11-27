@@ -433,7 +433,7 @@ namespace WinForms.TestHarness
                     var statistics1 = model.GetBondLengthStatistics();
                     var statistics2 = model.GetBondLengthStatistics(false);
 
-                    Information1.Text = $"Formula: {model.ConciseFormula} ({model.UnicodeFormula})";
+                    Information1.Text = $"Formula: {model.ConciseFormula} Unicode: {model.UnicodeFormula}";
 
                     var stringBuilder = new StringBuilder();
 
@@ -516,9 +516,7 @@ namespace WinForms.TestHarness
                     _redoStack.Push(copy);
                 }
 
-                SetDisplayOptions();
-                var helper = new FormulaHelperV2(model);
-                ShowChemistry($"Undo -> {helper.Concise()}", model);
+                ShowChemistry($"Undo -> {model.ConciseFormula}", model);
             }
             catch (Exception exception)
             {
@@ -548,9 +546,7 @@ namespace WinForms.TestHarness
                     _undoStack.Push(clone);
                 }
 
-                SetDisplayOptions();
-                var helper = new FormulaHelperV2(model);
-                ShowChemistry($"Redo -> {helper.Concise()}", model);
+                ShowChemistry($"Redo -> {model.ConciseFormula}", model);
             }
             catch (Exception exception)
             {
@@ -721,7 +717,6 @@ namespace WinForms.TestHarness
 
         private void OnLoad_FlexForm(object sender, EventArgs e)
         {
-            SetDisplayOptions();
             Display.HighlightActive = false;
 
             RedoStack = new StackViewer();
@@ -765,17 +760,9 @@ namespace WinForms.TestHarness
 
         private void UpdateControls()
         {
-            SetDisplayOptions();
             Display.Chemistry = _lastCml;
-            //RedoStack.SetOptions(_editorOptions);
-            //UndoStack.SetOptions(_editorOptions);
             UndoStack.ListOfDisplays.ItemsSource = StackToList(_undoStack);
             RedoStack.ListOfDisplays.ItemsSource = StackToList(_redoStack);
-        }
-
-        private void SetDisplayOptions()
-        {
-            // Remove
         }
 
         private void OnClick_LayoutStructure(object sender, EventArgs e)
@@ -868,11 +855,11 @@ namespace WinForms.TestHarness
                 TopLeft = new Point(Left + 24, Top + 24),
                 Cml = _lastCml,
                 Properties = new Dictionary<string, string>
-                                            {
-                                                {
-                                                    "Guid", Guid.NewGuid().ToString("N")
-                                                }
-                                            }
+                             {
+                                 {
+                                     "Guid", Guid.NewGuid().ToString("N")
+                                 }
+                             }
             };
             var tempFileName = renderer.Render();
             if (string.IsNullOrEmpty(tempFileName))
@@ -965,10 +952,7 @@ namespace WinForms.TestHarness
                 model.EnsureBondLength(DefaultBondLength, false);
                 _lastCml = cc.Export(model);
 
-                SetDisplayOptions();
-
-                var helper = new FormulaHelperV2(model);
-                ShowChemistry($"{captionPrefix} {helper.Concise()}", model);
+                ShowChemistry($"{captionPrefix} {model.ConciseFormula}", model);
             }
             else
             {
@@ -1007,10 +991,7 @@ namespace WinForms.TestHarness
 
             _lastCml = cc.Export(model);
 
-            SetDisplayOptions();
-
-            var helper = new FormulaHelperV2(model);
-            ShowChemistry($"{changedProperties} changed properties; {helper.Concise()}", model);
+            ShowChemistry($"{changedProperties} changed properties; {model.ConciseFormula}", model);
         }
     }
 }

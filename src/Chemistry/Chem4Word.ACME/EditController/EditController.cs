@@ -568,10 +568,7 @@ namespace Chem4Word.ACME
             // Some molecules are selected
             foreach (Molecule molecule in SelectedItems.Where(m => m is Molecule))
             {
-                var helper = new FormulaHelperV2(molecule);
-                //List<MoleculeFormulaPart> parts = FormulaHelper.ParseFormulaIntoParts(molecule.ConciseFormula);
-                //string formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
-                formulae.Add(helper.Unicode());
+                formulae.Add(molecule.UnicodeFormula);
             }
 
             if (formulae.Count > 0)
@@ -582,11 +579,7 @@ namespace Chem4Word.ACME
             // No molecules are selected
             foreach (Molecule molecule in Model.Molecules.Values)
             {
-                var helper = new FormulaHelperV2(molecule);
-                //List<MoleculeFormulaPart> parts = FormulaHelper.ParseFormulaIntoParts(molecule.ConciseFormula);
-                //string formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
-                //formulae.Add(formulaPartsAsUnicode);
-                formulae.Add(helper.Unicode());
+                formulae.Add(molecule.UnicodeFormula);
             }
 
             if (formulae.Count > 0)

@@ -66,9 +66,7 @@ namespace WinForms.TestHarness
                     }
                     else
                     {
-                        var helper2 = new FormulaHelperV2(model);
-                        //Text = "ACME - Editing " + FormulaHelper.FormulaPartsAsUnicode(FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula));
-                        Text = "ACME - Editing " + helper2.Unicode();
+                        Text = "ACME - Editing " + model.UnicodeFormula;
                     }
 
                     acmeEditor.OnFeedbackChange += OnFeedbackChange_AcmeEditor;

@@ -349,7 +349,7 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var helper = new FormulaHelperV2(this);
+                FormulaHelper helper = new FormulaHelper(this);
                 return helper.Concise();
             }
         }
@@ -358,7 +358,7 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var helper = new FormulaHelperV2(this);
+                FormulaHelper helper = new FormulaHelper(this);
                 return helper.Unicode();
             }
         }
@@ -650,12 +650,18 @@ namespace Chem4Word.Model2
 
                         foreach (TextualProperty formula in molecule.Formulas)
                         {
+                            string text = formula.Value;
+                            if (formula.FullType.ToLower().Contains("formula"))
+                            {
+                                text = FormulaHelper.ToUnicode(formula.Value);
+                            }
+
                             properties.Add(new TextualProperty
                             {
                                 Id = formula.Id,
                                 TypeCode = "F",
                                 FullType = formula.FullType,
-                                Value = formula.Value
+                                Value = text
                             });
                         }
 

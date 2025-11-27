@@ -10,7 +10,7 @@ using System;
 
 namespace Chem4Word.Model2.Formula
 {
-    public class FormulaPartV2
+    public class FormulaPart
     {
         public FormulaPartType PartType { get; }
 
@@ -18,7 +18,7 @@ namespace Chem4Word.Model2.Formula
 
         public int Count { get; set; }
 
-        public int SumOfCharges { get; set; }
+        public int Index { get; set; }
 
         public string Value
         {
@@ -30,17 +30,17 @@ namespace Chem4Word.Model2.Formula
                 {
                     case FormulaPartType.Charge:
                         value = string.Empty;
-                        int absCharge = Math.Abs(SumOfCharges);
+                        int absCharge = Math.Abs(Count);
 
                         if (absCharge > 0)
                         {
-                            if (SumOfCharges > 0 )
+                            if (Count > 0 )
                             {
-                                value = SumOfCharges > 1 ? $"+ {absCharge}" : "+";
+                                value = Count > 1 ? $"+ {absCharge}" : "+";
                             }
-                            if (SumOfCharges < 0)
+                            if (Count < 0)
                             {
-                                value = SumOfCharges < -1 ? $"- {absCharge}" : "-";
+                                value = Count < -1 ? $"- {absCharge}" : "-";
                             }
                         }
                         break;
@@ -62,13 +62,20 @@ namespace Chem4Word.Model2.Formula
             }
         }
 
-        public FormulaPartV2(FormulaPartType partType, string text, int count)
+        public FormulaPart(FormulaPartType partType, string text, int count)
         {
             PartType = partType;
             Text = text;
             Count = count;
         }
 
+        public FormulaPart(FormulaPartType partType, int index, string text, int count)
+        {
+            PartType = partType;
+            Index = index;
+            Text = text;
+            Count = count;
+        }
         public override string ToString()
         {
             return $"{Value} - {PartType}";

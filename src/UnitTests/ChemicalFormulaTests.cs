@@ -8,7 +8,6 @@
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Formula;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Xunit;
@@ -29,7 +28,7 @@ namespace Chem4WordTests
         [InlineData(-1, -1, 0, "C 2 H 3 F - 2")]
         [InlineData(1, 1, -1, "C 2 H 3 F +")]
         [InlineData(1, 1, -2, "C 2 H 3 F")]
-        public void CheckCalculatedFormula(int a1Charge, int a2Charge, int m1Charge, string expected)
+        public void CalculatedFormula(int a1Charge, int a2Charge, int m1Charge, string expected)
         {
             Model model = TestHelpers.CreateSimpleMolecule();
             Atom a1 = model.GetAllAtoms().First(a => a.Id.Equals("a1")); // C
@@ -61,7 +60,7 @@ namespace Chem4WordTests
         [InlineData(0, 0, 0, 1, 0, 0, "[ C 2 H 6 · H F ] +")]
         [InlineData(0, 0, 0, 0, 2, 0, "[ C 2 H 6 + 2 · H F ]")]
         [InlineData(0, 0, 0, 0, 0, -1, "[ C 2 H 6 · H F - ]")]
-        public void CheckCalculatedFormulaNested(int a1Charge, int a2Charge, int a3Charge, int m1Charge, int m2Charge, int m3Charge, string expected)
+        public void CalculatedFormulaNested(int a1Charge, int a2Charge, int a3Charge, int m1Charge, int m2Charge, int m3Charge, string expected)
         {
             Model model = TestHelpers.CreateNestedMolecule();
 
@@ -101,7 +100,7 @@ namespace Chem4WordTests
         }
 
         [Fact]
-        public void CheckCalculatedFormulaDoubleNested()
+        public void CalculatedFormulaDoubleNested()
         {
             Model model = TestHelpers.CreateDoubleNestedMolecule();
 
@@ -129,47 +128,78 @@ namespace Chem4WordTests
             }
         }
 
-        [Theory(Skip = "Not yet implemented.")]
-        // Invalid strings
-        [InlineData("2", 0)]
-        [InlineData("Q", 0)]
-        [InlineData("Not found", 0)]
-        [InlineData("Any Old Rubbish.", 0)]
-        [InlineData("[ . ]", 0)]
-        [InlineData("Any - Old + Rubbish!", 0)]
-        [InlineData("55Any+ 999Old- -Rubbish", 0)]
-        // Valid strings
-        [InlineData("C  6  H  6", 2)]
-        [InlineData("C7H6N", 3)]
-        [InlineData("C7 H7 F1", 3)]
-        [InlineData("C 5 H 5 Y 1 + 2", 4)]
-        [InlineData("C28H31N2O3+", 5)]
-        [InlineData("C6H10O12P2-4", 5)]
-        [InlineData("C20H21N7O7-2", 5)]
-        [InlineData("C57H101O18S3-3", 5)]
-        [InlineData("C19H26NO4+", 5)]
-        [InlineData("C15H22N2O17P2-2", 6)]
-        [InlineData("C 6 H 6 · C7 H7 F1", 6)]
-        [InlineData("2 C 6 H 6 · C 7 H 7", 6)]
-        [InlineData("C14H15BrClNO6", 6)]
-        [InlineData("[C2 H6 · H1 F1] + 1", 8)]
-        [InlineData("[C2H6 · HF]+", 8)]
-        [InlineData("C 5 H 5 P 1 - · C 5 H 5 N 1 - 2 · C 5 H 5 O 1 + · C 5 H 5 Y 1 + 2", 19)]
-        public void ParseFormula(string formula, int count)
+        [Theory]
+        [InlineData("2")]
+        [InlineData("Q")]
+        [InlineData("Not found")]
+        [InlineData("Any Old Rubbish.")]
+        [InlineData("[ . ]")]
+        [InlineData("Any - Old + Rubbish!")]
+        public void ParseFormula_ExpectSame(string formula)
         {
-            List<FormulaPartV2> listOfParts = FormulaHelperV2.ParseFormulaIntoParts(formula);
+            // Arrange
 
+            // Act
+
+            string result = FormulaHelper.ToUnicode(formula);
             if (Debugger.IsAttached)
             {
-                int i = 1;
-                Debug.WriteLine(formula);
-                foreach (FormulaPartV2 part in listOfParts)
+                Debug.WriteLine($"Formula:  '{formula}'");
+                Debug.WriteLine($"Actual:   '{result}'");
+
+                if (!result.Equals(formula))
+
                 {
-                    Debug.WriteLine($"    #{i++} {part.PartType} {part.Text} {part.Count}");
+                    Debugger.Break();
                 }
             }
+            else
+            {
+                // Assert(ions)
+                Assert.Equal(formula, result);
+            }
+        }
 
-            Assert.Equal(count, listOfParts.Count);
+        [Theory]
+        [InlineData("[C2 H6 · H1 F1] + 1", "[C₂H₆ · HF]⁺")]
+        [InlineData("[C2H6 · HF]+", "[C₂H₆ · HF]⁺")]
+        [InlineData("2 C 6 H 6 · C 7 H 7", "2C₆H₆ · C₇H₇")]
+        [InlineData("C  6  H  6", "C₆H₆")]
+        [InlineData("C 5 H 5 P 1 - · C 5 H 5 N 1 - 2 · C 5 H 5 O 1 + · C 5 H 5 Y 1 + 2", "C₅H₅P⁻ · C₅H₅N²⁻ · C₅H₅O⁺ · C₅H₅Y²⁺")]
+        [InlineData("C 5 H 5 Y 1 + 2", "C₅H₅Y²⁺")]
+        [InlineData("C 6 H 6 · C7 H7 F1", "C₆H₆ · C₇H₇F")]
+        [InlineData("C14H15BrClNO6", "C₁₄H₁₅BrClNO₆")]
+        [InlineData("C15H22N2O17P2-2", "C₁₅H₂₂N₂O₁₇P₂²⁻")]
+        [InlineData("C19H26NO4+", "C₁₉H₂₆NO₄⁺")]
+        [InlineData("C20H21N7O7-2", "C₂₀H₂₁N₇O₇²⁻")]
+        [InlineData("C28H31N2O3+", "C₂₈H₃₁N₂O₃⁺")]
+        [InlineData("C57H101O18S3-3", "C₅₇H₁₀₁O₁₈S₃³⁻")]
+        [InlineData("C6H10O12P2-4", "C₆H₁₀O₁₂P₂⁴⁻")]
+        [InlineData("C7 H7 F1", "C₇H₇F")]
+        [InlineData("C7H6N", "C₇H₆N")]
+        public void ParseFormula_ExpectUnicode(string formula, string expected)
+        {
+            // Arrange
+
+            // Act
+            string result = FormulaHelper.ToUnicode(formula);
+            if (Debugger.IsAttached)
+            {
+                Debug.WriteLine($"Formula:  '{formula}'");
+                Debug.WriteLine($"Expected: '{expected}'");
+                Debug.WriteLine($"Actual:   '{result}'");
+
+                if (!result.Equals(expected))
+
+                {
+                    Debugger.Break();
+                }
+            }
+            else
+            {
+                // Assert(ions)
+                Assert.Equal(expected, result);
+            }
         }
 
         [Fact]
@@ -204,17 +234,16 @@ namespace Chem4WordTests
         }
 
         [Theory]
-        [ClassData(typeof(NewMoleculeData))]
-        public void New_Molecule(string cmlFile, string expectedConcise, string expectedUnicode)
+        [ClassData(typeof(BasicMoleculeScenarios))]
+        public void BasicMolecule(string cmlFile, string expectedConcise, string expectedUnicode)
         {
             // Arrange
             CMLConverter mc = new CMLConverter();
             Model model = mc.Import(ResourceHelper.GetStringResource(cmlFile));
 
             // Act
-            FormulaHelperV2 helper = new FormulaHelperV2(model);
-            string actualConcise = helper.Concise();
-            string actualUniCode = helper.Unicode();
+            string actualConcise = model.ConciseFormula;
+            string actualUniCode = model.UnicodeFormula;
 
             Debug.WriteLine($"{cmlFile}");
             Debug.WriteLine($"  Expected Concise: '{expectedConcise}'");
@@ -233,23 +262,20 @@ namespace Chem4WordTests
         }
 
         [Theory]
-        [ClassData(typeof(NewMoleculeCompactData))]
-        public void New_Molecule_Compact(string cmlFile, string expectedConcise, string expectedUnicode)
+        [ClassData(typeof(CompactConciseFormulaScenarios))]
+        public void CompactConciseFormula(string cmlFile, string expectedConcise)
         {
             // Arrange
             CMLConverter mc = new CMLConverter();
             Model model = mc.Import(ResourceHelper.GetStringResource(cmlFile));
 
             // Act
-            FormulaHelperV2 helper = new FormulaHelperV2(model);
+            FormulaHelper helper = new FormulaHelper(model);
             string actualConcise = helper.Concise(compact: true);
-            string actualUniCode = helper.Unicode();
 
             Debug.WriteLine($"{cmlFile}");
             Debug.WriteLine($"  Expected Concise: '{expectedConcise}'");
             Debug.WriteLine($"  Actual   Concise: '{actualConcise}'");
-            Debug.WriteLine($"  Expected Unicode: '{expectedUnicode}'");
-            Debug.WriteLine($"  Actual   Unicode: '{actualUniCode}'");
 
             Debugger.Break();
 
@@ -257,13 +283,12 @@ namespace Chem4WordTests
             if (!Debugger.IsAttached)
             {
                 Assert.Equal(expectedConcise, actualConcise);
-                Assert.Equal(expectedUnicode, actualUniCode);
             }
         }
 
         [Theory]
-        [ClassData(typeof(NewFirstMoleculeData))]
-        public void New_FirstMolecule(string cmlFile, string expectedConcise, string expectedUnicode)
+        [ClassData(typeof(FirstMoleculeScenarios))]
+        public void FirstMolecule(string cmlFile, string expectedConcise, string expectedUnicode)
         {
             // Arrange
             CMLConverter mc = new CMLConverter();
@@ -271,47 +296,12 @@ namespace Chem4WordTests
             Molecule molecule = model.Molecules.Values.First(m => m.Molecules.Count > 1);
 
             // Act
-            FormulaHelperV2 modelHelper = new FormulaHelperV2(model);
-            FormulaHelperV2 helper = new FormulaHelperV2(molecule);
-            string conciseOfChildren = helper.Concise();
-            string unicodeOfChildren = helper.Unicode();
+            string conciseOfChildren = molecule.ConciseFormula;
+            string unicodeOfChildren = molecule.UnicodeFormula;
 
             Debug.WriteLine($"{cmlFile}");
-            Debug.WriteLine($"  Model Concise: '{modelHelper.Concise()}'");
-            Debug.WriteLine($"  Model Unicode: '{modelHelper.Unicode()}'");
-            Debug.WriteLine($"  Expected Concise: '{expectedConcise}'");
-            Debug.WriteLine($"  Actual   Concise: '{conciseOfChildren}'");
-            Debug.WriteLine($"  Expected Unicode: '{expectedUnicode}'");
-            Debug.WriteLine($"  Actual   Unicode: '{unicodeOfChildren}'");
-
-            Debugger.Break();
-
-            // Assert(ions)
-            if (!Debugger.IsAttached)
-            {
-                Assert.Equal(expectedConcise, conciseOfChildren);
-                Assert.Equal(expectedUnicode, unicodeOfChildren);
-            }
-        }
-
-        [Theory]
-        [ClassData(typeof(NewChildMoleculeData))]
-        public void New_ChildMolecule(string cmlFile, string expectedConcise, string expectedUnicode)
-        {
-            // Arrange
-            CMLConverter mc = new CMLConverter();
-            Model model = mc.Import(ResourceHelper.GetStringResource(cmlFile));
-            Molecule molecule = model.Molecules.Values.First(m => m.Molecules.Count > 1);
-
-            // Act
-            FormulaHelperV2 modelHelper = new FormulaHelperV2(model);
-            FormulaHelperV2 helper = new FormulaHelperV2(molecule);
-            string conciseOfChildren = helper.ConciseOfChildren();
-            string unicodeOfChildren = helper.UnicodeOfChildren();
-
-            Debug.WriteLine($"{cmlFile}");
-            Debug.WriteLine($"  Model Concise: '{modelHelper.Concise()}'");
-            Debug.WriteLine($"  Model Unicode: '{modelHelper.Unicode()}'");
+            Debug.WriteLine($"  Model Concise: '{model.ConciseFormula}'");
+            Debug.WriteLine($"  Model Unicode: '{model.UnicodeFormula}'");
             Debug.WriteLine($"  Expected Concise: '{expectedConcise}'");
             Debug.WriteLine($"  Actual   Concise: '{conciseOfChildren}'");
             Debug.WriteLine($"  Expected Unicode: '{expectedUnicode}'");
@@ -328,9 +318,9 @@ namespace Chem4WordTests
         }
     }
 
-    public class NewMoleculeData : TheoryData<string, string, string>
+    public class BasicMoleculeScenarios : TheoryData<string, string, string>
     {
-        public NewMoleculeData()
+        public BasicMoleculeScenarios()
         {
             Add("example-1.xml",
                 "C 3 H 4 - 4",
@@ -347,28 +337,20 @@ namespace Chem4WordTests
         }
     }
 
-    public class NewMoleculeCompactData : TheoryData<string, string, string>
+    public class CompactConciseFormulaScenarios : TheoryData<string, string>
     {
-        public NewMoleculeCompactData()
+        public CompactConciseFormulaScenarios()
         {
-            Add("example-1.xml",
-                "C3H4-4",
-                "C₃H₄⁴⁻");
-            Add("example-2.xml",
-                "2C3H6·C3H4-2",
-                "2 C₃H₆ · C₃H₄²⁻");
-            Add("example-3.xml",
-                "C3H5+·2C3H6",
-                "C₃H₅⁺ · 2 C₃H₆");
-            Add("example-4.xml",
-                "C3H5+·[2C4H8·2C3H6]",
-                "C₃H₅⁺ · [ 2 C₄H₈ · 2 C₃H₆ ]");
+            Add("example-1.xml", "C3H4-4");
+            Add("example-2.xml", "2C3H6·C3H4-2");
+            Add("example-3.xml", "C3H5+·2C3H6");
+            Add("example-4.xml", "C3H5+·[2C4H8·2C3H6]");
         }
     }
 
-    public class NewFirstMoleculeData : TheoryData<string, string, string>
+    public class FirstMoleculeScenarios : TheoryData<string, string, string>
     {
-        public NewFirstMoleculeData()
+        public FirstMoleculeScenarios()
         {
             Add("example-3.xml",
                 "2 C 3 H 6",
@@ -376,19 +358,6 @@ namespace Chem4WordTests
             Add("example-4.xml",
                 "[ 2 C 4 H 8 · 2 C 3 H 6 ]",
                 "[ 2 C₄H₈ · 2 C₃H₆ ]");
-        }
-    }
-
-    public class NewChildMoleculeData : TheoryData<string, string, string>
-    {
-        public NewChildMoleculeData()
-        {
-            Add("example-3.xml",
-                "2 C 3 H 6",
-                "2 C₃H₆");
-            Add("example-4.xml",
-                "2 C 4 H 8 · 2 C 3 H 6",
-                "2 C₄H₈ · 2 C₃H₆");
         }
     }
 }

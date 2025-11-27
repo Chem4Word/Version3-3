@@ -105,10 +105,7 @@ namespace Chem4Word.Editor.ACME
                     }
                     else
                     {
-                        var helper = new FormulaHelperV2(model);
-                        //var parts = FormulaHelper.ParseFormulaIntoParts(model.ConciseFormula);
-                        //var formulaPartsAsUnicode = FormulaHelper.FormulaPartsAsUnicode(parts);
-                        Text = "ACME - Editing " + helper.Unicode();
+                        Text = "ACME - Editing " + model.UnicodeFormula;
                     }
                 }
 

@@ -216,8 +216,6 @@ namespace Chem4Word.Model2
 
         public string CreatorGuid { get; set; }
 
-        //private Dictionary<string, int> _calculatedFormulas;
-
         /// <summary>
         /// Bond length used in Xaml
         /// </summary>
@@ -671,7 +669,7 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var helper = new FormulaHelperV2(this);
+                FormulaHelper helper = new FormulaHelper(this);
                 return helper.Concise();
             }
         }
@@ -683,86 +681,10 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var helper = new FormulaHelperV2(this);
+                FormulaHelper helper = new FormulaHelper(this);
                 return helper.Unicode();
             }
         }
-
-        //private void GatherFormulas(List<Molecule> molecules)
-        //{
-        //    foreach (var molecule in molecules)
-        //    {
-        //        if (molecule.Atoms.Count > 0)
-        //        {
-        //            // Add into running totals
-        //            if (_calculatedFormulas.ContainsKey(molecule.ConciseFormula))
-        //            {
-        //                _calculatedFormulas[molecule.ConciseFormula]++;
-        //            }
-        //            else
-        //            {
-        //                _calculatedFormulas.Add(molecule.ConciseFormula, 1);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            // Gather the formulas of the children
-        //            var children = new List<string>();
-        //            foreach (var childMolecule in molecule.Molecules.Values.ToList())
-        //            {
-        //                children.Add(childMolecule.ConciseFormula);
-        //            }
-
-        //            // Add Brackets and join using Bullet character <Alt>0183
-        //            var combined = "[" + string.Join(" · ", children) + "]";
-
-        //            // Add charge here
-        //            if (molecule.FormalCharge != null)
-        //            {
-        //                var charge = molecule.FormalCharge.Value;
-        //                var absCharge = Math.Abs(charge);
-
-        //                if (charge > 0)
-        //                {
-        //                    combined += $" + {absCharge}";
-        //                }
-        //                if (charge < 0)
-        //                {
-        //                    combined += $" - {absCharge}";
-        //                }
-        //            }
-
-        //            // Add combined value into running totals
-        //            if (_calculatedFormulas.ContainsKey(combined))
-        //            {
-        //                _calculatedFormulas[combined]++;
-        //            }
-        //            else
-        //            {
-        //                _calculatedFormulas.Add(combined, 1);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private string CalculatedFormulaAsString()
-        //{
-        //    var strings = new List<string>();
-        //    foreach (var calculatedFormula in _calculatedFormulas)
-        //    {
-        //        if (calculatedFormula.Value > 1)
-        //        {
-        //            strings.Add($"{calculatedFormula.Value} {calculatedFormula.Key}");
-        //        }
-        //        else
-        //        {
-        //            strings.Add(calculatedFormula.Key);
-        //        }
-        //    }
-
-        //    // Join using Bullet character <Alt>0183
-        //    return string.Join(" · ", strings);
-        //}
 
         public ReactionScheme DefaultReactionScheme
         {

@@ -21,13 +21,13 @@ namespace Wpf.UI.Sandbox.Forms
     /// </summary>
     public partial class FormulaTesting : Window
     {
-        private ObservableCollection<FormulaPartV2> PartsCollection { get; set; }
+        private ObservableCollection<FormulaPart> PartsCollection { get; set; }
 
         public FormulaTesting()
         {
             InitializeComponent();
 
-            PartsCollection = new ObservableCollection<FormulaPartV2>();
+            PartsCollection = new ObservableCollection<FormulaPart>();
             Concise.Text = "";
             Unicode.Text = "";
         }
@@ -73,11 +73,11 @@ namespace Wpf.UI.Sandbox.Forms
         private void DisplayFormulaParts()
         {
             Model model = Editor.EditedModel;
-            FormulaHelperV2 helper = new FormulaHelperV2(model);
+            FormulaHelper helper = new FormulaHelper(model);
 
-            Concise.Text = helper.Concise();
+            Concise.Text = model.ConciseFormula;
             ConciseCompact.Text = helper.Concise(compact: true);
-            Unicode.Text = helper.Unicode();
+            Unicode.Text = model.UnicodeFormula;
         }
     }
 }

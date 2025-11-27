@@ -118,8 +118,7 @@ namespace Chem4Word.ACME
             if (EditedModel != null)
             {
                 OverallConciseFormulaPanel.Children.Clear();
-                var helper = new FormulaHelperV2(EditedModel);
-                OverallConciseFormulaPanel.Children.Add(TextBlockHelper.FromUnicode(helper.Unicode()));
+                OverallConciseFormulaPanel.Children.Add(TextBlockHelper.FromUnicode(EditedModel.UnicodeFormula));
 
                 var root = new TreeViewItem
                 {
@@ -159,8 +158,7 @@ namespace Chem4Word.ACME
                         {
                             Orientation = Orientation.Horizontal
                         };
-                        var helper = new FormulaHelperV2(molecule);
-                        stackPanel.Children.Add(TextBlockHelper.FromUnicode(helper.UnicodeOfChildren(), "Group:"));
+                        stackPanel.Children.Add(TextBlockHelper.FromUnicode(molecule.UnicodeFormula, "Group:"));
 
                         tvi.Header = stackPanel;
                         tvi.Tag = molecule;
@@ -171,8 +169,7 @@ namespace Chem4Word.ACME
                         {
                             Orientation = Orientation.Horizontal
                         };
-                        var helper = new FormulaHelperV2(molecule);
-                        stackPanel.Children.Add(TextBlockHelper.FromUnicode(helper.Unicode()));
+                        stackPanel.Children.Add(TextBlockHelper.FromUnicode(molecule.UnicodeFormula));
 
                         tvi.Header = stackPanel;
                         tvi.Tag = molecule;
