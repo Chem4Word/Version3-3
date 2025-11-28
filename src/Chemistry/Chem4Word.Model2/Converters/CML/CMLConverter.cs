@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -802,7 +802,35 @@ namespace Chem4Word.Model2.Converters.CML
             {
                 result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeFunctionalGroupPlacement, atom.ExplicitFunctionalGroupPlacement));
             }
+
+            if (atom.Electrons.Any())
+            {
+                foreach (Electron electron in atom.Electrons.Values)
+                {
+                    result.Add(new XElement(GetXElement(electron)));
+                }
+            }
             return result;
+        }
+
+        private XElement GetXElement(Electron electron)
+        {
+            string epValue = electron.Placement is null?"": electron.Placement.ToString();
+
+            XElement electronElement = new XElement(CMLNamespaces.cml + ModelConstants.TagElectron,
+                                                    new XAttribute(ModelConstants.AttributeElectronCount,
+                                                                   electron.Count),
+                                                    new XAttribute(ModelConstants.AttributeId, electron.Id),
+                                                    new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeElectronType,
+                                                                   electron.Type));
+
+            if (electron.Placement != null)
+            {
+                electronElement.SetAttributeValue(CMLNamespaces.c4w + ModelConstants.AttributeElectronPlacement,
+                                                  epValue);
+            }
+
+            return electronElement;
         }
 
         // <cml:formula id="m1.f1" convention="chemspider:Smiles" inline="m1.f1" concise="C 6 H 14 Li 1 N 1" />
@@ -1077,10 +1105,9 @@ namespace Chem4Word.Model2.Converters.CML
             var atom = new Atom();
 
             atom.Messages = new List<string>();
-            string atomLabel = cmlElement.Attribute(ModelConstants.AttributeId)?.Value;
+            string atomLabel = CMLHelper.GetId(cmlElement);
 
-            string message = "";
-            Point p = CMLHelper.GetPosition(cmlElement, out message);
+            Point p = CMLHelper.GetPosition(cmlElement, out string message);
             if (!string.IsNullOrEmpty(message))
             {
                 atom.Messages.Add(message);
@@ -1105,8 +1132,27 @@ namespace Chem4Word.Model2.Converters.CML
                 atom.ExplicitHPlacement = CMLHelper.GetExplicitHPlacement(cmlElement);
                 atom.ExplicitFunctionalGroupPlacement = CMLHelper.GetExplicitGroupPlacement(cmlElement);
             }
+            //get any electrons associated with the atom
+            foreach (XElement electronElement in cmlElement.Elements(CMLNamespaces.cml + ModelConstants.TagElectron))
+            {
+                Electron newElectron = GetElectron(electronElement);
+                atom.AddElectron(newElectron);
+                newElectron.Parent = atom;
+            }
 
             return atom;
+        }
+
+        private static Electron GetElectron(XElement electronElement)
+        {
+            Electron newElectron = new Electron
+            {
+                Count = CMLHelper.GetElectronCount(electronElement),
+                Id = CMLHelper.GetId(electronElement),
+                Placement = CMLHelper.GetElectronPlacement(electronElement),
+                Type = CMLHelper.GetElectronType(electronElement)
+            };
+            return newElectron;
         }
 
         private static Bond GetBond(XElement cmlElement, Dictionary<string, Guid> reverseAtomLookup)
@@ -1141,8 +1187,7 @@ namespace Chem4Word.Model2.Converters.CML
             XAttribute dirAttr = cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributePlacement);
             if (dirAttr != null)
             {
-                BondDirection temp;
-                if (Enum.TryParse(dirAttr.Value, out temp))
+                if (Enum.TryParse(dirAttr.Value, out BondDirection temp))
                 {
                     dir = temp;
                 }

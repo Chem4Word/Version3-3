@@ -93,6 +93,8 @@
     <Compile Include="Formula\FormulaHelper.cs" />
     <Compile Include="Formula\FormulaPart.cs" />
     <Compile Include="Enums\FormulaStyle.cs" />
+        <Compile Include="Electron.cs" />
+    <Compile Include="ElectronType.cs" />
     <Compile Include="StructuralObject.cs" />
     <Compile Include="BondLengthStatistics.cs" />
     <Compile Include="Converters\CML\CmlFormat.cs" />
@@ -167,6 +169,9 @@
     <Protobuf Include="Converters\ProtocolBuffers\bondDirection.proto" />
     <Protobuf Include="Converters\ProtocolBuffers\substanceRole.proto" />
     <None Include="app.config" />
+    <Protobuf Include="Converters\ProtocolBuffers\electron.proto">
+      <Generator>MSBuild:Compile</Generator>
+    </Protobuf>
     <None Include="packages.config" />
     <None Include="Resources\PeriodicTable.xlsx" />
     <EmbeddedResource Include="Resources\PropertyTypes.json" />

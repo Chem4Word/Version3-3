@@ -138,6 +138,7 @@
     <Compile Include="Drawing\Text\BlockTextSource.cs" />
     <Compile Include="Drawing\Text\BlockTextRunProperties.cs" />
     <Compile Include="Drawing\Text\TextSupport.cs" />
+    <Compile Include="Drawing\Visuals\ElectronVisual.cs" />
     <Compile Include="Drawing\Visuals\ReactionVisual.cs" />
     <Compile Include="Drawing\Visuals\AnnotationVisual.cs" />
     <Compile Include="EditController\EditController.AlignmentOperations.cs" />

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -40,6 +40,8 @@ namespace Chem4Word.Model2
 
         public event NotifyCollectionChangedEventHandler AnnotationsChanged;
 
+        public event NotifyCollectionChangedEventHandler ElectronsChanged;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion Events
@@ -55,6 +57,7 @@ namespace Chem4Word.Model2
                     var mol = ((Molecule)oldItem);
                     mol.AtomsChanged -= OnCollectionChanged_Atoms;
                     mol.BondsChanged -= OnCollectionChanged_Bonds;
+                    mol.ElectronsChanged -= OnCollectionChanged_Electrons;
                     mol.PropertyChanged -= OnPropertyChanged_ChemObject;
                 }
             }
@@ -66,20 +69,28 @@ namespace Chem4Word.Model2
                     var mol = ((Molecule)newItem);
                     mol.AtomsChanged += OnCollectionChanged_Atoms;
                     mol.BondsChanged += OnCollectionChanged_Bonds;
+                    mol.ElectronsChanged += OnCollectionChanged_Electrons;
                     mol.PropertyChanged += OnPropertyChanged_ChemObject;
                 }
             }
         }
+
+        private void OnCollectionChanged_Electrons(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (!InhibitEvents)
+            {
+                var temp = ElectronsChanged;
+                temp?.Invoke(sender, e);
+            }
+        }
+
 
         private void OnMoleculesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (!InhibitEvents)
             {
                 var temp = MoleculesChanged;
-                if (temp != null)
-                {
-                    temp.Invoke(sender, e);
-                }
+                temp?.Invoke(sender, e);
             }
         }
 
@@ -95,10 +106,7 @@ namespace Chem4Word.Model2
             if (!InhibitEvents)
             {
                 var temp = PropertyChanged;
-                if (temp != null)
-                {
-                    temp.Invoke(sender, e);
-                }
+                temp?.Invoke(sender, e);
             }
         }
 
@@ -122,10 +130,7 @@ namespace Chem4Word.Model2
             if (!InhibitEvents)
             {
                 var temp = AnnotationsChanged;
-                if (temp != null)
-                {
-                    temp.Invoke(sender, e);
-                }
+                temp?.Invoke(sender, e);
             }
         }
 
@@ -151,10 +156,7 @@ namespace Chem4Word.Model2
             if (!InhibitEvents)
             {
                 var temp = BondsChanged;
-                if (temp != null)
-                {
-                    temp.Invoke(sender, e);
-                }
+                temp?.Invoke(sender, e);
             }
         }
 
@@ -170,10 +172,7 @@ namespace Chem4Word.Model2
             if (!InhibitEvents)
             {
                 var temp = AtomsChanged;
-                if (temp != null)
-                {
-                    temp.Invoke(sender, e);
-                }
+                temp?.Invoke(sender, e);
             }
         }
 
@@ -803,8 +802,7 @@ namespace Chem4Word.Model2
             foreach (var molecule in GetAllMolecules())
             {
                 var number = molecule.Id.Substring(1);
-                int n;
-                if (int.TryParse(number, out n))
+                if (int.TryParse(number, out int n))
                 {
                     molCount = Math.Max(molCount, n);
                 }
@@ -813,8 +811,7 @@ namespace Chem4Word.Model2
             foreach (var atom in GetAllAtoms())
             {
                 var number = atom.Id.Substring(1);
-                int n;
-                if (int.TryParse(number, out n))
+                if (int.TryParse(number, out int n))
                 {
                     atomCount = Math.Max(atomCount, n);
                 }
@@ -823,8 +820,7 @@ namespace Chem4Word.Model2
             foreach (var bond in GetAllBonds())
             {
                 var number = bond.Id.Substring(1);
-                int n;
-                if (int.TryParse(number, out n))
+                if (int.TryParse(number, out int n))
                 {
                     bondCount = Math.Max(bondCount, n);
                 }
@@ -833,8 +829,7 @@ namespace Chem4Word.Model2
             foreach (ReactionScheme scheme in GetAllReactionSchemes())
             {
                 var number = scheme.Id.Substring(1);
-                int n;
-                if (int.TryParse(number, out n))
+                if (int.TryParse(number, out int n))
                 {
                     reactionSchemeCount = Math.Max(reactionSchemeCount, n);
                 }
@@ -843,8 +838,7 @@ namespace Chem4Word.Model2
             foreach (Reaction reaction in GetAllReactions())
             {
                 var number = reaction.Id.Substring(1);
-                int n;
-                if (int.TryParse(number, out n))
+                if (int.TryParse(number, out int n))
                 {
                     reactionCount = Math.Max(reactionCount, n);
                 }
@@ -1413,10 +1407,7 @@ namespace Chem4Word.Model2
             if (!InhibitEvents)
             {
                 var temp = ReactionSchemesChanged;
-                if (temp != null)
-                {
-                    temp.Invoke(sender, e);
-                }
+                temp?.Invoke(sender, e);
             }
         }
 
@@ -1475,10 +1466,7 @@ namespace Chem4Word.Model2
             if (!InhibitEvents)
             {
                 var temp = ReactionsChanged;
-                if (temp != null)
-                {
-                    temp.Invoke(sender, e);
-                }
+                temp?.Invoke(sender, e);
             }
         }
 

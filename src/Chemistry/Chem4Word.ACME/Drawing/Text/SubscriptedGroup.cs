@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ namespace Chem4Word.ACME.Drawing.Text
 
             List<Point> mainOutline;
             //first, get some initial size measurements
-            _mainText = new GlyphText(Text, GlyphUtils.SymbolTypeface, _fontSize, pixelsPerDip);
+            _mainText = new GlyphText(Text, GlyphUtils.AtomLabelTypeface, _fontSize, pixelsPerDip);
             _mainText.Premeasure();
 
             //measure up the subscript (if we have one)

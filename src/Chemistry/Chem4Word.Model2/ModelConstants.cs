@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -22,6 +22,9 @@ namespace Chem4Word.Model2
         public const string AttributeConvention = "convention";
         public const string AttributeCount = "count";
         public const string AttributeDictRef = "dictRef";
+        public const string AttributeElectronCount = "count";
+        public const string AttributeElectronPlacement = "electronPlacement";
+        public const string AttributeElectronType = "electronType";
         public const string AttributeElementType = "elementType";
         public const string AttributeExplicit = "explicit";
         public const string AttributeExplicitC = "explicitC";
@@ -59,6 +62,7 @@ namespace Chem4Word.Model2
         public const string AttrValueTheoretical = "theoretical";
         public const string TagAnnotation = "annotation";
         public const string TagAtom = "atom";
+        public const string TagElectron = "electron";
         public const string TagAtomArray = "atomArray";
         public const string TagBond = "bond";
         public const string TagBondArray = "bondArray";

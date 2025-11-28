@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -296,22 +296,19 @@ namespace Chem4Word.Model2
 
         private static double DoubleParser(string input)
         {
-            double result;
-            double.TryParse(input, out result);
+            double.TryParse(input, out double result);
             return result;
         }
 
         private static bool BoolParser(string input)
         {
-            bool result;
-            bool.TryParse(input, out result);
+            bool.TryParse(input, out bool result);
             return result;
         }
 
         private static int IntParser(string input)
         {
-            int result;
-            int.TryParse(input, out result);
+            int.TryParse(input, out int result);
             return result;
         }
 

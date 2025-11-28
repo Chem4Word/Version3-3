@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -2443,11 +2443,11 @@ namespace Chem4Word
                         {
                             var temp = Globals.Chem4WordV3.ThisVersion.Root.Element("Number").Value;
                             var idx = temp.IndexOf(" ", StringComparison.InvariantCulture);
-                            ah.VersionString = $"Chem4Word 2025 {temp.Substring(idx + 1)}";
+                            ah.VersionString = $"Chem4Word 2026 {temp.Substring(idx + 1)}";
                         }
                         else
                         {
-                            ah.VersionString = $"Chem4Word 2025 {fvi.FileVersion}";
+                            ah.VersionString = $"Chem4Word 2026 {fvi.FileVersion}";
                         }
                         ah.ShowDialog();
                     }

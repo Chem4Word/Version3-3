@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -10,6 +10,7 @@ using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -42,6 +43,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         public AtomVisual()
         {
+            ElectronVisuals= new Dictionary<string, ElectronVisual>();
         }
 
         #region Properties
@@ -74,6 +76,12 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 {
                     tempHull.AddRange(ChargeChildVisual.Metrics.Corners);
                 }
+
+                foreach (ElectronVisual electronVisual in ElectronVisuals.Values)
+                {
+                    tempHull.AddRange(electronVisual.Metrics.Corners);
+                }
+
                 var sortedHull = (from Point p in tempHull
                                   orderby p.X, p.Y descending
                                   select p).ToList();
@@ -96,6 +104,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
         private ChargeVisual ChargeChildVisual { get; set; }
         public IsotopeVisual IsotopeChildVisual { get; set; }
 
+        public  Dictionary<string, ElectronVisual> ElectronVisuals { get; }
+        
         private List<Visual> children = new List<Visual>();
 
         public double SymbolSize { get; set; }
@@ -121,7 +131,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         {
             if (AtomSymbol != "")
             {
-                var symbolText = new GlyphText(AtomSymbol, SymbolTypeface, SymbolSize, PixelsPerDip());
+                GlyphText symbolText = new GlyphText(AtomSymbol, AtomLabelTypeface, SymbolSize, PixelsPerDip());
                 symbolText.Fill = Fill;
                 symbolText.MeasureAtCenter(Position);
                 if (!measureOnly)
@@ -162,7 +172,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             if (AtomSymbol != "")
             {
                 var symbolText = new GlyphText(AtomSymbol,
-                    SymbolTypeface, SymbolSize, PixelsPerDip());
+                    AtomLabelTypeface, SymbolSize, PixelsPerDip());
                 symbolText.MeasureAtCenter(Position);
                 //grab the hull for later
                 if (symbolText.FlattenedPath != null)
@@ -212,20 +222,29 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 AddVisualChild(ChargeChildVisual);
                 children.Add(ChargeChildVisual);
             }
-
+            // Stage 8: draw any electrons
+            foreach (var electron in ParentAtom.Electrons.Values)
+            {
+                ElectronVisual electronVisual = new ElectronVisual(this, drawingContext, mainAtomMetrics, HydrogenChildVisual?.Metrics, ChargeChildVisual?.Metrics);
+                electronVisual.ParentElectron = electron;
+                electronVisual.Render();
+                AddVisualChild(electronVisual);
+                children.Add(electronVisual);
+                ElectronVisuals[electron.Id] = electronVisual;
+            }
             // Diag: Show the Hull
 #if DEBUG
 #if SHOWHULLS
                 ShowHull(Hull, drawingContext);
 #endif
-            // End Diag
+                // End Diag
 
-            // Diag: Show the Atom Point
+                // Diag: Show the Atom Point
 #if SHOWATOMCENTRES
             drawingContext.DrawEllipse(Brushes.Red, null, ParentAtom.Position, 5, 5);
 #endif
 #endif
-            // End Diag
+                // End Diag
         }
 
 #if DEBUG
@@ -428,4 +447,5 @@ namespace Chem4Word.ACME.Drawing.Visuals
             return null;
         }
     }
+
 }

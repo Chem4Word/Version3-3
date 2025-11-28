@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -10,6 +10,7 @@ package model;
 
 option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
 import "Converters/ProtocolBuffers/point.proto";
+import "Converters/ProtocolBuffers/electron.proto";
 import "google/protobuf/wrappers.proto";
 
 message PBChemicalElement
@@ -39,4 +40,5 @@ message PBAtom
 	PBPoint Position = 8;
 	bool DoubletRadical = 9;
 	google.protobuf.Int32Value ExplicitH = 10;
+	map<string, PBElectron> Electrons = 11;
 }

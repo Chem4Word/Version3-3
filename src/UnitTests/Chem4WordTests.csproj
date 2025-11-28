@@ -139,6 +139,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ChemicalFormulaTests.cs" />
+    <Compile Include="ElectronTests.cs" />
     <Compile Include="GeneralTests.cs" />
     <Compile Include="ImplicitHydrogenAndCarbonTests.cs" />
     <Compile Include="ModelHelper.cs" />
@@ -171,125 +172,59 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\CML\cyclopropane.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\CML\Benzene.xml" />
     <EmbeddedResource Include="Resources\MDL\Benzene.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\MDL\BasicParafuchsin.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\MDL\Insulin.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\CML\Testosterone.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\CML\ParafuchsinCarbol.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\CML\CopperPhthalocyanine.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\CML\Phthalocyanine.xml" />
+    <EmbeddedResource Include="Resources\CML\cyclohexylidenecyclohexane.xml" />
+    <EmbeddedResource Include="Resources\CML\Exporting\ChemDraw.xml" />
+    <EmbeddedResource Include="Resources\CML\Exporting\MarvinJs.xml" />
+    <EmbeddedResource Include="Resources\CML\Formulae\Multi-Level-Nested.xml" />
+    <EmbeddedResource Include="Resources\CML\NestedMolecules.xml" />
+    <EmbeddedResource Include="Resources\CML\Carbon.xml" />
+    <EmbeddedResource Include="Resources\CML\Two-Rings.xml" />
+    <EmbeddedResource Include="Resources\CML\C60.xml" />
+    <EmbeddedResource Include="Resources\CML\Insulin.xml" />
+    <EmbeddedResource Include="Resources\CML\NoAtoms.xml" />
+    <EmbeddedResource Include="Resources\CML\NestedParafuchsinCarbol.xml" />
+    <EmbeddedResource Include="Resources\CML\Trimethylamine-Normal.xml" />
+    <EmbeddedResource Include="Resources\CML\Trimethylamine-MinusNamespace.xml" />
+    <EmbeddedResource Include="Resources\CML\Trimethylamine-MinusArrays.xml" />
+    <EmbeddedResource Include="Resources\CML\Trimethylamine-MoleculeRoot.xml" />
+    <EmbeddedResource Include="Resources\CML\Two-Molecules-With-Foliage.xml" />
+    <EmbeddedResource Include="Resources\CML\Two-Molecules-For-Joining.xml" />
+    <EmbeddedResource Include="Resources\CML\Two-Grouped-Molecules.xml" />
+    <EmbeddedResource Include="Resources\CML\Exporting\TwoMoleculesWithCmlRoot.xml" />
+    <EmbeddedResource Include="Resources\CML\Exporting\OneMoleculeWthCmlRoot.xml" />
+    <EmbeddedResource Include="Resources\CML\Benzene-With-Missing-Ids.xml" />
+    <EmbeddedResource Include="Resources\CML\Transformed.xml" />
+    <EmbeddedResource Include="Resources\CML\FG-C2H5.xml" />
+    <EmbeddedResource Include="Resources\CML\BalancingVectorCheckTwoBonds.xml" />
+    <EmbeddedResource Include="Resources\CML\BalancingVectorCheckThreeBonds.xml" />
+    <EmbeddedResource Include="Resources\CML\Pseudo-R.xml" />
+    <EmbeddedResource Include="Resources\CML\Pseudo-X.xml" />
+    <EmbeddedResource Include="Resources\CML\Pseudo-T.xml" />
+    <EmbeddedResource Include="Resources\CML\Pseudo-D.xml" />
+    <EmbeddedResource Include="Resources\CML\Formulae\example-1.xml" />
+    <EmbeddedResource Include="Resources\CML\Formulae\example-2.xml" />
+    <EmbeddedResource Include="Resources\CML\Formulae\example-3.xml" />
+    <EmbeddedResource Include="Resources\CML\Formulae\example-4.xml" />
+    <EmbeddedResource Include="Resources\CML\electron placement empty.xml" />
+    <EmbeddedResource Include="Resources\CML\electron placement.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Resources\CML\cyclohexylidenecyclohexane.xml" />
-    <EmbeddedResource Include="Resources\CML\Exporting\ChemDraw.xml" />
-    <EmbeddedResource Include="Resources\CML\Exporting\MarvinJs.xml" />
-    <EmbeddedResource Include="Resources\CML\Formulae\Multi-Level-Nested.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\NestedMolecules.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Carbon.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Two-Rings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\C60.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Insulin.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\NoAtoms.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\NestedParafuchsinCarbol.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Trimethylamine-Normal.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Trimethylamine-MinusNamespace.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Trimethylamine-MinusArrays.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Trimethylamine-MoleculeRoot.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Two-Molecules-With-Foliage.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Two-Molecules-For-Joining.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Two-Grouped-Molecules.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Exporting\TwoMoleculesWithCmlRoot.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Exporting\OneMoleculeWthCmlRoot.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Benzene-With-Missing-Ids.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Transformed.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\FG-C2H5.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\BalancingVectorCheckTwoBonds.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\BalancingVectorCheckThreeBonds.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Pseudo-R.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Pseudo-X.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Pseudo-T.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Pseudo-D.xml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.1.24.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
     <Analyzer Include="..\packages\xunit.analyzers.1.24.0\analyzers\dotnet\cs\xunit.analyzers.fixes.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Formulae\example-1.xml" />
-    <EmbeddedResource Include="Resources\CML\Formulae\example-2.xml" />
-    <EmbeddedResource Include="Resources\CML\Formulae\example-3.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CML\Formulae\example-4.xml" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

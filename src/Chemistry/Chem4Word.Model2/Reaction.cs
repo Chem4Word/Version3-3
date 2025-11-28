@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -108,9 +108,6 @@ namespace Chem4Word.Model2
 
         public TextOffset? ConditionsBlockOffset { get; set; }
 
-        public string Id { get; set; }
-        public Guid InternalId { get; internal set; }
-
         public ReactionScheme Parent { get; set; }
         public bool InhibitEvents { get; private set; }
 
@@ -193,10 +190,7 @@ namespace Chem4Word.Model2
         private void OnReactantsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             NotifyCollectionChangedEventHandler temp = ReactantsChanged;
-            if (temp != null)
-            {
-                temp.Invoke(sender, e);
-            }
+            temp?.Invoke(sender, e);
         }
 
         public void RemoveReactant(Molecule reactant)
@@ -281,10 +275,7 @@ namespace Chem4Word.Model2
         private void OnProductsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             NotifyCollectionChangedEventHandler temp = ProductsChanged;
-            if (temp != null)
-            {
-                temp.Invoke(sender, e);
-            }
+            temp?.Invoke(sender, e);
         }
 
         public void RemoveProduct(Molecule product)

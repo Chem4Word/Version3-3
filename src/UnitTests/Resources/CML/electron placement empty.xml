@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cml:cml xmlns:conventions="http://www.xml-cml.org/convention/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:c4w="http://www.chem4word.com/cml" conventions="convention:molecular">
+  <c4w:explicitC>false</c4w:explicitC>
+  <c4w:explicitH>HeteroAndTerminal</c4w:explicitH>
+  <c4w:showColouredAtoms>true</c4w:showColouredAtoms>
+  <c4w:showMoleculeGrouping>true</c4w:showMoleculeGrouping>
+  <c4w:molecularWeight>168.107</c4w:molecularWeight>
+  <c4w:showMolecularWeight>false</c4w:showMolecularWeight>
+  <c4w:showMoleculeCaptions>false</c4w:showMoleculeCaptions>
+  <cml:molecule id="m1">
+    <cml:formula id="m1.f0" concise="C 10 H 20 O 3" />
+    <cml:atomArray>
+      <cml:atom id="a1" elementType="C" x2="495.8494" y2="601.0" />
+      <cml:atom id="a2" elementType="C" x2="495.8494" y2="576.0" />
+      <cml:atom id="a3" elementType="O" x2="517.5" y2="563.5">
+      </cml:atom>
+      <cml:atom id="a4" elementType="C" x2="539.1506" y2="576.0" />
+      <cml:atom id="a5" elementType="C" x2="539.1506" y2="601.0" />
+      <cml:atom id="a6" elementType="C" x2="517.5" y2="613.5" />
+      <cml:atom id="a7" elementType="C" x2="560.8013" y2="563.5" />
+      <cml:atom id="a8" elementType="C" x2="582.4519" y2="576.0" />
+      <cml:atom id="a9" elementType="O" x2="604.1025" y2="563.5">
+      </cml:atom>
+      
+      <cml:atom id="a10" elementType="C" x2="517.5" y2="638.5" />
+      <cml:atom id="a11" elementType="C" x2="539.1506" y2="651.0" />
+      <cml:atom id="a12" elementType="C" x2="560.8013" y2="638.5" />
+      <cml:atom id="a13" elementType="O" x2="539.1506" y2="676.0" c4w:hydrogenPlacement="South" />
+    </cml:atomArray>
+    <cml:bondArray>
+      <cml:bond id="b1" atomRefs2="a1 a2" order="S" />
+      <cml:bond id="b2" atomRefs2="a2 a3" order="S" />
+      <cml:bond id="b3" atomRefs2="a3 a4" order="S" />
+      <cml:bond id="b4" atomRefs2="a4 a5" order="S" />
+      <cml:bond id="b5" atomRefs2="a5 a6" order="S" />
+      <cml:bond id="b6" atomRefs2="a6 a1" order="S" />
+      <cml:bond id="b7" atomRefs2="a4 a7" order="S" />
+      <cml:bond id="b8" atomRefs2="a7 a8" order="S" />
+      <cml:bond id="b9" atomRefs2="a8 a9" order="S" />
+      <cml:bond id="b10" atomRefs2="a6 a10" order="S" />
+      <cml:bond id="b11" atomRefs2="a10 a11" order="S" />
+      <cml:bond id="b12" atomRefs2="a11 a12" order="S" />
+      <cml:bond id="b13" atomRefs2="a11 a13" order="S" />
+    </cml:bondArray>
+  </cml:molecule>
+</cml:cml>

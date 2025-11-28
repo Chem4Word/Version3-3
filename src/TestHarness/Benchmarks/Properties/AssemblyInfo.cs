@@ -7,10 +7,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Benchmarks")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Konecranes Plc")]
+[assembly: AssemblyCompany("Chem4Word")]
 [assembly: AssemblyProduct("Benchmarks")]
-[assembly: AssemblyCopyright("Copyright © Konecranes Plc 2025")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("© Chem4Word 2025. All rights reserved.")]
+[assembly: AssemblyTrademark("Chem4Word")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -28,5 +28,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("3.3.16.9497")]
+[assembly: AssemblyFileVersion("3.3.16.9497")]

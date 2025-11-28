@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -11,6 +11,8 @@ using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -24,6 +26,8 @@ namespace Chem4Word.Model2
         #region Fields
 
         public List<string> Messages = new List<string>();
+        public readonly ReadOnlyDictionary<Guid, Electron> Electrons; //keyed by InternalId
+        internal readonly Dictionary<Guid, Electron> _electrons;
 
         #endregion Fields
 
@@ -337,7 +341,7 @@ namespace Chem4Word.Model2
 
         private string _id;
 
-        public string Id
+        public override string Id
         {
             get => _id;
             set
@@ -722,12 +726,15 @@ namespace Chem4Word.Model2
         {
             InternalId = Guid.NewGuid();
             Id = InternalId.ToString("D");
+
+            _electrons = new Dictionary<Guid, Electron>();
+            Electrons = new ReadOnlyDictionary<Guid, Electron>(_electrons);
         }
 
         /// <summary>
         /// The internal ID ties atoms and bonds together
         /// </summary>
-        public Guid InternalId { get; internal set; }
+        public override Guid InternalId { get; internal set; }
 
         public bool Singleton => Parent?.Atoms.Count == 1 && Parent?.Atoms.Values.First() == this;
 
@@ -789,6 +796,57 @@ namespace Chem4Word.Model2
             OnPropertyChanged(nameof(SymbolText));
         }
 
+        public void AddElectron(Electron toAdd)
+        {
+            _electrons[toAdd.InternalId] = toAdd;
+            var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
+                                                         new List<Electron> { toAdd });
+            OnCollectionChanged_Electrons(this, e);
+            UpdateElectronPropertyHandlers(e);
+        }
+
+        public void RemoveElectron(Electron toRemove)
+        {
+            if (_electrons.Remove(toRemove.InternalId))
+            {
+                var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove,
+                                                             new List<Electron> { toRemove });
+                OnCollectionChanged_Electrons(this, e);
+                UpdateElectronPropertyHandlers(e);
+            }
+        }
+
+        private void UpdateElectronPropertyHandlers(NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (object oldItem in e.OldItems)
+                {
+                    ((Electron)oldItem).PropertyChanged -= OnElectronPropertyChanged;
+                }
+            }
+            if (e.NewItems != null)
+            {
+                foreach (object oldItem in e.NewItems)
+                {
+                    ((Electron)oldItem).PropertyChanged += OnElectronPropertyChanged;
+                }
+            }
+        }
+
+       
+
+        private void OnElectronPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(sender, e);
+        }
+
+        private void OnCollectionChanged_Electrons(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            NotifyCollectionChangedEventHandler temp = ElectronsChanged;
+            temp?.Invoke(sender, e);
+        }
+
         #endregion Methods
 
         #region Overrides
@@ -819,6 +877,8 @@ namespace Chem4Word.Model2
         }
 
         #endregion INotifyPropertyChanged
+
+        public event NotifyCollectionChangedEventHandler ElectronsChanged;
 
         #endregion Events
 
@@ -853,9 +913,81 @@ namespace Chem4Word.Model2
 
         public override StructuralObject GetByPath(string path)
         {
-            //Atoms do not support child objects, yet.
-            //We will revisit this when we add electrons to atoms
+            if (path.StartsWith(MoleculePathSeparator))
+            {
+                path = path.Substring(1);
+                return Parent.Model.GetByPath(path);
+            }
+
+            int nextSlashPos = path.IndexOf(MoleculePathSeparator, StringComparison.Ordinal);
+            if (nextSlashPos == -1)
+            {
+                // No more slashes so must be a direct child of the molecule
+                foreach (Bond bond in Bonds)
+                {
+                    if (bond.Id == path)
+                    {
+                        return bond;
+                    }
+                }
+
+                foreach (Electron electron in Electrons.Values)
+                {
+                    if (electron.Id == path)
+                    {
+                        return electron;
+                    }
+                }
+                //haven't found anything so degrade gracefully
+                return null;
+            }
+
+            // There are more slashes so must be a child of a molecule or reaction scheme
+            var firstId = path.Substring(0, nextSlashPos);
+            var remainder = path.Substring(nextSlashPos + 1);
+
+            foreach (Bond bond in Bonds)
+            {
+                if (bond.Id == path)
+                {
+                    return bond.GetByPath(remainder);
+                }
+            }
+
             return null;
+        }
+
+        public Atom Copy()
+        {
+            var newAtom = new Atom
+            {
+                Id = Id,
+                Position = Position,
+                Element = Element,
+                FormalCharge = FormalCharge,
+                IsotopeNumber = IsotopeNumber,
+                ExplicitC = ExplicitC,
+                ExplicitH = ExplicitH,
+                ExplicitHPlacement = ExplicitHPlacement,
+                ExplicitFunctionalGroupPlacement = ExplicitFunctionalGroupPlacement
+            };
+
+            foreach (Electron electron in Electrons.Values)
+            {
+                Electron newElectron = electron.Copy();
+                newAtom.AddElectron(newElectron);
+                newElectron.Parent = newAtom;
+            }
+            return newAtom;
+        }
+
+        public void Relabel()
+        {
+            int ecount = 0;
+            foreach (Electron electron in Electrons.Values)
+            {
+                electron.Id = $"e{++ecount}";
+            }
         }
     }
 }

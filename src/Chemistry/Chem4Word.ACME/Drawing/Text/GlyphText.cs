@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ namespace Chem4Word.ACME.Drawing.Text
 
         public GlyphText(string text, Typeface typeface, double typesize, float pixelsPerDip)
         {
-            if (!GlyphUtils.SymbolTypeface.TryGetGlyphTypeface(out _glyphTypeface))
+            if (!GlyphUtils.AtomLabelTypeface.TryGetGlyphTypeface(out _glyphTypeface))
             {
                 Debugger.Break();
                 throw new InvalidOperationException($"No glyph typeface found for the Windows Typeface '{typeface.FaceNames[XmlLanguage.GetLanguage("en-GB")]}'");
@@ -174,21 +174,21 @@ namespace Chem4Word.ACME.Drawing.Text
     public class SubLabelText : GlyphText
     {
         public SubLabelText(string text, float pixelsPerDip, double SubscriptSize)
-            : base(text, GlyphUtils.SymbolTypeface, SubscriptSize, pixelsPerDip)
+            : base(text, GlyphUtils.AtomLabelTypeface, SubscriptSize, pixelsPerDip)
         { }
     }
 
     public class IsotopeLabelText : GlyphText
     {
         public IsotopeLabelText(string text, float pixelsPerDip, double superScriptSize)
-            : base(text, GlyphUtils.SymbolTypeface, superScriptSize, pixelsPerDip)
+            : base(text, GlyphUtils.AtomLabelTypeface, superScriptSize, pixelsPerDip)
         { }
     }
 
     public class ChargeLabelText : GlyphText
     {
         public ChargeLabelText(string text, float pixelsPerDip, double superScriptSize)
-            : base(text, GlyphUtils.SymbolTypeface, superScriptSize, pixelsPerDip)
+            : base(text, GlyphUtils.AtomLabelTypeface, superScriptSize, pixelsPerDip)
         {
         }
     }

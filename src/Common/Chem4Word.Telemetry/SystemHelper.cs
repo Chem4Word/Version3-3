@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -780,7 +780,7 @@ namespace Chem4Word.Telemetry
 
                     try
                     {
-                        // Get Server Date header i.e. "Tue, 01 Jan 2019 19:52:46 GMT"
+                        // Get Server Date header i.e. "Tue, 01 Jan 2026 19:52:46 GMT"
                         ServerDateHeader = response.Headers["date"];
                         SystemUtcDateTime = DateTime.UtcNow;
                         ServerUtcDateTime = DateTime.Parse(ServerDateHeader).ToUniversalTime();

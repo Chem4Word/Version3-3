@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ namespace Chem4Word.Editor.ACME
 
         public string Name => CoreConstants.DefaultEditorPlugIn;
 
-        public string Description => "This is the standard editor for Chem4Word 2025. ACME stands for Advanced CML-based Molecule Editor.";
+        public string Description => "This is the standard editor for Chem4Word 2026. ACME stands for Advanced CML-based Molecule Editor.";
 
         public bool HasSettings => false;
 

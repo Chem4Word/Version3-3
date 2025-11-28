@@ -1,0 +1,20 @@
+// ---------------------------------------------------------------------------
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
+//  at the root directory of the distribution.
+// ---------------------------------------------------------------------------
+
+syntax ="proto3";
+package model;
+
+option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
+import "google/protobuf/wrappers.proto";
+
+message PBElectron
+{
+	string Id = 1;
+	google.protobuf.Int32Value Count = 2;
+	google.protobuf.Int32Value Placement = 3;
+	google.protobuf.Int32Value ElectronType = 4;
+}

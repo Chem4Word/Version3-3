@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -22,8 +22,8 @@ namespace Chem4Word.Model2
     {
         public readonly ReadOnlyDictionary<Guid, Reaction> Reactions;
         private readonly Dictionary<Guid, Reaction> _reactions;
-        public string Id { get; set; }
-        public Guid InternalId { get; internal set; }
+        public override string Id { get; set; }
+        public override Guid InternalId { get; internal set; }
         public Model Parent { get; set; }
 
         public override string Path
@@ -73,10 +73,7 @@ namespace Chem4Word.Model2
         private void OnReactionsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             NotifyCollectionChangedEventHandler temp = ReactionsChanged;
-            if (temp != null)
-            {
-                temp.Invoke(sender, e);
-            }
+            temp?.Invoke(sender, e);
         }
 
         public void RemoveReaction(Reaction reaction)

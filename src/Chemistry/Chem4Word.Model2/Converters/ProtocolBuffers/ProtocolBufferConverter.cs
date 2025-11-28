@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -124,6 +124,12 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 var atomToPBuff = AtomToPBuff(atom);
                 result.Atoms[atom.Id] = atomToPBuff;
                 atomLookup[atom.Id] = atomToPBuff;
+                //now do the electrons
+                foreach (Electron electron in atom.Electrons.Values)
+                {
+                    var electronToPBuff = ElectronToPBuff(electron);
+                    atomToPBuff.Electrons[electron.Id] = electronToPBuff;
+                }
             }
 
             foreach (var molecule in mol.Molecules.Values)
@@ -163,6 +169,18 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             }
 
             return result;
+        }
+
+        private PBElectron ElectronToPBuff(Electron electron)
+        {
+            PBElectron electronBuff = new PBElectron()
+                                      {
+                                          Id = electron.Id,
+                                            Count = electron.Count,
+                                            Placement = (int?)electron.Placement,
+                                            ElectronType = (int?)electron.Type
+            };
+            return electronBuff;
         }
 
         private PBTextualProperty TPToPBuff(TextualProperty property)
@@ -416,6 +434,20 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                         newAtom.ExplicitFunctionalGroupPlacement = (CompassPoints?)atom.FunctionalGroup.PlacementFG;
                         break;
                 }
+                // do any electrons now
+                foreach (var pbElectron in atom.Electrons.Values)
+                {
+                    Electron newElectron = new Electron()
+                                           {
+                                               Id = pbElectron.Id,
+                                               Count = (int)pbElectron.Count,
+                                               Type = (ElectronType)pbElectron.ElectronType,
+                                               Placement = (CompassPoints?)pbElectron.Placement
+                                           };
+                    newAtom.AddElectron(newElectron);
+                    newElectron.Parent=newAtom;
+                }
+
                 newMol.AddAtom(newAtom);
                 atomLookup[newAtom.Id] = newAtom;
             }

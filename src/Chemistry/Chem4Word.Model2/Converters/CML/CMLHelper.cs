@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Chem4Word.Model2.Converters.CML
@@ -22,9 +23,7 @@ namespace Chem4Word.Model2.Converters.CML
     {
         public static int? GetIsotopeNumber(XElement cmlElement)
         {
-            int isotopeNumber;
-
-            if (int.TryParse(cmlElement.Attribute(ModelConstants.AttributeIsotopeNumber)?.Value, out isotopeNumber))
+            if (int.TryParse(cmlElement.Attribute(ModelConstants.AttributeIsotopeNumber)?.Value, out int isotopeNumber))
             {
                 return isotopeNumber;
             }
@@ -336,5 +335,53 @@ namespace Chem4Word.Model2.Converters.CML
 
         public static bool BondOrderIsValid(string order) =>
             "0|1|2|3|S|D|T|hbond|partial01|partial12|partial23|A|".Contains($"|{order}|");
+
+        public static int GetElectronCount(XElement electronElement)
+        {
+            if (int.TryParse(electronElement.Attribute(CMLNamespaces.cml + ModelConstants.AttributeElectronCount)?.Value, out int electronCount))
+            {
+                return electronCount;
+            }
+            if (int.TryParse(electronElement.Attribute(ModelConstants.AttributeElectronCount)?.Value, out electronCount))
+            {
+                return electronCount;
+            }
+
+            return 0;
+        }
+
+        public static string GetId(XElement structElement)
+        {
+            string label = structElement.Attribute(ModelConstants.AttributeId)?.Value;
+            return label;
+        }
+
+        public static CompassPoints? GetElectronPlacement(XElement electronElement)
+        {
+            if (Enum.TryParse(electronElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeElectronPlacement)?.Value, out CompassPoints electronPlacement))
+            {
+                return electronPlacement;
+            }
+
+            if (Enum.TryParse(electronElement.Attribute(ModelConstants.AttributeElectronPlacement)?.Value, out electronPlacement))
+            {
+                return electronPlacement;
+            }
+            return null;
+        }
+
+        public static ElectronType GetElectronType(XElement electronElement)
+        {
+            if (Enum.TryParse(electronElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeElectronType)?.Value, out ElectronType type))
+            {
+                return type;
+            }
+            if (Enum.TryParse(electronElement.Attribute(ModelConstants.AttributeElectronType)?.Value, out type))
+            {
+                return type;
+            }
+
+            return ElectronType.LonePair;
+        }
     }
 }

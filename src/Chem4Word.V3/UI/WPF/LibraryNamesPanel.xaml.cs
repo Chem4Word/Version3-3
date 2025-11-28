@@ -1,11 +1,12 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Controls;
+using Chem4Word.Model2.Formula;
 using IChem4Word.Contracts.Dto;
 using System.Collections.Generic;
 using System.Linq;
@@ -191,12 +192,12 @@ namespace Chem4Word.UI.WPF
                                 FontSize = tagChildNode.FontSize
                             };
 
-                            if (tagChildNode.Tag.ToString().Contains("Formula")
+                            if (tagChildNode.Tag.ToString().ToLower().Contains("formula")
                                 && !dataObject.Name.ToLower().Equals("not found")
                                 && !dataObject.Name.ToLower().Equals("not requested")
                                 && !dataObject.Name.ToLower().Equals("unable to calculate"))
                             {
-                                node.Header = TextBlockHelper.FromUnicode(dataObject.Name);
+                                node.Header = TextBlockHelper.FromUnicode(FormulaHelper.ToUnicode(dataObject.Name));
                             }
                             else
                             {

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -21,6 +21,10 @@ using System.Windows.Media;
 
 namespace Chem4Word.ACME.Controls
 {
+    /// <summary>
+    /// The main rendering surface for chemistry. Passive.
+    /// EditorCanvas derives from this class
+    /// </summary>
     public class ChemistryCanvas : Canvas
     {
         private const double Spacing = 4.5;

@@ -19,7 +19,7 @@ function Help {
 	"Sets the AssemblyVersion and AssemblyFileVersion of AssemblyInfo.cs files`n"
 	".\SetAssemblyVersion.ps1 [VersionNumber] -path [SearchPath] -released [Released] -name [Name]`n"
 	"   [VersionNumber]     The version number to set, for example: 1.2.3"
-	"   [Released]          The release date, for example: 01-Jan-2025"
+	"   [Released]          The release date, for example: 01-Jan-2026"
 	"   [Name]              The name, for example: Beta 2"
 	"   [SearchPath]        The path to search for AssemblyInfo files.`n"
 }
@@ -155,7 +155,7 @@ Write-Host "$($wixFile)" -ForegroundColor Green
 
 $xml = [xml](Get-Content $wixFile)
 $xml.Wix.Package.Version = "$($version).$($delta.Days)"
-$xml.Wix.Package.Name = "Chemistry Add-In for Microsoft Word 2025 $($name)"
+$xml.Wix.Package.Name = "Chemistry Add-In for Microsoft Word 2026 $($name)"
 $xml.Save($wixFile)
 
 # ---------------------------------------------------------- #

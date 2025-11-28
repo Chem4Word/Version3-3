@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -266,9 +266,7 @@ namespace Chem4Word.Model2
 
         #region Structural Properties
 
-        public string Id { get; set; }
-
-        public Guid InternalId { get; internal set; }
+        public override Guid InternalId { get; internal set; }
 
         public IChemistryContainer Parent { get; set; }
 
@@ -522,7 +520,7 @@ namespace Chem4Word.Model2
         {
             _bonds.Add(newBond);
             var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<Bond> { newBond });
-            OnBondsChanged(this, e);
+            OnCollectionChanged_Bonds(this, e);
             UpdateBondsPropertyHandlers(e);
         }
 
@@ -530,7 +528,7 @@ namespace Chem4Word.Model2
         {
             _bonds.Remove(toRemove);
             var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new List<Bond> { toRemove });
-            OnBondsChanged(this, e);
+            OnCollectionChanged_Bonds(this, e);
             UpdateBondsPropertyHandlers(e);
         }
 
@@ -538,7 +536,7 @@ namespace Chem4Word.Model2
         {
             _atoms[newAtom.InternalId] = newAtom;
             var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<Atom> { newAtom });
-            OnAtomsChanged(this, e);
+            OnCollectionChanged_Atoms(this, e);
             UpdateAtomPropertyHandlers(e);
         }
 
@@ -555,7 +553,7 @@ namespace Chem4Word.Model2
             if (result)
             {
                 var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new List<Atom> { toRemove });
-                OnAtomsChanged(this, e);
+                OnCollectionChanged_Atoms(this, e);
                 UpdateAtomPropertyHandlers(e);
             }
         }
@@ -566,7 +564,9 @@ namespace Chem4Word.Model2
             {
                 foreach (object oldItem in e.OldItems)
                 {
-                    ((Atom)oldItem).PropertyChanged -= OnPropertyChanged_ChemObject;
+                    Atom item = ((Atom)oldItem);
+                    item.PropertyChanged -= OnStructuralObjectPropertyChanged;
+                    item.ElectronsChanged -= OnCollectionChanged_Electrons;
                 }
             }
 
@@ -574,7 +574,9 @@ namespace Chem4Word.Model2
             {
                 foreach (object newItem in e.NewItems)
                 {
-                    ((Atom)newItem).PropertyChanged += OnPropertyChanged_ChemObject;
+                    Atom item = ((Atom)newItem);
+                    item.PropertyChanged += OnStructuralObjectPropertyChanged;
+                    item.ElectronsChanged += OnCollectionChanged_Electrons;
                 }
             }
         }
@@ -585,7 +587,7 @@ namespace Chem4Word.Model2
             if (res)
             {
                 var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new List<Molecule> { mol });
-                OnMoleculesChanged(this, e);
+                OnCollectionChanged_Molecules(this, e);
                 UpdateMoleculeHandlers(e);
             }
 
@@ -596,7 +598,7 @@ namespace Chem4Word.Model2
         {
             _molecules[newMol.InternalId] = newMol;
             var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<Molecule> { newMol });
-            OnMoleculesChanged(this, e);
+            OnCollectionChanged_Molecules(this, e);
             UpdateMoleculeHandlers(e);
             return newMol;
         }
@@ -700,19 +702,17 @@ namespace Chem4Word.Model2
 
         public event NotifyCollectionChangedEventHandler MoleculesChanged;
 
+        public event NotifyCollectionChangedEventHandler ElectronsChanged;
+
         #endregion Events
 
         #region Event handlers
 
-        private void OnMoleculesChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            NotifyCollectionChangedEventHandler temp = MoleculesChanged;
-            if (temp != null)
-            {
-                temp.Invoke(sender, e);
-            }
-        }
-
+        /// <summary>
+        /// Called when a child molecule is added or removed
+        /// Syncs the event handlers on the parent
+        /// </summary>
+        /// <param name="e"></param>
         private void UpdateMoleculeHandlers(NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
@@ -722,8 +722,9 @@ namespace Chem4Word.Model2
                     var mol = (Molecule)oldItem;
                     mol.AtomsChanged -= OnCollectionChanged_Atoms;
                     mol.BondsChanged -= OnCollectionChanged_Bonds;
+                    mol.ElectronsChanged -= OnCollectionChanged_Electrons;
                     mol.MoleculesChanged -= OnCollectionChanged_Molecules;
-                    mol.PropertyChanged -= OnPropertyChanged_ChemObject;
+                    mol.PropertyChanged -= OnStructuralObjectPropertyChanged;
                 }
             }
 
@@ -734,29 +735,39 @@ namespace Chem4Word.Model2
                     var mol = (Molecule)newItem;
                     mol.AtomsChanged += OnCollectionChanged_Atoms;
                     mol.BondsChanged += OnCollectionChanged_Bonds;
+                    mol.ElectronsChanged += OnCollectionChanged_Electrons;
                     mol.MoleculesChanged += OnCollectionChanged_Molecules;
-                    mol.PropertyChanged += OnPropertyChanged_ChemObject;
+                    mol.PropertyChanged += OnStructuralObjectPropertyChanged;
                 }
             }
         }
 
+        /// <summary>
+        /// Bubbles up the electron collection changed event up to the next level
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnCollectionChanged_Electrons(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            NotifyCollectionChangedEventHandler temp = ElectronsChanged;
+            temp?.Invoke(sender, e);
+        }
+
+        /// <summary>
+        /// Called when any child molecules are added or removed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnCollectionChanged_Molecules(object sender, NotifyCollectionChangedEventArgs e)
         {
-            OnMoleculesChanged(sender, e);
+            NotifyCollectionChangedEventHandler temp = MoleculesChanged;
+            temp?.Invoke(sender, e);
         }
 
         private void OnCollectionChanged_Bonds(object sender, NotifyCollectionChangedEventArgs e)
         {
-            OnBondsChanged(sender, e);
-        }
-
-        private void OnBondsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
             NotifyCollectionChangedEventHandler temp = BondsChanged;
-            if (temp != null)
-            {
-                temp.Invoke(sender, e);
-            }
+            temp?.Invoke(sender, e);
         }
 
         private void UpdateBondsPropertyHandlers(NotifyCollectionChangedEventArgs e)
@@ -765,7 +776,7 @@ namespace Chem4Word.Model2
             {
                 foreach (object oldItem in e.OldItems)
                 {
-                    ((Bond)oldItem).PropertyChanged -= OnPropertyChanged_ChemObject;
+                    ((Bond)oldItem).PropertyChanged -= OnStructuralObjectPropertyChanged;
                 }
             }
 
@@ -773,26 +784,23 @@ namespace Chem4Word.Model2
             {
                 foreach (object newItem in e.NewItems)
                 {
-                    ((Bond)newItem).PropertyChanged += OnPropertyChanged_ChemObject;
+                    ((Bond)newItem).PropertyChanged += OnStructuralObjectPropertyChanged;
                 }
             }
         }
 
+        /// <summary>
+        /// Called when any atoms are added or removed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnCollectionChanged_Atoms(object sender, NotifyCollectionChangedEventArgs e)
         {
-            OnAtomsChanged(sender, e);
-        }
-
-        private void OnAtomsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
             NotifyCollectionChangedEventHandler temp = AtomsChanged;
-            if (temp != null)
-            {
-                temp.Invoke(sender, e);
-            }
+            temp?.Invoke(sender, e);
         }
 
-        private void OnPropertyChanged_ChemObject(object sender, PropertyChangedEventArgs e)
+        private void OnStructuralObjectPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(sender, e);
         }
@@ -815,8 +823,7 @@ namespace Chem4Word.Model2
                     string[] parts = property.Id.Split('.');
                     prefix = parts[0];
                     suffix = parts[1].Substring(0, 1);
-                    int n;
-                    if (int.TryParse(parts[1].Substring(1), out n))
+                    if (int.TryParse(parts[1].Substring(1), out int n))
                     {
                         max = Math.Max(max, n);
                     }
@@ -970,6 +977,7 @@ namespace Chem4Word.Model2
             foreach (Atom a in Atoms.Values)
             {
                 a.Id = $"a{++atomCount}";
+                a.Relabel();
             }
 
             foreach (Bond b in Bonds)
@@ -1068,18 +1076,7 @@ namespace Chem4Word.Model2
             {
                 foreach (var atom in Atoms.Values)
                 {
-                    var newAtom = new Atom
-                    {
-                        Id = atom.Id,
-                        Position = atom.Position,
-                        Element = atom.Element,
-                        FormalCharge = atom.FormalCharge,
-                        IsotopeNumber = atom.IsotopeNumber,
-                        ExplicitC = atom.ExplicitC,
-                        ExplicitH = atom.ExplicitH,
-                        ExplicitHPlacement = atom.ExplicitHPlacement,
-                        ExplicitFunctionalGroupPlacement = atom.ExplicitFunctionalGroupPlacement
-                    };
+                    var newAtom = atom.Copy();
 
                     copy.AddAtom(newAtom);
                     newAtom.Parent = copy;

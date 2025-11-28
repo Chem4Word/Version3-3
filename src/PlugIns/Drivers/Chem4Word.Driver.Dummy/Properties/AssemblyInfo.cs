@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
@@ -37,6 +37,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("3.3.16.9496")]
-[assembly: AssemblyVersion("3.3.16.9496")]
-[assembly: AssemblyFileVersion("3.3.16.9496")]
+// [assembly: AssemblyVersion("3.3.16.9497")]
+[assembly: AssemblyVersion("3.3.16.9497")]
+[assembly: AssemblyFileVersion("3.3.16.9497")]
