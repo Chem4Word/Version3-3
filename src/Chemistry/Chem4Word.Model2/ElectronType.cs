@@ -10,7 +10,6 @@ namespace Chem4Word.Model2
     {
         Radical = 1,
         LonePair = 2,
-        CarbenoidSinglet = 3,
-        CarbenoidTriplet = 4
+        Carbenoid=3
     }
 }

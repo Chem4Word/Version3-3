@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Media;
 using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
@@ -55,6 +56,10 @@ namespace Chem4Word.Model2
                 _explicitHPlacement = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ImplicitHPlacement));
+                foreach (Electron electron in Electrons.Values)
+                {
+                    electron.OnPropertyChanged(nameof(electron.Placement));
+                }
             }
         }
 
@@ -568,6 +573,39 @@ namespace Chem4Word.Model2
             }
         }
 
+        public int SpareValences
+        {
+            get
+            {
+                if (Element is FunctionalGroup)
+                {
+                    return -1;
+                }
+
+                if (Element != null)
+                {
+                    int bondCount = (int)Math.Truncate(BondOrders);
+                    int charge = FormalCharge ?? 0;
+                    int spares = ModelGlobals.PeriodicTable.SpareValencies(Element as Element, bondCount, charge);
+
+                    foreach (Electron electron in Electrons.Values)
+                    {
+                        if (electron.Count == 1 && electron.Type == ElectronType.Radical)
+                        {
+                            spares -= 1;
+                        }
+                        else if (electron.Count == 2 && (electron.Type == ElectronType.Carbenoid))
+                        {
+                            spares -= 2;
+                        }
+                    }
+
+                    return spares;
+                }
+                return 0;
+            }
+        }
+
         public int ImplicitHydrogenCount
         {
             get
@@ -584,10 +622,7 @@ namespace Chem4Word.Model2
                 {
                     if (ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{Element.Symbol}|"))
                     {
-                        int bondCount = (int)Math.Truncate(BondOrders);
-                        int charge = FormalCharge ?? 0;
-                        int availableElectrons = ModelGlobals.PeriodicTable.SpareValencies(Element as Element, bondCount, charge);
-                        iHydrogenCount = availableElectrons <= 0 ? 0 : availableElectrons;
+                        iHydrogenCount = Math.Max(SpareValences, 0);
                     }
                 }
 
@@ -689,14 +724,9 @@ namespace Chem4Word.Model2
 
             Vector VectorFromNorth(double angleDegrees)
             {
-                var angleRadians = angleDegrees * (Math.PI / 180);
-
-                var cosAngle = Math.Cos(angleRadians);
-                var sinAngle = Math.Sin(angleRadians);
-                var newX = GeometryTool.ScreenNorth.X * cosAngle - GeometryTool.ScreenNorth.Y * sinAngle;
-                var newY = GeometryTool.ScreenNorth.X * sinAngle + GeometryTool.ScreenNorth.Y * cosAngle;
-
-                return new Vector(newX, newY);
+                Matrix rotationMatrix = new Matrix();
+                rotationMatrix.Rotate(angleDegrees);
+                return GeometryTool.ScreenNorth * rotationMatrix;
             }
         }
 
@@ -744,10 +774,10 @@ namespace Chem4Word.Model2
 
         public List<Atom> NeighboursExcept(Atom toIgnore)
         {
-            return Neighbours.Where(a => a != toIgnore).ToList();
+            return NeighboursExcept(new [] { toIgnore });
         }
 
-        public List<Atom> NeighboursExcept(params Atom[] toIgnore)
+        public List<Atom> NeighboursExcept(Atom[] toIgnore)
         {
             return Neighbours.Where(a => !toIgnore.Contains(a)).ToList();
         }
@@ -788,6 +818,71 @@ namespace Chem4Word.Model2
                 ? GeometryTool.SnapTo2EW(angleFromNorth)
                 : GeometryTool.SnapTo4NESW(angleFromNorth);
             return orientation;
+        }
+
+        //tries to find a free space to stick the electrons once everything else is placed
+        public CompassPoints GetEmptySpaceForElectrons(Electron e)
+        {
+            HashSet<CompassPoints> freePoints = new HashSet<CompassPoints>
+                                     {
+                                         CompassPoints.North,
+                                         CompassPoints.NorthEast,
+                                         CompassPoints.East,
+                                         CompassPoints.SouthEast,
+                                         CompassPoints.South,
+                                         CompassPoints.SouthWest,
+                                         CompassPoints.West,
+                                         CompassPoints.NorthWest
+                                     };
+            CompassPoints whereTheHsGo = ImplicitHPlacement;
+            CompassPoints whereTheClutterIs =
+                GeometryTool.SnapTo4NESW(Vector.AngleBetween(GeometryTool.ScreenNorth, -BalancingVector()));
+
+            freePoints.Remove(whereTheHsGo);
+            freePoints.Remove(whereTheClutterIs);
+
+            foreach (Electron electron in Electrons.Values)
+            {
+                if (!(electron.ExplicitPlacement is null))
+                {
+                    freePoints.Remove(electron.ExplicitPlacement.Value);
+                }
+            }
+
+            IEnumerable<Electron> freeElectrons = from el in Electrons.Values
+                                                  where el.ExplicitPlacement is null
+                                                  select el;
+
+            foreach (Electron existingElectron in freeElectrons)
+            {
+                CompassPoints preferredSpot;
+                if (freePoints.Contains(CompassPoints.North))
+                {
+                    preferredSpot = CompassPoints.North;
+                }
+                else if (freePoints.Contains(CompassPoints.South))
+                {
+                    preferredSpot = CompassPoints.South;
+                }
+                else if (freePoints.Contains(CompassPoints.East))
+                {
+                    preferredSpot = CompassPoints.East;
+                }
+                else
+                {
+                    preferredSpot = CompassPoints.West;
+                }
+                if (e == existingElectron)
+                {
+                    return preferredSpot;
+                }
+                else
+                {
+                    freePoints.Remove(preferredSpot);
+                }
+            }
+            //should never get here
+            return CompassPoints.North;
         }
 
         //notification methods
@@ -833,8 +928,6 @@ namespace Chem4Word.Model2
                 }
             }
         }
-
-       
 
         private void OnElectronPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -903,11 +996,7 @@ namespace Chem4Word.Model2
         {
             get
             {
-                int bondCount = (int)Math.Truncate(BondOrders);
-                int charge = FormalCharge ?? 0;
-                int availableElectrons = ModelGlobals.PeriodicTable.SpareValencies(Element as Element, bondCount, charge);
-                bool result = availableElectrons < 0;
-                return result;
+                return SpareValences < 0;
             }
         }
 

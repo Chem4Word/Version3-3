@@ -213,7 +213,6 @@
     <EmbeddedResource Include="Resources\CML\Formulae\example-2.xml" />
     <EmbeddedResource Include="Resources\CML\Formulae\example-3.xml" />
     <EmbeddedResource Include="Resources\CML\Formulae\example-4.xml" />
-    <EmbeddedResource Include="Resources\CML\electron placement empty.xml" />
     <EmbeddedResource Include="Resources\CML\electron placement.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -225,6 +224,9 @@
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.1.24.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
     <Analyzer Include="..\packages\xunit.analyzers.1.24.0\analyzers\dotnet\cs\xunit.analyzers.fixes.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CML\electron placement empty.xml" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -27,8 +27,8 @@ namespace Chem4Word.Model2
 
         private int _count;
         private ElectronType _type;
-        private CompassPoints? _placement;
         private StructuralObject _parent;
+        private CompassPoints? _explicitPlacement;
 
         #endregion Fields
 
@@ -50,7 +50,7 @@ namespace Chem4Word.Model2
 
         public List<string> Errors { get; }
 
-        public override string  Id { get; set; }
+        public override string Id { get; set; }
 
         public override string Path
         {
@@ -59,6 +59,7 @@ namespace Chem4Word.Model2
                 return Parent.Path + MoleculePathSeparator + Id;
             }
         }
+
         /// <summary>
         /// How many physical electrons map to the representation on screen
         /// 1 for a radical, 2 for a lone pair etc
@@ -75,6 +76,7 @@ namespace Chem4Word.Model2
                 OnPropertyChanged();
             }
         }
+
         /// <summary>
         /// See the ElectronType enum for details
         /// </summary>
@@ -90,22 +92,43 @@ namespace Chem4Word.Model2
                 OnPropertyChanged();
             }
         }
+
+        /// <summary>
+        /// Used to explicitly set the placement of the electron
+        /// Use this when configuring from CML or the editor
+        /// But use the Placement property to get the actual placement
+        /// Set to null to clear any explicit placement
+        /// </summary>
+        public CompassPoints? ExplicitPlacement
+        {
+            get
+            {
+                return _explicitPlacement;
+            }
+            set
+            {
+                _explicitPlacement = value;
+                OnPropertyChanged(nameof(Placement));
+            }
+        }
+
         /// <summary>
         /// Where in space they are situated relative to the parent StructuralObject.
-        /// If null, let the atom work out where to shove the electrons
+        /// If null, let the atom work out where to shove the electrons.
+        /// Use this when displaying atoms.
         /// </summary>
         public CompassPoints? Placement
         {
             get
             {
-                return _placement;
-            }
-            set
-            {
-                _placement = value;
-                OnPropertyChanged();
+                if (ExplicitPlacement is null && Parent is Atom atom)
+                {
+                    return atom.GetEmptySpaceForElectrons(this);
+                }
+                return ExplicitPlacement;
             }
         }
+
         /// <summary>
         /// Atom or Bond that this Electron is associated with
         /// </summary>
@@ -125,6 +148,7 @@ namespace Chem4Word.Model2
         #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Retrieves a <see cref="StructuralObject"/> based on the specified path.
         /// </summary>
@@ -136,6 +160,7 @@ namespace Chem4Word.Model2
             //so return null always
             return null;
         }
+
         /// <summary>
         /// Used when copying molecules and the suchlike
         /// </summary>
@@ -147,7 +172,7 @@ namespace Chem4Word.Model2
                 Id = Id,
                 Count = Count,
                 Type = Type,
-                Placement = Placement
+                ExplicitPlacement = ExplicitPlacement
             };
             return newElectron;
         }
@@ -159,7 +184,7 @@ namespace Chem4Word.Model2
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

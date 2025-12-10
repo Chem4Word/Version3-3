@@ -10,7 +10,6 @@ using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Geometry;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -43,7 +42,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         public AtomVisual()
         {
-            ElectronVisuals= new Dictionary<string, ElectronVisual>();
+            ElectronVisuals = new Dictionary<string, ElectronVisual>();
         }
 
         #region Properties
@@ -104,8 +103,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
         private ChargeVisual ChargeChildVisual { get; set; }
         public IsotopeVisual IsotopeChildVisual { get; set; }
 
-        public  Dictionary<string, ElectronVisual> ElectronVisuals { get; }
-        
+        public Dictionary<string, ElectronVisual> ElectronVisuals { get; }
+
         private List<Visual> children = new List<Visual>();
 
         public double SymbolSize { get; set; }
@@ -237,14 +236,14 @@ namespace Chem4Word.ACME.Drawing.Visuals
 #if SHOWHULLS
                 ShowHull(Hull, drawingContext);
 #endif
-                // End Diag
+            // End Diag
 
-                // Diag: Show the Atom Point
+            // Diag: Show the Atom Point
 #if SHOWATOMCENTRES
-            drawingContext.DrawEllipse(Brushes.Red, null, ParentAtom.Position, 5, 5);
+            drawingContext.DrawEllipse(Brushes.GreenYellow, null, ParentAtom.Position, 3, 3);
 #endif
 #endif
-                // End Diag
+            // End Diag
         }
 
 #if DEBUG
@@ -447,5 +446,4 @@ namespace Chem4Word.ACME.Drawing.Visuals
             return null;
         }
     }
-
 }

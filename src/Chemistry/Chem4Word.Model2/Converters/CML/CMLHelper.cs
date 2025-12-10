@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace Chem4Word.Model2.Converters.CML

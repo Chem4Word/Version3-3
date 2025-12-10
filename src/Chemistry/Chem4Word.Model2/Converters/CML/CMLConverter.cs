@@ -815,7 +815,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private XElement GetXElement(Electron electron)
         {
-            string epValue = electron.Placement is null?"": electron.Placement.ToString();
+            string epValue = electron.ExplicitPlacement is null ? "" : electron.ExplicitPlacement.ToString();
 
             XElement electronElement = new XElement(CMLNamespaces.cml + ModelConstants.TagElectron,
                                                     new XAttribute(ModelConstants.AttributeElectronCount,
@@ -824,7 +824,7 @@ namespace Chem4Word.Model2.Converters.CML
                                                     new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeElectronType,
                                                                    electron.Type));
 
-            if (electron.Placement != null)
+            if (electron.ExplicitPlacement != null)
             {
                 electronElement.SetAttributeValue(CMLNamespaces.c4w + ModelConstants.AttributeElectronPlacement,
                                                   epValue);
@@ -1149,7 +1149,7 @@ namespace Chem4Word.Model2.Converters.CML
             {
                 Count = CMLHelper.GetElectronCount(electronElement),
                 Id = CMLHelper.GetId(electronElement),
-                Placement = CMLHelper.GetElectronPlacement(electronElement),
+                ExplicitPlacement = CMLHelper.GetElectronPlacement(electronElement),
                 Type = CMLHelper.GetElectronType(electronElement)
             };
             return newElectron;

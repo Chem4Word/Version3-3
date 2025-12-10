@@ -1,12 +1,14 @@
-﻿using Chem4Word.ACME.Drawing.Text;
+﻿// ---------------------------------------------------------------------------
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
+//  at the root directory of the distribution.
+// ---------------------------------------------------------------------------
+
+using Chem4Word.ACME.Drawing.Text;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
-using System;
-using System.Collections.Generic;
 using System.Windows;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace Chem4Word.ACME.Drawing.Visuals
@@ -40,14 +42,16 @@ namespace Chem4Word.ACME.Drawing.Visuals
             ParentMetrics = mainAtomMetrics;
             HydrogenMetrics = hMetrics;
             ChargeMetrics = chargeMetrics;
+            SymbolSize = parentVisual.SymbolSize;
+            Fill = parentVisual.Fill;
         }
+
+        #endregion Constructors
 
         public override void Render()
         {
             Point center = ParentVisual.Position;
 
-            //establish a vector from the centre of the atom to the planned position for the bounding box
-            
             //first, work out from the placement property what the vector is
             double offsetAngle = 45 * (int)(ParentElectron.Placement.Value);
             Matrix rotator = new Matrix();
@@ -55,17 +59,55 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
             //make it long enough to clear the atom symbol
             Vector placementVector = 100 * GeometryTool.ScreenNorth * rotator;
-            
+
             //and intersect it with the convex hull to find the edge point
             var endPoint = ParentVisual.GetIntersection(center, center + placementVector);
-
-
             //now extend it by the standoff distance plus the size of the electron symbol
+            Vector unitVector = placementVector;
+            unitVector.Normalize();
+            placementVector = (endPoint.Value - center) + unitVector * (ParentVisual.SymbolSize / 4);
+            Point electronCenter = center + placementVector;
             //this is the centre of the electron symbol
             //if we're drawing a radical, then draw a simple dot
-            //otherwise, draw two dots offset by a perpendicular to the main vector
-        }
+            double radius = SymbolSize / 10;
+            double d;
+            if (ParentElectron.Count == 1)
+            {
+                d = radius;
+                Context.DrawEllipse(Fill, null, electronCenter, radius, radius);
+            }
+            else //two electrons - draw a pair of dots or a line for carbenoids
+            {
+                Pen pen = new Pen(Fill, AcmeConstants.BondThickness)
+                {
+                    StartLineCap = PenLineCap.Square,
+                    EndLineCap = PenLineCap.Square
+                };
+                radius = SymbolSize / 15;
+                Vector perp = unitVector.Perpendicular();
 
-        #endregion Constructors
+                if (ParentElectron.Type == ElectronType.Carbenoid) //draw a line
+                {
+                    d = radius * 4;
+                    perp *= d;
+                    Context.DrawLine(pen, electronCenter + perp, electronCenter - perp);
+                }
+                else //draw two dots
+                {
+                    d = radius * 2;
+                    perp *= d;
+                    Context.DrawEllipse(Fill, pen, electronCenter + perp, radius, radius);
+                    Context.DrawEllipse(Fill, pen, electronCenter - perp, radius, radius);
+                }
+            }
+
+            //now draw a transparent circle on top of the electron visual to aid hit testing
+            Context.DrawEllipse(Brushes.Transparent, null, electronCenter, d, d);
+            Metrics = new AtomTextMetrics
+            {
+                TotalBoundingBox = new Rect(new Point(electronCenter.X - d, electronCenter.Y - d),
+                                            new Point(electronCenter.X + d, electronCenter.Y + d)),
+            };
+        }
     }
 }

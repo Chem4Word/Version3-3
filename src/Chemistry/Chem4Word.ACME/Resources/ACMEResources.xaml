@@ -5,694 +5,694 @@
     xmlns:graphics="clr-namespace:Chem4Word.ACME.Graphics"
     xmlns:selectors="clr-namespace:Chem4Word.ACME.Adorners.Selectors">
 
-  <!--  Simple shapes for use in menus, buttons etc  -->
-  <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="Brushes.xaml" />
-    <ResourceDictionary Source="BondOptions.xaml" />
-    <ResourceDictionary Source="ReactionOptions.xaml" />
-  </ResourceDictionary.MergedDictionaries>
+    <!--  Simple shapes for use in menus, buttons etc  -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Brushes.xaml" />
+        <ResourceDictionary Source="BondOptions.xaml" />
+        <ResourceDictionary Source="ReactionOptions.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
-  <!--  standard livery for Chem4Word  -->
-  <SolidColorBrush x:Key="Chem4WordBlue" Color="#2A579A" />
-  <SolidColorBrush x:Key="Chem4WordRed" Color="#C92626" />
-  <SolidColorBrush x:Key="Chem4WordGreen" Color="#1A6D1A" />
-  <SolidColorBrush x:Key="PinkLace" Color="#FFDDF4" />
-  <SolidColorBrush x:Key="ACMEToolbarBackground" Color="#F1F1F1" />
-  <SolidColorBrush
+    <!--  standard livery for Chem4Word  -->
+    <SolidColorBrush x:Key="Chem4WordBlue" Color="#2A579A" />
+    <SolidColorBrush x:Key="Chem4WordRed" Color="#C92626" />
+    <SolidColorBrush x:Key="Chem4WordGreen" Color="#1A6D1A" />
+    <SolidColorBrush x:Key="PinkLace" Color="#FFDDF4" />
+    <SolidColorBrush x:Key="ACMEToolbarBackground" Color="#F1F1F1" />
+    <SolidColorBrush
         x:Key="DiagnosticOverlay"
         Opacity="0.5"
         Color="PaleGreen" />
 
-  <!--
+    <!--
         Fix weird binding errors
         We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
         https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
     -->
-  <Style TargetType="{x:Type ComboBoxItem}">
-    <Setter Property="HorizontalContentAlignment" Value="Left" />
-    <Setter Property="VerticalContentAlignment" Value="Top" />
-  </Style>
-  <Style TargetType="{x:Type ListBoxItem}">
-    <Setter Property="HorizontalContentAlignment" Value="Left" />
-    <Setter Property="VerticalContentAlignment" Value="Top" />
-  </Style>
-  <Style TargetType="{x:Type TreeViewItem}">
-    <Setter Property="HorizontalContentAlignment" Value="Left" />
-    <Setter Property="VerticalContentAlignment" Value="Top" />
-  </Style>
-  <Style TargetType="{x:Type acme:AtomOption}">
-    <Setter Property="HorizontalContentAlignment" Value="Left" />
-    <Setter Property="VerticalContentAlignment" Value="Top" />
-    <Setter Property="FontFamily" Value="Arial" />
-    <Setter Property="FontWeight" Value="DemiBold" />
-  </Style>
+    <Style TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+    </Style>
+    <Style TargetType="{x:Type ListBoxItem}">
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+    </Style>
+    <Style TargetType="{x:Type TreeViewItem}">
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+    </Style>
+    <Style TargetType="{x:Type acme:AtomOption}">
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="FontWeight" Value="DemiBold" />
+    </Style>
 
-  <Style x:Key="WedgeBondStyle" TargetType="Path">
-    <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-    <Setter Property="Height" Value="14" />
-    <Setter Property="Stroke" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-    <Setter Property="Width" Value="25" />
-    <Setter Property="Data" Value="M 0,7 L 25,10 l 0 -7 Z" />
-  </Style>
+    <Style x:Key="WedgeBondStyle" TargetType="Path">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Height" Value="14" />
+        <Setter Property="Stroke" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Width" Value="25" />
+        <Setter Property="Data" Value="M 0,7 L 25,10 l 0 -7 Z" />
+    </Style>
 
-  <!--  Reaction handling brushes  -->
-  <SolidColorBrush x:Key="ReactantIndicatorBrush" Color="DarkBlue" />
-  <SolidColorBrush x:Key="ProductIndicatorBrush" Color="DarkRed" />
-  <SolidColorBrush x:Key="ArrowIndicatorBrush" Color="Black" />
-  <SolidColorBrush
+    <!--  Reaction handling brushes  -->
+    <SolidColorBrush x:Key="ReactantIndicatorBrush" Color="DarkBlue" />
+    <SolidColorBrush x:Key="ProductIndicatorBrush" Color="DarkRed" />
+    <SolidColorBrush x:Key="ArrowIndicatorBrush" Color="Black" />
+    <SolidColorBrush
         x:Key="IndicatorBackgroundBrush"
         Opacity="0.75"
         Color="White" />
 
-  <!--  styles for bond fills  -->
-  <SolidColorBrush x:Key="BlockedAdornerBrush" Color="LightGray" />
+    <!--  styles for bond fills  -->
+    <SolidColorBrush x:Key="BlockedAdornerBrush" Color="LightGray" />
 
-  <LinearGradientBrush x:Key="HatchBondBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="50,0" EndPoint="50,5">
-    <GradientStop Offset="0" Color="{x:Static SystemColors.WindowColor}" />
-    <GradientStop Offset="0.1" Color="{x:Static SystemColors.WindowColor}" />
-    <GradientStop Offset="0.1" Color="Transparent" />
-    <GradientStop Offset="0.2" Color="Transparent" />
-  </LinearGradientBrush>
+    <LinearGradientBrush x:Key="HatchBondBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="50,0" EndPoint="50,5">
+        <GradientStop Offset="0" Color="{x:Static SystemColors.WindowColor}" />
+        <GradientStop Offset="0.1" Color="{x:Static SystemColors.WindowColor}" />
+        <GradientStop Offset="0.1" Color="Transparent" />
+        <GradientStop Offset="0.2" Color="Transparent" />
+    </LinearGradientBrush>
 
-  <Style
+    <Style
         x:Key="HatchBondStyle"
         BasedOn="{StaticResource WedgeBondStyle}"
         TargetType="Path">
-    <Setter Property="Fill">
-      <Setter.Value>
-        <LinearGradientBrush MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="50,0" EndPoint="50,5">
-          <GradientStop Offset="0" Color="{x:Static SystemColors.WindowTextColor}" />
-          <GradientStop Offset="0.2" Color="{x:Static SystemColors.WindowTextColor}" />
-          <GradientStop Offset="0.2" Color="Transparent" />
-          <GradientStop Offset="0.4" Color="Transparent" />
-          <LinearGradientBrush.Transform>
-            <RotateTransform Angle="90" />
-          </LinearGradientBrush.Transform>
-        </LinearGradientBrush>
-      </Setter.Value>
-    </Setter>
-    <Setter Property="Stroke" Value="{x:Null}" />
-  </Style>
+        <Setter Property="Fill">
+            <Setter.Value>
+                <LinearGradientBrush MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="50,0" EndPoint="50,5">
+                    <GradientStop Offset="0" Color="{x:Static SystemColors.WindowTextColor}" />
+                    <GradientStop Offset="0.2" Color="{x:Static SystemColors.WindowTextColor}" />
+                    <GradientStop Offset="0.2" Color="Transparent" />
+                    <GradientStop Offset="0.4" Color="Transparent" />
+                    <LinearGradientBrush.Transform>
+                        <RotateTransform Angle="90" />
+                    </LinearGradientBrush.Transform>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Stroke" Value="{x:Null}" />
+    </Style>
 
-  <Style x:Key="RingButtonGraphic" TargetType="{x:Type Path}">
-    <Setter Property="Height" Value="25" />
-    <Setter Property="Width" Value="25" />
-    <Setter Property="Stroke" Value="{StaticResource ResourceKey=Chem4WordBlue}" />
-  </Style>
+    <Style x:Key="RingButtonGraphic" TargetType="{x:Type Path}">
+        <Setter Property="Height" Value="25" />
+        <Setter Property="Width" Value="25" />
+        <Setter Property="Stroke" Value="{StaticResource ResourceKey=Chem4WordBlue}" />
+    </Style>
 
-  <!--  used in the main ACME toolbar  -->
-  <Path
+    <!--  used in the main ACME toolbar  -->
+    <Path
         x:Key="BenzenePath"
         Stroke="Black"
         Style="{StaticResource RingButtonGraphic}"
         Tag="Benzene">
-    <Path.Data>M 3.34 7 L 12 2 L 20.66 7 L 20.66 17 L 12 22 L 3.34 17 Z M 5.5 8.24 L 12 4.5 M 18.5 8.24 L 18.5 15.75 M 12 19.5 L 5.5 15.75</Path.Data>
-  </Path>
+        <Path.Data>M 3.34 7 L 12 2 L 20.66 7 L 20.66 17 L 12 22 L 3.34 17 Z M 5.5 8.24 L 12 4.5 M 18.5 8.24 L 18.5 15.75 M 12 19.5 L 5.5 15.75</Path.Data>
+    </Path>
 
-  <Path
+    <Path
         x:Key="CyclohexanePath"
         Stroke="Black"
         Style="{StaticResource RingButtonGraphic}"
         Tag="Cyclohexane">
-    <Path.Data>M 3.34 7 L 12 2 L 20.66 7 L 20.66 17 L 12 22 L 3.34 17 Z</Path.Data>
-  </Path>
+        <Path.Data>M 3.34 7 L 12 2 L 20.66 7 L 20.66 17 L 12 22 L 3.34 17 Z</Path.Data>
+    </Path>
 
-  <Path
+    <Path
         x:Key="CyclopentanePath"
         Stroke="Black"
         Style="{StaticResource RingButtonGraphic}"
         Tag="Cyclopentane">
-    <Path.Data>M 12 22.5 L 1.89 15.15 L 5.75 3.26 L 18.25 3.26 L 22.11 15.15 Z</Path.Data>
-  </Path>
+        <Path.Data>M 12 22.5 L 1.89 15.15 L 5.75 3.26 L 18.25 3.26 L 22.11 15.15 Z</Path.Data>
+    </Path>
 
-  <Path
+    <Path
         x:Key="CyclopentadienePath"
         Stroke="Black"
         Style="{StaticResource RingButtonGraphic}"
         Tag="Cyclopentadiene">
-    <Path.Data>M 12 22.5 L 1.89 15.15 L 5.75 3.26 L 18.25 3.26 L 22.11 15.15 Z M 5.53 13.8 L 8 6.19 M 16 6.19 L 18.47 13.8</Path.Data>
-  </Path>
+        <Path.Data>M 12 22.5 L 1.89 15.15 L 5.75 3.26 L 18.25 3.26 L 22.11 15.15 Z M 5.53 13.8 L 8 6.19 M 16 6.19 L 18.47 13.8</Path.Data>
+    </Path>
 
-  <Path
+    <Path
         x:Key="CycloheptanePath"
         Stroke="Black"
         Style="{StaticResource RingButtonGraphic}"
         Tag="Cycloheptane">
-    <Path.Data>M 11.5 3 L 18.71 6.47 L 20.49 14.27 L 15.5 20.53 L 7.5 20.53 L 2.51 14.27 L 4.29 6.47 z</Path.Data>
-    <Path.RenderTransform>
-      <TranslateTransform X="0" Y="0" />
-    </Path.RenderTransform>
-  </Path>
+        <Path.Data>M 11.5 3 L 18.71 6.47 L 20.49 14.27 L 15.5 20.53 L 7.5 20.53 L 2.51 14.27 L 4.29 6.47 z</Path.Data>
+        <Path.RenderTransform>
+            <TranslateTransform X="0" Y="0" />
+        </Path.RenderTransform>
+    </Path>
 
-  <Path
+    <Path
         x:Key="CyclooctanePath"
         Stroke="Black"
         Style="{StaticResource RingButtonGraphic}"
         Tag="Cyclooctane">
-    <Path.Data>M 11.5 5 L 18.89 8.06 L 21.95 15.45 L 18.89 22.84 L 11.5 25.91 L 4.11 22.84 L 1.05 15.45 L 4.11 8.06 z</Path.Data>
-    <Path.RenderTransform>
-      <TranslateTransform X="7.5" Y="5" />
-    </Path.RenderTransform>
-  </Path>
+        <Path.Data>M 11.5 5 L 18.89 8.06 L 21.95 15.45 L 18.89 22.84 L 11.5 25.91 L 4.11 22.84 L 1.05 15.45 L 4.11 8.06 z</Path.Data>
+        <Path.RenderTransform>
+            <TranslateTransform X="7.5" Y="5" />
+        </Path.RenderTransform>
+    </Path>
 
-  <Path
+    <Path
         x:Key="ChainPath"
         Stroke="Black"
         StrokeThickness="2"
         Style="{StaticResource RingButtonGraphic}"
         Tag="Chain">
-    <Path.Data>M 0 12 L 8.66 18 L 17.32 12 L 25.98 18</Path.Data>
-  </Path>
+        <Path.Data>M 0 12 L 8.66 18 L 17.32 12 L 25.98 18</Path.Data>
+    </Path>
 
-  <graphics:RegularPolygon
+    <graphics:RegularPolygon
         x:Key="Heptagon"
         PointCount="7"
         SideLength="8.0"
         Stroke="Black" />
 
-  <graphics:RegularPolygon
+    <graphics:RegularPolygon
         x:Key="Octagon"
         PointCount="8"
         SideLength="8.0"
         Stroke="Black" />
 
-  <!--  used to populate the bond dropdown combo in the editor  -->
-  <x:Array x:Key="AllowedBondLengths" Type="ComboBoxItem">
-    <ComboBoxItem>5</ComboBoxItem>
-    <ComboBoxItem>10</ComboBoxItem>
-    <ComboBoxItem>15</ComboBoxItem>
-    <ComboBoxItem>20</ComboBoxItem>
-    <ComboBoxItem>25</ComboBoxItem>
-    <ComboBoxItem>30</ComboBoxItem>
-    <ComboBoxItem>35</ComboBoxItem>
-    <ComboBoxItem>40</ComboBoxItem>
-    <ComboBoxItem>45</ComboBoxItem>
-    <ComboBoxItem>50</ComboBoxItem>
-    <ComboBoxItem>55</ComboBoxItem>
-    <ComboBoxItem>60</ComboBoxItem>
-    <ComboBoxItem>65</ComboBoxItem>
-    <ComboBoxItem>70</ComboBoxItem>
-    <ComboBoxItem>75</ComboBoxItem>
-    <ComboBoxItem>80</ComboBoxItem>
-    <ComboBoxItem>85</ComboBoxItem>
-    <ComboBoxItem>90</ComboBoxItem>
-    <ComboBoxItem>95</ComboBoxItem>
-  </x:Array>
+    <!--  used to populate the bond dropdown combo in the editor  -->
+    <x:Array x:Key="AllowedBondLengths" Type="ComboBoxItem">
+        <ComboBoxItem>5</ComboBoxItem>
+        <ComboBoxItem>10</ComboBoxItem>
+        <ComboBoxItem>15</ComboBoxItem>
+        <ComboBoxItem>20</ComboBoxItem>
+        <ComboBoxItem>25</ComboBoxItem>
+        <ComboBoxItem>30</ComboBoxItem>
+        <ComboBoxItem>35</ComboBoxItem>
+        <ComboBoxItem>40</ComboBoxItem>
+        <ComboBoxItem>45</ComboBoxItem>
+        <ComboBoxItem>50</ComboBoxItem>
+        <ComboBoxItem>55</ComboBoxItem>
+        <ComboBoxItem>60</ComboBoxItem>
+        <ComboBoxItem>65</ComboBoxItem>
+        <ComboBoxItem>70</ComboBoxItem>
+        <ComboBoxItem>75</ComboBoxItem>
+        <ComboBoxItem>80</ComboBoxItem>
+        <ComboBoxItem>85</ComboBoxItem>
+        <ComboBoxItem>90</ComboBoxItem>
+        <ComboBoxItem>95</ComboBoxItem>
+    </x:Array>
 
-  <!--  thumb styles  -->
-  <SolidColorBrush x:Key="DrawBondBrush" Color="OrangeRed" />
-  <SolidColorBrush
+    <!--  thumb styles  -->
+    <SolidColorBrush x:Key="DrawBondBrush" Color="OrangeRed" />
+    <SolidColorBrush
         x:Key="GrabHandleFillBrush"
         Opacity="0.75"
         Color="Orange" />
-  <SolidColorBrush
+    <SolidColorBrush
         x:Key="AtomBondSelectorBrush"
         Opacity="0.5"
         Color="DarkOrange" />
 
-  <SolidColorBrush
+    <SolidColorBrush
         x:Key="GrabHandleBorderBrush"
         Opacity="0.8"
         Color="DarkOrange" />
-  <SolidColorBrush
+    <SolidColorBrush
         x:Key="ThumbFillBrush"
         Opacity="0.25"
         Color="Gold" />
 
-  <!--  manipulator styles  -->
-  <Pen x:Key="GrabHandlePen" Thickness="1.0">
-    <Pen.Brush>
-      <StaticResource ResourceKey="GrabHandleBorderBrush" />
-    </Pen.Brush>
-  </Pen>
+    <!--  manipulator styles  -->
+    <Pen x:Key="GrabHandlePen" Thickness="1.0">
+        <Pen.Brush>
+            <StaticResource ResourceKey="GrabHandleBorderBrush" />
+        </Pen.Brush>
+    </Pen>
 
-  <Style x:Key="AtomThumb" TargetType="Thumb">
-    <Setter Property="SnapsToDevicePixels" Value="true" />
-    <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="Background" Value="{StaticResource GrabHandleFillBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
-    <Setter Property="Opacity" Value="0.5" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Thumb">
-          <Ellipse
+    <Style x:Key="AtomThumb" TargetType="Thumb">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Background" Value="{StaticResource GrabHandleFillBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
+        <Setter Property="Opacity" Value="0.5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Ellipse
                         Width="12"
                         Height="12"
                         Fill="{StaticResource GrabHandleFillBrush}"
                         Stroke="{StaticResource GrabHandleBorderBrush}" />
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style x:Key="GrabHandleStyle" TargetType="Thumb">
-    <Setter Property="SnapsToDevicePixels" Value="true" />
-    <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="Background" Value="{StaticResource ThumbFillBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Thumb">
-          <Ellipse Fill="{x:Static SystemColors.WindowBrush}" Stroke="{StaticResource GrabHandleBorderBrush}" />
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+    <Style x:Key="GrabHandleStyle" TargetType="Thumb">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Background" Value="{StaticResource ThumbFillBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Ellipse Fill="{x:Static SystemColors.WindowBrush}" Stroke="{StaticResource GrabHandleBorderBrush}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style
+    <Style
         x:Key="BigThumbStyle"
         BasedOn="{StaticResource GrabHandleStyle}"
         TargetType="Thumb">
-    <Setter Property="Background" Value="{StaticResource ThumbFillBrush}" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Thumb">
-          <Rectangle Fill="{StaticResource ThumbFillBrush}" Stroke="{StaticResource GrabHandleBorderBrush}" />
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+        <Setter Property="Background" Value="{StaticResource ThumbFillBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Rectangle Fill="{StaticResource ThumbFillBrush}" Stroke="{StaticResource GrabHandleBorderBrush}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style
+    <Style
         x:Key="GroupHandleStyle"
         BasedOn="{StaticResource GrabHandleStyle}"
         TargetType="Thumb">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Thumb">
-          <Rectangle
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Rectangle
                         Fill="{x:Static SystemColors.WindowBrush}"
                         Stroke="{StaticResource GrabHandleBorderBrush}"
                         StrokeThickness="2" />
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style
+    <Style
         x:Key="MolAdornerStyle"
         BasedOn="{StaticResource GrabHandleStyle}"
         TargetType="Thumb">
-    <Setter Property="Opacity" Value="0.15" />
-  </Style>
+        <Setter Property="Opacity" Value="0.15" />
+    </Style>
 
-  <Style x:Key="RotateThumb" TargetType="Thumb">
-    <Setter Property="SnapsToDevicePixels" Value="true" />
-    <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="Background" Value="{StaticResource GrabHandleFillBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
+    <Style x:Key="RotateThumb" TargetType="Thumb">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Background" Value="{StaticResource GrabHandleFillBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
 
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Thumb">
-          <Viewbox
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Viewbox
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}"
                         Stretch="Uniform">
 
-            <Canvas
+                        <Canvas
                             Width="38"
                             Height="38"
                             Margin="0"
                             Background="Transparent">
-              <Path
+                            <Path
                                 Width="38"
                                 Height="38"
                                 Data="M 57 57 L 42 57 L 42 42 L 47.19 47.19 C 49.54 44.84 51 41.59 51 38 C 51 30.82 45.18 25 38 25 C 30.82 25 25 30.82 25 38 C 25 42.61 27.4 46.67 31.03 48.97 L 26.71 53.29 C 22.03 49.83 19 44.27 19 38 C 19 27.51 27.51 19 38 19 C 48.49 19 57 27.51 57 38 C 57 43.25 54.87 48 51.44 51.44 L 57 57 Z"
                                 Fill="{StaticResource GrabHandleBorderBrush}"
                                 Stretch="Fill" />
-            </Canvas>
-          </Viewbox>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        </Canvas>
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style x:Key="PivotStyle" TargetType="Thumb">
-    <Setter Property="SnapsToDevicePixels" Value="true" />
-    <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="Background" Value="{StaticResource GrabHandleFillBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Thumb">
-          <Ellipse
+    <Style x:Key="PivotStyle" TargetType="Thumb">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Background" Value="{StaticResource GrabHandleFillBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Ellipse
                         Width="15"
                         Height="15"
                         Stroke="{StaticResource GrabHandleBorderBrush}">
-            <Ellipse.Fill>
-              <StaticResource ResourceKey="GrabHandleBorderBrush" />
-            </Ellipse.Fill>
-          </Ellipse>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        <Ellipse.Fill>
+                            <StaticResource ResourceKey="GrabHandleBorderBrush" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!--  ACME toolbar 'icons'  -->
-  <DrawingImage x:Key="PencilIcon">
-    <DrawingImage.Drawing>
-      <DrawingGroup>
-        <GeometryDrawing Brush="Black">
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure StartPoint="21.5367, 46.0076">
-                <LineSegment Point="19, 57" />
-                <LineSegment Point="29.3932, 54.6016" />
-                <BezierSegment
+    <!--  ACME toolbar 'icons'  -->
+    <DrawingImage x:Key="PencilIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Black">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure StartPoint="21.5367, 46.0076">
+                                <LineSegment Point="19, 57" />
+                                <LineSegment Point="29.3932, 54.6016" />
+                                <BezierSegment
                                     Point1="28.0768, 50.6411"
                                     Point2="25.8696, 47.0904"
                                     Point3="21.5367, 46.0076" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-        <GeometryDrawing Brush="OrangeRed">
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure StartPoint="39, 53">
-                <LineSegment Point="69.4259, 22.5741" />
-                <BezierSegment
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="OrangeRed">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure StartPoint="39, 53">
+                                <LineSegment Point="69.4259, 22.5741" />
+                                <BezierSegment
                                     Point1="67.0871, 17.8183"
                                     Point2="63.7005, 13.6708"
                                     Point3="59.5673, 10.4327" />
-                <LineSegment Point="31, 39" />
-                <LineSegment Point="31, 45" />
-                <LineSegment Point="39, 45" />
-                <LineSegment Point="39, 53" />
-              </PathFigure>
-              <PathFigure StartPoint="29, 38">
-                <LineSegment Point="57.8385, 9.1615" />
-                <BezierSegment
+                                <LineSegment Point="31, 39" />
+                                <LineSegment Point="31, 45" />
+                                <LineSegment Point="39, 45" />
+                                <LineSegment Point="39, 53" />
+                            </PathFigure>
+                            <PathFigure StartPoint="29, 38">
+                                <LineSegment Point="57.8385, 9.1615" />
+                                <BezierSegment
                                     Point1="56.438, 8.19625"
                                     Point2="54.9638, 7.33038"
                                     Point3="53.4259, 6.57407" />
-                <LineSegment Point="24, 36" />
-                <LineSegment Point="24, 38" />
-                <LineSegment Point="29, 38" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-      </DrawingGroup>
-    </DrawingImage.Drawing>
-  </DrawingImage>
-  <DrawingImage x:Key="CopyIcon">
-    <DrawingImage.Drawing>
-      <DrawingGroup>
-        <GeometryDrawing Brush="Black">
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure StartPoint="27, 20">
-                <LineSegment Point="38.75, 20" />
-                <LineSegment Point="37.75, 19" />
-                <LineSegment Point="24, 19" />
-                <LineSegment Point="24, 50" />
-                <LineSegment Point="27, 50" />
-                <LineSegment Point="27, 20" />
-              </PathFigure>
-              <PathFigure StartPoint="46.25, 20">
-                <LineSegment Point="59, 32.75" />
-                <LineSegment Point="59, 59" />
-                <LineSegment Point="27, 59" />
-                <LineSegment Point="27, 54" />
-                <LineSegment Point="20, 54" />
-                <LineSegment Point="20, 15" />
-                <LineSegment Point="39.25, 15" />
-                <LineSegment Point="44.25, 20" />
-                <LineSegment Point="46.25, 20" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-        <GeometryDrawing Brush="LightGoldenrodYellow">
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure StartPoint="31, 24">
-                <LineSegment Point="31, 55" />
-                <LineSegment Point="55, 55" />
-                <LineSegment Point="55, 37" />
-                <LineSegment Point="42, 37" />
-                <LineSegment Point="42, 24" />
-                <LineSegment Point="31, 24" />
-              </PathFigure>
-              <PathFigure StartPoint="46, 25.25">
-                <LineSegment Point="46, 33" />
-                <LineSegment Point="53.75, 33" />
-                <LineSegment Point="46, 25.25" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-      </DrawingGroup>
-    </DrawingImage.Drawing>
-  </DrawingImage>
-  <DrawingImage x:Key="PasteIcon">
-    <DrawingImage.Drawing>
-      <DrawingGroup>
-        <GeometryDrawing Brush="Black">
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure StartPoint="34.0001, 60">
-                <BezierSegment
+                                <LineSegment Point="24, 36" />
+                                <LineSegment Point="24, 38" />
+                                <LineSegment Point="29, 38" />
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="CopyIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Black">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure StartPoint="27, 20">
+                                <LineSegment Point="38.75, 20" />
+                                <LineSegment Point="37.75, 19" />
+                                <LineSegment Point="24, 19" />
+                                <LineSegment Point="24, 50" />
+                                <LineSegment Point="27, 50" />
+                                <LineSegment Point="27, 20" />
+                            </PathFigure>
+                            <PathFigure StartPoint="46.25, 20">
+                                <LineSegment Point="59, 32.75" />
+                                <LineSegment Point="59, 59" />
+                                <LineSegment Point="27, 59" />
+                                <LineSegment Point="27, 54" />
+                                <LineSegment Point="20, 54" />
+                                <LineSegment Point="20, 15" />
+                                <LineSegment Point="39.25, 15" />
+                                <LineSegment Point="44.25, 20" />
+                                <LineSegment Point="46.25, 20" />
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="LightGoldenrodYellow">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure StartPoint="31, 24">
+                                <LineSegment Point="31, 55" />
+                                <LineSegment Point="55, 55" />
+                                <LineSegment Point="55, 37" />
+                                <LineSegment Point="42, 37" />
+                                <LineSegment Point="42, 24" />
+                                <LineSegment Point="31, 24" />
+                            </PathFigure>
+                            <PathFigure StartPoint="46, 25.25">
+                                <LineSegment Point="46, 33" />
+                                <LineSegment Point="53.75, 33" />
+                                <LineSegment Point="46, 25.25" />
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="PasteIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Black">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure StartPoint="34.0001, 60">
+                                <BezierSegment
                                     Point1="32.3433, 60"
                                     Point2="31.0001, 58.6569"
                                     Point3="31.0001, 57" />
-                <LineSegment Point="31.0001, 54.0001" />
-                <LineSegment Point="23, 54.0001" />
-                <BezierSegment
+                                <LineSegment Point="31.0001, 54.0001" />
+                                <LineSegment Point="23, 54.0001" />
+                                <BezierSegment
                                     Point1="21.3431, 54.0001"
                                     Point2="20, 52.6569"
                                     Point3="20, 51.0001" />
-                <LineSegment Point="20, 24.0001" />
-                <BezierSegment
+                                <LineSegment Point="20, 24.0001" />
+                                <BezierSegment
                                     Point1="20, 22.3432"
                                     Point2="21.3431, 21.0001"
                                     Point3="23, 21.0001" />
-                <LineSegment Point="26.5001, 20.9999" />
-                <BezierSegment
+                                <LineSegment Point="26.5001, 20.9999" />
+                                <BezierSegment
                                     Point1="26.5001, 20.9999"
                                     Point2="27.4999, 20.8807"
                                     Point3="27.4999, 19.5" />
-                <BezierSegment
+                                <BezierSegment
                                     Point1="27.4999, 18.1193"
                                     Point2="29.1191, 17"
                                     Point3="30.4999, 17" />
-                <LineSegment Point="38.4998, 17.0001" />
-                <BezierSegment
+                                <LineSegment Point="38.4998, 17.0001" />
+                                <BezierSegment
                                     Point1="39.8798, 17.0001"
                                     Point2="41.4988, 18.6176"
                                     Point3="41.5, 19.9979" />
-                <LineSegment Point="41.4998, 19.5024" />
-                <BezierSegment
+                                <LineSegment Point="41.4998, 19.5024" />
+                                <BezierSegment
                                     Point1="41.5009, 20.881"
                                     Point2="42.5, 21"
                                     Point3="42.5, 21" />
-                <LineSegment Point="46, 21.0001" />
-                <BezierSegment
+                                <LineSegment Point="46, 21.0001" />
+                                <BezierSegment
                                     Point1="47.6569, 21.0001"
                                     Point2="49, 22.3432"
                                     Point3="49, 24.0001" />
-                <LineSegment Point="49, 31" />
-                <LineSegment Point="56, 38" />
-                <LineSegment Point="56.0001, 57" />
-                <BezierSegment
+                                <LineSegment Point="49, 31" />
+                                <LineSegment Point="56, 38" />
+                                <LineSegment Point="56.0001, 57" />
+                                <BezierSegment
                                     Point1="56.0001, 58.6569"
                                     Point2="54.657, 60"
                                     Point3="53.0001, 60" />
-                <LineSegment Point="34.0001, 60" />
-              </PathFigure>
-              <PathFigure StartPoint="33.9999, 31.0001">
-                <LineSegment Point="33.9999, 57.0001" />
-                <LineSegment Point="53.0001, 57" />
-                <LineSegment Point="53.0001, 43" />
-                <LineSegment Point="42.0002, 43" />
-                <LineSegment Point="42.0001, 31" />
-                <LineSegment Point="33.9999, 31.0001" />
-              </PathFigure>
-              <PathFigure StartPoint="53, 40.0001">
-                <LineSegment Point="45, 32.0001" />
-                <LineSegment Point="45.0001, 40" />
-                <LineSegment Point="53, 40.0001" />
-              </PathFigure>
-              <PathFigure StartPoint="28.5, 25">
-                <LineSegment Point="40.5, 25" />
-                <BezierSegment
+                                <LineSegment Point="34.0001, 60" />
+                            </PathFigure>
+                            <PathFigure StartPoint="33.9999, 31.0001">
+                                <LineSegment Point="33.9999, 57.0001" />
+                                <LineSegment Point="53.0001, 57" />
+                                <LineSegment Point="53.0001, 43" />
+                                <LineSegment Point="42.0002, 43" />
+                                <LineSegment Point="42.0001, 31" />
+                                <LineSegment Point="33.9999, 31.0001" />
+                            </PathFigure>
+                            <PathFigure StartPoint="53, 40.0001">
+                                <LineSegment Point="45, 32.0001" />
+                                <LineSegment Point="45.0001, 40" />
+                                <LineSegment Point="53, 40.0001" />
+                            </PathFigure>
+                            <PathFigure StartPoint="28.5, 25">
+                                <LineSegment Point="40.5, 25" />
+                                <BezierSegment
                                     Point1="40.5, 25"
                                     Point2="39.4998, 23.8809"
                                     Point3="39.4998, 22.5002" />
-                <BezierSegment
+                                <BezierSegment
                                     Point1="39.4998, 21.1194"
                                     Point2="38.3805, 20.0002"
                                     Point3="36.9998, 20.0002" />
-                <LineSegment Point="31.9998, 20.0002" />
-                <BezierSegment
+                                <LineSegment Point="31.9998, 20.0002" />
+                                <BezierSegment
                                     Point1="30.6191, 20.0002"
                                     Point2="29.4998, 21.1194"
                                     Point3="29.4998, 22.5002" />
-                <BezierSegment
+                                <BezierSegment
                                     Point1="29.4998, 23.8809"
                                     Point2="28.5, 25"
                                     Point3="28.5, 25" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-        <GeometryDrawing Brush="LightGoldenrodYellow">
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure StartPoint="33.9999, 31.0001">
-                <LineSegment Point="33.9999, 57.0001" />
-                <LineSegment Point="53.0001, 57" />
-                <LineSegment Point="53.0001, 43" />
-                <LineSegment Point="42.0002, 43" />
-                <LineSegment Point="42.0001, 31" />
-                <LineSegment Point="33.9999, 31.0001" />
-              </PathFigure>
-              <PathFigure StartPoint="53, 40.0001">
-                <LineSegment Point="45, 32.0001" />
-                <LineSegment Point="45.0001, 40" />
-                <LineSegment Point="53, 40.0001" />
-              </PathFigure>
-              <PathFigure StartPoint="28.5, 25">
-                <LineSegment Point="40.5, 25" />
-                <BezierSegment
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="LightGoldenrodYellow">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure StartPoint="33.9999, 31.0001">
+                                <LineSegment Point="33.9999, 57.0001" />
+                                <LineSegment Point="53.0001, 57" />
+                                <LineSegment Point="53.0001, 43" />
+                                <LineSegment Point="42.0002, 43" />
+                                <LineSegment Point="42.0001, 31" />
+                                <LineSegment Point="33.9999, 31.0001" />
+                            </PathFigure>
+                            <PathFigure StartPoint="53, 40.0001">
+                                <LineSegment Point="45, 32.0001" />
+                                <LineSegment Point="45.0001, 40" />
+                                <LineSegment Point="53, 40.0001" />
+                            </PathFigure>
+                            <PathFigure StartPoint="28.5, 25">
+                                <LineSegment Point="40.5, 25" />
+                                <BezierSegment
                                     Point1="40.5, 25"
                                     Point2="39.4998, 23.8809"
                                     Point3="39.4998, 22.5002" />
-                <BezierSegment
+                                <BezierSegment
                                     Point1="39.4998, 21.1194"
                                     Point2="38.3805, 20.0002"
                                     Point3="36.9998, 20.0002" />
-                <LineSegment Point="31.9998, 20.0002" />
-                <BezierSegment
+                                <LineSegment Point="31.9998, 20.0002" />
+                                <BezierSegment
                                     Point1="30.6191, 20.0002"
                                     Point2="29.4998, 21.1194"
                                     Point3="29.4998, 22.5002" />
-                <BezierSegment
+                                <BezierSegment
                                     Point1="29.4998, 23.8809"
                                     Point2="28.5, 25"
                                     Point3="28.5, 25" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-      </DrawingGroup>
-    </DrawingImage.Drawing>
-  </DrawingImage>
-  <DrawingImage x:Key="FlipHorizontalIcon">
-    <DrawingImage.Drawing>
-      <DrawingGroup>
-        <GeometryDrawing Brush="LightBlue">
-          <GeometryDrawing.Pen>
-            <Pen
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="FlipHorizontalIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="LightBlue">
+                    <GeometryDrawing.Pen>
+                        <Pen
                             Brush="Black"
                             LineJoin="Round"
                             Thickness="2" />
-          </GeometryDrawing.Pen>
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure IsClosed="True" StartPoint="16.399987, 0">
-                <LineSegment Point="28.399977, 32" />
-                <LineSegment Point="16.399987, 32" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-        <GeometryDrawing Brush="Black">
-          <GeometryDrawing.Pen>
-            <Pen
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure IsClosed="True" StartPoint="16.399987, 0">
+                                <LineSegment Point="28.399977, 32" />
+                                <LineSegment Point="16.399987, 32" />
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="Black">
+                    <GeometryDrawing.Pen>
+                        <Pen
                             Brush="Black"
                             LineJoin="Round"
                             Thickness="2" />
-          </GeometryDrawing.Pen>
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure IsClosed="True" StartPoint="11.99999, 0">
-                <LineSegment Point="11.99999, 32" />
-                <LineSegment Point="0, 32" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-      </DrawingGroup>
-    </DrawingImage.Drawing>
-  </DrawingImage>
-  <DrawingImage x:Key="FlipVerticalIcon">
-    <DrawingImage.Drawing>
-      <DrawingGroup>
-        <GeometryDrawing Brush="LightBlue">
-          <GeometryDrawing.Pen>
-            <Pen
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure IsClosed="True" StartPoint="11.99999, 0">
+                                <LineSegment Point="11.99999, 32" />
+                                <LineSegment Point="0, 32" />
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="FlipVerticalIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="LightBlue">
+                    <GeometryDrawing.Pen>
+                        <Pen
                             Brush="Black"
                             LineJoin="Round"
                             Thickness="2" />
-          </GeometryDrawing.Pen>
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure IsClosed="True" StartPoint="0, 16.400004">
-                <LineSegment Point="32, 16.400004" />
-                <LineSegment Point="32, 28.4" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-        <GeometryDrawing Brush="Black">
-          <GeometryDrawing.Pen>
-            <Pen
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure IsClosed="True" StartPoint="0, 16.400004">
+                                <LineSegment Point="32, 16.400004" />
+                                <LineSegment Point="32, 28.4" />
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="Black">
+                    <GeometryDrawing.Pen>
+                        <Pen
                             Brush="Black"
                             LineJoin="Round"
                             Thickness="2" />
-          </GeometryDrawing.Pen>
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathFigure IsClosed="True" StartPoint="32, 0">
-                <LineSegment Point="32, 11.999996" />
-                <LineSegment Point="0, 11.999996" />
-              </PathFigure>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-      </DrawingGroup>
-    </DrawingImage.Drawing>
-  </DrawingImage>
-  <Viewbox x:Key="PTPickerIcon" Stretch="Uniform">
-    <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="10" />
-        <RowDefinition Height="10" />
-        <RowDefinition Height="10" />
-        <RowDefinition Height="10" />
-        <RowDefinition Height="10" />
-        <RowDefinition Height="10" />
-        <RowDefinition Height="10" />
-        <RowDefinition Height="5" />
-        <RowDefinition Height="10" />
-        <RowDefinition Height="10" />
-      </Grid.RowDefinitions>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-        <ColumnDefinition Width="10" />
-      </Grid.ColumnDefinitions>
-      <Rectangle
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry>
+                            <PathFigure IsClosed="True" StartPoint="32, 0">
+                                <LineSegment Point="32, 11.999996" />
+                                <LineSegment Point="0, 11.999996" />
+                            </PathFigure>
+                        </PathGeometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <Viewbox x:Key="PTPickerIcon" Stretch="Uniform">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+            <Rectangle
                 Grid.Row="0"
                 Grid.RowSpan="7"
                 Grid.Column="1"
@@ -700,7 +700,7 @@
                 Fill="{StaticResource PTAlkaliBrush}"
                 Stroke="Black"
                 StrokeThickness="2" />
-      <Rectangle
+            <Rectangle
                 Grid.Row="3"
                 Grid.RowSpan="4"
                 Grid.Column="3"
@@ -708,7 +708,7 @@
                 Fill="{StaticResource PTTransitionMetalBrush}"
                 Stroke="Black"
                 StrokeThickness="2" />
-      <Rectangle
+            <Rectangle
                 Grid.Row="1"
                 Grid.RowSpan="6"
                 Grid.Column="13"
@@ -716,7 +716,7 @@
                 Fill="{StaticResource PTMetalloidBrush}"
                 Stroke="Black"
                 StrokeThickness="2" />
-      <Rectangle
+            <Rectangle
                 Grid.Row="0"
                 Grid.RowSpan="7"
                 Grid.Column="18"
@@ -724,7 +724,7 @@
                 Fill="{StaticResource PTNobleGasBrush}"
                 Stroke="Black"
                 StrokeThickness="2" />
-      <Rectangle
+            <Rectangle
                 Grid.Row="8"
                 Grid.RowSpan="2"
                 Grid.Column="3"
@@ -732,150 +732,150 @@
                 Fill="{StaticResource PTActinideBrush}"
                 Stroke="Black"
                 StrokeThickness="2" />
-    </Grid>
-  </Viewbox>
+        </Grid>
+    </Viewbox>
 
-  <ControlTemplate x:Key="BulletTemplate" TargetType="{x:Type ContentControl}">
-    <BulletDecorator Margin="3">
-      <BulletDecorator.Bullet>
-        <Ellipse
+    <ControlTemplate x:Key="BulletTemplate" TargetType="{x:Type ContentControl}">
+        <BulletDecorator Margin="3">
+            <BulletDecorator.Bullet>
+                <Ellipse
                     Width="6"
                     Height="6"
                     Margin="0,1.5,0,0"
                     Fill="#FFF15207" />
-      </BulletDecorator.Bullet>
-      <ContentPresenter />
-    </BulletDecorator>
-  </ControlTemplate>
+            </BulletDecorator.Bullet>
+            <ContentPresenter />
+        </BulletDecorator>
+    </ControlTemplate>
 
-  <Style x:Key="BulletBody" TargetType="{x:Type TextBlock}">
-    <Setter Property="TextWrapping" Value="WrapWithOverflow" />
-    <Setter Property="Padding" Value="5,0,0,0" />
-  </Style>
+    <Style x:Key="BulletBody" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextWrapping" Value="WrapWithOverflow" />
+        <Setter Property="Padding" Value="5,0,0,0" />
+    </Style>
 
-  <Style x:Key="ToolTipHeader" TargetType="{x:Type Label}">
-    <Setter Property="Background" Value="#FFBD3907" />
-    <Setter Property="FontWeight" Value="Bold" />
-    <Setter Property="Foreground" Value="#FFF7F1E3" />
-  </Style>
+    <Style x:Key="ToolTipHeader" TargetType="{x:Type Label}">
+        <Setter Property="Background" Value="#FFBD3907" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="#FFF7F1E3" />
+    </Style>
 
-  <Style TargetType="{x:Type ToolTip}">
-    <Setter Property="Background" Value="#FFF7F1E3" />
-    <Setter Property="BorderThickness" Value="1" />
-  </Style>
+    <Style TargetType="{x:Type ToolTip}">
+        <Setter Property="Background" Value="#FFF7F1E3" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
 
-  <Style TargetType="selectors:BaseSelectionAdorner">
-    <Setter Property="ToolTip">
-      <Setter.Value>
-        <ToolTip>
-          <StackPanel>
-            <Label Style="{StaticResource ToolTipHeader}">Object selected</Label>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Grab this adorner and drag to move</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Hit [Del] to delete</TextBlock>
-            </ContentControl>
-          </StackPanel>
-        </ToolTip>
-      </Setter.Value>
-    </Setter>
-  </Style>
+    <Style TargetType="selectors:BaseSelectionAdorner">
+        <Setter Property="ToolTip">
+            <Setter.Value>
+                <ToolTip>
+                    <StackPanel>
+                        <Label Style="{StaticResource ToolTipHeader}">Object selected</Label>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Grab this adorner and drag to move</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Hit [Del] to delete</TextBlock>
+                        </ContentControl>
+                    </StackPanel>
+                </ToolTip>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style TargetType="selectors:ReactionSelectionAdorner">
-    <Setter Property="ToolTip">
-      <Setter.Value>
-        <ToolTip>
-          <StackPanel>
-            <Label Style="{StaticResource ToolTipHeader}">Reaction selected</Label>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Select an arrow to change the reaction type</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Drag the arrow to move the reaction</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Drag the arrow ends to resize/realign</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="2">Double click a text area to add reagents or conditions</TextBlock>
-            </ContentControl>
-          </StackPanel>
-        </ToolTip>
-      </Setter.Value>
-    </Setter>
-  </Style>
+    <Style TargetType="selectors:ReactionSelectionAdorner">
+        <Setter Property="ToolTip">
+            <Setter.Value>
+                <ToolTip>
+                    <StackPanel>
+                        <Label Style="{StaticResource ToolTipHeader}">Reaction selected</Label>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Select an arrow to change the reaction type</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Drag the arrow to move the reaction</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Drag the arrow ends to resize/realign</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="2">Double click a text area to add reagents or conditions</TextBlock>
+                        </ContentControl>
+                    </StackPanel>
+                </ToolTip>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style TargetType="selectors:MoleculeSelectionAdorner">
-    <Setter Property="ToolTip">
-      <Setter.Value>
-        <ToolTip>
-          <StackPanel>
-            <Label Style="{StaticResource ToolTipHeader}">Molecule selected</Label>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Grab a handle to resize the molecule</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Grab the main area to move the molecule</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Grab the rotate handle to rotate the molecule</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Use the toolbar buttons to cut/copy/paste or group molecules</TextBlock>
-            </ContentControl>
-            <Separator />
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Right-click to access properties</TextBlock>
-            </ContentControl>
-          </StackPanel>
-        </ToolTip>
-      </Setter.Value>
-    </Setter>
-  </Style>
+    <Style TargetType="selectors:MoleculeSelectionAdorner">
+        <Setter Property="ToolTip">
+            <Setter.Value>
+                <ToolTip>
+                    <StackPanel>
+                        <Label Style="{StaticResource ToolTipHeader}">Molecule selected</Label>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Grab a handle to resize the molecule</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Grab the main area to move the molecule</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Grab the rotate handle to rotate the molecule</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Use the toolbar buttons to cut/copy/paste or group molecules</TextBlock>
+                        </ContentControl>
+                        <Separator />
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Right-click to access properties</TextBlock>
+                        </ContentControl>
+                    </StackPanel>
+                </ToolTip>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style TargetType="selectors:MultiAtomBondAdorner">
-    <Setter Property="ToolTip">
-      <Setter.Value>
-        <ToolTip>
-          <StackPanel>
-            <Label Style="{StaticResource ToolTipHeader}">Atoms/bonds selected</Label>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Grab and drag selection to move</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Select new atom/bond to change selected objects</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">[Del] to delete selected objects</TextBlock>
-            </ContentControl>
-          </StackPanel>
-        </ToolTip>
-      </Setter.Value>
-    </Setter>
-  </Style>
+    <Style TargetType="selectors:MultiAtomBondAdorner">
+        <Setter Property="ToolTip">
+            <Setter.Value>
+                <ToolTip>
+                    <StackPanel>
+                        <Label Style="{StaticResource ToolTipHeader}">Atoms/bonds selected</Label>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Grab and drag selection to move</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Select new atom/bond to change selected objects</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">[Del] to delete selected objects</TextBlock>
+                        </ContentControl>
+                    </StackPanel>
+                </ToolTip>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style TargetType="selectors:GroupSelectionAdorner">
-    <Setter Property="ToolTip">
-      <Setter.Value>
-        <ToolTip>
-          <StackPanel>
-            <Label Style="{StaticResource ToolTipHeader}">Group selected</Label>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Grab a handle to resize the Group</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Grab the main area to move the Group</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Grab the rotate handle to rotate the Group</TextBlock>
-            </ContentControl>
-            <ContentControl Template="{StaticResource BulletTemplate}">
-              <TextBlock Padding="1">Use the toolbar buttons to cut/copy/paste or ungroup</TextBlock>
-            </ContentControl>
-          </StackPanel>
-        </ToolTip>
-      </Setter.Value>
-    </Setter>
-  </Style>
+    <Style TargetType="selectors:GroupSelectionAdorner">
+        <Setter Property="ToolTip">
+            <Setter.Value>
+                <ToolTip>
+                    <StackPanel>
+                        <Label Style="{StaticResource ToolTipHeader}">Group selected</Label>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Grab a handle to resize the Group</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Grab the main area to move the Group</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Grab the rotate handle to rotate the Group</TextBlock>
+                        </ContentControl>
+                        <ContentControl Template="{StaticResource BulletTemplate}">
+                            <TextBlock Padding="1">Use the toolbar buttons to cut/copy/paste or ungroup</TextBlock>
+                        </ContentControl>
+                    </StackPanel>
+                </ToolTip>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

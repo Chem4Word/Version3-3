@@ -259,6 +259,10 @@ namespace Chem4Word.ACME.Controls
             {
                 switch (sender)
                 {
+                    case Electron el when el.Parent is Atom a:
+                        RedrawAtom(a);
+                        break;
+
                     case Atom a:
                         RedrawAtom(a);
                         break;

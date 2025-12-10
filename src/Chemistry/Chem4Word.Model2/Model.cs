@@ -84,7 +84,6 @@ namespace Chem4Word.Model2
             }
         }
 
-
         private void OnMoleculesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (!InhibitEvents)

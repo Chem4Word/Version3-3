@@ -35,7 +35,7 @@ namespace Chem4WordTests
             Assert.NotNull(electron2);
             Assert.Equal(1, electron2.Count);
             Assert.Equal(ElectronType.Radical, electron2.Type);
-            Assert.Equal(CompassPoints.NorthEast, electron2.Placement);
+            Assert.Equal(CompassPoints.North, electron2.Placement);
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace Chem4WordTests
             {
                 Count = 2,
                 Type = ElectronType.LonePair,
-                Placement = CompassPoints.NorthEast
+                ExplicitPlacement = CompassPoints.NorthEast
             };
             atom.AddElectron(electron);
             electron.Parent = atom;
@@ -103,7 +103,7 @@ namespace Chem4WordTests
             {
                 Count = 2,
                 Type = ElectronType.LonePair,
-                Placement = CompassPoints.NorthEast
+                ExplicitPlacement = CompassPoints.NorthEast
             };
             bool addedOK = false;
             modelFromCml.ElectronsChanged += (s, e) =>
@@ -122,7 +122,7 @@ namespace Chem4WordTests
             // Assert
             Assert.True(addedOK, "Electron addition event did not bubble to Model level");
             Assert.Equal(CompassPoints.NorthEast, electron.Placement);
-            electron.Placement = CompassPoints.SouthWest;
+            electron.ExplicitPlacement = CompassPoints.SouthWest;
             Assert.True(propOK, "Electron property change event did not bubble to Model level");
         }
     }

@@ -174,11 +174,11 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
         private PBElectron ElectronToPBuff(Electron electron)
         {
             PBElectron electronBuff = new PBElectron()
-                                      {
-                                          Id = electron.Id,
-                                            Count = electron.Count,
-                                            Placement = (int?)electron.Placement,
-                                            ElectronType = (int?)electron.Type
+            {
+                Id = electron.Id,
+                Count = electron.Count,
+                Placement = (int?)electron.Placement,
+                ElectronType = (int?)electron.Type
             };
             return electronBuff;
         }
@@ -438,14 +438,14 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 foreach (var pbElectron in atom.Electrons.Values)
                 {
                     Electron newElectron = new Electron()
-                                           {
-                                               Id = pbElectron.Id,
-                                               Count = (int)pbElectron.Count,
-                                               Type = (ElectronType)pbElectron.ElectronType,
-                                               Placement = (CompassPoints?)pbElectron.Placement
-                                           };
+                    {
+                        Id = pbElectron.Id,
+                        Count = (int)pbElectron.Count,
+                        Type = (ElectronType)pbElectron.ElectronType,
+                        ExplicitPlacement = (CompassPoints?)pbElectron.Placement
+                    };
                     newAtom.AddElectron(newElectron);
-                    newElectron.Parent=newAtom;
+                    newElectron.Parent = newAtom;
                 }
 
                 newMol.AddAtom(newAtom);

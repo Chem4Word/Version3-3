@@ -11,7 +11,6 @@ using Chem4Word.Core.UI;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Formula;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
