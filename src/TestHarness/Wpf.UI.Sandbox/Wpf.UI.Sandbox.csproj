@@ -82,6 +82,9 @@
     <Compile Include="Forms\ComboBoxAndTreeViewStyles.xaml.cs">
       <DependentUpon>ComboBoxAndTreeViewStyles.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Forms\CompassTesting.xaml.cs">
+      <DependentUpon>CompassTesting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormulaTesting.xaml.cs">
       <DependentUpon>FormulaTesting.xaml</DependentUpon>
     </Compile>
@@ -105,6 +108,10 @@
     <Page Include="Forms\Animation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\CompassTesting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Forms\FormulaTesting.xaml">
       <SubType>Designer</SubType>
@@ -216,6 +223,9 @@
       <Name>Chem4Word.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Converters\" />
+    <Folder Include="Enums\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

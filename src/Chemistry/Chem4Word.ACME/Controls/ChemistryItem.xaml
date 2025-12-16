@@ -115,6 +115,7 @@
             <system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">10</system:Double>
         </ResourceDictionary>
     </UserControl.Resources>
+
     <Grid Margin="3" d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

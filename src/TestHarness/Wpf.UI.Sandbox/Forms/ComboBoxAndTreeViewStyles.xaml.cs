@@ -48,9 +48,9 @@ namespace Wpf.UI.Sandbox.Forms
 
         private void AddTopLevelNode(TreeView treeView)
         {
-            var style = (Style)treeView.FindResource("Chem4WordTreeViewItemStyle");
-            var template = (ControlTemplate)treeView.FindResource("Chem4WordTreeViewItemTemplate");
-            var node = new TreeViewItem
+            Style style = (Style)treeView.FindResource("Chem4WordTreeViewItemStyle");
+            ControlTemplate template = (ControlTemplate)treeView.FindResource("Chem4WordTreeViewItemTemplate");
+            TreeViewItem node = new TreeViewItem
             {
                 Header = $"{DateTime.UtcNow:HH:mm:ss.fff}",
                 Template = template,
@@ -65,7 +65,7 @@ namespace Wpf.UI.Sandbox.Forms
         {
             if (item != null)
             {
-                var node = new TreeViewItem
+                TreeViewItem node = new TreeViewItem
                 {
                     Header = $"{DateTime.UtcNow:HH:mm:ss.fff}",
                     Template = item.Template,

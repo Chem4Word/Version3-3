@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Chem4Word")]
 [assembly: AssemblyProduct("PackageScanner")]
-[assembly: AssemblyCopyright("© Chem4Word 2025. All rights reserved.")]
+[assembly: AssemblyCopyright("© Chem4Word 2026. All rights reserved.")]
 [assembly: AssemblyTrademark("Chem4Word")]
 [assembly: AssemblyCulture("")]
 

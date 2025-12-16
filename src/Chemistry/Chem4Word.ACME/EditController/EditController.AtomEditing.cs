@@ -798,30 +798,37 @@ namespace Chem4Word.ACME
 
                 ElementBase elementBaseBefore = atom.Element;
                 int? chargeBefore = atom.FormalCharge;
-                CompassPoints? explicitFGPlacementBefore = atom.ExplicitFunctionalGroupPlacement;
                 int? isotopeBefore = atom.IsotopeNumber;
                 bool? explicitCBefore = atom.ExplicitC;
-                HydrogenLabels? explicitHBefore = atom.ExplicitH;
 
+                HydrogenLabels? explicitHBefore = atom.ExplicitH;
                 CompassPoints? hydrogenPlacementBefore = atom.ExplicitHPlacement;
+                CompassPoints? explicitFgPlacementBefore = atom.ExplicitFunctionalGroupPlacement;
 
                 ElementBase elementBaseAfter = atomPropertiesModel.Element;
                 int? chargeAfter = null;
                 int? isotopeAfter = null;
                 bool? explicitCAfter = null;
-                HydrogenLabels? explictHAfter = null;
 
+                HydrogenLabels? explicitHydrogensAfter = null;
                 CompassPoints? hydrogenPlacementAfter = null;
-                CompassPoints? explicitFGPlacementAfter = null;
+                CompassPoints? explicitFgPlacementAfter = null;
+
+                // Handle Electrons
+                List<Electron> electronsBefore = new List<Electron>();
+                electronsBefore.AddRange(atom.Electrons.Values);
+                List<Electron> electronsAfter = new List<Electron>();
+                electronsAfter.AddRange(atomPropertiesModel.MicroModel.GetAllAtoms().First().Electrons.Values);
+
                 if (elementBaseAfter is FunctionalGroup)
                 {
-                    explicitFGPlacementAfter = atomPropertiesModel.ExplicitFunctionalGroupPlacement;
+                    explicitFgPlacementAfter = atomPropertiesModel.ExplicitFunctionalGroupPlacement;
                 }
                 else if (elementBaseAfter is Element)
                 {
                     chargeAfter = atomPropertiesModel.Charge;
                     explicitCAfter = atomPropertiesModel.ExplicitC;
-                    explictHAfter = atomPropertiesModel.ExplicitH;
+                    explicitHydrogensAfter = atomPropertiesModel.ExplicitH;
                     hydrogenPlacementAfter = atomPropertiesModel.ExplicitHydrogenPlacement;
                     if (!string.IsNullOrEmpty(atomPropertiesModel.Isotope))
                     {
@@ -835,10 +842,15 @@ namespace Chem4Word.ACME
                                   atom.FormalCharge = chargeAfter;
                                   atom.IsotopeNumber = isotopeAfter;
                                   atom.ExplicitC = explicitCAfter;
-                                  atom.ExplicitH = explictHAfter;
+                                  atom.ExplicitH = explicitHydrogensAfter;
                                   atom.ExplicitHPlacement = hydrogenPlacementAfter;
-                                  atom.ExplicitFunctionalGroupPlacement = explicitFGPlacementAfter;
+                                  atom.ExplicitFunctionalGroupPlacement = explicitFgPlacementAfter;
+
+                                  // Handle Electrons
+                                  atom.ClearElectrons();
+                                  atom.AddRangeOfElectrons(electronsAfter);
                                   atom.Parent.UpdateVisual();
+
                                   //freshen any selection adorner
                                   if (SelectedItems.Contains(atom))
                                   {
@@ -855,8 +867,13 @@ namespace Chem4Word.ACME
                                   atom.ExplicitC = explicitCBefore;
                                   atom.ExplicitH = explicitHBefore;
                                   atom.ExplicitHPlacement = hydrogenPlacementBefore;
-                                  atom.ExplicitFunctionalGroupPlacement = explicitFGPlacementBefore;
+                                  atom.ExplicitFunctionalGroupPlacement = explicitFgPlacementBefore;
+
+                                  // Handle Electrons
+                                  atom.ClearElectrons();
+                                  atom.AddRangeOfElectrons(electronsBefore);
                                   atom.Parent.UpdateVisual();
+
                                   //freshen any selection adorner
                                   if (SelectedItems.Contains(atom))
                                   {

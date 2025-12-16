@@ -8,12 +8,47 @@
 using Chem4Word.ACME.Entities;
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Enums;
 using System.Collections.Generic;
 
 namespace Chem4Word.ACME.Controls.DesignTimeModels
 {
     public class ApeDesigner
     {
+        // Constructor
+        public ApeDesigner()
+        {
+            IsElement = true;
+            IsFunctionalGroup = !IsElement;
+
+            if (IsElement)
+            {
+                Element = ModelGlobals.PeriodicTable.C;
+                Charge = -1;
+
+                HasIsotopes = true;
+                Isotope = "13";
+
+                ShowHydrogenLabels = true;
+
+                ExplicitHydrogenPlacement = CompassPoints.East;
+                ExplicitElectronPlacements =
+                    new Dictionary<CompassPoints, ElectronType> { { CompassPoints.East, ElectronType.LonePair } };
+
+                // For some reason these have to be done after setting the properties
+                SetUpCharges();
+                SetUpIsotopeMasses();
+            }
+            else
+            {
+                Element = ModelGlobals.FunctionalGroupsList.Find(fg => fg.Name == "CH2CH2OH");
+                ExplicitFunctionalGroupPlacement = CompassPoints.East;
+                ShowHydrogenLabels = false;
+            }
+
+            ShowCompass = true;
+        }
+
         // Two Way bindings must have get and set
         // One way bindings only need get
 
@@ -52,41 +87,12 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
 
         public CompassPoints? ExplicitHydrogenPlacement { get; set; }
         public CompassPoints? ExplicitFunctionalGroupPlacement { get; set; }
+        public Dictionary<CompassPoints, ElectronType> ExplicitElectronPlacements { get; set; }
 
         // Drop Down Lists
         public List<ChargeValue> Charges { get; private set; }
 
         public List<IsotopeValue> IsotopeMasses { get; private set; }
-
-        public ApeDesigner()
-        {
-            IsElement = true;
-            IsFunctionalGroup = !IsElement;
-
-            if (IsElement)
-            {
-                Element = ModelGlobals.PeriodicTable.C;
-                Charge = -1;
-
-                HasIsotopes = true;
-                Isotope = "13";
-
-                ExplicitHydrogenPlacement = CompassPoints.East;
-                ShowHydrogenLabels = true;
-
-                // For some reason these have to be done after setting the properties
-                SetUpCharges();
-                SetUpIsotopeMasses();
-            }
-            else
-            {
-                Element = ModelGlobals.FunctionalGroupsList.Find(fg => fg.Name == "CH2CH2OH");
-                ExplicitFunctionalGroupPlacement = CompassPoints.East;
-                ShowHydrogenLabels = false;
-            }
-
-            ShowCompass = true;
-        }
 
         private void SetUpCharges()
         {

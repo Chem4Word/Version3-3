@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Chem4Word")]
 [assembly: AssemblyProduct("Wpf.UI.Sandbox")]
-[assembly: AssemblyCopyright("© Chem4Word 2025. All rights reserved.")]
+[assembly: AssemblyCopyright("© Chem4Word 2026. All rights reserved.")]
 [assembly: AssemblyTrademark("Chem4Word")]
 [assembly: AssemblyCulture("")]
 

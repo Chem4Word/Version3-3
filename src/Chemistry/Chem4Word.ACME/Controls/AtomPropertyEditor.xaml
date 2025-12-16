@@ -6,12 +6,10 @@
     xmlns:conv="clr-namespace:Chem4Word.ACME.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dvm="clr-namespace:Chem4Word.ACME.Controls.DesignTimeModels"
-    xmlns:enums="clr-namespace:Chem4Word.Core.Enums;assembly=Chem4Word.Core"
     xmlns:local="clr-namespace:Chem4Word.ACME.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="PropertyEditor"
     Title="Atom Properties"
-    MinWidth="200"
     d:DataContext="{d:DesignInstance {x:Type dvm:ApeDesigner},
                                      IsDesignTimeCreatable=True}"
     Closing="OnClosing_AtomPropertyEditor"
@@ -19,9 +17,9 @@
     Icon="/Chem4Word.ACME;component/Resources/ms-word-16.ico"
     Loaded="OnLoaded_AtomPropertyEditor"
     ResizeMode="NoResize"
-    ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
     mc:Ignorable="d">
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -34,112 +32,97 @@
                 x:Key="VisConverter"
                 FalseValue="Collapsed"
                 TrueValue="Visible" />
-            <conv:BoolToVisibilityConverter
-                x:Key="InverseVisConverter"
-                FalseValue="Visible"
-                TrueValue="Collapsed" />
-            <conv:NullableEnumToBooleanConverter x:Key="PlacementConverter" />
-            <Style x:Key="PlacementButtonStyle" TargetType="ToggleButton">
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="FontSize" Value="20" />
-                <Setter Property="Foreground" Value="Black" />
-                <Setter Property="FontWeight" Value="Regular" />
-                <Setter Property="FontFamily" Value="Arial" />
-                <Setter Property="Padding" Value="0,0,0,0" />
-                <Setter Property="HorizontalContentAlignment" Value="Center" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type ToggleButton}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="3*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="3*" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Border
-                                    Grid.RowSpan="3"
-                                    Grid.ColumnSpan="3"
-                                    BorderBrush="DarkOrange"
-                                    BorderThickness="2"
-                                    Visibility="{TemplateBinding IsChecked,
-                                                                 Converter={StaticResource VisConverter}}" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Center"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    FontWeight="{TemplateBinding FontWeight}"
-                                    Text="{TemplateBinding Content}" />
-                            </Grid>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
         </ResourceDictionary>
     </Window.Resources>
-    <Border Margin="3" d:IsLocked="True">
-        <Grid d:IsLocked="True">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+
+    <Grid d:IsLocked="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Atom Path display (Debug only)  -->
+        <TextBlock
+            x:Name="AtomPath"
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="5,5,5,0"
+            HorizontalAlignment="Left"
+            d:IsLocked="True"
+            Foreground="Black"><Run Text="Atom Path ..." /></TextBlock>
+
+        <!--  Element or Functional Group selector  -->
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="5"
+            VerticalAlignment="Top"
+            d:IsLocked="True"
+            Orientation="Horizontal">
+            <RadioButton
+                x:Name="Element"
+                Padding="0"
+                d:IsLocked="True"
+                Click="OnClick_ChangeToElement"
+                IsChecked="{Binding IsElement, Mode=TwoWay}"
+                Style="{StaticResource Acme.Controls.TextBlock.RadioButton.Standard}">
+                <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.RadioButton}">Element</TextBlock>
+            </RadioButton>
+            <RadioButton
+                x:Name="FunctionalGroup"
+                Padding="0"
+                d:IsLocked="True"
+                Click="OnClick_ChangeToFunctionalGroup"
+                IsChecked="{Binding IsFunctionalGroup, Mode=TwoWay}"
+                Style="{StaticResource Acme.Controls.TextBlock.RadioButton.Standard}">
+                <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.RadioButton}">Functional Group</TextBlock>
+            </RadioButton>
+        </StackPanel>
+
+        <!--  Preview Pane  -->
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="0"
+            Width="330"
+            Height="330"
+            Margin="5,5,5,5"
+            VerticalAlignment="Top"
+            d:IsLocked="True">
+            <Border
+                d:IsLocked="True"
+                BorderBrush="DarkOrange"
+                BorderThickness="3"
+                CornerRadius="5">
+                <ACME:Display
+                    x:Name="Preview"
+                    Width="320"
+                    Height="320"
+                    Margin="2"
+                    d:IsLocked="True"
+                    HighlightActive="False" />
+            </Border>
+        </StackPanel>
+
+        <Grid
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="2"
+            d:IsLocked="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <StackPanel
-                Grid.Row="0"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                d:IsLocked="True">
-                <!--  Atom Path display  -->
-                <TextBlock
-                    x:Name="AtomPath"
-                    Margin="5"
-                    HorizontalAlignment="Left"
-                    d:IsLocked="True"
-                    Foreground="Black"
-                    Visibility="Collapsed"><Run Text="Atom Path" /></TextBlock>
-
-                <!--  Element or Functional Group selector  -->
-                <StackPanel d:IsLocked="True" Orientation="Horizontal">
-                    <RadioButton
-                        x:Name="Element"
-                        d:IsLocked="True"
-                        Click="OnClick_Element"
-                        IsChecked="{Binding IsElement, Mode=TwoWay}"
-                        Style="{StaticResource Acme.Controls.TextBlock.RadioButton.Standard}">
-                        <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.RadioButton}">Element</TextBlock>
-                    </RadioButton>
-                    <RadioButton
-                        x:Name="FunctionalGroup"
-                        d:IsLocked="True"
-                        Click="OnClick_FunctionalGroup"
-                        IsChecked="{Binding IsFunctionalGroup, Mode=TwoWay}"
-                        Style="{StaticResource Acme.Controls.TextBlock.RadioButton.Standard}">
-                        <TextBlock d:IsLocked="True" Style="{StaticResource Acme.Controls.TextBlock.RadioButton}">Functional Group</TextBlock>
-                    </RadioButton>
-                </StackPanel>
-            </StackPanel>
-
             <!--  Stack Panel to hold Element / Functional Group controls  -->
-            <StackPanel
-                Grid.Row="1"
-                Grid.Column="0"
-                d:IsLocked="True">
+            <StackPanel Grid.Row="1" d:IsLocked="True">
                 <!--  Properties of an Element  -->
                 <StackPanel d:IsLocked="True" Visibility="{Binding IsChecked, Converter={StaticResource VisConverter}, ElementName=Element}">
                     <!-- <StackPanel Visibility="Visible">-->
@@ -156,7 +139,6 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -190,7 +172,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <ComboBox
                                     x:Name="AtomPicker"
@@ -203,9 +185,7 @@
                                     VerticalContentAlignment="Center"
                                     d:IsLocked="True"
                                     Background="{x:Static SystemColors.WindowBrush}"
-                                    FontFamily="Arial"
                                     FontSize="16"
-                                    FontWeight="DemiBold"
                                     Foreground="{Binding SelectedItem.Foreground, RelativeSource={RelativeSource Self}}"
                                     SelectedValue="{Binding Element}"
                                     SelectedValuePath="Element"
@@ -291,7 +271,6 @@
                                 VerticalContentAlignment="Center"
                                 d:IsLocked="True"
                                 FontFamily="Arial"
-                                FontWeight="DemiBold"
                                 Foreground="{Binding SelectedValue, Converter={StaticResource PositiveConverter}, ElementName=ChargeCombo}"
                                 ItemsSource="{Binding Charges}"
                                 SelectedValue="{Binding Charge}"
@@ -308,7 +287,6 @@
                             <TextBlock
                                 Grid.Row="3"
                                 Grid.Column="0"
-                                Margin="5,0,0,7"
                                 VerticalAlignment="Bottom"
                                 d:IsLocked="True"
                                 Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
@@ -319,7 +297,7 @@
                                 Grid.Column="1"
                                 Width="50"
                                 Height="30"
-                                Margin="5,5,0,5"
+                                Margin="5"
                                 HorizontalAlignment="Left"
                                 VerticalContentAlignment="Center"
                                 d:IsLocked="True"
@@ -331,35 +309,47 @@
                                 SelectionChanged="OnSelectionChanged_IsotopePicker"
                                 Style="{StaticResource StandardCombo}"
                                 Visibility="{Binding HasIsotopes, Converter={StaticResource VisConverter}, Mode=OneWay}" />
-                        </Grid>
-                        <Grid
-                            Name="HydrogenVisibilityGrid"
-                            Grid.Row="1"
-                            d:IsLocked="True"
-                            Visibility="{Binding ShowHydrogenLabels, Converter={StaticResource VisConverter}, Mode=OneWay}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Margin="5,0,0,0"
+
+                            <Grid
+                                Name="HydrogenVisibilityGrid"
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
                                 HorizontalAlignment="Left"
                                 d:IsLocked="True"
-                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
-                                <Run FontSize="14" Text="Hydrogen Labels" />
-                            </TextBlock>
-                            <ComboBox
-                                x:Name="ImplicitHydrogenMode"
-                                Grid.Row="1"
-                                Width="175"
-                                Height="30"
-                                Margin="5,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalContentAlignment="Center"
-                                d:IsLocked="True"
-                                SelectionChanged="OnSelectionChanged_ImplicitHydrogenMode" />
+                                Visibility="{Binding ShowHydrogenLabels, Converter={StaticResource VisConverter}, Mode=OneWay}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="2"
+                                    d:IsLocked="True"
+                                    Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
+                                    <Run FontSize="14" Text="Hydrogen Labels" />
+                                </TextBlock>
+                                <ComboBox
+                                    x:Name="ImplicitHydrogenMode"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Width="150"
+                                    Height="32"
+                                    Margin="5"
+                                    HorizontalAlignment="Left"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"
+                                    d:IsLocked="True"
+                                    SelectionChanged="OnSelectionChanged_ImplicitHydrogenMode" />
+                            </Grid>
                         </Grid>
+
                         <Grid
                             Name="HydrogenPlacementGrid"
                             Grid.Row="2"
@@ -367,89 +357,43 @@
                             Visibility="{Binding ShowCompass, Converter={StaticResource VisConverter}, Mode=OneWay}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock
                                 Grid.Row="0"
-                                Margin="5,0,0,0"
-                                HorizontalAlignment="Stretch"
+                                Grid.Column="0"
                                 d:IsLocked="True"
-                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
-                                <Run FontSize="14" Text="Hydrogen Label Placement" />
-                            </TextBlock>
-                            <Grid
+                                Text="Hydrogens" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                d:IsLocked="True"
+                                Text="Electrons" />
+                            <local:Compass
+                                x:Name="Compass1"
                                 Grid.Row="1"
-                                Margin="5"
-                                d:IsLocked="True">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="35" />
-                                    <RowDefinition Height="35" />
-                                    <RowDefinition Height="35" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="35" />
-                                    <ColumnDefinition Width="35" />
-                                    <ColumnDefinition Width="35" />
-                                </Grid.ColumnDefinitions>
-                                <ToggleButton
-                                    Name="AutoButton"
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    d:IsLocked="True"
-                                    Checked="OnChecked_PlacementButton"
-                                    IsChecked="{Binding ExplicitHydrogenPlacement, Converter={StaticResource PlacementConverter}, ConverterParameter={x:Null}}"
-                                    Style="{StaticResource PlacementButtonStyle}"
-                                    ToolTip="Automatic">
-                                    A
-                                </ToggleButton>
-                                <ToggleButton
-                                    Name="NorthButton"
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    d:IsLocked="True"
-                                    Checked="OnChecked_PlacementButton"
-                                    IsChecked="{Binding ExplicitHydrogenPlacement, Converter={StaticResource PlacementConverter}, ConverterParameter={x:Static enums:CompassPoints.North}}"
-                                    Style="{StaticResource PlacementButtonStyle}"
-                                    ToolTip="North">
-                                    N
-                                </ToggleButton>
-                                <ToggleButton
-                                    Name="SouthButton"
-                                    Grid.Row="2"
-                                    Grid.Column="1"
-                                    d:IsLocked="True"
-                                    Checked="OnChecked_PlacementButton"
-                                    IsChecked="{Binding ExplicitHydrogenPlacement, Converter={StaticResource PlacementConverter}, ConverterParameter={x:Static enums:CompassPoints.South}}"
-                                    Style="{StaticResource PlacementButtonStyle}"
-                                    ToolTip="South">
-                                    S
-                                </ToggleButton>
-                                <ToggleButton
-                                    Name="EastButton"
-                                    Grid.Row="1"
-                                    Grid.Column="2"
-                                    d:IsLocked="True"
-                                    Checked="OnChecked_PlacementButton"
-                                    IsChecked="{Binding ExplicitHydrogenPlacement, Converter={StaticResource PlacementConverter}, ConverterParameter={x:Static enums:CompassPoints.East}}"
-                                    Style="{StaticResource PlacementButtonStyle}"
-                                    ToolTip="East">
-                                    E
-                                </ToggleButton>
-                                <ToggleButton
-                                    Name="WestButton"
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    d:IsLocked="True"
-                                    Checked="OnChecked_PlacementButton"
-                                    IsChecked="{Binding ExplicitHydrogenPlacement, Converter={StaticResource PlacementConverter}, ConverterParameter={x:Static enums:CompassPoints.West}}"
-                                    Style="{StaticResource PlacementButtonStyle}"
-                                    ToolTip="West">
-                                    W
-                                </ToggleButton>
-                            </Grid>
+                                Grid.Column="0"
+                                d:IsLocked="True"
+                                CompassControlType="Hydrogens"
+                                CompassValueChanged="OnCompassValueChanged_HydrogensCompass"
+                                SelectedCompassPoint="{Binding ExplicitHydrogenPlacement}" />
+                            <local:Compass
+                                x:Name="Compass2"
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                d:IsLocked="True"
+                                CompassControlType="Electrons"
+                                CompassValueChanged="OnCompassValueChanged_ElectronsCompass"
+                                SelectedElectronValues="{Binding ExplicitElectronPlacements}" />
                         </Grid>
                     </Grid>
                 </StackPanel>
+
                 <!--  Properties of a Functional Group  -->
                 <Grid
                     Width="Auto"
@@ -458,14 +402,14 @@
                     Visibility="{Binding IsChecked, Converter={StaticResource VisConverter}, ElementName=FunctionalGroup}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock
-                        Padding="0,0"
+                        Margin="1"
                         d:IsLocked="True"
                         Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run Text="Group" /></TextBlock>
                     <ComboBox
@@ -476,13 +420,11 @@
                         Height="30"
                         MinWidth="60"
                         MinHeight="25"
-                        Margin="0,5,0,5"
+                        Margin="2"
                         VerticalContentAlignment="Center"
                         d:IsLocked="True"
                         Background="{x:Static SystemColors.WindowBrush}"
-                        FontFamily="Arial"
                         FontSize="18"
-                        FontWeight="DemiBold"
                         Foreground="{Binding SelectedItem.Foreground, RelativeSource={RelativeSource Self}}"
                         SelectedValue="{Binding Element}"
                         SelectedValuePath="Element"
@@ -500,115 +442,52 @@
                         <Grid d:IsLocked="True">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <TextBlock
                                 Grid.Row="0"
                                 Margin="5,5,0,0"
                                 d:IsLocked="True"
                                 Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run FontSize="14" Text="Group Placement" /></TextBlock>
-                            <Grid
+                            <local:Compass
+                                x:Name="Compass3"
                                 Grid.Row="1"
                                 Margin="5"
-                                d:IsLocked="True">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="35" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="35" />
-                                    <ColumnDefinition Width="35" />
-                                    <ColumnDefinition Width="35" />
-                                </Grid.ColumnDefinitions>
-                                <ToggleButton
-                                    Name="FGAutoButton"
-                                    Grid.Column="1"
-                                    d:IsLocked="True"
-                                    Checked="OnChecked_FGPlacementButton"
-                                    IsChecked="{Binding ExplicitFunctionalGroupPlacement, Converter={StaticResource PlacementConverter}, ConverterParameter={x:Null}}"
-                                    Style="{StaticResource PlacementButtonStyle}"
-                                    ToolTip="Automatic">
-                                    A
-                                </ToggleButton>
-                                <ToggleButton
-                                    Name="FGEastButton"
-                                    Grid.Column="2"
-                                    d:IsLocked="True"
-                                    Checked="OnChecked_FGPlacementButton"
-                                    IsChecked="{Binding ExplicitFunctionalGroupPlacement, Converter={StaticResource PlacementConverter}, ConverterParameter={x:Static enums:CompassPoints.East}}"
-                                    Style="{StaticResource PlacementButtonStyle}"
-                                    ToolTip="East">
-                                    E
-                                </ToggleButton>
-                                <ToggleButton
-                                    Name="FGWestButton"
-                                    Grid.Column="0"
-                                    d:IsLocked="True"
-                                    Checked="OnChecked_FGPlacementButton"
-                                    IsChecked="{Binding ExplicitFunctionalGroupPlacement, Converter={StaticResource PlacementConverter}, ConverterParameter={x:Static enums:CompassPoints.West}}"
-                                    Style="{StaticResource PlacementButtonStyle}"
-                                    ToolTip="West">
-                                    W
-                                </ToggleButton>
-                            </Grid>
+                                d:IsLocked="True"
+                                CompassControlType="FunctionalGroups"
+                                CompassValueChanged="OnCompassValueChanged_FunctionalGroupsCompass"
+                                SelectedCompassPoint="{Binding ExplicitFunctionalGroupPlacement}" />
                         </Grid>
                     </Grid>
                 </Grid>
+
             </StackPanel>
 
-            <!--  Preview Pane  -->
-            <StackPanel
-                Grid.Row="1"
-                Grid.Column="1"
-                Height="245"
-                MaxWidth="245"
-                MaxHeight="245"
-                Margin="5,5,5,0"
-                VerticalAlignment="Top"
-                d:IsLocked="True">
-                <Border
-                    d:IsLocked="True"
-                    BorderBrush="DarkOrange"
-                    BorderThickness="3"
-                    CornerRadius="5">
-                    <ACME:Display
-                        x:Name="Preview"
-                        Width="230"
-                        Height="230"
-                        Margin="3"
-                        d:IsLocked="True"
-                        HighlightActive="False" />
-                </Border>
-            </StackPanel>
-
-            <!--  Finally the Save and Cancel buttons  -->
-            <Grid
-                Grid.Row="2"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Width="Auto"
-                Height="Auto"
-                d:IsLocked="True">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button
-                    Grid.Column="1"
-                    Margin="3"
-                    d:IsLocked="True"
-                    Click="OnClick_Save"
-                    Content="OK"
-                    Style="{StaticResource Acme.Control.Button.DialogButton}" />
-                <Button
-                    Grid.Column="2"
-                    Margin="3"
-                    d:IsLocked="True"
-                    Click="OnClick_Close"
-                    Content="Cancel"
-                    Style="{StaticResource Acme.Control.Button.DialogButton}" />
-            </Grid>
         </Grid>
-    </Border>
+
+        <!--  Finally, the Save and Cancel buttons  -->
+        <StackPanel
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            d:IsLocked="True"
+            Orientation="Horizontal">
+            <Button
+                Margin="5"
+                d:IsLocked="True"
+                Click="OnClick_Save"
+                Content="OK"
+                Style="{StaticResource Acme.Control.Button.DialogButton}" />
+            <Button
+                Margin="5"
+                d:IsLocked="True"
+                Click="OnClick_Close"
+                Content="Cancel"
+                Style="{StaticResource Acme.Control.Button.DialogButton}" />
+
+        </StackPanel>
+    </Grid>
+
 </Window>

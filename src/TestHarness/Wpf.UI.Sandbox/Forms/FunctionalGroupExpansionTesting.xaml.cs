@@ -27,39 +27,39 @@ namespace Wpf.UI.Sandbox.Forms
 
         private void OnLoaded_FunctionalGroupExpansion(object sender, RoutedEventArgs e)
         {
-            var model = new Model();
+            Model model = new Model();
             Editor.SetProperties(new CMLConverter().Export(model), null, new RenderingOptions());
         }
 
         private void OnClick_ExpandButton(object sender, RoutedEventArgs e)
         {
-            var model = Editor.EditedModel.Copy();
+            Model model = Editor.EditedModel.Copy();
 
-            var before = model.FunctionalGroupsCount;
+            int before = model.FunctionalGroupsCount;
 
-            var expanded = model.ExpandAllFunctionalGroups();
+            int expanded = model.ExpandAllFunctionalGroups();
 
             // Use .Copy() as display scales it's model to have bond length of 40, therefore corrupting it
             Display.Chemistry = model.Copy();
 
             Debug.WriteLine($"Expanded {expanded} Functional Groups from {before}; remaining {model.FunctionalGroupsCount}");
 
-            var converter = new CMLConverter();
+            CMLConverter converter = new CMLConverter();
             Clipboard.SetText(XmlHelper.AddHeader(converter.Export(model)));
             Debug.WriteLine("New CML copied to clipboard");
         }
 
         private void OnClick_LoadButton(object sender, RoutedEventArgs e)
         {
-            var converter = new CMLConverter();
+            CMLConverter converter = new CMLConverter();
 
-            var openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "*.cml|*.cml"
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                var model = converter.Import(File.ReadAllText(openFileDialog.FileName));
+                Model model = converter.Import(File.ReadAllText(openFileDialog.FileName));
                 if (model != null)
                 {
                     Editor.SetProperties(new CMLConverter().Export(model), null, new RenderingOptions());

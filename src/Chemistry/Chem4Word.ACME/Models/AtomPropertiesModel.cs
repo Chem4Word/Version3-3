@@ -16,16 +16,21 @@ namespace Chem4Word.ACME.Models
     public class AtomPropertiesModel : BaseDialogModel
     {
         private ElementBase _element;
+        private CompassPoints? _explicitHydrogenPlacement;
+        private CompassPoints? _explicitFunctionalGroupPlacement;
+
+        private Dictionary<CompassPoints, ElectronType> _explicitElectronPlacements =
+            new Dictionary<CompassPoints, ElectronType>();
+
         private int? _charge;
         private string _isotope;
         private bool? _explicitC;
         private HydrogenLabels? _explicitH;
+
         private bool _isFunctionalGroup;
         private bool _isElement;
         private bool _showCompass;
         private bool _showHydrogenLabels;
-        private CompassPoints? _explicitHydrogenPlacement;
-        private CompassPoints? _fgPlacement;
 
         public ElementBase AddedElement { get; set; }
 
@@ -100,10 +105,20 @@ namespace Chem4Word.ACME.Models
 
         public CompassPoints? ExplicitFunctionalGroupPlacement
         {
-            get => _fgPlacement;
+            get => _explicitFunctionalGroupPlacement;
             set
             {
-                _fgPlacement = value;
+                _explicitFunctionalGroupPlacement = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Dictionary<CompassPoints, ElectronType> ExplicitElectronPlacements
+        {
+            get => _explicitElectronPlacements;
+            set
+            {
+                _explicitElectronPlacements = value;
                 OnPropertyChanged();
             }
         }
@@ -158,11 +173,11 @@ namespace Chem4Word.ACME.Models
             {
                 List<IsotopeValue> temp = new List<IsotopeValue>();
 
-                var e = Element as Element;
+                Element element = Element as Element;
                 temp.Add(new IsotopeValue { Label = "", Mass = null });
-                if (e != null && e.IsotopeMasses != null)
+                if (element != null && element.IsotopeMasses != null)
                 {
-                    foreach (int mass in e.IsotopeMasses)
+                    foreach (int mass in element.IsotopeMasses)
                     {
                         temp.Add(new IsotopeValue { Label = mass.ToString(), Mass = mass });
                     }

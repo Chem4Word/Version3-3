@@ -37,7 +37,7 @@ namespace Wpf.UI.Sandbox.Controls
         public void Start(string text)
         {
             TextToScroll.Text = text;
-            var doubleAnimation = new DoubleAnimation
+            DoubleAnimation doubleAnimation = new DoubleAnimation
             {
                 From = -TextToScroll.ActualWidth,
                 To = ScrollingRegion.ActualWidth,

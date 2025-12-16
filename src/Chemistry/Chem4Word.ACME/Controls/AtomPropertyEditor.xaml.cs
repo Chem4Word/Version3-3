@@ -7,15 +7,20 @@
 
 using Chem4Word.ACME.Annotations;
 using Chem4Word.ACME.Entities;
+using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Models;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Core;
+using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
+using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -31,9 +36,13 @@ namespace Chem4Word.ACME.Controls
     /// </summary>
     public partial class AtomPropertyEditor : INotifyPropertyChanged
     {
+        private const double WidthOfAtomMode = 620;
+        private const double WidthOfFunctionalGroupMode = 575;
+
         private bool _closedByUser;
         private bool IsDirty { get; set; }
         private bool _isLoading;
+        private bool _inhibitEvents;
 
         private AtomPropertiesModel _atomPropertiesModel;
 
@@ -57,17 +66,19 @@ namespace Chem4Word.ACME.Controls
 
         public AtomPropertyEditor(AtomPropertiesModel model) : this()
         {
-#if DEBUG
-            AtomPath.Visibility = Visibility.Visible;
-#endif
+
+            AtomPath.Visibility = Debugger.IsAttached
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
 
             _isLoading = true;
 
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 AtomPropertiesModel = model;
-                DataContext = AtomPropertiesModel;
-                AtomPath.Text = AtomPropertiesModel.Path;
+                DataContext = _atomPropertiesModel;
+                AtomPath.Text = _atomPropertiesModel.Path;
             }
         }
 
@@ -81,6 +92,7 @@ namespace Chem4Word.ACME.Controls
             SetupHydrogenLabelsDropDown();
             LoadAtomItems();
             LoadFunctionalGroups();
+
             ShowPreview();
 
             IsDirty = false;
@@ -106,6 +118,7 @@ namespace Chem4Word.ACME.Controls
                 Content = inherited,
                 Tag = null
             };
+
             ImplicitHydrogenMode.Items.Add(notSet);
             if (!atom.ExplicitC.HasValue)
             {
@@ -137,7 +150,23 @@ namespace Chem4Word.ACME.Controls
             Top = point.Y;
 
             IsDirty = false;
-            InvalidateArrange();
+
+            DataContext = _atomPropertiesModel;
+
+            if (_atomPropertiesModel.IsFunctionalGroup)
+            {
+                MinWidth = WidthOfFunctionalGroupMode;
+                Width = WidthOfFunctionalGroupMode;
+            }
+            else
+            {
+                MinWidth = WidthOfAtomMode;
+                Width = WidthOfAtomMode;
+            }
+
+            Compass1.SelectedCompassPoint = _atomPropertiesModel.ExplicitHydrogenPlacement;
+            Compass2.SelectedElectronValues = _atomPropertiesModel.ExplicitElectronPlacements;
+            Compass3.SelectedCompassPoint = _atomPropertiesModel.ExplicitFunctionalGroupPlacement;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -164,7 +193,7 @@ namespace Chem4Word.ACME.Controls
         {
             AtomOption newOption = null;
             Element selElement = e.SelectedElement as Element;
-            AtomPropertiesModel.Element = selElement;
+            _atomPropertiesModel.Element = selElement;
             PeriodicTableExpander.IsExpanded = false;
             bool found = false;
 
@@ -189,26 +218,35 @@ namespace Chem4Word.ACME.Controls
             {
                 newOption = new AtomOption(selElement);
                 AtomPicker.Items.Add(newOption);
-                AtomPropertiesModel.AddedElement = selElement;
+                _atomPropertiesModel.AddedElement = selElement;
             }
 
             AtomOption atomPickerSelectedItem = newOption;
             AtomPicker.SelectedItem = atomPickerSelectedItem;
-            ShowPreview();
+            if (!_inhibitEvents)
+            {
+                ShowPreview();
+            }
         }
 
         private void OnSelectionChanged_AtomPicker(object sender, SelectionChangedEventArgs e)
         {
             AtomOption option = AtomPicker.SelectedItem as AtomOption;
-            AtomPropertiesModel.AddedElement = option?.Element;
-            ShowPreview();
+            _atomPropertiesModel.AddedElement = option?.Element;
+            if (!_inhibitEvents)
+            {
+                ShowPreview();
+            }
         }
 
         private void OnSelectionChanged_FunctionalGroupPicker(object sender, SelectionChangedEventArgs e)
         {
             AtomOption option = FunctionalGroupPicker.SelectedItem as AtomOption;
-            AtomPropertiesModel.AddedElement = option?.Element;
-            ShowPreview();
+            _atomPropertiesModel.AddedElement = option?.Element;
+            if (!_inhibitEvents)
+            {
+                ShowPreview();
+            }
         }
 
         private void OnSelectionChanged_ChargeCombo(object sender, SelectionChangedEventArgs e)
@@ -224,12 +262,15 @@ namespace Chem4Word.ACME.Controls
         private void HandleIsotopeOrChargeChange()
         {
             SetStateOfExplicitCarbonCheckbox();
-            ShowPreview();
+            if (!_inhibitEvents)
+            {
+                ShowPreview();
+            }
         }
 
         private void SetStateOfExplicitCarbonCheckbox()
         {
-            List<Atom> atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
+            List<Atom> atoms = _atomPropertiesModel.MicroModel.GetAllAtoms();
             Atom atom = atoms[0];
             if (atom.Parent.AtomCount == 1)
             {
@@ -253,7 +294,10 @@ namespace Chem4Word.ACME.Controls
 
         private void OnClick_ExplicitCheckBox(object sender, RoutedEventArgs e)
         {
-            ShowPreview();
+            if (!_inhibitEvents)
+            {
+                ShowPreview();
+            }
         }
 
         private void LoadAtomItems()
@@ -264,14 +308,14 @@ namespace Chem4Word.ACME.Controls
                 AtomPicker.Items.Add(new AtomOption(ModelGlobals.PeriodicTable.Elements[item]));
             }
 
-            if (AtomPropertiesModel.Element is Element el)
+            if (_atomPropertiesModel.Element is Element el)
             {
                 if (!AcmeConstants.StandardAtoms.Contains(el.Symbol))
                 {
                     AtomPicker.Items.Add(new AtomOption(ModelGlobals.PeriodicTable.Elements[el.Symbol]));
                 }
 
-                AtomPicker.SelectedItem = new AtomOption(AtomPropertiesModel.Element as Element);
+                AtomPicker.SelectedItem = new AtomOption(_atomPropertiesModel.Element as Element);
             }
         }
 
@@ -286,7 +330,7 @@ namespace Chem4Word.ACME.Controls
                 }
             }
 
-            if (AtomPropertiesModel.Element is FunctionalGroup functionalGroup
+            if (_atomPropertiesModel.Element is FunctionalGroup functionalGroup
                 && functionalGroup.ShowInDropDown)
             {
                 FunctionalGroupPicker.SelectedItem = new AtomOption(functionalGroup);
@@ -295,52 +339,73 @@ namespace Chem4Word.ACME.Controls
 
         private void ShowPreview()
         {
-            List<Atom> atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
-            Atom atom = atoms[0];
-
-            AtomPropertiesModel.ShowCompass = false;
-
-            atom.Element = AtomPropertiesModel.Element;
-
-            if (AtomPropertiesModel.IsElement)
+            if (!_inhibitEvents)
             {
-                atom.FormalCharge = AtomPropertiesModel.Charge;
-                atom.ExplicitC = AtomPropertiesModel.ExplicitC;
-                atom.ExplicitH = AtomPropertiesModel.ExplicitH;
-                atom.ExplicitHPlacement = AtomPropertiesModel.ExplicitHydrogenPlacement;
+                _inhibitEvents = true;
 
-                if (string.IsNullOrEmpty(AtomPropertiesModel.Isotope))
-                {
-                    atom.IsotopeNumber = null;
-                }
-                else
-                {
-                    atom.IsotopeNumber = int.Parse(AtomPropertiesModel.Isotope);
-                }
+                List<Atom> atoms = _atomPropertiesModel.MicroModel.GetAllAtoms();
+                Atom atom = atoms[0];
 
-                if (atom.Element is Element)
+                _atomPropertiesModel.ShowCompass = false;
+
+                atom.Element = _atomPropertiesModel.Element;
+
+                if (_atomPropertiesModel.IsElement)
                 {
+                    atom.FormalCharge = _atomPropertiesModel.Charge;
+                    atom.ExplicitC = _atomPropertiesModel.ExplicitC;
+                    atom.ExplicitH = _atomPropertiesModel.ExplicitH;
+                    atom.ExplicitHPlacement = _atomPropertiesModel.ExplicitHydrogenPlacement;
+
+                    foreach (Electron electron in atom.Electrons.Values.ToList())
+                    {
+                        atom.RemoveElectron(electron);
+                    }
+
+                    foreach (KeyValuePair<CompassPoints, ElectronType> pair in _atomPropertiesModel.ExplicitElectronPlacements)
+                    {
+                        Electron electron = new Electron
+                        {
+                            Count = pair.Value == ElectronType.Radical ? 1 : 2,
+                            ExplicitPlacement = pair.Key,
+                            Parent = atom,
+                            Type = pair.Value
+                        };
+                        atom.AddElectron(electron);
+                    }
+
+                    if (string.IsNullOrEmpty(_atomPropertiesModel.Isotope))
+                    {
+                        atom.IsotopeNumber = null;
+                    }
+                    else
+                    {
+                        atom.IsotopeNumber = int.Parse(_atomPropertiesModel.Isotope);
+                    }
+
                     SetVisibilityFlags(atom);
                 }
-            }
 
-            if (AtomPropertiesModel.IsFunctionalGroup)
-            {
-                atom.ExplicitFunctionalGroupPlacement = AtomPropertiesModel.ExplicitFunctionalGroupPlacement;
-                atom.FormalCharge = null;
-                atom.ExplicitC = null;
-                atom.ExplicitH = null;
-                atom.IsotopeNumber = null;
-
-                if (AtomPropertiesModel.Element is FunctionalGroup fg)
+                if (_atomPropertiesModel.IsFunctionalGroup)
                 {
-                    AtomPropertiesModel.ShowHydrogenLabels = false;
-                    AtomPropertiesModel.ShowCompass = fg.Flippable;
-                }
-            }
+                    atom.ExplicitFunctionalGroupPlacement = _atomPropertiesModel.ExplicitFunctionalGroupPlacement;
+                    atom.FormalCharge = null;
+                    atom.ExplicitC = null;
+                    atom.ExplicitH = null;
+                    atom.IsotopeNumber = null;
 
-            Preview.Chemistry = AtomPropertiesModel.MicroModel.Copy();
-            IsDirty = true;
+                    if (_atomPropertiesModel.Element is FunctionalGroup fg)
+                    {
+                        _atomPropertiesModel.ShowHydrogenLabels = false;
+                        _atomPropertiesModel.ShowCompass = fg.Flippable;
+                    }
+                }
+
+                Preview.Chemistry = _atomPropertiesModel.MicroModel.Copy();
+                IsDirty = true;
+
+                _inhibitEvents = false;
+            }
         }
 
         private void OnClosing_AtomPropertyEditor(object sender, CancelEventArgs e)
@@ -371,26 +436,55 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void OnChecked_PlacementButton(object sender, RoutedEventArgs e)
+        private void OnClick_ChangeToElement(object sender, RoutedEventArgs e)
         {
-            ShowPreview();
-        }
+            MinWidth = WidthOfAtomMode;
+            Width = WidthOfAtomMode;
 
-        private void OnChecked_FGPlacementButton(object sender, RoutedEventArgs e)
-        {
-            ShowPreview();
-        }
-
-        private void OnClick_Element(object sender, RoutedEventArgs e)
-        {
-            List<Atom> atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
+            List<Atom> atoms = _atomPropertiesModel.MicroModel.GetAllAtoms();
             Atom atom = atoms[0];
 
-            if (AtomPropertiesModel.IsElement
-                && AtomPropertiesModel.Element is Element)
+            if (_atomPropertiesModel.IsElement
+                && _atomPropertiesModel.Element is Element)
             {
-                SetVisibilityFlags(atom);
+                // ToDo: Where should this data come from ???
+                _atomPropertiesModel.ExplicitElectronPlacements = new Dictionary<CompassPoints, ElectronType>
+                                                                  {
+                                                                      {
+                                                                          CompassPoints.NorthEast, ElectronType.LonePair
+                                                                      }
+                                                                  };
+                _atomPropertiesModel.ExplicitHydrogenPlacement = null;
             }
+
+            Compass1.CompassControlType = CompassControlType.Hydrogens;
+            Compass2.CompassControlType = CompassControlType.Electrons;
+
+            Compass1.SelectedCompassPoint = _atomPropertiesModel.ExplicitHydrogenPlacement;
+            Compass2.SelectedElectronValues = _atomPropertiesModel.ExplicitElectronPlacements;
+
+            SetVisibilityFlags(atom);
+        }
+
+        private void OnClick_ChangeToFunctionalGroup(object sender, RoutedEventArgs e)
+        {
+            MinWidth = WidthOfFunctionalGroupMode;
+            Width = WidthOfFunctionalGroupMode;
+
+            _atomPropertiesModel.ShowCompass = false;
+
+            if (_atomPropertiesModel.IsFunctionalGroup
+                && _atomPropertiesModel.Element is FunctionalGroup fg)
+            {
+                _atomPropertiesModel.ShowCompass = fg.Flippable;
+
+                // ToDo: Where should this data come from ???
+                _atomPropertiesModel.ExplicitFunctionalGroupPlacement = null;
+            }
+
+            Compass3.CompassControlType = CompassControlType.FunctionalGroups;
+
+            Compass3.SelectedCompassPoint = _atomPropertiesModel.ExplicitFunctionalGroupPlacement;
         }
 
         private void SetVisibilityFlags(Atom atom)
@@ -399,25 +493,16 @@ namespace Chem4Word.ACME.Controls
 
             bool canShowHydrogen = ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{atom.Element.Symbol}|");
 
-            AtomPropertiesModel.ShowHydrogenLabels = canShowHydrogen
-                                                     || atom.IsHetero
-                                                     || atom.IsTerminal;
+            _atomPropertiesModel.ShowHydrogenLabels = canShowHydrogen
+                                                      || atom.IsHetero
+                                                      || atom.IsTerminal;
 
-            bool showHydrogenLabels = atom.ShowImplicitHydrogenCharacters;
-            string atomSymbol = atom.AtomSymbol;
+            //bool showHydrogenLabels = atom.ShowImplicitHydrogenCharacters;
+            //string atomSymbol = atom.AtomSymbol;
 
-            AtomPropertiesModel.ShowCompass = showHydrogenLabels && atom.ImplicitHydrogenCount > 0 && atomSymbol != "";
-        }
-
-        private void OnClick_FunctionalGroup(object sender, RoutedEventArgs e)
-        {
-            AtomPropertiesModel.ShowCompass = false;
-
-            if (AtomPropertiesModel.IsFunctionalGroup
-                && AtomPropertiesModel.Element is FunctionalGroup fg)
-            {
-                AtomPropertiesModel.ShowCompass = fg.Flippable;
-            }
+            //_atomPropertiesModel.ShowCompass = showHydrogenLabels && atom.ImplicitHydrogenCount > 0 && atomSymbol != "";
+            // ToDo: Need to work out what the new rules are ...
+            _atomPropertiesModel.ShowCompass = true;
         }
 
         private void OnSelectionChanged_ImplicitHydrogenMode(object sender, SelectionChangedEventArgs e)
@@ -428,14 +513,14 @@ namespace Chem4Word.ACME.Controls
                 ExplicitCheckBox.IsEnabled = true;
                 if (cbi.Tag is null)
                 {
-                    AtomPropertiesModel.ExplicitH = null;
+                    _atomPropertiesModel.ExplicitH = null;
                 }
                 else
                 {
                     if (Enum.TryParse(cbi.Tag.ToString(), out HydrogenLabels hydrogenLabels))
                     {
-                        AtomPropertiesModel.ExplicitH = hydrogenLabels;
-                        List<Atom> atoms = AtomPropertiesModel.MicroModel.GetAllAtoms();
+                        _atomPropertiesModel.ExplicitH = hydrogenLabels;
+                        List<Atom> atoms = _atomPropertiesModel.MicroModel.GetAllAtoms();
                         Atom atom = atoms[0];
                         if (atom.IsCarbon && hydrogenLabels == HydrogenLabels.All)
                         {
@@ -443,8 +528,71 @@ namespace Chem4Word.ACME.Controls
                         }
                     }
                 }
-                ShowPreview();
+
+                if (!_inhibitEvents)
+                {
+                    ShowPreview();
+                }
+
                 IsDirty = true;
+            }
+        }
+
+        private void OnCompassValueChanged_HydrogensCompass(object sender, WpfEventArgs e)
+        {
+            if (sender is Compass compass)
+            {
+                switch (compass.CompassControlType)
+                {
+                    case CompassControlType.Hydrogens:
+                        _atomPropertiesModel.ExplicitHydrogenPlacement = compass.SelectedCompassPoint;
+                        if (!_inhibitEvents)
+                        {
+                            ShowPreview();
+                        }
+                        IsDirty = true;
+                        break;
+                }
+            }
+        }
+
+        private void OnCompassValueChanged_FunctionalGroupsCompass(object sender, WpfEventArgs e)
+        {
+            if (sender is Compass compass)
+            {
+                switch (compass.CompassControlType)
+                {
+                    case CompassControlType.FunctionalGroups:
+                        _atomPropertiesModel.ExplicitFunctionalGroupPlacement = compass.SelectedCompassPoint;
+                        if (!_inhibitEvents)
+                        {
+                            ShowPreview();
+                        }
+                        IsDirty = true;
+                        break;
+                }
+            }
+        }
+
+        private void OnCompassValueChanged_ElectronsCompass(object sender, WpfEventArgs e)
+        {
+            if (sender is Compass compass)
+            {
+                switch (compass.CompassControlType)
+                {
+                    case CompassControlType.Electrons:
+                        // No need to update the model here as data binding has done it for us
+                        foreach (KeyValuePair<CompassPoints, ElectronType> pair in _atomPropertiesModel.ExplicitElectronPlacements)
+                        {
+                            Debug.WriteLine($"{pair.Key} {pair.Value}");
+                        }
+                        if (!_inhibitEvents)
+                        {
+                            ShowPreview();
+                        }
+                        IsDirty = true;
+                        break;
+                }
             }
         }
     }

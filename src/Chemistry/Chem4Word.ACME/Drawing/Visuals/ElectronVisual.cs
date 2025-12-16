@@ -8,6 +8,7 @@
 using Chem4Word.ACME.Drawing.Text;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
+using Chem4Word.Model2.Enums;
 using System.Windows;
 using System.Windows.Media;
 
@@ -62,11 +63,13 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
             //and intersect it with the convex hull to find the edge point
             var endPoint = ParentVisual.GetIntersection(center, center + placementVector);
+
             //now extend it by the standoff distance plus the size of the electron symbol
             Vector unitVector = placementVector;
             unitVector.Normalize();
             placementVector = (endPoint.Value - center) + unitVector * (ParentVisual.SymbolSize / 4);
             Point electronCenter = center + placementVector;
+
             //this is the centre of the electron symbol
             //if we're drawing a radical, then draw a simple dot
             double radius = SymbolSize / 10;

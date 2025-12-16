@@ -51,6 +51,8 @@ namespace Chem4Word.Telemetry
 
         public string AddInLocation { get; set; }
 
+        private string _sourceCodeLocation;
+
         public string IpAddress { get; set; }
 
         public string IpObtainedFrom { get; set; }
@@ -111,9 +113,9 @@ namespace Chem4Word.Telemetry
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                var userDomainName = Environment.UserDomainName;
-                var userName = Environment.UserName;
-                var machineName = Environment.MachineName;
+                string userDomainName = Environment.UserDomainName;
+                string userName = Environment.UserName;
+                string machineName = Environment.MachineName;
 
                 if (userDomainName.Equals(machineName))
                 {
@@ -190,7 +192,7 @@ namespace Chem4Word.Telemetry
 
                 #region Get Office/Word Version
 
-                var functionName = "";
+                string functionName = "";
                 try
                 {
                     functionName = "OfficeHelper.GetClick2RunProductIds()";
@@ -216,6 +218,8 @@ namespace Chem4Word.Telemetry
                 // CodeBase is the location of the installed files
                 Uri uriCodeBase = new Uri(assembly.CodeBase);
                 AddInLocation = Path.GetDirectoryName(uriCodeBase.LocalPath);
+
+                _sourceCodeLocation = FindSolutionFolder(AddInLocation);
 
                 Version productVersion = assembly.GetName().Version;
                 AssemblyVersionNumber = productVersion.ToString();
@@ -258,11 +262,11 @@ namespace Chem4Word.Telemetry
 
                 AllAddIns = InfoHelper.GetListOfAddIns();
 
-                var uniqueManifests = AllAddIns
-                    .Select(p => p.Manifest.ToLower())
-                    .Distinct()
-                    .Where(s => !string.IsNullOrEmpty(s) && s.Contains("chem4word"))
-                    .ToList();
+                List<string> uniqueManifests = AllAddIns
+                                               .Select(p => p.Manifest.ToLower())
+                                               .Distinct()
+                                               .Where(s => !string.IsNullOrEmpty(s) && s.Contains("chem4word"))
+                                               .ToList();
 
                 MultipleVersions = uniqueManifests.Count > 1;
 
@@ -313,13 +317,13 @@ namespace Chem4Word.Telemetry
 
             try
             {
-                var q1 = "*[System/Provider/@Name='Microsoft-Windows-Kernel-Boot' and System/EventID=27]";
-                var d1 = LastEventDateTime(q1);
-                LastBootUpTime = $"{SafeDate.ToLongDate(d1.ToUniversalTime())}";
+                string query1 = "*[System/Provider/@Name='Microsoft-Windows-Kernel-Boot' and System/EventID=27]";
+                DateTime dateTime1 = LastEventDateTime(query1);
+                LastBootUpTime = $"{SafeDate.ToLongDate(dateTime1.ToUniversalTime())}";
 
-                var q2 = "*[System/Provider/@Name='Microsoft-Windows-Winlogon' and System/EventID=7001]";
-                var d2 = LastEventDateTime(q2);
-                LastLoginTime = $"{SafeDate.ToLongDate(d2.ToUniversalTime())}";
+                string query2 = "*[System/Provider/@Name='Microsoft-Windows-Winlogon' and System/EventID=7001]";
+                DateTime dateTime2 = LastEventDateTime(query2);
+                LastLoginTime = $"{SafeDate.ToLongDate(dateTime2.ToUniversalTime())}";
             }
             catch
             {
@@ -331,15 +335,15 @@ namespace Chem4Word.Telemetry
             {
                 DateTime result = DateTime.MinValue;
 
-                var eventLogQuery = new EventLogQuery("System", PathType.LogName, query);
-                using (var elReader = new EventLogReader(eventLogQuery))
+                EventLogQuery eventLogQuery = new EventLogQuery("System", PathType.LogName, query);
+                using (EventLogReader elReader = new EventLogReader(eventLogQuery))
                 {
                     EventRecord eventInstance = elReader.ReadEvent();
                     while (eventInstance != null)
                     {
                         if (eventInstance.TimeCreated.HasValue)
                         {
-                            var thisTime = eventInstance.TimeCreated.Value.ToUniversalTime();
+                            DateTime thisTime = eventInstance.TimeCreated.Value.ToUniversalTime();
                             if (thisTime > result)
                             {
                                 result = thisTime;
@@ -377,62 +381,92 @@ namespace Chem4Word.Telemetry
 
         private void GetGitStatus(object o)
         {
-            var result = new List<string>();
+            List<string> result = new List<string> { "Git Origin", $"Source Code Folder '{_sourceCodeLocation}'" };
 
-            result.Add("Git Origin");
-            result.AddRange(RunCommand("git.exe", "config --get remote.origin.url", AddInLocation));
+            result.AddRange(RunCommand("git.exe", "config --get remote.origin.url", _sourceCodeLocation));
 
             // Ensure status is accurate
-            var fetchOutput = RunCommand("git.exe", "fetch", AddInLocation);
-            if (fetchOutput.Any())
+            List<string> fetchResult = RunCommand("git.exe", "fetch", _sourceCodeLocation);
+            if (fetchResult.Any())
             {
                 result.Add("Git fetch");
-                result.AddRange(fetchOutput);
+                result.AddRange(fetchResult);
             }
 
             // git status -s -b --porcelain == Gets Branch, Status and a List of any changed files
-            var changedFiles = RunCommand("git.exe", "status -s -b --porcelain", AddInLocation);
-            if (changedFiles.Any())
+            List<string> statusResult = RunCommand("git.exe", "status -s -b --porcelain", _sourceCodeLocation);
+            if (statusResult.Any())
             {
                 result.Add("Git Branch, Status & Changed files");
-                result.AddRange(changedFiles);
+                result.AddRange(statusResult);
             }
             GitStatus = string.Join(Environment.NewLine, result.ToArray());
 
-            var message = $"GetGitStatus finished at {SafeDate.ToLongDate(DateTime.UtcNow)}";
+            string message = $"GetGitStatus finished at {SafeDate.ToLongDate(DateTime.UtcNow)}";
             StartUpTimings.Add(message);
             Debug.WriteLine(message);
         }
 
+        private string FindSolutionFolder(string startPath)
+        {
+            string current = startPath;
+            while (!string.IsNullOrEmpty(current))
+            {
+                string[] slnFiles = Directory.GetFiles(current, "*.sln");
+                if (slnFiles.Length > 0)
+                {
+                    return current;
+                }
+
+                current = Directory.GetParent(current)?.FullName;
+            }
+
+            return null;
+        }
+
         private List<string> RunCommand(string exeName, string args, string folder)
         {
-            var results = new List<string>();
-            try
+            List<string> results = new List<string>();
+
+            if (!string.IsNullOrEmpty(folder))
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo(exeName)
+                try
                 {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    WorkingDirectory = folder,
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                    Arguments = args
-                };
+                    ProcessStartInfo startInfo = new ProcessStartInfo(exeName)
+                    {
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        WorkingDirectory = folder,
+                        RedirectStandardInput = true,
+                        RedirectStandardOutput = true,
+                        Arguments = args
+                    };
 
-                Process process = new Process();
-                process.StartInfo = startInfo;
-                process.Start();
+                    using (Process process = new Process())
+                    {
+                        process.StartInfo = startInfo;
+                        process.Start();
 
-                while (!process.StandardOutput.EndOfStream)
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            results.Add(process.StandardOutput.ReadLine());
+                        }
+                    }
+                }
+                catch (Exception exception)
                 {
-                    results.Add(process.StandardOutput.ReadLine());
+                    results.Add($"Exception running '{exeName}' '{args}' in folder '{folder}'");
+                    results.Add(exception.ToString());
+
+                    Debugger.Break();
                 }
             }
-            catch (Exception exception)
+            else
             {
-                results.Add(exception.Message);
+                results.Add("Folder is null");
             }
+
             return results;
         }
 
@@ -441,10 +475,10 @@ namespace Chem4Word.Telemetry
             List<string> screens = new List<string>();
 
             int idx = 0;
-            foreach (var screen in Screen.AllScreens)
+            foreach (Screen screen in Screen.AllScreens)
             {
                 idx++;
-                var primary = screen.Primary ? "[P]" : "";
+                string primary = screen.Primary ? "[P]" : "";
                 screens.Add($"#{idx}{primary}: {screen.Bounds.Width}x{screen.Bounds.Height} @ {screen.Bounds.X},{screen.Bounds.Y}");
             }
 
@@ -694,7 +728,7 @@ namespace Chem4Word.Telemetry
 
         private void GetInternalVersion(string url)
         {
-            var data = GetData(url);
+            string data = GetData(url);
 
             // Tidy Up the data
             data = data.Replace("Your IP address : ", "");
@@ -702,11 +736,11 @@ namespace Chem4Word.Telemetry
             data = data.Replace("<br/>", "|");
             data = data.Replace("<br />", "|");
 
-            var lines = data.Split('|');
+            string[] lines = data.Split('|');
 
             if (lines[0].Contains(":"))
             {
-                var ipV6Parts = lines[0].Split(':');
+                string[] ipV6Parts = lines[0].Split(':');
                 // Must have between 4 and 8 parts
                 if (ipV6Parts.Length >= 4 && ipV6Parts.Length <= 8)
                 {
@@ -718,7 +752,7 @@ namespace Chem4Word.Telemetry
             if (lines[0].Contains("."))
             {
                 // Must have 4 parts
-                var ipV4Parts = lines[0].Split('.');
+                string[] ipV4Parts = lines[0].Split('.');
                 if (ipV4Parts.Length == 4)
                 {
                     IpAddress = "IpAddress " + lines[0];
@@ -743,7 +777,7 @@ namespace Chem4Word.Telemetry
 
         private void GetExternalVersion(string url)
         {
-            var data = GetData(url);
+            string data = GetData(url);
 
             if (data.Contains(":"))
             {
@@ -762,7 +796,7 @@ namespace Chem4Word.Telemetry
         {
             string result = "0.0.0.0";
 
-            var securityProtocol = ServicePointManager.SecurityProtocol;
+            SecurityProtocolType securityProtocol = ServicePointManager.SecurityProtocol;
 
             try
             {
@@ -795,10 +829,10 @@ namespace Chem4Word.Telemetry
 
                     if (HttpStatusCode.OK.Equals(response.StatusCode))
                     {
-                        var stream = response.GetResponseStream();
+                        Stream stream = response.GetResponseStream();
                         if (stream != null)
                         {
-                            using (var reader = new StreamReader(stream))
+                            using (StreamReader reader = new StreamReader(stream))
                             {
                                 result = reader.ReadToEnd();
                             }
@@ -827,7 +861,7 @@ namespace Chem4Word.Telemetry
         private DateTime FromPhpDate(string line)
         {
             string[] p = line.Split(',');
-            var serverUtc = new DateTime(int.Parse(p[0]), int.Parse(p[1]), int.Parse(p[2]), int.Parse(p[3]), int.Parse(p[4]), int.Parse(p[5]));
+            DateTime serverUtc = new DateTime(int.Parse(p[0]), int.Parse(p[1]), int.Parse(p[2]), int.Parse(p[3]), int.Parse(p[4]), int.Parse(p[5]));
             return DateTime.SpecifyKind(serverUtc, DateTimeKind.Utc);
         }
     }

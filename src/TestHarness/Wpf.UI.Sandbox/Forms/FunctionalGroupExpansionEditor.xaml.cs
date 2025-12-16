@@ -34,16 +34,16 @@ namespace Wpf.UI.Sandbox.Forms
 
         private void OnLoaded_MainWindow(object sender, RoutedEventArgs e)
         {
-            var model = new List<FgItem>();
+            List<FgItem> model = new List<FgItem>();
 
-            var groupsToShow = ModelGlobals.FunctionalGroupsList
-                                      .Where(g => g.GroupType == GroupType.SuperAtom)
-                                      .OrderBy(g => g.AtomicWeight)
-                                      .ThenBy(g => g.Name);
+            IOrderedEnumerable<FunctionalGroup> groupsToShow = ModelGlobals.FunctionalGroupsList
+                                                                           .Where(g => g.GroupType == GroupType.SuperAtom)
+                                                                           .OrderBy(g => g.AtomicWeight)
+                                                                           .ThenBy(g => g.Name);
 
-            foreach (var functionalGroup in groupsToShow)
+            foreach (FunctionalGroup functionalGroup in groupsToShow)
             {
-                var item = new FgItem
+                FgItem item = new FgItem
                 {
                     Name = functionalGroup.Name,
                     Group = functionalGroup
@@ -70,21 +70,21 @@ namespace Wpf.UI.Sandbox.Forms
         {
             if (Groups.SelectedItem is FgItem item)
             {
-                var cmlConverter = new CMLConverter();
+                CMLConverter cmlConverter = new CMLConverter();
 
                 if (!string.IsNullOrEmpty(_lastFunctionalGroup))
                 {
                     if (Editor.IsDirty)
                     {
-                        var fge = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
+                        FunctionalGroup fge = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
                         if (fge != null)
                         {
-                            var temp = Editor.ActiveController.Model.Copy();
+                            Model temp = Editor.ActiveController.Model.Copy();
                             if (temp.TotalAtomsCount > 0)
                             {
                                 temp.RescaleForCml();
                                 temp.Relabel(true);
-                                var cml = cmlConverter.Export(temp, compressed: true, format: CmlFormat.ChemDraw);
+                                string cml = cmlConverter.Export(temp, compressed: true, format: CmlFormat.ChemDraw);
                                 fge.Expansion = cml;
                             }
                             else
@@ -97,16 +97,16 @@ namespace Wpf.UI.Sandbox.Forms
 
                 _lastFunctionalGroup = item.Name;
 
-                var fg = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(item.Name));
+                FunctionalGroup fg = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(item.Name));
 
                 if (fg == null || string.IsNullOrEmpty(fg.Expansion))
                 {
-                    var model = new Model();
+                    Model model = new Model();
                     Editor.SetProperties(new CMLConverter().Export(model), null, new RenderingOptions());
                 }
                 else
                 {
-                    var model = cmlConverter.Import(fg.Expansion);
+                    Model model = cmlConverter.Import(fg.Expansion);
                     Debug.WriteLine($"Formula for '{fg.Name}' is {model.ConciseFormula}");
                     Editor.SetProperties(new CMLConverter().Export(model), null, new RenderingOptions());
                 }
@@ -121,16 +121,16 @@ namespace Wpf.UI.Sandbox.Forms
         {
             if (Editor.IsDirty)
             {
-                var fg = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
+                FunctionalGroup fg = ModelGlobals.FunctionalGroupsList.FirstOrDefault(f => f.Name.Equals(_lastFunctionalGroup));
                 if (fg != null)
                 {
-                    var temp = Editor.ActiveController.Model.Copy();
+                    Model temp = Editor.ActiveController.Model.Copy();
                     if (temp.TotalAtomsCount > 0)
                     {
                         temp.RescaleForCml();
                         temp.Relabel(true);
-                        var cmlConverter = new CMLConverter();
-                        var cml = cmlConverter.Export(temp, compressed: true, format: CmlFormat.ChemDraw);
+                        CMLConverter cmlConverter = new CMLConverter();
+                        string cml = cmlConverter.Export(temp, compressed: true, format: CmlFormat.ChemDraw);
                         fg.Expansion = cml;
                     }
                     else
@@ -144,30 +144,30 @@ namespace Wpf.UI.Sandbox.Forms
 
             ModelGlobals.FunctionalGroupsList.Sort(delegate (FunctionalGroup x, FunctionalGroup y)
                                               {
-                                                  var xType = (int)x.GroupType;
-                                                  var yType = (int)y.GroupType;
+                                                  int xType = (int)x.GroupType;
+                                                  int yType = (int)y.GroupType;
 
                                                   if (xType != yType)
                                                   {
                                                       return xType.CompareTo(yType);
                                                   }
 
-                                                  var xWeight = x.AtomicWeight;
-                                                  var yWeight = y.AtomicWeight;
+                                                  double xWeight = x.AtomicWeight;
+                                                  double yWeight = y.AtomicWeight;
                                                   if (xWeight != yWeight)
                                                   {
                                                       return xWeight.CompareTo(yWeight);
                                                   }
 
-                                                  var xComment = $"{x.Comment}";
-                                                  var yComment = $"{y.Comment}";
+                                                  string xComment = $"{x.Comment}";
+                                                  string yComment = $"{y.Comment}";
                                                   if (xComment != yComment)
                                                   {
                                                       return string.Compare(xComment, yComment, StringComparison.InvariantCultureIgnoreCase);
                                                   }
 
-                                                  var xName = x.Name;
-                                                  var yName = y.Name;
+                                                  string xName = x.Name;
+                                                  string yName = y.Name;
 
                                                   if (xName.StartsWith("R"))
                                                   {
@@ -193,14 +193,14 @@ namespace Wpf.UI.Sandbox.Forms
                                                           return "R002";
                                                       }
 
-                                                      var number = int.Parse(name.Substring(1)) + 100;
+                                                      int number = int.Parse(name.Substring(1)) + 100;
                                                       return $"R{number:000}";
                                                   }
 
                                                   return string.Compare(xName, yName, StringComparison.InvariantCultureIgnoreCase);
                                               });
 
-            var xml = FunctionalGroups.ExportAsXml();
+            string xml = FunctionalGroups.ExportAsXml();
             Clipboard.SetText(XmlHelper.AddHeader(xml));
             MessageBox.Show($@"Please replace $\src\Chemistry\Chem4Word.Model2\Resources\FunctionalGroups.xml{Environment.NewLine}with the results on the clipboard!", "Data on Clipboard");
         }

@@ -4,12 +4,13 @@
 //  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
-namespace Chem4Word.Model2
+
+namespace Chem4Word.ACME.Enums
 {
-    public enum ElectronType
+    public enum CompassControlType
     {
-        Radical = 1,
-        LonePair = 2,
-        Carbenoid=3
+        Hydrogens,
+        FunctionalGroups,
+        Electrons
     }
 }

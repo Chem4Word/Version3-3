@@ -35,8 +35,8 @@ namespace Wpf.UI.Sandbox.Forms
 
         private void StartAnimation()
         {
-            var duration = new Duration(TimeSpan.FromSeconds(5));
-            var animation = new DoubleAnimation
+            Duration duration = new Duration(TimeSpan.FromSeconds(5));
+            DoubleAnimation animation = new DoubleAnimation
             {
                 Duration = duration,
                 From = 0,
@@ -44,7 +44,7 @@ namespace Wpf.UI.Sandbox.Forms
             };
             Storyboard.SetTarget(animation, ProgressBar);
             Storyboard.SetTargetProperty(animation, new PropertyPath(RangeBase.ValueProperty));
-            var storyboard = new Storyboard
+            Storyboard storyboard = new Storyboard
             {
                 RepeatBehavior = RepeatBehavior.Forever
             };

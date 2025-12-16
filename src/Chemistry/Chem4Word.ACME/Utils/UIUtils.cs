@@ -11,10 +11,13 @@ using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Entities;
 using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Models;
+using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using IChem4Word.Contracts;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
@@ -107,8 +110,10 @@ namespace Chem4Word.ACME.Utils
             return new Point(left, top);
         }
 
-        public static void EditBondProperties(Bond bond, EditController controller,
-                                              Point screenPosition, EditorCanvas currentEditor)
+        public static void EditBondProperties(Bond bond,
+                                              EditController controller,
+                                              Point screenPosition,
+                                              EditorCanvas currentEditor)
         {
             ShutdownMode mode = Application.Current.ShutdownMode;
 
@@ -193,7 +198,8 @@ namespace Chem4Word.ACME.Utils
         }
 
         public static void EditAtomProperties(Atom atom,
-                                              EditController controller, Point screenPosition,
+                                              EditController controller,
+                                              Point screenPosition,
                                               EditorCanvas currentEditor)
         {
             ShutdownMode mode = Application.Current.ShutdownMode;
@@ -217,6 +223,45 @@ namespace Chem4Word.ACME.Utils
                 atomPropertiesModel.ExplicitC = atom.ExplicitC;
                 atomPropertiesModel.ExplicitH = atom.ExplicitH;
                 atomPropertiesModel.ExplicitHydrogenPlacement = atom.ExplicitHPlacement;
+
+                atomPropertiesModel.ExplicitElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
+                if (atom.Electrons.Count > 0)
+                {
+                    foreach (Electron electron in atom.Electrons.Values)
+                    {
+                        bool isValid = false;
+
+                        CompassPoints cp = CompassPoints.North;
+
+                        // Explicit Placement
+                        CompassPoints? ep = electron.ExplicitPlacement;
+                        if (ep != null)
+                        {
+                            cp = ep.Value;
+                            isValid = true;
+                        }
+                        else
+                        {
+                            // Automatic placement
+                            CompassPoints? ap = electron.Placement;
+                            if (ap.HasValue)
+                            {
+                                cp = ap.Value;
+                                isValid = true;
+                            }
+                        }
+                        ElectronType ty = electron.Type;
+
+                        if (isValid)
+                        {
+                            atomPropertiesModel.ExplicitElectronPlacements.Add(cp, ty);
+                        }
+                        else
+                        {
+                            Debugger.Break();
+                        }
+                    }
+                }
                 atomPropertiesModel.ShowHydrogenLabels = true;
             }
 
@@ -234,11 +279,11 @@ namespace Chem4Word.ACME.Utils
             atomPropertiesModel.MicroModel = new Model();
             atomPropertiesModel.MicroModel.SetUserOptions(currentEditor.Controller.Model.GetCurrentOptions());
 
-            Molecule m = new Molecule();
-            atomPropertiesModel.MicroModel.AddMolecule(m);
-            m.Parent = atomPropertiesModel.MicroModel;
+            Molecule molecule = new Molecule();
+            atomPropertiesModel.MicroModel.AddMolecule(molecule);
+            molecule.Parent = atomPropertiesModel.MicroModel;
 
-            Atom a = new Atom
+            Atom newAtom = new Atom
             {
                 Id = atom.Id,
                 Element = atom.Element,
@@ -246,10 +291,14 @@ namespace Chem4Word.ACME.Utils
                 ExplicitC = atom.ExplicitC,
                 ExplicitH = atom.ExplicitH,
                 FormalCharge = atom.FormalCharge,
-                IsotopeNumber = atom.IsotopeNumber
+                IsotopeNumber = atom.IsotopeNumber,
             };
-            m.AddAtom(a);
-            a.Parent = m;
+            foreach (Electron electron in atom.Electrons.Values)
+            {
+                newAtom.AddElectron(electron.Copy());
+            }
+            molecule.AddAtom(newAtom);
+            newAtom.Parent = molecule;
 
             int atomId = 0;
             foreach (Bond bond in atom.Bonds)
@@ -262,9 +311,9 @@ namespace Chem4Word.ACME.Utils
                     ExplicitH = HydrogenLabels.None,
                     Position = bond.OtherAtom(atom).Position
                 };
-                m.AddAtom(ac);
-                ac.Parent = m;
-                Bond b = new Bond(a, ac) { Order = bond.Order };
+                molecule.AddAtom(ac);
+                ac.Parent = molecule;
+                Bond b = new Bond(newAtom, ac) { Order = bond.Order };
                 if (bond.Stereo != BondStereo.None)
                 {
                     b.Stereo = bond.Stereo;
@@ -272,18 +321,18 @@ namespace Chem4Word.ACME.Utils
                     {
                         if (atom.Path.Equals(bond.StartAtom.Path))
                         {
-                            b.StartAtomInternalId = a.InternalId;
+                            b.StartAtomInternalId = newAtom.InternalId;
                             b.EndAtomInternalId = ac.InternalId;
                         }
                         else
                         {
                             b.StartAtomInternalId = ac.InternalId;
-                            b.EndAtomInternalId = a.InternalId;
+                            b.EndAtomInternalId = newAtom.InternalId;
                         }
                     }
                 }
-                m.AddBond(b);
-                b.Parent = m;
+                molecule.AddBond(b);
+                b.Parent = molecule;
             }
             atomPropertiesModel.MicroModel.ScaleToAverageBondLength(20);
 
@@ -330,7 +379,10 @@ namespace Chem4Word.ACME.Utils
             }
         }
 
-        public static void EditMoleculeProperties(Molecule moleculeBeingEdited, EditController controller, Point screenPosition, EditorCanvas currentEditor)
+        public static void EditMoleculeProperties(Molecule moleculeBeingEdited,
+                                                  EditController controller,
+                                                  Point screenPosition,
+                                                  EditorCanvas currentEditor)
         {
             ShutdownMode mode = Application.Current.ShutdownMode;
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;

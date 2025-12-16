@@ -26,6 +26,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Button
             Grid.Row="0"
@@ -99,5 +100,13 @@
             Content="Formula Testing"
             Style="{StaticResource LauncherButtons}"
             Tag="FormulaTesting" />
+        <Button
+            Grid.Row="3"
+            Grid.Column="0"
+            d:IsLocked="True"
+            Click="OnClick_Button"
+            Content="Compass Control PoC"
+            Style="{StaticResource LauncherButtons}"
+            Tag="CompassTesting" />
     </Grid>
 </Window>

@@ -1,0 +1,81 @@
+﻿<UserControl
+    x:Class="Chem4Word.ACME.Controls.CompassButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:compassControl="clr-namespace:Chem4Word.ACME.Converters.CompassControl"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    d:DesignHeight="48"
+    d:DesignWidth="48"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <compassControl:ButtonBoolToVisibility x:Key="CompassButtonBoolToVisibilityConverter" />
+        <compassControl:ButtonInverseBoolToVisibility x:Key="CompassButtonInverseBoolToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <Grid d:IsLocked="True">
+        <!--  Hydrogens Mode  -->
+        <ToggleButton
+            x:Name="HydrogensModeButton"
+            d:IsLocked="True"
+            Click="OnInternalClick"
+            IsChecked="{Binding IsChecked, ElementName=Root, Mode=TwoWay}"
+            Visibility="{Binding IsElectronsMode, ElementName=Root, Converter={StaticResource CompassButtonInverseBoolToVisibilityConverter}}">
+            <ToggleButton.Template>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                        x:Name="border"
+                        Background="Transparent"
+                        BorderBrush="Orange"
+                        BorderThickness="2"
+                        CornerRadius="3">
+                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{Binding ButtonContent, ElementName=Root}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  Gray when CompassValue is null  -->
+                        <DataTrigger Binding="{Binding CompassValue, ElementName=Root}" Value="{x:Null}">
+                            <Setter TargetName="border" Property="BorderBrush" Value="Gray" />
+                            <Setter TargetName="border" Property="Background" Value="Transparent" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </ToggleButton.Template>
+        </ToggleButton>
+
+        <!--  Electrons Mode  -->
+        <ToggleButton
+            x:Name="ElectronsModeButton"
+            d:IsLocked="True"
+            Click="OnInternalClick"
+            IsChecked="{Binding IsChecked, ElementName=Root, Mode=TwoWay}"
+            Visibility="{Binding IsElectronsMode, ElementName=Root, Converter={StaticResource CompassButtonBoolToVisibilityConverter}}">
+            <ToggleButton.Template>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                        x:Name="border"
+                        Background="Transparent"
+                        BorderBrush="Orange"
+                        BorderThickness="2"
+                        CornerRadius="3">
+                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{Binding ButtonContent, ElementName=Root}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  Gray when ElectronValue is null  -->
+                        <DataTrigger Binding="{Binding ElectronValue, ElementName=Root}" Value="{x:Null}">
+                            <Setter TargetName="border" Property="BorderBrush" Value="Gray" />
+                            <Setter TargetName="border" Property="Background" Value="Transparent" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </ToggleButton.Template>
+        </ToggleButton>
+    </Grid>
+</UserControl>

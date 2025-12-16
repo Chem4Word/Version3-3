@@ -8,6 +8,7 @@
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
+using Chem4Word.Model2.Enums;
 using System.Collections.Specialized;
 using Xunit;
 

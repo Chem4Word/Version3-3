@@ -774,7 +774,7 @@ namespace Chem4Word.Model2
 
         public List<Atom> NeighboursExcept(Atom toIgnore)
         {
-            return NeighboursExcept(new [] { toIgnore });
+            return NeighboursExcept(new[] { toIgnore });
         }
 
         public List<Atom> NeighboursExcept(Atom[] toIgnore)
@@ -891,23 +891,42 @@ namespace Chem4Word.Model2
             OnPropertyChanged(nameof(SymbolText));
         }
 
+        public void AddRangeOfElectrons(List<Electron> electrons)
+        {
+            foreach (Electron electron in electrons)
+            {
+                AddElectron(electron);
+            }
+        }
+
         public void AddElectron(Electron toAdd)
         {
             _electrons[toAdd.InternalId] = toAdd;
-            var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
-                                                         new List<Electron> { toAdd });
-            OnCollectionChanged_Electrons(this, e);
-            UpdateElectronPropertyHandlers(e);
+            NotifyCollectionChangedEventArgs changedEventArgs =
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, 
+                                                     new List<Electron> { toAdd });
+            OnCollectionChanged_Electrons(this, changedEventArgs);
+            UpdateElectronPropertyHandlers(changedEventArgs);
         }
+
+        public void ClearElectrons()
+        {
+            foreach (Electron electron in _electrons.Values.ToList())
+            {
+                RemoveElectron(electron);
+            }
+        }
+
 
         public void RemoveElectron(Electron toRemove)
         {
             if (_electrons.Remove(toRemove.InternalId))
             {
-                var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove,
+                NotifyCollectionChangedEventArgs eventArgs
+                    = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove,
                                                              new List<Electron> { toRemove });
-                OnCollectionChanged_Electrons(this, e);
-                UpdateElectronPropertyHandlers(e);
+                OnCollectionChanged_Electrons(this, eventArgs);
+                UpdateElectronPropertyHandlers(eventArgs);
             }
         }
 

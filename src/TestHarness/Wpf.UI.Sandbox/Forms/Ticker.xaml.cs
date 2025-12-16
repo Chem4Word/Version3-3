@@ -21,14 +21,14 @@ namespace Wpf.UI.Sandbox.Forms
     {
         private int _index = 0;
 
-        private List<TickerItem> _tickerItems = new List<TickerItem>
-                                                {
-                                                    new TickerItem { Text = "#1 This is news item #1", Url = "https://item1" },
-                                                    new TickerItem { Text = "#2 This is news item #2", Url = "https://item2" },
-                                                    new TickerItem { Text = "#3 This is news item #3", Url = "https://item3" },
-                                                    new TickerItem { Text = "#4 This is news item #4", Url = "https://item4" },
-                                                    new TickerItem { Text = "#5 This is news item #5", Url = "https://item5" }
-                                                };
+        private readonly List<TickerItem> _tickerItems = new List<TickerItem>
+                                                         {
+                                                             new TickerItem { Text = "#1 This is news item #1", Url = "https://item1" },
+                                                             new TickerItem { Text = "#2 This is news item #2", Url = "https://item2" },
+                                                             new TickerItem { Text = "#3 This is news item #3", Url = "https://item3" },
+                                                             new TickerItem { Text = "#4 This is news item #4", Url = "https://item4" },
+                                                             new TickerItem { Text = "#5 This is news item #5", Url = "https://item5" }
+                                                         };
 
         public Ticker()
         {

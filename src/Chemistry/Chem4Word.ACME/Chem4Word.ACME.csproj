@@ -126,6 +126,12 @@
     <Compile Include="Controls\AnnotationEditor.cs" />
     <Compile Include="Controls\AnnotationEditorEventArgs.cs" />
     <Compile Include="Controls\AnnotationEditorExitArgsType.cs" />
+    <Compile Include="Controls\Compass.xaml.cs">
+      <DependentUpon>Compass.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CompassButton.xaml.cs">
+      <DependentUpon>CompassButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DragHandle.cs" />
     <Compile Include="Controls\TextBlockHelper.cs" />
     <Compile Include="Controls\ReactionOption.cs" />
@@ -134,6 +140,10 @@
     </Compile>
     <Compile Include="Controls\DesignTimeModels\BpeDesigner.cs" />
     <Compile Include="Controls\DesignTimeModels\ApeDesigner.cs" />
+    <Compile Include="Converters\CompassControl\ButtonBoolToVisibility.cs" />
+    <Compile Include="Converters\CompassControl\ButtonInverseBoolToVisibility.cs" />
+    <Compile Include="Converters\CompassControl\CompassTypeInverseToVisibility.cs" />
+    <Compile Include="Converters\CompassControl\CompassTypeToVisibility.cs" />
     <Compile Include="Drawing\LayoutSupport\ThickBondLayout.cs" />
     <Compile Include="Drawing\Text\BlockTextSource.cs" />
     <Compile Include="Drawing\Text\BlockTextRunProperties.cs" />
@@ -152,6 +162,7 @@
     <Compile Include="EditController\EditController.Reactions.cs" />
     <Compile Include="EditController\EditController.Selection.cs" />
     <Compile Include="EditController\EditController.StateManagement.cs" />
+    <Compile Include="Enums\CompassControlType.cs" />
     <Compile Include="Graphics\BlockedArrow.cs" />
     <Compile Include="Graphics\DashedArrow.cs" />
     <Compile Include="Graphics\EquilibriumArrow.cs" />
@@ -192,9 +203,7 @@
     <Compile Include="Graphics\QuadraticArrow.cs" />
     <Compile Include="Graphics\StraightArrow.cs" />
     <Compile Include="IHostedWpfEditor.cs" />
-    <Compile Include="LabelsEditor.xaml.cs">
-      <DependentUpon>LabelsEditor.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="LabelsEditor.xaml.cs" />
     <Compile Include="Controls\NamesEditor.xaml.cs">
       <DependentUpon>NamesEditor.xaml</DependentUpon>
     </Compile>
@@ -312,22 +321,16 @@
     <Compile Include="Controls\ChemistryCanvas.cs" />
     <Compile Include="Controls\ZoomBox.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
-    <Compile Include="CmlEditor.xaml.cs">
-      <DependentUpon>CmlEditor.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="CmlEditor.xaml.cs" />
     <Compile Include="Controls\ModeButton.cs" />
     <Compile Include="Converters\DoNothingConverter.cs" />
     <Compile Include="Converters\ElementConverter.cs" />
     <Compile Include="Converters\EnabledConverter.cs" />
     <Compile Include="Converters\ModeConverter.cs" />
-    <Compile Include="Display.xaml.cs">
-      <DependentUpon>Display.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Display.xaml.cs" />
     <Compile Include="Drawing\Text\GlyphText.cs" />
     <Compile Include="Drawing\Text\GlyphUtils.cs" />
-    <Compile Include="Editor.xaml.cs">
-      <DependentUpon>Editor.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Editor.xaml.cs" />
     <Compile Include="EditController\EditController.cs" />
     <Compile Include="Graphics\ArcArrow.cs" />
     <Compile Include="Graphics\Arrow.cs" />
@@ -342,6 +345,14 @@
     <Page Include="Controls\ChemistryItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Compass.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Controls\CompassButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Controls\MoleculePropertyEditor.xaml">
       <SubType>Designer</SubType>

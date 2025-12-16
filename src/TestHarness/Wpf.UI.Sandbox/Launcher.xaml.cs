@@ -40,7 +40,7 @@ namespace Wpf.UI.Sandbox
                         break;
 
                     case "Ticker":
-                        var top = Top + Height - 80;
+                        double top = Top + Height - 80;
                         window = new Ticker();
                         window.Height = 80;
                         window.Left = Left;
@@ -75,6 +75,11 @@ namespace Wpf.UI.Sandbox
 
                     case "FormulaTesting":
                         window = new FormulaTesting();
+                        window.ShowDialog();
+                        break;
+
+                    case "CompassTesting":
+                        window = new CompassTesting();
                         window.ShowDialog();
                         break;
                 }
