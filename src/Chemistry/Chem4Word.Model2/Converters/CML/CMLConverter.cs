@@ -51,69 +51,63 @@ namespace Chem4Word.Model2.Converters.CML
                     XElement root = modelDoc.Root;
 
                     //test to see whether the model originates from Chem4Word
-                    var hasC4W = root.Attributes().Where(a => a.IsNamespaceDeclaration && a.Name.LocalName == "c4w")
-                                     .Any();
+                    bool hasC4W = root.Attributes()
+                                      .Any(a => a.IsNamespaceDeclaration && a.Name.LocalName == "c4w");
 
                     newModel.FromChem4Word = hasC4W;
 
                     // Only import if set
                     XElement explicitC = CMLHelper.GetExplicitCarbonTag(root);
-                    if (explicitC != null && !string.IsNullOrEmpty(explicitC.Value))
+                    if (explicitC != null
+                        && !string.IsNullOrEmpty(explicitC.Value)
+                        && bool.TryParse(explicitC.Value, out var result1))
                     {
-                        if (bool.TryParse(explicitC.Value, out var result))
-                        {
-                            newModel.ExplicitC = result;
-                        }
+                        newModel.ExplicitC = result1;
                     }
 
                     // Only import if set
                     XElement explicitH = CMLHelper.GetExplicitHydrogenTag(root);
-                    if (explicitH != null && !string.IsNullOrEmpty(explicitH.Value))
+                    if (explicitH != null
+                        && !string.IsNullOrEmpty(explicitH.Value)
+                        && Enum.TryParse(explicitH.Value, out HydrogenLabels result2))
                     {
-                        if (Enum.TryParse(explicitH.Value, out HydrogenLabels result))
-                        {
-                            newModel.ExplicitH = result;
-                        }
+                        newModel.ExplicitH = result2;
                     }
 
                     // Only import if set
                     XElement colouredAtoms = CMLHelper.GetColouredAtomsTag(root);
-                    if (colouredAtoms != null && !string.IsNullOrEmpty(colouredAtoms.Value))
+                    if (colouredAtoms != null
+                        && !string.IsNullOrEmpty(colouredAtoms.Value)
+                        && bool.TryParse(colouredAtoms.Value, out bool result3))
                     {
-                        if (bool.TryParse(colouredAtoms.Value, out bool result))
-                        {
-                            newModel.ShowColouredAtoms = result;
-                        }
+                        newModel.ShowColouredAtoms = result3;
                     }
 
                     // Only import if set
                     XElement showGrouping = CMLHelper.GetShowMoleculeGroupingTag(root);
-                    if (showGrouping != null && !string.IsNullOrEmpty(showGrouping.Value))
+                    if (showGrouping != null
+                        && !string.IsNullOrEmpty(showGrouping.Value)
+                        && bool.TryParse(showGrouping.Value, out bool result4))
                     {
-                        if (bool.TryParse(showGrouping.Value, out bool result))
-                        {
-                            newModel.ShowMoleculeGrouping = result;
-                        }
+                        newModel.ShowMoleculeGrouping = result4;
                     }
 
                     // Only import if set
                     XElement showMolecularWeight = CMLHelper.GetShowMolecularWeightTag(root);
-                    if (showMolecularWeight != null && !string.IsNullOrEmpty(showMolecularWeight.Value))
+                    if (showMolecularWeight != null
+                        && !string.IsNullOrEmpty(showMolecularWeight.Value)
+                        && bool.TryParse(showMolecularWeight.Value, out bool result5))
                     {
-                        if (bool.TryParse(showMolecularWeight.Value, out bool result))
-                        {
-                            newModel.ShowMolecularWeight = result;
-                        }
+                        newModel.ShowMolecularWeight = result5;
                     }
 
                     // Only import if set
                     XElement showMoleculeCaptions = CMLHelper.GetShowMoleculeCaptionsTag(root);
-                    if (showMoleculeCaptions != null && !string.IsNullOrEmpty(showMoleculeCaptions.Value))
+                    if (showMoleculeCaptions != null
+                        && !string.IsNullOrEmpty(showMoleculeCaptions.Value)
+                        && bool.TryParse(showMoleculeCaptions.Value, out bool result))
                     {
-                        if (bool.TryParse(showMoleculeCaptions.Value, out bool result))
-                        {
-                            newModel.ShowMoleculeCaptions = result;
-                        }
+                        newModel.ShowMoleculeCaptions = result;
                     }
 
                     // Only import if set
@@ -627,12 +621,10 @@ namespace Chem4Word.Model2.Converters.CML
         private XElement GetXElement(Bond bond, CmlFormat format = CmlFormat.Default)
         {
             var order = bond.Order;
-            if (format != CmlFormat.Default)
+            if (format != CmlFormat.Default
+                && bond.OrderValue != null)
             {
-                if (bond.OrderValue != null)
-                {
-                    order = bond.OrderValue.Value.ToString(CultureInfo.InvariantCulture);
-                }
+                order = bond.OrderValue.Value.ToString(CultureInfo.InvariantCulture);
             }
 
             var result = new XElement(CMLNamespaces.cml + ModelConstants.TagBond,
@@ -822,7 +814,7 @@ namespace Chem4Word.Model2.Converters.CML
                                                                    electron.Count),
                                                     new XAttribute(ModelConstants.AttributeId, electron.Id),
                                                     new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeElectronType,
-                                                                   electron.Type));
+                                                                   electron.TypeOfElectron));
 
             if (electron.ExplicitPlacement != null)
             {
@@ -942,12 +934,10 @@ namespace Chem4Word.Model2.Converters.CML
             }
 
             string explicitHValue = cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeExplicitH)?.Value;
-            if (!string.IsNullOrEmpty(explicitHValue))
+            if (!string.IsNullOrEmpty(explicitHValue)
+                && Enum.TryParse(explicitHValue, out HydrogenLabels explicitH))
             {
-                if (Enum.TryParse(explicitHValue, out HydrogenLabels explicitH))
-                {
-                    molecule.ExplicitH = explicitH;
-                }
+                molecule.ExplicitH = explicitH;
             }
 
             string idValue = cmlElement.Attribute(ModelConstants.AttributeId)?.Value;
@@ -1136,6 +1126,7 @@ namespace Chem4Word.Model2.Converters.CML
             foreach (XElement electronElement in cmlElement.Elements(CMLNamespaces.cml + ModelConstants.TagElectron))
             {
                 Electron newElectron = GetElectron(electronElement);
+                newElectron.Parent = atom;
                 atom.AddElectron(newElectron);
                 newElectron.Parent = atom;
             }
@@ -1150,7 +1141,7 @@ namespace Chem4Word.Model2.Converters.CML
                 Count = CMLHelper.GetElectronCount(electronElement),
                 Id = CMLHelper.GetId(electronElement),
                 ExplicitPlacement = CMLHelper.GetElectronPlacement(electronElement),
-                Type = CMLHelper.GetElectronType(electronElement)
+                TypeOfElectron = CMLHelper.GetElectronType(electronElement)
             };
             return newElectron;
         }
@@ -1185,12 +1176,10 @@ namespace Chem4Word.Model2.Converters.CML
             BondDirection? dir = null;
 
             XAttribute dirAttr = cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributePlacement);
-            if (dirAttr != null)
+            if (dirAttr != null
+                && Enum.TryParse(dirAttr.Value, out BondDirection temp))
             {
-                if (Enum.TryParse(dirAttr.Value, out BondDirection temp))
-                {
-                    dir = temp;
-                }
+                dir = temp;
             }
 
             if (dir != null)

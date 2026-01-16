@@ -54,29 +54,29 @@ namespace Chem4Word.ACME.Drawing.Visuals
             Point center = ParentVisual.Position;
 
             //first, work out from the placement property what the vector is
-            double offsetAngle = 45 * (int)(ParentElectron.Placement.Value);
+            double offsetAngle = 45 * (int)ParentElectron.Placement.Value;
             Matrix rotator = new Matrix();
             rotator.Rotate(offsetAngle);
 
             //make it long enough to clear the atom symbol
-            Vector placementVector = 100 * GeometryTool.ScreenNorth * rotator;
+            Vector placementVector = 1000 * GeometryTool.ScreenNorth * rotator;
 
             //and intersect it with the convex hull to find the edge point
-            var endPoint = ParentVisual.GetIntersection(center, center + placementVector);
+            Point? endPoint = ParentVisual.GetIntersection(center, center + placementVector);
 
             //now extend it by the standoff distance plus the size of the electron symbol
             Vector unitVector = placementVector;
             unitVector.Normalize();
-            placementVector = (endPoint.Value - center) + unitVector * (ParentVisual.SymbolSize / 4);
+            placementVector = endPoint.Value - center + unitVector * (ParentVisual.SymbolSize / 4);
             Point electronCenter = center + placementVector;
 
             //this is the centre of the electron symbol
             //if we're drawing a radical, then draw a simple dot
             double radius = SymbolSize / 10;
-            double d;
+            double offset;
             if (ParentElectron.Count == 1)
             {
-                d = radius;
+                offset = radius;
                 Context.DrawEllipse(Fill, null, electronCenter, radius, radius);
             }
             else //two electrons - draw a pair of dots or a line for carbenoids
@@ -87,29 +87,29 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     EndLineCap = PenLineCap.Square
                 };
                 radius = SymbolSize / 15;
-                Vector perp = unitVector.Perpendicular();
+                Vector perpendicular = unitVector.Perpendicular();
 
-                if (ParentElectron.Type == ElectronType.Carbenoid) //draw a line
+                if (ParentElectron.TypeOfElectron == ElectronType.Carbenoid) //draw a line
                 {
-                    d = radius * 4;
-                    perp *= d;
-                    Context.DrawLine(pen, electronCenter + perp, electronCenter - perp);
+                    offset = radius * 4;
+                    perpendicular *= offset;
+                    Context.DrawLine(pen, electronCenter + perpendicular, electronCenter - perpendicular);
                 }
                 else //draw two dots
                 {
-                    d = radius * 2;
-                    perp *= d;
-                    Context.DrawEllipse(Fill, pen, electronCenter + perp, radius, radius);
-                    Context.DrawEllipse(Fill, pen, electronCenter - perp, radius, radius);
+                    offset = radius * 2;
+                    perpendicular *= offset;
+                    Context.DrawEllipse(Fill, pen, electronCenter + perpendicular, radius, radius);
+                    Context.DrawEllipse(Fill, pen, electronCenter - perpendicular, radius, radius);
                 }
             }
 
             //now draw a transparent circle on top of the electron visual to aid hit testing
-            Context.DrawEllipse(Brushes.Transparent, null, electronCenter, d, d);
+            Context.DrawEllipse(Brushes.Transparent, null, electronCenter, offset, offset);
             Metrics = new AtomTextMetrics
             {
-                TotalBoundingBox = new Rect(new Point(electronCenter.X - d, electronCenter.Y - d),
-                                            new Point(electronCenter.X + d, electronCenter.Y + d)),
+                TotalBoundingBox = new Rect(new Point(electronCenter.X - offset, electronCenter.Y - offset),
+                                            new Point(electronCenter.X + offset, electronCenter.Y + offset)),
             };
         }
     }

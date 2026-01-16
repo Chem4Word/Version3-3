@@ -5,6 +5,8 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,6 +37,25 @@ namespace Chem4Word.Model2.Helpers
         public static int GetNonHCount(this IEnumerable<Atom> atomList)
         {
             return atomList.Count() - atomList.GetHCount();
+        }
+
+        public static CompassPoints NextCompassPoint(CompassPoints? point)
+        {
+            CompassPoints result = CompassPoints.North;
+
+            if (point != null)
+            {
+                Array points = Enum.GetValues(typeof(CompassPoints));
+                int index = (int)point;
+                index++;
+
+                if (index < points.Length)
+                {
+                    result = (CompassPoints)index;
+                }
+            }
+
+            return result;
         }
     }
 }

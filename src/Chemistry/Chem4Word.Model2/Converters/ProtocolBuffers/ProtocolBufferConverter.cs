@@ -178,7 +178,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 Id = electron.Id,
                 Count = electron.Count,
                 Placement = (int?)electron.Placement,
-                ElectronType = (int?)electron.Type
+                ElectronType = (int?)electron.TypeOfElectron
             };
             return electronBuff;
         }
@@ -441,7 +441,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     {
                         Id = pbElectron.Id,
                         Count = (int)pbElectron.Count,
-                        Type = (ElectronType)pbElectron.ElectronType,
+                        TypeOfElectron = (ElectronType)pbElectron.ElectronType,
                         ExplicitPlacement = (CompassPoints?)pbElectron.Placement
                     };
                     newAtom.AddElectron(newElectron);

@@ -31,11 +31,11 @@ namespace Chem4WordTests
             // Assert
             Assert.NotNull(electron);
             Assert.Equal(2, electron.Count);
-            Assert.Equal(ElectronType.LonePair, electron.Type);
+            Assert.Equal(ElectronType.LonePair, electron.TypeOfElectron);
 
             Assert.NotNull(electron2);
             Assert.Equal(1, electron2.Count);
-            Assert.Equal(ElectronType.Radical, electron2.Type);
+            Assert.Equal(ElectronType.Radical, electron2.TypeOfElectron);
             Assert.Equal(CompassPoints.North, electron2.Placement);
         }
 
@@ -74,7 +74,7 @@ namespace Chem4WordTests
             var electron = new Electron
             {
                 Count = 2,
-                Type = ElectronType.LonePair,
+                TypeOfElectron = ElectronType.LonePair,
                 ExplicitPlacement = CompassPoints.NorthEast
             };
             atom.AddElectron(electron);
@@ -86,7 +86,7 @@ namespace Chem4WordTests
             // Assert
             Assert.NotNull(importedElectron);
             Assert.Equal(2, importedElectron.Count);
-            Assert.Equal(ElectronType.LonePair, importedElectron.Type);
+            Assert.Equal(ElectronType.LonePair, importedElectron.TypeOfElectron);
             Assert.Equal(CompassPoints.NorthEast, electron.Placement);
         }
 
@@ -103,7 +103,7 @@ namespace Chem4WordTests
             var electron = new Electron
             {
                 Count = 2,
-                Type = ElectronType.LonePair,
+                TypeOfElectron = ElectronType.LonePair,
                 ExplicitPlacement = CompassPoints.NorthEast
             };
             bool addedOK = false;

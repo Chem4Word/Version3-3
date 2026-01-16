@@ -17,7 +17,6 @@ using Chem4Word.Model2.Enums;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
@@ -225,43 +224,46 @@ namespace Chem4Word.ACME.Utils
                 atomPropertiesModel.ExplicitHydrogenPlacement = atom.ExplicitHPlacement;
 
                 atomPropertiesModel.ExplicitElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
+                atomPropertiesModel.Electrons = new List<Electron>();
+
                 if (atom.Electrons.Count > 0)
                 {
+                    int manualPlacementsCount = atom.Electrons.Values.Count(e => e.ExplicitPlacement != null);
+
+                    CompassPoints cp = CompassPoints.North;
+
                     foreach (Electron electron in atom.Electrons.Values)
                     {
-                        bool isValid = false;
+                        ElectronType ty = electron.TypeOfElectron;
 
-                        CompassPoints cp = CompassPoints.North;
-
-                        // Explicit Placement
-                        CompassPoints? ep = electron.ExplicitPlacement;
-                        if (ep != null)
+                        // There are some manual placements
+                        if (manualPlacementsCount > 0)
                         {
-                            cp = ep.Value;
-                            isValid = true;
-                        }
-                        else
-                        {
-                            // Automatic placement
-                            CompassPoints? ap = electron.Placement;
-                            if (ap.HasValue)
+                            if (electron.ExplicitPlacement.HasValue)
                             {
-                                cp = ap.Value;
-                                isValid = true;
+                                // This is a manual placement
+                                cp = electron.ExplicitPlacement.Value;
                             }
-                        }
-                        ElectronType ty = electron.Type;
+                            else
+                            {
+                                // This is an automatic placement - find the next free compass point
+                                while (atomPropertiesModel.ExplicitElectronPlacements.ContainsKey(cp))
+                                {
+                                    cp = Model2.Helpers.Utils.NextCompassPoint(cp);
+                                }
+                            }
 
-                        if (isValid)
-                        {
+                            // Add to the explicit placements
                             atomPropertiesModel.ExplicitElectronPlacements.Add(cp, ty);
                         }
                         else
                         {
-                            Debugger.Break();
+                            // All are automatic placements
+                            atomPropertiesModel.Electrons.Add(electron);
                         }
                     }
                 }
+
                 atomPropertiesModel.ShowHydrogenLabels = true;
             }
 
@@ -279,7 +281,8 @@ namespace Chem4Word.ACME.Utils
             atomPropertiesModel.MicroModel = new Model();
             atomPropertiesModel.MicroModel.SetUserOptions(currentEditor.Controller.Model.GetCurrentOptions());
 
-            Molecule molecule = new Molecule();
+            Molecule molecule = new Molecule { Id = "mx" };
+
             atomPropertiesModel.MicroModel.AddMolecule(molecule);
             molecule.Parent = atomPropertiesModel.MicroModel;
 
@@ -293,6 +296,7 @@ namespace Chem4Word.ACME.Utils
                 FormalCharge = atom.FormalCharge,
                 IsotopeNumber = atom.IsotopeNumber,
             };
+
             foreach (Electron electron in atom.Electrons.Values)
             {
                 newAtom.AddElectron(electron.Copy());

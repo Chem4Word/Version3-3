@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.LoadStructure = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -58,6 +59,7 @@
             this.ClearChemistry = new System.Windows.Forms.Button();
             this.RenderOoXml = new System.Windows.Forms.Button();
             this.Information2 = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.LayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -66,6 +68,7 @@
             // LoadStructure
             // 
             this.LoadStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.LoadStructure.Enabled = false;
             this.LoadStructure.Location = new System.Drawing.Point(12, 501);
             this.LoadStructure.Name = "LoadStructure";
             this.LoadStructure.Size = new System.Drawing.Size(75, 23);
@@ -81,6 +84,7 @@
             // 
             // EditWithAcme
             // 
+            this.EditWithAcme.Enabled = false;
             this.EditWithAcme.Location = new System.Drawing.Point(6, 19);
             this.EditWithAcme.Name = "EditWithAcme";
             this.EditWithAcme.Size = new System.Drawing.Size(75, 23);
@@ -233,6 +237,7 @@
             // 
             // SearchOpsin
             // 
+            this.SearchOpsin.Enabled = false;
             this.SearchOpsin.Location = new System.Drawing.Point(168, 77);
             this.SearchOpsin.Name = "SearchOpsin";
             this.SearchOpsin.Size = new System.Drawing.Size(75, 23);
@@ -256,6 +261,7 @@
             // 
             // SearchChEBI
             // 
+            this.SearchChEBI.Enabled = false;
             this.SearchChEBI.Location = new System.Drawing.Point(168, 48);
             this.SearchChEBI.Name = "SearchChEBI";
             this.SearchChEBI.Size = new System.Drawing.Size(75, 23);
@@ -267,6 +273,7 @@
             // 
             // SearchPubChem
             // 
+            this.SearchPubChem.Enabled = false;
             this.SearchPubChem.Location = new System.Drawing.Point(168, 19);
             this.SearchPubChem.Name = "SearchPubChem";
             this.SearchPubChem.Size = new System.Drawing.Size(75, 23);
@@ -290,6 +297,7 @@
             // ChangeOoXmlSettings
             // 
             this.ChangeOoXmlSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ChangeOoXmlSettings.Enabled = false;
             this.ChangeOoXmlSettings.Location = new System.Drawing.Point(15, 19);
             this.ChangeOoXmlSettings.Name = "ChangeOoXmlSettings";
             this.ChangeOoXmlSettings.Size = new System.Drawing.Size(75, 23);
@@ -360,6 +368,10 @@
             this.Information2.TabIndex = 22;
             this.Information2.Text = "...";
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -421,6 +433,7 @@
         private System.Windows.Forms.Button SearchPubChem;
         private System.Windows.Forms.Button CalculateProperties;
         private System.Windows.Forms.Label Information2;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

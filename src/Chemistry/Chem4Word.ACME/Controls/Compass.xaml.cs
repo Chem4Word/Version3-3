@@ -8,12 +8,14 @@
 using Chem4Word.ACME.Enums;
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.UI.Wpf;
+using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -62,17 +64,20 @@ namespace Chem4Word.ACME.Controls
             set { SetValue(SelectedCompassPointProperty, value); }
         }
 
-        public static readonly DependencyProperty SelectedElectronValuesProperty = DependencyProperty.Register(
-            nameof(SelectedElectronValues), typeof(Dictionary<CompassPoints, ElectronType>), typeof(Compass),
+        public static readonly DependencyProperty SelectedElectronDictionaryProperty = DependencyProperty.Register(
+            nameof(SelectedElectronDictionary), typeof(Dictionary<CompassPoints, ElectronType>), typeof(Compass),
             new PropertyMetadata(new Dictionary<CompassPoints, ElectronType>()));
 
-        public Dictionary<CompassPoints, ElectronType> SelectedElectronValues
+        public Dictionary<CompassPoints, ElectronType> SelectedElectronDictionary
         {
-            get { return (Dictionary<CompassPoints, ElectronType>)GetValue(SelectedElectronValuesProperty); }
-            set { SetValue(SelectedElectronValuesProperty, value); }
+            get { return (Dictionary<CompassPoints, ElectronType>)GetValue(SelectedElectronDictionaryProperty); }
+            set { SetValue(SelectedElectronDictionaryProperty, value); }
         }
 
         #endregion Dependency Properties
+
+        public List<Electron> SelectedElectrons { get; set; } = new List<Electron>();
+        public Atom Atom { get; set; }
 
         private bool _inhibitEvents;
 
@@ -97,6 +102,8 @@ namespace Chem4Word.ACME.Controls
         {
             _inhibitEvents = true;
 
+            CollapseAllButtons();
+
             switch (CompassControlType)
             {
                 case CompassControlType.Hydrogens:
@@ -120,19 +127,27 @@ namespace Chem4Word.ACME.Controls
             _inhibitEvents = false;
         }
 
+        public void DisableEvents()
+        {
+            _inhibitEvents = true;
+        }
+
+        public void EnableEvents()
+        {
+            _inhibitEvents = false;
+        }
+
         public void SetButtonStates()
         {
-            //Debugger.Break();
-
             if (ElectronsMode)
             {
-                List<CompassButton> buttons = FindVisualChildren<CompassButton>(this).ToList();
+                List<CompassButton> buttons = GetVisibleButtons();
                 foreach (CompassButton button in buttons)
                 {
                     if (button.Name != "Centre")
                     {
                         ElectronType? electronType = GetElectronType(button);
-                        button.ElectronValue = electronType;
+                        button.ElectronTypeValue = electronType;
                         button.ButtonContent = CreateElectronsModeCanvas(electronType, button);
                         button.IsElectronsMode = true;
                     }
@@ -140,16 +155,6 @@ namespace Chem4Word.ACME.Controls
             }
             else
             {
-                North.ButtonContent = CreateCanvasWithSingleLetter(North);
-                East.ButtonContent = CreateCanvasWithSingleLetter(East);
-                South.ButtonContent = CreateCanvasWithSingleLetter(South);
-                West.ButtonContent = CreateCanvasWithSingleLetter(West);
-                Centre.ButtonContent = CreateCanvasWithSingleLetter(Centre);
-
-                Left.ButtonContent = CreateCanvasWithSingleLetter(Left);
-                Right.ButtonContent = CreateCanvasWithSingleLetter(Right);
-                Middle.ButtonContent = CreateCanvasWithSingleLetter(Middle);
-
                 if (SelectedCompassPoint != null)
                 {
                     if (CompassControlType == CompassControlType.Hydrogens)
@@ -197,32 +202,13 @@ namespace Chem4Word.ACME.Controls
                     Middle.CompassValue = CompassPoints.North;
                     Middle.IsElectronsMode = false;
                 }
-            }
-        }
 
-        /// <summary>
-        /// Recursively finds all children of a given type in the visual tree.
-        /// </summary>
-        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
-        {
-            if (parent == null)
-            {
-                yield break;
-            }
+                Debug.WriteLine(Name);
 
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < count; i++)
-            {
-                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
-
-                if (child is T typedChild)
+                List<CompassButton> buttons = GetVisibleButtons();
+                foreach (CompassButton button in buttons)
                 {
-                    yield return typedChild;
-                }
-
-                foreach (T descendant in FindVisualChildren<T>(child))
-                {
-                    yield return descendant;
+                    Debug.WriteLine($"{Name} Button:{button.Name} CompassValue:{button.CompassValue}");
                 }
             }
         }
@@ -256,8 +242,268 @@ namespace Chem4Word.ACME.Controls
             Middle.CompassValue = null;
         }
 
-        private object CreateCanvasWithSingleLetter(CompassButton button)
+        private ElectronType? GetElectronType(CompassButton button)
         {
+            ElectronType? result = null;
+
+            if (SelectedElectronDictionary.ContainsKey(button.DefaultDirection))
+            {
+                SelectedElectronDictionary.TryGetValue(button.DefaultDirection, out ElectronType value);
+                result = value;
+            }
+
+            return result;
+        }
+
+        private void CollapseAllButtons()
+        {
+            List<CompassButton> buttons = GetAllButtons();
+            foreach (CompassButton button in buttons)
+            {
+                button.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ClearAllVisibleButtons()
+        {
+            List<CompassButton> buttons = GetVisibleButtons();
+            foreach (CompassButton button in buttons)
+            {
+                button.CompassValue = null;
+            }
+        }
+
+        private void InitializeElectronsMode()
+        {
+            North.IsElectronsMode = true;
+            North.ButtonContent = CreateElectronsModeCanvas(null, North);
+
+            NorthEast.IsElectronsMode = true;
+            NorthEast.ButtonContent = CreateElectronsModeCanvas(null, NorthEast);
+
+            East.IsElectronsMode = true;
+            East.ButtonContent = CreateElectronsModeCanvas(null, East);
+
+            SouthEast.IsElectronsMode = true;
+            SouthEast.ButtonContent = CreateElectronsModeCanvas(null, SouthEast);
+
+            South.IsElectronsMode = true;
+            South.ButtonContent = CreateElectronsModeCanvas(null, South);
+
+            SouthWest.IsElectronsMode = true;
+            SouthWest.ButtonContent = CreateElectronsModeCanvas(null, SouthWest);
+
+            West.IsElectronsMode = true;
+            West.ButtonContent = CreateElectronsModeCanvas(null, West);
+
+            NorthWest.IsElectronsMode = true;
+            NorthWest.ButtonContent = CreateElectronsModeCanvas(null, NorthWest);
+
+            // Centre Button (C for Clear)
+            Centre.IsElectronsMode = true;
+            Centre.ButtonContent = CreateCanvasWithSingleLetter(Centre, true);
+        }
+
+        private void InitializeFunctionalGroupsMode()
+        {
+            Left.ButtonContent = CreateCanvasWithSingleLetter(Left);
+            Left.IsElectronsMode = false;
+            Right.ButtonContent = CreateCanvasWithSingleLetter(Right);
+            Right.IsElectronsMode = false;
+
+            Middle.ButtonContent = CreateCanvasWithSingleLetter(Middle);
+            Middle.IsElectronsMode = false;
+        }
+
+        private void InitializeHydrogensMode()
+        {
+            North.ButtonContent = CreateCanvasWithSingleLetter(North);
+            North.IsElectronsMode = false;
+            East.ButtonContent = CreateCanvasWithSingleLetter(East);
+            East.IsElectronsMode = false;
+            South.ButtonContent = CreateCanvasWithSingleLetter(South);
+            South.IsElectronsMode = false;
+            West.ButtonContent = CreateCanvasWithSingleLetter(West);
+            West.IsElectronsMode = false;
+
+            Centre.ButtonContent = CreateCanvasWithSingleLetter(Centre);
+            Centre.IsElectronsMode = false;
+        }
+
+        private void OnIsVisibleChanged_Grid1(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            Grid1.InvalidateArrange();
+            Grid1.UpdateLayout();
+
+            // Schedule async work without blocking
+            Application.Current.Dispatcher.BeginInvoke(
+                DispatcherPriority.ApplicationIdle,
+                new Action(() =>
+                           {
+                               Refresh();
+                           }));
+        }
+
+        private void OnIsVisibleChanged_Grid2(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            Grid2.InvalidateArrange();
+            Grid2.UpdateLayout();
+
+            // Schedule async work without blocking
+            Application.Current.Dispatcher.BeginInvoke(
+                DispatcherPriority.ApplicationIdle,
+                new Action(() =>
+                           {
+                               Refresh();
+                           }));
+        }
+
+        private void OnLoaded_Compass(object sender, RoutedEventArgs e)
+        {
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                Refresh();
+            }
+        }
+
+        private void OnValueChanged_CompassButton(object sender, RoutedEventArgs e)
+        {
+            if (sender is CompassButton button
+                && !_inhibitEvents)
+            {
+                _inhibitEvents = true;
+
+                if (ElectronsMode)
+                {
+                    Debug.WriteLine($"{Name} - Button:{button.Name} ElectronTypeValue:{button.ElectronTypeValue}");
+
+                    if (button.Name == "Centre")
+                    {
+                        SelectedElectronDictionary.Clear();
+                        button.ElectronTypeValue = null;
+                    }
+                    else
+                    {
+                        if (button.ElectronTypeValue.HasValue)
+                        {
+                            SelectedElectronDictionary[button.DefaultDirection] = button.ElectronTypeValue.Value;
+                        }
+                        else
+                        {
+                            SelectedElectronDictionary.Remove(button.DefaultDirection);
+                        }
+                    }
+
+                    SetButtonStates();
+                }
+                else
+                {
+                    CompassPoints? compassValue = button.CompassValue;
+
+                    Debug.WriteLine($"{Name} - Button:{button.Name} CompassValue:{button.CompassValue}");
+
+                    ClearAllVisibleButtons();
+
+                    // Centre button special case
+                    if (button.Name == "Centre" || button.Name == "Middle")
+                    {
+                        SelectedCompassPoint = null;
+                    }
+                    else
+                    {
+                        SelectedCompassPoint = compassValue;
+                        button.CompassValue = SelectedCompassPoint;
+                    }
+
+                    // Auto select Centre or Middle button when no other buttons selected
+                    List<CompassButton> buttons = GetVisibleButtons();
+                    int emptyButtons = buttons.Count(b => b.CompassValue != null);
+                    if (emptyButtons == 0)
+                    {
+                        if (CompassControlType == CompassControlType.Hydrogens)
+                        {
+                            Centre.CompassValue = CompassPoints.North;
+                        }
+                        else
+                        {
+                            Middle.CompassValue = CompassPoints.North;
+                        }
+                    }
+                }
+
+                WpfEventArgs args = new WpfEventArgs
+                {
+                    Button = button.Name
+                };
+
+                CompassValueChanged?.Invoke(this, args);
+
+                _inhibitEvents = false;
+            }
+        }
+
+        public string ListCompassElectrons()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.AppendLine($"{SelectedElectronDictionary.Count} Electron Values selected");
+            foreach (KeyValuePair<CompassPoints, ElectronType> keyValuePair in SelectedElectronDictionary)
+            {
+                Electron electron = new Electron
+                {
+                    ExplicitPlacement = keyValuePair.Key,
+                    TypeOfElectron = keyValuePair.Value,
+                    Count = keyValuePair.Value == ElectronType.Radical ? 1 : 2
+                };
+                stringBuilder.AppendLine($"  {electron}");
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        private List<CompassButton> GetAllButtons()
+        {
+            List<CompassButton> buttons = FindVisualChildren<CompassButton>(this)
+                .ToList();
+            return buttons;
+        }
+
+        private List<CompassButton> GetVisibleButtons()
+        {
+            List<CompassButton> buttons = FindVisualChildren<CompassButton>(this)
+                                          .Where(b => b.Visibility == Visibility.Visible)
+                .ToList();
+            return buttons;
+        }
+
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null)
+            {
+                yield break;
+            }
+
+            int count = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < count; i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T typedChild)
+                {
+                    yield return typedChild;
+                }
+
+                foreach (T descendant in FindVisualChildren<T>(child))
+                {
+                    yield return descendant;
+                }
+            }
+        }
+
+        private object CreateCanvasWithSingleLetter(CompassButton button, bool grey = false)
+        {
+            button.Visibility = Visibility.Visible;
+
             if (button.ActualWidth > 0 && button.ActualHeight > 0)
             {
                 double width = button.ActualWidth;
@@ -269,9 +515,17 @@ namespace Chem4Word.ACME.Controls
                 // Create a canvas which does not overlap the button's borders
                 Canvas canvas = new Canvas
                 {
-                    Width = width - (padding * 2),
-                    Height = height - (padding * 2),
-                    Background = Brushes.Transparent
+                    Width = width - padding,
+                    Height = height - padding,
+                    Background = grey ? Brushes.LightGray : Brushes.Transparent
+                };
+
+                // Clip the canvas so that the (orange or gray) border is not mangled
+                canvas.Clip = new RectangleGeometry
+                {
+                    Rect = new Rect(0, 0, canvas.Width, canvas.Height),
+                    RadiusX = 3,
+                    RadiusY = 3
                 };
 
                 Grid grid = new Grid
@@ -357,6 +611,8 @@ namespace Chem4Word.ACME.Controls
 
         private object CreateElectronsModeCanvas(ElectronType? electronType, CompassButton button)
         {
+            button.Visibility = Visibility.Visible;
+
             if (button.ActualWidth > 0 && button.ActualHeight > 0)
             {
                 double width = button.ActualWidth;
@@ -431,9 +687,12 @@ namespace Chem4Word.ACME.Controls
                         Y1 = start.Y - padding,
                         X2 = end.X - padding,
                         Y2 = end.Y - padding,
-                        Stroke = Brushes.Blue,
+                        Stroke = Brushes.Red,
                         StrokeThickness = offset / 2.0
                     };
+
+                    string colour = Atom.Element.Colour;
+                    line.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour ?? AcmeConstants.DefaultTextColor));
 
                     canvas.Children.Add(line);
                 }
@@ -449,6 +708,10 @@ namespace Chem4Word.ACME.Controls
                         StrokeThickness = 1.0,
                         Fill = Brushes.Red
                     };
+
+                    string colour = Atom.Element.Colour;
+                    ellipse.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour ?? AcmeConstants.DefaultTextColor));
+                    ellipse.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour ?? AcmeConstants.DefaultTextColor));
 
                     // Position ellipse on canvas
                     Canvas.SetLeft(ellipse, x - padding - 2.0);
@@ -499,185 +762,6 @@ namespace Chem4Word.ACME.Controls
             }
 
             return null;
-        }
-
-        private ElectronType? GetElectronType(CompassButton button)
-        {
-            ElectronType? result = null;
-
-            if (SelectedElectronValues.ContainsKey(button.DefaultDirection))
-            {
-                SelectedElectronValues.TryGetValue(button.DefaultDirection, out ElectronType value);
-                result = value;
-            }
-
-            return result;
-        }
-
-        private void InitializeElectronsMode()
-        {
-            North.IsElectronsMode = true;
-            North.ButtonContent = CreateElectronsModeCanvas(null, North);
-
-            NorthEast.IsElectronsMode = true;
-            NorthEast.ButtonContent = CreateElectronsModeCanvas(null, NorthEast);
-
-            East.IsElectronsMode = true;
-            East.ButtonContent = CreateElectronsModeCanvas(null, East);
-
-            SouthEast.IsElectronsMode = true;
-            SouthEast.ButtonContent = CreateElectronsModeCanvas(null, SouthEast);
-
-            South.IsElectronsMode = true;
-            South.ButtonContent = CreateElectronsModeCanvas(null, South);
-
-            SouthWest.IsElectronsMode = true;
-            SouthWest.ButtonContent = CreateElectronsModeCanvas(null, SouthWest);
-
-            West.IsElectronsMode = true;
-            West.ButtonContent = CreateElectronsModeCanvas(null, West);
-
-            NorthWest.IsElectronsMode = true;
-            NorthWest.ButtonContent = CreateElectronsModeCanvas(null, NorthEast);
-
-            // Enable Centre Button (as Clear)
-            //SetVisibility(Centre, Visibility.Collapsed);
-            Centre.IsElectronsMode = true;
-            Centre.ButtonContent = CreateCanvasWithSingleLetter(Centre);
-        }
-
-        private void InitializeFunctionalGroupsMode()
-        {
-            Left.ButtonContent = CreateCanvasWithSingleLetter(Left);
-            Left.IsElectronsMode = false;
-            Right.ButtonContent = CreateCanvasWithSingleLetter(Right);
-            Right.IsElectronsMode = false;
-
-            Middle.ButtonContent = CreateCanvasWithSingleLetter(Middle);
-            Middle.IsElectronsMode = false;
-            Middle.IsChecked = true;
-        }
-
-        private void InitializeHydrogensMode()
-        {
-            SetVisibility(NorthEast, Visibility.Collapsed);
-            SetVisibility(SouthEast, Visibility.Collapsed);
-            SetVisibility(SouthWest, Visibility.Collapsed);
-            SetVisibility(NorthWest, Visibility.Collapsed);
-
-            North.ButtonContent = CreateCanvasWithSingleLetter(North);
-            North.IsElectronsMode = false;
-            East.ButtonContent = CreateCanvasWithSingleLetter(East);
-            East.IsElectronsMode = false;
-            South.ButtonContent = CreateCanvasWithSingleLetter(South);
-            South.IsElectronsMode = false;
-            West.ButtonContent = CreateCanvasWithSingleLetter(West);
-            West.IsElectronsMode = false;
-
-            Centre.ButtonContent = CreateCanvasWithSingleLetter(Centre);
-            Centre.IsElectronsMode = false;
-            Centre.IsChecked = true;
-        }
-
-        private void SetVisibility(CompassButton button, Visibility visibility)
-        {
-            if (button.Visibility != visibility)
-            {
-                button.Visibility = visibility;
-            }
-        }
-
-        private void OnIsVisibleChanged_Grid1(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            Grid1.InvalidateArrange();
-            Grid1.UpdateLayout();
-
-            // Schedule async work without blocking
-            Application.Current.Dispatcher.BeginInvoke(
-                DispatcherPriority.ApplicationIdle,
-                new Action(() =>
-                           {
-                               Refresh();
-                           }));
-        }
-
-        private void OnIsVisibleChanged_Grid2(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            Grid2.InvalidateArrange();
-            Grid2.UpdateLayout();
-
-            // Schedule async work without blocking
-            Application.Current.Dispatcher.BeginInvoke(
-                DispatcherPriority.ApplicationIdle,
-                new Action(() =>
-                           {
-                               Refresh();
-                           }));
-        }
-
-        private void OnLoaded_Compass(object sender, RoutedEventArgs e)
-        {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                Refresh();
-            }
-        }
-
-        private void OnValueChanged_CompassButton(object sender, RoutedEventArgs e)
-        {
-            if (sender is CompassButton button)
-            {
-                if (!_inhibitEvents)
-                {
-                    _inhibitEvents = true;
-
-                    if (ElectronsMode)
-                    {
-                        Debug.WriteLine($"Compass.Xaml - Name: {button.Name} {CompassControlType} ElectronValue: {button.ElectronValue}");
-
-                        if (button.Name == "Centre")
-                        {
-                            SelectedElectronValues.Clear();
-                        }
-                        else
-                        {
-                            if (button.ElectronValue.HasValue)
-                            {
-                                SelectedElectronValues[button.DefaultDirection] = button.ElectronValue.Value;
-                            }
-                            else
-                            {
-                                SelectedElectronValues.Remove(button.DefaultDirection);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Compass.Xaml - Name: {button.Name} {CompassControlType} CompassValue: {button.CompassValue}");
-
-                        // Centre button special case
-                        if (button.Name == "Centre" || button.Name == "Middle")
-                        {
-                            SelectedCompassPoint = null;
-                        }
-                        else
-                        {
-                            SelectedCompassPoint = button.CompassValue;
-                        }
-                    }
-
-                    SetButtonStates();
-
-                    WpfEventArgs args = new WpfEventArgs
-                    {
-                        Button = button.Name
-                    };
-
-                    CompassValueChanged?.Invoke(this, args);
-
-                    _inhibitEvents = false;
-                }
-            }
         }
     }
 }

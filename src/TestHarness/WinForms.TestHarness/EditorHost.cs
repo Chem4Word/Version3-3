@@ -10,7 +10,6 @@ using Chem4Word.Core;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
-using Chem4Word.Model2.Formula;
 using Chem4Word.Telemetry;
 using System;
 using System.Collections.Generic;

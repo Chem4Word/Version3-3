@@ -8,8 +8,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="AcmeCompass"
-    d:DesignHeight="124"
-    d:DesignWidth="124"
+    Width="154"
+    Height="154"
     Loaded="OnLoaded_Compass"
     mc:Ignorable="d">
 
@@ -26,14 +26,14 @@
             Visibility="{Binding ElementName=AcmeCompass, Path=CompassControlType, Converter={StaticResource InverseVisibilityConvertor}}">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="2" />
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="2" />
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
 
             <controls:CompassButton
@@ -74,18 +74,18 @@
             Visibility="{Binding ElementName=AcmeCompass, Path=CompassControlType, Converter={StaticResource VisibilityConvertor}}">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
+                <RowDefinition Height="50" />
                 <RowDefinition Height="2" />
-                <RowDefinition Height="40" />
+                <RowDefinition Height="50" />
                 <RowDefinition Height="2" />
-                <RowDefinition Height="40" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="2" />
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="2" />
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
 
             <!--  Top Row  -->

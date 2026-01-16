@@ -166,6 +166,7 @@
     <Compile Include="EditorHost.Designer.cs">
       <DependentUpon>EditorHost.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormState.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

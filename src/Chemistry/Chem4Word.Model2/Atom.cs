@@ -590,11 +590,11 @@ namespace Chem4Word.Model2
 
                     foreach (Electron electron in Electrons.Values)
                     {
-                        if (electron.Count == 1 && electron.Type == ElectronType.Radical)
+                        if (electron.Count == 1 && electron.TypeOfElectron == ElectronType.Radical)
                         {
                             spares -= 1;
                         }
-                        else if (electron.Count == 2 && (electron.Type == ElectronType.Carbenoid))
+                        else if (electron.Count == 2 && electron.TypeOfElectron == ElectronType.Carbenoid)
                         {
                             spares -= 2;
                         }
@@ -618,12 +618,10 @@ namespace Chem4Word.Model2
                     return iHydrogenCount;
                 }
 
-                if (Element != null)
+                if (Element != null
+                    && ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{Element.Symbol}|"))
                 {
-                    if (ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{Element.Symbol}|"))
-                    {
-                        iHydrogenCount = Math.Max(SpareValences, 0);
-                    }
+                    iHydrogenCount = Math.Max(SpareValences, 0);
                 }
 
                 return iHydrogenCount;
@@ -895,8 +893,14 @@ namespace Chem4Word.Model2
         {
             foreach (Electron electron in electrons)
             {
+                electron.Parent = this;
                 AddElectron(electron);
             }
+        }
+
+        public List<Electron> AllElectrons()
+        {
+            return _electrons.Values.ToList();
         }
 
         public void AddElectron(Electron toAdd)
@@ -916,7 +920,6 @@ namespace Chem4Word.Model2
                 RemoveElectron(electron);
             }
         }
-
 
         public void RemoveElectron(Electron toRemove)
         {

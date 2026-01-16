@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Enums;
-using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System;
 using System.ComponentModel;
@@ -26,8 +25,8 @@ namespace Chem4Word.ACME.Controls
         public override string ToString()
         {
             return IsElectronsMode
-                ? $"E: {DefaultDirection} - {ElectronValue}"
-                : $"H: {DefaultDirection} - {CompassValue}";
+                ? $"E: {Name} - {DefaultDirection} - {ElectronTypeValue}"
+                : $"H: {Name} - {DefaultDirection} - {CompassValue}";
         }
 
         // INotifyPropertyChanged
@@ -38,7 +37,7 @@ namespace Chem4Word.ACME.Controls
 
         public static readonly DependencyProperty IsCheckedProperty =
             DependencyProperty.Register(nameof(IsChecked), typeof(bool?),
-                                        typeof(CompassButton), new PropertyMetadata(null, OnAnyPropertyChanged));
+                                        typeof(CompassButton), new PropertyMetadata(null, null));
 
         public bool? IsChecked
         {
@@ -60,7 +59,7 @@ namespace Chem4Word.ACME.Controls
         // DefaultDirection
         public static readonly DependencyProperty DefaultDirectionProperty = DependencyProperty.Register(
             nameof(DefaultDirection), typeof(CompassPoints), typeof(CompassButton),
-                new PropertyMetadata(CompassPoints.North, OnAnyPropertyChanged));
+                new PropertyMetadata(CompassPoints.North, null));
 
         public CompassPoints DefaultDirection
         {
@@ -71,7 +70,7 @@ namespace Chem4Word.ACME.Controls
         // IsElectronsMode
         public static readonly DependencyProperty IsElectronsModeProperty = DependencyProperty.Register(
             nameof(IsElectronsMode), typeof(bool), typeof(CompassButton),
-                new PropertyMetadata(false, OnAnyPropertyChanged));
+                new PropertyMetadata(false, null));
 
         public bool IsElectronsMode
         {
@@ -90,20 +89,20 @@ namespace Chem4Word.ACME.Controls
             set => SetValue(CompassValueProperty, value);
         }
 
-        // ElectronValue
-        public static readonly DependencyProperty ElectronValueProperty = DependencyProperty.Register(
-            nameof(ElectronValue), typeof(ElectronType?), typeof(CompassButton),
+        // ElectronTypeValue
+        public static readonly DependencyProperty ElectronTypeValueProperty = DependencyProperty.Register(
+            nameof(ElectronTypeValue), typeof(ElectronType?), typeof(CompassButton),
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged));
 
-        public ElectronType? ElectronValue
+        public ElectronType? ElectronTypeValue
         {
-            get => (ElectronType?)GetValue(ElectronValueProperty);
-            set => SetValue(ElectronValueProperty, value);
+            get => (ElectronType?)GetValue(ElectronTypeValueProperty);
+            set => SetValue(ElectronTypeValueProperty, value);
         }
 
         // ButtonContent
         public static readonly DependencyProperty ButtonContentProperty = DependencyProperty.Register(
-            nameof(ButtonContent), typeof(object), typeof(CompassButton), new PropertyMetadata(null, OnAnyPropertyChanged));
+            nameof(ButtonContent), typeof(object), typeof(CompassButton), new PropertyMetadata(null, null));
 
         public object ButtonContent
         {
@@ -115,13 +114,6 @@ namespace Chem4Word.ACME.Controls
         {
             CompassButton control = (CompassButton)d;
             control.RaiseEvent(new RoutedEventArgs(ValueChangedEvent));
-            control.OnPropertyChanged(nameof(DebugInfo));
-        }
-
-        private static void OnAnyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            CompassButton control = (CompassButton)d;
-            control.OnPropertyChanged(nameof(DebugInfo));
         }
 
         private void OnInternalClick(object sender, RoutedEventArgs e)
@@ -130,14 +122,14 @@ namespace Chem4Word.ACME.Controls
             {
                 // ToDo: Implement null (off) -> lone pair -> radical -> carbenoid singlet -> null (off)
                 ElectronType[] values = (ElectronType[])Enum.GetValues(typeof(ElectronType));
-                if (ElectronValue == null)
+                if (ElectronTypeValue == null)
                 {
-                    ElectronValue = values.First();
+                    ElectronTypeValue = values.First();
                 }
                 else
                 {
-                    int index = Array.IndexOf(values, ElectronValue.Value);
-                    ElectronValue = index == values.Length - 1 ? null : (ElectronType?)values[index + 1];
+                    int index = Array.IndexOf(values, ElectronTypeValue.Value);
+                    ElectronTypeValue = index == values.Length - 1 ? null : (ElectronType?)values[index + 1];
                 }
             }
             else
@@ -145,11 +137,5 @@ namespace Chem4Word.ACME.Controls
                 CompassValue = CompassValue == null ? DefaultDirection : (CompassPoints?)null;
             }
         }
-
-        // DebugInfo
-        public string DebugInfo =>
-            IsElectronsMode
-                ? $"Mode=Toggle, Value={CompassValue?.ToString() ?? "null"}"
-                : $"Mode=Electrons, Value={ElectronValue?.ToString() ?? "null"}";
     }
 }

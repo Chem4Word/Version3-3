@@ -13,7 +13,6 @@ using Chem4Word.Model2.Converters.JSON;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Model2.Converters.SketchEl;
-using Chem4Word.Model2.Formula;
 using Chem4Word.Renderer.OoXmlV4;
 using Chem4Word.Searcher.ChEBIPlugin;
 using Chem4Word.Searcher.OpsinPlugIn;
@@ -31,6 +30,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -61,24 +61,93 @@ namespace WinForms.TestHarness
         {
             InitializeComponent();
 
+            SetButtonStates(FormState.Disabled);
+
             _helper = new SystemHelper();
             _telemetry = new TelemetryWriter(true, true, _helper);
+            timer1.Enabled = true;
 
-            var location = Assembly.GetExecutingAssembly().Location;
-            var path = Path.GetDirectoryName(location);
+            string location = Assembly.GetExecutingAssembly().Location;
+            string path = Path.GetDirectoryName(location);
 
             // Use either path or null below
             _renderOptions = new OoXmlV4Options(null);
         }
 
+        private void SetButtonStates(FormState state)
+        {
+            switch (state)
+            {
+                case FormState.Disabled:
+                    LoadStructure.Enabled = false;
+                    EditWithAcme.Enabled = false;
+                    Undo.Enabled = false;
+                    Redo.Enabled = false;
+                    EditCml.Enabled = false;
+                    ShowCml.Enabled = false;
+                    SaveStructure.Enabled = false;
+                    ClearChemistry.Enabled = false;
+                    EditLabels.Enabled = false;
+                    LayoutStructure.Enabled = false;
+                    RenderOoXml.Enabled = false;
+                    ChangeOoXmlSettings.Enabled = false;
+                    SearchChEBI.Enabled = false;
+                    SearchOpsin.Enabled = false;
+                    SearchPubChem.Enabled = false;
+                    CalculateProperties.Enabled = false;
+                    break;
+
+                case FormState.OpenOrCreate:
+                    LoadStructure.Enabled = true;
+                    EditWithAcme.Enabled = true;
+                    SearchChEBI.Enabled = true;
+                    SearchOpsin.Enabled = true;
+                    SearchPubChem.Enabled = true;
+                    break;
+
+                case FormState.Edit:
+                    EnableNormalButtons();
+                    EnableUndoRedoButtonsAndShowStacks();
+                    break;
+            }
+        }
+
+        private void EnableNormalButtons()
+        {
+            EditWithAcme.Enabled = true;
+            EditLabels.Enabled = true;
+            EditCml.Enabled = true;
+            CalculateProperties.Enabled = true;
+
+            ShowCml.Enabled = true;
+            ClearChemistry.Enabled = true;
+            SaveStructure.Enabled = true;
+            LayoutStructure.Enabled = true;
+            RenderOoXml.Enabled = true;
+
+            Renderer renderer = new Renderer();
+            ChangeOoXmlSettings.Enabled = renderer.HasSettings;
+
+            ListStacks();
+        }
+
+        private void EnableUndoRedoButtonsAndShowStacks()
+        {
+            Redo.Enabled = _redoStack.Count > 0;
+            Undo.Enabled = _undoStack.Count > 0;
+
+            UndoStack.ListOfDisplays.ItemsSource = StackToList(_undoStack);
+            RedoStack.ListOfDisplays.ItemsSource = StackToList(_redoStack);
+        }
+
         private void OnClick_LoadStructure(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 Model model = null;
 
-                var sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
                 sb.Append("All molecule files (*.cml, *.xml, *.mol, *.sdf, *.json, *.pbuff, *.el)|*.cml;*.xml;*.mol;*.sdf;*.json;*.pbuff;*.el");
                 sb.Append("|CML molecule files (*.cml, *.xml)|*.cml;*.xml");
                 sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
@@ -92,16 +161,16 @@ namespace WinForms.TestHarness
                 openFileDialog1.FileName = "";
                 openFileDialog1.ShowHelp = false;
 
-                var dr = openFileDialog1.ShowDialog();
+                DialogResult dr = openFileDialog1.ShowDialog();
 
                 if (dr == DialogResult.OK)
                 {
-                    var fileType = Path.GetExtension(openFileDialog1.FileName).ToLower();
-                    var filename = Path.GetFileName(openFileDialog1.FileName);
-                    var mol = File.ReadAllText(openFileDialog1.FileName);
+                    string fileType = Path.GetExtension(openFileDialog1.FileName).ToLower();
+                    string filename = Path.GetFileName(openFileDialog1.FileName);
+                    string mol = File.ReadAllText(openFileDialog1.FileName);
 
-                    var cmlConverter = new CMLConverter();
-                    var fileConverter = new SdFileConverter();
+                    CMLConverter cmlConverter = new CMLConverter();
+                    SdFileConverter fileConverter = new SdFileConverter();
 
                     Stopwatch stopwatch;
                     TimeSpan elapsed1 = default;
@@ -130,7 +199,7 @@ namespace WinForms.TestHarness
                         case ".json":
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
-                            var jsonConvertor = new JSONConverter();
+                            JSONConverter jsonConvertor = new JSONConverter();
                             model = jsonConvertor.Import(mol);
                             stopwatch.Stop();
                             elapsed1 = stopwatch.Elapsed;
@@ -139,19 +208,19 @@ namespace WinForms.TestHarness
                         case ".el":
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
-                            var sketchElConverter = new SketchElConverter();
+                            SketchElConverter sketchElConverter = new SketchElConverter();
                             model = sketchElConverter.Import(mol);
                             stopwatch.Stop();
                             elapsed1 = stopwatch.Elapsed;
                             break;
 
                         case ".pbuff":
-                            var protocolBufferConverter = new ProtocolBufferConverter();
+                            ProtocolBufferConverter protocolBufferConverter = new ProtocolBufferConverter();
 
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
 
-                            var inputBytes = File.ReadAllBytes(openFileDialog1.FileName);
+                            byte[] inputBytes = File.ReadAllBytes(openFileDialog1.FileName);
                             model = protocolBufferConverter.Import(inputBytes);
 
                             stopwatch.Stop();
@@ -169,7 +238,7 @@ namespace WinForms.TestHarness
 
                         if (model.AllErrors.Count == 0)
                         {
-                            var originalBondLength = model.MeanBondLength;
+                            double originalBondLength = model.MeanBondLength;
                             model.EnsureBondLength(DefaultBondLength, false);
 
                             if (string.IsNullOrEmpty(model.CustomXmlPartGuid))
@@ -179,7 +248,7 @@ namespace WinForms.TestHarness
 
                             if (!string.IsNullOrEmpty(_lastCml))
                             {
-                                var clone = cmlConverter.Import(_lastCml);
+                                Model clone = cmlConverter.Import(_lastCml);
                                 Debug.WriteLine($"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength:#,##0.00} onto Stack");
                                 _undoStack.Push(clone);
                             }
@@ -214,7 +283,7 @@ namespace WinForms.TestHarness
 
         private void OnClick_ChangeBackground(object sender, EventArgs e)
         {
-            var dr = colorDialog1.ShowDialog();
+            DialogResult dr = colorDialog1.ShowDialog();
             if (dr == DialogResult.OK)
             {
                 DisplayHost.BackColor = colorDialog1.Color;
@@ -223,122 +292,9 @@ namespace WinForms.TestHarness
 
         private Brush ColorToBrush(Color colour)
         {
-            var hex = $"#{colour.A:X2}{colour.R:X2}{colour.G:X2}{colour.B:X2}";
-            var converter = new BrushConverter();
+            string hex = $"#{colour.A:X2}{colour.R:X2}{colour.G:X2}{colour.B:X2}";
+            BrushConverter converter = new BrushConverter();
             return (Brush)converter.ConvertFromString(hex);
-        }
-
-        private void OnCheckedChanged_ShowCarbons(object sender, EventArgs e)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                if (Display.Chemistry is Model model)
-                {
-                    var copy = model.Copy();
-                    copy.Refresh();
-                    Debug.WriteLine($"Old Model: ({model.MinX}, {model.MinY}):({model.MaxX}, {model.MaxY})");
-                    Debug.WriteLine($"New Model: ({copy.MinX}, {copy.MinY}):({copy.MaxX}, {copy.MaxY})");
-                    Display.Chemistry = copy;
-                }
-            }
-            catch (Exception exception)
-            {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
-                MessageBox.Show(exception.StackTrace, exception.Message);
-            }
-        }
-
-        private void OnClick_RemoveAtom(object sender, EventArgs e)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                if (Display.Chemistry is Model model)
-                {
-                    var allAtoms = model.GetAllAtoms();
-                    if (model.GetAllAtoms().Any())
-                    {
-                        var modelMolecule =
-                            model.GetAllMolecules().FirstOrDefault(m => allAtoms.Any() && m.Atoms.Count > 0);
-                        var atom = modelMolecule.Atoms.Values.First();
-                        var bondList = atom.Bonds.ToList();
-                        foreach (var neighbouringBond in bondList)
-                        {
-                            modelMolecule.RemoveBond(neighbouringBond);
-                            neighbouringBond.OtherAtom(atom).UpdateVisual();
-                            foreach (var bond in neighbouringBond.OtherAtom(atom).Bonds)
-                            {
-                                bond.UpdateVisual();
-                            }
-                        }
-
-                        modelMolecule.RemoveAtom(atom);
-                    }
-
-                    model.Refresh();
-                    Information1.Text = $"Formula: {model.ConciseFormula} ({model.UnicodeFormula})";
-                    Information2.Text = $"BondLength: {model.MeanBondLength.ToString("#,##0.00")}";
-                }
-            }
-            catch (Exception exception)
-            {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
-                MessageBox.Show(exception.StackTrace, exception.Message);
-            }
-        }
-
-        private void OnClick_RandomElement(object sender, EventArgs e)
-        {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                if (Display.Chemistry is Model model)
-                {
-                    var allAtoms = model.GetAllAtoms();
-                    if (allAtoms.Any())
-                    {
-                        var rnd = new Random(DateTime.UtcNow.Millisecond);
-
-                        var maxAtoms = allAtoms.Count;
-                        var targetAtom = rnd.Next(0, maxAtoms);
-
-                        var elements = ModelGlobals.PeriodicTable.Elements;
-                        var newElement = rnd.Next(0, elements.Values.Max(v => v.AtomicNumber));
-                        var x = elements.Values.FirstOrDefault(v => v.AtomicNumber == newElement);
-
-                        if (x == null)
-                        {
-                            Debugger.Break();
-                        }
-
-                        allAtoms[targetAtom].Element = x;
-                        if (x.Symbol.Equals("C"))
-                        {
-                            //allAtoms[targetAtom].ShowSymbol = ExplicitC.Checked
-                        }
-
-                        allAtoms[targetAtom].UpdateVisual();
-
-                        foreach (var b in allAtoms[targetAtom].Bonds)
-                        {
-                            b.UpdateVisual();
-                        }
-
-                        model.Refresh();
-                        Information1.Text = $"Formula: {model.ConciseFormula} ({model.UnicodeFormula})";
-                        Information2.Text = $"BondLength: {model.MeanBondLength.ToString("#,##0.00")}";
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
-                MessageBox.Show(exception.StackTrace, exception.Message);
-            }
         }
 
         #endregion Disconnected Code - Please Keep for reference
@@ -353,7 +309,7 @@ namespace WinForms.TestHarness
 
             if (!string.IsNullOrEmpty(_lastCml))
             {
-                using (var editorHost = new EditorHost(_lastCml, "LABELS", DefaultBondLength))
+                using (EditorHost editorHost = new EditorHost(_lastCml, "LABELS", DefaultBondLength))
                 {
                     editorHost.ShowDialog(this);
                     if (editorHost.DialogResult == DialogResult.OK)
@@ -383,7 +339,7 @@ namespace WinForms.TestHarness
             try
             {
 #endif
-            using (var editorHost = new EditorHost(_lastCml, "ACME", DefaultBondLength))
+            using (EditorHost editorHost = new EditorHost(_lastCml, "ACME", DefaultBondLength))
             {
                 editorHost.ShowDialog(this);
                 if (editorHost.DialogResult == DialogResult.OK)
@@ -413,7 +369,7 @@ namespace WinForms.TestHarness
             {
                 if (model.AllErrors.Any())
                 {
-                    var lines = new List<string>();
+                    List<string> lines = new List<string>();
 
                     if (model.AllErrors.Any())
                     {
@@ -430,12 +386,12 @@ namespace WinForms.TestHarness
                         Text = filename;
                     }
 
-                    var statistics1 = model.GetBondLengthStatistics();
-                    var statistics2 = model.GetBondLengthStatistics(false);
+                    BondLengthStatistics statistics1 = model.GetBondLengthStatistics();
+                    BondLengthStatistics statistics2 = model.GetBondLengthStatistics(false);
 
                     Information1.Text = $"Formula: {model.ConciseFormula} Unicode: {model.UnicodeFormula}";
 
-                    var stringBuilder = new StringBuilder();
+                    StringBuilder stringBuilder = new StringBuilder();
 
                     stringBuilder.Append($"BL+H: Mean {SafeDouble.AsString(statistics1.Mean)} ");
                     stringBuilder.Append($"Mode {SafeDouble.AsString(statistics1.Mode)} ");
@@ -451,64 +407,36 @@ namespace WinForms.TestHarness
 
                     Debug.WriteLine($"FlexForm is displaying {model.ConciseFormula}");
 
-                    EnableNormalButtons();
-                    EnableUndoRedoButtonsAndShowStacks();
+                    SetButtonStates(FormState.Edit);
                 }
             }
         }
 
-        private void EnableNormalButtons()
-        {
-            EditWithAcme.Enabled = true;
-            EditLabels.Enabled = true;
-            EditCml.Enabled = true;
-            CalculateProperties.Enabled = true;
-
-            ShowCml.Enabled = true;
-            ClearChemistry.Enabled = true;
-            SaveStructure.Enabled = true;
-            LayoutStructure.Enabled = true;
-            RenderOoXml.Enabled = true;
-
-            var renderer = new Renderer();
-            ChangeOoXmlSettings.Enabled = renderer.HasSettings;
-
-            ListStacks();
-        }
-
         private List<Controller> StackToList(Stack<Model> stack)
         {
-            var list = new List<Controller>();
-            foreach (var item in stack)
+            List<Controller> list = new List<Controller>();
+            foreach (Model item in stack)
             {
-                var model = item.Copy();
+                Model model = item.Copy();
                 list.Add(new Controller(model));
             }
 
             return list;
         }
 
-        private void EnableUndoRedoButtonsAndShowStacks()
-        {
-            Redo.Enabled = _redoStack.Count > 0;
-            Undo.Enabled = _undoStack.Count > 0;
-            UndoStack.ListOfDisplays.ItemsSource = StackToList(_undoStack);
-            RedoStack.ListOfDisplays.ItemsSource = StackToList(_redoStack);
-        }
-
         private void OnClick_Undo(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                var model = _undoStack.Pop();
+                Model model = _undoStack.Pop();
                 Debug.WriteLine(
                     $"Popped F: {model.ConciseFormula} BL: {SafeDouble.AsString0(model.MeanBondLength)} from Undo Stack");
 
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
-                    var cc = new CMLConverter();
-                    var copy = cc.Import(_lastCml);
+                    CMLConverter cc = new CMLConverter();
+                    Model copy = cc.Import(_lastCml);
                     _lastCml = cc.Export(model);
 
                     Debug.WriteLine(
@@ -528,17 +456,17 @@ namespace WinForms.TestHarness
 
         private void OnClick_Redo(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                var model = _redoStack.Pop();
+                Model model = _redoStack.Pop();
                 Debug.WriteLine(
                     $"Popped F: {model.ConciseFormula} BL: {SafeDouble.AsString0(model.MeanBondLength)} from Redo Stack");
 
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
-                    var cc = new CMLConverter();
-                    var clone = cc.Import(_lastCml);
+                    CMLConverter cc = new CMLConverter();
+                    Model clone = cc.Import(_lastCml);
                     _lastCml = cc.Export(model);
 
                     Debug.WriteLine(
@@ -561,7 +489,7 @@ namespace WinForms.TestHarness
             if (_undoStack.Any())
             {
                 Debug.WriteLine("Undo Stack");
-                foreach (var model in _undoStack)
+                foreach (Model model in _undoStack)
                 {
                     Debug.WriteLine(
                         $"{model.ConciseFormula} [{model.GetHashCode()}] {model.MeanBondLength.ToString("#,##0.00")}");
@@ -571,7 +499,7 @@ namespace WinForms.TestHarness
             if (_redoStack.Any())
             {
                 Debug.WriteLine("Redo Stack");
-                foreach (var model in _redoStack)
+                foreach (Model model in _redoStack)
                 {
                     Debug.WriteLine(
                         $"{model.ConciseFormula} [{model.GetHashCode()}] {model.MeanBondLength.ToString("#,##0.00")}");
@@ -581,13 +509,13 @@ namespace WinForms.TestHarness
 
         private void OnClick_EditCml(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
-                    using (var editorHost = new EditorHost(_lastCml, "CML", DefaultBondLength))
+                    using (EditorHost editorHost = new EditorHost(_lastCml, "CML", DefaultBondLength))
                     {
                         editorHost.ShowDialog(this);
                         if (editorHost.DialogResult == DialogResult.OK)
@@ -610,12 +538,12 @@ namespace WinForms.TestHarness
 
         private void OnClick_ShowCml(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 if (!string.IsNullOrEmpty(_lastCml))
                 {
-                    using (var f = new ShowCml { Cml = _lastCml })
+                    using (ShowCml f = new ShowCml { Cml = _lastCml })
                     {
                         f.ShowDialog(this);
                     }
@@ -631,29 +559,29 @@ namespace WinForms.TestHarness
 
         private void SaveStructure_Click(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                var cmlConverter = new CMLConverter();
-                var m = cmlConverter.Import(_lastCml);
+                CMLConverter cmlConverter = new CMLConverter();
+                Model m = cmlConverter.Import(_lastCml);
                 m.CustomXmlPartGuid = "";
 
-                var sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
                 sb.Append("CML molecule files (*.cml, *.xml)|*.cml;*.xml");
                 sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
                 sb.Append("|ChemDoodle Web json files (*.json)|*.json");
                 sb.Append("|Protocol Buffers (*.pbuff)|*.pbuff");
                 sb.Append("|SketchEl (*.el)|*.el");
 
-                using (var sfd = new SaveFileDialog { Filter = sb.ToString() })
+                using (SaveFileDialog sfd = new SaveFileDialog { Filter = sb.ToString() })
                 {
                     sfd.AddExtension = true;
-                    var dr = sfd.ShowDialog();
+                    DialogResult dr = sfd.ShowDialog();
                     if (dr == DialogResult.OK)
                     {
-                        var fi = new FileInfo(sfd.FileName);
+                        FileInfo fi = new FileInfo(sfd.FileName);
                         _telemetry.Write(module, "Information", $"Exporting to '{fi.Name}'");
-                        var fileType = Path.GetExtension(sfd.FileName).ToLower();
+                        string fileType = Path.GetExtension(sfd.FileName).ToLower();
                         switch (fileType)
                         {
                             case ".cml":
@@ -664,22 +592,22 @@ namespace WinForms.TestHarness
                             case ".mol":
                             case ".sdf":
                                 // https://www.chemaxon.com/marvin-archive/6.0.2/marvin/help/formats/mol-csmol-doc.html
-                                var before = m.MeanBondLength;
+                                double before = m.MeanBondLength;
                                 // Set bond length to 1.54 angstroms (Å)
                                 m.ScaleToAverageBondLength(1.54);
-                                var after = m.MeanBondLength;
+                                double after = m.MeanBondLength;
                                 _telemetry.Write(module, "Information", $"Structure rescaled from {before.ToString("#0.00")} to {after.ToString("#0.00")}");
-                                var sdFileConverter = new SdFileConverter();
+                                SdFileConverter sdFileConverter = new SdFileConverter();
                                 File.WriteAllText(sfd.FileName, sdFileConverter.Export(m));
                                 break;
 
                             case ".el":
-                                var sketchElConverter = new SketchElConverter();
+                                SketchElConverter sketchElConverter = new SketchElConverter();
                                 File.WriteAllText(sfd.FileName, sketchElConverter.Export(m));
                                 break;
 
                             case ".json":
-                                var jsonConverter = new JSONConverter();
+                                JSONConverter jsonConverter = new JSONConverter();
                                 File.WriteAllText(sfd.FileName, jsonConverter.Export(m));
                                 break;
 
@@ -700,19 +628,19 @@ namespace WinForms.TestHarness
 
         private void WritePBuffFile(string sfdFileName, Model model)
         {
-            var pbc = new ProtocolBufferConverter();
-            var bytes = pbc.Export(model);
+            ProtocolBufferConverter pbc = new ProtocolBufferConverter();
+            byte[] bytes = pbc.Export(model);
             File.WriteAllBytes(sfdFileName, bytes);
         }
 
         private void OnClick_ClearChemistry(object sender, EventArgs e)
         {
-            var cc = new CMLConverter();
+            CMLConverter cc = new CMLConverter();
             _undoStack.Push(cc.Import(_lastCml));
             _lastCml = string.Empty;
 
             Display.Clear();
-            EnableUndoRedoButtonsAndShowStacks();
+            SetButtonStates(FormState.Edit);
         }
 
         private void OnLoad_FlexForm(object sender, EventArgs e)
@@ -725,8 +653,8 @@ namespace WinForms.TestHarness
             UndoHost.Child = UndoStack;
 
             // ToDo: [MAW] Check if we still need the config watcher
-            var location = Assembly.GetExecutingAssembly().Location;
-            var path = Path.GetDirectoryName(location);
+            string location = Assembly.GetExecutingAssembly().Location;
+            string path = Path.GetDirectoryName(location);
             _configWatcher = new ConfigWatcher(path);
         }
 
@@ -741,14 +669,14 @@ namespace WinForms.TestHarness
 
         private void OnClick_ChangeOoXmlSettings(object sender, EventArgs e)
         {
-            var settings = new OoXmlV4Settings();
+            OoXmlV4Settings settings = new OoXmlV4Settings();
             settings.Telemetry = _telemetry;
             settings.TopLeft = new Point(Left + 24, Top + 24);
 
-            var tempOptions = _renderOptions.Clone();
+            OoXmlV4Options tempOptions = _renderOptions.Clone();
             settings.RendererOptions = tempOptions;
 
-            var dr = settings.ShowDialog();
+            DialogResult dr = settings.ShowDialog();
             if (dr == DialogResult.OK)
             {
                 _renderOptions = tempOptions.Clone();
@@ -772,37 +700,37 @@ namespace WinForms.TestHarness
 
         private void LayoutUsingCheblClean()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var cc = new CMLConverter();
-            var model = cc.Import(_lastCml);
+            CMLConverter cc = new CMLConverter();
+            Model model = cc.Import(_lastCml);
 
             if (model.TotalMoleculesCount == 1
                 && !model.HasNestedMolecules
                 && !model.HasFunctionalGroups)
             {
-                var bondLength = model.MeanBondLength;
-                var marvin = cc.Export(model, true, CmlFormat.MarvinJs);
+                double bondLength = model.MeanBondLength;
+                string marvin = cc.Export(model, true, CmlFormat.MarvinJs);
 
                 // Replace double quote with single quote
                 marvin = marvin.Replace("\"", "'");
 
                 try
                 {
-                    using (var httpClient = new HttpClient())
+                    using (HttpClient httpClient = new HttpClient())
                     {
                         httpClient.Timeout = TimeSpan.FromSeconds(15);
                         httpClient.DefaultRequestHeaders.Add("user-agent", "Chem4Word");
 
                         try
                         {
-                            var request = new HttpRequestMessage(HttpMethod.Post, "https://www.ebi.ac.uk/chembl/api/utils/clean");
+                            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://www.ebi.ac.uk/chembl/api/utils/clean");
                             request.Headers.Add("User-Agent", "Chem4Word");
 
-                            var body = JsonConvert.SerializeObject(new { structure = $"{marvin}", parameters = new { dim = 2, opts = "s" } });
+                            string body = JsonConvert.SerializeObject(new { structure = $"{marvin}", parameters = new { dim = 2, opts = "s" } });
                             request.Content = new StringContent(body, Encoding.UTF8, "text/plain");
 
-                            var response = httpClient.SendAsync(request).Result;
+                            HttpResponseMessage response = httpClient.SendAsync(request).Result;
 
                             if (!response.IsSuccessStatusCode)
                             {
@@ -810,7 +738,7 @@ namespace WinForms.TestHarness
                                 Debug.WriteLine($"{response.StatusCode} - {response.RequestMessage}");
                             }
 
-                            var answer = response.Content.ReadAsStringAsync();
+                            Task<string> answer = response.Content.ReadAsStringAsync();
                             Debug.WriteLine(answer.Result);
 
                             model = cc.Import(answer.Result);
@@ -820,7 +748,7 @@ namespace WinForms.TestHarness
                                 model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
                             }
 
-                            var clone = cc.Import(_lastCml);
+                            Model clone = cc.Import(_lastCml);
                             _undoStack.Push(clone);
 
                             _lastCml = cc.Export(model);
@@ -849,19 +777,19 @@ namespace WinForms.TestHarness
 
         private void OnClick_RenderOoXml(object sender, EventArgs e)
         {
-            var renderer = new Renderer
+            Renderer renderer = new Renderer
             {
                 Telemetry = _telemetry,
                 TopLeft = new Point(Left + 24, Top + 24),
                 Cml = _lastCml,
                 Properties = new Dictionary<string, string>
-                             {
-                                 {
-                                     "Guid", Guid.NewGuid().ToString("N")
-                                 }
-                             }
+                                                 {
+                                                     {
+                                                         "Guid", Guid.NewGuid().ToString("N")
+                                                     }
+                                                 }
             };
-            var tempFileName = renderer.Render();
+            string tempFileName = renderer.Render();
             if (string.IsNullOrEmpty(tempFileName))
             {
                 MessageBox.Show("Something went wrong!", "Error");
@@ -876,13 +804,13 @@ namespace WinForms.TestHarness
 
         private void OnClick_SearchChEBI(object sender, EventArgs e)
         {
-            using (var searcher = new SearchChEBI())
+            using (SearchChEBI searcher = new SearchChEBI())
             {
                 searcher.Telemetry = _telemetry;
                 searcher.UserOptions = new ChEBIOptions();
                 searcher.TopLeft = new Point(Left + 24, Top + 24);
 
-                var result = searcher.ShowDialog(this);
+                DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
                     HandleChangedCml(searcher.Cml, "ChEBI Search result");
@@ -896,13 +824,13 @@ namespace WinForms.TestHarness
 
         private void OnClick_SearchPubChem(object sender, EventArgs e)
         {
-            using (var searcher = new SearchPubChem())
+            using (SearchPubChem searcher = new SearchPubChem())
             {
                 searcher.Telemetry = _telemetry;
                 searcher.UserOptions = new PubChemOptions();
                 searcher.TopLeft = new Point(Left + 24, Top + 24);
 
-                var result = searcher.ShowDialog(this);
+                DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
                     HandleChangedCml(searcher.Cml, "PubChem Search result");
@@ -916,13 +844,13 @@ namespace WinForms.TestHarness
 
         private void OnClick_SearchOpsin(object sender, EventArgs e)
         {
-            using (var searcher = new SearchOpsin())
+            using (SearchOpsin searcher = new SearchOpsin())
             {
                 searcher.Telemetry = _telemetry;
                 searcher.UserOptions = new SearcherOptions();
                 searcher.TopLeft = new Point(Left + 24, Top + 24);
 
-                var result = searcher.ShowDialog(this);
+                DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
                     HandleChangedCml(searcher.Cml, "ChEBI Search result");
@@ -936,16 +864,16 @@ namespace WinForms.TestHarness
 
         private void HandleChangedCml(string cml, string captionPrefix)
         {
-            var cc = new CMLConverter();
+            CMLConverter cc = new CMLConverter();
             if (!string.IsNullOrEmpty(_lastCml))
             {
-                var clone = cc.Import(_lastCml);
+                Model clone = cc.Import(_lastCml);
                 Debug.WriteLine(
                     $"Pushing F: {clone.ConciseFormula} BL: {SafeDouble.AsString0(clone.MeanBondLength)} onto Stack");
                 _undoStack.Push(clone);
             }
 
-            var model = cc.Import(cml);
+            Model model = cc.Import(cml);
             if (model.AllErrors.Count == 0 && model.AllWarnings.Count == 0)
             {
                 model.Relabel(true);
@@ -956,7 +884,7 @@ namespace WinForms.TestHarness
             }
             else
             {
-                var errors = model.AllWarnings;
+                List<string> errors = model.AllWarnings;
                 errors.AddRange(model.AllErrors);
 
                 MessageBox.Show(string.Join(Environment.NewLine, errors), "Model has errors or warnings!");
@@ -965,26 +893,26 @@ namespace WinForms.TestHarness
 
         private void OnClick_CalculateProperties(object sender, EventArgs e)
         {
-            var cc = new CMLConverter();
+            CMLConverter cc = new CMLConverter();
             if (!string.IsNullOrEmpty(_lastCml))
             {
-                var clone = cc.Import(_lastCml);
+                Model clone = cc.Import(_lastCml);
                 Debug.WriteLine(
                     $"Pushing F: {clone.ConciseFormula} BL: {clone.MeanBondLength.ToString("#,##0.00")} onto Stack");
                 _undoStack.Push(clone);
             }
 
-            var model = cc.Import(_lastCml);
+            Model model = cc.Import(_lastCml);
 
-            var assembly = Assembly.GetExecutingAssembly();
-            var version = assembly.GetName().Version;
-            var pc = new PropertyCalculator(_telemetry, new Point(Left, Top), version.ToString());
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Version version = assembly.GetName().Version;
+            PropertyCalculator pc = new PropertyCalculator(_telemetry, new Point(Left, Top), version.ToString());
 
-            var stopwatch = new Stopwatch();
+            Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
             model.CreatorGuid = $"TH:{Guid.NewGuid():N}";
-            var changedProperties = pc.CalculateProperties(model);
+            int changedProperties = pc.CalculateProperties(model);
 
             stopwatch.Stop();
             Debug.WriteLine($"Calculating {changedProperties} changed properties took {stopwatch.Elapsed}");
@@ -992,6 +920,16 @@ namespace WinForms.TestHarness
             _lastCml = cc.Export(model);
 
             ShowChemistry($"{changedProperties} changed properties; {model.ConciseFormula}", model);
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (_helper.GitStatusObtained)
+            {
+                timer1.Enabled = false;
+                Thread.Sleep(250);
+                SetButtonStates(FormState.OpenOrCreate);
+            }
         }
     }
 }

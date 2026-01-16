@@ -69,7 +69,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <!--  Gray when ElectronValue is null  -->
-                        <DataTrigger Binding="{Binding ElectronValue, ElementName=Root}" Value="{x:Null}">
+                        <DataTrigger Binding="{Binding ElectronTypeValue, ElementName=Root}" Value="{x:Null}">
                             <Setter TargetName="border" Property="BorderBrush" Value="Gray" />
                             <Setter TargetName="border" Property="Background" Value="Transparent" />
                         </DataTrigger>

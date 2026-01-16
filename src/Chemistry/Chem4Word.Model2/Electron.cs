@@ -7,10 +7,12 @@
 
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2.Annotations;
+using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static Chem4Word.Model2.ModelConstants;
 
@@ -81,7 +83,7 @@ namespace Chem4Word.Model2
         /// <summary>
         /// See the ElectronType enum for details
         /// </summary>
-        public ElectronType Type
+        public ElectronType TypeOfElectron
         {
             get
             {
@@ -162,6 +164,14 @@ namespace Chem4Word.Model2
             return null;
         }
 
+        public override string ToString()
+        {
+            string placement = ExplicitPlacement != null
+                ? $"{ExplicitPlacement} - M"
+                : "Auto";
+            return $"{TypeOfElectron} [{Count}] {placement}";
+        }
+
         /// <summary>
         /// Used when copying molecules and the suchlike
         /// </summary>
@@ -172,8 +182,9 @@ namespace Chem4Word.Model2
             {
                 Id = Id,
                 Count = Count,
-                Type = Type,
-                ExplicitPlacement = ExplicitPlacement
+                TypeOfElectron = TypeOfElectron,
+                ExplicitPlacement = ExplicitPlacement,
+                Parent = Parent
             };
             return newElectron;
         }
@@ -206,7 +217,11 @@ namespace Chem4Word.Model2
                 return true;
             }
 
-            return Equals(PropertyChanged, other.PropertyChanged) && Path == other.Path && Count == other.Count && Type == other.Type && Placement == other.Placement;
+            return Equals(PropertyChanged, other.PropertyChanged)
+                   && Path == other.Path
+                   && Count == other.Count
+                   && TypeOfElectron == other.TypeOfElectron
+                   && Placement == other.Placement;
         }
 
         public override bool Equals(object obj)
@@ -236,7 +251,7 @@ namespace Chem4Word.Model2
                 int hashCode = (PropertyChanged != null ? PropertyChanged.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Path != null ? Path.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ Count;
-                hashCode = (hashCode * 397) ^ (int)Type;
+                hashCode = (hashCode * 397) ^ (int)TypeOfElectron;
                 hashCode = (hashCode * 397) ^ (int)Placement;
                 return hashCode;
             }

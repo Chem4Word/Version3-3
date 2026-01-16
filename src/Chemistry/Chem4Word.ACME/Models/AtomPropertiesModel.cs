@@ -10,6 +10,7 @@ using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chem4Word.ACME.Models
 {
@@ -55,6 +56,8 @@ namespace Chem4Word.ACME.Models
         }
 
         public Model MicroModel { get; set; }
+
+        public Atom Atom { get { return MicroModel.GetAllAtoms().FirstOrDefault(); } }
 
         public bool HasIsotopes
         {
@@ -112,6 +115,8 @@ namespace Chem4Word.ACME.Models
                 OnPropertyChanged();
             }
         }
+
+        public List<Electron> Electrons { get; set; } = new List<Electron>();
 
         public Dictionary<CompassPoints, ElectronType> ExplicitElectronPlacements
         {

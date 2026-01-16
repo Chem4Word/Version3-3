@@ -69,6 +69,7 @@ namespace Chem4Word.Telemetry
         public string Screens { get; set; }
 
         public string GitStatus { get; set; }
+        public bool GitStatusObtained { get; set; }
 
         public long UtcOffset { get; set; }
         public DateTime SystemUtcDateTime { get; set; }
@@ -403,6 +404,8 @@ namespace Chem4Word.Telemetry
             GitStatus = string.Join(Environment.NewLine, result.ToArray());
 
             string message = $"GetGitStatus finished at {SafeDate.ToLongDate(DateTime.UtcNow)}";
+            GitStatusObtained = true;
+
             StartUpTimings.Add(message);
             Debug.WriteLine(message);
         }

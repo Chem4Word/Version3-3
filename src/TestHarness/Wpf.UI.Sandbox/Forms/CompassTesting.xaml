@@ -4,26 +4,30 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Chem4Word.ACME.Controls;assembly=Chem4Word.ACME"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enums="clr-namespace:Chem4Word.Model2.Enums;assembly=Chem4Word.Model2"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="ThisWindow"
     Title="Testing of Compass Control"
-    Width="600"
-    Height="400"
+    Height="450"
+    ContentRendered="CompassTesting_OnContentRendered"
+    SizeToContent="Width"
     mc:Ignorable="d">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="124" />
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="124" />
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="124" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="154" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="154" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="154" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="154" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="24" />
-            <RowDefinition Height="124" />
+            <RowDefinition Height="154" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -64,12 +68,37 @@
             CompassControlType="Electrons"
             CompassValueChanged="OnCompassValueChanged_Compass" />
 
-        <TextBlock
-            x:Name="Status3"
+        <StackPanel
             Grid.Row="2"
             Grid.Column="5"
-            Grid.ColumnSpan="2">
-            Compass #3
-        </TextBlock>
+            Grid.ColumnSpan="2"
+            Orientation="Vertical">
+            <CheckBox IsChecked="False">
+                Auto Placement
+            </CheckBox>
+
+            <TextBlock x:Name="Status3">
+                Compass #3
+            </TextBlock>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Grid.Column="7">
+            <controls:ElectronsView
+                x:Name="ElectronsView"
+                Width="154"
+                ElectronsValueChanged="ElectronsView_OnElectronsValueChanged" />
+        </Grid>
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="7"
+            Grid.ColumnSpan="2"
+            Orientation="Vertical">
+            <CheckBox IsChecked="True">
+                Auto Placement
+            </CheckBox>
+            <TextBlock x:Name="Status4">
+                Compass #4
+            </TextBlock>
+        </StackPanel>
     </Grid>
 </Window>

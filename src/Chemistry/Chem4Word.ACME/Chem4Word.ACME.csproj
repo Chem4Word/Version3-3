@@ -133,6 +133,9 @@
       <DependentUpon>CompassButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DragHandle.cs" />
+    <Compile Include="Controls\ElectronsView.xaml.cs">
+      <DependentUpon>ElectronsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TextBlockHelper.cs" />
     <Compile Include="Controls\ReactionOption.cs" />
     <Compile Include="Controls\ChemistryItem.xaml.cs">
@@ -353,6 +356,10 @@
     <Page Include="Controls\CompassButton.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Controls\ElectronsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MoleculePropertyEditor.xaml">
       <SubType>Designer</SubType>

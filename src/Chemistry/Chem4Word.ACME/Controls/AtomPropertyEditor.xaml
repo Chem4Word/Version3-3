@@ -35,7 +35,7 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid d:IsLocked="True">
+    <Grid x:Name="RootGrid" d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -60,6 +60,7 @@
 
         <!--  Element or Functional Group selector  -->
         <StackPanel
+            x:Name="RadioButtonPanel"
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -89,6 +90,7 @@
 
         <!--  Preview Pane  -->
         <StackPanel
+            x:Name="PreviewPanel"
             Grid.Row="2"
             Grid.Column="0"
             Width="330"
@@ -112,6 +114,7 @@
         </StackPanel>
 
         <Grid
+            x:Name="ControlsGrid"
             Grid.Row="2"
             Grid.Column="1"
             Margin="2"
@@ -126,13 +129,15 @@
                 <!--  Properties of an Element  -->
                 <StackPanel d:IsLocked="True" Visibility="{Binding IsChecked, Converter={StaticResource VisConverter}, ElementName=Element}">
                     <!-- <StackPanel Visibility="Visible">-->
-                    <Grid d:IsLocked="True">
+                    <Grid x:Name="GeneralGrid" d:IsLocked="True">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Grid d:IsLocked="True">
+                        <Grid x:Name="SymbolChargeIsotope" d:IsLocked="True">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
@@ -151,6 +156,7 @@
                                 d:IsLocked="True"
                                 Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run Text="Symbol" /></TextBlock>
                             <Grid
+                                x:Name="AtomPickerGrid"
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="0"
@@ -309,93 +315,98 @@
                                 SelectionChanged="OnSelectionChanged_IsotopePicker"
                                 Style="{StaticResource StandardCombo}"
                                 Visibility="{Binding HasIsotopes, Converter={StaticResource VisConverter}, Mode=OneWay}" />
-
-                            <Grid
-                                Name="HydrogenVisibilityGrid"
-                                Grid.Row="4"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="3"
-                                HorizontalAlignment="Left"
-                                d:IsLocked="True"
-                                Visibility="{Binding ShowHydrogenLabels, Converter={StaticResource VisConverter}, Mode=OneWay}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="0"
-                                    Margin="2"
-                                    d:IsLocked="True"
-                                    Style="{StaticResource Acme.Controls.TextBlock.StdLabel}">
-                                    <Run FontSize="14" Text="Hydrogen Labels" />
-                                </TextBlock>
-                                <ComboBox
-                                    x:Name="ImplicitHydrogenMode"
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Width="150"
-                                    Height="32"
-                                    Margin="5"
-                                    HorizontalAlignment="Left"
-                                    HorizontalContentAlignment="Stretch"
-                                    VerticalContentAlignment="Stretch"
-                                    d:IsLocked="True"
-                                    SelectionChanged="OnSelectionChanged_ImplicitHydrogenMode" />
-                            </Grid>
                         </Grid>
-
                         <Grid
-                            Name="HydrogenPlacementGrid"
-                            Grid.Row="2"
+                            Name="HydrogenOrElectronsGrid"
+                            Grid.Row="4"
                             d:IsLocked="True"
                             Visibility="{Binding ShowCompass, Converter={StaticResource VisConverter}, Mode=OneWay}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="156" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="156" />
                                 <ColumnDefinition Width="5" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="156" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="0"
+                                Margin="5,5,5,0"
                                 d:IsLocked="True"
+                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                 Text="Hydrogens" />
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="2"
+                                Margin="5,5,5,0"
                                 d:IsLocked="True"
+                                Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                 Text="Electrons" />
-                            <local:Compass
-                                x:Name="Compass1"
+                            <ToggleButton
+                                x:Name="ElectronPlacementMode"
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="2,0,2,5"
+                                d:IsLocked="True"
+                                Checked="OnSwitchToAutomatic"
+                                Content="Manual Placement"
+                                IsChecked="False"
+                                Unchecked="OnSwitchToManual" />
+                            <ComboBox
+                                x:Name="ImplicitHydrogenMode"
                                 Grid.Row="1"
                                 Grid.Column="0"
+                                Height="32"
+                                Margin="2,0,2,5"
+                                VerticalContentAlignment="Center"
+                                d:IsLocked="True"
+                                SelectionChanged="OnSelectionChanged_ImplicitHydrogenMode" />
+                            <local:Compass
+                                x:Name="HydrogensCompass"
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                VerticalAlignment="Top"
                                 d:IsLocked="True"
                                 CompassControlType="Hydrogens"
                                 CompassValueChanged="OnCompassValueChanged_HydrogensCompass"
                                 SelectedCompassPoint="{Binding ExplicitHydrogenPlacement}" />
-                            <local:Compass
-                                x:Name="Compass2"
-                                Grid.Row="1"
+                            <Grid
+                                x:Name="CompassOrListView"
+                                Grid.Row="2"
                                 Grid.Column="2"
-                                d:IsLocked="True"
-                                CompassControlType="Electrons"
-                                CompassValueChanged="OnCompassValueChanged_ElectronsCompass"
-                                SelectedElectronValues="{Binding ExplicitElectronPlacements}" />
+                                d:IsLocked="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="156" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <local:Compass
+                                    x:Name="ElectronsCompass"
+                                    Grid.Row="0"
+                                    d:IsLocked="True"
+                                    CompassControlType="Electrons"
+                                    CompassValueChanged="OnCompassValueChanged_ElectronsCompass"
+                                    SelectedElectronDictionary="{Binding ExplicitElectronPlacements}"
+                                    Visibility="Visible" />
+                                <local:ElectronsView
+                                    x:Name="ElectronsView"
+                                    Grid.Row="0"
+                                    d:IsLocked="True"
+                                    ElectronsValueChanged="OnElectronsValueChanged_ElectronsView"
+                                    Visibility="Collapsed" />
+                            </Grid>
                         </Grid>
                     </Grid>
                 </StackPanel>
 
                 <!--  Properties of a Functional Group  -->
                 <Grid
+                    x:Name="FunctionalGroupGrid"
                     Width="Auto"
                     Height="Auto"
                     d:IsLocked="True"
@@ -450,7 +461,7 @@
                                 d:IsLocked="True"
                                 Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"><Run FontSize="14" Text="Group Placement" /></TextBlock>
                             <local:Compass
-                                x:Name="Compass3"
+                                x:Name="FunctionalGroupsCompass"
                                 Grid.Row="1"
                                 Margin="5"
                                 d:IsLocked="True"
@@ -467,6 +478,7 @@
 
         <!--  Finally, the Save and Cancel buttons  -->
         <StackPanel
+            x:Name="ButtonsPanel"
             Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="2"
