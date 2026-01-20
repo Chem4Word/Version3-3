@@ -15,6 +15,8 @@
     <Content Include="Test.cmd" />
     <Content Include="Testing\Insert Test Messages.reg" />
     <Content Include="Testing\Insert-Legacy-Versions.reg" />
+    <Content Include="WixUIBanner.bmp" />
+    <Content Include="WixUIDialog.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Chem4Word.V3\Chem4Word.V3.csproj">
@@ -25,6 +27,7 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\WiX.CustomAction.V6\WiX.CustomAction.V6.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Testing" />
