@@ -879,6 +879,7 @@ namespace Chem4Word.Model2
                     freePoints.Remove(preferredSpot);
                 }
             }
+
             //should never get here
             return CompassPoints.North;
         }
@@ -907,7 +908,7 @@ namespace Chem4Word.Model2
         {
             _electrons[toAdd.InternalId] = toAdd;
             NotifyCollectionChangedEventArgs changedEventArgs =
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, 
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
                                                      new List<Electron> { toAdd });
             OnCollectionChanged_Electrons(this, changedEventArgs);
             UpdateElectronPropertyHandlers(changedEventArgs);

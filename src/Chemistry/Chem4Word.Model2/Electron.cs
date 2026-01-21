@@ -7,7 +7,6 @@
 
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2.Annotations;
-using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
@@ -124,11 +123,16 @@ namespace Chem4Word.Model2
         {
             get
             {
+                CompassPoints? result = ExplicitPlacement;
+                string type = "M";
                 if (ExplicitPlacement is null && Parent is Atom atom)
                 {
-                    return atom.GetEmptySpaceForElectrons(this);
+                    type = "A";
+                    result = atom.GetEmptySpaceForElectrons(this);
                 }
-                return ExplicitPlacement;
+
+                Debug.WriteLine($"Electron {Path} - Placement: {type} -> {result}");
+                return result;
             }
         }
 

@@ -202,14 +202,6 @@ namespace Chem4Word.ACME.Controls
                     Middle.CompassValue = CompassPoints.North;
                     Middle.IsElectronsMode = false;
                 }
-
-                Debug.WriteLine(Name);
-
-                List<CompassButton> buttons = GetVisibleButtons();
-                foreach (CompassButton button in buttons)
-                {
-                    Debug.WriteLine($"{Name} Button:{button.Name} CompassValue:{button.CompassValue}");
-                }
             }
         }
 
@@ -375,8 +367,6 @@ namespace Chem4Word.ACME.Controls
 
                 if (ElectronsMode)
                 {
-                    Debug.WriteLine($"{Name} - Button:{button.Name} ElectronTypeValue:{button.ElectronTypeValue}");
-
                     if (button.Name == "Centre")
                     {
                         SelectedElectronDictionary.Clear();
@@ -399,8 +389,6 @@ namespace Chem4Word.ACME.Controls
                 else
                 {
                     CompassPoints? compassValue = button.CompassValue;
-
-                    Debug.WriteLine($"{Name} - Button:{button.Name} CompassValue:{button.CompassValue}");
 
                     ClearAllVisibleButtons();
 

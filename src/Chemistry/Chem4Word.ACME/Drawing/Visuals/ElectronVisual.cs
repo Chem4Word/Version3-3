@@ -55,6 +55,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
             //first, work out from the placement property what the vector is
             double offsetAngle = 45 * (int)ParentElectron.Placement.Value;
+
             Matrix rotator = new Matrix();
             rotator.Rotate(offsetAngle);
 
