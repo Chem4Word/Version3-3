@@ -428,6 +428,50 @@ namespace Chem4Word.Model2
             }
         }
 
+
+        /// <summary>
+        /// Returns a list of all electron pushers associated with the molecule
+        /// </summary>
+        public IEnumerable<ElectronPusher> ElectronPushers
+        {
+            get
+            {
+                if (Model != null)
+                {
+                    foreach (var ep in Model.ElectronPushers)
+                    {
+                        if (Atoms.Values.Contains(ep.Value.StartChemistry))
+                        {
+                            yield return ep.Value;
+                        }
+                        else if (Bonds.Contains(ep.Value.StartChemistry))
+                        {
+                            yield return ep.Value;
+                        }
+                        else
+                        {
+                            foreach (StructuralObject chemistry in ep.Value.EndChemistries)
+                            {
+                                if (Atoms.Values.Contains(chemistry)||Bonds.Contains(chemistry))
+                                {
+                                    yield return ep.Value;
+                                    break;
+                                }
+                            }
+                        }
+
+                        foreach (var molecule in Molecules.Values)
+                        {
+                            foreach (var childEp in molecule.ElectronPushers)
+                            {
+                                yield return childEp;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion Chemical properties
 
         #region Reaction Properties

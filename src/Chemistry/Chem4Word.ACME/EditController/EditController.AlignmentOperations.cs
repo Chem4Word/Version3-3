@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Model2;
 using System;
 using System.Collections.Generic;
@@ -116,12 +117,10 @@ namespace Chem4Word.ACME
                 List<Molecule> moleculesToAlign = objects.OfType<Molecule>().ToList();
                 List<Annotation> annotationsToAlign = objects.OfType<Annotation>().ToList();
 
-                double epsilon = 1.0E6;
-
                 double top = Math.Min(moleculesToAlign.Select(m => m.Top)
-                                                      .DefaultIfEmpty(epsilon).Min(),
+                                                      .DefaultIfEmpty(CoreConstants.Epsilon).Min(),
                                       annotationsToAlign.Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Top)
-                                                        .DefaultIfEmpty(epsilon).Min());
+                                                        .DefaultIfEmpty(CoreConstants.Epsilon).Min());
 
                 foreach (Molecule molecule in moleculesToAlign)
                 {

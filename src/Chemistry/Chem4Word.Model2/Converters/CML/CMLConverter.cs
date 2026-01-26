@@ -144,6 +144,39 @@ namespace Chem4Word.Model2.Converters.CML
                         newAnnotation.Parent = newModel;
                     }
 
+                    //load up the mechanism-level electron pushers
+                    //must be done last of all when everything else is loaded.
+                    List<XElement> electronPusherElements = CMLHelper.GetElectronPushers(root);
+                    foreach (XElement epElement in electronPusherElements)
+                    {
+                        ElectronPusher newElectronPusher = GetElectronPusher(epElement);
+                        newModel.AddElectronPusher(newElectronPusher);
+                        newElectronPusher.Parent = newModel;
+
+                        //now fix the refs
+                        string firstRef = epElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrFirstChemistryRef)?.Value;
+                        string secondRefs = epElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrSecondChemistryRefs)?.Value;
+                        
+                        if (!string.IsNullOrEmpty(firstRef))
+                        {
+                            StructuralObject startChemistry = newModel.GetByPath(firstRef);
+                            if (startChemistry != null)
+                            {
+                                newElectronPusher.StartChemistry = startChemistry;
+                            }
+                        }
+                        //there may be more than one secondRef, so split it
+                        string[] secondPaths = secondRefs.Split(' ');
+                        foreach (string path in secondPaths)
+                        {
+                            StructuralObject endChemistry = newModel.GetByPath(path);
+                            if (endChemistry != null)
+                            {
+                                newElectronPusher.EndChemistries.Add(endChemistry);
+                            }
+                        }
+                    }
+
                     #region Handle 1D Labels
 
                     if (protectedLabels != null && protectedLabels.Count >= 1)
@@ -252,6 +285,35 @@ namespace Chem4Word.Model2.Converters.CML
             return newAnnotation;
         }
 
+        /// <summary>
+        /// This doesn't return the links to the start and end chemistries
+        /// You will need to fix these up immediately after conversion
+        /// </summary>
+        /// <param name="cmlElement"></param>
+        /// <returns></returns>
+        private ElectronPusher GetElectronPusher(XElement cmlElement)
+        {
+            ElectronPusher newElectronPusher = new ElectronPusher
+            {
+                PusherType = CMLHelper.GetElectronPusherType(cmlElement),
+                Id = CMLHelper.GetId(cmlElement)
+            };
+
+            string firstControlPointValue = cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint)?.Value;
+            if (!string.IsNullOrEmpty(firstControlPointValue))
+            {
+                newElectronPusher.FirstControlPoint = Point.Parse(firstControlPointValue);
+            }
+
+            string secondControlPointValue = cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint)?.Value;
+            if (!string.IsNullOrEmpty(secondControlPointValue))
+            {
+                newElectronPusher.SecondControlPoint = Point.Parse(secondControlPointValue);
+            }
+
+            return newElectronPusher;
+        }
+
         private void AddReactionScheme(Model newModel, ReactionScheme newScheme)
         {
             newModel.AddReactionScheme(newScheme);
@@ -309,6 +371,13 @@ namespace Chem4Word.Model2.Converters.CML
                         }
                     }
 
+                    if (model.HasElectronPushers)
+                    {
+                        foreach (ElectronPusher electronPusher in model.ElectronPushers.Values)
+                        {
+                            root.Add(GetXElement(electronPusher));
+                        }
+                    }
                     // Add namespaces etc
                     root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.TagConventions, CMLNamespaces.conventions));
                     root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.NSCML, CMLNamespaces.cml));
@@ -426,6 +495,24 @@ namespace Chem4Word.Model2.Converters.CML
                     model.Relabel(false);
                 }
             }
+        }
+
+        private XElement GetXElement(ElectronPusher electronPusher)
+        {
+            var firstControlPoint = PointHelper.AsCMLString(electronPusher.FirstControlPoint);
+            var secondControlPoint = PointHelper.AsCMLString(electronPusher.SecondControlPoint);
+
+            var startChemistryRefs = electronPusher.StartChemistry.Path;
+            var endChemistryRefs = string.Join(" ", electronPusher.EndChemistries.Select(c => c.Path));
+            var result = new XElement(CMLNamespaces.c4w + ModelConstants.TagElectronPusher,
+                                      new XAttribute(ModelConstants.AttributeId, electronPusher.Id),
+                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint, firstControlPoint),
+                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint, secondControlPoint),
+                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstChemistryRef, startChemistryRefs),
+                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondChemistryRefs, endChemistryRefs),
+                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType, electronPusher.PusherType.ToString())
+                                     );
+            return result;
         }
 
         #region Export Helpers

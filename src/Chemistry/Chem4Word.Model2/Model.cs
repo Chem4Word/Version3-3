@@ -42,6 +42,8 @@ namespace Chem4Word.Model2
 
         public event NotifyCollectionChangedEventHandler ElectronsChanged;
 
+        public event NotifyCollectionChangedEventHandler ElectronPushersChanged;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion Events
@@ -143,6 +145,39 @@ namespace Chem4Word.Model2
             OnAnnotationsChanged(this, e);
         }
 
+        public void AddElectronPusher(ElectronPusher newPusher)
+        {
+            _electronPushers[newPusher.InternalId] = newPusher;
+            NotifyCollectionChangedEventArgs e =
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<ElectronPusher> { newPusher});
+            UpdateElectronPushersEventHandlers(e);
+            OnElectronPushersChanged(this, e);
+        }
+
+        public void RemoveElectronPusher(ElectronPusher pusher)
+        {
+            _electronPushers.Remove(pusher.InternalId);
+            NotifyCollectionChangedEventArgs e =
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove,
+                                                     new List<ElectronPusher> { pusher });
+            UpdateElectronPushersEventHandlers(e);
+            OnElectronPushersChanged(this, e);
+        }
+
+        private void OnCollectionChanged_ElectronPushers(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnElectronPushersChanged(sender, e);
+        }
+
+        private void OnElectronPushersChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (!InhibitEvents)
+            {
+                var temp = ElectronPushersChanged;
+                temp?.Invoke(sender, e);
+            }
+        }
+
         //responds to bonds being added or removed
         private void OnCollectionChanged_Bonds(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -188,6 +223,8 @@ namespace Chem4Word.Model2
         private readonly Dictionary<Guid, Annotation> _annotations;
         public ReadOnlyDictionary<Guid, Annotation> Annotations;
 
+        private readonly Dictionary<Guid, ElectronPusher> _electronPushers;
+        public ReadOnlyDictionary<Guid, ElectronPusher> ElectronPushers;
         public string CustomXmlPartGuid { get; set; }
 
         public bool ExplicitC { get; set; } = false;
@@ -251,6 +288,11 @@ namespace Chem4Word.Model2
         /// True if this model has any annotations
         /// </summary>
         public bool HasAnnotations => Annotations.Values.Count > 0;
+
+        /// <summary>
+        /// True if this model has any electron pushers
+        /// </summary>
+        public bool HasElectronPushers => ElectronPushers.Values.Count > 0;
 
         /// <summary>
         /// Count of functional groups in this model
@@ -712,6 +754,9 @@ namespace Chem4Word.Model2
             _annotations = new Dictionary<Guid, Annotation>();
             Annotations = new ReadOnlyDictionary<Guid, Annotation>(_annotations);
 
+            _electronPushers = new Dictionary<Guid, ElectronPusher>();
+            ElectronPushers = new ReadOnlyDictionary<Guid, ElectronPusher>(_electronPushers);
+
             GeneralErrors = new List<string>();
             GeneralWarnings = new List<string>();
         }
@@ -743,6 +788,11 @@ namespace Chem4Word.Model2
             foreach (Annotation annotation in Annotations.Values)
             {
                 annotation.RepositionAll(x, y);
+            }
+
+            foreach (ElectronPusher electronPusher in ElectronPushers.Values)
+            {
+                electronPusher.RepositionAll(x, y);
             }
             _boundingBox = Rect.Empty;
         }
@@ -797,6 +847,7 @@ namespace Chem4Word.Model2
             int reactionSchemeCount = 0;
             int reactionCount = 0;
             int annotationCount = 0;
+            int epCount = 0;
 
             foreach (var molecule in GetAllMolecules())
             {
@@ -857,6 +908,11 @@ namespace Chem4Word.Model2
             {
                 an.ReLabelGuids(ref annotationCount);
             }
+
+            foreach (ElectronPusher pusher in ElectronPushers.Values)
+            {
+                pusher.ReLabelGuids(ref epCount);
+            }
         }
 
         private IEnumerable<Reaction> GetAllReactions()
@@ -882,7 +938,7 @@ namespace Chem4Word.Model2
             int reactionSchemeCount = 0;
             int reactionCount = 0;
             int annotationCount = 0;
-
+            int electronPusherCount = 0;
             if (Molecules.Count > 0)
             {
                 foreach (Molecule m in Molecules.Values)
@@ -904,6 +960,15 @@ namespace Chem4Word.Model2
                 foreach (var annotation in Annotations.Values)
                 {
                     annotation.ReLabel(ref annotationCount);
+                }
+            }
+
+            if (ElectronPushers.Count > 0)
+            {
+                foreach (ElectronPusher electronPusher in ElectronPushers.Values)
+                {
+                   
+                    electronPusher.ReLabel(ref electronPusherCount);
                 }
             }
         }
@@ -947,6 +1012,16 @@ namespace Chem4Word.Model2
                     var annCopy = ann.Copy();
                     modelCopy.AddAnnotation(annCopy);
                     annCopy.Parent = modelCopy;
+                }
+            }
+
+            if (ElectronPushers.Count > 0)
+            {
+                foreach (ElectronPusher pusher in ElectronPushers.Values)
+                {
+                    ElectronPusher epCopy = pusher.Copy(modelCopy);
+                    modelCopy.AddElectronPusher(epCopy);
+                    epCopy.Parent = modelCopy;
                 }
             }
 
@@ -1122,16 +1197,16 @@ namespace Chem4Word.Model2
             if (TotalBondsCount > 0 && MeanBondLength > 0)
             {
                 double scale = newLength / MeanBondLength;
-                var allAtoms = GetAllAtoms();
+                List<Atom> allAtoms = GetAllAtoms();
 
-                foreach (var atom in allAtoms)
+                foreach (Atom atom in allAtoms)
                 {
                     atom.Position = new Point(atom.Position.X * scale, atom.Position.Y * scale);
                 }
 
-                foreach (var scheme in ReactionSchemes.Values)
+                foreach (ReactionScheme scheme in ReactionSchemes.Values)
                 {
-                    foreach (var reaction in scheme.Reactions.Values)
+                    foreach (Reaction reaction in scheme.Reactions.Values)
                     {
                         reaction.TailPoint = new Point(reaction.TailPoint.X * scale, reaction.TailPoint.Y * scale);
                         reaction.HeadPoint = new Point(reaction.HeadPoint.X * scale, reaction.HeadPoint.Y * scale);
@@ -1141,6 +1216,12 @@ namespace Chem4Word.Model2
                 foreach (Annotation annotation in Annotations.Values)
                 {
                     annotation.Position = new Point(annotation.Position.X * scale, annotation.Position.Y * scale);
+                }
+
+                foreach (ElectronPusher pusher in ElectronPushers.Values)
+                {
+                    pusher.FirstControlPoint = new Point(pusher.FirstControlPoint.X * scale, pusher.FirstControlPoint.Y * scale);
+                    pusher.SecondControlPoint = new Point(pusher.SecondControlPoint.X * scale, pusher.SecondControlPoint.Y * scale);
                 }
 
                 _boundingBox = Rect.Empty;
@@ -1455,6 +1536,27 @@ namespace Chem4Word.Model2
             }
         }
 
+        private void UpdateElectronPushersEventHandlers(NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (var oldItem in e.OldItems)
+                {
+                    var ep = ((ElectronPusher)oldItem);
+                    ep.PropertyChanged -= OnPropertyChanged_ChemObject;
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (var newItem in e.NewItems)
+                {
+                    var ep = ((ElectronPusher)newItem);
+                    ep.PropertyChanged += OnPropertyChanged_ChemObject;
+                }
+            }
+        }
+
         private void OnCollectionChanged_Reactions(object sender, NotifyCollectionChangedEventArgs e)
         {
             OnReactionsChanged(sender, e);
@@ -1753,6 +1855,13 @@ namespace Chem4Word.Model2
                     if (annotation.Id == path)
                     {
                         return annotation;
+                    }
+                }
+                foreach (ElectronPusher electronPusher in ElectronPushers.Values)
+                {
+                    if (electronPusher.Id == path)
+                    {
+                        return electronPusher;
                     }
                 }
                 //haven't found anything so degrade gracefully

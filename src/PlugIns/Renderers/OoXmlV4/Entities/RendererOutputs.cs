@@ -16,27 +16,35 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         // Atom / Annotation / Molecular Weight characters
         public List<AtomLabelCharacter> AtomLabelCharacters { get; } = new List<AtomLabelCharacter>();
 
-        public Dictionary<string, List<Point>> ConvexHulls { get; } = new Dictionary<string, List<Point>>();
+        // Electrons
+        public Dictionary<string, List<OoXmlElectron>> AtomsWithElectrons { get; set; } = new Dictionary<string, List<OoXmlElectron>>();
 
-        public Rect AllCharacterExtents { get; set; } = Rect.Empty;
+        // Electrons Pushers
+        public List<OoXmlElectronPusher> Pushers { get; } = new List<OoXmlElectronPusher>();
 
         // Bond Lines
         public List<BondLine> BondLines { get; } = new List<BondLine>();
-
-        public List<Point> CrossingPoints { get; } = new List<Point>();
-
-        // Rings
-        public List<Point> RingCenters { get; } = new List<Point>();
-
-        public List<InnerCircle> InnerCircles { get; } = new List<InnerCircle>();
 
         // Brackets
         public List<Rect> GroupBrackets { get; } = new List<Rect>();
 
         public List<Rect> MoleculeBrackets { get; } = new List<Rect>();
 
+        // Rings
+        public List<Point> RingCenters { get; } = new List<Point>();
+
+        // Experimental
+        public List<Point> CrossingPoints { get; } = new List<Point>();
+
+        public List<InnerCircle> InnerCircles { get; } = new List<InnerCircle>();
+
         // Drawing Extents
+        public Rect AllCharacterExtents { get; set; } = Rect.Empty;
+
         public List<MoleculeExtents> AllMoleculeExtents { get; } = new List<MoleculeExtents>();
+
+        // Convex Hull of each atom (Label + Hydrogens + Electrons)
+        public Dictionary<string, List<Point>> ConvexHulls { get; } = new Dictionary<string, List<Point>>();
 
         public Diagnostics Diagnostics { get; } = new Diagnostics();
     }

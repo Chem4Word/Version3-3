@@ -222,6 +222,17 @@ namespace Chem4Word.Model2.Converters.CML
             return result;
         }
 
+        internal static List<XElement> GetElectronPushers(XElement doc)
+        {
+            List<XElement> result = new List<XElement>();
+
+            var ann = from XElement xe in doc.Elements(ModelConstants.TagElectronPusher) select xe;
+            var ann2 = from XElement xe2 in doc.Elements(CMLNamespaces.c4w + ModelConstants.TagElectronPusher) select xe2;
+            result = ann.Union(ann2).ToList();
+
+            return result;
+        }
+
         internal static int? GetFormalCharge(XElement cmlElement)
         {
             if (int.TryParse(cmlElement.Attribute(ModelConstants.AttributeFormalCharge)?.Value, out var formalCharge))
@@ -381,6 +392,20 @@ namespace Chem4Word.Model2.Converters.CML
             }
 
             return ElectronType.LonePair;
+        }
+
+        public static ElectronPusher.ElectronPusherType GetElectronPusherType(XElement cmlElement)
+        {
+            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType)?.Value, out ElectronPusher.ElectronPusherType type))
+            {
+                return type;
+            }
+            if (Enum.TryParse(cmlElement.Attribute(ModelConstants.AttrElectronPusherType)?.Value, out type))
+            {
+                return type;
+            }
+
+            return ElectronPusher.ElectronPusherType.CurlyArrow;
         }
     }
 }

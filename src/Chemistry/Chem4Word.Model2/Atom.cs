@@ -387,6 +387,14 @@ namespace Chem4Word.Model2
                         bond.UpdateVisual();
                     }
                 }
+
+                if (ElectronPushers.Any())
+                {
+                    foreach (ElectronPusher electronPusher in ElectronPushers)
+                    {
+                        electronPusher.UpdateVisual();
+                    }
+                }
             }
         }
 
@@ -879,7 +887,6 @@ namespace Chem4Word.Model2
                     freePoints.Remove(preferredSpot);
                 }
             }
-
             //should never get here
             return CompassPoints.North;
         }
@@ -1099,6 +1106,26 @@ namespace Chem4Word.Model2
             foreach (Electron electron in Electrons.Values)
             {
                 electron.Id = $"e{++ecount}";
+            }
+        }
+
+        public List<ElectronPusher> ElectronPushers
+        {
+            get
+            {
+                List<ElectronPusher> pushers = new List<ElectronPusher>();
+                if (Parent != null && Parent.Model != null)
+                {
+                    foreach (var electronPusher in Parent.Model.ElectronPushers.Values)
+                    {
+                        if (electronPusher.StartChemistry == this || electronPusher.EndChemistries.Contains(this))
+                        {
+                            pushers.Add(electronPusher);
+                        }
+                    }
+                }
+
+                return pushers;
             }
         }
     }

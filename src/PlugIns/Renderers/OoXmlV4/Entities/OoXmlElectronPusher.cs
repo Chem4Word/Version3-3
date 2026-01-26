@@ -5,19 +5,17 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
+using System.Windows;
 
-namespace Chem4Word.Model2
+namespace Chem4Word.Renderer.OoXmlV4.Entities
 {
-    public abstract class StructuralObject
+    public class OoXmlElectronPusher
     {
-        public abstract string Path { get; }
+        public Point StartPoint { get; set; }
+        public Point FirstControlPoint { get; set; }
+        public Point SecondControlPoint { get; set; }
+        public Point EndPoint { get; set; }
 
-        public abstract StructuralObject GetByPath(string path);
-        public virtual string Id { get; set; }
-
-        public virtual Guid InternalId { get; internal set; }
-
-
+        public string Path { get; set; }
     }
 }

@@ -23,6 +23,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         public const string Purple = "7030a0";
         public const string LightBlue = "7030a0";
         public const string DarkOrange = "ffc000";
+        public const string DarkRed = "8b0000";
 
         public const string Bracket = "00bbff";
     }

@@ -89,6 +89,8 @@
     <Compile Include="Atom.cs" />
     <Compile Include="AtomData.cs" />
     <Compile Include="Bond.cs" />
+    <Compile Include="ElectronPusher.cs" />
+    <Compile Include="ElectronPusherType.cs" />
     <Compile Include="Formula\FormulaConstants.cs" />
     <Compile Include="Formula\FormulaHelper.cs" />
     <Compile Include="Formula\FormulaPart.cs" />

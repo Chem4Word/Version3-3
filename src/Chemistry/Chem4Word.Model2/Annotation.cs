@@ -52,7 +52,6 @@ namespace Chem4Word.Model2
             }
         }
 
-        
         public IChemistryContainer Parent { get; set; }
 
         public bool IsEditable

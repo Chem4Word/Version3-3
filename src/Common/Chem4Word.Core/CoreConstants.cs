@@ -70,6 +70,6 @@ namespace Chem4Word.Core
 
         public const double ThickToDoubleScaleFactor = 0.6;
 
-        public const double Epsilon = 1e-6;
+        public const double Epsilon = 1e-9;
     }
 }

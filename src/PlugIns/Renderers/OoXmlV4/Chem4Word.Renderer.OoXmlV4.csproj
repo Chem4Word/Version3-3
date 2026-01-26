@@ -82,6 +82,8 @@
     <Compile Include="Entities\Diagnostic\DiagnosticLine.cs" />
     <Compile Include="Entities\Diagnostic\Diagnostics.cs" />
     <Compile Include="Entities\Diagnostic\DiagnosticSpot.cs" />
+    <Compile Include="Entities\OoXmlElectron.cs" />
+    <Compile Include="Entities\OoXmlElectronPusher.cs" />
     <Compile Include="Entities\OoXmlString.cs" />
     <Compile Include="Entities\SimpleLine.cs" />
     <Compile Include="Enums\BondLineStyle.cs" />

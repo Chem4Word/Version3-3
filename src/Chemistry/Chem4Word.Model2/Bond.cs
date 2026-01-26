@@ -170,6 +170,14 @@ namespace Chem4Word.Model2
                 _order = value;
                 OnPropertyChanged();
 
+                if (ElectronPushers.Any())
+                {
+                    foreach (ElectronPusher electronPusher in ElectronPushers)
+                    {
+                        electronPusher.UpdateVisual();
+                    }
+                }
+
                 // local function
                 void ResetStereo()
                 {
@@ -983,6 +991,26 @@ namespace Chem4Word.Model2
             //Bonds do not support child objects, yet.
             //We will revisit this when we add electrons to bonds
             return null;
+        }
+
+        public List<ElectronPusher> ElectronPushers
+        {
+            get
+            {
+                List<ElectronPusher> retval = new List<ElectronPusher>();
+                if (Parent != null && Parent.Model != null)
+                {
+                    foreach (var electronPusher in Parent.Model.ElectronPushers.Values)
+                    {
+                        if (electronPusher.StartChemistry == this || electronPusher.EndChemistries.Contains(this))
+                        {
+                            retval.Add(electronPusher);
+                        }
+                    }
+                }
+
+                return retval;
+            }
         }
     }
 }

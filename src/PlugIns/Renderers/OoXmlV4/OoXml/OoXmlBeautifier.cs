@@ -51,7 +51,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             // 5. Shrink Bond Lines so that they don't overlap any atom characters
             if (Inputs.Options.ClipBondLines)
             {
-                // ToDo: [MAW] Handle Thick Bonds
                 ShrinkBondLinesToExcludeAtomCharacters(Inputs.Progress);
                 ShrinkBondLinesThatCrossAtomCharacters(Inputs.Progress);
             }
@@ -60,11 +59,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             if (Inputs.Options.ClipCrossingBonds)
             {
+                // Experimental: Add mask underneath long bond lines of bonds detected as having crossing points
                 DetectCrossingLines();
+                // Make it look like we are clipping the overlapping bonds
+                AddMaskBehindCrossedBonds();
             }
-
-            // Make it look like we are clipping the overlapping bonds
-            AddMaskBehindCrossedBonds();
 
             BeautifyStereoBondLines();
         }
@@ -75,25 +74,25 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         private void AddMaskBehindCrossedBonds()
         {
             // Add mask underneath long bond lines of bonds detected as having crossing points
-            foreach (var crossedBonds in Inputs.Model.CrossedBonds.Values)
+            foreach (CrossedBonds crossedBonds in Inputs.Model.CrossedBonds.Values)
             {
                 // Find all lines for this bond
-                var lines = Outputs.BondLines.Where(b => b.BondPath.Equals(crossedBonds.LongBond.Path)).ToList();
-                foreach (var line in lines)
+                List<BondLine> lines = Outputs.BondLines.Where(b => b.BondPath.Equals(crossedBonds.LongBond.Path)).ToList();
+                foreach (BondLine line in lines)
                 {
                     // Create two copies for use later on
-                    var replacement = line.Copy();
-                    var mask = line.Copy();
+                    BondLine replacement = line.Copy();
+                    BondLine mask = line.Copy();
 
                     // Remove the line so we can add two more so that layering is correct
                     Outputs.BondLines.Remove(line);
 
                     // Set up mask which goes behind the replacement
                     mask.SetLineStyle(BondLineStyle.Solid);
-                    // Change this to OoXmlColours.Yellow to see mask
-                    mask.Colour = OoXmlColours.White;
-                    mask.Width = OoXmlConstants.AcsLineWidth * 8;
-                    var shrinkBy = (mask.Start - mask.End).Length * OoXmlConstants.MultipleBondOffsetPercentage / 1.5;
+                    // Change this from OoXmlColours.White to OoXmlColours.Yellow to see mask
+                    mask.Colour = OoXmlColours.Yellow;
+                    mask.Width = OoXmlConstants.AcsLineWidth * 4;
+                    double shrinkBy = (mask.Start - mask.End).Length * OoXmlConstants.MultipleBondOffsetPercentage / 1.5;
                     mask.Shrink(-shrinkBy);
 
                     // Add mask
@@ -452,6 +451,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                         Outputs.BondLines.Remove(bondLine);
                     }
                     break;
+
+                default:
+                    Debugger.Break();
+                    break;
             }
         }
 
@@ -565,24 +568,24 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             pb.Value = 0;
             pb.Maximum = Outputs.ConvexHulls.Count;
 
-            foreach (var hull in Outputs.ConvexHulls)
+            foreach (KeyValuePair<string, List<Point>> hull in Outputs.ConvexHulls)
             {
                 pb.Increment(1);
 
                 // select lines which start or end with this atom
-                var bondLines = (from line in Outputs.BondLines
-                                 where line.StartAtomPath == hull.Key || line.EndAtomPath == hull.Key
-                                 select line)
+                List<BondLine> bondLines = (from line in Outputs.BondLines
+                                            where line.StartAtomPath == hull.Key || line.EndAtomPath == hull.Key
+                                            select line)
                     .ToList();
 
-                foreach (var bondLine in bondLines)
+                foreach (BondLine bondLine in bondLines)
                 {
                     Point start;
                     Point end;
 
                     if (bondLine.Style == BondLineStyle.Thick)
                     {
-                        for (var index = 0; index < 3; index++)
+                        for (int index = 0; index < 3; index++)
                         {
                             switch (index)
                             {

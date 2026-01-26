@@ -38,17 +38,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         private RendererInputs Inputs { get; }
         private RendererOutputs Outputs { get; } = new RendererOutputs();
 
-        /// <summary>
-        /// Carries out the following
-        /// 1. Position atom Label characters
-        /// 2. Position bond lines
-        /// 3. Position brackets (molecules and groups)
-        /// 4. Position molecule label characters
-        /// 5. Shrink bond lines to not clash with atom labels
-        /// 5.1 Position molecular weight characters
-        /// 6. Add mask underneath long bond lines of bonds detected as having crossing points
-        /// </summary>
-        /// <returns>PositionerOutputs a class to hold all of the required output types</returns>
         public RendererOutputs Position()
         {
             _hydrogenCharacter = Inputs.TtfCharacterSet['H'];
@@ -57,19 +46,106 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             foreach (var mol in Inputs.Model.Molecules.Values)
             {
-                // Operations 1 to 4
+                // Position atoms and bonds
                 ProcessMolecule(mol, Inputs.Progress, ref moleculeNo);
             }
 
-            // Render reaction and annotation texts
+            ProcessPushers();
             ProcessReactionTexts();
             ProcessAnnotationTexts();
-
-            // 5.1 Add molecular weight
             ProcessMolecularWeight();
 
             // We are done now so we can return the final values
             return Outputs;
+        }
+
+        private void ProcessPushers()
+        {
+            if (Inputs.Model.HasElectronPushers)
+            {
+                foreach (ElectronPusher pusher in Inputs.Model.ElectronPushers.Values)
+                {
+                    StructuralObject startChemistry = pusher.StartChemistry;
+                    Point startPoint = GetPoint(startChemistry, pusher.FirstControlPoint);
+
+                    int index = 0;
+                    foreach (StructuralObject chemistry in pusher.EndChemistries)
+                    {
+                        Point point = GetPoint(chemistry, pusher.FirstControlPoint);
+                        string path = pusher.Path;
+                        if (index > 0)
+                        {
+                            path += $"/{index}";
+                        }
+
+                        Outputs.Pushers.Add(new OoXmlElectronPusher
+                        {
+                            StartPoint = startPoint,
+                            FirstControlPoint = pusher.FirstControlPoint,
+                            SecondControlPoint = pusher.SecondControlPoint,
+                            EndPoint = point,
+                            Path = path
+                        });
+
+                        index++;
+
+                        if (index > 1)
+                        {
+                            Debug.WriteLine("Can't Handle multiple EndChemistries (yet)");
+                            // ToDo: Handle multiple end points, when implemented by clyde
+                            Debugger.Break();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            Point GetPoint(StructuralObject startChemistry, Point controlPoint)
+            {
+                // Ensure we return a point that is within the overall structure
+                Point result = Inputs.Model.BoundingBoxOfCmlPoints.TopLeft;
+
+                switch (startChemistry)
+                {
+                    case Atom atom:
+                        Point p1 = atom.Position;
+                        Point p2 = p1 + (controlPoint - p1);
+                        List<Point> hull = ConvexHullOfAtomCharacters(atom.Path);
+                        Point[] clip = GeometryTool.ClipLineWithPolygon(p1, p2, hull, out _);
+                        switch (clip.Length)
+                        {
+                            case 3:
+                                result = clip[1];
+                                break;
+
+                            default:
+                                Debugger.Break();
+                                break;
+                        }
+
+                        break;
+
+                    case Bond bond:
+                        Point p3 = bond.MidPoint;
+                        Point p4 = p3 + (controlPoint - p3);
+                        List<Point> hull2 = ConvexHullOfBondLines(bond.Path);
+                        Point[] clip2 = GeometryTool.ClipLineWithPolygon(p3, p4, hull2, out _);
+                        switch (clip2.Length)
+                        {
+                            case 3:
+                                result = clip2[1];
+                                break;
+
+                            default:
+                                Debugger.Break();
+                                break;
+                        }
+
+                        break;
+                }
+
+                return result;
+            }
         }
 
         private void AddAnnotationCharacters(Annotation annotation, string path, List<FunctionalGroupTerm> terms,
@@ -91,7 +167,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 // Finally create diagnostics
                 Outputs.Diagnostics.Rectangles.Add(new DiagnosticRectangle(Inflate(groupOfCharacters.BoundingBox, OoXmlConstants.AcsLineWidth / 2), OoXmlColours.VibrantGreen));
-                Outputs.ConvexHulls.Add(path, ConvexHull(path));
+                Outputs.ConvexHulls.Add(path, ConvexHullOfAtomCharacters(path));
             }
         }
 
@@ -171,7 +247,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 // Finally create diagnostics
                 Outputs.Diagnostics.Rectangles.Add(new DiagnosticRectangle(Inflate(groupOfCharacters.BoundingBox, OoXmlConstants.AcsLineWidth / 2), OoXmlColours.VibrantGreen));
-                Outputs.ConvexHulls.Add(path, ConvexHull(path));
+                Outputs.ConvexHulls.Add(path, ConvexHullOfAtomCharacters(path));
             }
         }
 
@@ -201,10 +277,35 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             return existing;
         }
 
-        private List<Point> ConvexHull(string atomPath)
+        private List<Point> ConvexHullOfAtomCharacters(string atomPath)
         {
-            var chars = Outputs.AtomLabelCharacters.Where(m => m.ParentAtom == atomPath).ToList();
+            List<AtomLabelCharacter> chars = Outputs.AtomLabelCharacters.Where(m => m.ParentAtom == atomPath).ToList();
             return ConvexHull(chars);
+        }
+
+        private List<Point> ConvexHullOfBondLines(string bondPath)
+        {
+            List<BondLine> bondlines = Outputs.BondLines.Where(m => m.BondPath == bondPath).ToList();
+            List<Point> hull = new List<Point>();
+
+            foreach (BondLine bondline in bondlines)
+            {
+                double width = Math.Ceiling(BondOffset() / 2) + 1;
+                var h1 = GeometryTool.HullOfCircle(bondline.Start, width);
+                hull = CombinedConvexHull(hull, h1);
+                var h2 = GeometryTool.HullOfCircle(bondline.End, width);
+                hull = CombinedConvexHull(hull, h2);
+            }
+
+            return hull;
+        }
+
+        private List<Point> CombinedConvexHull(List<Point> convexHull, List<Point> toBeAdded)
+        {
+            List<Point> points = convexHull;
+            points.AddRange(toBeAdded);
+
+            return GeometryTool.MakeConvexHull(points);
         }
 
         private List<Point> ConvexHull(List<AtomLabelCharacter> chars)
@@ -596,6 +697,72 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             #endregion Create Bond Line objects
         }
 
+        private void AddElectrons(Atom atom)
+        {
+            if (atom.Electrons.Any())
+            {
+                List<Point> hull = ConvexHullOfAtomCharacters(atom.Path);
+
+                List<OoXmlElectron> electronsToBeRendered = new List<OoXmlElectron>();
+
+                foreach (Electron electron in atom.AllElectrons())
+                {
+                    Electron copy = electron.Copy();
+
+                    // Pre-calculate the compass direction of any auto placed electrons
+                    if (copy.ExplicitPlacement == null)
+                    {
+                        copy.ExplicitPlacement = copy.Placement;
+                    }
+
+                    OoXmlElectron ooXmlElectron = new OoXmlElectron
+                    {
+                        ParentAtom = atom,
+                        Position = atom.Position,
+                        Colour = atom.Element.Colour.Replace("#", ""),
+                        RadicalDiameter = BondOffset() / 2,
+                        MeanBondLength = Inputs.MeanBondLength,
+                        Electron = copy
+                    };
+
+                    electronsToBeRendered.Add(ooXmlElectron);
+
+                    // ToDo: [MAW] Electrons - Tweaks positions
+                    PositionElectron(ooXmlElectron, hull);
+                    hull = CombinedConvexHull(hull, ooXmlElectron.Hull());
+                }
+
+                // Set the outputs property
+                Outputs.AtomsWithElectrons.Add(atom.Path, electronsToBeRendered);
+
+                // Update Convex Hull of the atom which now includes the electrons
+                Outputs.ConvexHulls[atom.Path] = hull;
+            }
+        }
+
+        private void PositionElectron(OoXmlElectron electron, List<Point> atomHull)
+        {
+            Point centre = electron.Position;
+            Point position = centre;
+
+            //first, work out from the placement property what the vector is
+            double offsetAngle = 45 * (int)electron.Electron.Placement.Value;
+
+            Matrix rotator = new Matrix();
+            rotator.Rotate(offsetAngle);
+
+            //make it long enough to clear the atom symbol characters
+            Vector placementVector = 100 * GeometryTool.ScreenNorth * rotator;
+            position += placementVector;
+
+            Point[] result = GeometryTool.ClipLineWithPolygon(centre, position, atomHull, out _);
+            position = result[1];
+            GeometryTool.AdjustLineEndPoint(centre, ref position, BondOffset() / 2);
+
+            electron.Position = position;
+            electron.GeneratePoints(position, BondOffset() / 2);
+        }
+
         private void CreateElementCharacters(Atom atom)
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
@@ -829,8 +996,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                     Outputs.Diagnostics.Rectangles.Add(new DiagnosticRectangle(Inflate(isotope.BoundingBox, OoXmlConstants.AcsLineWidth / 2), OoXmlColours.LightBlue));
                 }
 
-                // Generate Convex Hull
-                Outputs.ConvexHulls.Add(atom.Path, ConvexHull(atom.Path));
+                // Save the convex hull of all atom characters
+                Outputs.ConvexHulls.Add(atom.Path, ConvexHullOfAtomCharacters(atom.Path));
             }
         }
 
@@ -939,7 +1106,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
 
             // Generate Convex Hull
-            Outputs.ConvexHulls.Add(atom.Path, ConvexHull(atom.Path));
+            Outputs.ConvexHulls.Add(atom.Path, ConvexHullOfAtomCharacters(atom.Path));
         }
 
         private Point GetCharacterPosition(Point cursorPosition, TtfCharacter character)
@@ -1140,6 +1307,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 if (atom.Element is Element)
                 {
                     CreateElementCharacters(atom);
+                    AddElectrons(atom);
                 }
 
                 if (atom.Element is FunctionalGroup)
@@ -1185,10 +1353,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         {
             molNumber++;
 
-            // 1. Position Atom Label Characters
+            // Position Atom Label Characters
             ProcessAtoms(mol, pb, molNumber);
 
-            // 2. Position Bond Lines
+            // Position Bond Lines
             ProcessBonds(mol, pb, molNumber);
 
             // Populate diagnostic data
@@ -1245,7 +1413,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 }
             }
 
-            // 3. Add required Brackets
+            // Add required Brackets
             var showBrackets = mol.ShowMoleculeBrackets.HasValue && mol.ShowMoleculeBrackets.Value
                                || mol.Count.HasValue && mol.Count.Value > 0
                                || mol.FormalCharge.HasValue && mol.FormalCharge.Value != 0
@@ -1320,7 +1488,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 thisMoleculeExtents.SetExternalCharacterExtents(CharacterExtents(mol, thisMoleculeExtents.MoleculeBracketsExtents));
             }
 
-            // 4. Position Molecule Label Characters
+            // Position Molecule Label Characters
             // Handle optional rendering of molecule labels centered on brackets (if any) and below any molecule property characters
             if (Inputs.Model.ShowMoleculeCaptions && mol.Captions.Any())
             {
@@ -1330,6 +1498,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                         + Inputs.MeanBondLength * OoXmlConstants.MultipleBondOffsetPercentage / 2);
 
                 AddMoleculeCaptionsAsCharacters(mol.Captions.ToList(), point, mol.Path);
+
                 // Recalculate as we have just added extra characters
                 thisMoleculeExtents.SetExternalCharacterExtents(CharacterExtents(mol, thisMoleculeExtents.MoleculeBracketsExtents));
             }

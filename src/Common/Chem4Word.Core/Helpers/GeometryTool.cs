@@ -18,12 +18,12 @@ namespace Chem4Word.Core.Helpers
     public static class GeometryTool
     {
         //returns the dot product of a and b
-        public static double Dot(this Vector a, Vector b) => a.X * b.X + a.Y + b.Y;
+        public static double Dot(this Vector a, Vector b) => a.X * b.X + a.Y * b.Y;
 
         //projects vector a onto the axis defined by b
         public static Vector Project(this Vector a, Vector b)
         {
-            var projection =
+            Vector projection =
                 a.Dot(b) / b.Dot(b) * b;
 
             return projection;
@@ -44,9 +44,9 @@ namespace Chem4Word.Core.Helpers
             points = HullCull(points);
 
             // Find the remaining point with the smallest Y value.
-            // if (there's a tie, take the one with the smaller X value.
-            var bestPt = points[0];
-            foreach (var pt in points)
+            // if there's a tie, take the one with the smaller X value.
+            Point bestPt = points[0];
+            foreach (Point pt in points)
             {
                 if (pt.Y < bestPt.Y
                     || pt.Y == bestPt.Y && pt.X < bestPt.X)
@@ -56,7 +56,7 @@ namespace Chem4Word.Core.Helpers
             }
 
             // Move this point to the convex hull.
-            var hull = new List<Point> { bestPt };
+            List<Point> hull = new List<Point> { bestPt };
 
             points.Remove(bestPt);
 
@@ -66,15 +66,15 @@ namespace Chem4Word.Core.Helpers
             {
                 // Find the point with smallest AngleValue
                 // from the last point.
-                var x1 = hull[hull.Count - 1].X;
-                var y1 = hull[hull.Count - 1].Y;
+                double x1 = hull[hull.Count - 1].X;
+                double y1 = hull[hull.Count - 1].Y;
                 bestPt = points[0];
                 double bestAngle = 3600;
 
                 // Search the rest of the points.
-                foreach (var pt in points)
+                foreach (Point pt in points)
                 {
-                    var testAngle = AngleValue(x1, y1, pt.X, pt.Y);
+                    double testAngle = AngleValue(x1, y1, pt.X, pt.Y);
                     if (testAngle >= sweepAngle
                         && bestAngle > testAngle)
                     {
@@ -85,7 +85,7 @@ namespace Chem4Word.Core.Helpers
 
                 // See if the first point is better.
                 // If so, we are done.
-                var firstAngle = AngleValue(x1, y1, hull[0].X, hull[0].Y);
+                double firstAngle = AngleValue(x1, y1, hull[0].X, hull[0].Y);
                 if (firstAngle >= sweepAngle
                     && bestAngle >= firstAngle)
                 {
@@ -99,7 +99,7 @@ namespace Chem4Word.Core.Helpers
 
                 sweepAngle = bestAngle;
 
-                // If all of the points are on the hull, we're done.
+                // If all the points are on the hull, we're done.
                 if (points.Count == 0)
                 {
                     break;
@@ -116,13 +116,13 @@ namespace Chem4Word.Core.Helpers
         private static List<Point> HullCull(List<Point> points)
         {
             // Find a culling box.
-            var cullingBox = GetMinMaxBox(points);
+            Rect cullingBox = GetMinMaxBox(points);
 
             // Cull the points.
-            var results = new List<Point>();
-            foreach (var pt in points)
+            List<Point> results = new List<Point>();
+            foreach (Point pt in points)
             {
-                // See if (this point lies outside of the culling box.
+                // See if this point lies outside the culling box.
                 if (pt.X <= cullingBox.Left ||
                     pt.X >= cullingBox.Right ||
                     pt.Y <= cullingBox.Top ||
@@ -137,6 +137,32 @@ namespace Chem4Word.Core.Helpers
             return results;
         }
 
+        public static List<Point> HullOfCircle(Point centre, double diameter, int numPoints = 36)
+        {
+            List<Point> result = new List<Point>();
+
+            double centerX = centre.X;
+            double centerY = centre.Y;
+
+            if (diameter <= 0)
+            {
+                Debug.WriteLine("Fix the issue which caused diameter to be zero or less");
+                Debugger.Break();
+            }
+
+            double radius = diameter / 2.0;
+
+            for (int i = 0; i < numPoints; i++)
+            {
+                double angle = 2 * Math.PI * i / numPoints; // evenly spaced angles
+                double x = centerX + radius * Math.Cos(angle);
+                double y = centerY + radius * Math.Sin(angle);
+                result.Add(new Point(x, y));
+            }
+
+            return MakeConvexHull(result);
+        }
+
         // Return a number that gives the ordering of angles
         // WEST horizontal from the point (x1, y1) to (x2, y2).
         // In other words, AngleValue(x1, y1, x2, y2) is not
@@ -145,7 +171,7 @@ namespace Chem4Word.Core.Helpers
         // then
         //   AngleValue(x1, y1, x2, y2) > AngleValue(x1, y1, x2, y2)
         // this angle is greater than the angle for another set
-        // of points,) this number for
+        // of points this number for
         //
         // This function is dy / (dy + dx).
         private static double AngleValue(double x1, double y1, double x2, double y2)
@@ -162,7 +188,7 @@ namespace Chem4Word.Core.Helpers
             ay = Math.Abs(dy);
             if (ax + ay == 0)
             {
-                // if (the two points are the same, return 360.
+                // if the two points are the same, return 360.
                 t = 360f / 9f;
             }
             else
@@ -222,7 +248,7 @@ namespace Chem4Word.Core.Helpers
                 ymax = ll.Y;
             }
 
-            var result = new Rect();
+            Rect result = new Rect();
             if (xmax - xmin > 0 && ymax - ymin > 0)
             {
                 result = new Rect(xmin, ymin, xmax - xmin, ymax - ymin);
@@ -242,7 +268,7 @@ namespace Chem4Word.Core.Helpers
             lr = ul;
 
             // Search the other points.
-            foreach (var pt in points)
+            foreach (Point pt in points)
             {
                 if (-pt.X - pt.Y > -ul.X - ul.Y)
                 {
@@ -269,49 +295,59 @@ namespace Chem4Word.Core.Helpers
         // http://csharphelper.com/blog/2016/01/clip-a-line-segment-to-a-polygon-in-c/
 
         // Return points where the segment enters and leaves the polygon.
-        public static Point[] ClipLineWithPolygon(Point point1, Point point2, List<Point> points, out bool lineStartsOutsidePolygon)
+        // Fixed function generated by CoPilot
+
+        public static Point[] ClipLineWithPolygon(Point point1, Point point2, List<Point> polygon, out bool lineStartsOutsidePolygon)
         {
-            // Make lists to hold points of
-            // intersection and their t values.
-            var intersections = new List<Point>();
-            var tValues = new List<double>();
+            List<(double t, Point p)> intersections = new List<(double t, Point p)>();
 
-            // Add the segment's starting point.
-            intersections.Add(point1);
-            tValues.Add(0f);
-            lineStartsOutsidePolygon = !PointIsInPolygon(point1.X, point1.Y, points.ToArray());
+            // Determine whether the line starts outside
+            lineStartsOutsidePolygon = !PointIsInPolygon(point1.X, point1.Y, polygon.ToArray());
 
-            // Examine the polygon's edges.
-            for (var i1 = 0; i1 < points.Count; i1++)
+            // Always include start and end
+            intersections.Add((0.0, point1));
+            intersections.Add((1.0, point2));
+
+            Vector d = point2 - point1;
+
+            for (int i = 0; i < polygon.Count; i++)
             {
-                // Get the end points for this edge.
-                var i2 = (i1 + 1) % points.Count;
+                int j = (i + 1) % polygon.Count;
 
-                // See where the edge intersects the segment.
+                // Intersect line with polygon edge
+                IntersectLines(
+                    point1, point2,
+                    polygon[i], polygon[j],
+                    out double t,
+                    out double u
+                );
 
-                var crossingPoint = GetIntersection(point1, point2, points[i1], points[i2]);
-
-                // See if the segment intersects the edge.
-                if (crossingPoint != null)
+                //  line segment intersection range
+                if (t < -CoreConstants.Epsilon || t > 1 + CoreConstants.Epsilon)
                 {
-                    // See if we need to record this intersection.
+                    continue;
+                }
 
-                    // Record this intersection.
-                    intersections.Add(crossingPoint.Value);
+                //  HALF-OPEN EDGE RULE: accept u in [0,1)
+                if (u < -CoreConstants.Epsilon || u >= 1 - CoreConstants.Epsilon)
+                {
+                    continue;
+                }
+
+                Point p = point1 + d * t;
+
+                // Deduplicate by t
+                if (!intersections.Any(q => Math.Abs(q.t - t) < CoreConstants.Epsilon))
+                {
+                    intersections.Add((t, p));
                 }
             }
 
-            // Add the segment's ending point.
-            intersections.Add(point2);
-            tValues.Add(1f);
+            // Sort along the line
+            intersections.Sort((a, b) => a.t.CompareTo(b.t));
+            Point[] result = intersections.Select(x => x.p).ToArray();
 
-            // Sort the points of intersection by t value.
-            var intersectionsArray = intersections.ToArray();
-            var tArray = tValues.ToArray();
-            Array.Sort(tArray, intersectionsArray);
-
-            // Return the intersections.
-            return intersectionsArray;
+            return result;
         }
 
         // Return True if the point is in the polygon.
@@ -319,15 +355,15 @@ namespace Chem4Word.Core.Helpers
         {
             // Get the angle between the point and the
             // first and last vertices.
-            var maxPoint = points.Length - 1;
-            var totalAngle = GetAngle(
+            int maxPoint = points.Length - 1;
+            double totalAngle = GetAngle(
                 points[maxPoint].X, points[maxPoint].Y,
                 x, y,
                 points[0].X, points[0].Y);
 
             // Add the angles from the point
             // to each other pair of vertices.
-            for (var i = 0; i < maxPoint; i++)
+            for (int i = 0; i < maxPoint; i++)
             {
                 totalAngle += GetAngle(
                     points[i].X, points[i].Y,
@@ -349,7 +385,7 @@ namespace Chem4Word.Core.Helpers
             {
                 return true;
             }
-            var side = GetSide(lineP1, lineP2, region.First());
+            int side = GetSide(lineP1, lineP2, region.First());
             return side != 0 && region.All(x => GetSide(lineP1, lineP2, x) == side);
         }
 
@@ -365,10 +401,10 @@ namespace Chem4Word.Core.Helpers
         private static double GetAngle(double ax, double ay, double bx, double by, double cx, double cy)
         {
             // Get the dot product.
-            var dotProduct = DotProduct(ax, ay, bx, @by, cx, cy);
+            double dotProduct = DotProduct(ax, ay, bx, @by, cx, cy);
 
             // Get the cross product.
-            var crossProductLength = CrossProductLength(ax, ay, bx, @by, cx, cy);
+            double crossProductLength = CrossProductLength(ax, ay, bx, @by, cx, cy);
 
             // Calculate the angle.
             return Math.Atan2(crossProductLength, dotProduct);
@@ -379,10 +415,10 @@ namespace Chem4Word.Core.Helpers
         private static double DotProduct(double ax, double ay, double bx, double by, double cx, double cy)
         {
             // Get the vectors' coordinates.
-            var bax = ax - bx;
-            var bay = ay - @by;
-            var bcx = cx - bx;
-            var bcy = cy - @by;
+            double bax = ax - bx;
+            double bay = ay - by;
+            double bcx = cx - bx;
+            double bcy = cy - by;
 
             // Calculate the dot product.
             return bax * bcx + bay * bcy;
@@ -398,10 +434,10 @@ namespace Chem4Word.Core.Helpers
         private static double CrossProductLength(double ax, double ay, double bx, double by, double cx, double cy)
         {
             // Get the vectors' coordinates.
-            var bax = ax - bx;
-            var bay = ay - @by;
-            var bcx = cx - bx;
-            var bcy = cy - @by;
+            double bax = ax - bx;
+            double bay = ay - @by;
+            double bcx = cx - bx;
+            double bcy = cy - @by;
 
             // Calculate the Z coordinate of the cross product.
             return bax * bcy - bay * bcx;
@@ -434,7 +470,13 @@ namespace Chem4Word.Core.Helpers
             AdjustLineEndPoint(midPoint, ref endPoint, pixelCount);
         }
 
-        private static void AdjustLineEndPoint(Point startPoint, ref Point endPoint, double pixelCount)
+        /// <summary>
+        /// Extends line by n pixels
+        /// </summary>
+        /// <param name="startPoint"></param>
+        /// <param name="endPoint"></param>
+        /// <param name="pixelCount"></param>
+        public static void AdjustLineEndPoint(Point startPoint, ref Point endPoint, double pixelCount)
         {
             double dx = endPoint.X - startPoint.X;
             double dy = endPoint.Y - startPoint.Y;
@@ -563,7 +605,7 @@ namespace Chem4Word.Core.Helpers
         /// <returns>Point at which both lines intersect, null if otherwise</returns>
         public static Point? GetIntersection(Point segment1Start, Point segment1End, Point segment2Start, Point segment2End, bool extrapolate = false)
         {
-            IntersectLines(segment1Start, segment1End, segment2Start, segment2End, out var t, out var u);
+            IntersectLines(segment1Start, segment1End, segment2Start, segment2End, out double t, out double u);
             if ((t >= 0 && u >= 0 && t <= 1 && u <= 1) || extrapolate) //voila, we have an intersection
             {
                 Vector vIntersect = (segment1End - segment1Start) * t;
@@ -635,7 +677,7 @@ namespace Chem4Word.Core.Helpers
         public static int SnapToClock(double angleFromNorth)
         {
             int tolerance = 15;
-            var sector = SnapAngleToTolerance(angleFromNorth, tolerance);
+            int sector = SnapAngleToTolerance(angleFromNorth, tolerance);
             return sector;
         }
 

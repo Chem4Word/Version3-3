@@ -60,9 +60,15 @@ namespace Chem4Word.Model2
         public const string AttrValueRetrosynthetic = "retrosynthetic";
         public const string AttrValueReversible = "reversible";
         public const string AttrValueTheoretical = "theoretical";
+        public const string AttrFirstControlPoint = "firstControlPoint";
+        public const string AttrSecondControlPoint = "secondControlPoint";
+        public const string AttrFirstChemistryRef = "firstChemistryRef";
+        public const string AttrSecondChemistryRefs = "secondChemistryRefs";
+        public const string AttrElectronPusherType = "electronPusherType";
         public const string TagAnnotation = "annotation";
         public const string TagAtom = "atom";
         public const string TagElectron = "electron";
+        public const string TagElectronPusher = "electronPusher";
         public const string TagAtomArray = "atomArray";
         public const string TagBond = "bond";
         public const string TagBondArray = "bondArray";
