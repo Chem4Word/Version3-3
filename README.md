@@ -47,17 +47,14 @@ Azure Devops Build must be set to use VS2022 build agent
 |Microsoft.Extensions.Options|10.0.2|MIT|3|
 |Microsoft.Extensions.Primitives|10.0.2|MIT|3|
 |Microsoft.NETCore.Platforms|7.0.4|MIT|2|
-|Microsoft.TestPlatform.ObjectModel|18.0.1|MIT|1|
 |Microsoft.Xaml.Behaviors.Wpf|1.1.135|MIT|1|
-|Microsoft_VisualStudio_QualityTools_UnitTestFramework.STW|12.0.21005.1|Microsoft|1|
-|Newtonsoft.Json|13.0.4|MIT|15|
-|NuGet.Frameworks|7.0.1|Apache-2.0|1|
+|Newtonsoft.Json|13.0.4|MIT|14|
 |Ookii.Dialogs.WinForms|4.0.0|BSD-3-Clause|1|
 |Standard.Licensing|1.2.2|MIT|1|
 |Stub.System.Data.SQLite.Core.NetFramework|1.0.119.0|Public Domain|3|
-|System.Buffers|4.6.1|MIT|7|
+|System.Buffers|4.6.1|MIT|6|
 |System.ClientModel|1.9.0|MIT|3|
-|System.Collections.Immutable|10.0.2|MIT|3|
+|System.Collections.Immutable|10.0.2|MIT|2|
 |System.Data.SQLite.Core|1.0.119.0|Public Domain|3|
 |System.Data.SQLite.EF6|1.0.119.0|Public Domain|3|
 |System.Data.SQLite.Linq|1.0.119.0|Public Domain|3|
@@ -70,12 +67,12 @@ Azure Devops Build must be set to use VS2022 build agent
 |System.IO.Pipelines|10.0.2|MIT|3|
 |System.IO|4.3.0|MIT|1|
 |System.Memory.Data|10.0.2|MIT|3|
-|System.Memory|4.6.3|MIT|7|
+|System.Memory|4.6.3|MIT|6|
 |System.Net.Http|4.3.4|MS-.NET-Library|6|
-|System.Numerics.Vectors|4.6.1|MIT|7|
-|System.Reflection.Metadata|10.0.2|MIT|2|
+|System.Numerics.Vectors|4.6.1|MIT|6|
+|System.Reflection.Metadata|10.0.2|MIT|1|
 |System.Resources.Extensions|10.0.2|MIT|1|
-|System.Runtime.CompilerServices.Unsafe|6.1.2|MIT|7|
+|System.Runtime.CompilerServices.Unsafe|6.1.2|MIT|6|
 |System.Runtime.InteropServices.RuntimeInformation|4.3.0|MS-.NET-Library|3|
 |System.Security.Cryptography.Algorithms|4.3.1|MS-.NET-Library|6|
 |System.Security.Cryptography.Encoding|4.3.0|MS-.NET-Library|6|
@@ -84,22 +81,13 @@ Azure Devops Build must be set to use VS2022 build agent
 |System.Text.Encodings.Web|10.0.2|MIT|3|
 |System.Text.Json|10.0.2|MIT|3|
 |System.Threading.Tasks.Extensions|4.6.3|MIT|3|
-|System.ValueTuple|4.6.1|MIT|15|
+|System.ValueTuple|4.6.1|MIT|14|
 |VirtualizingWrapPanel|2.3.2|MIT|1|
 |WixToolset.Dtf.CustomAction|6.0.2|OSI|1|
 |WixToolset.Dtf.WindowsInstaller|6.0.2|OSI|1|
 |WixToolset.NetFx.wixext|6.0.2|OSI|1|
 |WixToolset.UI.wixext|6.0.2|OSI|1|
 |WixToolset.Util.wixext|6.0.2|OSI|1|
-|xunit.abstractions|2.0.3|Apache-2.0|1|
-|xunit.analyzers|1.27.0|Apache-2.0|1|
-|xunit.assert|2.9.3|Apache-2.0|1|
-|xunit.core|2.9.3|Apache-2.0|1|
-|xunit.extensibility.core|2.9.3|Apache-2.0|1|
-|xunit.extensibility.execution|2.9.3|Apache-2.0|1|
-|xunit.runner.console|2.9.3|Apache-2.0|1|
-|xunit.runner.visualstudio|3.1.5|Apache-2.0|1|
-|xunit|2.9.3|Apache-2.0|1|
 
 ## Acknowledgements
 1. [CEVOpen](https://github.com/petermr/CEVOpen) - This data represents about 2100 unique chemical names of volatile plant chemicals (essential oils) from the EssoilDB 1.0 database (compiled from the scientific literature over about 10 years in Dr Yadav's laboratory). They are made available for re-use by anyone for any purpose (CC0). We would appreciate acknowledgement of EssoilDB and the following people who extracted and cleaned the data during 2019. (Gitanjali Yadav, Ambarish Kumar, Peter Murray-Rust).

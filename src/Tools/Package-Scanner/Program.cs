@@ -35,7 +35,7 @@ namespace PackageScanner
             // Exclude projects in the Tools folder
             foreach (string file in files.ToList())
             {
-                if (file.Contains("Tools"))
+                if (file.Contains(@"\Tools\") || file.Contains(@"\UnitTests\"))
                 {
                     files.Remove(file);
                 }
