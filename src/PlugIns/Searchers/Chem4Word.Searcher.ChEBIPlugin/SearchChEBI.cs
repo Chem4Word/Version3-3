@@ -18,9 +18,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
@@ -33,6 +33,10 @@ namespace Chem4Word.Searcher.ChEBIPlugin
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
+        private const string SearchForTemplate = "{0}/backend/api/public/es_search/?term={1}&page=1&size={2}";
+        private const string GetMolfileTemplate = "{0}/backend/api/public/molfile/{1}";
+        private const int ResultsToFetch = 20;
+
         #region Fields
 
         private Dictionary<string, string> _structureCache = new Dictionary<string, string>();
@@ -40,11 +44,6 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         private Model _lastModel;
         private string _lastMolfile = string.Empty;
-
-        private HttpClient _client = new HttpClient
-        {
-            Timeout = TimeSpan.FromSeconds(15)
-        };
 
         #endregion Fields
 
@@ -97,6 +96,16 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
         }
 
+        private static bool MolFileIsValid(string sdfile)
+        {
+            string file = sdfile.ToUpper();
+
+            int idx1 = file.IndexOf("V2000");
+            int idx2 = file.IndexOf("M  END");
+
+            return idx2 > idx1;
+        }
+
         private void ExecuteSearch(string searchFor)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
@@ -109,61 +118,59 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
             using (new WaitCursor())
             {
-                SecurityProtocolType securityProtocol = ServicePointManager.SecurityProtocol;
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls12;
-
                 try
                 {
                     string webSafe = TextHelper.NormalizeCharacters(WebUtility.HtmlEncode(searchFor));
 
-                    // https://www.ebi.ac.uk/chebi/backend/api/public/es_search/?term=benzene&page=1&size=10
-                    // DefaultChEBIWebServiceUri = "https://www.ebi.ac.uk/chebi/"
-                    string query = $"{UserOptions.ChEBIWebService2Uri}/backend/api/public/es_search/?term={webSafe}&page=1&size={UserOptions.MaximumResults}";
+                    string api = string.Format(CultureInfo.InvariantCulture, SearchForTemplate,
+                                               UserOptions.ChEBIWebService2Uri, webSafe, ResultsToFetch);
 
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, query);
-                    request.Headers.Add("User-Agent", "Chem4Word");
-                    request.Headers.Add("Cookie", $"JSESSIONID={_guid}");
+                    Dictionary<string, string> headers = new Dictionary<string, string>
+                                                         {
+                                                             { "Cookie", $"JSESSIONID={_guid}" }
+                                                         };
 
-                    HttpResponseMessage response = _client.SendAsync(request).Result;
-                    response.EnsureSuccessStatusCode();
-
-                    string body = response.Content.ReadAsStringAsync().Result;
-                    ProcessSearchResponse(body);
-                }
-                catch (HttpErrorStatusCodeException requestException)
-                {
-                    string message = "";
-                    switch (requestException.ErrorStatusCode)
+                    ApiResult apiResult = HttpHelper.InvokeGet(api, headers);
+                    if (apiResult.StatusCode == HttpStatusCode.OK)
                     {
-                        case HttpStatusCode.NotFound:
-                            message = $"Your search for '{searchFor}' did not find any matches";
-                            ErrorsAndWarnings.Text = message;
-                            Telemetry.Write(module, "Warning", message);
-                            break;
-
-                        case HttpStatusCode.GatewayTimeout:
-                        case HttpStatusCode.RequestTimeout:
-                            message = "Please try again later - the service has timed out";
-                            ErrorsAndWarnings.Text = message;
-                            Telemetry.Write(module, "Warning", message);
-                            break;
-
-                        default:
-                            message = requestException.Message;
-                            ErrorsAndWarnings.Text = message;
-                            Telemetry.Write(module, "Exception", message);
-                            break;
+                        ProcessSearchResponse(apiResult.Content);
+                    }
+                    else
+                    {
+                        ChEbiSearchResult data = ProcessSearchResponse(apiResult.Content);
+                        Telemetry.Write(module, "Exception", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
+                //catch (HttpErrorStatusCodeException requestException)
+                //{
+                //    string message = "";
+                //    switch (requestException.ErrorStatusCode)
+                //    {
+                //        case HttpStatusCode.NotFound:
+                //            message = $"Your search for '{searchFor}' did not find any matches";
+                //            ErrorsAndWarnings.Text = message;
+                //            Telemetry.Write(module, "Warning", message);
+                //            break;
+
+                //        case HttpStatusCode.GatewayTimeout:
+                //        case HttpStatusCode.RequestTimeout:
+                //            message = "Please try again later - the service has timed out";
+                //            ErrorsAndWarnings.Text = message;
+                //            Telemetry.Write(module, "Warning", message);
+                //            break;
+
+                //        default:
+                //            message = requestException.Message;
+                //            ErrorsAndWarnings.Text = message;
+                //            Telemetry.Write(module, "Exception", message);
+                //            break;
+                //    }
+                //}
                 catch (Exception exception)
                 {
                     ErrorsAndWarnings.Text = exception.Message;
                     Telemetry.Write(module, "Exception", exception.Message);
                     Telemetry.Write(module, "Exception", exception.StackTrace);
-                }
-                finally
-                {
-                    ServicePointManager.SecurityProtocol = securityProtocol;
                 }
             }
 
@@ -171,38 +178,54 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             Telemetry.Write(module, "Information", $"Search for {searchFor} took {stopwatch.Elapsed}");
         }
 
-        private void ProcessSearchResponse(string body)
+        private ChEbiSearchResult ProcessSearchResponse(string body)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             ErrorsAndWarnings.Text = string.Empty;
 
-            SearchResult data = JsonConvert.DeserializeObject<SearchResult>(body);
-
-            if (data != null && data.Results.Any())
+            ChEbiSearchResult data = JsonConvert.DeserializeObject<ChEbiSearchResult>(body);
+            if (data != null)
             {
-                ResultsListView.Items.Clear();
-                ResultsListView.Enabled = true;
-                foreach (Result result in data.Results
-                                              .OrderByDescending(r => r.Score)
-                                              .ToList())
+                if (data.Results.Any())
                 {
-                    ListViewItem li = new ListViewItem
+                    ResultsListView.Items.Clear();
+                    ResultsListView.Enabled = true;
+
+                    List<ChEbiResult> sortedResults = data.Results
+                                                          .OrderByDescending(r => r.Score)
+                                                          .ToList();
+
+                    foreach (ChEbiResult result in sortedResults)
                     {
-                        Text = result.Source.ChebiId,
-                        Tag = result
-                    };
+                        ListViewItem li = new ListViewItem
+                        {
+                            Text = result.Source.ChebiId,
+                            Tag = result
+                        };
 
-                    ListViewItem.ListViewSubItem name =
-                        new ListViewItem.ListViewSubItem(li, result.Source.Name);
-                    li.SubItems.Add(name);
+                        ListViewItem.ListViewSubItem name =
+                            new ListViewItem.ListViewSubItem(li, result.Source.Name);
+                        li.SubItems.Add(name);
 
-                    ListViewItem.ListViewSubItem score =
-                        new ListViewItem.ListViewSubItem(li, SafeDouble.AsString0(result.Score));
-                    li.SubItems.Add(score);
-                    ResultsListView.Items.Add(li);
+                        ListViewItem.ListViewSubItem score =
+                            new ListViewItem.ListViewSubItem(li, SafeDouble.AsString0(result.Score));
+                        li.SubItems.Add(score);
+
+                        ResultsListView.Items.Add(li);
+                    }
+
+                    ResultsListView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 }
 
-                ResultsListView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                if (!string.IsNullOrEmpty(data.Detail))
+                {
+                    ErrorsAndWarnings.Text = data.Detail;
+                    Telemetry.Write(module, "Exception", $"{data.Detail}");
+                }
             }
+
+            return data;
         }
 
         private string GetStructureFromWeb(string chebiId)
@@ -216,23 +239,23 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
             using (new WaitCursor())
             {
-                SecurityProtocolType securityProtocol = ServicePointManager.SecurityProtocol;
-                ServicePointManager.SecurityProtocol = securityProtocol | SecurityProtocolType.Tls12;
-
                 try
                 {
-                    // DefaultChEBIWebServiceUri = "https://www.ebi.ac.uk/chebi/"
-                    // https://www.ebi.ac.uk/chebi/backend/api/public/molfile/231449
-                    string query = $"{UserOptions.ChEBIWebService2Uri}/backend/api/public/molfile/{chebiId.Replace("CHEBI:", "")}";
+                    string api = string.Format(CultureInfo.InvariantCulture, GetMolfileTemplate,
+                                               UserOptions.ChEBIWebService2Uri, chebiId.Replace("CHEBI:", ""));
 
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, query);
-                    request.Headers.Add("User-Agent", "Chem4Word");
-                    request.Headers.Add("Cookie", $"JSESSIONID={_guid}");
-
-                    HttpResponseMessage response = _client.SendAsync(request).Result;
-                    response.EnsureSuccessStatusCode();
-
-                    result = response.Content.ReadAsStringAsync().Result;
+                    ApiResult apiResult2 = HttpHelper.InvokeGet(api);
+                    if (apiResult2.StatusCode == HttpStatusCode.OK)
+                    {
+                        if (MolFileIsValid(apiResult2.Content))
+                        {
+                            result = apiResult2.Content;
+                        }
+                    }
+                    else
+                    {
+                        Telemetry.Write(module, "Exception", $"[{(int)apiResult2.StatusCode}] {apiResult2.StatusCode} - {apiResult2.Message}");
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -246,10 +269,6 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                         Telemetry.Write(module, "Exception", exception.Message);
                         Telemetry.Write(module, "Exception", exception.StackTrace);
                     }
-                }
-                finally
-                {
-                    ServicePointManager.SecurityProtocol = securityProtocol;
                 }
             }
 
@@ -452,7 +471,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
             using (new WaitCursor())
             {
-                if (ResultsListView.SelectedItems[0]?.Tag is Result item)
+                if (ResultsListView.SelectedItems[0]?.Tag is ChEbiResult item)
                 {
                     ChebiId = item.Source.ChebiId;
 

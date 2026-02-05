@@ -113,18 +113,15 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                         UserOptions = _searcherOptions
                     };
 
-                    using (new WaitCursor(Cursors.Default))
+                    DialogResult dr = searcher.ShowDialog();
+                    if (dr == DialogResult.OK)
                     {
-                        DialogResult dr = searcher.ShowDialog();
-                        if (dr == DialogResult.OK)
-                        {
-                            Properties = new Dictionary<string, string>();
-                            Telemetry.Write(module, "Information", $"Importing Id {searcher.ChebiId}");
-                            Cml = searcher.Cml;
-                        }
-
-                        return dr;
+                        Properties = new Dictionary<string, string>();
+                        Telemetry.Write(module, "Information", $"Importing Id {searcher.ChebiId}");
+                        Cml = searcher.Cml;
                     }
+
+                    return dr;
                 }
             }
             catch (Exception ex)

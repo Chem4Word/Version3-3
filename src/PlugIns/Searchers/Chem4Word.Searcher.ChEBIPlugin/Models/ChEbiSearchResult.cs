@@ -6,24 +6,22 @@
 // ---------------------------------------------------------------------------
 
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Chem4Word.Searcher.ChEBIPlugin.Models
 {
-    public class Result
+    public class ChEbiSearchResult
     {
-        [JsonProperty("_index")]
-        public string Index { get; set; }
+        [JsonProperty("detail")]
+        public string Detail { get; set; } = string.Empty;
 
-        [JsonProperty("_type")]
-        public string Type { get; set; }
+        [JsonProperty("results")]
+        public List<ChEbiResult> Results { get; set; } = new List<ChEbiResult>();
 
-        [JsonProperty("_id")]
-        public string Id { get; set; }
+        [JsonProperty("total")]
+        public int Total { get; set; }
 
-        [JsonProperty("_score")]
-        public double Score { get; set; }
-
-        [JsonProperty("_source")]
-        public Source Source { get; set; }
+        [JsonProperty("number_pages")]
+        public int NumberPages { get; set; }
     }
 }

@@ -101,7 +101,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
 
         private void RestoreControls()
         {
-            OpsinWsUri.Text = SearcherOptions.OpsinWebServiceUri;
+            OpsinWsUri.Text = SearcherOptions.WebServiceUri;
             DisplayOrder.Value = SearcherOptions.DisplayOrder;
         }
 
@@ -158,7 +158,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                SearcherOptions.OpsinWebServiceUri = OpsinWsUri.Text;
+                SearcherOptions.WebServiceUri = OpsinWsUri.Text;
                 _dirty = true;
             }
             catch (Exception ex)

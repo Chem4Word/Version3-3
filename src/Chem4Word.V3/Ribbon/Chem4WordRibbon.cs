@@ -2430,7 +2430,6 @@ namespace Chem4Word
 
                     var app = Globals.Chem4WordV3.Application;
 
-                    Cursor.Current = Cursors.WaitCursor;
                     try
                     {
                         var ah = new AboutHost();

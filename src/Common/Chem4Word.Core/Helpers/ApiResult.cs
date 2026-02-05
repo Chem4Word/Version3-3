@@ -5,20 +5,16 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Net;
 
-namespace Chem4Word.Searcher.ChEBIPlugin.Models
+namespace Chem4Word.Core.Helpers
 {
-    public class SearchResult
+    public class ApiResult
     {
-        [JsonProperty("results")]
-        public List<Result> Results { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
 
-        [JsonProperty("total")]
-        public int Total { get; set; }
+        public string Message { get; set; } = string.Empty;
 
-        [JsonProperty("number_pages")]
-        public int NumberPages { get; set; }
+        public string Content { get; set; } = string.Empty;
     }
 }

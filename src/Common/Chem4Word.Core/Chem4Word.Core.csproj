@@ -59,7 +59,7 @@
       <HintPath>..\..\packages\Google.Protobuf.3.32.0\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -122,9 +122,11 @@
   <ItemGroup>
     <Compile Include="AzureSettings.cs" />
     <Compile Include="Enums\CompassPoints.cs" />
+    <Compile Include="Helpers\ApiResult.cs" />
     <Compile Include="Helpers\ConfigWatcher.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Helpers\HttpErrorStatusCodeException.cs" />
+    <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Helpers\RestApiResult.cs" />
     <Compile Include="Helpers\AzureRestApi.cs" />
     <Compile Include="Helpers\CohenSutherland.cs" />

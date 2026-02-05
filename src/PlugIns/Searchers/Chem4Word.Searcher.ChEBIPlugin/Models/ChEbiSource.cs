@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Chem4Word.Searcher.ChEBIPlugin.Models
 {
-    public class Source
+    public class ChEbiSource
     {
         [JsonProperty("chebi_accession")]
         public string ChebiId { get; set; }

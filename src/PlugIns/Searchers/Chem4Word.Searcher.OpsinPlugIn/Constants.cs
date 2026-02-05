@@ -9,7 +9,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
 {
     public class Constants
     {
-        public static string DefaultOpsinWebServiceUri = "https://opsin.ch.cam.ac.uk/opsin/";
+        public static string DefaultOpsinWebServiceUri = "https://www.ebi.ac.uk/opsin/ws/";
 
         public static int DefaultDisplayOrder = 50;
     }

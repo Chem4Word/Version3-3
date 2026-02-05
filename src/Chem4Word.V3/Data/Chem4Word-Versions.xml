@@ -10,6 +10,7 @@
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
+      <Change>BugFix: Fixed broken Searching (ChEBI/PubChem/OPSIN)</Change>
       <Change>UI: Add Automatic mode for Electron Placements</Change>
       <Change>Internal: Refactor of generation of Concise Formula</Change>
       <Change>Internal: GetByPath function for key model objects</Change>

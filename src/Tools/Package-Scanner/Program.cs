@@ -27,9 +27,19 @@ namespace PackageScanner
             ReadReadMe(Path.Combine(baseDirectory, readMeFile), packages);
 
             var files = Directory.GetFiles(baseDirectory, "packages.config", SearchOption.AllDirectories).ToList();
+
             // Include Wix projects
             files.AddRange(Directory.GetFiles(baseDirectory, "WiX*.wixproj", SearchOption.AllDirectories));
             files.AddRange(Directory.GetFiles(baseDirectory, "WiX*.csproj", SearchOption.AllDirectories));
+
+            // Exclude projects in the Tools folder
+            foreach (string file in files.ToList())
+            {
+                if (file.Contains("Tools"))
+                {
+                    files.Remove(file);
+                }
+            }
 
             ProcessPackages(files, packages);
 

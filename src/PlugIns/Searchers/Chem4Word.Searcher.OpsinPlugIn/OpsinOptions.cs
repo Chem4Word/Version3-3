@@ -21,7 +21,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         [JsonProperty]
-        public string OpsinWebServiceUri { get; set; }
+        public string WebServiceUri { get; set; }
 
         [JsonProperty]
         public int DisplayOrder { get; set; }
@@ -136,7 +136,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
 
         private void SetValuesFromCopy(SearcherOptions options)
         {
-            OpsinWebServiceUri = options.OpsinWebServiceUri;
+            WebServiceUri = options.WebServiceUri;
             DisplayOrder = options.DisplayOrder;
         }
 
@@ -154,7 +154,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
 
         public void RestoreDefaults()
         {
-            OpsinWebServiceUri = Constants.DefaultOpsinWebServiceUri;
+            WebServiceUri = Constants.DefaultOpsinWebServiceUri;
             DisplayOrder = Constants.DefaultDisplayOrder;
         }
     }
