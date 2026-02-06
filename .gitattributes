@@ -40,6 +40,7 @@
 *.pfx binary
 *.cer binary
 *.pvk binary
+*.db binary
 
 # Other specific files
 Library.db binary
