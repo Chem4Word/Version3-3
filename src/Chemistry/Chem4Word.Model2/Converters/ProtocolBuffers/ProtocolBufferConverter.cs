@@ -6,11 +6,13 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Enums;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Interfaces;
 using Google.Protobuf;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace Chem4Word.Model2.Converters.ProtocolBuffers
 {
@@ -99,6 +101,12 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 }
 
                 pbModel.ReactionSchemes[schemeBuffer.Id] = schemeBuffer;
+            }
+
+            //add electron pushers
+            foreach (var pusher in model.ElectronPushers.Values)
+            {
+                pbModel.ElectronPushers[pusher.Id] = PusherToPbuff(pusher);
             }
 
             return pbModel.ToByteArray();
@@ -242,6 +250,17 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             return result;
         }
 
+        private PBElectronPusher PusherToPbuff(ElectronPusher pusher) =>
+            new PBElectronPusher
+            {
+                Id = pusher.Id,
+                FirstControlPoint = PointHelper.AsCMLString(pusher.FirstControlPoint),
+                SecondControlPoint = PointHelper.AsCMLString(pusher.SecondControlPoint),
+                FirstChemistryRef = pusher.StartChemistry.Path,
+                ScondChemistryRefs = pusher.EndChemistriesAsString(),
+                PusherType = (int)pusher.PusherType
+            };
+
         private PBAnnotation AnnotationToPBuff(Annotation annValue) =>
             new PBAnnotation
             {
@@ -257,8 +276,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
         /// </summary>
         /// <param name="protoBuffModel"></param>
         /// <returns></returns>
-        public Model
-            Import(byte[] bytes)
+        public Model Import(byte[] bytes)
         {
             var protoBuffModel = PBModel.Parser.ParseFrom(bytes);
 
@@ -297,31 +315,65 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 result.ShowMoleculeCaptions = protoBuffModel.ShowMoleculeCaptions.Value;
             }
 
-            ImportAnnotations(protoBuffModel, result);
-
             ImportMolecules(protoBuffModel, result, moleculeLookup);
-            //now do the reactants
 
+            //now do the reactants
             ImportReactionSchemes(protoBuffModel, result);
+
+            ImportPushers(protoBuffModel, result);
+
+            ImportAnnotations(protoBuffModel, result);
 
             return result;
 
             //local function
-            void ImportAnnotations(PBModel model, Model result1)
+            void ImportAnnotations(PBModel pbModel, Model model)
             {
-                foreach (var ann in model.Annotations)
+                foreach (KeyValuePair<string, PBAnnotation> ann in pbModel.Annotations)
                 {
-                    var annValue = ann.Value;
-                    var newAnnotation = new Annotation
+                    PBAnnotation annValue = ann.Value;
+                    Annotation newAnnotation = new Annotation
                     {
                         Id = annValue.Id,
                         Xaml = annValue.Xaml,
-                        Position = new System.Windows.Point(annValue.Position.X, annValue.Position.Y),
+                        Position = new Point(annValue.Position.X, annValue.Position.Y),
                         IsEditable = annValue.IsEditable,
                         SymbolSize = annValue.SymbolSize,
-                        Parent = result1
+                        Parent = model
                     };
-                    result1.AddAnnotation(newAnnotation);
+                    model.AddAnnotation(newAnnotation);
+                }
+            }
+
+            //local function
+            void ImportPushers(PBModel pbModel, Model model)
+            {
+                foreach (KeyValuePair<string, PBElectronPusher> kvp in pbModel.ElectronPushers)
+                {
+                    PBElectronPusher pbElectronPusher = kvp.Value;
+
+                    Point? control1 = PointHelper.FromString(pbElectronPusher.FirstControlPoint);
+                    Point? control2 = PointHelper.FromString(pbElectronPusher.SecondControlPoint);
+
+                    if (control1.HasValue && control2.HasValue)
+                    {
+                        ElectronPusher pusher = new ElectronPusher
+                        {
+                            Id = pbElectronPusher.Id,
+                            FirstControlPoint = control1.Value,
+                            SecondControlPoint = control2.Value,
+                            StartChemistry = model.GetByPath(pbElectronPusher.FirstChemistryRef),
+                            PusherType = (ElectronPusherType)pbElectronPusher.PusherType,
+                            Parent = model
+                        };
+                        pusher.EndChemistries.Clear();
+                        string[] paths = pbElectronPusher.ScondChemistryRefs.Split(' ');
+                        foreach (string path in paths)
+                        {
+                            pusher.EndChemistries.Add(model.GetByPath(path));
+                        }
+                        model.AddElectronPusher(pusher);
+                    }
                 }
             }
 
@@ -340,13 +392,13 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                 var newReaction = new Reaction
                 {
                     ConditionsText = reactionVal.ConditionsText,
-                    HeadPoint = new System.Windows.Point(
+                    HeadPoint = new Point(
                                           reactionVal.HeadPoint.X, reactionVal.HeadPoint.Y),
                     Id = reactionVal.Id,
                     Parent = rs,
                     ReactionType = (ReactionType)reactionVal.ReactionType,
                     ReagentText = reactionVal.ReagentText,
-                    TailPoint = new System.Windows.Point(reactionVal.TailPoint.X, reactionVal.TailPoint.Y)
+                    TailPoint = new Point(reactionVal.TailPoint.X, reactionVal.TailPoint.Y)
                 };
 
                 foreach (var reactantId in reactionVal.Reactants)
@@ -418,7 +470,7 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     FormalCharge = atom.FormalCharge,
                     Id = atom.Id,
                     IsotopeNumber = atom.IsotopeNumber,
-                    Position = new System.Windows.Point(atom.Position.X, atom.Position.Y),
+                    Position = new Point(atom.Position.X, atom.Position.Y),
                     SpinMultiplicity = atom.SpinMultiplicity,
                     Parent = newMol
                 };

@@ -43,7 +43,7 @@ namespace Chem4Word.ACME.Adorners.Feedback
             Arrow arrow1 = new ArcArrow
             {
                 ArrowEnds = ArrowEnds.End,
-                HeadLength = baseVector.Length * 0.2,
+                MaxHeadLength = baseVector.Length * 0.2,
                 Center = parentAtom.Position,
                 StartAngle = newPlacementAngle + 30,
                 EndAngle = newPlacementAngle + 100,

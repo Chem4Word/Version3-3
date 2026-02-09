@@ -394,9 +394,9 @@ namespace Chem4Word.Model2.Converters.CML
             return ElectronType.LonePair;
         }
 
-        public static ElectronPusher.ElectronPusherType GetElectronPusherType(XElement cmlElement)
+        public static ElectronPusherType GetElectronPusherType(XElement cmlElement)
         {
-            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType)?.Value, out ElectronPusher.ElectronPusherType type))
+            if (Enum.TryParse(cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType)?.Value, out ElectronPusherType type))
             {
                 return type;
             }
@@ -405,7 +405,7 @@ namespace Chem4Word.Model2.Converters.CML
                 return type;
             }
 
-            return ElectronPusher.ElectronPusherType.CurlyArrow;
+            return ElectronPusherType.CurlyArrow;
         }
     }
 }

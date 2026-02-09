@@ -8,6 +8,8 @@
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Utils;
+using Chem4Word.Model2;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 
@@ -63,6 +65,15 @@ namespace Chem4Word.ACME.Behaviors
             var hitTestResult = CurrentEditor.ActiveVisual;
             switch (hitTestResult)
             {
+                case ElectronPusherVisual epv:
+                    {
+                        var pusher = epv.ParentPusher;
+                        EditController.DeleteElectronPushers(new List<ElectronPusher>() { pusher });
+                        CurrentStatus = ("Electron pusher deleted.", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        break;
+                    }
+
+
                 case HydrogenVisual _:
                     //bail out - we shouldn't be deleting implicit Hs
                     return;
@@ -117,6 +128,10 @@ namespace Chem4Word.ACME.Behaviors
             {
                 CurrentEditor.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
                 CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
+                if (_parent != null)
+                {
+                    _parent.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
+                }
                 CurrentEditor.IsHitTestVisible = false;
                 CurrentEditor.Cursor = _cursor;
                 CurrentStatus = ("", "", "");

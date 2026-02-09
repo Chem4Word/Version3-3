@@ -107,6 +107,11 @@ namespace Chem4Word.ACME
                     result |= SelectionTypeCode.Annotation;
                 }
 
+                if (SelectedItems.OfType<ElectronPusher>().Any())
+                {
+                    result |= SelectionTypeCode.ElectronPusher;
+                }
+
                 return result;
             }
         }
@@ -366,6 +371,8 @@ namespace Chem4Word.ACME
 
             List<Annotation> allAnnotations = (from r in newObjects.OfType<Annotation>().Union(SelectedItems.OfType<Annotation>())
                                                select r).ToList();
+            List<ElectronPusher> allPushers = (from ep in newObjects.OfType<ElectronPusher>() .Union(SelectedItems.OfType<ElectronPusher>())
+                                               select ep).ToList();
 
             bool allSingletons = singleAtomMols.Count == allMolecules.Count && singleAtomMols.Any();
             bool allGroups = allMolecules.Count == groupMols.Count && groupMols.Any();
@@ -427,7 +434,7 @@ namespace Chem4Word.ACME
                              allReactions.Union(allAnnotations.Cast<StructuralObject>()).ToList());
                 }
             }
-            else //just reactions or annotations
+            else //just reactions or annotations or pushers
             {
                 RemoveAllAdorners();
                 if (allReactions.Count + allAnnotations.Count > 1)
@@ -454,6 +461,14 @@ namespace Chem4Word.ACME
                             new SingleObjectSelectionAdorner(EditingCanvas, new List<StructuralObject> { a });
                         SelectionAdorners[a] = annotationAdorner;
                         annotationAdorner.MouseLeftButtonDown += OnMouseLeftButtonDown_SelAdorner;
+                    }
+
+                    if (allPushers.Any())
+                    {
+                        ElectronPusher ep = allPushers.First();
+                        ElectronPusherSelectionAdorner pusherAdorner 
+                            = new ElectronPusherSelectionAdorner(EditingCanvas,
+                                                                 EditingCanvas.ChemicalVisuals[ep] as ElectronPusherVisual);
                     }
                 }
             }
@@ -678,7 +693,7 @@ namespace Chem4Word.ACME
                     }
                 }
 
-                //finally the annotations
+                //add the annotations
                 List<Annotation> newAnnotations = thingsToAdd.OfType<Annotation>().ToList();
 
                 foreach (Annotation annotation in newAnnotations)
@@ -689,6 +704,21 @@ namespace Chem4Word.ACME
                         if (thingsToAdd.Contains(annotation))
                         {
                             thingsToAdd.Remove(annotation);
+                        }
+                    }
+                }
+
+                //add the electron pushers
+                List<ElectronPusher> newElectronPushers  = thingsToAdd.OfType<ElectronPusher>().ToList();
+
+                foreach (ElectronPusher electronPusher in newElectronPushers)
+                {
+                    if (!_selectedItems.Contains(electronPusher))
+                    {
+                        _selectedItems.Add(electronPusher);
+                        if (thingsToAdd.Contains(electronPusher))
+                        {
+                            thingsToAdd.Remove(electronPusher);
                         }
                     }
                 }
@@ -826,6 +856,10 @@ namespace Chem4Word.ACME
                 foreach (Annotation a in Model.Annotations.Values)
                 {
                     selection.Add(a);
+                }
+                foreach (ElectronPusher ep in Model.ElectronPushers.Values)
+                {
+                    selection.Add(ep);
                 }
 
                 AddObjectListToSelection(selection);

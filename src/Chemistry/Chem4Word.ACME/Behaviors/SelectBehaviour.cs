@@ -245,6 +245,10 @@ namespace Chem4Word.ACME.Behaviors
                     _lassoHits.Add(selGroup.ParentMolecule);
                     break;
 
+                case ElectronPusherVisual epv:
+                    _lassoHits.Add((epv.ParentPusher));
+                    break;
+                
                 case AtomVisual av:
                     {
                         var selAtom = av.ParentAtom;
@@ -269,6 +273,7 @@ namespace Chem4Word.ACME.Behaviors
                 case AnnotationVisual anv:
                     _lassoHits.Add(anv.ParentAnnotation);
                     break;
+             
             }
             return HitTestResultBehavior.Continue;
         }
@@ -492,6 +497,10 @@ namespace Chem4Word.ACME.Behaviors
 
             switch (visual)
             {
+                case ElectronPusherVisual epc:
+                    currentObject = epc.ParentPusher;
+                    break;
+
                 case AtomVisual av:
                     currentObject = av.ParentAtom;
                     break;
@@ -534,7 +543,7 @@ namespace Chem4Word.ACME.Behaviors
                 {
                     var currentObject = CurrentObject(e);
 
-                    if (!(currentObject != null || KeyboardUtils.HoldingDownShift()))
+                    if (!(currentObject != null || KeyboardUtils.HoldingDownShift() ))
                     {
                         EditController.ClearSelection();
                     }
@@ -649,7 +658,7 @@ namespace Chem4Word.ACME.Behaviors
             base.OnDetaching();
 
             CurrentEditor.PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown_CurrentEditor;
-            CurrentEditor.MouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_CurrentEditor;
+            CurrentEditor.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp_CurrentEditor;
             CurrentEditor.PreviewMouseMove -= OnPreviewMouseMove_CurrentEditor;
             CurrentEditor.PreviewMouseRightButtonUp -= OnPreviewMouseRightButtonUp_CurrentEditor;
             CurrentEditor.PreviewMouseRightButtonDown -= OnPreviewMouseRightButtonDown_CurrentEditor;

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
+using Geometry = Chem4Word.ACME.Utils.Geometry;
 
 namespace Chem4Word.ACME.Drawing.Visuals
 {
@@ -162,7 +163,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             dc.DrawRectangle(null, new Pen(new SolidColorBrush(Colors.LightGreen) {Opacity = 0.4}, 1.0), rect);
 #endif
 #endif
-                            var runOutline = currentRun.GetOutline();
+                            var runOutline = Geometry.GetOutline(currentRun);
                             //need to see if the run has been super or sub-scripted
                             var variants = originalRun.Properties.TypographyProperties.Variants;
 
@@ -213,19 +214,19 @@ namespace Chem4Word.ACME.Drawing.Visuals
             }
         }
 
-        public override Geometry HullGeometry
+        public override System.Windows.Media.Geometry HullGeometry
         {
             get
             {
                 //need to combine the actually filled atom area
                 //with a stroked outline of it, to give a sufficient margin
-                Geometry geo1 = Utils.Geometry.BuildPolyPath(Hull);
+                System.Windows.Media.Geometry geo1 = Utils.Geometry.BuildPolyPath(Hull);
                 CombinedGeometry cg = new CombinedGeometry(geo1, geo1.GetWidenedPathGeometry(new Pen(Brushes.Black, Standoff)));
                 return cg;
             }
         }
 
-        public override Geometry WidenedHullGeometry => HullGeometry;
+        public override System.Windows.Media.Geometry WidenedHullGeometry => HullGeometry;
 
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
         {

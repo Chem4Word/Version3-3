@@ -93,6 +93,8 @@
   <ItemGroup>
     <Compile Include="ACMEConstants.cs" />
     <Compile Include="Adorners\Feedback\ReactionHoverAdorner.cs" />
+    <Compile Include="Adorners\Selectors\ElectronPusherSelectionAdorner.cs" />
+    <Compile Include="Adorners\Sketching\ElectronPusherDrawAdorner.cs" />
     <Compile Include="Adorners\Sketching\FloatingSymbolAdorner.cs" />
     <Compile Include="Adorners\Sketching\DrawReactionAdorner.cs" />
     <Compile Include="Adorners\Feedback\BaseHoverAdorner.cs" />
@@ -100,6 +102,7 @@
     <Compile Include="Adorners\Selectors\MultiAtomBondAdorner.cs" />
     <Compile Include="Adorners\Selectors\ReactionSelectionAdorner.cs" />
     <Compile Include="Behaviors\AnnotationBehavior.cs" />
+    <Compile Include="Behaviors\ElectronPusherBehaviour.cs" />
     <Compile Include="Behaviors\IgnoreMouseWheelBehavior.cs" />
     <Compile Include="Behaviors\ReactionBehavior.cs" />
     <Compile Include="Commands\BlockEditing\InsertTextCommand.cs" />
@@ -151,6 +154,7 @@
     <Compile Include="Drawing\Text\BlockTextSource.cs" />
     <Compile Include="Drawing\Text\BlockTextRunProperties.cs" />
     <Compile Include="Drawing\Text\TextSupport.cs" />
+    <Compile Include="Drawing\Visuals\ElectronPusherVisual.cs" />
     <Compile Include="Drawing\Visuals\ElectronVisual.cs" />
     <Compile Include="Drawing\Visuals\ReactionVisual.cs" />
     <Compile Include="Drawing\Visuals\AnnotationVisual.cs" />
@@ -160,6 +164,7 @@
     <Compile Include="EditController\EditController.BondEditing.cs" />
     <Compile Include="EditController\EditController.Constructors.cs" />
     <Compile Include="EditController\EditController.Drawing.cs" />
+    <Compile Include="EditController\EditController.ElectronPushers.cs" />
     <Compile Include="EditController\EditController.MoleculeEditing.cs" />
     <Compile Include="EditController\EditController.Properties.cs" />
     <Compile Include="EditController\EditController.Reactions.cs" />
@@ -169,6 +174,7 @@
     <Compile Include="Graphics\BlockedArrow.cs" />
     <Compile Include="Graphics\DashedArrow.cs" />
     <Compile Include="Graphics\EquilibriumArrow.cs" />
+    <Compile Include="Graphics\FishHookArrow.cs" />
     <Compile Include="Graphics\Harpoon.cs" />
     <Compile Include="Graphics\RetrosyntheticArrow.cs" />
     <Compile Include="Controls\FormulaBlock.cs" />

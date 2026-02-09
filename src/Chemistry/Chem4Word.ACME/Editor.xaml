@@ -919,7 +919,7 @@
                                 ArrowHeadClosed="True"
                                 Fill="Black"
                                 HeadAngle="35"
-                                HeadLength="2"
+                                MaxHeadLength="2"
                                 Stroke="Black"
                                 StrokeThickness="0.75"
                                 StartPoint="0, 1"
@@ -1273,7 +1273,7 @@
                                 ArrowHeadClosed="True"
                                 Fill="Black"
                                 HeadAngle="35"
-                                HeadLength="2"
+                                MaxHeadLength="2"
                                 Stroke="Black"
                                 StrokeThickness="0.75"
                                 StartPoint="0, 1"
@@ -1315,7 +1315,7 @@
                                 ArrowHeadClosed="True"
                                 Fill="Black"
                                 HeadAngle="35"
-                                HeadLength="2"
+                                MaxHeadLength="2"
                                 Stroke="Black"
                                 StrokeThickness="0.75"
                                 StartPoint="0,1"
@@ -1398,7 +1398,7 @@
                                 ArrowHeadClosed="False"
                                 Fill="Black"
                                 HeadAngle="45"
-                                HeadLength="4"
+                                MaxHeadLength="4"
                                 Stroke="Black"
                                 StartPoint="8,8"
                                 EndPoint="16,16" />
@@ -1444,7 +1444,7 @@
                                 ArrowHeadClosed="False"
                                 Fill="Black"
                                 HeadAngle="45"
-                                HeadLength="4"
+                                MaxHeadLength="4"
                                 Stroke="Black"
                                 StartPoint="8,8"
                                 EndPoint="16,16" />
@@ -1497,7 +1497,7 @@
                                 ArrowHeadClosed="True"
                                 Fill="Green"
                                 HeadAngle="35"
-                                HeadLength="2"
+                                MaxHeadLength="2"
                                 Stroke="Green"
                                 StrokeThickness="2"
                                 StartPoint="20,30"
@@ -1544,7 +1544,7 @@
                                 ArrowHeadClosed="True"
                                 Fill="Green"
                                 HeadAngle="35"
-                                HeadLength="2"
+                                MaxHeadLength="2"
                                 Stroke="Green"
                                 StrokeThickness="2"
                                 StartPoint="8,30"
@@ -1573,7 +1573,7 @@
                                 ArrowHeadClosed="True"
                                 Fill="Green"
                                 HeadAngle="35"
-                                HeadLength="2"
+                                MaxHeadLength="2"
                                 Stroke="Green"
                                 StrokeThickness="2"
                                 StartPoint="2,8"
@@ -1617,7 +1617,7 @@
                                 ArrowHeadClosed="True"
                                 Fill="Green"
                                 HeadAngle="35"
-                                HeadLength="2"
+                                MaxHeadLength="2"
                                 Stroke="Green"
                                 StrokeThickness="2"
                                 StartPoint="2,20"
@@ -1859,6 +1859,81 @@
                         </UniformGrid>
                     </Border>
                 </Popup>
+            </ToolBar>
+            <ToolBar Band="1" BandIndex="3">
+                <ToolBar.Resources>
+                    <utils:BindingProxy x:Key="Proxy" Data="{Binding ElementName=AcmeControl}" />
+                </ToolBar.Resources>
+                <RadioButton
+                    x:Name="SingleElectronPusherButton"
+                    Click="OnChecked_Mode"
+                    GroupName="Actions"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    ToolTip="Electron Pusher">
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
+                        <Canvas Width="100" Height="100">
+                            <graphics:ArcArrow
+                                Center="50,70"
+                                EndAngle="70"
+                                HeadAngle="45"
+                                MaxHeadLength="18"
+                                Radius="40"
+                                StartAngle="-70"
+                                Stroke="DarkRed"
+                                StrokeThickness="9" />
+                        </Canvas>
+                    </Viewbox>
+                    <RadioButton.Tag>
+                        <behaviors:ElectronPusherBehaviour EditController="{Binding Source={StaticResource Proxy}, Path=Data.ActiveController}" ElectronPusherType="CurlyArrow" />
+                    </RadioButton.Tag>
+                </RadioButton>
+                <RadioButton
+                    x:Name="DoubleElectronPusherButton"
+                    Click="OnChecked_Mode"
+                    GroupName="Actions"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    ToolTip="Double-headed Electron Pusher">
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
+                        <Canvas Width="100" Height="100">
+                            <graphics:ArcArrow
+                                ArrowEnds="Both"
+                                Center="50,70"
+                                EndAngle="70"
+                                HeadAngle="45"
+                                MaxHeadLength="18"
+                                Radius="40"
+                                StartAngle="-70"
+                                Stroke="DarkRed"
+                                StrokeThickness="9" />
+                        </Canvas>
+                    </Viewbox>
+                    <RadioButton.Tag>
+                        <behaviors:ElectronPusherBehaviour EditController="{Binding Source={StaticResource Proxy}, Path=Data.ActiveController}" ElectronPusherType="DoubleArrow" />
+                    </RadioButton.Tag>
+                </RadioButton>
+                <RadioButton
+                    x:Name="FishHookButton"
+                    Click="OnChecked_Mode"
+                    GroupName="Actions"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    ToolTip="Radical FishHook">
+                    <Viewbox d:IsLocked="True" Stretch="Uniform">
+                        <Canvas Width="100" Height="100">
+                            <graphics:FishHookArrow
+                                FirstControlPoint="0,0"
+                                HeadAngle="45"
+                                MaxHeadLength="30"
+                                SecondControlPoint="100,0"
+                                Stroke="DarkRed"
+                                StrokeThickness="9"
+                                StartPoint="20,50"
+                                EndPoint="80,50" />
+                        </Canvas>
+                    </Viewbox>
+                    <RadioButton.Tag>
+                        <behaviors:ElectronPusherBehaviour EditController="{Binding Source={StaticResource Proxy}, Path=Data.ActiveController}" ElectronPusherType="FishHook" />
+                    </RadioButton.Tag>
+                </RadioButton>
             </ToolBar>
         </ToolBarTray>
         <Grid
@@ -2166,7 +2241,7 @@
                                         ArrowHeadClosed="True"
                                         Fill="Black"
                                         HeadAngle="45"
-                                        HeadLength="8"
+                                        MaxHeadLength="8"
                                         Stroke="Black"
                                         StrokeThickness="4"
                                         StartPoint="0,0"

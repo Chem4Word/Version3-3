@@ -641,28 +641,23 @@ namespace Chem4Word.ACME.Controls
 
                     if (Debugger.IsAttached)
                     {
-                        ShowEnumValue();
+                        //TextBlock textBlock = new TextBlock
+                        // {
+                        //     Text = $"E:{(int)electronType}",
+                        //     FontSize = 10,
+                        //     Foreground = Brushes.Blue
+                        // };
+
+                        // Canvas.SetLeft(textBlock, 0.0);
+                        // Canvas.SetTop(textBlock, 0.0);
+
+                        // canvas.Children.Add(textBlock);
                     }
                 }
 
                 return canvas;
 
                 // Local Functions
-
-                void ShowEnumValue()
-                {
-                    TextBlock textBlock = new TextBlock
-                    {
-                        Text = $"E:{(int)electronType}",
-                        FontSize = 10,
-                        Foreground = Brushes.Blue
-                    };
-
-                    Canvas.SetLeft(textBlock, 0.0);
-                    Canvas.SetTop(textBlock, 0.0);
-
-                    canvas.Children.Add(textBlock);
-                }
 
                 void AddLine()
                 {

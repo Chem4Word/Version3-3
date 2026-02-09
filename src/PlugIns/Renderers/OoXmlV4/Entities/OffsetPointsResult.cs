@@ -4,15 +4,15 @@
 //  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
-namespace Chem4Word.Model2
+
+using System.Collections.Generic;
+using System.Windows;
+
+namespace Chem4Word.Renderer.OoXmlV4.Entities
 {
-    public partial class ElectronPusher
+    public class OffsetPointsResult
     {
-        public enum ElectronPusherType
-        {
-            CurlyArrow,
-            DoubleArrow,
-            FishHook
-        }
+        public List<Point> Points { get; set; } = new List<Point>();
+        public Rect Extents { get; set; }
     }
 }

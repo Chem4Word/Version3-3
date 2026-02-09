@@ -10,6 +10,31 @@
     "IsFormula": false
   },
   {
+    "ExternalName": "> <CHEM4WORD_INCHIKEY>",
+    "InternalName": "chem4word:CalculatedInchikey",
+    "IsFormula": false
+  },
+  {
+    "ExternalName": "> <CHEM4WORD_INCHI>",
+    "InternalName": "chem4word:CalculatedInchi",
+    "IsFormula": false
+  },
+  {
+    "ExternalName": "> <CHEM4WORD_RESOLVED_FORMULA>",
+    "InternalName": "chem4word:ResolvedFormula",
+    "IsFormula": true
+  },
+  {
+    "ExternalName": "> <CHEM4WORD_RESOLVED_IUPAC_NAME>",
+    "InternalName": "chem4word:ResolvedIupacname",
+    "IsFormula": true
+  },
+  {
+    "ExternalName": "> <CHEM4WORD_RESOLVED_SMILES>",
+    "InternalName": "chem4word:ResolvedSmiles",
+    "IsFormula": true
+  },
+  {
     "ExternalName": "> <CHEM4WORD_CEV_IDENTIFIER>",
     "InternalName": "chem4word:cev_cid",
     "IsFormula": false

@@ -181,6 +181,8 @@ namespace Chem4Word.ACME.Behaviors
                 {
                     switch (targetedVisual)
                     {
+                        case ElectronPusherVisual epv:
+                            break;
                         case ReactionVisual _:
                             CurrentStatus = (AcmeConstants.ReactionTypeStdMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             CurrentEditor.Cursor = CursorUtils.Pencil;
@@ -500,6 +502,10 @@ namespace Chem4Word.ACME.Behaviors
                 {
                     EditController.SetReactionType(EditController.SelectedReactionType.Value, rv.ParentReaction);
                 }
+            }
+            else if (chemicalVisual is ElectronPusherVisual ev)
+            {
+                
             }
             else
             {

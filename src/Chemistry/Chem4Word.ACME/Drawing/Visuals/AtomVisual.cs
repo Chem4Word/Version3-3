@@ -411,17 +411,25 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
         {
-            if (ParentAtom.Element is Element)
+            try
             {
-                if (HydrogenChildVisual != null && HydrogenChildVisual.HullGeometry.FillContains(hitTestParameters.HitPoint))
+                if (ParentAtom.Element is Element)
                 {
-                    return new PointHitTestResult(HydrogenChildVisual, hitTestParameters.HitPoint);
-                }
+                    if (HydrogenChildVisual != null &&
+                        HydrogenChildVisual.HullGeometry.FillContains(hitTestParameters.HitPoint))
+                    {
+                        return new PointHitTestResult(HydrogenChildVisual, hitTestParameters.HitPoint);
+                    }
 
-                if (HullGeometry.FillContains(hitTestParameters.HitPoint))
-                {
-                    return new PointHitTestResult(this, hitTestParameters.HitPoint);
+                    if (HullGeometry.FillContains(hitTestParameters.HitPoint))
+                    {
+                        return new PointHitTestResult(this, hitTestParameters.HitPoint);
+                    }
                 }
+            }
+            catch
+            {
+                //ignore errors here
             }
 
             return null;

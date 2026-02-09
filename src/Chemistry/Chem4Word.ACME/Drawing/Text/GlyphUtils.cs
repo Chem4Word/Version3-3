@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
@@ -108,44 +107,6 @@ namespace Chem4Word.ACME.Drawing.Text
                 symbolSize, pixelsPerDip, point);
             //work out exactly how much we should offset from the center to get to the bottom left
             return glyphInfo;
-        }
-
-        /// <summary>
-        /// Returns a rough outline of a glyph run.  useful for calculating a convex hull
-        /// </summary>
-        /// <param name="glyphRun">Glyph run to outline</param>
-        /// <returns>List<Point> of geometry tracing the GlyphRun</Point></returns>
-        public static List<Point> GetOutline(this GlyphRun glyphRun)
-        {
-            if (glyphRun != null)
-            {
-                var geo = glyphRun.BuildGeometry();
-                return GetGeoPoints(geo);
-            }
-
-            return null;
-        }
-
-        public static List<Point> GetGeoPoints(Geometry geo)
-        {
-            List<Point> retval = new List<Point>();
-            var pg = geo.GetFlattenedPathGeometry(0.01, ToleranceType.Relative);
-
-            foreach (var f in pg.Figures)
-            {
-                foreach (var s in f.Segments)
-                {
-                    if (s is PolyLineSegment)
-                    {
-                        foreach (var pt in ((PolyLineSegment)s).Points)
-                        {
-                            retval.Add(pt);
-                        }
-                    }
-                }
-            }
-
-            return retval;
         }
 
         /// <summary>

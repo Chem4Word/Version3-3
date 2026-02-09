@@ -111,6 +111,19 @@ namespace Chem4Word.ACME
             }
         }
 
+        public bool HighlightActive
+        {
+            get
+            {
+                return EditingCanvas.HighlightActive;
+            }
+            set
+            {
+                EditingCanvas.HighlightActive = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion Properties
 
         #region Methods
@@ -225,7 +238,7 @@ namespace Chem4Word.ACME
                         newMol.Parent = tempModel;
                         tempModel.AddMolecule(newMol);
                     }
-
+                   
                     tempModel.RescaleForCml();
                     string export = converter.Export(tempModel);
                     Clipboard.Clear();
@@ -300,7 +313,7 @@ namespace Chem4Word.ACME
                 List<Molecule> molList = buffer.Molecules.Values.ToList();
                 List<Reaction> reactionList = buffer.DefaultReactionScheme.Reactions.Values.ToList();
                 List<Annotation> annotationList = buffer.Annotations.Values.ToList();
-
+                List<ElectronPusher> pusherList = buffer.ElectronPushers.Values.ToList();
                 if (pasteAt != null)
                 {
                     //offset the pasted content so that its centroid is at the pasteAt location
@@ -344,6 +357,12 @@ namespace Chem4Word.ACME
                                       Model.RemoveAnnotation(annotation);
                                       annotation.Parent = null;
                                   }
+                                  foreach (ElectronPusher pusher in pusherList)
+                                  {
+                                      RemoveFromSelection(pusher);
+                                      Model.RemoveElectronPusher(pusher);
+                                      pusher.Parent = null;
+                                  }
                               };
                 Action redo = () =>
                               {
@@ -367,6 +386,12 @@ namespace Chem4Word.ACME
                                       annotation.Parent = Model;
                                       Model.AddAnnotation(annotation);
                                       AddToSelection(annotation);
+                                  }
+
+                                  foreach (ElectronPusher pusher in pusherList)
+                                  {
+                                      pusher.Parent = Model;
+                                      Model.AddElectronPusher(pusher);
                                   }
                               };
 

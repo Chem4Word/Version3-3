@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2.Enums;
 using System.Windows;
 
 namespace Chem4Word.Renderer.OoXmlV4.Entities
@@ -15,7 +16,9 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public Point FirstControlPoint { get; set; }
         public Point SecondControlPoint { get; set; }
         public Point EndPoint { get; set; }
+        public Point FishHookPoint { get; set; }
 
         public string Path { get; set; }
+        public ElectronPusherType PusherType { get; set; }
     }
 }

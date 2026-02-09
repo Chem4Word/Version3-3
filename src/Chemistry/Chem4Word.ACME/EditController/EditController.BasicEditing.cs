@@ -64,7 +64,13 @@ namespace Chem4Word.ACME
                 List<Molecule> molecules = SelectedItems.OfType<Molecule>().ToList();
                 List<Reaction> reactions = SelectedItems.OfType<Reaction>().ToList();
                 List<Annotation> annotations = SelectedItems.OfType<Annotation>().ToList();
+                List<ElectronPusher> pushers = SelectedItems.OfType<ElectronPusher>().ToList();
                 UndoManager.BeginUndoBlock();
+
+                if (pushers.Any())
+                {
+                    DeleteElectronPushers(pushers);
+                }
 
                 if (molecules.Any())
                 {
@@ -86,6 +92,7 @@ namespace Chem4Word.ACME
                     DeleteAnnotations(annotations);
                 }
 
+                
                 ClearSelection();
                 UndoManager.EndUndoBlock();
             }

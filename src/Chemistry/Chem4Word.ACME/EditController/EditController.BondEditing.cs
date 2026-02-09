@@ -210,6 +210,7 @@ namespace Chem4Word.ACME
 
                 Action redo = () =>
                               {
+                                  ClearSelection();
                                   Model.ScaleToAverageBondLength(newLength, centre);
                                   SetTextParams(newLength);
                                   Model.SetAnnotationSize(newLength / ModelConstants.ScaleFactorForXaml);
@@ -222,6 +223,7 @@ namespace Chem4Word.ACME
                               };
                 Action undo = () =>
                               {
+                                  ClearSelection();
                                   Model.ScaleToAverageBondLength(currentLength, centre);
                                   SetTextParams(currentSelection);
                                   Model.SetAnnotationSize(currentSelection / ModelConstants.ScaleFactorForXaml);

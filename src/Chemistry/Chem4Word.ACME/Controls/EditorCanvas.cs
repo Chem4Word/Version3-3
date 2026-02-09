@@ -66,6 +66,10 @@ namespace Chem4Word.ACME.Controls
                 {
                     boundingBox = GetReactionBoundingBox(new List<Reaction> { reaction });
                 }
+                else if (structuralObject is ElectronPusher ep)
+                {
+                    boundingBox = GetDrawnBoundingBox(ep);
+                }
                 union.Union(boundingBox);
             }
 

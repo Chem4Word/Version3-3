@@ -474,6 +474,19 @@ namespace Chem4Word.ACME.Utils
         {
             switch (activeVisual)
             {
+                case ElectronPusherVisual epc:
+                    {
+                        ElectronPusher pusher = epc.ParentPusher;
+                        if (!editController.SelectedItems.Contains(pusher))
+                        {
+                            editController.AddToSelection(pusher);
+                        }
+                        else
+                        {
+                            editController.RemoveFromSelection(pusher);
+                        }
+                        return (AcmeConstants.SelStatusMessage, editController.TotUpMolFormulae(), editController.TotUpSelectedMwt());
+                    }
                 case GroupVisual gv:
                     Molecule mol = gv.ParentMolecule;
                     if (!editController.SelectedItems.Contains(mol))

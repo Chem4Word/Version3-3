@@ -143,7 +143,7 @@
             Center="400,100"
             EndAngle="90"
             HeadAngle="30"
-            HeadLength="5"
+            MaxHeadLength="5"
             Radius="40"
             StartAngle="30"
             Stroke="Green"
@@ -153,7 +153,7 @@
         <shapes:EquilibriumArrow
             av:IsLocked="True"
             Bias="Forward"
-            HeadLength="25"
+            MaxHeadLength="25"
             Separation="5"
             Stroke="DarkRed"
             StrokeThickness="3"
@@ -162,7 +162,7 @@
         <shapes:EquilibriumArrow
             av:IsLocked="True"
             Bias="Backward"
-            HeadLength="25"
+            MaxHeadLength="25"
             Separation="5"
             Stroke="DarkRed"
             StrokeThickness="3"
@@ -171,7 +171,7 @@
         <shapes:EquilibriumArrow
             av:IsLocked="True"
             Bias="None"
-            HeadLength="25"
+            MaxHeadLength="25"
             Separation="5"
             Stroke="DarkRed"
             StrokeThickness="3"
@@ -179,7 +179,7 @@
             EndPoint="300,300" />
         <shapes:BlockedArrow
             av:IsLocked="True"
-            HeadLength="25"
+            MaxHeadLength="25"
             Stroke="DarkRed"
             StrokeThickness="3"
             StartPoint="100,350"
@@ -213,7 +213,7 @@
             EndAngle="120"
             Fill="{Binding Stroke, RelativeSource={RelativeSource Mode=Self}}"
             HeadAngle="45"
-            HeadLength="20"
+            MaxHeadLength="20"
             Radius="60"
             StartAngle="0"
             Stroke="#7FCA34"
@@ -221,7 +221,7 @@
         <shapes:RetrosyntheticArrow
             av:IsLocked="True"
             Bias="Forward"
-            HeadLength="25"
+            MaxHeadLength="25"
             Separation="5"
             Stroke="DarkRed"
             StrokeThickness="3"

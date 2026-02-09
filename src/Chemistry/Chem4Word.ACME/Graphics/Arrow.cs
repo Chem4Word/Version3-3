@@ -70,16 +70,28 @@ namespace Chem4Word.ACME.Graphics
         }
 
         /// <summary>
-        /// length of the 'barbs' of the arrow
+        /// Sets the length of the arrow head as a fraction of the total length of the line. 
         /// </summary>
-        public double HeadLength
+        public static readonly DependencyProperty HeadFractionLengthProperty = DependencyProperty.Register(
+            nameof(HeadFractionLength), typeof(double), typeof(Arrow), new PropertyMetadata(0.10d));
+
+        public double HeadFractionLength
         {
-            get { return (double)GetValue(HeadLengthProperty); }
-            set { SetValue(HeadLengthProperty, value); }
+            get { return (double)GetValue(HeadFractionLengthProperty); }
+            set { SetValue(HeadFractionLengthProperty, value); }
         }
 
-        public static readonly DependencyProperty HeadLengthProperty =
-            DependencyProperty.Register("HeadLength", typeof(double), typeof(Arrow),
+        /// <summary>
+        /// Maximum length of the 'barbs' of the arrow
+        /// </summary>
+        public double MaxHeadLength
+        {
+            get { return (double)GetValue(MaxHeadLengthProperty); }
+            set { SetValue(MaxHeadLengthProperty, value); }
+        }
+
+        public static readonly DependencyProperty MaxHeadLengthProperty =
+            DependencyProperty.Register("MaxHeadLength", typeof(double), typeof(Arrow),
                                         new FrameworkPropertyMetadata(12.0,
                                                                       FrameworkPropertyMetadataOptions.AffectsRender
                                                                       | FrameworkPropertyMetadataOptions.AffectsArrange
@@ -129,13 +141,15 @@ namespace Chem4Word.ACME.Graphics
         /// <returns>Simple path figure of arrow head, oriented appropriately </returns>
         public virtual PathFigure ArrowHeadGeometry(PathFigure line, bool reverse = false)
         {
+            double localHeadLength;
+            var length = GetPathFigureLength(line);
+          
+            localHeadLength = GetWorkingHeadLength(length);
             var headAngleInRadians = HeadAngle / 360 * 2 * Math.PI;
 
             //work out how far back the arrowhead extends
             //project the arrowhead barb onto the shaft
-            double offset = HeadLength * Math.Cos(headAngleInRadians);
-
-            var length = GetPathFigureLength(line);
+            double offset = localHeadLength * Math.Cos(headAngleInRadians);
 
             double fraction;  //if we're going for the start or end of line
             if (reverse)
@@ -175,7 +189,7 @@ namespace Chem4Word.ACME.Graphics
                 tangentVector = -tangentVector;
             }
             tangentVector.Normalize();
-            tangentVector *= HeadLength;
+            tangentVector *= localHeadLength;
 
             PolyLineSegment polyseg = new PolyLineSegment();
 
@@ -198,6 +212,15 @@ namespace Chem4Word.ACME.Graphics
             PathFigure pathfig = new PathFigure(pointA, psc, ArrowHeadClosed);
 
             return pathfig;
+        }
+
+        protected double GetWorkingHeadLength(double length)
+        {
+            double localHeadLength;
+            localHeadLength = HeadFractionLength * length;
+            
+            localHeadLength = Math.Min(localHeadLength, MaxHeadLength);
+            return localHeadLength;
         }
 
         /// <summary>
@@ -309,7 +332,7 @@ namespace Chem4Word.ACME.Graphics
 #else
             overlayBrush = Brushes.Transparent;
 #endif
-            double overlayWidth = 2 * HeadLength * Math.Sin(HeadAngle / 360 * 2 * Math.PI);
+            double overlayWidth = 2 * MaxHeadLength * Math.Sin(HeadAngle / 360 * 2 * Math.PI);
             pen = new Pen(overlayBrush, overlayWidth);
             pen.StartLineCap = PenLineCap.Round;
             pen.EndLineCap = PenLineCap.Round;

@@ -163,8 +163,14 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         protected virtual void OnPreviewMouseLeftButtonDown_BaseSelectionAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (BlockPMD)
+            {
+                return;
+            }
             CurrentEditor.RaiseEvent(e);
         }
+
+        public bool BlockPMD { get; set; }
 
         protected virtual void OnMouseLeftButtonDown_BaseSelectionAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

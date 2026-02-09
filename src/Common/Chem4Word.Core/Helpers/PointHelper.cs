@@ -68,7 +68,20 @@ namespace Chem4Word.Core.Helpers
         public static string AsString0(Point p)
             => $"X: {SafeDouble.AsString0(p.X)} Y:{SafeDouble.AsString0(p.Y)}";
 
-        public static object AsCMLString(Point p) =>
+        public static string AsCMLString(Point p) =>
             $"{SafeDouble.AsCMLString(p.X)},{SafeDouble.AsCMLString(p.Y)}";
+
+        public static Point? FromString(string value)
+        {
+            string[] coordinate = value.Split(',');
+            if (coordinate.Length == 2)
+            {
+                double x = SafeDouble.Parse(coordinate[0]);
+                double y = SafeDouble.Parse(coordinate[1]);
+                return new Point(x, y);
+            }
+
+            return null;
+        }
     }
 }

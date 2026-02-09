@@ -17,7 +17,7 @@ namespace Chem4Word.ACME.Graphics
             base.DrawArrowGeometry(drawingContext, outlinePen, headFillBrush);
             Vector shaftVector = EndPoint - StartPoint;
             var midpoint = StartPoint + shaftVector * 0.5;
-            double crossArmLength = HeadLength;
+            double crossArmLength = MaxHeadLength;
             Point[] points = new Point[4];
             //draw the X through the shaft;
 

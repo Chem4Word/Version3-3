@@ -22,7 +22,6 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Formula;
 using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
@@ -280,6 +279,7 @@ namespace Chem4Word.ACME
                 {
                     args.Formula = value.formula;
                     args.MolecularWeight = value.molecularWeight;
+                    args.UniCodeFormula = Model.UnicodeFormula;
                 }
 
                 OnFeedbackChange?.Invoke(this, args);

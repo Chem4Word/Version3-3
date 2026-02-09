@@ -196,22 +196,26 @@ namespace Chem4Word.ACME
 
                 if (atoms.Any())
                 {
-                    GeneralTransform inverse = operation.Inverse;
+                    Transform inverse = (Transform)operation.Inverse;
                     if (inverse != null)
                     {
-                        Atom[] atomsToTransform = atoms.ToArray();
+                        List<Atom> atomsToTransform = atoms.ToList();
                         //need a reference to the mol later
                         Molecule parent = atoms[0].Parent;
 
                         Action undo = () =>
                         {
+                            HashSet<Bond> affectedBonds = new HashSet<Bond>();
                             ClearSelection();
                             foreach (Atom atom in atomsToTransform)
                             {
                                 atom.Position = inverse.Transform(atom.Position);
                                 atom.UpdateVisual();
+                                
+                                affectedBonds.UnionWith(atom.Bonds);
                             }
-
+                            TransformAtomRelatedPushers(atomsToTransform, inverse);
+                            TransformBondRelatedPushers(affectedBonds.ToList(), inverse);
                             parent.RootMolecule.UpdateVisual();
                             foreach (Atom o in atomsToTransform)
                             {
@@ -221,20 +225,24 @@ namespace Chem4Word.ACME
 
                         Action redo = () =>
                         {
+                            HashSet<Bond> affectedBonds = new HashSet<Bond>();
                             ClearSelection();
                             foreach (Atom atom in atomsToTransform)
                             {
                                 atom.Position = operation.Transform(atom.Position);
                                 atom.UpdateVisual();
-                            }
 
+                                affectedBonds.UnionWith(atom.Bonds);
+                            }
+                            TransformAtomRelatedPushers(atomsToTransform, operation);
+                            TransformBondRelatedPushers(affectedBonds.ToList(), operation);
                             parent.RootMolecule.UpdateVisual();
                             foreach (Atom o in atomsToTransform)
                             {
                                 AddToSelection(o);
                             }
                         };
-
+                        
                         UndoManager.BeginUndoBlock();
                         UndoManager.RecordAction(undo, redo);
                         UndoManager.EndUndoBlock();
@@ -262,7 +270,7 @@ namespace Chem4Word.ACME
             List<Molecule> molecules = objectsToTransform.OfType<Molecule>().ToList();
             List<Reaction> reactions = objectsToTransform.OfType<Reaction>().ToList();
             List<Annotation> annotations = objectsToTransform.OfType<Annotation>().ToList();
-
+            List<ElectronPusher> electronPushers = Model.ElectronPushers.Values.ToList();
             try
             {
                 string countMolString = molecules == null ? "{null}" : $"{molecules.Count}";
@@ -321,9 +329,14 @@ namespace Chem4Word.ACME
                         ann.UpdateVisual();
                     }
 
+                    foreach (ElectronPusher ep in electronPushers)
+                    {
+                        ep.UpdateVisual();
+                    }
                     AddObjectListToSelection(molecules.Cast<StructuralObject>().ToList());
                     AddObjectListToSelection(reactions.Cast<StructuralObject>().ToList());
                     AddObjectListToSelection(annotations.Cast<StructuralObject>().ToList());
+                    AddObjectListToSelection(electronPushers.Cast<StructuralObject>().ToList());
                 };
 
                 Action redo = () =>
@@ -353,6 +366,11 @@ namespace Chem4Word.ACME
                         ann.Position = operation.Transform(ann.Position);
                     }
 
+                    //foreach (ElectronPusher pusher in electronPushers)
+                    //{
+                    //    pusher.FirstControlPoint = operation.Transform(pusher.FirstControlPoint);
+                    //    pusher.SecondControlPoint = operation.Transform(pusher.SecondControlPoint);
+                    //}
                     SuppressEditorRedraw(false);
 
                     foreach (Molecule mol in moleculesToTransform)
@@ -369,10 +387,15 @@ namespace Chem4Word.ACME
                     {
                         ann.UpdateVisual();
                     }
+                    foreach (ElectronPusher ep in electronPushers)
+                    {
+                        ep.UpdateVisual();
+                    }
 
                     AddObjectListToSelection(molecules.Cast<StructuralObject>().ToList());
                     AddObjectListToSelection(reactions.Cast<StructuralObject>().ToList());
                     AddObjectListToSelection(annotations.Cast<StructuralObject>().ToList());
+                    //AddObjectListToSelection(electronPushers.Cast<StructuralObject>().ToList());
                 };
                 UndoManager.BeginUndoBlock();
                 UndoManager.RecordAction(undo, redo);
@@ -411,6 +434,7 @@ namespace Chem4Word.ACME
                     mol.UpdateVisual();
                 }
             }
+            TransformAllElectronPushers(molecule, operation);
         }
 
         /// <summary>

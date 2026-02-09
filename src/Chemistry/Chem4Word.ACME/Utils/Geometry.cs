@@ -254,5 +254,47 @@ namespace Chem4Word.ACME.Utils
             }
             return result;
         }
+
+        public static List<Point> GetGeoPoints(System.Windows.Media.Geometry geo)
+        {
+            List<Point> retval = new List<Point>();
+            var pg = geo.GetFlattenedPathGeometry(0.01, ToleranceType.Relative);
+
+            foreach (var f in pg.Figures)
+            {
+                retval.Add(f.StartPoint);
+                foreach (var s in f.Segments)
+                {
+                    if (s is PolyLineSegment segment)
+                    {
+                        foreach (Point pt in segment.Points)
+                        {
+                            retval.Add(pt);
+                        }
+                    }
+                    else if (s is LineSegment lineSegment)
+                    {
+                        retval.Add(lineSegment.Point);
+                    }
+                }
+            }
+            return retval;
+        }
+
+        /// <summary>
+        /// Returns a rough outline of a glyph run.  useful for calculating a convex hull
+        /// </summary>
+        /// <param name="glyphRun">Glyph run to outline</param>
+        /// <returns>List<Point> of geometry tracing the GlyphRun</Point></returns>
+        public static List<Point> GetOutline(this GlyphRun glyphRun)
+        {
+            if (glyphRun != null)
+            {
+                var geo = glyphRun.BuildGeometry();
+                return Geometry.GetGeoPoints(geo);
+            }
+
+            return null;
+        }
     }
 }

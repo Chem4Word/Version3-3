@@ -129,12 +129,36 @@ namespace Chem4Word.ACME
         public void DeleteMolecule(Molecule mol)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            
+            HashSet<ElectronPusher> associatedPushers = new HashSet<ElectronPusher>();
+
+            //find any electron pushers associated with this molecule
+            foreach (Atom atom in mol.Atoms.Values)
+            {
+                foreach (ElectronPusher pusher in atom.ElectronPushers)
+                {
+                    associatedPushers.Add(pusher);
+                }
+            }
+
+            foreach (Bond bond  in mol.Bonds)
+            {
+                foreach (ElectronPusher pusher in bond.ElectronPushers)
+                {
+                    associatedPushers.Add(pusher);
+                }
+            }
+
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
 
                 Action redo = () =>
                               {
+                                  foreach (ElectronPusher pusher in associatedPushers)
+                                  {
+                                      Model.RemoveElectronPusher(pusher);
+                                  }
                                   RemoveFromSelection(mol);
                                   Model.RemoveMolecule(mol);
                                   mol.Parent = null;
@@ -145,6 +169,11 @@ namespace Chem4Word.ACME
                               {
                                   mol.Parent = Model;
                                   Model.AddMolecule(mol);
+
+                                  foreach (ElectronPusher pusher in associatedPushers)
+                                  {
+                                      Model.AddElectronPusher(pusher);
+                                  }
                                   AddToSelection(mol);
                               };
 

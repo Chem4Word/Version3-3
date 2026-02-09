@@ -9,8 +9,12 @@ using Chem4Word.ACME.Drawing.Text;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Geometry;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using Geometry = Chem4Word.ACME.Utils.Geometry;
 
 namespace Chem4Word.ACME.Drawing.Visuals
 {
@@ -19,6 +23,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
     /// </summary>
     public class ElectronVisual : AtomVisual
     {
+        private Point? _centroid;
+
         #region Properties
 
         public AtomVisual ParentVisual { get; protected set; }
@@ -106,12 +112,45 @@ namespace Chem4Word.ACME.Drawing.Visuals
             }
 
             //now draw a transparent circle on top of the electron visual to aid hit testing
-            Context.DrawEllipse(Brushes.Transparent, null, electronCenter, offset, offset);
+            var overlay = new EllipseGeometry(electronCenter, offset, offset);
+
+            Context.DrawGeometry(Brushes.Transparent, null, overlay);
             Metrics = new AtomTextMetrics
             {
                 TotalBoundingBox = new Rect(new Point(electronCenter.X - offset, electronCenter.Y - offset),
                                             new Point(electronCenter.X + offset, electronCenter.Y + offset)),
             };
+
+            //fix the hull for future use
+            CoreHull = Geometry.GetGeoPoints(overlay);
+        }
+
+        public override List<Point> Hull
+        {
+            get
+            {
+                List<Point> tempHull = new List<Point>(CoreHull);
+
+                var sortedHull = (from Point p in tempHull
+                                  orderby p.X, p.Y descending
+                                  select p).ToList();
+
+                return Geometry<Point>.GetHull(sortedHull, p => p);
+            }
+        }
+
+        public Point Centroid
+        {
+            get
+            {
+                if (_centroid is null)
+                {
+                    var convexHull = GeometryTool.MakeConvexHull(Hull);
+                    _centroid =Geometry<Point>.GetCentroid(convexHull.ToArray(), p => p);
+
+                }
+                return _centroid.Value;
+            }
         }
     }
 }

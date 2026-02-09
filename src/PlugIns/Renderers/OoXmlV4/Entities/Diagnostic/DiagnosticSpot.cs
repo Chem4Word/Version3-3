@@ -17,11 +17,22 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities.Diagnostic
 
         public double Diameter { get; }
 
+        public bool Filled { get; }
+
         public DiagnosticSpot(Point point, string colour, double diameter)
         {
             Point = point;
             Colour = colour;
             Diameter = diameter;
+            Filled = false;
+        }
+
+        public DiagnosticSpot(Point point, string colour, double diameter, bool filled)
+        {
+            Point = point;
+            Colour = colour;
+            Diameter = diameter;
+            Filled = filled;
         }
     }
 }

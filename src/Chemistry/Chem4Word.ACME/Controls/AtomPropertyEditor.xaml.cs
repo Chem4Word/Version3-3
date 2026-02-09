@@ -40,7 +40,9 @@ namespace Chem4Word.ACME.Controls
         private const double WidthOfFunctionalGroupMode = 580;
 
         private bool _closedByUser;
+
         private bool IsDirty { get; set; }
+
         private bool AutomaticPlacement { get; set; }
 
         private bool _isLoading;
@@ -161,8 +163,6 @@ namespace Chem4Word.ACME.Controls
             Left = point.X;
             Top = point.Y;
 
-            IsDirty = false;
-
             DataContext = _atomPropertiesModel;
 
             if (_atomPropertiesModel.IsFunctionalGroup)
@@ -186,6 +186,8 @@ namespace Chem4Word.ACME.Controls
 
             FunctionalGroupsCompass.SelectedCompassPoint = _atomPropertiesModel.ExplicitFunctionalGroupPlacement;
 
+            IsDirty = false;
+
             _inhibitEvents = false;
             _isLoading = false;
 
@@ -202,6 +204,9 @@ namespace Chem4Word.ACME.Controls
 
         private void OnClick_Close(object sender, RoutedEventArgs e)
         {
+            _atomPropertiesModel.Save = false;
+            _closedByUser = true;
+
             Close();
         }
 
@@ -209,6 +214,7 @@ namespace Chem4Word.ACME.Controls
         {
             _atomPropertiesModel.Save = true;
             _closedByUser = true;
+
             Close();
         }
 
@@ -246,8 +252,10 @@ namespace Chem4Word.ACME.Controls
 
             AtomOption atomPickerSelectedItem = newOption;
             AtomPicker.SelectedItem = atomPickerSelectedItem;
+
             if (!_inhibitEvents)
             {
+                IsDirty = true;
                 ShowPreview();
             }
         }
@@ -259,6 +267,7 @@ namespace Chem4Word.ACME.Controls
             ElectronsCompass.Atom = _atomPropertiesModel.Atom;
             if (!_inhibitEvents)
             {
+                IsDirty = true;
                 ShowPreview();
                 ElectronsCompass.Refresh();
             }
@@ -270,6 +279,7 @@ namespace Chem4Word.ACME.Controls
             _atomPropertiesModel.AddedElement = option?.Element;
             if (!_inhibitEvents)
             {
+                IsDirty = true;
                 ShowPreview();
             }
         }
@@ -288,6 +298,7 @@ namespace Chem4Word.ACME.Controls
         {
             if (!_inhibitEvents)
             {
+                IsDirty = true;
                 SetStateOfExplicitCarbonCheckbox();
                 ShowPreview();
             }
@@ -323,6 +334,7 @@ namespace Chem4Word.ACME.Controls
         {
             if (!_inhibitEvents)
             {
+                IsDirty = true;
                 ShowPreview();
             }
         }
@@ -439,7 +451,6 @@ namespace Chem4Word.ACME.Controls
                     }
 
                     Preview.Chemistry = _atomPropertiesModel.MicroModel.Copy();
-                    IsDirty = true;
                 }
                 else
                 {
@@ -584,10 +595,9 @@ namespace Chem4Word.ACME.Controls
 
                 if (!_inhibitEvents)
                 {
+                    IsDirty = true;
                     ShowPreview();
                 }
-
-                IsDirty = true;
             }
         }
 
@@ -603,9 +613,9 @@ namespace Chem4Word.ACME.Controls
                         if (!_inhibitEvents)
                         {
                             ShowPreview();
+                            IsDirty = true;
                         }
 
-                        IsDirty = true;
                         break;
                 }
             }
@@ -622,10 +632,10 @@ namespace Chem4Word.ACME.Controls
 
                         if (!_inhibitEvents)
                         {
+                            IsDirty = true;
                             ShowPreview();
                         }
 
-                        IsDirty = true;
                         break;
                 }
             }
@@ -647,10 +657,10 @@ namespace Chem4Word.ACME.Controls
 
                         if (!_inhibitEvents)
                         {
+                            IsDirty = true;
                             ShowPreview();
                         }
 
-                        IsDirty = true;
                         break;
                 }
             }
@@ -662,10 +672,9 @@ namespace Chem4Word.ACME.Controls
             {
                 if (!_inhibitEvents)
                 {
+                    IsDirty = true;
                     ShowPreview();
                 }
-
-                IsDirty = true;
             }
         }
 
@@ -721,6 +730,8 @@ namespace Chem4Word.ACME.Controls
 
                 ElectronsView.EnableEvents();
                 ElectronsCompass.EnableEvents();
+
+                IsDirty = true;
             }
         }
 
@@ -765,6 +776,8 @@ namespace Chem4Word.ACME.Controls
 
                 ElectronsView.EnableEvents();
                 ElectronsCompass.EnableEvents();
+
+                IsDirty = true;
             }
         }
 

@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core;
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
@@ -50,7 +51,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 ProcessMolecule(mol, Inputs.Progress, ref moleculeNo);
             }
 
-            ProcessPushers();
+            ProcessElectronPushers();
             ProcessReactionTexts();
             ProcessAnnotationTexts();
             ProcessMolecularWeight();
@@ -59,93 +60,169 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             return Outputs;
         }
 
-        private void ProcessPushers()
+        private void ProcessElectronPushers()
         {
             if (Inputs.Model.HasElectronPushers)
             {
-                foreach (ElectronPusher pusher in Inputs.Model.ElectronPushers.Values)
+                foreach (ElectronPusher electronPusher in Inputs.Model.ElectronPushers.Values)
                 {
-                    StructuralObject startChemistry = pusher.StartChemistry;
-                    Point startPoint = GetPoint(startChemistry, pusher.FirstControlPoint);
+                    StructuralObject startChemistry = electronPusher.StartChemistry;
+                    Point startPoint = GetPoint(startChemistry, electronPusher.FirstControlPoint);
+                    Point endPoint = GetPoint(electronPusher.EndChemistries[0], electronPusher.FirstControlPoint);
 
-                    int index = 0;
-                    foreach (StructuralObject chemistry in pusher.EndChemistries)
+                    OoXmlElectronPusher pusher = new OoXmlElectronPusher
                     {
-                        Point point = GetPoint(chemistry, pusher.FirstControlPoint);
-                        string path = pusher.Path;
-                        if (index > 0)
+                        StartPoint = startPoint,
+                        FirstControlPoint = electronPusher.FirstControlPoint,
+                        SecondControlPoint = electronPusher.SecondControlPoint,
+                        EndPoint = endPoint,
+                        PusherType = electronPusher.PusherType,
+                        Path = electronPusher.Path
+                    };
+
+                    if (electronPusher.EndChemistries.Count == 2)
+                    {
+                        Point pseudoBondStart = GetPoint(electronPusher.EndChemistries[0], electronPusher.FirstControlPoint, false);
+                        Point pseudoBondEnd = GetPoint(electronPusher.EndChemistries[1], electronPusher.FirstControlPoint, false);
+
+                        // Adjust the end point
+                        endPoint = GeometryTool.GetMidPoint(pseudoBondStart, pseudoBondEnd);
+
+                        // Draw the fake bond
+                        //Outputs.Diagnostics.Lines.Add(new DiagnosticLine(pseudoBondStart, pseudoBondEnd, BondLineStyle.Zero, OoXmlColours.DarkGreen));
+
+                        pusher.EndPoint = endPoint;
+                    }
+
+                    if (electronPusher.PusherType == ElectronPusherType.FishHook)
+                    {
+                        Point[] ends = DetermineBarbEnds(endPoint, electronPusher.SecondControlPoint, headLength: BondOffset(), barbOffset: BondOffset() / 2);
+                        if (ends.Length == 2)
                         {
-                            path += $"/{index}";
+                            //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(ends[0], OoXmlColours.DarkOrange, BondOffset() / 2, false));
+                            //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(ends[1], OoXmlColours.Bracket, BondOffset() / 2, false));
+
+                            // Work out which point is the furthest away from the start point use that
+                            Vector vector0 = startPoint - ends[0];
+                            Vector vector1 = startPoint - ends[1];
+                            pusher.FishHookPoint = vector0.Length > vector1.Length
+                                ? ends[0]
+                                : ends[1];
+
+                            //Outputs.Diagnostics.Lines.Add(new DiagnosticLine(pusher.StartPoint, pusher.FishHookPoint, BondLineStyle.Zero, OoXmlColours.DarkOrange));
+                            //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(pusher.StartPoint, OoXmlColours.DarkOrange, BondOffset() / 2, false));
                         }
-
-                        Outputs.Pushers.Add(new OoXmlElectronPusher
+                        else
                         {
-                            StartPoint = startPoint,
-                            FirstControlPoint = pusher.FirstControlPoint,
-                            SecondControlPoint = pusher.SecondControlPoint,
-                            EndPoint = point,
-                            Path = path
-                        });
-
-                        index++;
-
-                        if (index > 1)
-                        {
-                            Debug.WriteLine("Can't Handle multiple EndChemistries (yet)");
-                            // ToDo: Handle multiple end points, when implemented by clyde
+                            Debug.WriteLine("Something has gone wrong, we should have had two points");
                             Debugger.Break();
-                            break;
                         }
                     }
+
+                    Outputs.Pushers.Add(pusher);
+
+                    //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(pusher.StartPoint, OoXmlColours.DarkRed, BondOffset() / 2, false));
+                    //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(pusher.FirstControlPoint, OoXmlColours.DarkRed, BondOffset() / 2, false));
+                    //Outputs.Diagnostics.Lines.Add(new DiagnosticLine(pusher.StartPoint, pusher.FirstControlPoint, BondLineStyle.Zero, OoXmlColours.DarkRed));
+
+                    //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(pusher.EndPoint, OoXmlColours.Blue, BondOffset() / 2, false));
+                    //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(pusher.SecondControlPoint, OoXmlColours.Blue, BondOffset() / 2, false));
+                    //Outputs.Diagnostics.Lines.Add(new DiagnosticLine(pusher.EndPoint, pusher.SecondControlPoint, BondLineStyle.Zero, OoXmlColours.Blue));
                 }
             }
+        }
 
-            Point GetPoint(StructuralObject startChemistry, Point controlPoint)
+        private Point GetPoint(StructuralObject startChemistry, Point controlPoint, bool clip = true)
+        {
+            // Ensure we return a point that is within the overall structure
+            Point result = Inputs.Model.BoundingBoxOfCmlPoints.TopLeft;
+
+            switch (startChemistry)
             {
-                // Ensure we return a point that is within the overall structure
-                Point result = Inputs.Model.BoundingBoxOfCmlPoints.TopLeft;
-
-                switch (startChemistry)
-                {
-                    case Atom atom:
-                        Point p1 = atom.Position;
-                        Point p2 = p1 + (controlPoint - p1);
-                        List<Point> hull = ConvexHullOfAtomCharacters(atom.Path);
-                        Point[] clip = GeometryTool.ClipLineWithPolygon(p1, p2, hull, out _);
-                        switch (clip.Length)
+                case Atom atom:
+                    result = atom.Position;
+                    if (clip)
+                    {
+                        Point point1 = atom.Position;
+                        Point point2 = point1 + (controlPoint - point1);
+                        if (Outputs.ConvexHulls.TryGetValue(atom.Path, out List<Point> hull))
                         {
-                            case 3:
-                                result = clip[1];
-                                break;
+                            Point[] points = GeometryTool.ClipLineWithPolygon(point1, point2, hull, out _);
+                            switch (points.Length)
+                            {
+                                case 2:
+                                case 3:
+                                    result = points[1];
+                                    break;
 
-                            default:
-                                Debugger.Break();
-                                break;
+                                default:
+                                    Debugger.Break();
+                                    result = point1; // ToDo: Check this if it ever occurs
+                                    break;
+                            }
                         }
+                    }
+                    break;
 
-                        break;
-
-                    case Bond bond:
-                        Point p3 = bond.MidPoint;
-                        Point p4 = p3 + (controlPoint - p3);
-                        List<Point> hull2 = ConvexHullOfBondLines(bond.Path);
-                        Point[] clip2 = GeometryTool.ClipLineWithPolygon(p3, p4, hull2, out _);
-                        switch (clip2.Length)
+                case Bond bond:
+                    result = bond.MidPoint;
+                    if (clip)
+                    {
+                        Point point1 = bond.MidPoint;
+                        Point point2 = point1 + (controlPoint - point1);
+                        if (Outputs.ConvexHulls.TryGetValue(bond.Path, out List<Point> hull))
                         {
-                            case 3:
-                                result = clip2[1];
-                                break;
+                            Point[] points = GeometryTool.ClipLineWithPolygon(point1, point2, hull, out _);
+                            switch (points.Length)
+                            {
+                                case 2:
+                                case 3:
+                                    result = points[1];
+                                    break;
 
-                            default:
-                                Debugger.Break();
-                                break;
+                                default:
+                                    Debugger.Break();
+                                    result = point1; // ToDo: Check this if it ever occurs
+                                    break;
+                            }
                         }
+                    }
 
-                        break;
-                }
-
-                return result;
+                    break;
             }
+
+            return result;
+        }
+
+        private Point[] DetermineBarbEnds(Point endPoint, Point controlPoint,
+                                  double headLength = 8.0, double barbOffset = 4.0)
+        {
+            List<Point> points = new List<Point>();
+
+            // Tangent direction at the end (end - control)
+            Vector tangent = endPoint - controlPoint;
+
+            if (tangent.Length < CoreConstants.Epsilon)
+            {
+                return points.ToArray();
+            }
+
+            tangent.Normalize(); // unit direction
+
+            // Normal (perpendicular) vectors
+            Vector leftNormal = new Vector(-tangent.Y, tangent.X);
+            Vector rightNormal = new Vector(tangent.Y, -tangent.X);
+
+            // Base of the arrow head
+            Point basePoint = endPoint - (tangent * headLength);
+
+            // Left barb
+            points.Add(basePoint + (leftNormal * barbOffset));
+
+            // Right barb
+            points.Add(basePoint + (rightNormal * barbOffset));
+
+            return points.ToArray();
         }
 
         private void AddAnnotationCharacters(Annotation annotation, string path, List<FunctionalGroupTerm> terms,
@@ -350,8 +427,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             var bondEnd = bond.EndAtom.Position;
 
-            #region Create Bond Line objects
-
             switch (bond.Order)
             {
                 case ModelConstants.OrderZero:
@@ -365,319 +440,21 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 case "1":
                 case ModelConstants.OrderSingle:
-                    switch (bond.Stereo)
-                    {
-                        case BondStereo.None:
-                            Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, bond));
-                            break;
-
-                        case BondStereo.Hatch:
-                            Outputs.BondLines.Add(new BondLine(BondLineStyle.Hatch, bond, Inputs.MeanBondLength));
-                            break;
-
-                        case BondStereo.Wedge:
-                            Outputs.BondLines.Add(new BondLine(BondLineStyle.Wedge, bond, Inputs.MeanBondLength));
-                            break;
-
-                        case BondStereo.Indeterminate:
-                            Outputs.BondLines.Add(new BondLine(BondLineStyle.Wavy, bond));
-                            break;
-
-                        case BondStereo.Thick:
-                            Outputs.BondLines.Add(new BondLine(BondLineStyle.Thick, bond, Inputs.MeanBondLength));
-                            break;
-
-                        default:
-                            Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, bond));
-                            break;
-                    }
+                    ProcessSingleBond(bond);
                     break;
 
                 case ModelConstants.OrderPartial12:
                 case ModelConstants.OrderAromatic:
-
-                    BondLine onePointFive;
-                    BondLine onePointFiveDashed;
-                    Point onePointFiveStart;
-                    Point onePointFiveEnd;
-
-                    switch (bond.Placement)
-                    {
-                        case BondDirection.Clockwise:
-                            onePointFive = new BondLine(BondLineStyle.Solid, bond);
-                            Outputs.BondLines.Add(onePointFive);
-                            onePointFiveDashed = onePointFive.GetParallel(BondOffset());
-                            onePointFiveStart = new Point(onePointFiveDashed.Start.X, onePointFiveDashed.Start.Y);
-                            onePointFiveEnd = new Point(onePointFiveDashed.End.X, onePointFiveDashed.End.Y);
-                            GeometryTool.AdjustLineAboutMidpoint(ref onePointFiveStart, ref onePointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                            onePointFiveDashed = new BondLine(BondLineStyle.Half, onePointFiveStart, onePointFiveEnd, bond);
-                            Outputs.BondLines.Add(onePointFiveDashed);
-                            break;
-
-                        case BondDirection.Anticlockwise:
-                            onePointFive = new BondLine(BondLineStyle.Solid, bond);
-                            Outputs.BondLines.Add(onePointFive);
-                            onePointFiveDashed = onePointFive.GetParallel(-BondOffset());
-                            onePointFiveStart = new Point(onePointFiveDashed.Start.X, onePointFiveDashed.Start.Y);
-                            onePointFiveEnd = new Point(onePointFiveDashed.End.X, onePointFiveDashed.End.Y);
-                            GeometryTool.AdjustLineAboutMidpoint(ref onePointFiveStart, ref onePointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                            onePointFiveDashed = new BondLine(BondLineStyle.Half, onePointFiveStart, onePointFiveEnd, bond);
-                            Outputs.BondLines.Add(onePointFiveDashed);
-                            break;
-
-                        case BondDirection.None:
-                            onePointFive = new BondLine(BondLineStyle.Solid, bond);
-                            Outputs.BondLines.Add(onePointFive.GetParallel(-(BondOffset() / 2)));
-                            onePointFiveDashed = onePointFive.GetParallel(BondOffset() / 2);
-                            onePointFiveDashed.SetLineStyle(BondLineStyle.Half);
-                            Outputs.BondLines.Add(onePointFiveDashed);
-                            break;
-                    }
+                    ProcessOnePointFiveBond(bond);
                     break;
 
                 case "2":
                 case ModelConstants.OrderDouble:
-                    if (bond.Stereo == BondStereo.Indeterminate) //crossing bonds
-                    {
-                        // Crossed lines
-                        var d = new BondLine(BondLineStyle.Solid, bondStart, bondEnd, bond);
-                        var d1 = d.GetParallel(-(BondOffset() / 2));
-                        var d2 = d.GetParallel(BondOffset() / 2);
-                        Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, new Point(d1.Start.X, d1.Start.Y), new Point(d2.End.X, d2.End.Y), bond));
-                        Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, new Point(d2.Start.X, d2.Start.Y), new Point(d1.End.X, d1.End.Y), bond));
-                    }
-                    else
-                    {
-                        switch (bond.Placement)
-                        {
-                            case BondDirection.Anticlockwise:
-                                var da = new BondLine(BondLineStyle.Solid, bond);
-                                Outputs.BondLines.Add(da);
-                                Outputs.BondLines.Add(PlaceSecondaryLine(da, da.GetParallel(-BondOffset())));
-                                break;
-
-                            case BondDirection.Clockwise:
-                                var dc = new BondLine(BondLineStyle.Solid, bond);
-                                Outputs.BondLines.Add(dc);
-                                Outputs.BondLines.Add(PlaceSecondaryLine(dc, dc.GetParallel(BondOffset())));
-                                break;
-
-                                // Local Function
-                                BondLine PlaceSecondaryLine(BondLine primaryLine, BondLine secondaryLine)
-                                {
-                                    var primaryMidpoint = GeometryTool.GetMidPoint(primaryLine.Start, primaryLine.End);
-                                    var secondaryMidpoint = GeometryTool.GetMidPoint(secondaryLine.Start, secondaryLine.End);
-
-                                    var startPointa = secondaryLine.Start;
-                                    var endPointa = secondaryLine.End;
-
-                                    Point? centre = null;
-
-                                    var clip = false;
-
-                                    // Does bond have a primary ring?
-                                    if (bond.PrimaryRing != null && bond.PrimaryRing.Centroid != null)
-                                    {
-                                        // Get angle between bond and vector to primary ring centre
-                                        centre = bond.PrimaryRing.Centroid.Value;
-                                        var primaryRingVector = primaryMidpoint - centre.Value;
-                                        var angle = GeometryTool.AngleBetween(bond.BondVector, primaryRingVector);
-
-                                        // Does bond have a secondary ring?
-                                        if (bond.SubsidiaryRing != null && bond.SubsidiaryRing.Centroid != null)
-                                        {
-                                            // Get angle between bond and vector to secondary ring centre
-                                            var centre2 = bond.SubsidiaryRing.Centroid.Value;
-                                            var secondaryRingVector = primaryMidpoint - centre2;
-                                            var angle2 = GeometryTool.AngleBetween(bond.BondVector, secondaryRingVector);
-
-                                            // Get angle in which the offset line has moved with respect to the bond line
-                                            var offsetVector = primaryMidpoint - secondaryMidpoint;
-                                            var offsetAngle = GeometryTool.AngleBetween(bond.BondVector, offsetVector);
-
-                                            // If in the same direction as secondary ring centre, use it
-                                            if (Math.Sign(angle2) == Math.Sign(offsetAngle))
-                                            {
-                                                centre = centre2;
-                                            }
-                                        }
-
-                                        // Is projection to centre at right angles +/- 10 degrees
-                                        if (Math.Abs(angle) > 80 && Math.Abs(angle) < 100)
-                                        {
-                                            clip = true;
-                                        }
-
-                                        // Is secondary line outside of the "selected" ring
-                                        var distance1 = primaryRingVector.Length;
-                                        var distance2 = (secondaryMidpoint - centre.Value).Length;
-                                        if (distance2 > distance1)
-                                        {
-                                            clip = false;
-                                        }
-                                    }
-
-                                    if (clip)
-                                    {
-                                        var outIntersectP1 = GeometryTool.GetIntersection(startPointa, endPointa, bondStart, centre.Value);
-                                        var outIntersectP2 = GeometryTool.GetIntersection(startPointa, endPointa, bondEnd, centre.Value);
-
-                                        if (Inputs.Options.ShowDoubleBondTrimmingLines)
-                                        {
-                                            // Diagnostics
-                                            Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.StartAtom.Position, centre.Value, BondLineStyle.Dotted, OoXmlColours.Red));
-                                            Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.EndAtom.Position, centre.Value, BondLineStyle.Dotted, OoXmlColours.Red));
-                                        }
-
-                                        return new BondLine(BondLineStyle.Solid, outIntersectP1.Value, outIntersectP2.Value, bond);
-                                    }
-                                    else
-                                    {
-                                        GeometryTool.AdjustLineAboutMidpoint(ref startPointa, ref endPointa, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                                        return TrimSecondaryLine(new BondLine(BondLineStyle.Solid, startPointa, endPointa, bond));
-                                    }
-                                }
-
-                                // Local Function
-                                BondLine TrimSecondaryLine(BondLine bondLine)
-                                {
-                                    var otherStartBonds = bond.StartAtom.Bonds.Except(new[] { bond }).ToList();
-                                    var otherEndBonds = bond.EndAtom.Bonds.Except(new[] { bond }).ToList();
-
-                                    foreach (var otherBond in otherStartBonds)
-                                    {
-                                        TrimSecondaryBondLine(bond.StartAtom.Position, bond.EndAtom.Position,
-                                                              otherBond.OtherAtom(bond.StartAtom).Position);
-                                    }
-
-                                    foreach (var otherBond in otherEndBonds)
-                                    {
-                                        TrimSecondaryBondLine(bond.EndAtom.Position, bond.StartAtom.Position,
-                                                              otherBond.OtherAtom(bond.EndAtom).Position);
-                                    }
-
-                                    void TrimSecondaryBondLine(Point common, Point left, Point right)
-                                    {
-                                        var v1 = left - common;
-                                        var v2 = right - common;
-                                        var angle = GeometryTool.AngleBetween(v1, v2);
-                                        var matrix = new Matrix();
-                                        matrix.Rotate(angle / 2);
-                                        v1 = v1 * 2 * matrix;
-                                        if (Inputs.Options.ShowDoubleBondTrimmingLines)
-                                        {
-                                            Outputs.Diagnostics.Lines.Add(new DiagnosticLine(common, common + v1, BondLineStyle.Dotted, OoXmlColours.Blue));
-                                        }
-
-                                        var meetingPoint = GeometryTool.GetIntersection(bondLine.Start, bondLine.End,
-                                                                      common, common + v1);
-                                        if (meetingPoint != null)
-                                        {
-                                            if (common == bondLine.Bond.StartAtom.Position)
-                                            {
-                                                bondLine.Start = meetingPoint.Value;
-                                            }
-                                            if (common == bondLine.Bond.EndAtom.Position)
-                                            {
-                                                bondLine.End = meetingPoint.Value;
-                                            }
-                                        }
-                                    }
-
-                                    return bondLine;
-                                }
-
-                            default:
-                                switch (bond.Stereo)
-                                {
-                                    case BondStereo.Cis:
-                                        var dcc = new BondLine(BondLineStyle.Solid, bond);
-                                        Outputs.BondLines.Add(dcc);
-                                        var blnewc = dcc.GetParallel(BondOffset());
-                                        var startPointn = blnewc.Start;
-                                        var endPointn = blnewc.End;
-                                        GeometryTool.AdjustLineAboutMidpoint(ref startPointn, ref endPointn, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                                        Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, startPointn, endPointn, bond));
-                                        break;
-
-                                    case BondStereo.Trans:
-                                        var dtt = new BondLine(BondLineStyle.Solid, bond);
-                                        Outputs.BondLines.Add(dtt);
-                                        var blnewt = dtt.GetParallel(BondOffset());
-                                        var startPointt = blnewt.Start;
-                                        var endPointt = blnewt.End;
-                                        GeometryTool.AdjustLineAboutMidpoint(ref startPointt, ref endPointt, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                                        Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, startPointt, endPointt, bond));
-                                        break;
-
-                                    default:
-                                        var dp = new BondLine(BondLineStyle.Solid, bond);
-                                        Outputs.BondLines.Add(dp.GetParallel(-(BondOffset() / 2)));
-                                        Outputs.BondLines.Add(dp.GetParallel(BondOffset() / 2));
-                                        break;
-                                }
-                                break;
-                        }
-                    }
+                    ProcessDoubleBond(bond, bondStart, bondEnd);
                     break;
 
                 case ModelConstants.OrderPartial23:
-                    BondLine twoPointFive;
-                    BondLine twoPointFiveDashed;
-                    BondLine twoPointFiveParallel;
-                    Point twoPointFiveStart;
-                    Point twoPointFiveEnd;
-                    switch (bond.Placement)
-                    {
-                        case BondDirection.Clockwise:
-                            // Central bond line
-                            twoPointFive = new BondLine(BondLineStyle.Solid, bond);
-                            Outputs.BondLines.Add(twoPointFive);
-                            // Solid bond line
-                            twoPointFiveParallel = twoPointFive.GetParallel(-BondOffset());
-                            twoPointFiveStart = new Point(twoPointFiveParallel.Start.X, twoPointFiveParallel.Start.Y);
-                            twoPointFiveEnd = new Point(twoPointFiveParallel.End.X, twoPointFiveParallel.End.Y);
-                            GeometryTool.AdjustLineAboutMidpoint(ref twoPointFiveStart, ref twoPointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                            twoPointFiveParallel = new BondLine(BondLineStyle.Solid, twoPointFiveStart, twoPointFiveEnd, bond);
-                            Outputs.BondLines.Add(twoPointFiveParallel);
-                            // Dashed bond line
-                            twoPointFiveDashed = twoPointFive.GetParallel(BondOffset());
-                            twoPointFiveStart = new Point(twoPointFiveDashed.Start.X, twoPointFiveDashed.Start.Y);
-                            twoPointFiveEnd = new Point(twoPointFiveDashed.End.X, twoPointFiveDashed.End.Y);
-                            GeometryTool.AdjustLineAboutMidpoint(ref twoPointFiveStart, ref twoPointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                            twoPointFiveDashed = new BondLine(BondLineStyle.Half, twoPointFiveStart, twoPointFiveEnd, bond);
-                            Outputs.BondLines.Add(twoPointFiveDashed);
-                            break;
-
-                        case BondDirection.Anticlockwise:
-                            // Central bond line
-                            twoPointFive = new BondLine(BondLineStyle.Solid, bond);
-                            Outputs.BondLines.Add(twoPointFive);
-                            // Dashed bond line
-                            twoPointFiveDashed = twoPointFive.GetParallel(-BondOffset());
-                            twoPointFiveStart = new Point(twoPointFiveDashed.Start.X, twoPointFiveDashed.Start.Y);
-                            twoPointFiveEnd = new Point(twoPointFiveDashed.End.X, twoPointFiveDashed.End.Y);
-                            GeometryTool.AdjustLineAboutMidpoint(ref twoPointFiveStart, ref twoPointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                            twoPointFiveDashed = new BondLine(BondLineStyle.Half, twoPointFiveStart, twoPointFiveEnd, bond);
-                            Outputs.BondLines.Add(twoPointFiveDashed);
-                            // Solid bond line
-                            twoPointFiveParallel = twoPointFive.GetParallel(BondOffset());
-                            twoPointFiveStart = new Point(twoPointFiveParallel.Start.X, twoPointFiveParallel.Start.Y);
-                            twoPointFiveEnd = new Point(twoPointFiveParallel.End.X, twoPointFiveParallel.End.Y);
-                            GeometryTool.AdjustLineAboutMidpoint(ref twoPointFiveStart, ref twoPointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
-                            twoPointFiveParallel = new BondLine(BondLineStyle.Solid, twoPointFiveStart, twoPointFiveEnd, bond);
-                            Outputs.BondLines.Add(twoPointFiveParallel);
-                            break;
-
-                        case BondDirection.None:
-                            twoPointFive = new BondLine(BondLineStyle.Solid, bond);
-                            Outputs.BondLines.Add(twoPointFive);
-                            Outputs.BondLines.Add(twoPointFive.GetParallel(-BondOffset()));
-                            twoPointFiveDashed = twoPointFive.GetParallel(BondOffset());
-                            twoPointFiveDashed.SetLineStyle(BondLineStyle.Half);
-                            Outputs.BondLines.Add(twoPointFiveDashed);
-                            break;
-                    }
+                    ProcessTwoPointFiveBond(bond);
                     break;
 
                 case "3":
@@ -693,8 +470,327 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                     Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, bond));
                     break;
             }
+        }
 
-            #endregion Create Bond Line objects
+        private void ProcessTwoPointFiveBond(Bond bond)
+        {
+            BondLine twoPointFive;
+            BondLine twoPointFiveDashed;
+            BondLine twoPointFiveParallel;
+            Point twoPointFiveStart;
+            Point twoPointFiveEnd;
+            switch (bond.Placement)
+            {
+                case BondDirection.Clockwise:
+                    // Central bond line
+                    twoPointFive = new BondLine(BondLineStyle.Solid, bond);
+                    Outputs.BondLines.Add(twoPointFive);
+
+                    // Solid bond line
+                    twoPointFiveParallel = twoPointFive.GetParallel(-BondOffset());
+                    twoPointFiveStart = new Point(twoPointFiveParallel.Start.X, twoPointFiveParallel.Start.Y);
+                    twoPointFiveEnd = new Point(twoPointFiveParallel.End.X, twoPointFiveParallel.End.Y);
+                    GeometryTool.AdjustLineAboutMidpoint(ref twoPointFiveStart, ref twoPointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                    twoPointFiveParallel = new BondLine(BondLineStyle.Solid, twoPointFiveStart, twoPointFiveEnd, bond);
+                    Outputs.BondLines.Add(twoPointFiveParallel);
+
+                    // Dashed bond line
+                    twoPointFiveDashed = twoPointFive.GetParallel(BondOffset());
+                    twoPointFiveStart = new Point(twoPointFiveDashed.Start.X, twoPointFiveDashed.Start.Y);
+                    twoPointFiveEnd = new Point(twoPointFiveDashed.End.X, twoPointFiveDashed.End.Y);
+                    GeometryTool.AdjustLineAboutMidpoint(ref twoPointFiveStart, ref twoPointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                    twoPointFiveDashed = new BondLine(BondLineStyle.Half, twoPointFiveStart, twoPointFiveEnd, bond);
+                    Outputs.BondLines.Add(twoPointFiveDashed);
+                    break;
+
+                case BondDirection.Anticlockwise:
+                    // Central bond line
+                    twoPointFive = new BondLine(BondLineStyle.Solid, bond);
+                    Outputs.BondLines.Add(twoPointFive);
+
+                    // Dashed bond line
+                    twoPointFiveDashed = twoPointFive.GetParallel(-BondOffset());
+                    twoPointFiveStart = new Point(twoPointFiveDashed.Start.X, twoPointFiveDashed.Start.Y);
+                    twoPointFiveEnd = new Point(twoPointFiveDashed.End.X, twoPointFiveDashed.End.Y);
+                    GeometryTool.AdjustLineAboutMidpoint(ref twoPointFiveStart, ref twoPointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                    twoPointFiveDashed = new BondLine(BondLineStyle.Half, twoPointFiveStart, twoPointFiveEnd, bond);
+                    Outputs.BondLines.Add(twoPointFiveDashed);
+
+                    // Solid bond line
+                    twoPointFiveParallel = twoPointFive.GetParallel(BondOffset());
+                    twoPointFiveStart = new Point(twoPointFiveParallel.Start.X, twoPointFiveParallel.Start.Y);
+                    twoPointFiveEnd = new Point(twoPointFiveParallel.End.X, twoPointFiveParallel.End.Y);
+                    GeometryTool.AdjustLineAboutMidpoint(ref twoPointFiveStart, ref twoPointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                    twoPointFiveParallel = new BondLine(BondLineStyle.Solid, twoPointFiveStart, twoPointFiveEnd, bond);
+                    Outputs.BondLines.Add(twoPointFiveParallel);
+                    break;
+
+                case BondDirection.None:
+                    twoPointFive = new BondLine(BondLineStyle.Solid, bond);
+                    Outputs.BondLines.Add(twoPointFive);
+                    Outputs.BondLines.Add(twoPointFive.GetParallel(-BondOffset()));
+                    twoPointFiveDashed = twoPointFive.GetParallel(BondOffset());
+                    twoPointFiveDashed.SetLineStyle(BondLineStyle.Half);
+                    Outputs.BondLines.Add(twoPointFiveDashed);
+                    break;
+            }
+        }
+
+        private void ProcessDoubleBond(Bond bond, Point bondStart, Point bondEnd)
+        {
+            if (bond.Stereo == BondStereo.Indeterminate) //crossing bonds
+            {
+                // Crossed lines
+                var d = new BondLine(BondLineStyle.Solid, bondStart, bondEnd, bond);
+                var d1 = d.GetParallel(-(BondOffset() / 2));
+                var d2 = d.GetParallel(BondOffset() / 2);
+                Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, new Point(d1.Start.X, d1.Start.Y), new Point(d2.End.X, d2.End.Y), bond));
+                Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, new Point(d2.Start.X, d2.Start.Y), new Point(d1.End.X, d1.End.Y), bond));
+            }
+            else
+            {
+                switch (bond.Placement)
+                {
+                    case BondDirection.Anticlockwise:
+                        var da = new BondLine(BondLineStyle.Solid, bond);
+                        Outputs.BondLines.Add(da);
+                        Outputs.BondLines.Add(PlaceSecondaryLine(da, da.GetParallel(-BondOffset())));
+                        break;
+
+                    case BondDirection.Clockwise:
+                        var dc = new BondLine(BondLineStyle.Solid, bond);
+                        Outputs.BondLines.Add(dc);
+                        Outputs.BondLines.Add(PlaceSecondaryLine(dc, dc.GetParallel(BondOffset())));
+                        break;
+
+                        // Local Function
+                        BondLine PlaceSecondaryLine(BondLine primaryLine, BondLine secondaryLine)
+                        {
+                            var primaryMidpoint = GeometryTool.GetMidPoint(primaryLine.Start, primaryLine.End);
+                            var secondaryMidpoint = GeometryTool.GetMidPoint(secondaryLine.Start, secondaryLine.End);
+
+                            var startPointa = secondaryLine.Start;
+                            var endPointa = secondaryLine.End;
+
+                            Point? centre = null;
+
+                            var clip = false;
+
+                            // Does bond have a primary ring?
+                            if (bond.PrimaryRing != null && bond.PrimaryRing.Centroid != null)
+                            {
+                                // Get angle between bond and vector to primary ring centre
+                                centre = bond.PrimaryRing.Centroid.Value;
+                                var primaryRingVector = primaryMidpoint - centre.Value;
+                                var angle = GeometryTool.AngleBetween(bond.BondVector, primaryRingVector);
+
+                                // Does bond have a secondary ring?
+                                if (bond.SubsidiaryRing != null && bond.SubsidiaryRing.Centroid != null)
+                                {
+                                    // Get angle between bond and vector to secondary ring centre
+                                    var centre2 = bond.SubsidiaryRing.Centroid.Value;
+                                    var secondaryRingVector = primaryMidpoint - centre2;
+                                    var angle2 = GeometryTool.AngleBetween(bond.BondVector, secondaryRingVector);
+
+                                    // Get angle in which the offset line has moved with respect to the bond line
+                                    var offsetVector = primaryMidpoint - secondaryMidpoint;
+                                    var offsetAngle = GeometryTool.AngleBetween(bond.BondVector, offsetVector);
+
+                                    // If in the same direction as secondary ring centre, use it
+                                    if (Math.Sign(angle2) == Math.Sign(offsetAngle))
+                                    {
+                                        centre = centre2;
+                                    }
+                                }
+
+                                // Is projection to centre at right angles +/- 10 degrees
+                                if (Math.Abs(angle) > 80 && Math.Abs(angle) < 100)
+                                {
+                                    clip = true;
+                                }
+
+                                // Is secondary line outside of the "selected" ring
+                                var distance1 = primaryRingVector.Length;
+                                var distance2 = (secondaryMidpoint - centre.Value).Length;
+                                if (distance2 > distance1)
+                                {
+                                    clip = false;
+                                }
+                            }
+
+                            if (clip)
+                            {
+                                var outIntersectP1 = GeometryTool.GetIntersection(startPointa, endPointa, bondStart, centre.Value);
+                                var outIntersectP2 = GeometryTool.GetIntersection(startPointa, endPointa, bondEnd, centre.Value);
+
+                                if (Inputs.Options.ShowDoubleBondTrimmingLines)
+                                {
+                                    // Diagnostics
+                                    Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.StartAtom.Position, centre.Value, BondLineStyle.Dotted, OoXmlColours.Red));
+                                    Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.EndAtom.Position, centre.Value, BondLineStyle.Dotted, OoXmlColours.Red));
+                                }
+
+                                return new BondLine(BondLineStyle.Solid, outIntersectP1.Value, outIntersectP2.Value, bond);
+                            }
+                            else
+                            {
+                                GeometryTool.AdjustLineAboutMidpoint(ref startPointa, ref endPointa, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                                return TrimSecondaryLine(new BondLine(BondLineStyle.Solid, startPointa, endPointa, bond));
+                            }
+                        }
+
+                        // Local Function
+                        BondLine TrimSecondaryLine(BondLine bondLine)
+                        {
+                            var otherStartBonds = bond.StartAtom.Bonds.Except(new[] { bond }).ToList();
+                            var otherEndBonds = bond.EndAtom.Bonds.Except(new[] { bond }).ToList();
+
+                            foreach (var otherBond in otherStartBonds)
+                            {
+                                TrimSecondaryBondLine(bond.StartAtom.Position, bond.EndAtom.Position,
+                                                      otherBond.OtherAtom(bond.StartAtom).Position);
+                            }
+
+                            foreach (var otherBond in otherEndBonds)
+                            {
+                                TrimSecondaryBondLine(bond.EndAtom.Position, bond.StartAtom.Position,
+                                                      otherBond.OtherAtom(bond.EndAtom).Position);
+                            }
+
+                            void TrimSecondaryBondLine(Point common, Point left, Point right)
+                            {
+                                var v1 = left - common;
+                                var v2 = right - common;
+                                var angle = GeometryTool.AngleBetween(v1, v2);
+                                var matrix = new Matrix();
+                                matrix.Rotate(angle / 2);
+                                v1 = v1 * 2 * matrix;
+                                if (Inputs.Options.ShowDoubleBondTrimmingLines)
+                                {
+                                    Outputs.Diagnostics.Lines.Add(new DiagnosticLine(common, common + v1, BondLineStyle.Dotted, OoXmlColours.Blue));
+                                }
+
+                                var meetingPoint = GeometryTool.GetIntersection(bondLine.Start, bondLine.End,
+                                    common, common + v1);
+                                if (meetingPoint != null)
+                                {
+                                    if (common == bondLine.Bond.StartAtom.Position)
+                                    {
+                                        bondLine.Start = meetingPoint.Value;
+                                    }
+                                    if (common == bondLine.Bond.EndAtom.Position)
+                                    {
+                                        bondLine.End = meetingPoint.Value;
+                                    }
+                                }
+                            }
+
+                            return bondLine;
+                        }
+
+                    default:
+                        switch (bond.Stereo)
+                        {
+                            case BondStereo.Cis:
+                                var dcc = new BondLine(BondLineStyle.Solid, bond);
+                                Outputs.BondLines.Add(dcc);
+                                var blnewc = dcc.GetParallel(BondOffset());
+                                var startPointn = blnewc.Start;
+                                var endPointn = blnewc.End;
+                                GeometryTool.AdjustLineAboutMidpoint(ref startPointn, ref endPointn, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                                Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, startPointn, endPointn, bond));
+                                break;
+
+                            case BondStereo.Trans:
+                                var dtt = new BondLine(BondLineStyle.Solid, bond);
+                                Outputs.BondLines.Add(dtt);
+                                var blnewt = dtt.GetParallel(BondOffset());
+                                var startPointt = blnewt.Start;
+                                var endPointt = blnewt.End;
+                                GeometryTool.AdjustLineAboutMidpoint(ref startPointt, ref endPointt, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                                Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, startPointt, endPointt, bond));
+                                break;
+
+                            default:
+                                var dp = new BondLine(BondLineStyle.Solid, bond);
+                                Outputs.BondLines.Add(dp.GetParallel(-(BondOffset() / 2)));
+                                Outputs.BondLines.Add(dp.GetParallel(BondOffset() / 2));
+                                break;
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void ProcessOnePointFiveBond(Bond bond)
+        {
+            BondLine onePointFive;
+            BondLine onePointFiveDashed;
+            Point onePointFiveStart;
+            Point onePointFiveEnd;
+
+            switch (bond.Placement)
+            {
+                case BondDirection.Clockwise:
+                    onePointFive = new BondLine(BondLineStyle.Solid, bond);
+                    Outputs.BondLines.Add(onePointFive);
+                    onePointFiveDashed = onePointFive.GetParallel(BondOffset());
+                    onePointFiveStart = new Point(onePointFiveDashed.Start.X, onePointFiveDashed.Start.Y);
+                    onePointFiveEnd = new Point(onePointFiveDashed.End.X, onePointFiveDashed.End.Y);
+                    GeometryTool.AdjustLineAboutMidpoint(ref onePointFiveStart, ref onePointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                    onePointFiveDashed = new BondLine(BondLineStyle.Half, onePointFiveStart, onePointFiveEnd, bond);
+                    Outputs.BondLines.Add(onePointFiveDashed);
+                    break;
+
+                case BondDirection.Anticlockwise:
+                    onePointFive = new BondLine(BondLineStyle.Solid, bond);
+                    Outputs.BondLines.Add(onePointFive);
+                    onePointFiveDashed = onePointFive.GetParallel(-BondOffset());
+                    onePointFiveStart = new Point(onePointFiveDashed.Start.X, onePointFiveDashed.Start.Y);
+                    onePointFiveEnd = new Point(onePointFiveDashed.End.X, onePointFiveDashed.End.Y);
+                    GeometryTool.AdjustLineAboutMidpoint(ref onePointFiveStart, ref onePointFiveEnd, -(BondOffset() / OoXmlConstants.LineShrinkPixels));
+                    onePointFiveDashed = new BondLine(BondLineStyle.Half, onePointFiveStart, onePointFiveEnd, bond);
+                    Outputs.BondLines.Add(onePointFiveDashed);
+                    break;
+
+                case BondDirection.None:
+                    onePointFive = new BondLine(BondLineStyle.Solid, bond);
+                    Outputs.BondLines.Add(onePointFive.GetParallel(-(BondOffset() / 2)));
+                    onePointFiveDashed = onePointFive.GetParallel(BondOffset() / 2);
+                    onePointFiveDashed.SetLineStyle(BondLineStyle.Half);
+                    Outputs.BondLines.Add(onePointFiveDashed);
+                    break;
+            }
+        }
+
+        private void ProcessSingleBond(Bond bond)
+        {
+            switch (bond.Stereo)
+            {
+                case BondStereo.None:
+                    Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, bond));
+                    break;
+
+                case BondStereo.Hatch:
+                    Outputs.BondLines.Add(new BondLine(BondLineStyle.Hatch, bond, Inputs.MeanBondLength));
+                    break;
+
+                case BondStereo.Wedge:
+                    Outputs.BondLines.Add(new BondLine(BondLineStyle.Wedge, bond, Inputs.MeanBondLength));
+                    break;
+
+                case BondStereo.Indeterminate:
+                    Outputs.BondLines.Add(new BondLine(BondLineStyle.Wavy, bond));
+                    break;
+
+                case BondStereo.Thick:
+                    Outputs.BondLines.Add(new BondLine(BondLineStyle.Thick, bond, Inputs.MeanBondLength));
+                    break;
+
+                default:
+                    Outputs.BondLines.Add(new BondLine(BondLineStyle.Solid, bond));
+                    break;
+            }
         }
 
         private void AddElectrons(Atom atom)
@@ -715,11 +811,16 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                         copy.ExplicitPlacement = copy.Placement;
                     }
 
+                    string colour = OoXmlColours.Black;
+                    if (Inputs.Model.ShowColouredAtoms)
+                    {
+                        colour = atom.Element.Colour.Replace("#", "");
+                    }
                     OoXmlElectron ooXmlElectron = new OoXmlElectron
                     {
                         ParentAtom = atom,
                         Position = atom.Position,
-                        Colour = atom.Element.Colour.Replace("#", ""),
+                        Colour = colour,
                         RadicalDiameter = BondOffset() / 2,
                         MeanBondLength = Inputs.MeanBondLength,
                         Electron = copy

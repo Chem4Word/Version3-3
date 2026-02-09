@@ -4,17 +4,22 @@
 //  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
+
+using Chem4Word.Core.Helpers;
+
+using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
 using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
 {
-    public partial class ElectronPusher : StructuralObject, INotifyPropertyChanged
+    public class ElectronPusher : StructuralObject, INotifyPropertyChanged
     {
         private Point _firstControlPoint;
         private IChemistryContainer _parent;
@@ -22,7 +27,6 @@ namespace Chem4Word.Model2
         private StructuralObject _startChemistry;
         private readonly List<StructuralObject> _endChemistries;
         private Point _secondControlPoint;
-
 
         public ElectronPusher()
         {
@@ -110,6 +114,18 @@ namespace Chem4Word.Model2
             }
         }
 
+        public string EndChemistriesAsString()
+        {
+            List<string> buffer = new List<string>();
+
+            foreach (StructuralObject chemistry in EndChemistries)
+            {
+                buffer.Add(chemistry.Path);
+            }
+
+            return string.Join(" ", buffer);
+        }
+
         public List<StructuralObject> EndChemistries
         {
             get
@@ -118,7 +134,58 @@ namespace Chem4Word.Model2
             }
         }
 
-        public Point FirstControlPoint
+        public Point StartPoint
+        {
+            get
+            {
+                switch (StartChemistry)
+                {
+                    case Atom a:
+                        return a.Position;
+
+                    case Bond b:
+                        return b.MidPoint;
+
+                    default:
+                        return new Point(0, 0);
+                }
+            }
+        }
+
+        public Point EndPoint
+        {
+            get
+            {
+                if (EndChemistries.Count == 1)
+                {
+                    var endChemistry = EndChemistries[0];
+                    switch (endChemistry)
+                    {
+                        case Atom a:
+                            return a.Position;
+
+                        case Bond b:
+                            return b.MidPoint;
+
+                        default:
+                            return new Point(0, 0);
+                    }
+                }
+                else if (EndChemistries.Count == 2)
+                //two atoms
+                {
+                    return GeometryTool.GetMidPoint((EndChemistries[0] as Atom).Position,
+                                                    (EndChemistries[1] as Atom).Position);
+                }
+                else
+                {
+                    return new Point(0, 0);
+                }
+            }
+        }
+
+        public Point
+            FirstControlPoint
         {
             get
             {
@@ -180,13 +247,13 @@ namespace Chem4Word.Model2
         {
             var newStartChemistry = newCopy.GetByPath(StartChemistry.Path);
             var copy = new ElectronPusher()
-                       {
-                           Id = Id,
-                           StartChemistry = newStartChemistry,
-                           FirstControlPoint = FirstControlPoint,
-                           SecondControlPoint = SecondControlPoint,
-                           PusherType = PusherType
-                       };
+            {
+                Id = Id,
+                StartChemistry = newStartChemistry,
+                FirstControlPoint = FirstControlPoint,
+                SecondControlPoint = SecondControlPoint,
+                PusherType = PusherType
+            };
 
             foreach (StructuralObject chemistry in EndChemistries)
             {

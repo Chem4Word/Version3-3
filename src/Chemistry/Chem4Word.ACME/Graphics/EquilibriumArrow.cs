@@ -70,8 +70,8 @@ namespace Chem4Word.ACME.Graphics
             var point3 = StartPoint + perp * Separation;
             var point4 = EndPoint + perp * Separation;
 
-            var halfArrowForward = new Harpoon { StartPoint = point1 + topOffset, EndPoint = point2 - topOffset, HeadLength = HeadLength * topScale, HeadAngle = HeadAngle };
-            var halfArrowBack = new Harpoon { StartPoint = point4 - bottomOffset, EndPoint = point3 + bottomOffset, HeadLength = HeadLength * bottomScale, HeadAngle = HeadAngle };
+            var halfArrowForward = new Harpoon { StartPoint = point1 + topOffset, EndPoint = point2 - topOffset, HeadLength = MaxHeadLength * topScale, HeadAngle = HeadAngle };
+            var halfArrowBack = new Harpoon { StartPoint = point4 - bottomOffset, EndPoint = point3 + bottomOffset, HeadLength = MaxHeadLength * bottomScale, HeadAngle = HeadAngle };
 
             drawingContext.DrawGeometry(arrowBrush, arrowPen, halfArrowForward.HarpoonGeometry);
             drawingContext.DrawGeometry(arrowBrush, arrowPen, halfArrowBack.HarpoonGeometry);

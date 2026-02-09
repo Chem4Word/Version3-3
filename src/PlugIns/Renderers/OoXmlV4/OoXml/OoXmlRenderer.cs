@@ -24,6 +24,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
+
 using A = DocumentFormat.OpenXml.Drawing;
 using Drawing = DocumentFormat.OpenXml.Wordprocessing.Drawing;
 using Point = System.Windows.Point;
@@ -209,12 +210,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                     switch (electron.Electron.TypeOfElectron)
                     {
                         case ElectronType.Radical:
-                            DrawFilledCircle(electron.Points[0], electron.Electron.Path, BondOffset() / 2, electron.Colour);
+                            DrawRadicalDot(electron.Points[0], electron.Electron.Path, BondOffset() / 2, electron.Colour, true);
                             break;
 
                         case ElectronType.LonePair:
-                            DrawFilledCircle(electron.Points[0], electron.Electron.Path, BondOffset() / 2, electron.Colour);
-                            DrawFilledCircle(electron.Points[1], electron.Electron.Path, BondOffset() / 2, electron.Colour);
+                            DrawRadicalDot(electron.Points[0], electron.Electron.Path, BondOffset() / 2, electron.Colour, true);
+                            DrawRadicalDot(electron.Points[1], electron.Electron.Path, BondOffset() / 2, electron.Colour, true);
                             break;
 
                         case ElectronType.Carbenoid:
@@ -229,19 +230,24 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             {
                 foreach (OoXmlElectronPusher pusher in _outputs.Pushers)
                 {
-                    DrawElectronPusher(pusher.StartPoint, pusher.EndPoint, pusher.FirstControlPoint, pusher.SecondControlPoint, pusher.Path);
+                    DrawElectronPusher(pusher.StartPoint, pusher.EndPoint,
+                                       pusher.FirstControlPoint, pusher.SecondControlPoint,
+                                       pusher.FishHookPoint, pusher.PusherType, pusher.Path);
                 }
             }
 
             // Render Diagnostic Markers
-            RenderDiagnostics();
+            if (Debugger.IsAttached)
+            {
+                RenderDiagnostics();
+            }
 
             _telemetry.Write(module, "Timing", $"Rendering {_chemistryModel.TotalMoleculesCount} molecules with {_chemistryModel.TotalAtomsCount} atoms and {_chemistryModel.TotalBondsCount} bonds took {SafeDouble.AsString0(swr.ElapsedMilliseconds)} ms; Average Bond Length: {SafeDouble.AsString(_chemistryModel.MeanBondLength)}");
 
             ShutDownProgress(progress);
 
             return run;
-         }
+        }
 
         private void RenderDiagnostics()
         {
@@ -418,7 +424,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 var half = spot.Diameter / 2;
                 var extents = new Rect(new Point(spot.Point.X - half, spot.Point.Y - half),
                                        new Point(spot.Point.X + half, spot.Point.Y + half));
-                DrawShape(extents, A.ShapeTypeValues.Ellipse, true, spot.Colour);
+                DrawShape(extents, A.ShapeTypeValues.Ellipse, spot.Filled, spot.Colour);
             }
         }
 
@@ -1571,11 +1577,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
         }
 
-        private void DrawFilledCircle(Point position, string path, double diameter, string colour)
+        private void DrawRadicalDot(Point position, string path, double diameter, string colour, bool filled)
         {
             var extents = new Rect(new Point(position.X - diameter / 2, position.Y - diameter / 2),
                                    new Point(position.X + diameter / 2, position.Y + diameter / 2));
-            DrawShape(extents, A.ShapeTypeValues.Ellipse, true, colour);
+            DrawShape(extents, A.ShapeTypeValues.Ellipse, filled, colour, path: path);
         }
 
         private void DrawShape(Rect cmlExtents, A.ShapeTypeValues shape, bool filled, string colour,
@@ -1625,7 +1631,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             else
             {
                 // Set shape outline and colour
-                var emuLineWidth = (Int32Value)(outlineWidth * OoXmlConstants.EmusPerWordPoint);
+                var emuLineWidth = (Int32Value)(outlineWidth / 2 * OoXmlConstants.EmusPerWordPoint);
                 var outline = new A.Outline { Width = emuLineWidth, CapType = A.LineCapValues.Round };
                 var rgbColorModelHex2 = new A.RgbColorModelHex { Val = colour };
                 var outlineFill = new A.SolidFill();
@@ -1645,22 +1651,32 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void DrawElectronPusher(Point startPoint, Point endPoint,
                                         Point firstControlPoint, Point secondControlPoint,
-                                        string pusherPath)
+                                        Point hookEndPoint, ElectronPusherType pusherType, string pusherPath)
         {
-            var tuple = OffsetFourPoints(startPoint, firstControlPoint, secondControlPoint, endPoint);
-            var cmlStartPoint = tuple.Start;
-            var cmlFirstPoint = tuple.First;
-            var cmlSecondPoint = tuple.Second;
-            var cmlEndPoint = tuple.End;
-            var cmlLineExtents = tuple.Extents;
+            var listOfPoints = new List<Point> { startPoint, firstControlPoint, secondControlPoint, endPoint };
+            if (pusherType == ElectronPusherType.FishHook)
+            {
+                listOfPoints.Add(hookEndPoint);
+            }
+            var offsets = OffsetPoints(listOfPoints);
+
+            var cmlStartPoint = offsets.Points[0];
+            var cmlFirstPoint = offsets.Points[1];
+            var cmlSecondPoint = offsets.Points[2];
+            var cmlEndPoint = offsets.Points[3];
+            var cmlHookEndPoint = new Point();
+
+            if (pusherType == ElectronPusherType.FishHook)
+            {
+                cmlHookEndPoint = offsets.Points[4];
+            }
+
+            var cmlLineExtents = offsets.Extents;
 
             var emuTop = OoXmlHelper.ScaleCmlToEmu(cmlLineExtents.Top);
             var emuLeft = OoXmlHelper.ScaleCmlToEmu(cmlLineExtents.Left);
             var emuWidth = OoXmlHelper.ScaleCmlToEmu(cmlLineExtents.Width);
             var emuHeight = OoXmlHelper.ScaleCmlToEmu(cmlLineExtents.Height);
-
-            //var xOffset = xMin;
-            //var yOffset = yMin;
 
             var id = _ooxmlId++;
             var suffix = string.IsNullOrEmpty(pusherPath) ? id.ToString() : pusherPath;
@@ -1674,52 +1690,67 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             var path = new A.Path { Width = emuWidth, Height = emuHeight };
 
             var moveTo = new A.MoveTo();
-            var startingPoint = new A.Point
-            {
-                X = OoXmlHelper.ScaleCmlToEmu(cmlStartPoint.X).ToString(),
-                Y = OoXmlHelper.ScaleCmlToEmu(cmlStartPoint.Y).ToString()
-            };
-            moveTo.Append(startingPoint);
+            moveTo.Append(OoXmlPoint(cmlStartPoint));
             path.Append(moveTo);
 
             var cubicBezierCurveTo = new A.CubicBezierCurveTo();
 
-            var p1 = new A.Point
-            {
-                X = OoXmlHelper.ScaleCmlToEmu(cmlFirstPoint.X).ToString(),
-                Y = OoXmlHelper.ScaleCmlToEmu(cmlFirstPoint.Y).ToString()
-            };
-            cubicBezierCurveTo.Append(p1);
-
-            var p2 = new A.Point
-            {
-                X = OoXmlHelper.ScaleCmlToEmu(cmlSecondPoint.X).ToString(),
-                Y = OoXmlHelper.ScaleCmlToEmu(cmlSecondPoint.Y).ToString()
-            };
-            cubicBezierCurveTo.Append(p2);
-
-            var p3 = new A.Point
-            {
-                X = OoXmlHelper.ScaleCmlToEmu(cmlEndPoint.X).ToString(),
-                Y = OoXmlHelper.ScaleCmlToEmu(cmlEndPoint.Y).ToString()
-            };
-            cubicBezierCurveTo.Append(p3);
+            AddPointToCurve(cmlFirstPoint);
+            AddPointToCurve(cmlSecondPoint);
+            AddPointToCurve(cmlEndPoint);
 
             path.Append(cubicBezierCurveTo);
             pathList.Append(path);
+
+            switch (pusherType)
+            {
+                case ElectronPusherType.FishHook:
+                    var hookPath = new A.Path { Width = emuWidth, Height = emuHeight };
+
+                    var m1 = new A.MoveTo();
+                    m1.Append(OoXmlPoint(cmlEndPoint));
+                    var l1 = new A.LineTo();
+                    l1.Append(OoXmlPoint(cmlHookEndPoint));
+
+                    hookPath.Append(m1);
+                    hookPath.Append(l1);
+
+                    pathList.Append(hookPath);
+
+                    break;
+            }
 
             var lineWidth = OoXmlConstants.AcsLineWidth;
             var emuLineWidth = (Int32Value)(lineWidth * OoXmlConstants.EmusPerWordPoint);
             var outline = new A.Outline { Width = emuLineWidth, CapType = A.LineCapValues.Round };
 
             var solidFill = new A.SolidFill();
-            var rgbColorModelHex = new A.RgbColorModelHex { Val = OoXmlColours.DarkRed };
+            var colour = OoXmlColours.Black;
+            if (_inputs.Model.ShowColouredAtoms)
+            {
+                colour = OoXmlColours.DarkRed;
+            }
+            var rgbColorModelHex = new A.RgbColorModelHex { Val = colour };
             solidFill.Append(rgbColorModelHex);
             outline.Append(solidFill);
 
-            // Draw the arrow head
-            var tailEnd = new A.TailEnd { Type = A.LineEndValues.Triangle };
-            outline.Append(tailEnd);
+            switch (pusherType)
+            {
+                // When creating all OoXml lines the arrow heads appear to be the wrong way round !
+                case ElectronPusherType.CurlyArrow:
+                    var curlyArrowHead = MakeTailEnd();
+                    outline.Append(curlyArrowHead);
+                    break;
+
+                case ElectronPusherType.DoubleArrow:
+                    // Note - The OoXml HeadEnd MUST be added before the TailEnd
+                    var doubleArrowTail = MakeHeadEnd();
+                    outline.Append(doubleArrowTail);
+
+                    var doubleArrowHead = MakeTailEnd();
+                    outline.Append(doubleArrowHead);
+                    break;
+            }
 
             shapeProperties.Append(CreateCustomGeometry(pathList));
             shapeProperties.Append(outline);
@@ -1731,18 +1762,69 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             _wordprocessingGroup.Append(wordprocessingShape);
 
-            Debug.WriteLine(wordprocessingShape.ToString());
+            // Local Functions
+            void AddPointToCurve(Point point)
+            {
+                cubicBezierCurveTo.Append(OoXmlPoint(point));
+            }
+
+            // return a pair of arrow end attributes
+            (A.LineEndWidthValues width, A.LineEndLengthValues length) GetEndSize(double meanBondLength)
+            {
+                if (meanBondLength < 33)
+                {
+                    return (A.LineEndWidthValues.Small, A.LineEndLengthValues.Small);
+                }
+
+                if (meanBondLength < 66)
+                {
+                    return (A.LineEndWidthValues.Medium, A.LineEndLengthValues.Medium);
+                }
+
+                //Fallthrough meanBondLength >= 66
+                return (A.LineEndWidthValues.Large, A.LineEndLengthValues.Large);
+            }
+
+            A.TailEnd MakeTailEnd()
+            {
+                var (width, length) = GetEndSize(_meanBondLength);
+                return new A.TailEnd
+                {
+                    Type = A.LineEndValues.Triangle,
+                    Width = width,
+                    Length = length
+                };
+            }
+
+            A.HeadEnd MakeHeadEnd()
+            {
+                var (width, length) = GetEndSize(_meanBondLength);
+                return new A.HeadEnd
+                {
+                    Type = A.LineEndValues.Triangle,
+                    Width = width,
+                    Length = length
+                };
+            }
+        }
+
+        private A.Point OoXmlPoint(Point cmlPoint)
+        {
+            return new A.Point
+            {
+                X = OoXmlHelper.ScaleCmlToEmu(cmlPoint.X).ToString(),
+                Y = OoXmlHelper.ScaleCmlToEmu(cmlPoint.Y).ToString()
+            };
         }
 
         private void DrawSingleLinedReactionArrow(Reaction reaction)
         {
-            var lineStart = reaction.TailPoint;
-            var lineEnd = reaction.HeadPoint;
+            var listOfPoints = new List<Point> { reaction.TailPoint, reaction.HeadPoint };
+            var offsets = OffsetPoints(listOfPoints);
 
-            var tuple = OffsetTwoPoints(lineStart, lineEnd);
-            var cmlStartPoint = tuple.Start;
-            var cmlEndPoint = tuple.End;
-            var cmlLineExtents = tuple.Extents;
+            var cmlStartPoint = offsets.Points[0];
+            var cmlEndPoint = offsets.Points[1];
+            var cmlLineExtents = offsets.Extents;
 
             var emuTop = OoXmlHelper.ScaleCmlToEmu(cmlLineExtents.Top);
             var emuLeft = OoXmlHelper.ScaleCmlToEmu(cmlLineExtents.Left);
@@ -1762,12 +1844,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             var path = new A.Path { Width = emuWidth, Height = emuHeight };
 
             var moveTo = new A.MoveTo();
-            var point1 = new A.Point { X = OoXmlHelper.ScaleCmlToEmu(cmlEndPoint.X).ToString(), Y = OoXmlHelper.ScaleCmlToEmu(cmlEndPoint.Y).ToString() };
+            var point1 = OoXmlPoint(cmlEndPoint);
             moveTo.Append(point1);
             path.Append(moveTo);
 
             var lineTo = new A.LineTo();
-            var point2 = new A.Point { X = OoXmlHelper.ScaleCmlToEmu(cmlStartPoint.X).ToString(), Y = OoXmlHelper.ScaleCmlToEmu(cmlStartPoint.Y).ToString() };
+            var point2 = OoXmlPoint(cmlStartPoint);
             lineTo.Append(point2);
             path.Append(lineTo);
 
@@ -1846,12 +1928,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 var path1 = new A.Path { Width = emuWidth, Height = emuHeight };
 
                 var moveTo2 = new A.MoveTo();
-                var point3 = new A.Point { X = OoXmlHelper.ScaleCmlToEmu(endPoint.X).ToString(), Y = OoXmlHelper.ScaleCmlToEmu(endPoint.Y).ToString() };
+                var point3 = OoXmlPoint(endPoint);
                 moveTo2.Append(point3);
                 path1.Append(moveTo2);
 
                 var lineTo2 = new A.LineTo();
-                var point4 = new A.Point { X = OoXmlHelper.ScaleCmlToEmu(startPoint.X).ToString(), Y = OoXmlHelper.ScaleCmlToEmu(startPoint.Y).ToString() };
+                var point4 = OoXmlPoint(startPoint);
                 lineTo2.Append(point4);
                 path1.Append(lineTo2);
                 pathList.Append(path1);
@@ -1861,10 +1943,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         private void DrawStraightLine(Point bondStart, Point bondEnd, string bondPath,
                                       BondLineStyle lineStyle, string lineColour, double lineWidth)
         {
-            var tuple = OffsetTwoPoints(bondStart, bondEnd);
-            var cmlStartPoint = tuple.Start;
-            var cmlEndPoint = tuple.End;
-            var cmlLineExtents = tuple.Extents;
+            var listOfPoints = new List<Point> { bondStart, bondEnd };
+            var offsets = OffsetPoints(listOfPoints);
+
+            var cmlStartPoint = offsets.Points[0];
+            var cmlEndPoint = offsets.Points[1];
+            var cmlLineExtents = offsets.Extents;
 
             var emuTop = OoXmlHelper.ScaleCmlToEmu(cmlLineExtents.Top);
             var emuLeft = OoXmlHelper.ScaleCmlToEmu(cmlLineExtents.Left);
@@ -1885,12 +1969,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             var path = new A.Path { Width = emuWidth, Height = emuHeight };
 
             var moveTo = new A.MoveTo();
-            var point1 = new A.Point { X = OoXmlHelper.ScaleCmlToEmu(cmlStartPoint.X).ToString(), Y = OoXmlHelper.ScaleCmlToEmu(cmlStartPoint.Y).ToString() };
+            var point1 = OoXmlPoint(cmlStartPoint);
             moveTo.Append(point1);
             path.Append(moveTo);
 
             var lineTo = new A.LineTo();
-            var point2 = new A.Point { X = OoXmlHelper.ScaleCmlToEmu(cmlEndPoint.X).ToString(), Y = OoXmlHelper.ScaleCmlToEmu(cmlEndPoint.Y).ToString() };
+            var point2 = OoXmlPoint(cmlEndPoint);
             lineTo.Append(point2);
             path.Append(lineTo);
 
@@ -1927,6 +2011,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             if (!string.IsNullOrEmpty(bondPath) && _options.ShowBondDirection)
             {
+                // When creating bond lines, the arrow heads seem to be the wrong way round
+                //  don't know why but our lines start at the OoXml end and finish at the OoXml start
+
                 var tailEnd = new A.TailEnd
                 {
                     Type = A.LineEndValues.Arrow,
@@ -1949,10 +2036,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void DrawWavyLine(Point bondStart, Point bondEnd, string bondPath, string lineColour)
         {
-            var tuple = OffsetTwoPoints(bondStart, bondEnd);
-            var cmlStartPoint = tuple.Start;
-            var cmlEndPoint = tuple.End;
-            var cmlLineExtents = tuple.Extents;
+            var listOfPoints = new List<Point> { bondStart, bondEnd };
+            var offsets = OffsetPoints(listOfPoints);
+
+            var cmlStartPoint = offsets.Points[0];
+            var cmlEndPoint = offsets.Points[1];
+            var cmlLineExtents = offsets.Extents;
 
             // Calculate wiggles
 
@@ -2032,7 +2121,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             var path = new A.Path { Width = emuWidth, Height = emuHeight };
 
             var moveTo = new A.MoveTo();
-            var firstPoint = new A.Point { X = OoXmlHelper.ScaleCmlToEmu(cmlStartPoint.X + xOffset).ToString(), Y = OoXmlHelper.ScaleCmlToEmu(cmlStartPoint.Y + yOffset).ToString() };
+            var firstPoint = OoXmlPoint(new Point(cmlStartPoint.X + xOffset, cmlStartPoint.Y + yOffset));
             moveTo.Append(firstPoint);
             path.Append(moveTo);
 
@@ -2043,7 +2132,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 for (var j = 0; j < 3; j++)
                 {
-                    var nextPoint = new A.Point { X = OoXmlHelper.ScaleCmlToEmu(allpoints[i + j].X + xOffset).ToString(), Y = OoXmlHelper.ScaleCmlToEmu(allpoints[i + j].Y + yOffset).ToString() };
+                    var nextPoint = OoXmlPoint(new Point(allpoints[i + j].X + xOffset, allpoints[i + j].Y + yOffset));
                     cubicBezierCurveTo.Append(nextPoint);
                 }
                 path.Append(cubicBezierCurveTo);
@@ -2064,6 +2153,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             if (_options.ShowBondDirection)
             {
+                // When creating bond lines, the arrow heads seem to be the wrong way round
+                //  don't know why but our lines start at the OoXml end and finish at the OoXml start
+
                 var tailEnd = new A.TailEnd { Type = A.LineEndValues.Stealth };
                 outline.Append(tailEnd);
             }
@@ -2096,49 +2188,43 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             };
         }
 
-        private (Point Start, Point End, Rect Extents) OffsetTwoPoints(Point start, Point end)
+        private OffsetPointsResult OffsetPoints(List<Point> points)
         {
-            var startPoint = new Point(start.X, start.Y);
-            var endPoint = new Point(end.X, end.Y);
-            var extents = new Rect(startPoint, endPoint);
+            OffsetPointsResult result = new OffsetPointsResult();
 
-            // Move Extents and Points to have 0,0 Top Left Reference
-            startPoint.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
-            endPoint.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
+            double xMax = points.Select(a => a.X).Max();
+            double xMin = points.Select(a => a.X).Min();
+
+            double yMax = points.Select(a => a.Y).Max();
+            double yMin = points.Select(a => a.Y).Min();
+
+            Rect extents = new Rect(new Point(xMin, yMin), new Point(xMax, yMax));
+
+            // Move Extents to have 0,0 Top Left Reference
             extents.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
 
-            // Move points into New Extents
-            startPoint.Offset(-extents.Left, -extents.Top);
-            endPoint.Offset(-extents.Left, -extents.Top);
+            Point[] pp = points.ToArray();
 
-            // Return a Tuple with the results
-            return (Start: startPoint, End: endPoint, Extents: extents);
-        }
+            // Pass 1 - Move Points to have 0,0 Top Left Reference
+            for (int i = 0; i < pp.Length; i++)
+            {
+                Point p = new Point(pp[i].X, pp[i].Y);
+                p.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
+                pp[i] = p;
+            }
 
-        private (Point Start, Point End, Point First, Point Second, Rect Extents) OffsetFourPoints(
-            Point start, Point first, Point second, Point end)
-        {
-            var startPoint = new Point(start.X, start.Y);
-            var endPoint = new Point(end.X, end.Y);
-            var firstPoint = new Point(first.X, first.Y);
-            var secondPoint = new Point(second.X, second.Y);
-            var extents = new Rect(startPoint, endPoint);
+            // Pass 2 - Move points into New Extents
+            for (int i = 0; i < pp.Length; i++)
+            {
+                Point p = new Point(pp[i].X, pp[i].Y);
+                p.Offset(-extents.Left, -extents.Top);
+                pp[i] = p;
+            }
 
-            // Move Extents and Points to have 0,0 Top Left Reference
-            startPoint.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
-            firstPoint.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
-            secondPoint.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
-            endPoint.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
-            extents.Offset(-_boundingBoxOfEverything.Left, -_boundingBoxOfEverything.Top);
+            result.Extents = extents;
+            result.Points = pp.ToList();
 
-            // Move points into New Extents
-            startPoint.Offset(-extents.Left, -extents.Top);
-            firstPoint.Offset(-extents.Left, -extents.Top);
-            secondPoint.Offset(-extents.Left, -extents.Top);
-            endPoint.Offset(-extents.Left, -extents.Top);
-
-            // Return a Tuple with the results
-            return (Start: startPoint, End: endPoint, First: firstPoint, Second: secondPoint, Extents: extents);
+            return result;
         }
 
         /// <summary>

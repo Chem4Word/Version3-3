@@ -5,19 +5,12 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using System;
-
-namespace Chem4Word.ACME.Enums
+namespace Chem4Word.Model2.Enums
 {
-    [Flags]
-    public enum SelectionTypeCode
+    public enum ElectronPusherType
     {
-        None = 0,
-        Atom = 1,
-        Bond = 2,
-        Molecule = 4,
-        Reaction = 8,
-        Annotation = 16,
-        ElectronPusher=32
+        CurlyArrow,
+        DoubleArrow,
+        FishHook
     }
 }

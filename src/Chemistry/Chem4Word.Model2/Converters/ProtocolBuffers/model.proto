@@ -9,9 +9,12 @@ syntax ="proto3";
 package model;
 
 option csharp_namespace = "Chem4Word.Model2.Converters.ProtocolBuffers";
+
 import "Converters/ProtocolBuffers/molecule.proto";
 import "Converters/ProtocolBuffers/reactionScheme.proto";
 import "Converters/ProtocolBuffers/annotation.proto";
+import "Converters/ProtocolBuffers/electronPusher.proto";
+
 import "google/protobuf/wrappers.proto";
 
 message PBModel
@@ -22,9 +25,10 @@ message PBModel
 	google.protobuf.BoolValue ExplicitC = 4;
 	google.protobuf.Int32Value ExplicitH = 5;
 	google.protobuf.BoolValue ShowColouredAtoms = 6;
-	// Legacy Property - No longer set on export
+	// ShowMoleculeBrackets is Legacy Property - No longer set on export
 	google.protobuf.BoolValue ShowMoleculeBrackets = 7;
 	google.protobuf.BoolValue ShowMolecularWeight = 8;
 	google.protobuf.BoolValue ShowMoleculeCaptions = 9;
 	google.protobuf.BoolValue ShowMoleculeGrouping = 10;
+	map<string, PBElectronPusher> ElectronPushers = 11;
 }

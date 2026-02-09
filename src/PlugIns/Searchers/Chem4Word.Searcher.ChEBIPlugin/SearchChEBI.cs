@@ -39,8 +39,8 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         #region Fields
 
-        private Dictionary<string, string> _structureCache = new Dictionary<string, string>();
-        private string _guid = Guid.NewGuid().ToString("N");
+        private readonly Dictionary<string, string> _structureCache = new Dictionary<string, string>();
+        private readonly string _guid = Guid.NewGuid().ToString("N");
 
         private Model _lastModel;
         private string _lastMolfile = string.Empty;
@@ -96,9 +96,9 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
         }
 
-        private static bool MolFileIsValid(string sdfile)
+        private static bool MolFileIsValid(string molFile)
         {
-            string file = sdfile.ToUpper();
+            string file = molFile.ToUpper();
 
             int idx1 = file.IndexOf("V2000");
             int idx2 = file.IndexOf("M  END");
@@ -141,31 +141,6 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                         Telemetry.Write(module, "Exception", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
-                //catch (HttpErrorStatusCodeException requestException)
-                //{
-                //    string message = "";
-                //    switch (requestException.ErrorStatusCode)
-                //    {
-                //        case HttpStatusCode.NotFound:
-                //            message = $"Your search for '{searchFor}' did not find any matches";
-                //            ErrorsAndWarnings.Text = message;
-                //            Telemetry.Write(module, "Warning", message);
-                //            break;
-
-                //        case HttpStatusCode.GatewayTimeout:
-                //        case HttpStatusCode.RequestTimeout:
-                //            message = "Please try again later - the service has timed out";
-                //            ErrorsAndWarnings.Text = message;
-                //            Telemetry.Write(module, "Warning", message);
-                //            break;
-
-                //        default:
-                //            message = requestException.Message;
-                //            ErrorsAndWarnings.Text = message;
-                //            Telemetry.Write(module, "Exception", message);
-                //            break;
-                //    }
-                //}
                 catch (Exception exception)
                 {
                     ErrorsAndWarnings.Text = exception.Message;
@@ -228,7 +203,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             return data;
         }
 
-        private string GetStructureFromWeb(string chebiId)
+        private string FetchStructure(string chebiId)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
@@ -241,20 +216,22 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             {
                 try
                 {
+                    Telemetry.Write(module, "Information", $"Fetching structure for '{chebiId}'");
+
                     string api = string.Format(CultureInfo.InvariantCulture, GetMolfileTemplate,
                                                UserOptions.ChEBIWebService2Uri, chebiId.Replace("CHEBI:", ""));
 
-                    ApiResult apiResult2 = HttpHelper.InvokeGet(api);
-                    if (apiResult2.StatusCode == HttpStatusCode.OK)
+                    ApiResult apiResult = HttpHelper.InvokeGet(api);
+                    if (apiResult.StatusCode == HttpStatusCode.OK)
                     {
-                        if (MolFileIsValid(apiResult2.Content))
+                        if (MolFileIsValid(apiResult.Content))
                         {
-                            result = apiResult2.Content;
+                            result = apiResult.Content;
                         }
                     }
                     else
                     {
-                        Telemetry.Write(module, "Exception", $"[{(int)apiResult2.StatusCode}] {apiResult2.StatusCode} - {apiResult2.Message}");
+                        Telemetry.Write(module, "Exception", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
                 catch (Exception exception)
@@ -381,6 +358,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             ErrorsAndWarnings.Text = "";
+            display1.Clear();
 
             using (WaitCursor cursor = new WaitCursor())
             {
@@ -468,6 +446,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             ErrorsAndWarnings.Text = "";
+            display1.Clear();
 
             using (new WaitCursor())
             {
@@ -477,7 +456,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
                     if (!_structureCache.TryGetValue(ChebiId, out string chemStructure))
                     {
-                        chemStructure = GetStructureFromWeb(item.Source.ChebiId);
+                        chemStructure = FetchStructure(item.Source.ChebiId);
                         if (!string.IsNullOrEmpty(chemStructure))
                         {
                             _structureCache.Add(ChebiId, chemStructure);
@@ -485,7 +464,10 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     }
                     else
                     {
-                        Telemetry.Write(module, "Information", $"Structure '{ChebiId}' found in cache");
+                        if (Debugger.IsAttached)
+                        {
+                            Telemetry.Write(module, "Information", $"Structure '{ChebiId}' found in cache");
+                        }
                     }
 
                     if (!string.IsNullOrEmpty(chemStructure))
@@ -493,46 +475,51 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                         _lastMolfile = ConvertToWindows(chemStructure);
                         SdFileConverter sdConverter = new SdFileConverter();
                         _lastModel = sdConverter.Import(chemStructure);
-                    }
 
-                    if (_lastModel != null)
-                    {
-                        if (_lastModel.TotalAtomsCount == 0)
+                        if (_lastModel != null)
                         {
-                            display1.Chemistry = null;
+                            if (_lastModel.TotalAtomsCount == 0)
+                            {
+                                _lastMolfile = string.Empty;
+                                display1.Clear();
+                                ErrorsAndWarnings.Text = $"Structure for {ChebiId} has no atoms.";
+                            }
+                            else if (_lastModel.AllWarnings.Count > 0 || _lastModel.AllErrors.Count > 0)
+                            {
+                                List<string> lines = new List<string>();
+                                if (_lastModel.AllErrors.Count > 0)
+                                {
+                                    Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, _lastModel.AllErrors));
+                                    Telemetry.Write(module, "Exception(Data)", chemStructure);
+                                    lines.Add("Errors(s)");
+                                    lines.AddRange(_lastModel.AllErrors);
+                                }
+                                if (_lastModel.AllWarnings.Count > 0)
+                                {
+                                    Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, _lastModel.AllWarnings));
+                                    lines.Add("Warnings(s)");
+                                    lines.AddRange(_lastModel.AllWarnings);
+                                }
+                                ErrorsAndWarnings.Text = string.Join(Environment.NewLine, lines);
+                            }
+
+                            Model copy = _lastModel.Copy();
+                            copy.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
+                            display1.Chemistry = copy;
+                        }
+                        else
+                        {
+                            _lastMolfile = string.Empty;
                             display1.Clear();
-                            ErrorsAndWarnings.Text = "No structure available.";
+                            ErrorsAndWarnings.Text = $"No structure available for {ChebiId}.";
                         }
-                        else if (_lastModel.AllWarnings.Count > 0 || _lastModel.AllErrors.Count > 0)
-                        {
-                            List<string> lines = new List<string>();
-                            if (_lastModel.AllErrors.Count > 0)
-                            {
-                                Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, _lastModel.AllErrors));
-                                Telemetry.Write(module, "Exception(Data)", chemStructure);
-                                lines.Add("Errors(s)");
-                                lines.AddRange(_lastModel.AllErrors);
-                            }
-                            if (_lastModel.AllWarnings.Count > 0)
-                            {
-                                Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, _lastModel.AllWarnings));
-                                lines.Add("Warnings(s)");
-                                lines.AddRange(_lastModel.AllWarnings);
-                            }
-                            ErrorsAndWarnings.Text = string.Join(Environment.NewLine, lines);
-                        }
-
-                        Model copy = _lastModel.Copy();
-                        copy.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
-                        display1.Chemistry = copy;
                     }
                     else
                     {
                         _lastModel = null;
                         _lastMolfile = string.Empty;
-                        display1.Chemistry = null;
                         display1.Clear();
-                        ErrorsAndWarnings.Text = "No structure available.";
+                        ErrorsAndWarnings.Text = $"No structure available for {ChebiId}.";
                     }
                 }
             }

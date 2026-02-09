@@ -250,6 +250,8 @@
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Background" Value="{StaticResource ThumbFillBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource GrabHandleBorderBrush}" />
+        <Setter Property="Height" Value="15" />
+        <Setter Property="Width" Value="15" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
@@ -263,7 +265,6 @@
         x:Key="BigThumbStyle"
         BasedOn="{StaticResource GrabHandleStyle}"
         TargetType="Thumb">
-        <Setter Property="Background" Value="{StaticResource ThumbFillBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">

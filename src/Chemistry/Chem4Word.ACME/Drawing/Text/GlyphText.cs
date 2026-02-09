@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Utils;
 using Chem4Word.Model2.Geometry;
 using System;
 using System.Collections.Generic;

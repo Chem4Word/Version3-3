@@ -312,7 +312,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             arrowVector *= radius * 1.5;
             Point arrowStart = reactantCenter + arrowVector;
             Point arrowEnd = productCenter - arrowVector;
-            Arrow arrowVisual = new StraightArrow { StartPoint = arrowStart, EndPoint = arrowEnd, HeadLength = radius * 1.6, ArrowHeadClosed = false };
+            Arrow arrowVisual = new StraightArrow { StartPoint = arrowStart, EndPoint = arrowEnd, MaxHeadLength = radius * 1.6, ArrowHeadClosed = false };
             Pen outlinePen = new Pen(arrowBrush, lineThickness);
             arrowVisual.DrawArrowGeometry(drawingContext, outlinePen, null);
         }

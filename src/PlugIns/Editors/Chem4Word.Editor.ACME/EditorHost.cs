@@ -34,6 +34,8 @@ namespace Chem4Word.Editor.ACME
 
         public string OutputCml { get; set; }
 
+        private string _originalFormula;
+
         private readonly string _cml;
         private readonly List<string> _used1DProperties;
         private readonly RenderingOptions _defaultRenderingOptions;
@@ -98,18 +100,39 @@ namespace Chem4Word.Editor.ACME
                     editor.OnFeedbackChange += OnFeedbackChange_AcmeEditor;
 
                     var model = editor.ActiveController.Model;
-                    if (model == null || model.Molecules.Count == 0)
-                    {
-                        Text = "ACME - New structure";
-                    }
-                    else
-                    {
-                        Text = "ACME - Editing " + model.UnicodeFormula;
-                    }
+                    _originalFormula = model.UnicodeFormula;
+                    SetFormTitle(false, _originalFormula);
                 }
 
                 IsLoading = false;
             }
+        }
+
+        private void SetFormTitle(bool modified, string newFormula)
+        {
+            string title;
+
+            if (string.IsNullOrEmpty(_originalFormula))
+            {
+                title = "ACME - New structure";
+            }
+            else
+            {
+                title = "ACME - Editing";
+            }
+
+            if (modified
+                && !string.IsNullOrEmpty(newFormula)
+                && newFormula != _originalFormula)
+            {
+                title = $"{title} {newFormula} *";
+            }
+            else
+            {
+                title = $"{title} {_originalFormula}";
+            }
+
+            Text = title;
         }
 
         private void OnFeedbackChange_AcmeEditor(object sender, WpfEventArgs e)
@@ -117,6 +140,8 @@ namespace Chem4Word.Editor.ACME
             StatusPanel.Label1Text = e.Message;
             StatusPanel.Label2Text = e.MolecularWeight;
             StatusPanel.Label3Text = e.Formula;
+
+            SetFormTitle(true, e.UniCodeFormula);
         }
 
         private void OnClick_Ok(object sender, EventArgs e)

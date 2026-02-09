@@ -70,7 +70,6 @@ namespace Chem4Word.ACME.Controls
 
         public AtomVisual ActiveAtomVisual => ActiveVisual as AtomVisual;
 
-        public ReactionVisual ActiveReactionVisual => ActiveVisual as ReactionVisual;
         public BondVisual ActiveBondVisual => ActiveVisual as BondVisual;
 
         public StructuralObject ActiveChemistry
@@ -79,6 +78,12 @@ namespace Chem4Word.ACME.Controls
             {
                 switch (ActiveVisual)
                 {
+                    case ElectronPusherVisual epv:
+                        return epv.ParentPusher;
+
+                    case ElectronVisual ev:
+                        return ev.ParentElectron;
+
                     case GroupVisual gv:
                         return gv.ParentMolecule;
 
@@ -222,6 +227,57 @@ namespace Chem4Word.ACME.Controls
             _controller.Model.ReactionSchemesChanged += OnReactionSchemesChanged_Model;
             _controller.Model.PropertyChanged += OnPropertyChanged_Model;
             _controller.Model.AnnotationsChanged += OnAnnotationsChanged_Model;
+            _controller.Model.ElectronPushersChanged += OnElectronPushersChanged_Model;
+        }
+
+        private void OnElectronPushersChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (var eNewItem in e.NewItems)
+                {
+                    ElectronPusher ep = (ElectronPusher)eNewItem;
+
+                    ElectronPusherAdded(ep);
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (var oldItem in e.OldItems)
+                {
+                    ElectronPusher ep = (ElectronPusher)oldItem;
+
+                    ElectronPusherRemoved(ep);
+                }
+            }
+        }
+
+        private void ElectronPusherRemoved(ElectronPusher ep)
+        {
+            if (ChemicalVisuals.TryGetValue(ep, out DrawingVisual
+                                                dv))
+            {
+                var epv = (ElectronPusherVisual)dv;
+                DeleteVisual(epv);
+                ChemicalVisuals.Remove(ep);
+            }
+        }
+
+        private void ElectronPusherAdded(ElectronPusher ep)
+        {
+            ElectronPusherVisual epv;
+            if (ChemicalVisuals.ContainsKey(ep)) //it's already in the list
+            {
+                epv = (ElectronPusherVisual)ChemicalVisuals[ep];
+                DeleteVisual(epv);
+            }
+
+            ChemicalVisuals[ep] = new ElectronPusherVisual(ep);
+            epv = (ElectronPusherVisual)ChemicalVisuals[ep];
+            epv.ChemicalVisuals = ChemicalVisuals;
+            epv.Render();
+            AddVisual(epv);
         }
 
         private void OnAnnotationsChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
@@ -282,6 +338,10 @@ namespace Chem4Word.ACME.Controls
                     case Annotation an:
                         RedrawAnnotation(an);
                         break;
+
+                    case ElectronPusher ep:
+                        RedrawElectronPusher(ep);
+                        break;
                 }
 
                 if (AutoResize)
@@ -289,6 +349,21 @@ namespace Chem4Word.ACME.Controls
                     InvalidateMeasure();
                 }
             }
+        }
+
+        private void RedrawElectronPusher(ElectronPusher ep)
+        {
+            int refCount = 1;
+            ElectronPusherVisual epv;
+            if (ChemicalVisuals.ContainsKey(ep))
+            {
+                epv = (ElectronPusherVisual)ChemicalVisuals[ep];
+                refCount = epv.RefCount;
+                ElectronPusherRemoved(ep);
+            }
+            ElectronPusherAdded(ep);
+            epv = (ElectronPusherVisual)ChemicalVisuals[ep];
+            epv.RefCount = refCount;
         }
 
         private void RedrawMolecule(Molecule molecule, Rect? boundingBox = null)
@@ -506,6 +581,10 @@ namespace Chem4Word.ACME.Controls
             _controller.Model.MoleculesChanged -= OnMoleculesChanged_Model;
 
             _controller.Model.PropertyChanged -= OnPropertyChanged_Model;
+            _controller.Model.ReactionsChanged -= OnReactionsChanged_Model;
+            _controller.Model.ReactionSchemesChanged -= OnReactionSchemesChanged_Model;
+            _controller.Model.AnnotationsChanged -= OnAnnotationsChanged_Model;
+            _controller.Model.ElectronPushersChanged -= OnElectronPushersChanged_Model;
         }
 
         #endregion Properties
@@ -641,6 +720,14 @@ namespace Chem4Word.ACME.Controls
                         AnnotationAdded(annotation);
                     }
                 }
+
+                if (controller.Model.HasElectronPushers)
+                {
+                    foreach (ElectronPusher pusher in controller.Model.ElectronPushers.Values)
+                    {
+                        ElectronPusherAdded(pusher);
+                    }
+                }
                 InvalidateMeasure();
             }
         }
@@ -761,6 +848,17 @@ namespace Chem4Word.ACME.Controls
 
             boundingBox.Union(reactionVisual.ContentBounds);
             boundingBox.Inflate(Spacing, Spacing);
+
+            return boundingBox;
+        }
+
+        public Rect GetDrawnBoundingBox(ElectronPusher ep)
+        {
+            Rect boundingBox = Rect.Empty;
+            var electronPusherVisual = ChemicalVisuals[ep];
+            boundingBox.Union(electronPusherVisual.ContentBounds);
+            boundingBox.Union(ep.FirstControlPoint);
+            boundingBox.Union(ep.SecondControlPoint);
 
             return boundingBox;
         }
@@ -996,6 +1094,12 @@ namespace Chem4Word.ACME.Controls
                 result = _visuals.FirstOrDefault(v => v is HydrogenVisual);
             }
 
+            // If not successful try to get an ElectronPusherVisual (should only ever be one!)
+            if (result == null)
+            {
+                result = _visuals.FirstOrDefault(v => v is ElectronPusherVisual);
+            }
+
             // If not successful try to get an AtomVisual (should only ever be one!)
             if (result == null)
             {
@@ -1013,7 +1117,11 @@ namespace Chem4Word.ACME.Controls
 
         private HitTestResultBehavior ResultCallback(HitTestResult result)
         {
-            if (result.VisualHit is HydrogenVisual hv)
+            if (result.VisualHit is ElectronPusherVisual epv)
+            {
+                _visuals.Add(epv);
+            }
+            else if (result.VisualHit is HydrogenVisual hv)
             {
                 _visuals.Add(hv);
             }

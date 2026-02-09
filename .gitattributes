@@ -24,7 +24,7 @@
 *.msc text eol=crlf
 *.md text eol=crlf
 
-# Declare file types that are truly binary and should not be modified.
+# Denote all file types that are truly binary and should not be modified.
 *.png binary
 *.bmp binary
 *.jpg binary
@@ -42,5 +42,5 @@
 *.pvk binary
 *.db binary
 
-# Other specific files
+# Specific files
 Library.db binary

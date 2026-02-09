@@ -28,6 +28,8 @@ namespace Chem4Word.ACME
         //messages for the status bar
         public const string UnlockStatusText = "[Shift] = unlock length; [Ctrl] = unlock angle; [Esc] = cancel.";
 
+        public const string ResizeCPStatusText = "Drag handle to resize arrow";
+
         public const string DefaultStatusText = "Drag a handle to resize; drag shaft to reposition.";
 
         //reactions status messages

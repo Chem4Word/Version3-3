@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -55,6 +56,14 @@ namespace Chem4Word.ACME.Graphics
             LineSegment ls = new LineSegment(EndPoint, true);
             mainline.Segments.Add(ls);
             return mainline;
+        }
+
+        public double Length
+        {
+            get
+            {
+                return Math.Sqrt((EndPoint-StartPoint).LengthSquared);
+            }
         }
     }
 }

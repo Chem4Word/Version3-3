@@ -156,7 +156,7 @@ namespace Chem4Word.Model2.Converters.CML
                         //now fix the refs
                         string firstRef = epElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrFirstChemistryRef)?.Value;
                         string secondRefs = epElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrSecondChemistryRefs)?.Value;
-                        
+
                         if (!string.IsNullOrEmpty(firstRef))
                         {
                             StructuralObject startChemistry = newModel.GetByPath(firstRef);
@@ -302,13 +302,21 @@ namespace Chem4Word.Model2.Converters.CML
             string firstControlPointValue = cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint)?.Value;
             if (!string.IsNullOrEmpty(firstControlPointValue))
             {
-                newElectronPusher.FirstControlPoint = Point.Parse(firstControlPointValue);
+                Point? p = PointHelper.FromString(firstControlPointValue);
+                if (p.HasValue)
+                {
+                    newElectronPusher.FirstControlPoint = p.Value;
+                }
             }
 
             string secondControlPointValue = cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint)?.Value;
             if (!string.IsNullOrEmpty(secondControlPointValue))
             {
-                newElectronPusher.SecondControlPoint = Point.Parse(secondControlPointValue);
+                Point? p = PointHelper.FromString(secondControlPointValue);
+                if (p.HasValue)
+                {
+                    newElectronPusher.SecondControlPoint = p.Value;
+                }
             }
 
             return newElectronPusher;
@@ -503,7 +511,7 @@ namespace Chem4Word.Model2.Converters.CML
             var secondControlPoint = PointHelper.AsCMLString(electronPusher.SecondControlPoint);
 
             var startChemistryRefs = electronPusher.StartChemistry.Path;
-            var endChemistryRefs = string.Join(" ", electronPusher.EndChemistries.Select(c => c.Path));
+            var endChemistryRefs = electronPusher.EndChemistriesAsString();
             var result = new XElement(CMLNamespaces.c4w + ModelConstants.TagElectronPusher,
                                       new XAttribute(ModelConstants.AttributeId, electronPusher.Id),
                                       new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint, firstControlPoint),

@@ -20,6 +20,7 @@ namespace Chem4Word.Core.UI.Wpf
         public string Message { get; set; }
 
         public string Formula { get; set; }
+        public string UniCodeFormula { get; set; }
         public string MolecularWeight { get; set; }
     }
 }

@@ -481,13 +481,16 @@ namespace Chem4Word.ACME
                 HashSet<Atom> deleteAtoms = new HashSet<Atom>();
                 HashSet<Bond> deleteBonds = new HashSet<Bond>();
                 HashSet<Atom> neighbours = new HashSet<Atom>();
-
+                HashSet<ElectronPusher> associatedPushers = new HashSet<ElectronPusher>();
                 if (atomlist != null)
                 {
                     //Add all the selected atoms to a set A
                     foreach (Atom atom in atomlist)
                     {
                         deleteAtoms.Add(atom);
+
+                        //track any pushers
+                        associatedPushers.UnionWith(atom.ElectronPushers);
 
                         foreach (Bond bond in atom.Bonds)
                         {
@@ -496,6 +499,8 @@ namespace Chem4Word.ACME
                             //Add start and end atoms B1s and B1E to neighbours
                             neighbours.Add(bond.StartAtom);
                             neighbours.Add(bond.EndAtom);
+                            //track any pushers
+                            associatedPushers.UnionWith(bond.ElectronPushers);
                         }
                     }
                 }
@@ -509,6 +514,8 @@ namespace Chem4Word.ACME
                         //Add start and end atoms B1s and B1E to neighbours
                         neighbours.Add(bond.StartAtom);
                         neighbours.Add(bond.EndAtom);
+                        //track any pushers
+                        associatedPushers.UnionWith(bond.ElectronPushers);
                     }
                 }
 
@@ -556,6 +563,9 @@ namespace Chem4Word.ACME
                     Action redo = () =>
                                   {
                                       ClearSelection();
+
+                                      DeleteElectronPushers(associatedPushers.ToList());
+
                                       int theoreticalRings = molecule.TheoreticalRings;
                                       foreach (Bond deleteBond in deleteBonds)
                                       {
@@ -624,7 +634,10 @@ namespace Chem4Word.ACME
 
                                           AddToSelection(restoreBond);
                                       }
-
+                                      foreach (ElectronPusher pusher in associatedPushers)
+                                      {
+                                          molecule.Model.AddElectronPusher(pusher);
+                                      }
                                       moleculePropertyBag.Restore(molecule);
                                   };
 
@@ -640,6 +653,8 @@ namespace Chem4Word.ACME
 
                     Dictionary<Atom, bool?> explicitFlags = new Dictionary<Atom, bool?>();
 
+                    //get rid of the pushers first
+                    DeleteElectronPushers(associatedPushers.ToList());
                     //add all the relevant atoms and bonds to a new molecule
                     //grab the model for future reference
                     Model parentModel = null;
@@ -730,6 +745,9 @@ namespace Chem4Word.ACME
                     Action redo = () =>
                                   {
                                       ClearSelection();
+
+                                      DeleteElectronPushers(associatedPushers.ToList());
+
                                       foreach (Molecule newmol in newMolecules)
                                       {
                                           newmol.Reparent();

@@ -382,32 +382,58 @@ namespace Chem4Word.Telemetry
 
         private void GetGitStatus(object o)
         {
-            List<string> result = new List<string> { "Git Origin", $"Source Code Folder '{_sourceCodeLocation}'" };
-
-            result.AddRange(RunCommand("git.exe", "config --get remote.origin.url", _sourceCodeLocation));
-
-            // Ensure status is accurate
-            List<string> fetchResult = RunCommand("git.exe", "fetch", _sourceCodeLocation);
-            if (fetchResult.Any())
+            if (Debugger.IsAttached)
             {
-                result.Add("Git fetch");
-                result.AddRange(fetchResult);
+                bool gitFound = false;
+
+                string systemPath = Environment.GetEnvironmentVariable("path");
+                if (!string.IsNullOrEmpty(systemPath))
+                {
+                    string[] paths = systemPath.Split(';');
+                    foreach (string path in paths)
+                    {
+                        if (File.Exists(Path.Combine(path, "git.exe")))
+                        {
+                            gitFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                List<string> result = new List<string> { "Git Origin", $"Source Code Folder '{_sourceCodeLocation}'" };
+
+                if (!gitFound)
+                {
+                    UserInteractions.StopUser("'git.exe' was not found on your system path!");
+                    result.Add("Warning: Could not find git.exe on the system path!");
+                    return;
+                }
+
+                result.AddRange(RunCommand("git.exe", "config --get remote.origin.url", _sourceCodeLocation));
+
+                // Ensure status is accurate
+                List<string> fetchResult = RunCommand("git.exe", "fetch", _sourceCodeLocation);
+                if (fetchResult.Any())
+                {
+                    result.Add("Git fetch");
+                    result.AddRange(fetchResult);
+                }
+
+                // git status -s -b --porcelain == Gets Branch, Status and a List of any changed files
+                List<string> statusResult = RunCommand("git.exe", "status -s -b --porcelain", _sourceCodeLocation);
+                if (statusResult.Any())
+                {
+                    result.Add("Git Branch, Status & Changed files");
+                    result.AddRange(statusResult);
+                }
+                GitStatus = string.Join(Environment.NewLine, result.ToArray());
+
+                string message = $"GetGitStatus finished at {SafeDate.ToLongDate(DateTime.UtcNow)}";
+                GitStatusObtained = true;
+
+                StartUpTimings.Add(message);
+                Debug.WriteLine(message);
             }
-
-            // git status -s -b --porcelain == Gets Branch, Status and a List of any changed files
-            List<string> statusResult = RunCommand("git.exe", "status -s -b --porcelain", _sourceCodeLocation);
-            if (statusResult.Any())
-            {
-                result.Add("Git Branch, Status & Changed files");
-                result.AddRange(statusResult);
-            }
-            GitStatus = string.Join(Environment.NewLine, result.ToArray());
-
-            string message = $"GetGitStatus finished at {SafeDate.ToLongDate(DateTime.UtcNow)}";
-            GitStatusObtained = true;
-
-            StartUpTimings.Add(message);
-            Debug.WriteLine(message);
         }
 
         private string FindSolutionFolder(string startPath)

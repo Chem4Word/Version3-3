@@ -28,6 +28,8 @@ namespace WinForms.TestHarness
 
         private readonly string _editorType;
 
+        private string _originalFormula;
+
         public EditorHost(string cml, string type, int defaultBondLength)
         {
             InitializeComponent();
@@ -57,16 +59,10 @@ namespace WinForms.TestHarness
                     var options = DefaultRenderingOptions.Copy();
                     options.DefaultBondLength = defaultBondLength;
                     acmeEditor.SetProperties(cml, used1D, options);
-                    var model = acmeEditor.ActiveController.Model;
 
-                    if (model.Molecules.Count == 0)
-                    {
-                        Text = "ACME - New structure";
-                    }
-                    else
-                    {
-                        Text = "ACME - Editing " + model.UnicodeFormula;
-                    }
+                    var model = acmeEditor.ActiveController.Model;
+                    _originalFormula = model.UnicodeFormula;
+                    SetFormTitle(false, _originalFormula);
 
                     acmeEditor.OnFeedbackChange += OnFeedbackChange_AcmeEditor;
 
@@ -104,6 +100,33 @@ namespace WinForms.TestHarness
             }
         }
 
+        private void SetFormTitle(bool modified, string newFormula)
+        {
+            string title;
+
+            if (string.IsNullOrEmpty(_originalFormula))
+            {
+                title = "ACME - New structure";
+            }
+            else
+            {
+                title = "ACME - Editing";
+            }
+
+            if (modified
+                && !string.IsNullOrEmpty(newFormula)
+                && newFormula != _originalFormula)
+            {
+                title = $"{title} {newFormula} *";
+            }
+            else
+            {
+                title = $"{title} {_originalFormula}";
+            }
+
+            Text = title;
+        }
+
         private void HideOtherStatusPanels()
         {
             StatusPanel.Label1ToolTip = "";
@@ -116,6 +139,8 @@ namespace WinForms.TestHarness
             StatusPanel.Label1Text = e.Message;
             StatusPanel.Label2Text = e.MolecularWeight;
             StatusPanel.Label3Text = e.Formula;
+
+            SetFormTitle(true, e.UniCodeFormula);
         }
 
         private List<string> SimulateGetUsed1DLabels(string cml)

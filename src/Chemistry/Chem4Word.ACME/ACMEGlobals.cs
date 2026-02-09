@@ -21,5 +21,7 @@ namespace Chem4Word.ACME
         public const int MaxAtomCharge = 9;
         public const int MinMoleculeCharge = -8;
         public const int MaxMoleculeCharge = 8;
+        public const double ElectronPusherHeadSize =12.0;
+        public const double ElectronPusherHeadFractionLength = 0.1;
     }
 }

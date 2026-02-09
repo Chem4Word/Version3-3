@@ -6,8 +6,10 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Drawing.LayoutSupport;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -21,6 +23,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         public Bond ParentBond { get; }
         public double BondThickness { get; set; }
+        protected List<Point> CoreHull { get; set; }
 
         public double Standoff { get; set; }
 
@@ -513,6 +516,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                                 dc.DrawLine(_subsidiaryBondPen,
                                             dbd3.SecondaryStart,
                                             dbd3.SecondaryEnd);
+                                DrawHitTestOverlay(dc);
                                 dc.Close();
                             }
                         }
@@ -521,7 +525,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             using (DrawingContext dc = RenderOpen())
                             {
                                 dc.DrawGeometry(_mainBondPen.Brush, _mainBondPen, BondLayout.DefiningGeometry);
-
+                                DrawHitTestOverlay(dc);
                                 dc.Close();
                             }
                         }
@@ -544,12 +548,14 @@ namespace Chem4Word.ACME.Drawing.Visuals
                                 dc.DrawLine(_mainBondPen, tbd.SecondaryStart, tbd.SecondaryEnd);
                                 dc.DrawLine(_mainBondPen, tbd.Start, tbd.End);
                                 dc.DrawLine(_subsidiaryBondPen, tbd.TertiaryStart, tbd.TertiaryEnd);
+                                DrawHitTestOverlay(dc);
                             }
                             else
                             {
                                 dc.DrawLine(_subsidiaryBondPen, tbd.SecondaryStart, tbd.SecondaryEnd);
                                 dc.DrawLine(_mainBondPen, tbd.Start, tbd.End);
                                 dc.DrawLine(_mainBondPen, tbd.TertiaryStart, tbd.TertiaryEnd);
+                                DrawHitTestOverlay(dc);
                             }
 
                             dc.Close();
@@ -558,6 +564,10 @@ namespace Chem4Word.ACME.Drawing.Visuals
                         break;
                 }
             }
+
+            
+
+
             //local function
             void DrawHitTestOverlay(DrawingContext dc)
             {
@@ -573,6 +583,31 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
                 Pen outlinePen = new Pen(outliner, BondThickness * 5);
                 dc.DrawGeometry(outliner, outlinePen, BondLayout.DefiningGeometry);
+                PathGeometry tempPG = new PathGeometry();
+                tempPG.AddGeometry(BondLayout.DefiningGeometry);
+
+                tempPG =tempPG.GetWidenedPathGeometry(outlinePen);
+
+                CoreHull = new List<Point>();
+
+                foreach (var f in tempPG.Figures)
+                {
+                    CoreHull.Add(f.StartPoint);
+                    foreach (var s in f.Segments)
+                    {
+                        if (s is PolyLineSegment segment)
+                        {
+                            foreach (Point pt in segment.Points)
+                            {
+                                CoreHull.Add(pt);
+                            }
+                        }
+                        else if (s is LineSegment lineSegment)
+                        {
+                            CoreHull.Add(lineSegment.Point);
+                        }
+                    }
+                }
             }
         }
 
@@ -594,6 +629,42 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 }
             }
 
+            return null;
+        }
+
+        /// <summary>
+        /// Returns a list of points corresponding to the combined hulls of all label parts
+        /// </summary>
+        public virtual List<Point> Hull
+        {
+            get
+            {
+                List<Point> tempHull = new List<Point>(CoreHull);
+
+                var sortedHull = (from Point p in tempHull
+                                  orderby p.X, p.Y descending
+                                  select p).ToList();
+
+                return Geometry<Point>.GetHull(sortedHull, p => p);
+            }
+        }
+
+        /// <summary>
+        /// Returns the intersection point of a line with the Convex Hull
+        /// </summary>
+        /// <param name="start">Start point of line</param>
+        /// <param name="end">End point of line</param>
+        /// <returns>Point? defining the crossing point</returns>
+        public Point? GetIntersection(Point start, Point end)
+        {
+            for (int i = 0; i < Hull.Count; i++)
+            {
+                Point? p;
+                if ((p = GeometryTool.GetIntersection(start, end, Hull[i], Hull[(i + 1) % Hull.Count])) != null)
+                {
+                    return p;
+                }
+            }
             return null;
         }
     }

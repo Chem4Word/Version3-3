@@ -352,3 +352,4 @@ MigrationBackup/
 # Chem4Word additions
 Thumbs.db
 *.diagsession
+/docs/pull_request_template.md
