@@ -3,6 +3,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ACMEResources.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
     <!--  Styles  -->
     <Style x:Key="NuclearButtonFocusVisual">
         <Setter Property="Control.Template">
@@ -19,6 +20,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style x:Key="ToolbarButton" TargetType="{x:Type ToggleButton}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource NuclearButtonFocusVisual}" />
         <Setter Property="BorderThickness" Value="0" />
@@ -84,6 +86,7 @@
     <Style TargetType="ToolBarPanel">
         <Setter Property="Background" Value="{StaticResource ACMEToolbarBackground}" />
     </Style>
+
     <!--  combos and lists  -->
     <Style x:Key="StandardCombo" TargetType="{x:Type ComboBox}">
         <Setter Property="Background" Value="{x:Static SystemColors.WindowBrush}" />
@@ -92,6 +95,7 @@
         <Setter Property="Height" Value="Auto" />
         <Setter Property="FontSize" Value="14" />
         <!--
+            Fix weird binding errors
             We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
             https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
         -->

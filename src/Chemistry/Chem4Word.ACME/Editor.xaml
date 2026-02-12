@@ -24,6 +24,13 @@
                 <ResourceDictionary Source="Resources/ControlStyles.xaml" />
                 <ResourceDictionary Source="Resources/ACMEResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <converters:DoNothingConverter x:Key="DoNothing" />
+            <converters:EnabledConverter x:Key="EnabledConverter" />
+            <converters:DrawingToImageSourceConverter x:Key="DrawingToImageSource" />
+
+            <!--  styles  -->
+
             <Style x:Key="ReactionAtomStyle" TargetType="{x:Type Run}">
                 <Setter Property="FontSize" Value="7" />
                 <Setter Property="FontFamily" Value="Arial" />
@@ -33,8 +40,7 @@
                 <Setter Property="FontFamily" Value="Arial" />
                 <Setter Property="BaselineAlignment" Value="Subscript" />
             </Style>
-            <converters:DoNothingConverter x:Key="DoNothing" />
-            <!--  styles  -->
+
             <Style x:Key="ToggleButtonStyle" TargetType="ToggleButton">
                 <Setter Property="SnapsToDevicePixels" Value="true" />
                 <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -53,6 +59,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
             <Style TargetType="{x:Type control:ZoomBox}">
                 <Style.Resources>
                     <VisualBrush
@@ -272,7 +279,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <converters:EnabledConverter x:Key="EnabledConverter" />
+
             <Viewbox
                 x:Key="GroupButtonIcon"
                 d:IsLocked="True"
@@ -303,6 +310,7 @@
                     Stretch="Uniform"
                     Stroke="{StaticResource GrabHandleBorderBrush}" />
             </Viewbox>
+
             <Path
                 x:Key="CutIconPath"
                 d:IsLocked="True"
@@ -502,7 +510,7 @@
                     ToolTip="Current Bond Type">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <Viewbox ToolTip="{Binding Path=Description, Mode=OneTime}">
+                            <Viewbox ToolTip="{Binding Description}">
                                 <Image
                                     Width="40"
                                     Height="14"
@@ -510,7 +518,7 @@
                                     HorizontalAlignment="Left"
                                     Stretch="None">
                                     <Image.Source>
-                                        <DrawingImage Drawing="{Binding Path=BondGraphic}" />
+                                        <DrawingImage Drawing="{Binding BondGraphic}" />
                                     </Image.Source>
                                 </Image>
                             </Viewbox>
@@ -968,8 +976,8 @@
                     Command="{Binding ElementName=AcmeControl, Path=ActiveController.PropertiesCommand}"
                     Style="{StaticResource CommandButtonStyle}"
                     ToolTip="Properties">
-                    <Viewbox>
-                        <Grid Margin="4">
+                    <Viewbox d:IsLocked="True">
+                        <Grid Margin="4" d:IsLocked="True">
                             <StaticResource ResourceKey="PropertiesIconPath" />
                         </Grid>
                     </Viewbox>
@@ -1232,7 +1240,7 @@
                                 Stretch="Uniform"
                                 ToolTip="{Binding Description}">
                                 <Image.Source>
-                                    <DrawingImage Drawing="{Binding Path=ReactionGraphic}" />
+                                    <DrawingImage Drawing="{Binding ReactionGraphic}" />
                                 </Image.Source>
                             </Image>
                         </DataTemplate>
@@ -1860,19 +1868,27 @@
                     </Border>
                 </Popup>
             </ToolBar>
-            <ToolBar Band="1" BandIndex="3">
+            <ToolBar
+                d:IsLocked="True"
+                Band="1"
+                BandIndex="3">
                 <ToolBar.Resources>
                     <utils:BindingProxy x:Key="Proxy" Data="{Binding ElementName=AcmeControl}" />
                 </ToolBar.Resources>
                 <RadioButton
                     x:Name="SingleElectronPusherButton"
+                    d:IsLocked="True"
                     Click="OnChecked_Mode"
                     GroupName="Actions"
                     Style="{StaticResource ToolbarButtonStyle}"
                     ToolTip="Electron Pusher">
                     <Viewbox d:IsLocked="True" Stretch="Uniform">
-                        <Canvas Width="100" Height="100">
+                        <Canvas
+                            Width="100"
+                            Height="100"
+                            d:IsLocked="True">
                             <graphics:ArcArrow
+                                d:IsLocked="True"
                                 Center="50,70"
                                 EndAngle="70"
                                 HeadAngle="45"
@@ -1889,13 +1905,18 @@
                 </RadioButton>
                 <RadioButton
                     x:Name="DoubleElectronPusherButton"
+                    d:IsLocked="True"
                     Click="OnChecked_Mode"
                     GroupName="Actions"
                     Style="{StaticResource ToolbarButtonStyle}"
                     ToolTip="Double-headed Electron Pusher">
                     <Viewbox d:IsLocked="True" Stretch="Uniform">
-                        <Canvas Width="100" Height="100">
+                        <Canvas
+                            Width="100"
+                            Height="100"
+                            d:IsLocked="True">
                             <graphics:ArcArrow
+                                d:IsLocked="True"
                                 ArrowEnds="Both"
                                 Center="50,70"
                                 EndAngle="70"
@@ -1913,13 +1934,18 @@
                 </RadioButton>
                 <RadioButton
                     x:Name="FishHookButton"
+                    d:IsLocked="True"
                     Click="OnChecked_Mode"
                     GroupName="Actions"
                     Style="{StaticResource ToolbarButtonStyle}"
                     ToolTip="Radical FishHook">
                     <Viewbox d:IsLocked="True" Stretch="Uniform">
-                        <Canvas Width="100" Height="100">
+                        <Canvas
+                            Width="100"
+                            Height="100"
+                            d:IsLocked="True">
                             <graphics:FishHookArrow
+                                d:IsLocked="True"
                                 FirstControlPoint="0,0"
                                 HeadAngle="45"
                                 MaxHeadLength="30"
@@ -2004,18 +2030,31 @@
 
                 <Style TargetType="{x:Type ContextMenu}">
                     <Setter Property="ItemsPanel" Value="{StaticResource MenuItemPanelTemplate}" />
+
+                    <Style.Resources>
+                        <!--  Grey out the whole menu item (text + icon) when disabled  -->
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.25" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Style.Resources>
                 </Style>
+
+                <!--  Molecule ContextMenu  -->
                 <ContextMenu x:Key="MoleculeContextMenu">
                     <MenuItem Header="Charge">
                         <MenuItem.Icon>
-                            <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox>
                                 <StaticResource ResourceKey="ChargeMenuItemIcon" />
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Radical">
                         <MenuItem.Icon>
-                            <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox>
                                 <StaticResource ResourceKey="RadicalDoubleMenuItemIcon" />
                             </Viewbox>
                         </MenuItem.Icon>
@@ -2039,14 +2078,14 @@
                     <Separator />
                     <MenuItem Header="Copy">
                         <MenuItem.Icon>
-                            <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox>
                                 <Image d:IsLocked="True" Source="{StaticResource CopyIcon}" />
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Cut">
                         <MenuItem.Icon>
-                            <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox>
                                 <StaticResource ResourceKey="CutMenuItemIcon" />
                             </Viewbox>
                         </MenuItem.Icon>
@@ -2054,14 +2093,14 @@
                     <Separator />
                     <MenuItem Header="Flip Horizontal">
                         <MenuItem.Icon>
-                            <Viewbox d:IsLocked="True" Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
                                 <Image d:IsLocked="True" Source="{StaticResource FlipHorizontalIcon}" />
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Flip Vertical">
                         <MenuItem.Icon>
-                            <Viewbox d:IsLocked="True" Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
                                 <Image d:IsLocked="True" Source="{StaticResource FlipVerticalIcon}" />
                             </Viewbox>
                         </MenuItem.Icon>
@@ -2069,7 +2108,7 @@
                     <Separator />
                     <MenuItem Header="Properties...">
                         <MenuItem.Icon>
-                            <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox>
                                 <StaticResource ResourceKey="PropertiesIcon" />
                             </Viewbox>
                         </MenuItem.Icon>
@@ -2090,11 +2129,13 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
+
+                <!--  Atom ContextMenu  -->
                 <ContextMenu x:Key="AtomContextMenu">
                     <MenuItem Header="Charge" Icon="{StaticResource ChargeMenuItemIcon}" />
                     <MenuItem Header="Radical" Visibility="Collapsed">
                         <MenuItem.Icon>
-                            <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox>
                                 <StaticResource ResourceKey="RadicalDoubleMenuItemIcon" />
                             </Viewbox>
                         </MenuItem.Icon>
@@ -2104,7 +2145,7 @@
                             Header="Single"
                             Tag="2">
                             <MenuItem.Icon>
-                                <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
+                                <Viewbox>
                                     <StaticResource ResourceKey="RadicalSingleMenuItemIcon" />
                                 </Viewbox>
                             </MenuItem.Icon>
@@ -2114,7 +2155,7 @@
                             Header="Double"
                             Tag="3">
                             <MenuItem.Icon>
-                                <Viewbox Style="{StaticResource GrayedMenuIconStyle}">
+                                <Viewbox>
                                     <StaticResource ResourceKey="RadicalDoubleMenuItemIcon" />
                                 </Viewbox>
                             </MenuItem.Icon>
@@ -2123,12 +2164,14 @@
                     <Separator />
                     <MenuItem Header="Properties...">
                         <MenuItem.Icon>
-                            <Viewbox Stretch="Uniform" Style="{StaticResource GrayedMenuIconStyle}">
+                            <Viewbox Stretch="Uniform">
                                 <StaticResource ResourceKey="PropertiesIcon" />
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
+
+                <!--  Bond ContextMenu  -->
                 <ContextMenu
                     x:Key="BondContextMenu"
                     ContextMenuOpening="OnContextMenuOpening_BondContextMenu"
@@ -2136,10 +2179,10 @@
                     <MenuItem Header="Type" ItemsSource="{StaticResource BondOptions}">
                         <MenuItem.ItemTemplate>
                             <DataTemplate>
-                                <Viewbox ToolTip="{Binding Path=Description}">
+                                <Viewbox ToolTip="{Binding Description}">
                                     <Image Stretch="Uniform">
                                         <Image.Source>
-                                            <DrawingImage Drawing="{Binding Path=BondGraphic}" />
+                                            <DrawingImage Drawing="{Binding BondGraphic, Converter={StaticResource DrawingToImageSource}}" />
                                         </Image.Source>
                                     </Image>
                                 </Viewbox>
@@ -2252,6 +2295,7 @@
                     </MenuItem>
                 </ContextMenu>
             </Grid.Resources>
+
             <!--  scrolls the drawing area  -->
             <ScrollViewer
                 Name="DrawingArea"
@@ -2332,6 +2376,7 @@
                     </control:AnnotationEditor>
                 </Canvas>
             </ScrollViewer>
+
             <control:ZoomBox
                 x:Name="ZoomBox"
                 Width="180"
@@ -2343,6 +2388,7 @@
                 FontFamily="Segoe UI"
                 ScrollViewer="{Binding ElementName=DrawingArea}" />
         </Grid>
+
         <StatusBar
             Name="FeedbackBar"
             Grid.Row="2"

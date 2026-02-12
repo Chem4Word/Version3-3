@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enums="clr-namespace:Chem4Word.Model2.Enums;assembly=Chem4Word.Model2"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="AutoElectrons"
     Width="154"
     Height="154"
     Loaded="OnLoaded_ElectronsView"
@@ -34,7 +35,7 @@
             Grid.Row="0"
             Margin="2"
             d:IsLocked="True"
-            ItemsSource="{Binding ElementName=ThisWindow, Path=Electrons}"
+            ItemsSource="{Binding ElementName=AutoElectrons, Path=Electrons}"
             SelectionChanged="OnSelectionChanged_ElectronsListView"
             SelectionMode="Single">
             <ListView.Resources>

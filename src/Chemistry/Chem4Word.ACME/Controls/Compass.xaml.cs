@@ -13,7 +13,6 @@ using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -638,21 +637,6 @@ namespace Chem4Word.ACME.Controls
                             AddLine();
                             break;
                     }
-
-                    if (Debugger.IsAttached)
-                    {
-                        //TextBlock textBlock = new TextBlock
-                        // {
-                        //     Text = $"E:{(int)electronType}",
-                        //     FontSize = 10,
-                        //     Foreground = Brushes.Blue
-                        // };
-
-                        // Canvas.SetLeft(textBlock, 0.0);
-                        // Canvas.SetTop(textBlock, 0.0);
-
-                        // canvas.Children.Add(textBlock);
-                    }
                 }
 
                 return canvas;
@@ -674,8 +658,13 @@ namespace Chem4Word.ACME.Controls
                         StrokeThickness = offset / 2.0
                     };
 
-                    string colour = Atom.Element.Colour;
-                    line.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour ?? AcmeConstants.DefaultTextColor));
+                    string colour = AcmeConstants.DefaultTextColor;
+                    if (Atom != null)
+                    {
+                        colour = Atom.Element.Colour;
+                    }
+
+                    line.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour));
 
                     canvas.Children.Add(line);
                 }
@@ -692,9 +681,14 @@ namespace Chem4Word.ACME.Controls
                         Fill = Brushes.Red
                     };
 
-                    string colour = Atom.Element.Colour;
-                    ellipse.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour ?? AcmeConstants.DefaultTextColor));
-                    ellipse.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour ?? AcmeConstants.DefaultTextColor));
+                    string colour = AcmeConstants.DefaultTextColor;
+                    if (Atom != null)
+                    {
+                        colour = Atom.Element.Colour;
+                    }
+
+                    ellipse.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour));
+                    ellipse.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colour));
 
                     // Position ellipse on canvas
                     Canvas.SetLeft(ellipse, x - padding - 2.0);

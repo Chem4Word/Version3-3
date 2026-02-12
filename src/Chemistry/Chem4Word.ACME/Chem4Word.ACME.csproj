@@ -150,6 +150,7 @@
     <Compile Include="Converters\CompassControl\ButtonInverseBoolToVisibility.cs" />
     <Compile Include="Converters\CompassControl\CompassTypeInverseToVisibility.cs" />
     <Compile Include="Converters\CompassControl\CompassTypeToVisibility.cs" />
+    <Compile Include="Converters\DrawingToImageSourceConverter.cs" />
     <Compile Include="Drawing\LayoutSupport\ThickBondLayout.cs" />
     <Compile Include="Drawing\Text\BlockTextSource.cs" />
     <Compile Include="Drawing\Text\BlockTextRunProperties.cs" />

@@ -12,15 +12,21 @@
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     Loaded="OnLoaded_LabelsEditor"
     mc:Ignorable="d">
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ACMEResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Brushes.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/ControlStyles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Chem4Word.ACME;component/Resources/Chem4WordTreeViewItem.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
             <converters:BoolToVisibilityConverter
                 x:Key="VisConverter"
                 FalseValue="Collapsed"
                 TrueValue="Visible" />
+
             <SolidColorBrush x:Key="Chem4WordBlue" Color="#2A579A" />
             <SolidColorBrush x:Key="SplitterBackground" Color="{x:Static SystemColors.ActiveCaptionColor}" />
         </ResourceDictionary>
@@ -66,7 +72,32 @@
                             x:Name="TreeView"
                             d:IsLocked="True"
                             FontFamily="Segoe UI"
-                            SelectedItemChanged="OnSelectedItemChanged_TreeView" />
+                            SelectedItemChanged="OnSelectedItemChanged_TreeView">
+                            <TreeView.Resources>
+                                <Style TargetType="TreeView">
+                                    <!--
+                                        Fix weird binding errors
+                                        We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+                                        https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+                                    -->
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="VerticalContentAlignment" Value="Top" />
+                                </Style>
+                                <Style TargetType="TreeViewItem">
+                                    <!--
+                                        Fix weird binding errors
+                                        We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+                                        https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+                                    -->
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="VerticalContentAlignment" Value="Top" />
+                                </Style>
+                            </TreeView.Resources>
+                            <TreeViewItem
+                                Header="Root"
+                                Style="{StaticResource Chem4WordTreeViewItemStyle}"
+                                Template="{StaticResource Chem4WordTreeViewItemTemplate}" />
+                        </TreeView>
                     </ScrollViewer>
                     <Border
                         Grid.Row="2"

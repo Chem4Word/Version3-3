@@ -695,7 +695,8 @@ namespace WinForms.TestHarness
 
         private void OnClick_LayoutStructure(object sender, EventArgs e)
         {
-            LayoutUsingCheblClean();
+            // No Longer working ...
+            // LayoutUsingCheblClean()
         }
 
         private void LayoutUsingCheblClean()

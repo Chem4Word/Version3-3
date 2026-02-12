@@ -910,7 +910,6 @@ namespace Chem4Word
                                     if (certificate != null)
                                     {
                                         signedBy = certificate.Subject;
-                                        // E=developer@chem4word.co.uk, CN="Open Source Developer, Mike Williams", O=Open Source Developer, C=GB
                                         Debug.WriteLine(certificate.Subject);
                                         Debug.WriteLine(certificate.Issuer);
                                     }
@@ -967,7 +966,14 @@ namespace Chem4Word
             foreach (var plugIn in plugInsFound)
             {
                 var parts = plugIn.Split('|');
-                Debug.WriteLine($"Loading PlugIn {parts[0]} with Interface {parts[1]} from file {parts[2]} signed by {parts[3]}");
+                if (mustBeSigned)
+                {
+                    Debug.WriteLine($"Loading PlugIn {parts[0]} with Interface {parts[1]} from file {parts[2]} signed by {parts[3]}");
+                }
+                else
+                {
+                    Debug.WriteLine($"Loading PlugIn {parts[0]} with Interface {parts[1]} from file {parts[2]}");
+                }
 
                 var allowed = true;
                 if (mustBeSigned)

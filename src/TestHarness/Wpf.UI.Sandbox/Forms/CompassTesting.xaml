@@ -73,9 +73,6 @@
             Grid.Column="5"
             Grid.ColumnSpan="2"
             Orientation="Vertical">
-            <CheckBox IsChecked="False">
-                Auto Placement
-            </CheckBox>
 
             <TextBlock x:Name="Status3">
                 Compass #3
@@ -93,9 +90,6 @@
             Grid.Column="7"
             Grid.ColumnSpan="2"
             Orientation="Vertical">
-            <CheckBox IsChecked="True">
-                Auto Placement
-            </CheckBox>
             <TextBlock x:Name="Status4">
                 Compass #4
             </TextBlock>

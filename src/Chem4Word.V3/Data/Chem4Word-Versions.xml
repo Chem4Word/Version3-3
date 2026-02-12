@@ -10,9 +10,11 @@
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
+      <Change>Internal: Fix xaml binding errors (in ACME)</Change>
       <Change>Internal: Update to xUnit Test V3</Change>
       <Change>BugFix: Fix and Improve searching (ChEBI/PubChem/OPSIN)</Change>
-      <Change>UI: Add Automatic mode for Electron Placements</Change>
+      <Change>UI: Added ability to create Electron pushers (between Atoms or Bonds)</Change>
+      <Change>UI: Added ability to create Electrons (on Atoms)</Change>
       <Change>Internal: Refactor of generation of Concise Formula</Change>
       <Change>Internal: GetByPath function for key model objects</Change>
       <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>

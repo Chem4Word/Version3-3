@@ -372,7 +372,7 @@
                                 d:IsLocked="True"
                                 CompassControlType="Hydrogens"
                                 CompassValueChanged="OnCompassValueChanged_HydrogensCompass"
-                                SelectedCompassPoint="{Binding ExplicitHydrogenPlacement}" />
+                                SelectedCompassPoint="{Binding DataContext.ExplicitHydrogenPlacement, RelativeSource={RelativeSource AncestorType=Window}}" />
                             <Grid
                                 x:Name="CompassOrListView"
                                 Grid.Row="2"
@@ -391,7 +391,7 @@
                                     d:IsLocked="True"
                                     CompassControlType="Electrons"
                                     CompassValueChanged="OnCompassValueChanged_ElectronsCompass"
-                                    SelectedElectronDictionary="{Binding ExplicitElectronPlacements}"
+                                    SelectedElectronDictionary="{Binding DataContext.ExplicitElectronPlacements, RelativeSource={RelativeSource AncestorType=Window}}"
                                     Visibility="Visible" />
                                 <local:ElectronsView
                                     x:Name="ElectronsView"
@@ -467,7 +467,7 @@
                                 d:IsLocked="True"
                                 CompassControlType="FunctionalGroups"
                                 CompassValueChanged="OnCompassValueChanged_FunctionalGroupsCompass"
-                                SelectedCompassPoint="{Binding ExplicitFunctionalGroupPlacement}" />
+                                SelectedCompassPoint="{Binding DataContext.ExplicitFunctionalGroupPlacement, RelativeSource={RelativeSource AncestorType=Window}}" />
                         </Grid>
                     </Grid>
                 </Grid>

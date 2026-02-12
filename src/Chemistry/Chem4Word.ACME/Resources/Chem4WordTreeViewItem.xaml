@@ -14,6 +14,14 @@
     <Style x:Key="Chem4WordTreeViewItemStyle" TargetType="TreeViewItem">
         <Setter Property="Foreground" Value="#2A579A" />
         <Setter Property="FontSize" Value="14" />
+
+        <!--
+            Fix weird binding errors
+            We need to define these two properties twice to fix binding errors see answer which I [Mike Williams] have commented on at
+            https://stackoverflow.com/questions/160391/listbox-with-grid-as-itemspaneltemplate-produces-weird-binding-errors
+        -->
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
     </Style>
 
     <Style x:Key="Chem4WordTreeViewItemToggleButtonStyle" TargetType="{x:Type ToggleButton}">
