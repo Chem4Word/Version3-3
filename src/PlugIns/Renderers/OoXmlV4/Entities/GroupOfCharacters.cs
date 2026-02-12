@@ -69,7 +69,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public void AddString(string value, string colour)
         {
-            foreach (var character in value)
+            foreach (char character in value)
             {
                 AddCharacter(character, colour);
             }
@@ -77,9 +77,9 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public void AddParts(List<FunctionalGroupPart> parts, string colour)
         {
-            foreach (var part in parts)
+            foreach (FunctionalGroupPart part in parts)
             {
-                foreach (var character in part.Text)
+                foreach (char character in part.Text)
                 {
                     switch (part.Type)
                     {
@@ -102,7 +102,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public void AddCharacter(char characterIn, string colour, bool isSubScript = false, bool isSuperScript = false)
         {
             // Ensure we only create known characters
-            var knownCharacter = characterIn;
+            char knownCharacter = characterIn;
             if (!_characterSet.ContainsKey(characterIn))
             {
                 knownCharacter = OoXmlConstants.DefaultCharacter;
@@ -111,17 +111,17 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
             Text += knownCharacter;
 
             // Create new AtomLabelCharacter and add to Characters
-            var ttfCharacter = _characterSet[knownCharacter];
+            TtfCharacter ttfCharacter = _characterSet[knownCharacter];
             if (ttfCharacter != null)
             {
                 if (_firstCharacterOfLineOriginX == null)
                 {
                     _firstCharacterOfLineOriginX = ttfCharacter.OriginX;
                 }
-                var isSmaller = isSubScript || isSuperScript;
+                bool isSmaller = isSubScript || isSuperScript;
 
                 // Get character position as if it's standard size
-                var thisCharacterPosition = GetCharacterPosition(_cursor, ttfCharacter);
+                Point thisCharacterPosition = GetCharacterPosition(_cursor, ttfCharacter);
 
                 if (isSmaller)
                 {
@@ -135,14 +135,14 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                     }
                 }
 
-                var alc = new AtomLabelCharacter(thisCharacterPosition, ttfCharacter, colour, _atomPath, _parentPath);
+                AtomLabelCharacter alc = new AtomLabelCharacter(thisCharacterPosition, ttfCharacter, colour, _atomPath, _parentPath);
                 alc.IsSubScript = isSubScript;
                 alc.IsSuperScript = isSuperScript;
                 alc.IsSmaller = isSmaller;
                 Characters.Add(alc);
 
-                var size = new Size(OoXmlHelper.ScaleCsTtfToCml(ttfCharacter.Width, _bondLength),
-                                    OoXmlHelper.ScaleCsTtfToCml(ttfCharacter.Height, _bondLength));
+                Size size = new Size(OoXmlHelper.ScaleCsTtfToCml(ttfCharacter.Width, _bondLength),
+                                     OoXmlHelper.ScaleCsTtfToCml(ttfCharacter.Height, _bondLength));
 
                 if (isSmaller)
                 {
@@ -150,7 +150,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                     size.Height *= OoXmlConstants.SubscriptScaleFactor;
                 }
 
-                var thisBoundingBox = new Rect(thisCharacterPosition, size);
+                Rect thisBoundingBox = new Rect(thisCharacterPosition, size);
                 _boundingBox.Union(thisBoundingBox);
 
                 // Move to next Character position
@@ -167,7 +167,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public void AdjustPosition(Vector adjust)
         {
-            foreach (var c in Characters)
+            foreach (AtomLabelCharacter c in Characters)
             {
                 c.Position += adjust;
             }
@@ -188,13 +188,13 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public void Nudge(CompassPoints direction, double pixels = 0)
         {
-            var moveBy = pixels;
+            double moveBy = pixels;
             if (pixels == 0)
             {
                 moveBy = _bondLength / 16;
             }
 
-            var destination = Centre;
+            Point destination = Centre;
             switch (direction)
             {
                 case CompassPoints.North:
@@ -219,15 +219,15 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         private Point GetCharacterPosition(Point cursorPosition, TtfCharacter character)
         {
-            var position = new Point(cursorPosition.X + OoXmlHelper.ScaleCsTtfToCml(character.OriginX, _bondLength),
-                                     cursorPosition.Y + OoXmlHelper.ScaleCsTtfToCml(character.OriginY, _bondLength));
+            Point position = new Point(cursorPosition.X + OoXmlHelper.ScaleCsTtfToCml(character.OriginX, _bondLength),
+                                       cursorPosition.Y + OoXmlHelper.ScaleCsTtfToCml(character.OriginY, _bondLength));
 
             return position;
         }
 
         public override string ToString()
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.Append($"{Text}");
             sb.Append(" ");
             sb.Append($"at {PointHelper.AsString(BoundingBox.Location)}");

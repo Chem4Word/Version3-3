@@ -23,9 +23,9 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public SimpleLine GetParallel(double offset)
         {
-            var vector = End - Start;
+            Vector vector = End - Start;
             vector.Normalize();
-            var perpendicular = vector.Perpendicular() * offset;
+            Vector perpendicular = vector.Perpendicular() * offset;
 
             return new SimpleLine(Start - perpendicular, End - perpendicular);
         }

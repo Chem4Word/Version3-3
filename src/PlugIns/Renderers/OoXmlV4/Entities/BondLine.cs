@@ -87,6 +87,47 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
             }
         }
 
+        public List<Point> ConvexHull
+        {
+            get
+            {
+                switch (Style)
+                {
+                    case BondLineStyle.Thick:
+                        return HullOfPoints(InnerStart, InnerEnd, OuterEnd, OuterStart);
+
+                    case BondLineStyle.Wedge:
+                    case BondLineStyle.Hatch:
+                        return HullOfPoints(Nose, LeftTail, RightTail);
+
+                    default:
+                        return HullOfPoints(Start, End);
+                }
+            }
+        }
+
+        private List<Point> HullOfPoints(Point p1, Point p2, Point? p3 = null, Point? p4 = null)
+        {
+            double width = Math.Ceiling(Bond.Model.MeanBondLength * OoXmlConstants.MultipleBondOffsetPercentage / 2) + 1;
+
+            List<Point> hull = new List<Point>();
+
+            hull.AddRange(GeometryTool.HullOfCircle(p1, width));
+            hull.AddRange(GeometryTool.HullOfCircle(p2, width));
+
+            if (p3 != null)
+            {
+                hull.AddRange(GeometryTool.HullOfCircle(p3.Value, width));
+            }
+
+            if (p4 != null)
+            {
+                hull.AddRange(GeometryTool.HullOfCircle(p4.Value, width));
+            }
+
+            return GeometryTool.MakeConvexHull(hull);
+        }
+
         public Point End
         {
             get => _end;
@@ -270,8 +311,8 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
             Offset = BondOffset(medianBondLength) / 2;
 
-            var originalInside = GetParallel(Offset);
-            var originalOutside = GetParallel(-Offset);
+            BondLine originalInside = GetParallel(Offset);
+            BondLine originalOutside = GetParallel(-Offset);
 
             if (Style == BondLineStyle.Thick)
             {
@@ -291,7 +332,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public BondLine Copy()
         {
-            var copy = new BondLine(Style, Start, End, Bond)
+            BondLine copy = new BondLine(Style, Start, End, Bond)
             {
                 Colour = Colour,
                 Width = Width
@@ -302,9 +343,9 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public Point GetOriginalPoint(string pointName)
         {
-            var result = new Point();
+            Point result = new Point();
 
-            if (_outlines.TryGetValue(0, out var value))
+            if (_outlines.TryGetValue(0, out Dictionary<string, Point> value))
             {
                 switch (pointName)
                 {
@@ -364,8 +405,8 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public BondLine GetParallel(double offset)
         {
-            var simpleLine = new SimpleLine(Start, End);
-            var offsetLine = simpleLine.GetParallel(offset);
+            SimpleLine simpleLine = new SimpleLine(Start, End);
+            SimpleLine offsetLine = simpleLine.GetParallel(offset);
 
             return new BondLine(Style, offsetLine.Start, offsetLine.End, Bond)
             {
@@ -382,8 +423,8 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public void Shrink(double value)
         {
-            var start = Start;
-            var end = End;
+            Point start = Start;
+            Point end = End;
             GeometryTool.AdjustLineAboutMidpoint(ref start, ref end, value);
             Start = start;
             End = end;
@@ -391,7 +432,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         public override string ToString()
         {
-            var result = $"{Style} from {PointHelper.AsString(Start)} to {PointHelper.AsString(End)}";
+            string result = $"{Style} from {PointHelper.AsString(Start)} to {PointHelper.AsString(End)}";
             if (Bond != null)
             {
                 result += $" [{Bond}]";
@@ -408,29 +449,29 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
             switch (Style)
             {
                 case BondLineStyle.Thick:
-                    var thickPoints = new Dictionary<string, Point>
-                                      {
-                                          { nameof(Start), Start },
-                                          { nameof(End), End },
-                                          { nameof(InnerStart), InnerStart },
-                                          { nameof(InnerEnd), InnerEnd },
-                                          { nameof(OuterStart), OuterStart },
-                                          { nameof(OuterEnd), OuterEnd }
-                                      };
+                    Dictionary<string, Point> thickPoints = new Dictionary<string, Point>
+                                                            {
+                                                                { nameof(Start), Start },
+                                                                { nameof(End), End },
+                                                                { nameof(InnerStart), InnerStart },
+                                                                { nameof(InnerEnd), InnerEnd },
+                                                                { nameof(OuterStart), OuterStart },
+                                                                { nameof(OuterEnd), OuterEnd }
+                                                            };
                     _outlines.Add(_outlines.Count, thickPoints);
                     break;
 
                 case BondLineStyle.Wedge:
                 case BondLineStyle.Hatch:
-                    var wedgePoints = new Dictionary<string, Point>
-                                      {
-                                          { nameof(Start), Start },
-                                          { nameof(Nose), Nose },
-                                          { nameof(LeftTail), LeftTail },
-                                          { nameof(Tail), Tail },
-                                          { nameof(End), End },
-                                          { nameof(RightTail), RightTail }
-                                      };
+                    Dictionary<string, Point> wedgePoints = new Dictionary<string, Point>
+                                                            {
+                                                                { nameof(Start), Start },
+                                                                { nameof(Nose), Nose },
+                                                                { nameof(LeftTail), LeftTail },
+                                                                { nameof(Tail), Tail },
+                                                                { nameof(End), End },
+                                                                { nameof(RightTail), RightTail }
+                                                            };
                     _outlines.Add(_outlines.Count, wedgePoints);
                     break;
             }
@@ -447,13 +488,13 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         private Rect GetBoundingBox(List<Point> points)
         {
-            var minX = double.MaxValue;
-            var minY = double.MaxValue;
+            double minX = double.MaxValue;
+            double minY = double.MaxValue;
 
-            var maxX = double.MinValue;
-            var maxY = double.MinValue;
+            double maxX = double.MinValue;
+            double maxY = double.MinValue;
 
-            foreach (var point in points)
+            foreach (Point point in points)
             {
                 minX = Math.Min(minX, point.X);
                 minY = Math.Min(minY, point.Y);
@@ -469,10 +510,10 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         [Obsolete("No Longer used")]
         private static void TrimByVector(Point line1Start, Point line1End, Point line2Start, Point line2End, ref Vector vector)
         {
-            var crossingPoint = GeometryTool.GetIntersection(line1Start, line1End, line2Start, line2End);
+            Point? crossingPoint = GeometryTool.GetIntersection(line1Start, line1End, line2Start, line2End);
             if (crossingPoint != null)
             {
-                var v = crossingPoint.Value - line1Start;
+                Vector v = crossingPoint.Value - line1Start;
                 if (v.Length < vector.Length)
                 {
                     vector = v;

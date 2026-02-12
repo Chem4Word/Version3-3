@@ -39,10 +39,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         /// <returns></returns>
         public static string CreateFromCml(string cml, string guid, OoXmlV4Options options, IChem4WordTelemetry telemetry, Point topLeft)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var cc = new CMLConverter();
-            var model = cc.Import(cml);
+            CMLConverter cc = new CMLConverter();
+            Model model = cc.Import(cml);
             if (model.AllErrors.Count > 0 || model.AllWarnings.Count > 0)
             {
                 if (model.AllErrors.Count > 0)
@@ -56,27 +56,27 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 }
             }
 
-            var fileName = string.Empty;
+            string fileName = string.Empty;
 
-            var canRender = model.HasReactions
-                            || model.HasAnnotations
-                            || model.TotalAtomsCount > 0
-                            && (model.TotalBondsCount == 0
-                                || model.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
+            bool canRender = model.HasReactions
+                             || model.HasAnnotations
+                             || model.TotalAtomsCount > 0
+                             && (model.TotalBondsCount == 0
+                                 || model.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
 
             if (canRender)
             {
                 fileName = Path.Combine(Path.GetTempPath(), $"Chem4Word-V3-{guid}.docx");
 
-                var bookmarkName = CoreConstants.OoXmlBookmarkPrefix + guid;
+                string bookmarkName = CoreConstants.OoXmlBookmarkPrefix + guid;
 
                 // Create a Wordprocessing document.
-                using (var document = WordprocessingDocument.Create(fileName, WordprocessingDocumentType.Document))
+                using (WordprocessingDocument document = WordprocessingDocument.Create(fileName, WordprocessingDocumentType.Document))
                 {
                     // Add a new main document part.
-                    var mainDocumentPart = document.AddMainDocumentPart();
+                    MainDocumentPart mainDocumentPart = document.AddMainDocumentPart();
                     mainDocumentPart.Document = new Document(new Body());
-                    var body = document.MainDocumentPart.Document.Body;
+                    Body body = document.MainDocumentPart.Document.Body;
 
                     AddPictureFromModel(body, model, bookmarkName, options, telemetry, topLeft);
 
@@ -86,16 +86,16 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
             else
             {
-                var message = new List<string>
-                              {
-                                  "Unable to render this structure",
-                                  $"  Molecules:{model.TotalMoleculesCount}",
-                                  $"  Bonds:{model.TotalBondsCount}",
-                                  $"  Atoms:{model.TotalAtomsCount}",
-                                  $"  MeanBondLength:{model.MeanBondLength}",
-                                  $"  HasAnnotations:{model.HasAnnotations}",
-                                  $"  HasReactions:{model.HasReactions}"
-                              };
+                List<string> message = new List<string>
+                                       {
+                                           "Unable to render this structure",
+                                           $"  Molecules:{model.TotalMoleculesCount}",
+                                           $"  Bonds:{model.TotalBondsCount}",
+                                           $"  Atoms:{model.TotalAtomsCount}",
+                                           $"  MeanBondLength:{model.MeanBondLength}",
+                                           $"  HasAnnotations:{model.HasAnnotations}",
+                                           $"  HasReactions:{model.HasReactions}"
+                                       };
 
                 telemetry.Write(module, "Information", string.Join(Environment.NewLine, message));
             }
@@ -114,26 +114,26 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         /// <param name="topLeft"></param>
         private static void AddPictureFromModel(Body body, Model model, string bookmarkName, OoXmlV4Options options, IChem4WordTelemetry telemetry, Point topLeft)
         {
-            var paragraph1 = new Paragraph();
+            Paragraph paragraph1 = new Paragraph();
             if (!string.IsNullOrEmpty(bookmarkName))
             {
-                var bookmarkStart = new BookmarkStart
-                {
-                    Name = bookmarkName,
-                    Id = "1"
-                };
+                BookmarkStart bookmarkStart = new BookmarkStart
+                                              {
+                                                  Name = bookmarkName,
+                                                  Id = "1"
+                                              };
                 paragraph1.Append(bookmarkStart);
             }
 
-            var renderer = new OoXmlRenderer(model, options, telemetry, topLeft);
+            OoXmlRenderer renderer = new OoXmlRenderer(model, options, telemetry, topLeft);
             paragraph1.Append(renderer.GenerateRun());
 
             if (!string.IsNullOrEmpty(bookmarkName))
             {
-                var bookmarkEnd = new BookmarkEnd
-                {
-                    Id = "1"
-                };
+                BookmarkEnd bookmarkEnd = new BookmarkEnd
+                                          {
+                                              Id = "1"
+                                          };
                 paragraph1.Append(bookmarkEnd);
             }
 

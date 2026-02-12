@@ -109,8 +109,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 && element == ModelGlobals.PeriodicTable.C
                 && atom.Bonds.ToList().Count == 3)
             {
-                var isInRing = atom.IsInRing;
-                var lines = Outputs.BondLines.Where(bl => bl.BondPath.Equals(bondPath)).ToList();
+                bool isInRing = atom.IsInRing;
+                List<BondLine> lines = Outputs.BondLines.Where(bl => bl.BondPath.Equals(bondPath)).ToList();
                 if (lines.Any())
                 {
                     List<Bond> otherLines;
@@ -125,8 +125,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                     if (lines.Count == 2 && otherLines.Count == 2)
                     {
-                        var line1 = Outputs.BondLines.FirstOrDefault(bl => bl.BondPath.Equals(otherLines[0].Path));
-                        var line2 = Outputs.BondLines.FirstOrDefault(bl => bl.BondPath.Equals(otherLines[1].Path));
+                        BondLine line1 = Outputs.BondLines.FirstOrDefault(bl => bl.BondPath.Equals(otherLines[0].Path));
+                        BondLine line2 = Outputs.BondLines.FirstOrDefault(bl => bl.BondPath.Equals(otherLines[1].Path));
                         if (line1 != null && line2 != null)
                         {
                             TrimBondLines(lines, line1, line2, isInRing);
@@ -148,23 +148,23 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         /// </summary>
         private void BeautifyDoubleBonds()
         {
-            var pb = Inputs.Progress;
+            Progress pb = Inputs.Progress;
 
-            var moleculeNo = 0;
+            int moleculeNo = 0;
 
-            foreach (var molecule in Inputs.Model.Molecules.Values)
+            foreach (Molecule molecule in Inputs.Model.Molecules.Values)
             {
                 // Obtain list of Double Bonds with Placement of BondDirection.None
-                var doubleBonds = molecule.Bonds.Where(b => b.OrderValue.HasValue
-                                                            && b.OrderValue.Value == 2
-                                                            && b.Placement == BondDirection.None).ToList();
+                List<Bond> doubleBonds = molecule.Bonds.Where(b => b.OrderValue.HasValue
+                                                                   && b.OrderValue.Value == 2
+                                                                   && b.Placement == BondDirection.None).ToList();
                 if (doubleBonds.Count > 0)
                 {
                     pb.Message = $"Processing Double Bonds in Molecule {moleculeNo}";
                     pb.Value = 0;
                     pb.Maximum = doubleBonds.Count;
 
-                    foreach (var doubleBond in doubleBonds)
+                    foreach (Bond doubleBond in doubleBonds)
                     {
                         BeautifyDoubleBondLines(doubleBond.StartAtom, doubleBond.Path);
                         BeautifyDoubleBondLines(doubleBond.EndAtom, doubleBond.Path);
@@ -185,24 +185,24 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void BeautifyThickBondLines(List<BondLine> thickBondLines)
         {
-            foreach (var thickBondLine in thickBondLines)
+            foreach (BondLine thickBondLine in thickBondLines)
             {
-                var wedgeBondLines = Outputs.BondLines
-                    .Where(l => (l.Style == BondLineStyle.Wedge || l.Style == BondLineStyle.Hatch)
-                                && (l.Tail == thickBondLine.Start || l.Tail == thickBondLine.End))
-                    .ToList();
+                List<BondLine> wedgeBondLines = Outputs.BondLines
+                                                       .Where(l => (l.Style == BondLineStyle.Wedge || l.Style == BondLineStyle.Hatch)
+                                                                   && (l.Tail == thickBondLine.Start || l.Tail == thickBondLine.End))
+                                                       .ToList();
 
                 wedgeBondLines.Remove(thickBondLine);
 
                 if (wedgeBondLines.Any())
                 {
-                    var innerClip = new ClippingLine(thickBondLine.InnerStart, thickBondLine.InnerEnd, ClippingLineType.ExtendBoth);
-                    var outerClip = new ClippingLine(thickBondLine.OuterStart, thickBondLine.OuterEnd, ClippingLineType.ExtendBoth);
+                    ClippingLine innerClip = new ClippingLine(thickBondLine.InnerStart, thickBondLine.InnerEnd, ClippingLineType.ExtendBoth);
+                    ClippingLine outerClip = new ClippingLine(thickBondLine.OuterStart, thickBondLine.OuterEnd, ClippingLineType.ExtendBoth);
 
-                    foreach (var wedgeBondLine in wedgeBondLines)
+                    foreach (BondLine wedgeBondLine in wedgeBondLines)
                     {
-                        var leftClip = new ClippingLine(wedgeBondLine.Start, wedgeBondLine.LeftTail, ClippingLineType.ExtendEnd);
-                        var rightClip = new ClippingLine(wedgeBondLine.Start, wedgeBondLine.RightTail, ClippingLineType.ExtendEnd);
+                        ClippingLine leftClip = new ClippingLine(wedgeBondLine.Start, wedgeBondLine.LeftTail, ClippingLineType.ExtendEnd);
+                        ClippingLine rightClip = new ClippingLine(wedgeBondLine.Start, wedgeBondLine.RightTail, ClippingLineType.ExtendEnd);
 
                         UpdateTailIfIntersectingAndLonger(wedgeBondLine, leftClip, outerClip, isLeft: true);
                         UpdateTailIfIntersectingAndLonger(wedgeBondLine, rightClip, innerClip, isLeft: false);
@@ -217,23 +217,23 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void BeautifyWedgeOrHatchBondLines(List<BondLine> wedgeOrHatchBondLines)
         {
-            foreach (var thisBondLine in wedgeOrHatchBondLines)
+            foreach (BondLine thisBondLine in wedgeOrHatchBondLines)
             {
-                var otherBondLines = Outputs.BondLines
-                    .Where(l => l.Style != BondLineStyle.Thick
-                                && (l.Start == thisBondLine.Tail || l.End == thisBondLine.Tail))
-                    .ToList();
+                List<BondLine> otherBondLines = Outputs.BondLines
+                                                       .Where(l => l.Style != BondLineStyle.Thick
+                                                                   && (l.Start == thisBondLine.Tail || l.End == thisBondLine.Tail))
+                                                       .ToList();
 
                 otherBondLines.Remove(thisBondLine);
 
                 if (otherBondLines.Any())
                 {
-                    var thisLeftClip = new ClippingLine(thisBondLine.Start, thisBondLine.LeftTail, ClippingLineType.ExtendEnd);
-                    var thisRightClip = new ClippingLine(thisBondLine.Start, thisBondLine.RightTail, ClippingLineType.ExtendEnd);
+                    ClippingLine thisLeftClip = new ClippingLine(thisBondLine.Start, thisBondLine.LeftTail, ClippingLineType.ExtendEnd);
+                    ClippingLine thisRightClip = new ClippingLine(thisBondLine.Start, thisBondLine.RightTail, ClippingLineType.ExtendEnd);
 
-                    foreach (var otherBondLine in otherBondLines)
+                    foreach (BondLine otherBondLine in otherBondLines)
                     {
-                        var otherClip = otherBondLine.Start == thisBondLine.Tail
+                        ClippingLine otherClip = otherBondLine.Start == thisBondLine.Tail
                             ? new ClippingLine(otherBondLine.End, otherBondLine.Start, ClippingLineType.ExtendEnd)
                             : new ClippingLine(otherBondLine.Start, otherBondLine.End, ClippingLineType.ExtendEnd);
 
@@ -260,15 +260,15 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void DetectCrossingLines()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var model = Inputs.Model;
+            Model model = Inputs.Model;
 
-            var sw = new Stopwatch();
+            Stopwatch sw = new Stopwatch();
             sw.Start();
 
             model.DetectCrossingLines();
-            foreach (var crossedBond in model.CrossedBonds)
+            foreach (KeyValuePair<string, CrossedBonds> crossedBond in model.CrossedBonds)
             {
                 Outputs.CrossingPoints.Add(crossedBond.Value.CrossingPoint);
             }
@@ -278,7 +278,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void GenerateOutlinePoints(List<BondLine> bondLines)
         {
-            foreach (var bondLine in bondLines)
+            foreach (BondLine bondLine in bondLines)
             {
                 switch (bondLine.Style)
                 {
@@ -287,8 +287,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                         break;
 
                     case BondLineStyle.Wedge:
-                        var touching = GetTouchingBondLines(bondLine);
-                        var thick = touching.Where(t => t.Style == BondLineStyle.Thick);
+                        List<BondLine> touching = GetTouchingBondLines(bondLine);
+                        IEnumerable<BondLine> thick = touching.Where(t => t.Style == BondLineStyle.Thick);
                         if (thick.Any())
                         {
                             bondLine.CalculateOutlinePoints(Inputs.MeanBondLength * CoreConstants.ThickToDoubleScaleFactor);
@@ -308,12 +308,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private List<BondLine> GetTouchingBondLines(BondLine thisBondLine)
         {
-            var otherBondLines = Outputs.BondLines
-                                        .Where(l => l.Start == thisBondLine.End
-                                                    || l.End == thisBondLine.Start
-                                                    || l.End == thisBondLine.End
-                                                    || l.Start == thisBondLine.Start)
-                                        .ToList();
+            List<BondLine> otherBondLines = Outputs.BondLines
+                                                   .Where(l => l.Start == thisBondLine.End
+                                                               || l.End == thisBondLine.Start
+                                                               || l.End == thisBondLine.End
+                                                               || l.Start == thisBondLine.Start)
+                                                   .ToList();
             otherBondLines.Remove(thisBondLine);
 
             return otherBondLines;
@@ -323,11 +323,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                                string startPropName, string endPropName,
                                                Dictionary<string, Point> originalPoints)
         {
-            var intersection = GeometryTool.GetIntersection(line1.Start, line1.End, line2.Start, line2.End);
+            Point? intersection = GeometryTool.GetIntersection(line1.Start, line1.End, line2.Start, line2.End);
             if (!intersection.HasValue) return;
 
-            var originalStart = originalPoints[startPropName];
-            var originalEnd = originalPoints[endPropName];
+            Point originalStart = originalPoints[startPropName];
+            Point originalEnd = originalPoints[endPropName];
 
             if (IsLonger(originalStart - intersection.Value, originalStart - originalEnd))
             {
@@ -343,13 +343,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                               ClippingLine leftWedgeClippingLine, ClippingLine rightWedgeClippingLine,
                               ClippingLine innerClippingLine, ClippingLine outerClippingLine)
         {
-            var originalPoints = new Dictionary<string, Point>
-            {
-                { nameof(thickBondLine.InnerStart), thickBondLine.GetOriginalPoint(nameof(thickBondLine.InnerStart)) },
-                { nameof(thickBondLine.InnerEnd), thickBondLine.GetOriginalPoint(nameof(thickBondLine.InnerEnd)) },
-                { nameof(thickBondLine.OuterStart), thickBondLine.GetOriginalPoint(nameof(thickBondLine.OuterStart)) },
-                { nameof(thickBondLine.OuterEnd), thickBondLine.GetOriginalPoint(nameof(thickBondLine.OuterEnd)) }
-            };
+            Dictionary<string, Point> originalPoints = new Dictionary<string, Point>
+                                                       {
+                                                           { nameof(thickBondLine.InnerStart), thickBondLine.GetOriginalPoint(nameof(thickBondLine.InnerStart)) },
+                                                           { nameof(thickBondLine.InnerEnd), thickBondLine.GetOriginalPoint(nameof(thickBondLine.InnerEnd)) },
+                                                           { nameof(thickBondLine.OuterStart), thickBondLine.GetOriginalPoint(nameof(thickBondLine.OuterStart)) },
+                                                           { nameof(thickBondLine.OuterEnd), thickBondLine.GetOriginalPoint(nameof(thickBondLine.OuterEnd)) }
+                                                       };
 
             HandleIntersection(thickBondLine, leftWedgeClippingLine, outerClippingLine, nameof(thickBondLine.OuterStart), nameof(thickBondLine.OuterEnd), originalPoints);
             HandleIntersection(thickBondLine, rightWedgeClippingLine, innerClippingLine, nameof(thickBondLine.InnerStart), nameof(thickBondLine.InnerEnd), originalPoints);
@@ -381,7 +381,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void ShrinkBondLine(Point start, Point end, KeyValuePair<string, List<Point>> hull, BondLine bondLine, int index)
         {
-            var result = GeometryTool.ClipLineWithPolygon(start, end, hull.Value, out var lineStartsOutsidePolygon);
+            Point[] result = GeometryTool.ClipLineWithPolygon(start, end, hull.Value, out bool lineStartsOutsidePolygon);
 
             Point newStart;
             Point newEnd;
@@ -402,13 +402,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                 break;
 
                             case 1:
-                                var simple1 = new SimpleLine(newStart, newEnd).GetParallel(-bondLine.Offset);
+                                SimpleLine simple1 = new SimpleLine(newStart, newEnd).GetParallel(-bondLine.Offset);
                                 bondLine.Start = simple1.Start;
                                 bondLine.End = simple1.End;
                                 break;
 
                             case 2:
-                                var simple2 = new SimpleLine(newStart, newEnd).GetParallel(bondLine.Offset);
+                                SimpleLine simple2 = new SimpleLine(newStart, newEnd).GetParallel(bondLine.Offset);
                                 bondLine.Start = simple2.Start;
                                 bondLine.End = simple2.End;
                                 break;
@@ -427,13 +427,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                 break;
 
                             case 1:
-                                var simple1 = new SimpleLine(newStart, newEnd).GetParallel(-bondLine.Offset);
+                                SimpleLine simple1 = new SimpleLine(newStart, newEnd).GetParallel(-bondLine.Offset);
                                 bondLine.Start = simple1.Start;
                                 bondLine.End = simple1.End;
                                 break;
 
                             case 2:
-                                var simple2 = new SimpleLine(newStart, newEnd).GetParallel(bondLine.Offset);
+                                SimpleLine simple2 = new SimpleLine(newStart, newEnd).GetParallel(bondLine.Offset);
                                 bondLine.Start = simple2.Start;
                                 bondLine.End = simple2.End;
                                 break;
@@ -470,12 +470,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             pb.Value = 0;
             pb.Maximum = Outputs.AtomLabelCharacters.Count;
 
-            foreach (var alc in Outputs.AtomLabelCharacters)
+            foreach (AtomLabelCharacter alc in Outputs.AtomLabelCharacters)
             {
                 pb.Increment(1);
 
-                var width = OoXmlHelper.ScaleCsTtfToCml(alc.Character.Width, Inputs.MeanBondLength);
-                var height = OoXmlHelper.ScaleCsTtfToCml(alc.Character.Height, Inputs.MeanBondLength);
+                double width = OoXmlHelper.ScaleCsTtfToCml(alc.Character.Width, Inputs.MeanBondLength);
+                double height = OoXmlHelper.ScaleCsTtfToCml(alc.Character.Height, Inputs.MeanBondLength);
 
                 if (alc.IsSmaller)
                 {
@@ -485,13 +485,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 }
 
                 // Create rectangle of the bounding box with a suitable clipping margin
-                var cbb = new Rect(alc.Position.X - OoXmlConstants.CmlCharacterMargin,
-                                   alc.Position.Y - OoXmlConstants.CmlCharacterMargin,
-                                   width + (OoXmlConstants.CmlCharacterMargin * 2),
-                                   height + (OoXmlConstants.CmlCharacterMargin * 2));
+                Rect cbb = new Rect(alc.Position.X - OoXmlConstants.CmlCharacterMargin,
+                                    alc.Position.Y - OoXmlConstants.CmlCharacterMargin,
+                                    width + (OoXmlConstants.CmlCharacterMargin * 2),
+                                    height + (OoXmlConstants.CmlCharacterMargin * 2));
 
                 // Just in case we end up splitting a line into two
-                var extraBondLines = new List<BondLine>();
+                List<BondLine> extraBondLines = new List<BondLine>();
 
                 // Select Lines which may require trimming
                 // By using LINQ to implement the following SQL
@@ -500,25 +500,25 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 //    Or (L.Top Between Cbb.Top And Cbb.Botton)
                 //    Or (L.Bottom Between Cbb.Top And Cbb.Botton)
 
-                var bondLines = (from line in Outputs.BondLines
-                                 where (cbb.Left <= line.BoundingBox.Right && line.BoundingBox.Right <= cbb.Right)
-                                       || (cbb.Left <= line.BoundingBox.Left && line.BoundingBox.Left <= cbb.Right)
-                                       || (cbb.Top <= line.BoundingBox.Top && line.BoundingBox.Top <= cbb.Bottom)
-                                       || (cbb.Top <= line.BoundingBox.Bottom && line.BoundingBox.Bottom <= cbb.Bottom)
-                                 select line).ToList();
-                foreach (var bondLine in bondLines)
+                List<BondLine> bondLines = (from line in Outputs.BondLines
+                                            where (cbb.Left <= line.BoundingBox.Right && line.BoundingBox.Right <= cbb.Right)
+                                                  || (cbb.Left <= line.BoundingBox.Left && line.BoundingBox.Left <= cbb.Right)
+                                                  || (cbb.Top <= line.BoundingBox.Top && line.BoundingBox.Top <= cbb.Bottom)
+                                                  || (cbb.Top <= line.BoundingBox.Bottom && line.BoundingBox.Bottom <= cbb.Bottom)
+                                            select line).ToList();
+                foreach (BondLine bondLine in bondLines)
                 {
                     if (!(bondLine.Bond.Stereo == BondStereo.Wedge
                           || bondLine.Bond.Stereo == BondStereo.Hatch
                           || bondLine.Bond.Stereo == BondStereo.Hatch))
                     {
-                        var start = new Point(bondLine.Start.X, bondLine.Start.Y);
-                        var end = new Point(bondLine.End.X, bondLine.End.Y);
+                        Point start = new Point(bondLine.Start.X, bondLine.Start.Y);
+                        Point end = new Point(bondLine.End.X, bondLine.End.Y);
 
-                        var attempts = 0;
+                        int attempts = 0;
                         if (CohenSutherland.ClipLine(cbb, ref start, ref end, out attempts))
                         {
-                            var bClipped = false;
+                            bool bClipped = false;
 
                             if (Math.Abs(bondLine.Start.X - start.X) < CoreConstants.Epsilon && Math.Abs(bondLine.Start.Y - start.Y) < CoreConstants.Epsilon)
                             {
@@ -535,7 +535,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                             {
                                 // Line was clipped at both ends
                                 // 1. Generate new line
-                                var extraLine = new BondLine(bondLine.Style, new Point(end.X, end.Y), new Point(bondLine.End.X, bondLine.End.Y), bondLine.Bond);
+                                BondLine extraLine = new BondLine(bondLine.Style, new Point(end.X, end.Y), new Point(bondLine.End.X, bondLine.End.Y), bondLine.Bond);
                                 extraBondLines.Add(extraLine);
                                 // 2. Trim existing line
                                 bondLine.End = new Point(start.X, start.Y);
@@ -549,7 +549,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 }
 
                 // Add any extra lines generated by this character into the List of Bond Lines
-                foreach (var bl in extraBondLines)
+                foreach (BondLine bl in extraBondLines)
                 {
                     Outputs.BondLines.Add(bl);
                 }
@@ -623,19 +623,19 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         private bool TrimBondLine(BondLine leftOrRight, BondLine line, bool isInRing)
         {
             // Make a longer version of the line
-            var startLonger = new Point(leftOrRight.Start.X, leftOrRight.Start.Y);
-            var endLonger = new Point(leftOrRight.End.X, leftOrRight.End.Y);
+            Point startLonger = new Point(leftOrRight.Start.X, leftOrRight.Start.Y);
+            Point endLonger = new Point(leftOrRight.End.X, leftOrRight.End.Y);
             GeometryTool.AdjustLineAboutMidpoint(ref startLonger, ref endLonger, Inputs.MeanBondLength / 5);
 
             // See if they intersect at one end
-            var crossingPoint = GeometryTool.GetIntersection(startLonger, endLonger, line.Start, line.End);
+            Point? crossingPoint = GeometryTool.GetIntersection(startLonger, endLonger, line.Start, line.End);
 
             // If they intersect update the main line
             bool crosses = crossingPoint != null;
             if (crosses)
             {
-                var l1 = GeometryTool.DistanceBetween(crossingPoint.Value, leftOrRight.Start);
-                var l2 = GeometryTool.DistanceBetween(crossingPoint.Value, leftOrRight.End);
+                double l1 = GeometryTool.DistanceBetween(crossingPoint.Value, leftOrRight.Start);
+                double l2 = GeometryTool.DistanceBetween(crossingPoint.Value, leftOrRight.End);
                 if (l1 > l2)
                 {
                     leftOrRight.End = new Point(crossingPoint.Value.X, crossingPoint.Value.Y);
@@ -678,11 +678,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void UpdatedTailPointsOfSharedWedges(BondLine thisBondLine, BondLine otherBondLine, ClippingLine thisLeftClip, ClippingLine thisRightClip)
         {
-            var otherLeftTail = otherBondLine.GetOriginalPoint(nameof(otherBondLine.LeftTail));
-            var otherRightTail = otherBondLine.GetOriginalPoint(nameof(otherBondLine.RightTail));
+            Point otherLeftTail = otherBondLine.GetOriginalPoint(nameof(otherBondLine.LeftTail));
+            Point otherRightTail = otherBondLine.GetOriginalPoint(nameof(otherBondLine.RightTail));
 
-            var otherLeftClip = new ClippingLine(otherBondLine.Nose, otherLeftTail, ClippingLineType.ExtendEnd);
-            var otherRightClip = new ClippingLine(otherBondLine.Nose, otherRightTail, ClippingLineType.ExtendEnd);
+            ClippingLine otherLeftClip = new ClippingLine(otherBondLine.Nose, otherLeftTail, ClippingLineType.ExtendEnd);
+            ClippingLine otherRightClip = new ClippingLine(otherBondLine.Nose, otherRightTail, ClippingLineType.ExtendEnd);
 
             UpdateTailIfIntersectingAndLonger(otherBondLine, otherLeftClip, thisLeftClip, isLeft: true);
             UpdateTailIfIntersectingAndLonger(otherBondLine, otherRightClip, thisRightClip, isLeft: false);
@@ -692,7 +692,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void UpdateTailIfIntersecting(BondLine bondLine, ClippingLine bondClip, ClippingLine otherClip, bool isLeft)
         {
-            var intersection = GeometryTool.GetIntersection(bondClip.Start, bondClip.End, otherClip.Start, otherClip.End);
+            Point? intersection = GeometryTool.GetIntersection(bondClip.Start, bondClip.End, otherClip.Start, otherClip.End);
             if (intersection.HasValue)
             {
                 if (isLeft)
@@ -708,10 +708,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void UpdateTailIfIntersectingAndLonger(BondLine bondLine, ClippingLine bondClip, ClippingLine otherClip, bool isLeft)
         {
-            var intersection = GeometryTool.GetIntersection(bondClip.Start, bondClip.End, otherClip.Start, otherClip.End);
+            Point? intersection = GeometryTool.GetIntersection(bondClip.Start, bondClip.End, otherClip.Start, otherClip.End);
             if (intersection.HasValue)
             {
-                var currentTail = isLeft ? bondLine.LeftTail : bondLine.RightTail;
+                Point currentTail = isLeft ? bondLine.LeftTail : bondLine.RightTail;
                 if (IsLonger(bondLine.Start - intersection.Value, bondLine.Start - currentTail))
                 {
                     if (isLeft)

@@ -39,20 +39,20 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnLoad_Settings(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
                 if (!PointHelper.PointIsEmpty(TopLeft))
                 {
                     Left = (int)TopLeft.X;
                     Top = (int)TopLeft.Y;
-                    var screen = Screen.FromControl(this);
-                    var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
+                    Screen screen = Screen.FromControl(this);
+                    Point sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                     Left = (int)sensible.X;
                     Top = (int)sensible.Y;
                 }
 
-                var tab1 = tabControlEx.TabPages[nameof(Rendering)];
+                TabPage tab1 = tabControlEx.TabPages[nameof(Rendering)];
                 if (!tab1.HasChildren)
                 {
                     tabControlEx.TabPages.Remove(Rendering);
@@ -74,7 +74,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnClick_Ok(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -91,11 +91,11 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnClick_SetDefaults(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
-                var dr = UserInteractions.AskUserOkCancel("Restore default settings");
+                DialogResult dr = UserInteractions.AskUserOkCancel("Restore default settings");
                 if (dr == DialogResult.OK)
                 {
                     RendererOptions.RestoreDefaults();
@@ -128,7 +128,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnFormClosing_Settings(object sender, FormClosingEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -140,12 +140,12 @@ namespace Chem4Word.Renderer.OoXmlV4
             }
             if (_dirty)
             {
-                var sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
                 sb.AppendLine("Do you wish to save your changes?");
                 sb.AppendLine("  Click 'Yes' to save your changes and exit.");
                 sb.AppendLine("  Click 'No' to discard your changes and exit.");
                 sb.AppendLine("  Click 'Cancel' to return to the form.");
-                var dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
+                DialogResult dr = UserInteractions.AskUserYesNoCancel(sb.ToString());
                 switch (dr)
                 {
                     case DialogResult.Cancel:
@@ -166,7 +166,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ClipLines(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -181,7 +181,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowRingCentres(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -196,7 +196,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowMoleculeBox(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -211,7 +211,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowCharacterBox(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -226,7 +226,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowAtomCentres(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -241,7 +241,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowConvexHulls(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -256,7 +256,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowDoubleBondTrimmingLines(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -271,7 +271,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowBondDirection(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -286,7 +286,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowCharacterGroupsBox(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -301,7 +301,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowBondCrossingPoints(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {
@@ -316,7 +316,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ClipCrossingBonds(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
             try
             {

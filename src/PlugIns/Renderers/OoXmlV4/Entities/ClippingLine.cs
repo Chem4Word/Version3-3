@@ -44,8 +44,8 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         private static Point GetExtendedLineEndPoint(Point p1, Point p2)
         {
-            var newX = p1.X + 2 * (p2.X - p1.X);
-            var newY = p1.Y + 2 * (p2.Y - p1.Y);
+            double newX = p1.X + 2 * (p2.X - p1.X);
+            double newY = p1.Y + 2 * (p2.Y - p1.Y);
 
             return new Point(newX, newY);
         }

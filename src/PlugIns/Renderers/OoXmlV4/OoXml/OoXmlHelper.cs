@@ -19,27 +19,27 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         public static Rect GetAllCharacterExtents(Model model, RendererOutputs outputs)
         {
-            var characterExtents = model.BoundingBoxOfCmlPoints;
+            Rect characterExtents = model.BoundingBoxOfCmlPoints;
 
-            foreach (var alc in outputs.AtomLabelCharacters)
+            foreach (AtomLabelCharacter alc in outputs.AtomLabelCharacters)
             {
                 if (alc.IsSmaller)
                 {
-                    var r = new Rect(alc.Position,
-                                     new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor,
-                                              ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor));
+                    Rect r = new Rect(alc.Position,
+                                      new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor,
+                                               ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor));
                     characterExtents.Union(r);
                 }
                 else
                 {
-                    var r = new Rect(alc.Position,
-                                     new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength),
-                                              ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength)));
+                    Rect r = new Rect(alc.Position,
+                                      new Size(ScaleCsTtfToCml(alc.Character.Width, model.MeanBondLength),
+                                               ScaleCsTtfToCml(alc.Character.Height, model.MeanBondLength)));
                     characterExtents.Union(r);
                 }
             }
 
-            foreach (var group in outputs.AllMoleculeExtents)
+            foreach (MoleculeExtents group in outputs.AllMoleculeExtents)
             {
                 characterExtents.Union(group.ExternalCharacterExtents);
             }
@@ -66,7 +66,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         /// <returns></returns>
         public static Int64Value ScaleCmlToEmu(double XorY)
         {
-            var scaled = XorY * OoXmlConstants.EmusPerCmlPoint;
+            double scaled = XorY * OoXmlConstants.EmusPerCmlPoint;
             return Int64Value.FromInt64((long)scaled);
         }
 
@@ -85,12 +85,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         {
             if (bondLength > 0.1)
             {
-                var scaled = XorY * EmusPerCsTtfPointSubscript(bondLength);
+                double scaled = XorY * EmusPerCsTtfPointSubscript(bondLength);
                 return Int64Value.FromInt64((long)scaled);
             }
             else
             {
-                var scaled = XorY * EmusPerCsTtfPointSubscript(20);
+                double scaled = XorY * EmusPerCsTtfPointSubscript(20);
                 return Int64Value.FromInt64((long)scaled);
             }
         }
@@ -123,12 +123,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         {
             if (bondLength > 0.1)
             {
-                var scaled = XorY * EmusPerCsTtfPoint(bondLength);
+                double scaled = XorY * EmusPerCsTtfPoint(bondLength);
                 return Int64Value.FromInt64((long)scaled);
             }
             else
             {
-                var scaled = XorY * EmusPerCsTtfPoint(20);
+                double scaled = XorY * EmusPerCsTtfPoint(20);
                 return Int64Value.FromInt64((long)scaled);
             }
         }
