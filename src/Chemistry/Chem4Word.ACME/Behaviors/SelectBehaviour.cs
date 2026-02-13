@@ -248,7 +248,7 @@ namespace Chem4Word.ACME.Behaviors
                 case ElectronPusherVisual epv:
                     _lassoHits.Add((epv.ParentPusher));
                     break;
-                
+
                 case AtomVisual av:
                     {
                         var selAtom = av.ParentAtom;
@@ -273,7 +273,6 @@ namespace Chem4Word.ACME.Behaviors
                 case AnnotationVisual anv:
                     _lassoHits.Add(anv.ParentAnnotation);
                     break;
-             
             }
             return HitTestResultBehavior.Continue;
         }
@@ -479,9 +478,11 @@ namespace Chem4Word.ACME.Behaviors
                 case AtomVisual av:
                     currentObject = av.ParentAtom;
                     break;
+
                 case BondVisual bv:
                     currentObject = bv.ParentBond;
                     break;
+
                 case ReactionVisual rv:
                     currentObject = rv.ParentReaction;
                     break;
@@ -543,7 +544,7 @@ namespace Chem4Word.ACME.Behaviors
                 {
                     var currentObject = CurrentObject(e);
 
-                    if (!(currentObject != null || KeyboardUtils.HoldingDownShift() ))
+                    if (!(currentObject != null || KeyboardUtils.HoldingDownShift()))
                     {
                         EditController.ClearSelection();
                     }

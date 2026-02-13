@@ -149,7 +149,7 @@ namespace Chem4Word.Model2
         {
             _electronPushers[newPusher.InternalId] = newPusher;
             NotifyCollectionChangedEventArgs e =
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<ElectronPusher> { newPusher});
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<ElectronPusher> { newPusher });
             UpdateElectronPushersEventHandlers(e);
             OnElectronPushersChanged(this, e);
         }
@@ -967,7 +967,6 @@ namespace Chem4Word.Model2
             {
                 foreach (ElectronPusher electronPusher in ElectronPushers.Values)
                 {
-                   
                     electronPusher.ReLabel(ref electronPusherCount);
                 }
             }

@@ -34,7 +34,7 @@ namespace Chem4Word.Model2.Formula
 
                         if (absCharge > 0)
                         {
-                            if (Count > 0 )
+                            if (Count > 0)
                             {
                                 value = Count > 1 ? $"+ {absCharge}" : "+";
                             }
@@ -76,6 +76,7 @@ namespace Chem4Word.Model2.Formula
             Text = text;
             Count = count;
         }
+
         public override string ToString()
         {
             return $"{Value} - {PartType}";

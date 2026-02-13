@@ -183,6 +183,7 @@ namespace Chem4Word.ACME.Behaviors
                     {
                         case ElectronPusherVisual epv:
                             break;
+
                         case ReactionVisual _:
                             CurrentStatus = (AcmeConstants.ReactionTypeStdMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             CurrentEditor.Cursor = CursorUtils.Pencil;
@@ -505,7 +506,7 @@ namespace Chem4Word.ACME.Behaviors
             }
             else if (chemicalVisual is ElectronPusherVisual ev)
             {
-                
+                //Traps the event so it doesn't get trapped by an AtomVisual pattern (a supertype)
             }
             else
             {
@@ -534,7 +535,7 @@ namespace Chem4Word.ACME.Behaviors
 
         private bool Dragging(MouseEventArgs e)
         {
-            return e.LeftButton == MouseButtonState.Pressed & IsDrawing;
+            return e.LeftButton == MouseButtonState.Pressed && IsDrawing;
         }
 
         protected override void OnDetaching()

@@ -371,7 +371,7 @@ namespace Chem4Word.ACME
 
             List<Annotation> allAnnotations = (from r in newObjects.OfType<Annotation>().Union(SelectedItems.OfType<Annotation>())
                                                select r).ToList();
-            List<ElectronPusher> allPushers = (from ep in newObjects.OfType<ElectronPusher>() .Union(SelectedItems.OfType<ElectronPusher>())
+            List<ElectronPusher> allPushers = (from ep in newObjects.OfType<ElectronPusher>().Union(SelectedItems.OfType<ElectronPusher>())
                                                select ep).ToList();
 
             bool allSingletons = singleAtomMols.Count == allMolecules.Count && singleAtomMols.Any();
@@ -466,7 +466,7 @@ namespace Chem4Word.ACME
                     if (allPushers.Any())
                     {
                         ElectronPusher ep = allPushers.First();
-                        ElectronPusherSelectionAdorner pusherAdorner 
+                        ElectronPusherSelectionAdorner pusherAdorner
                             = new ElectronPusherSelectionAdorner(EditingCanvas,
                                                                  EditingCanvas.ChemicalVisuals[ep] as ElectronPusherVisual);
                     }
@@ -709,7 +709,7 @@ namespace Chem4Word.ACME
                 }
 
                 //add the electron pushers
-                List<ElectronPusher> newElectronPushers  = thingsToAdd.OfType<ElectronPusher>().ToList();
+                List<ElectronPusher> newElectronPushers = thingsToAdd.OfType<ElectronPusher>().ToList();
 
                 foreach (ElectronPusher electronPusher in newElectronPushers)
                 {

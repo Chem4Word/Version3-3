@@ -70,7 +70,7 @@ namespace Chem4Word.ACME.Graphics
         }
 
         /// <summary>
-        /// Sets the length of the arrow head as a fraction of the total length of the line. 
+        /// Sets the length of the arrow head as a fraction of the total length of the line.
         /// </summary>
         public static readonly DependencyProperty HeadFractionLengthProperty = DependencyProperty.Register(
             nameof(HeadFractionLength), typeof(double), typeof(Arrow), new PropertyMetadata(0.10d));
@@ -143,7 +143,7 @@ namespace Chem4Word.ACME.Graphics
         {
             double localHeadLength;
             var length = GetPathFigureLength(line);
-          
+
             localHeadLength = GetWorkingHeadLength(length);
             var headAngleInRadians = HeadAngle / 360 * 2 * Math.PI;
 
@@ -218,7 +218,7 @@ namespace Chem4Word.ACME.Graphics
         {
             double localHeadLength;
             localHeadLength = HeadFractionLength * length;
-            
+
             localHeadLength = Math.Min(localHeadLength, MaxHeadLength);
             return localHeadLength;
         }

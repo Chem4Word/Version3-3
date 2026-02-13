@@ -57,7 +57,8 @@ namespace Chem4Word.ACME.Models
 
         public Model MicroModel { get; set; }
 
-        public Atom Atom { get { return MicroModel.GetAllAtoms().FirstOrDefault(); } }
+        public Atom Atom
+        { get { return MicroModel.GetAllAtoms().FirstOrDefault(); } }
 
         public bool HasIsotopes
         {

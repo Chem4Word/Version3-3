@@ -101,9 +101,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             // Initialise progress monitoring
             Progress progress = new Progress
-                                {
-                                    TopLeft = _topLeft
-                                };
+            {
+                TopLeft = _topLeft
+            };
 
             _inputs = new RendererInputs
             {
@@ -380,9 +380,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 foreach (InnerCircle innerCircle in _outputs.InnerCircles)
                 {
                     InnerCircle smallerCircle = new InnerCircle
-                                                {
-                                                    Centre = innerCircle.Centre
-                                                };
+                    {
+                        Centre = innerCircle.Centre
+                    };
                     // Move all points towards centre
                     foreach (Point point in innerCircle.Points)
                     {
@@ -575,20 +575,20 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             A.Point MakeSubscriptPoint(TtfPoint ttfPoint)
             {
                 A.Point pp = new A.Point
-                             {
-                                 X = $"{OoXmlHelper.ScaleCsTtfSubScriptToEmu(ttfPoint.X - alc.Character.OriginX, _meanBondLength)}",
-                                 Y = $"{OoXmlHelper.ScaleCsTtfSubScriptToEmu(alc.Character.Height + ttfPoint.Y - (alc.Character.Height + alc.Character.OriginY), _meanBondLength)}"
-                             };
+                {
+                    X = $"{OoXmlHelper.ScaleCsTtfSubScriptToEmu(ttfPoint.X - alc.Character.OriginX, _meanBondLength)}",
+                    Y = $"{OoXmlHelper.ScaleCsTtfSubScriptToEmu(alc.Character.Height + ttfPoint.Y - (alc.Character.Height + alc.Character.OriginY), _meanBondLength)}"
+                };
                 return pp;
             }
 
             A.Point MakeNormalPoint(TtfPoint ttfPoint)
             {
                 A.Point pp = new A.Point
-                             {
-                                 X = $"{OoXmlHelper.ScaleCsTtfToEmu(ttfPoint.X - alc.Character.OriginX, _meanBondLength)}",
-                                 Y = $"{OoXmlHelper.ScaleCsTtfToEmu(alc.Character.Height + ttfPoint.Y - (alc.Character.Height + alc.Character.OriginY), _meanBondLength)}"
-                             };
+                {
+                    X = $"{OoXmlHelper.ScaleCsTtfToEmu(ttfPoint.X - alc.Character.OriginX, _meanBondLength)}",
+                    Y = $"{OoXmlHelper.ScaleCsTtfToEmu(alc.Character.Height + ttfPoint.Y - (alc.Character.Height + alc.Character.OriginY), _meanBondLength)}"
+                };
                 return pp;
             }
         }
@@ -656,12 +656,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             run.Append(drawing);
 
             Wp.Inline inline = new Wp.Inline
-                               {
-                                   DistanceFromTop = (UInt32Value)0U,
-                                   DistanceFromLeft = (UInt32Value)0U,
-                                   DistanceFromBottom = (UInt32Value)0U,
-                                   DistanceFromRight = (UInt32Value)0U
-                               };
+            {
+                DistanceFromTop = (UInt32Value)0U,
+                DistanceFromLeft = (UInt32Value)0U,
+                DistanceFromBottom = (UInt32Value)0U,
+                DistanceFromRight = (UInt32Value)0U
+            };
             drawing.Append(inline);
 
             Int64Value width = OoXmlHelper.ScaleCmlToEmu(_boundingBoxOfEverything.Width);
@@ -670,22 +670,22 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             Wp.Extent extent = new Wp.Extent { Cx = width, Cy = height };
 
             Wp.EffectExtent effectExtent = new Wp.EffectExtent
-                                           {
-                                               TopEdge = 0L,
-                                               LeftEdge = 0L,
-                                               BottomEdge = 0L,
-                                               RightEdge = 0L
-                                           };
+            {
+                TopEdge = 0L,
+                LeftEdge = 0L,
+                BottomEdge = 0L,
+                RightEdge = 0L
+            };
 
             inline.Append(extent);
             inline.Append(effectExtent);
 
             UInt32Value inlineId = UInt32Value.FromUInt32((uint)_ooxmlId);
             Wp.DocProperties docProperties = new Wp.DocProperties
-                                             {
-                                                 Id = inlineId,
-                                                 Name = "Chem4Word Structure"
-                                             };
+            {
+                Id = inlineId,
+                Name = "Chem4Word Structure"
+            };
 
             inline.Append(docProperties);
 
@@ -695,9 +695,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             inline.Append(graphic);
 
             A.GraphicData graphicData = new A.GraphicData
-                                        {
-                                            Uri = "http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
-                                        };
+            {
+                Uri = "http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
+            };
 
             graphic.Append(graphicData);
 
@@ -1169,20 +1169,20 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 A.MoveTo moveTo = new A.MoveTo();
                 A.Point startPoint = new A.Point
-                                     {
-                                         X = line.Start.X.ToString("0"),
-                                         Y = line.Start.Y.ToString("0")
-                                     };
+                {
+                    X = line.Start.X.ToString("0"),
+                    Y = line.Start.Y.ToString("0")
+                };
 
                 moveTo.Append(startPoint);
                 path.Append(moveTo);
 
                 A.LineTo lineTo = new A.LineTo();
                 A.Point endPoint = new A.Point
-                                   {
-                                       X = line.End.X.ToString("0"),
-                                       Y = line.End.Y.ToString("0")
-                                   };
+                {
+                    X = line.End.X.ToString("0"),
+                    Y = line.End.Y.ToString("0")
+                };
                 lineTo.Append(endPoint);
                 path.Append(lineTo);
 
@@ -1871,21 +1871,21 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             // Add Arrow Head
             A.HeadEnd headEnd = new A.HeadEnd
-                                {
-                                    Type = A.LineEndValues.Triangle,
-                                    Width = A.LineEndWidthValues.Small,
-                                    Length = A.LineEndLengthValues.Small
-                                };
+            {
+                Type = A.LineEndValues.Triangle,
+                Width = A.LineEndWidthValues.Small,
+                Length = A.LineEndLengthValues.Small
+            };
             outline.Append(headEnd);
 
             if (reaction.ReactionType == ReactionType.Resonance)
             {
                 A.TailEnd tailEnd = new A.TailEnd
-                                    {
-                                        Type = A.LineEndValues.Triangle,
-                                        Width = A.LineEndWidthValues.Small,
-                                        Length = A.LineEndLengthValues.Small
-                                    };
+                {
+                    Type = A.LineEndValues.Triangle,
+                    Width = A.LineEndWidthValues.Small,
+                    Length = A.LineEndLengthValues.Small
+                };
                 outline.Append(tailEnd);
             }
 
@@ -2016,11 +2016,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 //  don't know why but our lines start at the OoXml end and finish at the OoXml start
 
                 A.TailEnd tailEnd = new A.TailEnd
-                                    {
-                                        Type = A.LineEndValues.Arrow,
-                                        Width = A.LineEndWidthValues.Small,
-                                        Length = A.LineEndLengthValues.Small
-                                    };
+                {
+                    Type = A.LineEndValues.Arrow,
+                    Width = A.LineEndWidthValues.Small,
+                    Length = A.LineEndLengthValues.Small
+                };
                 outline.Append(tailEnd);
             }
 

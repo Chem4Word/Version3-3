@@ -6,21 +6,20 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Drawing.Text;
+using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Enums;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
-using Geometry = Chem4Word.ACME.Utils.Geometry;
 
 namespace Chem4Word.ACME.Drawing.Visuals
 {
     public class FunctionalGroupVisual : AtomVisual
     {
-        private List<Point> _sortedOutline;
         private List<Point> _hull;
         public FunctionalGroup ParentGroup { get; }
         public bool Flipped => ParentAtom.FunctionalGroupPlacement == CompassPoints.West;
@@ -163,7 +162,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             dc.DrawRectangle(null, new Pen(new SolidColorBrush(Colors.LightGreen) {Opacity = 0.4}, 1.0), rect);
 #endif
 #endif
-                            var runOutline = Geometry.GetOutline(currentRun);
+                            var runOutline = WPFGeometry.GetOutline(currentRun);
                             //need to see if the run has been super or sub-scripted
                             var variants = originalRun.Properties.TypographyProperties.Variants;
 
@@ -193,11 +192,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             advanceWidths += currentRun.AdvanceWidths.Sum();
                         }
 
-                        _sortedOutline = (from Point p in outline
-                                          orderby p.X ascending, p.Y descending
-                                          select p).ToList();
-
-                        _hull = Geometry<Point>.GetHull(_sortedOutline, p => p);
+                        _hull = GeometryTool.MakeConvexHull(outline);
                         // Diag: Show Hulls or Atom centres
 #if DEBUG
 #if SHOWHULLS
@@ -220,7 +215,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             {
                 //need to combine the actually filled atom area
                 //with a stroked outline of it, to give a sufficient margin
-                System.Windows.Media.Geometry geo1 = Utils.Geometry.BuildPolyPath(Hull);
+                System.Windows.Media.Geometry geo1 = Utils.WPFGeometry.BuildPolyPath(Hull);
                 CombinedGeometry cg = new CombinedGeometry(geo1, geo1.GetWidenedPathGeometry(new Pen(Brushes.Black, Standoff)));
                 return cg;
             }

@@ -145,9 +145,9 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 _draggedControlPoint = DraggedControlPoint.SecondControlPoint;
             }
 
-            Resizing= _draggedControlPoint == DraggedControlPoint.FirstControlPoint ||
+            Resizing = _draggedControlPoint == DraggedControlPoint.FirstControlPoint ||
                       _draggedControlPoint == DraggedControlPoint.SecondControlPoint;
-            
+
             e.Handled = true;
         }
 
@@ -179,7 +179,6 @@ namespace Chem4Word.ACME.Adorners.Selectors
             MouseMove -= ThisAdorner_MouseMove;
         }
 
-      
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);

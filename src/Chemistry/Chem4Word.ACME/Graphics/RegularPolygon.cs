@@ -68,7 +68,7 @@ namespace Chem4Word.ACME.Graphics
                     rotator.Rotate(extAngle);
                 }
 
-                var path = Utils.Geometry.BuildPath(pathPoints, true);
+                var path = Utils.WPFGeometry.BuildPath(pathPoints, true);
                 return path;
             }
         }

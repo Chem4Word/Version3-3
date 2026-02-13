@@ -9,9 +9,7 @@ using Chem4Word.ACME.Drawing.Text;
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Geometry;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using static Chem4Word.ACME.Drawing.Text.GlyphUtils;
@@ -81,11 +79,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     tempHull.AddRange(electronVisual.Metrics.Corners);
                 }
 
-                var sortedHull = (from Point p in tempHull
-                                  orderby p.X, p.Y descending
-                                  select p).ToList();
-
-                return Geometry<Point>.GetHull(sortedHull, p => p);
+                return GeometryTool.MakeConvexHull(tempHull);
             }
         }
 
@@ -105,7 +99,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         public Dictionary<string, ElectronVisual> ElectronVisuals { get; }
 
-        private List<Visual> children = new List<Visual>();
+        private readonly List<Visual> children = new List<Visual>();
 
         public double SymbolSize { get; set; }
         public Point Position { get; set; }
@@ -250,10 +244,10 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         private void ShowHull(List<Point> points, DrawingContext drawingContext)
         {
-            var path = Utils.Geometry.BuildPath(points);
+            var path = Utils.WPFGeometry.BuildPath(points);
             // Diag: Show the Hull or it's Points
 #if SHOWHULLS
-            drawingContext.DrawGeometry(null, new Pen(new SolidColorBrush(Colors.GreenYellow), 0.01), path.Data);
+            drawingContext.DrawGeometry(null, new Pen(new SolidColorBrush(Colors.Orange), 0.01), path.Data);
             //ShowPoints(Hull, drawingContext);
 #endif
             // End Diag
@@ -373,7 +367,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             {
                 if (Hull != null && Hull.Count != 0)
                 {
-                    Geometry geo1 = Utils.Geometry.BuildPolyPath(Hull);
+                    Geometry geo1 = Utils.WPFGeometry.BuildPolyPath(Hull);
                     CombinedGeometry cg = new CombinedGeometry(geo1,
                                                                geo1.GetWidenedPathGeometry(new Pen(Brushes.Black, Standoff)));
                     return cg;

@@ -471,9 +471,7 @@
                         </Grid>
                     </Grid>
                 </Grid>
-
             </StackPanel>
-
         </Grid>
 
         <!--  Finally, the Save and Cancel buttons  -->
@@ -498,8 +496,6 @@
                 Click="OnClick_Close"
                 Content="Cancel"
                 Style="{StaticResource Acme.Control.Button.DialogButton}" />
-
         </StackPanel>
     </Grid>
-
 </Window>

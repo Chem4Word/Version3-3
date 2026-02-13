@@ -73,7 +73,6 @@ namespace Chem4Word.ACME.Behaviors
                         break;
                     }
 
-
                 case HydrogenVisual _:
                     //bail out - we shouldn't be deleting implicit Hs
                     return;

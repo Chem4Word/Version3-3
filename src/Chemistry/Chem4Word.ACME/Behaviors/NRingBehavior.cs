@@ -404,7 +404,7 @@ namespace Chem4Word.ACME.Behaviors
             //try to work out exactly where best to place the ring
 
             preferredPlacements = MarkOutAtoms(hitAtom, direction, xamlBondSize, ringSize);
-            if (Utils.Geometry.Overlaps(parentMolecule, preferredPlacements, new List<Atom> { hitAtom }))
+            if (Utils.WPFGeometry.Overlaps(parentMolecule, preferredPlacements, new List<Atom> { hitAtom }))
             {
                 preferredPlacements = null;
             }

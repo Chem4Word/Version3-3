@@ -62,7 +62,7 @@ namespace Chem4Word.ACME.Graphics
         {
             get
             {
-                return Math.Sqrt((EndPoint-StartPoint).LengthSquared);
+                return Math.Sqrt((EndPoint - StartPoint).LengthSquared);
             }
         }
     }

@@ -6,15 +6,14 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Drawing.Text;
+using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Geometry;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using Geometry = Chem4Word.ACME.Utils.Geometry;
 
 namespace Chem4Word.ACME.Drawing.Visuals
 {
@@ -122,20 +121,14 @@ namespace Chem4Word.ACME.Drawing.Visuals
             };
 
             //fix the hull for future use
-            CoreHull = Geometry.GetGeoPoints(overlay);
+            CoreHull = WPFGeometry.GetGeoPoints(overlay);
         }
 
         public override List<Point> Hull
         {
             get
             {
-                List<Point> tempHull = new List<Point>(CoreHull);
-
-                var sortedHull = (from Point p in tempHull
-                                  orderby p.X, p.Y descending
-                                  select p).ToList();
-
-                return Geometry<Point>.GetHull(sortedHull, p => p);
+                return GeometryTool.MakeConvexHull(CoreHull);
             }
         }
 
@@ -146,8 +139,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 if (_centroid is null)
                 {
                     var convexHull = GeometryTool.MakeConvexHull(Hull);
-                    _centroid =Geometry<Point>.GetCentroid(convexHull.ToArray(), p => p);
-
+                    _centroid = Geometry<Point>.GetCentroid(convexHull.ToArray(), p => p);
                 }
                 return _centroid.Value;
             }

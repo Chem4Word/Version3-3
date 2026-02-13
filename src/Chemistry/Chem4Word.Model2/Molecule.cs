@@ -428,7 +428,6 @@ namespace Chem4Word.Model2
             }
         }
 
-
         /// <summary>
         /// Returns a list of all electron pushers associated with the molecule
         /// </summary>
@@ -452,7 +451,7 @@ namespace Chem4Word.Model2
                         {
                             foreach (StructuralObject chemistry in ep.Value.EndChemistries)
                             {
-                                if (Atoms.Values.Contains(chemistry)||Bonds.Contains(chemistry))
+                                if (Atoms.Values.Contains(chemistry) || Bonds.Contains(chemistry))
                                 {
                                     yield return ep.Value;
                                     break;

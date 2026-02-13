@@ -1,12 +1,8 @@
 ﻿using Chem4Word.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace Chem4Word.ACME.Graphics
 {
@@ -15,7 +11,7 @@ namespace Chem4Word.ACME.Graphics
         public Vector BarbOffset(Point startPoint, Point endPoint)
         {
             var shaftLength = GetPathFigureLength(Shaft());
-            var shaftVector = endPoint-startPoint;
+            var shaftVector = endPoint - startPoint;
             var whl = GetWorkingHeadLength(shaftLength);
             shaftVector.Normalize();
             var barbOffset = whl * Math.Abs(Math.Sin(HeadAngle)) * shaftVector;

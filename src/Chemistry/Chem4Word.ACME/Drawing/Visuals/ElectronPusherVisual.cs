@@ -65,10 +65,10 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 bool doubleHeaded = ParentPusher.PusherType == ElectronPusherType.DoubleArrow;
                 arrow = new BezierArrow
                 {
-                StartPoint = lineStart.Value,
+                    StartPoint = lineStart.Value,
                     FirstControlPoint = ParentPusher.FirstControlPoint,
                     SecondControlPoint = ParentPusher.SecondControlPoint,
-                EndPoint = lineEnd.Value,
+                    EndPoint = lineEnd.Value,
                     MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
                     HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
                     ArrowHeadClosed = true,
@@ -83,15 +83,15 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 var newFishHook = new FishHookArrow
                 {
                     StartPoint = lineStart.Value,
-                FirstControlPoint = ParentPusher.FirstControlPoint,
-                SecondControlPoint = ParentPusher.SecondControlPoint,
+                    FirstControlPoint = ParentPusher.FirstControlPoint,
+                    SecondControlPoint = ParentPusher.SecondControlPoint,
                     EndPoint = lineEnd.Value,
-                MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
-                HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
+                    MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
+                    HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
                     ArrowHeadClosed = true,
-                  
+
                     Stroke = outline.Brush
-            };
+                };
                 var offset = newFishHook.BarbOffset(ParentPusher.StartPoint, ParentPusher.EndPoint);
                 newFishHook.EndPoint -= offset;
                 arrow = newFishHook;

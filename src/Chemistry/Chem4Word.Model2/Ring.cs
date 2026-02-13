@@ -154,24 +154,6 @@ namespace Chem4Word.Model2
             }
         }
 
-        public List<Atom> ConvexHull
-        {
-            get
-            {
-                var atomList = AtomsSortedForHull();
-
-                return Geometry<Atom>.GetHull(atomList, atom => atom.Position);
-            }
-        }
-
-        private IOrderedEnumerable<Atom> AtomsSortedForHull()
-        {
-            var atomList = from Atom a in Atoms
-                           orderby a.Position.X, a.Position.Y descending
-                           select a;
-            return atomList;
-        }
-
         //generates a unique ID for each ring based on the atom hash codes()
         public string UniqueID
         {

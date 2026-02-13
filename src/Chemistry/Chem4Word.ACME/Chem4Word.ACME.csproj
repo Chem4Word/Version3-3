@@ -317,7 +317,7 @@
     <Compile Include="Utils\ClipboardMonitor.cs" />
     <Compile Include="ACMEGlobals.cs" />
     <Compile Include="Utils\CursorUtils.cs" />
-    <Compile Include="Utils\Geometry.cs" />
+    <Compile Include="Utils\WPFGeometry.cs" />
     <Compile Include="Utils\GraphicsHelpers.cs" />
     <Compile Include="Utils\RegistryHelper.cs" />
     <Compile Include="Utils\TextUtils.cs" />

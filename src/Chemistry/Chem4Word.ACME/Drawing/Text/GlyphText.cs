@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Utils;
-using Chem4Word.Model2.Geometry;
+using Chem4Word.Core.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,7 +45,7 @@ namespace Chem4Word.ACME.Drawing.Text
             get
             {
                 var hull = Hull;
-                return Utils.Geometry.BuildPath(hull);
+                return Utils.WPFGeometry.BuildPath(hull);
             }
         }
 
@@ -55,11 +55,7 @@ namespace Chem4Word.ACME.Drawing.Text
             {
                 var outline = TextRun.GetOutline();
 
-                var sortedHull = (from Point p in outline
-                                  orderby p.X ascending, p.Y descending
-                                  select p).ToList();
-
-                List<Point> hull = Geometry<Point>.GetHull(sortedHull, p => p);
+                List<Point> hull = GeometryTool.MakeConvexHull(outline);
                 return hull;
             }
         }

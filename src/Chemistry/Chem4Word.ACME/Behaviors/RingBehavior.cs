@@ -280,7 +280,7 @@ namespace Chem4Word.ACME.Behaviors
             //try to work out exactly where best to place the ring
 
             preferredPlacements = MarkOutAtoms(hitAtom, direction, xamlBondSize, ringSize);
-            if (Utils.Geometry.Overlaps(parentMolecule, preferredPlacements, new List<Atom> { hitAtom }))
+            if (Utils.WPFGeometry.Overlaps(parentMolecule, preferredPlacements, new List<Atom> { hitAtom }))
             {
                 preferredPlacements = null;
             }
@@ -310,11 +310,11 @@ namespace Chem4Word.ACME.Behaviors
             bool followsBond = Vector.AngleBetween(bondDirection, mouseDirection) > 0;
 
             placements = MarkOutAtoms(hitBond, followsBond, ringSize);
-            firstOverlap = Utils.Geometry.OverlapArea(parentMolecule, placements);
+            firstOverlap = Utils.WPFGeometry.OverlapArea(parentMolecule, placements);
             firstOverlapArea = firstOverlap.GetArea();
 
             altPlacements = MarkOutAtoms(hitBond, !followsBond, ringSize);
-            secondOverlap = Utils.Geometry.OverlapArea(parentMolecule, altPlacements);
+            secondOverlap = Utils.WPFGeometry.OverlapArea(parentMolecule, altPlacements);
             secondOverlapArea = secondOverlap.GetArea();
 
             // Get points on the less crowded side of the bond

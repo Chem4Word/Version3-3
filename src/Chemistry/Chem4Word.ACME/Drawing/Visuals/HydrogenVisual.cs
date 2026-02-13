@@ -36,7 +36,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             {
                 if (Hull != null && Hull.Count != 0)
                 {
-                    Geometry geo1 = Utils.Geometry.BuildPolyPath(Hull);
+                    Geometry geo1 = Utils.WPFGeometry.BuildPolyPath(Hull);
                     CombinedGeometry cg = new CombinedGeometry(geo1,
                                                                geo1.GetWidenedPathGeometry(new Pen(Brushes.Black, Standoff)));
                     return cg;

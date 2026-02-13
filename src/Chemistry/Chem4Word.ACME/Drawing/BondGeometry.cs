@@ -58,7 +58,7 @@ namespace Chem4Word.ACME.Drawing
 
             //then draw it
             GetWedgePoints(desc, perpVector);
-            //and pass it back as a Geometry
+            //and pass it back as a WPFGeometry
             StreamGeometry sg;
             sg = desc.GetOutline();
             sg.Freeze();

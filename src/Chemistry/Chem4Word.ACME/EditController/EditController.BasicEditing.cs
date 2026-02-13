@@ -92,7 +92,6 @@ namespace Chem4Word.ACME
                     DeleteAnnotations(annotations);
                 }
 
-                
                 ClearSelection();
                 UndoManager.EndUndoBlock();
             }

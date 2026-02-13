@@ -1639,9 +1639,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 {
                     case "Run":
                         FunctionalGroupPart part = new FunctionalGroupPart
-                                                   {
-                                                       Text = node.InnerText
-                                                   };
+                        {
+                            Text = node.InnerText
+                        };
                         if (!string.IsNullOrEmpty(part.Text))
                         {
                             if (node.Attributes?["BaselineAlignment"] != null)

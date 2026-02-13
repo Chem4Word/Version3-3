@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace Chem4Word.ACME.Utils
 {
-    public static class Geometry
+    public static class WPFGeometry
     {
         public static bool Overlaps(Molecule molecule, List<Point> placements, List<Atom> excludeAtoms = null)
         {
@@ -291,7 +291,7 @@ namespace Chem4Word.ACME.Utils
             if (glyphRun != null)
             {
                 var geo = glyphRun.BuildGeometry();
-                return Geometry.GetGeoPoints(geo);
+                return WPFGeometry.GetGeoPoints(geo);
             }
 
             return null;

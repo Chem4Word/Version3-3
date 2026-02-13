@@ -5,89 +5,14 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Enums;
-using Chem4Word.Core.Helpers;
-using Chem4Word.Model2.Enums;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Media;
 
 namespace Chem4Word.Model2.Geometry
 {
-    public static class AngleMethods
+    public static class Geometry<T>
     {
-        public static Vector ToVector(this ClockDirections dir)
-        {
-            Matrix rotator = new Matrix();
-            rotator.Rotate((int)dir.ToDegrees());
-            return GeometryTool.ScreenNorth * rotator;
-        }
-
-        public static double ToDegrees(this ClockDirections cd)
-        {
-            return 30 * ((int)cd % 12);
-        }
-
-        /// <summary>
-        /// Splits the angle between two clock directions
-        /// </summary>
-        /// <param name="first"></param>
-        /// <param name="second"></param>
-        /// <returns>A clock direction pointing to the new direction </returns>
-        public static ClockDirections Split(this ClockDirections first, ClockDirections second)
-        {
-            return (ClockDirections)((((int)first + (int)second) % 12) / 2);
-        }
-
-        public static double ToDegrees(this CompassPoints cp)
-        {
-            return 45 * (int)cp;
-        }
-    }
-
-    public class Geometry<T>
-    {
-        /// <summary>
-        /// Returns the objects that make up the convex hull, in the right order
-        /// </summary>
-        /// <param name="sortedObjectList">List of objects to process sorted by X, Y coordinates</param>
-        /// <param name="getPosition">Lambda or delegate to obtain the position property of the object</param>
-        /// <returns></returns>
-        public static List<T> GetHull(IEnumerable<T> sortedObjectList, Func<T, Point> getPosition)
-        {
-            List<T> upper = new List<T>();
-            List<T> lower = new List<T>();
-            var sortedObjects = sortedObjectList.ToArray();
-
-            for (int i = 0; i < sortedObjects.Count(); i++)
-            {
-                while (lower.Count >= 2 &&
-                       Vector.AngleBetween((getPosition(lower[lower.Count - 2]) - getPosition(lower[lower.Count - 1])),
-                           (getPosition(sortedObjects[i]) - getPosition(lower[lower.Count - 1]))) > 0)
-                {
-                    lower.RemoveAt(lower.Count() - 1);
-                }
-                lower.Add(sortedObjects[i]);
-            }
-
-            for (int i = sortedObjects.Count() - 1; i >= 0; i--)
-            {
-                while (upper.Count >= 2 &&
-                       Vector.AngleBetween((getPosition(upper[upper.Count - 2]) - getPosition(upper[upper.Count - 1])),
-                           (getPosition(sortedObjects[i]) - getPosition(upper[upper.Count - 1]))) > 0)
-                {
-                    upper.RemoveAt(upper.Count() - 1);
-                }
-                upper.Add(sortedObjects[i]);
-            }
-            upper.RemoveAt(upper.Count() - 1);
-            lower.RemoveAt(lower.Count() - 1);
-            lower.AddRange(upper);
-            return lower;
-        }
-
         /// <summary>
         /// gets the centroid of an array of points
         /// </summary>

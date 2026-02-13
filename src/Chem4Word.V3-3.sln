@@ -20,8 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Searchers", "Searchers", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForms.TestHarness", "TestHarness\WinForms.TestHarness\WinForms.TestHarness.csproj", "{C5F54FA8-376E-442F-AE3C-DCFDC112B190}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestHarness", "TestHarness", "{2E9CE94F-9664-44CB-90B5-D1E0253E528C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.V3", "Chem4Word.V3\Chem4Word.V3.csproj", "{578789AB-84C4-4EA5-831D-BDCF20BA465F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{061F7B7B-89AE-4095-B3BB-B297F015A038} = {061F7B7B-89AE-4095-B3BB-B297F015A038}
@@ -33,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.V3", "Chem4Word.V
 		{D81EFA27-A4EF-4F75-B5D8-9BB06AB76091} = {D81EFA27-A4EF-4F75-B5D8-9BB06AB76091}
 		{EB6953E3-E0C3-468D-BD7E-2811CB275C75} = {EB6953E3-E0C3-468D-BD7E-2811CB275C75}
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestHarness", "TestHarness", "{2E9CE94F-9664-44CB-90B5-D1E0253E528C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Editor.SimpleWpfEditor", "PlugIns\Editors\SimpleWpfEditor\Chem4Word.Editor.SimpleWpfEditor.csproj", "{BB7BD7A5-B266-402C-9C53-A42B5A07D101}"
 EndProject

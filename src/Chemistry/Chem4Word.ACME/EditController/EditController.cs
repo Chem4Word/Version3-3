@@ -531,8 +531,7 @@ namespace Chem4Word.ACME
         //totals up the mwt of all the molecules in the selection
         public string TotUpSelectedMwt()
         {
-            string selectedMWT = SafeDouble.AsCMLString(Model.MolecularWeight);
-            //set the molecular weight if you can
+            string selectedMWT;
 
             double mwt = 0;
             foreach (Molecule molecule in SelectedItems.Where(m => m is Molecule))

@@ -184,5 +184,4 @@
                 ValueChanged="OnValueChanged_CompassButton" />
         </Grid>
     </Grid>
-
 </UserControl>

@@ -211,7 +211,7 @@ namespace Chem4Word.ACME
                             {
                                 atom.Position = inverse.Transform(atom.Position);
                                 atom.UpdateVisual();
-                                
+
                                 affectedBonds.UnionWith(atom.Bonds);
                             }
                             TransformAtomRelatedPushers(atomsToTransform, inverse);
@@ -242,7 +242,7 @@ namespace Chem4Word.ACME
                                 AddToSelection(o);
                             }
                         };
-                        
+
                         UndoManager.BeginUndoBlock();
                         UndoManager.RecordAction(undo, redo);
                         UndoManager.EndUndoBlock();

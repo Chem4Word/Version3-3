@@ -238,7 +238,7 @@ namespace Chem4Word.ACME
                         newMol.Parent = tempModel;
                         tempModel.AddMolecule(newMol);
                     }
-                   
+
                     tempModel.RescaleForCml();
                     string export = converter.Export(tempModel);
                     Clipboard.Clear();

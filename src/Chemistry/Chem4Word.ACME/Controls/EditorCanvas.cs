@@ -99,7 +99,7 @@ namespace Chem4Word.ACME.Controls
         /// </summary>
         /// <param name="selectedAtoms">List of selected atoms to rubber-band</param>
         /// <param name="shear">TranslateTransform describing how atoms are shifted. Omit to obtain an overlay to transform later</param>
-        /// <returns>Geometry of deformed atoms</returns>
+        /// <returns>WPFGeometry of deformed atoms</returns>
         private Geometry PartialGhost(List<Atom> selectedAtoms, Transform shear = null)
         {
             HashSet<Bond> bondSet = new HashSet<Bond>();
@@ -145,7 +145,7 @@ namespace Chem4Word.ACME.Controls
                     if (atom.SymbolText != "")
                     {
                         EllipseGeometry atomCircle = new EllipseGeometry(newPosition, atomRadius, atomRadius);
-                        Utils.Geometry.DrawGeometry(ghostContext, atomCircle);
+                        Utils.WPFGeometry.DrawGeometry(ghostContext, atomCircle);
                     }
                 }
                 foreach (Bond bond in bondSet)
@@ -160,7 +160,7 @@ namespace Chem4Word.ACME.Controls
                     descriptor.Start = startAtomPosition;
                     descriptor.End = endAtomPosition;
                     var bondgeom = descriptor.DefiningGeometry;
-                    Utils.Geometry.DrawGeometry(ghostContext, bondgeom);
+                    Utils.WPFGeometry.DrawGeometry(ghostContext, bondgeom);
                 }
                 ghostContext.Close();
             }

@@ -95,50 +95,49 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
             //determine whether we are in cramped space mode
             double length = (end - start).Length;
-            bool crampedSpaceMode = length < CurrentEditor.Controller.Model.MeanBondLength /2;
+            bool crampedSpaceMode = length < CurrentEditor.Controller.Model.MeanBondLength / 2;
 
             var proposedMetrics = DesiredGeometry(crampedSpaceMode, start, currentPosition, end);
-            
+
             //draw the arrow, locking if necessary to the target
             CanRender = (currentPosition - start).Length >= 10;
             FirstControlPoint = proposedMetrics.FirstControlPoint;
             SecondControlPoint = proposedMetrics.SecondControlPoint;
             if (CanRender)
             {
-                if(PusherType == ElectronPusherType.CurlyArrow|| PusherType ==ElectronPusherType.DoubleArrow)
+                if (PusherType == ElectronPusherType.CurlyArrow || PusherType == ElectronPusherType.DoubleArrow)
                 {
                     MyArrow = new BezierArrow
-                              {
-                                  StartPoint = proposedMetrics.StartPoint,
-                                  FirstControlPoint = proposedMetrics.FirstControlPoint,
-                                  SecondControlPoint = proposedMetrics.SecondControlPoint,
-                                  EndPoint = proposedMetrics.EndPoint,
-                                  MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
-                                  HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
-                                  ArrowHeadClosed = true,
-                                  ArrowEnds = PusherType == ElectronPusherType.CurlyArrow
+                    {
+                        StartPoint = proposedMetrics.StartPoint,
+                        FirstControlPoint = proposedMetrics.FirstControlPoint,
+                        SecondControlPoint = proposedMetrics.SecondControlPoint,
+                        EndPoint = proposedMetrics.EndPoint,
+                        MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
+                        HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
+                        ArrowHeadClosed = true,
+                        ArrowEnds = PusherType == ElectronPusherType.CurlyArrow
                                       ? ArrowEnds.End
                                       : ArrowEnds.Both,
-                                  Stroke = DrawPen.Brush
-                              };
+                        Stroke = DrawPen.Brush
+                    };
                 }
                 else if (PusherType == ElectronPusherType.FishHook)
                 {
-
                     var newFishHook = new FishHookArrow
-                              {
-                                  StartPoint = proposedMetrics.StartPoint,
-                                  FirstControlPoint = proposedMetrics.FirstControlPoint,
-                                  SecondControlPoint = proposedMetrics.SecondControlPoint,
-                                  EndPoint = proposedMetrics.EndPoint,
-                                  MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
-                                  HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
-                                  ArrowHeadClosed = true,
-                                  ArrowEnds = PusherType == ElectronPusherType.CurlyArrow
+                    {
+                        StartPoint = proposedMetrics.StartPoint,
+                        FirstControlPoint = proposedMetrics.FirstControlPoint,
+                        SecondControlPoint = proposedMetrics.SecondControlPoint,
+                        EndPoint = proposedMetrics.EndPoint,
+                        MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
+                        HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
+                        ArrowHeadClosed = true,
+                        ArrowEnds = PusherType == ElectronPusherType.CurlyArrow
                                       ? ArrowEnds.End
                                       : ArrowEnds.Both,
-                                  Stroke = DrawPen.Brush
-                              };
+                        Stroke = DrawPen.Brush
+                    };
                     var offset = newFishHook.BarbOffset(proposedMetrics.StartPoint, proposedMetrics.EndPoint);
                     newFishHook.EndPoint -= offset;
                     MyArrow = newFishHook;
@@ -146,8 +145,6 @@ namespace Chem4Word.ACME.Adorners.Sketching
             }
             InvalidateVisual();
         }
-
-
 
         /// <summary>
         /// Calculates the control points for the electron pusher arrow

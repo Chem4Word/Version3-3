@@ -9,7 +9,6 @@ using Chem4Word.ACME.Drawing.LayoutSupport;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -45,16 +44,14 @@ namespace Chem4Word.ACME.Drawing.Visuals
             get
 
             {
-                if (_hullGeometry == null)
+                if (_hullGeometry == null && _enclosingPoly != null && _enclosingPoly.Count > 0)
                 {
-                    if (_enclosingPoly != null && _enclosingPoly.Count > 0) //it's not a single-line bond
-                    {
-                        var result = Utils.Geometry.BuildPolyPath(_enclosingPoly);
+                    //it's not a single-line bond
+                    var result = Utils.WPFGeometry.BuildPolyPath(_enclosingPoly);
 
-                        _hullGeometry = new CombinedGeometry(result,
-                                                             result.GetWidenedPathGeometry(
-                                                                 new Pen(Brushes.Black, BondThickness)));
-                    }
+                    _hullGeometry = new CombinedGeometry(result,
+                                                         result.GetWidenedPathGeometry(
+                                                             new Pen(Brushes.Black, BondThickness)));
                 }
 
                 return _hullGeometry;
@@ -565,9 +562,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 }
             }
 
-            
-
-
             //local function
             void DrawHitTestOverlay(DrawingContext dc)
             {
@@ -586,7 +580,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 PathGeometry tempPG = new PathGeometry();
                 tempPG.AddGeometry(BondLayout.DefiningGeometry);
 
-                tempPG =tempPG.GetWidenedPathGeometry(outlinePen);
+                tempPG = tempPG.GetWidenedPathGeometry(outlinePen);
 
                 CoreHull = new List<Point>();
 
@@ -639,13 +633,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         {
             get
             {
-                List<Point> tempHull = new List<Point>(CoreHull);
-
-                var sortedHull = (from Point p in tempHull
-                                  orderby p.X, p.Y descending
-                                  select p).ToList();
-
-                return Geometry<Point>.GetHull(sortedHull, p => p);
+                return GeometryTool.MakeConvexHull(CoreHull);
             }
         }
 

@@ -18,6 +18,6 @@ namespace Chem4Word.ACME.Enums
         Molecule = 4,
         Reaction = 8,
         Annotation = 16,
-        ElectronPusher=32
+        ElectronPusher = 32
     }
 }

@@ -118,10 +118,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             if (!string.IsNullOrEmpty(bookmarkName))
             {
                 BookmarkStart bookmarkStart = new BookmarkStart
-                                              {
-                                                  Name = bookmarkName,
-                                                  Id = "1"
-                                              };
+                {
+                    Name = bookmarkName,
+                    Id = "1"
+                };
                 paragraph1.Append(bookmarkStart);
             }
 
@@ -131,9 +131,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             if (!string.IsNullOrEmpty(bookmarkName))
             {
                 BookmarkEnd bookmarkEnd = new BookmarkEnd
-                                          {
-                                              Id = "1"
-                                          };
+                {
+                    Id = "1"
+                };
                 paragraph1.Append(bookmarkEnd);
             }
 

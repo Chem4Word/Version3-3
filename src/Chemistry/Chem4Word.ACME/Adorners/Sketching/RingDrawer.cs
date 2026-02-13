@@ -64,7 +64,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
                                 PrimaryCentroid = centroid
                             };
                             BondGeometry.GetDoubleBondGeometry(dbd, dbd.PrincipleVector.Length, _fixedRingAdorner.CurrentEditor.Controller.Standoff);
-                            Utils.Geometry.DrawGeometry(sgc, dbd.DefiningGeometry);
+                            Utils.WPFGeometry.DrawGeometry(sgc, dbd.DefiningGeometry);
                             visited.Add(oldAtomPlacement);
                             visited.Add(newAtomPlacement);
                         }
@@ -76,7 +76,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
                                 End = newAtomPlacement.Position
                             };
                             BondGeometry.GetSingleBondGeometry(sbd, _fixedRingAdorner.CurrentEditor.Controller.Standoff);
-                            Utils.Geometry.DrawGeometry(sgc, sbd.DefiningGeometry);
+                            Utils.WPFGeometry.DrawGeometry(sgc, sbd.DefiningGeometry);
                         }
                     }
 
@@ -87,7 +87,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             }
             else //saturated ring, just draw a polygon
             {
-                drawingContext.DrawGeometry(null, _fixedRingAdorner.BondPen, Utils.Geometry.BuildPolyPath(_fixedRingAdorner.Placements, true));
+                drawingContext.DrawGeometry(null, _fixedRingAdorner.BondPen, Utils.WPFGeometry.BuildPolyPath(_fixedRingAdorner.Placements, true));
             }
         }
     }

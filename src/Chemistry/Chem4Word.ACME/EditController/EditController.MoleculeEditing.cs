@@ -129,7 +129,7 @@ namespace Chem4Word.ACME
         public void DeleteMolecule(Molecule mol)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            
+
             HashSet<ElectronPusher> associatedPushers = new HashSet<ElectronPusher>();
 
             //find any electron pushers associated with this molecule
@@ -141,7 +141,7 @@ namespace Chem4Word.ACME
                 }
             }
 
-            foreach (Bond bond  in mol.Bonds)
+            foreach (Bond bond in mol.Bonds)
             {
                 foreach (ElectronPusher pusher in bond.ElectronPushers)
                 {
