@@ -243,11 +243,9 @@ namespace Chem4Word.ACME.Drawing
                     {
                         //shorten the second bond to fit neatly within the ring
                         layoutSecondaryStart = GeometryTool.GetIntersection(layout.Start, workingCentroid.Value,
-                            layout.SecondaryStart,
-                            layout.SecondaryEnd);
+                                                                            layout.SecondaryStart, layout.SecondaryEnd);
                         layoutSecondaryEnd = GeometryTool.GetIntersection(layout.End, workingCentroid.Value,
-                                                                              layout.SecondaryStart,
-                                                                              layout.SecondaryEnd);
+                                                                          layout.SecondaryStart, layout.SecondaryEnd);
                         var tempPoint3 = layoutSecondaryStart ?? layout.SecondaryStart;
                         var tempPoint4 = layoutSecondaryEnd ?? layout.SecondaryEnd;
 
@@ -299,8 +297,8 @@ namespace Chem4Word.ACME.Drawing
         {
             foreach (Point neighbourPos in atomPosList)
             {
-                Point? intersection =
-                    GeometryTool.GetIntersection(secondaryStart, secondaryEnd, primaryAtomPos, neighbourPos);
+                Point? intersection = GeometryTool.GetIntersection(secondaryStart, secondaryEnd,
+                                                                   primaryAtomPos, neighbourPos);
                 if (intersection != null)
                 {
                     //need to shorten the line again
@@ -310,8 +308,8 @@ namespace Chem4Word.ACME.Drawing
                     Matrix rotator = new Matrix();
                     rotator.Rotate(-splitAngle);
                     splitVector = splitVector * rotator;
-                    Point? temp = GeometryTool.GetIntersection(secondaryStart, secondaryEnd, primaryAtomPos,
-                                                               primaryAtomPos + splitVector);
+                    Point? temp = GeometryTool.GetIntersection(secondaryStart, secondaryEnd,
+                                                               primaryAtomPos, primaryAtomPos + splitVector);
                     if (temp != null)
                     {
                         secondaryStart = temp.Value;
@@ -445,8 +443,8 @@ namespace Chem4Word.ACME.Drawing
             for (int i = 0; i < atomHull.Count; i++)
             {
                 Point? p;
-                if ((p = GeometryTool.GetIntersection(start, end, atomHull[i], atomHull[(i + 1) % atomHull.Count])) !=
-                    null)
+                if ((p = GeometryTool.GetIntersection(start, end,
+                                                      atomHull[i], atomHull[(i + 1) % atomHull.Count])) != null)
                 {
                     return p;
                 }

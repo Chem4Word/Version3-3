@@ -2162,10 +2162,10 @@ namespace Chem4Word
                             {
                                 ShowLibrary.Checked = taskPane.Visible;
                             }
-                            if (ShowLibrary.Checked)
-                            {
-                                (taskPane.Control as LibraryHost)?.Refresh();
-                            }
+                            //if (ShowLibrary.Checked)
+                            //{
+                            //    (taskPane.Control as LibraryHost)?.Refresh();
+                            //}
                             ShowLibrary.Label = ShowLibrary.Checked ? "Hide" : "Show";
                         }
                     }

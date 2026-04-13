@@ -471,13 +471,6 @@
                     SelectedValue="{Binding ElementName=AcmeControl, Path=ActiveController.SelectedElement, PresentationTraceSources.TraceLevel=None, Mode=TwoWay}"
                     SelectedValuePath="Element"
                     ToolTip="Current Atom Type">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <Viewbox ToolTip="{Binding Path=Element, Mode=OneTime}">
-                                <ContentPresenter Content="{Binding Content}" />
-                            </Viewbox>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
                     <ComboBox.ItemContainerStyle>
                         <Style TargetType="ComboBoxItem">
                             <Setter Property="FontSize" Value="18" />
@@ -2180,11 +2173,7 @@
                         <MenuItem.ItemTemplate>
                             <DataTemplate>
                                 <Viewbox ToolTip="{Binding Description}">
-                                    <Image Stretch="Uniform">
-                                        <Image.Source>
-                                            <DrawingImage Drawing="{Binding BondGraphic, Converter={StaticResource DrawingToImageSource}}" />
-                                        </Image.Source>
-                                    </Image>
+                                    <Image Source="{Binding BondGraphic, Converter={StaticResource DrawingToImageSource}}" Stretch="Uniform" />
                                 </Viewbox>
                             </DataTemplate>
                         </MenuItem.ItemTemplate>
@@ -2202,19 +2191,7 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type MenuItem}">
                                             <ControlTemplate.Resources>
-                                                <SolidColorBrush x:Key="&#347;" Color="#FFF0F0F0" />
-                                                <SolidColorBrush x:Key="&#348;" Color="#FF999999" />
-                                                <SolidColorBrush x:Key="&#349;" Color="#FF212121" />
-
-                                                <SolidColorBrush x:Key="&#350;" Color="#FFD7D7D7" />
-
-                                                <SolidColorBrush x:Key="&#351;" Color="#3DDADADA" />
-                                                <SolidColorBrush x:Key="&#352;" Color="#FFDADADA" />
                                                 <SolidColorBrush x:Key="&#353;" Color="#FF707070" />
-
-                                                <SolidColorBrush x:Key="&#354;" Color="#FF26A0DA" />
-                                                <SolidColorBrush x:Key="&#355;" Color="#95C5DB" />
-                                                <SolidColorBrush x:Key="&#356;" Color="#FF26A0DA" />
                                                 <SolidColorBrush x:Key="&#357;" Color="#95C5DB" />
                                                 <SolidColorBrush x:Key="&#358;" Color="#0A000000" />
                                                 <SolidColorBrush x:Key="&#359;" Color="#21000000" />

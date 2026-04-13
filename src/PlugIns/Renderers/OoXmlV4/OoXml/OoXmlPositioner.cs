@@ -30,7 +30,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 {
     public class OoXmlPositioner
     {
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private TtfCharacter _hydrogenCharacter;
 
@@ -225,7 +225,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             return points.ToArray();
         }
 
-        private void AddAnnotationCharacters(Annotation annotation, string path, List<FunctionalGroupTerm> terms,
+        private void AddAnnotationCharacters(Annotation annotation, string annotationPath, List<FunctionalGroupTerm> terms,
                                              TextBlockJustification justification = TextBlockJustification.Left)
         {
             // Position characters
@@ -244,11 +244,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 // Finally create diagnostics
                 Outputs.Diagnostics.Rectangles.Add(new DiagnosticRectangle(Inflate(groupOfCharacters.BoundingBox, OoXmlConstants.AcsLineWidth / 2), OoXmlColours.VibrantGreen));
-                Outputs.ConvexHulls.Add(path, ConvexHullOfAtomCharacters(path));
+                Outputs.ConvexHulls.Add(annotationPath, ConvexHullOfCharacters(annotationPath));
             }
         }
 
-        private void AddMolecularWeightAsCharacters(string molecularWeight, Point centrePoint, string path)
+        private void AddMolecularWeightAsCharacters(string molecularWeight, Point centrePoint, string molWeightPath)
         {
             Point point = new Point(centrePoint.X, centrePoint.Y);
 
@@ -259,10 +259,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             if (boundingBox != Rect.Empty)
             {
                 Point place = new Point(point.X - boundingBox.Width / 2, point.Y + (point.Y - boundingBox.Top));
-                PlaceString(molecularWeight, place, path);
+                PlaceString(molecularWeight, place, molWeightPath);
             }
 
             Outputs.AllCharacterExtents = OoXmlHelper.GetAllCharacterExtents(Inputs.Model, Outputs);
+
+            // Finally create diagnostics
+            Outputs.ConvexHulls.Add(molWeightPath, ConvexHullOfCharacters(molWeightPath));
         }
 
         private void AddMoleculeCaptionsAsCharacters(List<TextualProperty> labels, Point centrePoint, string moleculePath)
@@ -278,20 +281,22 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 if (boundingBox != Rect.Empty)
                 {
                     Point place = new Point(point.X - boundingBox.Width / 2, point.Y + (point.Y - boundingBox.Top));
-                    PlaceString(label.Value, place, moleculePath);
+                    PlaceString(label.Value, place, label.Id);
                 }
 
                 // Move to next line
                 point.Offset(0, boundingBox.Height + Inputs.MeanBondLength * OoXmlConstants.MultipleBondOffsetPercentage / 2);
+
+                Outputs.ConvexHulls.Add(label.Id, ConvexHullOfCharacters(label.Id));
             }
         }
 
         private void AddReactionCharacters(Reaction reaction, List<FunctionalGroupTerm> terms,
                                            bool isReagent = true, TextBlockJustification justification = TextBlockJustification.Centre)
         {
-            string path = reaction.Path + (isReagent ? "/reagent" : "/conditions");
+            string reactionPath = reaction.Path + (isReagent ? "/reagent" : "/conditions");
 
-            GroupOfCharacters groupOfCharacters = GroupOfCharactersFromTerms(reaction.MidPoint, path, terms, justification);
+            GroupOfCharacters groupOfCharacters = GroupOfCharactersFromTerms(reaction.MidPoint, reactionPath, terms, justification);
             if (groupOfCharacters.Characters.Any())
             {
                 // Position characters
@@ -301,19 +306,20 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 // March away from reaction midpoint
                 Vector vector = OffsetVector(reaction, isReagent);
 
-                bool isOutside;
-                int maxLoops = 0;
+                bool intersects;
+                int loops = 0;
                 do
                 {
                     groupOfCharacters.AdjustPosition(vector);
-                    List<Point> hull = ConvexHull(groupOfCharacters.Characters);
-                    isOutside = GeometryTool.IsOutside(reaction.HeadPoint, reaction.TailPoint, hull);
-
-                    if (maxLoops++ >= 10)
+                    List<Point> hull = ConvexHullOfGroupOfCharacters(groupOfCharacters);
+                    intersects = GeometryTool.Intersects(reaction.HeadPoint, reaction.TailPoint, hull);
+                    if (loops++ >= 10)
                     {
                         break;
                     }
-                } while (!isOutside);
+                } while (!intersects);
+
+                // Step out by one more
                 groupOfCharacters.AdjustPosition(vector);
 
                 // Transfer to output
@@ -324,7 +330,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 // Finally create diagnostics
                 Outputs.Diagnostics.Rectangles.Add(new DiagnosticRectangle(Inflate(groupOfCharacters.BoundingBox, OoXmlConstants.AcsLineWidth / 2), OoXmlColours.VibrantGreen));
-                Outputs.ConvexHulls.Add(path, ConvexHullOfAtomCharacters(path));
+                Outputs.ConvexHulls.Add(reactionPath, ConvexHullOfCharacters(reactionPath));
             }
         }
 
@@ -332,7 +338,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private Rect CharacterExtents(Molecule mol, Rect existing)
         {
-            List<AtomLabelCharacter> chars = Outputs.AtomLabelCharacters.Where(m => m.ParentMolecule.StartsWith(mol.Path)).ToList();
+            List<AtomLabelCharacter> chars = Outputs.AtomLabelCharacters.Where(m => m.MoleculePath.StartsWith(mol.Path)).ToList();
             foreach (AtomLabelCharacter c in chars)
             {
                 if (c.IsSmaller)
@@ -354,10 +360,77 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             return existing;
         }
 
-        private List<Point> ConvexHullOfAtomCharacters(string atomPath)
+        private List<Point> ConvexHullOfGroupOfCharacters(GroupOfCharacters groupOfCharacters)
         {
-            List<AtomLabelCharacter> chars = Outputs.AtomLabelCharacters.Where(m => m.ParentAtom == atomPath).ToList();
-            return ConvexHull(chars);
+            List<Point> hull = new List<Point>();
+
+            foreach (AtomLabelCharacter character in groupOfCharacters.Characters)
+            {
+                switch (Inputs.Options.HullMode)
+                {
+                    case HullType.BoundingBoxes:
+                        hull.AddRange(OoXmlHelper.BoundingBox(character, Inputs.MeanBondLength, OoXmlConstants.CmlCharacterMargin));
+                        break;
+
+                    case HullType.SimpleHull:
+                        List<Point> simpleHull = OoXmlHelper.SimpleHull(character, Inputs.MeanBondLength);
+                        hull.AddRange(simpleHull);
+                        break;
+
+                    case HullType.ComplexHull:
+                        List<Point> complexHull = OoXmlHelper.ComplexHull(character, Inputs.MeanBondLength);
+                        hull.AddRange(complexHull);
+                        break;
+                }
+            }
+
+            if (Inputs.Options.HullMode != HullType.BoundingBoxes)
+            {
+                hull = GeometryTool.MakeConvexHull(hull);
+                hull = GeometryTool.InflateConvexHull(hull, OoXmlConstants.CmlCharacterMargin);
+            }
+
+            return GeometryTool.MakeConvexHull(hull);
+        }
+
+        private List<Point> ConvexHullOfCharacters(string path)
+        {
+            List<Point> hull = new List<Point>();
+
+            List<AtomLabelCharacter> chars = Outputs.AtomLabelCharacters
+                                                    .Where(m => m.AtomPath == path)
+                                                    .ToList();
+
+            if (chars.Count > 0)
+            {
+                switch (Inputs.Options.HullMode)
+                {
+                    case HullType.BoundingBoxes:
+                        hull.AddRange(OoXmlHelper.BoundingBox(chars, Inputs.MeanBondLength, OoXmlConstants.CmlCharacterMargin));
+                        break;
+
+                    case HullType.SimpleHull:
+                        hull.AddRange(OoXmlHelper.SimpleHull(chars, Inputs.MeanBondLength));
+                        break;
+
+                    case HullType.ComplexHull:
+                        hull.AddRange(OoXmlHelper.ComplexHull(chars, Inputs.MeanBondLength));
+                        break;
+                }
+
+                if (Inputs.Options.HullMode != HullType.BoundingBoxes)
+                {
+                    hull = GeometryTool.MakeConvexHull(hull);
+                    hull = GeometryTool.InflateConvexHull(hull, OoXmlConstants.CmlCharacterMargin);
+                }
+
+                return GeometryTool.MakeConvexHull(hull);
+            }
+
+            Debug.WriteLine("Should not get here!");
+            Debugger.Break();
+
+            return hull;
         }
 
         private List<Point> ConvexHullOfBondLines(string bondPath)
@@ -381,37 +454,37 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             return GeometryTool.MakeConvexHull(points);
         }
 
-        private List<Point> ConvexHull(List<AtomLabelCharacter> chars)
-        {
-            List<Point> points = new List<Point>();
+        //private List<Point> ConvexHull(List<AtomLabelCharacter> chars)
+        //{
+        //    List<Point> points = new List<Point>();
 
-            double margin = OoXmlConstants.CmlCharacterMargin;
-            foreach (AtomLabelCharacter c in chars)
-            {
-                // Top Left --
-                points.Add(new Point(c.Position.X - margin, c.Position.Y - margin));
-                if (c.IsSmaller)
-                {
-                    points.Add(new Point(c.Position.X + OoXmlHelper.ScaleCsTtfToCml(c.Character.Width, Inputs.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor + margin,
-                                         c.Position.Y - margin));
-                    points.Add(new Point(c.Position.X + OoXmlHelper.ScaleCsTtfToCml(c.Character.Width, Inputs.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor + margin,
-                                         c.Position.Y + OoXmlHelper.ScaleCsTtfToCml(c.Character.Height, Inputs.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor + margin));
-                    points.Add(new Point(c.Position.X - margin,
-                                         c.Position.Y + OoXmlHelper.ScaleCsTtfToCml(c.Character.Height, Inputs.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor + margin));
-                }
-                else
-                {
-                    points.Add(new Point(c.Position.X + OoXmlHelper.ScaleCsTtfToCml(c.Character.Width, Inputs.MeanBondLength) + margin,
-                                         c.Position.Y - margin));
-                    points.Add(new Point(c.Position.X + OoXmlHelper.ScaleCsTtfToCml(c.Character.Width, Inputs.MeanBondLength) + margin,
-                                         c.Position.Y + OoXmlHelper.ScaleCsTtfToCml(c.Character.Height, Inputs.MeanBondLength) + margin));
-                    points.Add(new Point(c.Position.X - margin,
-                                         c.Position.Y + OoXmlHelper.ScaleCsTtfToCml(c.Character.Height, Inputs.MeanBondLength) + margin));
-                }
-            }
+        //    double margin = OoXmlConstants.CmlCharacterMargin;
+        //    foreach (AtomLabelCharacter c in chars)
+        //    {
+        //        // Top Left --
+        //        points.Add(new Point(c.Position.X - margin, c.Position.Y - margin));
+        //        if (c.IsSmaller)
+        //        {
+        //            points.Add(new Point(c.Position.X + OoXmlHelper.ScaleCsTtfToCml(c.Character.Width, Inputs.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor + margin,
+        //                                 c.Position.Y - margin));
+        //            points.Add(new Point(c.Position.X + OoXmlHelper.ScaleCsTtfToCml(c.Character.Width, Inputs.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor + margin,
+        //                                 c.Position.Y + OoXmlHelper.ScaleCsTtfToCml(c.Character.Height, Inputs.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor + margin));
+        //            points.Add(new Point(c.Position.X - margin,
+        //                                 c.Position.Y + OoXmlHelper.ScaleCsTtfToCml(c.Character.Height, Inputs.MeanBondLength) * OoXmlConstants.SubscriptScaleFactor + margin));
+        //        }
+        //        else
+        //        {
+        //            points.Add(new Point(c.Position.X + OoXmlHelper.ScaleCsTtfToCml(c.Character.Width, Inputs.MeanBondLength) + margin,
+        //                                 c.Position.Y - margin));
+        //            points.Add(new Point(c.Position.X + OoXmlHelper.ScaleCsTtfToCml(c.Character.Width, Inputs.MeanBondLength) + margin,
+        //                                 c.Position.Y + OoXmlHelper.ScaleCsTtfToCml(c.Character.Height, Inputs.MeanBondLength) + margin));
+        //            points.Add(new Point(c.Position.X - margin,
+        //                                 c.Position.Y + OoXmlHelper.ScaleCsTtfToCml(c.Character.Height, Inputs.MeanBondLength) + margin));
+        //        }
+        //    }
 
-            return GeometryTool.MakeConvexHull(points);
-        }
+        //    return GeometryTool.MakeConvexHull(points);
+        //}
 
         /// <summary>
         /// Creates the lines for a bond
@@ -619,14 +692,22 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                 Point? outIntersectP1 = GeometryTool.GetIntersection(startPointa, endPointa, bondStart, centre.Value);
                                 Point? outIntersectP2 = GeometryTool.GetIntersection(startPointa, endPointa, bondEnd, centre.Value);
 
-                                if (Inputs.Options.ShowDoubleBondTrimmingLines)
+                                if (outIntersectP1 != null && outIntersectP2 != null)
                                 {
-                                    // Diagnostics
-                                    Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.StartAtom.Position, centre.Value, BondLineStyle.Dotted, OoXmlColours.Red));
-                                    Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.EndAtom.Position, centre.Value, BondLineStyle.Dotted, OoXmlColours.Red));
+                                    if (Inputs.Options.ShowDoubleBondTrimmingLines)
+                                    {
+                                        // Diagnostics
+                                        Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.StartAtom.Position, centre.Value, BondLineStyle.Dotted, OoXmlColours.Red));
+                                        Outputs.Diagnostics.Lines.Add(new DiagnosticLine(bond.EndAtom.Position, centre.Value, BondLineStyle.Dotted, OoXmlColours.Red));
+                                    }
+
+                                    return new BondLine(BondLineStyle.Solid, outIntersectP1.Value, outIntersectP2.Value, bond);
                                 }
 
-                                return new BondLine(BondLineStyle.Solid, outIntersectP1.Value, outIntersectP2.Value, bond);
+                                Debug.WriteLine("Intersections not found !");
+                                Debugger.Break();
+
+                                return null;
                             }
                             else
                             {
@@ -666,8 +747,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                     Outputs.Diagnostics.Lines.Add(new DiagnosticLine(common, common + v1, BondLineStyle.Dotted, OoXmlColours.Blue));
                                 }
 
-                                Point? meetingPoint = GeometryTool.GetIntersection(bondLine.Start, bondLine.End,
-                                    common, common + v1);
+                                Point? meetingPoint = GeometryTool.GetIntersection(bondLine.Start, bondLine.End, common, common + v1);
                                 if (meetingPoint != null)
                                 {
                                     if (common == bondLine.Bond.StartAtom.Position)
@@ -793,19 +873,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         {
             if (atom.Electrons.Any())
             {
-                List<Point> hull = ConvexHullOfAtomCharacters(atom.Path);
+                List<Point> hull = ConvexHullOfCharacters(atom.Path);
 
                 List<OoXmlElectron> electronsToBeRendered = new List<OoXmlElectron>();
 
                 foreach (Electron electron in atom.AllElectrons())
                 {
                     Electron copy = electron.Copy();
-
-                    // Pre-calculate the compass direction of any auto placed electrons
-                    if (copy.ExplicitPlacement == null)
-                    {
-                        copy.ExplicitPlacement = copy.Placement;
-                    }
 
                     string colour = OoXmlColours.Black;
                     if (Inputs.Model.ShowColouredAtoms)
@@ -819,7 +893,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                         Colour = colour,
                         RadicalDiameter = BondOffset() / 2,
                         MeanBondLength = Inputs.MeanBondLength,
-                        Electron = copy
+                        Electron = copy,
+                        ComputedPlacement = copy.Placement ?? CompassPoints.North
                     };
 
                     electronsToBeRendered.Add(ooXmlElectron);
@@ -842,7 +917,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             Point position = centre;
 
             //first, work out from the placement property what the vector is
-            double offsetAngle = 45 * (int)electron.Electron.Placement.Value;
+            double offsetAngle = 45 * (int)electron.ComputedPlacement;
 
             Matrix rotator = new Matrix();
             rotator.Rotate(offsetAngle);
@@ -1093,7 +1168,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 }
 
                 // Save the convex hull of all atom characters
-                Outputs.ConvexHulls.Add(atom.Path, ConvexHullOfAtomCharacters(atom.Path));
+                Outputs.ConvexHulls.Add(atom.Path, ConvexHullOfCharacters(atom.Path));
             }
         }
 
@@ -1202,7 +1277,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
 
             // Generate Convex Hull
-            Outputs.ConvexHulls.Add(atom.Path, ConvexHullOfAtomCharacters(atom.Path));
+            Outputs.ConvexHulls.Add(atom.Path, ConvexHullOfCharacters(atom.Path));
         }
 
         private Point GetCharacterPosition(Point cursorPosition, TtfCharacter character)

@@ -568,14 +568,14 @@
                         Style="{StaticResource DefaultLabelStyle}">
                         Formula
                     </TextBlock>
-                    <controls:FormulaBlock
+                    <TextBlock
                         x:Name="FormulaBlock"
                         Grid.Row="1"
                         Grid.Column="1"
                         d:IsLocked="True"
                         Foreground="Black"
-                        Formula="{Binding Path=SelectedChemistryObject.Formula}"
-                        Style="{StaticResource DefaultLabelStyle}" />
+                        Style="{StaticResource DefaultLabelStyle}"
+                        Text="{Binding Path=SelectedChemistryObject.Formula}" />
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="0"

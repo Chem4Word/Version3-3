@@ -5,16 +5,18 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class FunctionalGroupTests
     {
@@ -111,7 +113,8 @@ namespace Chem4WordTests
         public void RotatingAFunctionalGroup()
         {
             var cmlConverter = new CMLConverter();
-            var model = cmlConverter.Import(ResourceHelper.GetStringResource("FG-C2H5.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = cmlConverter.Import(ResourceHelper.GetStringResource(assembly, "FG-C2H5.xml"));
 
             var molecule = model.Molecules.Values.First();
 

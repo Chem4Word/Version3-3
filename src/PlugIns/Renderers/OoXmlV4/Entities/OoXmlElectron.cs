@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
@@ -23,6 +24,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public string Colour { get; set; }
 
         public Electron Electron { get; set; }
+        public CompassPoints ComputedPlacement { get; set; }
 
         public double RadicalDiameter { get; set; }
 

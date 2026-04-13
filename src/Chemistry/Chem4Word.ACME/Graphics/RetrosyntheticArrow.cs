@@ -37,7 +37,8 @@ namespace Chem4Word.ACME.Graphics
                 //recalculate the end points of the long bits
                 var newTopRight = GeometryTool.GetIntersection(topLeft, topRight, EndPoint, headStart);
                 var newBottomRight = GeometryTool.GetIntersection(bottomLeft, bottomRight, EndPoint, headEnd);
-                //need to check we a
+
+                //Do we have valid points
                 if (newTopRight != null && newBottomRight != null)
                 {
                     //draw the long lines

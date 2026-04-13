@@ -12,7 +12,7 @@ using Chem4Word.Model2.Enums;
 using System.Linq;
 using Xunit;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class ImplicitHydrogenAndCarbonTests
     {

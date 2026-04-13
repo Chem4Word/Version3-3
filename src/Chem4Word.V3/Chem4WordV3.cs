@@ -791,12 +791,13 @@ namespace Chem4Word
 
                 Debug.WriteLine("Disposing of Config Watcher");
                 _configWatcher?.Dispose();
+
                 Debug.WriteLine("Disposing of Reference Keeper");
                 _keeper?.Dispose();
 
 #if DEBUG
                 // Wait up to 5 seconds for all telemetry to be sent
-                var stopwatch = new Stopwatch();
+                Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
                 while (Globals.Chem4WordV3.Telemetry.BufferCount() > 0)
                 {
@@ -1134,8 +1135,9 @@ namespace Chem4Word
 
                 if (plugin == null)
                 {
-                    Telemetry.Write(module, "Warning", $"Could not find driver plug in [{name}]");
-                    Debug.WriteLine($"Could not find driver plug in [{name}]");
+                    string message = $"Could not find driver plug in [{name}]";
+                    Telemetry.Write(module, "Warning", message);
+                    Debug.WriteLine(message);
                     Debugger.Break();
                 }
             }
@@ -1166,8 +1168,9 @@ namespace Chem4Word
 
                 if (plugin == null)
                 {
-                    Telemetry.Write(module, "Warning", $"Could not find editor plug in [{name}]");
-                    Debug.WriteLine($"Could not find editor plug in [{name}]");
+                    string message = $"Could not find editor plug in [{name}]";
+                    Telemetry.Write(module, "Warning", message);
+                    Debug.WriteLine(message);
                     Debugger.Break();
                 }
             }
@@ -1198,8 +1201,9 @@ namespace Chem4Word
 
                 if (plugin == null)
                 {
-                    Telemetry.Write(module, "Warning", $"Could not find renderer plug in [{name}]");
-                    Debug.WriteLine($"Could not find renderer plug in [{name}]");
+                    string message = $"Could not find renderer plug in [{name}]";
+                    Telemetry.Write(module, "Warning", message);
+                    Debug.WriteLine(message);
                     Debugger.Break();
                 }
             }
@@ -1230,8 +1234,9 @@ namespace Chem4Word
 
                 if (plugin == null)
                 {
-                    Telemetry.Write(module, "Warning", $"Could not find searcher plug in [{name}]");
-                    Debug.WriteLine($"Could not find searcher plug in [{name}]");
+                    string message = $"Could not find searcher plug in [{name}]";
+                    Telemetry.Write(module, "Warning", message);
+                    Debug.WriteLine(message);
                     Debugger.Break();
                 }
             }

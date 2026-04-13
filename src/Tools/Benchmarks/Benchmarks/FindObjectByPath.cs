@@ -1,16 +1,17 @@
 ﻿// ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
-//  This software is released under the Apache License, Version 2.0.
-//  The license and further copyright text can be found in the file LICENSE.md
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
 using BenchmarkDotNet.Attributes;
 using Chem4Word.Model2;
+using Performance.Shared;
 using System;
 using System.Collections.Generic;
 
-namespace Benchmarks
+namespace Performance.Benchmarks
 {
     [MemoryDiagnoser] // Adds memory usage diagnostics to the benchmark
     public class FindObjectByPath
@@ -35,8 +36,8 @@ namespace Benchmarks
             _pathsNested = Common.GetPaths(_modelNested);
             Console.WriteLine($"Nested model has {_pathsNested.Count:N0} paths");
 
-            _modelNested = Common.LoadCml("Maitotoxin.xml");
-            _pathsNested = Common.GetPaths(_modelNested);
+            _modelMaitotoxin = Common.LoadCml("Maitotoxin.xml");
+            _pathsMaitotoxin = Common.GetPaths(_modelNested);
             Console.WriteLine($"Maitotoxin model has {_pathsNested.Count:N0} paths");
         }
 
@@ -61,9 +62,9 @@ namespace Benchmarks
         [Benchmark]
         public void GetByPathInMaitotoxin()
         {
-            foreach (string path in _pathsC60)
+            foreach (string path in _pathsMaitotoxin)
             {
-                _modelC60.GetByPath(path);
+                _modelMaitotoxin.GetByPath(path);
             }
         }
     }

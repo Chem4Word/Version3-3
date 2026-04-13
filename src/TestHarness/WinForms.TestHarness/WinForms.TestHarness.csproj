@@ -199,6 +199,10 @@
       <DependentUpon>HexViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="LayoutResult.cs" />
+    <Compile Include="StackViewer.xaml.cs">
+      <DependentUpon>StackViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StackViewModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShowCml.cs">
@@ -206,9 +210,6 @@
     </Compile>
     <Compile Include="ShowCml.Designer.cs">
       <DependentUpon>ShowCml.cs</DependentUpon>
-    </Compile>
-    <Compile Include="StackViewer.xaml.cs">
-      <DependentUpon>StackViewer.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Dumper.resx">
       <DependentUpon>Dumper.cs</DependentUpon>

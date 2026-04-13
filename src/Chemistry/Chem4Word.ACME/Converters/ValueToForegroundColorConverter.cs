@@ -42,7 +42,6 @@ namespace Chem4Word.ACME.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            Debugger.Break();
             return null;
         }
 

@@ -88,11 +88,13 @@
     <Compile Include="Entities\OoXmlString.cs" />
     <Compile Include="Entities\SimpleLine.cs" />
     <Compile Include="Enums\BondLineStyle.cs" />
+    <Compile Include="Enums\HullType.cs" />
     <Compile Include="Enums\ClippingLineType.cs" />
     <Compile Include="Enums\TextBlockJustification.cs" />
     <Compile Include="Entities\AtomLabelCharacter.cs" />
     <Compile Include="Entities\BondLine.cs" />
     <Compile Include="Entities\MoleculeExtents.cs" />
+    <Compile Include="Helpers\FontHelper.cs" />
     <Compile Include="OoXml\OoXmlBeautifier.cs" />
     <Compile Include="OoXml\OoXmlColours.cs" />
     <Compile Include="OoXml\OoXmlConstants.cs" />

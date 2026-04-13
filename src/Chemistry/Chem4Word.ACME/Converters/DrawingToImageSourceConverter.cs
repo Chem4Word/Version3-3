@@ -15,9 +15,15 @@ namespace Chem4Word.ACME.Converters
     public class DrawingToImageSourceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => value is System.Windows.Media.Drawing d ? new DrawingImage(d) : null;
+        {
+            return value is System.Windows.Media.Drawing d
+                ? new DrawingImage(d)
+                : null;
+        }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+        {
+            return Binding.DoNothing;
+        }
     }
 }

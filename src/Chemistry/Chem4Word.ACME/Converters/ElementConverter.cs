@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using System;
 using System.ComponentModel;
@@ -30,11 +31,15 @@ namespace Chem4Word.ACME.Converters
         {
             try
             {
-                var s = value as string;
+                string s = value as string;
                 if (string.IsNullOrEmpty(s))
                 {
+                    // We should never get here
+                    string message = $"Value is null or empty !";
+                    Debug.WriteLine(message);
                     Debugger.Break();
-                    throw new InvalidOperationException();
+
+                    return "";
                 }
                 else
                 {

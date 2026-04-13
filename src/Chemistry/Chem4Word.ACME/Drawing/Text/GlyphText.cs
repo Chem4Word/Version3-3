@@ -14,7 +14,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace Chem4Word.ACME.Drawing.Text
 {
@@ -40,32 +39,14 @@ namespace Chem4Word.ACME.Drawing.Text
         public GlyphRun TextRun { get; protected set; }
         public Brush Fill { get; set; }
 
-        public Path Outline
-        {
-            get
-            {
-                var hull = Hull;
-                return Utils.WPFGeometry.BuildPath(hull);
-            }
-        }
-
-        public List<Point> Hull
-        {
-            get
-            {
-                var outline = TextRun.GetOutline();
-
-                List<Point> hull = GeometryTool.MakeConvexHull(outline);
-                return hull;
-            }
-        }
-
         public GlyphText(string text, Typeface typeface, double typesize, float pixelsPerDip)
         {
             if (!GlyphUtils.AtomLabelTypeface.TryGetGlyphTypeface(out _glyphTypeface))
             {
+                // We should never get here
+                string message = $"No glyph typeface found for the Windows Typeface '{typeface.FaceNames[XmlLanguage.GetLanguage("en-GB")]}'";
+                Debug.WriteLine(message);
                 Debugger.Break();
-                throw new InvalidOperationException($"No glyph typeface found for the Windows Typeface '{typeface.FaceNames[XmlLanguage.GetLanguage("en-GB")]}'");
             }
             Text = text;
             CurrentTypeface = typeface;
@@ -116,8 +97,8 @@ namespace Chem4Word.ACME.Drawing.Text
         public void MeasureAtCenter(Point center)
         {
             GlyphInfo = GlyphUtils.GetGlyphsAndInfo(Text, PixelsPerDip, out GlyphRun groupGlyphRun, center, _glyphTypeface, TypeSize);
-            //compensate the main offset vector for any descenders
 
+            //compensate the main offset vector for any descenders
             Vector mainOffset = GlyphUtils.GetOffsetVector(groupGlyphRun, TypeSize) +
                                 new Vector(0.0, -MaxBaselineOffset);
             var bb = groupGlyphRun.GetBoundingBox(center + mainOffset);

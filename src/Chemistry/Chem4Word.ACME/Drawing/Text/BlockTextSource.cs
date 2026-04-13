@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -81,13 +82,21 @@ namespace Chem4Word.ACME.Drawing.Text
 
         public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit)
         {
+            // We should never get here
+            string message = $"We should never get here !";
+            Debug.WriteLine(message);
             Debugger.Break();
+
             return null;
         }
 
         public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex)
         {
+            // We should never get here
+            string message = $"We should never get here !";
+            Debug.WriteLine(message);
             Debugger.Break();
+
             return 0;
         }
 

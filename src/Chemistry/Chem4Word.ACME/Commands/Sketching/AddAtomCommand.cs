@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using System;
 using System.Diagnostics;
 
@@ -21,6 +22,8 @@ namespace Chem4Word.ACME.Commands.Sketching
 
         public override void Execute(object parameter)
         {
+            string message = $"We should never get here !";
+            Debug.WriteLine(message);
             Debugger.Break();
         }
 

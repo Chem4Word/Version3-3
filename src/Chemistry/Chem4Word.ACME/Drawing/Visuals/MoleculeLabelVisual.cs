@@ -34,7 +34,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         {
             var chargeLabel = new FormattedText(_label, CultureInfo.CurrentCulture,
                                                 FlowDirection.LeftToRight,
-                                                GlyphUtils.MoleculelabelTypeface,
+                                                GlyphUtils.MoleculeLabelTypeface,
                                                 _textSize, _drawingBrush, null,
                                                 PixelsPerDip());
             var offset = new Vector(0.0, 0.0);

@@ -62,3 +62,13 @@ rem
 ) else (
 xcopy "$(TargetDir)$(TargetName).*" "$(SolutionDir)\Chem4Word.V3\$(OutDir)PlugIns\" /C /f /r /y /i
 )
+
+// Use this to replace Debugger.Break(); or throw new ...
+// We should never get here
+if (Debugger.IsAttached || UnitTestHelper.InUnitTest)
+{
+    string message = $"We should never get here !";
+    Debug.WriteLine(message);
+    throw new Chem4WordException(message);
+}
+

@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SHOWHULLS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -178,7 +178,6 @@
     <Compile Include="Graphics\FishHookArrow.cs" />
     <Compile Include="Graphics\Harpoon.cs" />
     <Compile Include="Graphics\RetrosyntheticArrow.cs" />
-    <Compile Include="Controls\FormulaBlock.cs" />
     <Compile Include="Controls\MoleculePropertyEditor.xaml.cs">
       <DependentUpon>MoleculePropertyEditor.xaml</DependentUpon>
     </Compile>

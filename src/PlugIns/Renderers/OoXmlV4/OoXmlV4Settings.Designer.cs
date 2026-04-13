@@ -49,6 +49,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowMoleculeBox = new System.Windows.Forms.CheckBox();
             this.SetDefaults = new System.Windows.Forms.Button();
             this.Ok = new System.Windows.Forms.Button();
+            this.ConvexHullMode = new System.Windows.Forms.ComboBox();
             this.tabControlEx.SuspendLayout();
             this.Debug.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -183,6 +184,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.ConvexHullMode);
             this.groupBox1.Controls.Add(this.ShowCharacterGroupsBox);
             this.groupBox1.Controls.Add(this.ShowCharacterBox);
             this.groupBox1.Controls.Add(this.ShowAtomPositions);
@@ -199,7 +201,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowCharacterGroupsBox.AutoSize = true;
             this.ShowCharacterGroupsBox.Checked = true;
             this.ShowCharacterGroupsBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowCharacterGroupsBox.Location = new System.Drawing.Point(17, 127);
+            this.ShowCharacterGroupsBox.Location = new System.Drawing.Point(17, 155);
             this.ShowCharacterGroupsBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowCharacterGroupsBox.Name = "ShowCharacterGroupsBox";
             this.ShowCharacterGroupsBox.Size = new System.Drawing.Size(269, 23);
@@ -213,7 +215,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowCharacterBox.AutoSize = true;
             this.ShowCharacterBox.Checked = true;
             this.ShowCharacterBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowCharacterBox.Location = new System.Drawing.Point(17, 59);
+            this.ShowCharacterBox.Location = new System.Drawing.Point(17, 57);
             this.ShowCharacterBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowCharacterBox.Name = "ShowCharacterBox";
             this.ShowCharacterBox.Size = new System.Drawing.Size(228, 23);
@@ -241,7 +243,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowConvexHulls.AutoSize = true;
             this.ShowConvexHulls.Checked = true;
             this.ShowConvexHulls.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowConvexHulls.Location = new System.Drawing.Point(17, 93);
+            this.ShowConvexHulls.Location = new System.Drawing.Point(17, 89);
             this.ShowConvexHulls.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowConvexHulls.Name = "ShowConvexHulls";
             this.ShowConvexHulls.Size = new System.Drawing.Size(216, 23);
@@ -255,7 +257,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowRingCentres.AutoSize = true;
             this.ShowRingCentres.Checked = true;
             this.ShowRingCentres.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowRingCentres.Location = new System.Drawing.Point(24, 231);
+            this.ShowRingCentres.Location = new System.Drawing.Point(24, 233);
             this.ShowRingCentres.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowRingCentres.Name = "ShowRingCentres";
             this.ShowRingCentres.Size = new System.Drawing.Size(210, 23);
@@ -269,7 +271,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.ShowMoleculeBox.AutoSize = true;
             this.ShowMoleculeBox.Checked = true;
             this.ShowMoleculeBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowMoleculeBox.Location = new System.Drawing.Point(24, 264);
+            this.ShowMoleculeBox.Location = new System.Drawing.Point(24, 266);
             this.ShowMoleculeBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShowMoleculeBox.Name = "ShowMoleculeBox";
             this.ShowMoleculeBox.Size = new System.Drawing.Size(234, 23);
@@ -301,6 +303,15 @@ namespace Chem4Word.Renderer.OoXmlV4
             this.Ok.Text = "OK";
             this.Ok.UseVisualStyleBackColor = true;
             this.Ok.Click += new System.EventHandler(this.OnClick_Ok);
+            // 
+            // ConvexHullMode
+            // 
+            this.ConvexHullMode.FormattingEnabled = true;
+            this.ConvexHullMode.Location = new System.Drawing.Point(17, 121);
+            this.ConvexHullMode.Name = "ConvexHullMode";
+            this.ConvexHullMode.Size = new System.Drawing.Size(210, 25);
+            this.ConvexHullMode.TabIndex = 26;
+            this.ConvexHullMode.SelectedIndexChanged += new System.EventHandler(this.OnSelectedIndexChanged_ConvexHullMode);
             // 
             // OoXmlV4Settings
             // 
@@ -352,5 +363,6 @@ namespace Chem4Word.Renderer.OoXmlV4
         private System.Windows.Forms.CheckBox ClipCrossingBonds;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.ComboBox ConvexHullMode;
     }
 }

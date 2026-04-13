@@ -8,6 +8,7 @@
 using Chem4Word.ACME.Commands.PropertyEdit;
 using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Models;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System;
@@ -115,6 +116,10 @@ namespace Chem4Word.ACME
                 {
                     WriteTelemetry(module, "Warning", "_selectedBondOptionId is {null}");
                     WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+
+                    // We should never get here
+                    string message = $"_selectedBondOptionId is null";
+                    Debug.WriteLine(message);
                     Debugger.Break();
                 }
             }

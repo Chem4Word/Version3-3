@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
@@ -12,11 +13,12 @@ using Chem4Word.Model2.Converters.ProtocolBuffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Xunit;
 using Point = System.Windows.Point;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class PersistenceTests
     {
@@ -31,7 +33,8 @@ namespace Chem4WordTests
 
             // Act
             var mc = new CMLConverter();
-            var m = mc.Import(ResourceHelper.GetStringResource(file));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var m = mc.Import(ResourceHelper.GetStringResource(assembly, file));
 
             // Assert
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
@@ -56,7 +59,8 @@ namespace Chem4WordTests
         public void CmlImport(string file, int molecules, int atoms, int bonds, int allRings, double expectedWeight, int placementRings, int names, int formulas)
         {
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource(file));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, file));
 
             Assert.True(model.Molecules.Count == molecules, $"Expected {molecules} Molecules; Got {model.Molecules.Count}");
             Assert.True(model.TotalAtomsCount == atoms, $"Expected {atoms} Atoms; Got {model.TotalAtomsCount}");
@@ -87,13 +91,14 @@ namespace Chem4WordTests
                                };
 
             Model model;
+            Assembly assembly = Assembly.GetExecutingAssembly();
             if (hasUsed1D)
             {
-                model = mc.Import(ResourceHelper.GetStringResource("Benzene-With-Missing-Ids.xml"), used1dLabels, false);
+                model = mc.Import(ResourceHelper.GetStringResource(assembly, "Benzene-With-Missing-Ids.xml"), used1dLabels, false);
             }
             else
             {
-                model = mc.Import(ResourceHelper.GetStringResource("Benzene-With-Missing-Ids.xml"));
+                model = mc.Import(ResourceHelper.GetStringResource(assembly, "Benzene-With-Missing-Ids.xml"));
             }
 
             // Basic Sanity Checks
@@ -142,7 +147,8 @@ namespace Chem4WordTests
         public void CheckAtomTransforms()
         {
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Transformed.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Transformed.xml"));
 
             // Basic Sanity Checks
             Assert.True(model.Molecules.Count == 1, $"Expected 1 Molecule; Got {model.Molecules.Count}");
@@ -167,7 +173,8 @@ namespace Chem4WordTests
         public void CmlImportNested()
         {
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("NestedMolecules.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "NestedMolecules.xml"));
 
             // Basic Sanity Checks
             Assert.True(model.Molecules.Count == 1, $"Expected 1 Molecule; Got {model.Molecules.Count}");
@@ -193,13 +200,14 @@ namespace Chem4WordTests
         public void CmlExportSingleMolecule_Cml_Root()
         {
             // Arrange
+            Assembly assembly = Assembly.GetExecutingAssembly();
             var model = CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model);
 
             // Assert
-            var expected = ResourceHelper.GetStringResource("OneMoleculeWthCmlRoot.xml");
+            var expected = ResourceHelper.GetStringResource(assembly, "OneMoleculeWthCmlRoot.xml");
             Assert.Equal(expected, cml);
         }
 
@@ -207,13 +215,14 @@ namespace Chem4WordTests
         public void CmlExportFlatMolecules_Cml_Root()
         {
             // Arrange
+            Assembly assembly = Assembly.GetExecutingAssembly();
             var model = CreateTwoFlatMolecules();
 
             // Act
             var cml = new CMLConverter().Export(model);
 
             // Assert
-            var expected = ResourceHelper.GetStringResource("TwoMoleculesWithCmlRoot.xml");
+            var expected = ResourceHelper.GetStringResource(assembly, "TwoMoleculesWithCmlRoot.xml");
             Assert.Equal(expected, cml);
         }
 
@@ -221,13 +230,14 @@ namespace Chem4WordTests
         public void CmlExportSingleMolecule_RequestChemDrawFormat_IsAccepted()
         {
             // Arrange
+            Assembly assembly = Assembly.GetExecutingAssembly();
             var model = CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.ChemDraw);
 
             // Assert
-            var expected = ResourceHelper.GetStringResource("ChemDraw.xml");
+            var expected = ResourceHelper.GetStringResource(assembly, "ChemDraw.xml");
             Assert.Equal(expected, cml);
         }
 
@@ -235,13 +245,14 @@ namespace Chem4WordTests
         public void CmlExportSingleMolecule_RequestMarvinJSFormat_IsAccepted()
         {
             // Arrange
+            Assembly assembly = Assembly.GetExecutingAssembly();
             var model = CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.MarvinJs);
 
             // Assert
-            var expected = ResourceHelper.GetStringResource("MarvinJs.xml");
+            var expected = ResourceHelper.GetStringResource(assembly, "MarvinJs.xml");
             Assert.Equal(expected, cml);
         }
 
@@ -249,13 +260,14 @@ namespace Chem4WordTests
         public void CmlExportTwoFlatMolecules_RequestChemDrawFormat_IsRejected()
         {
             // Arrange
+            Assembly assembly = Assembly.GetExecutingAssembly();
             var model = CreateTwoFlatMolecules();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.ChemDraw);
 
             // Assert
-            var expected = ResourceHelper.GetStringResource("TwoMoleculesWithCmlRoot.xml");
+            var expected = ResourceHelper.GetStringResource(assembly, "TwoMoleculesWithCmlRoot.xml");
             Assert.Equal(expected, cml);
         }
 
@@ -362,7 +374,8 @@ namespace Chem4WordTests
         public void CmlImportExportNested()
         {
             var mc = new CMLConverter();
-            var model_1 = mc.Import(ResourceHelper.GetStringResource("NestedMolecules.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model_1 = mc.Import(ResourceHelper.GetStringResource(assembly, "NestedMolecules.xml"));
 
             // Basic Sanity Checks
             Assert.True(model_1.Molecules.Count == 1, $"Expected 1 Molecule; Got {model_1.Molecules.Count}");
@@ -411,7 +424,8 @@ namespace Chem4WordTests
         public void SdfImportBenzene()
         {
             var mc = new SdFileConverter();
-            var m = mc.Import(ResourceHelper.GetStringResource("Benzene.txt"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var m = mc.Import(ResourceHelper.GetStringResource(assembly, "Benzene.txt"));
 
             // Basic sanity checks
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
@@ -430,7 +444,8 @@ namespace Chem4WordTests
         public void SdfImportBasicParafuchsin()
         {
             var mc = new SdFileConverter();
-            var m = mc.Import(ResourceHelper.GetStringResource("BasicParafuchsin.txt"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var m = mc.Import(ResourceHelper.GetStringResource(assembly, "BasicParafuchsin.txt"));
 
             // Basic sanity checks
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
@@ -452,7 +467,9 @@ namespace Chem4WordTests
 
             var mc = new CMLConverter();
 
-            var cml = ResourceHelper.GetStringResource("NestedMolecules.xml");
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var cml = ResourceHelper.GetStringResource(assembly, "NestedMolecules.xml");
+
             var pc = new ProtocolBufferConverter();
             Debug.WriteLine($"CML Length = {cml.Length}");
             var m = mc.Import(cml);
@@ -502,7 +519,9 @@ namespace Chem4WordTests
             var cmlConverter = new CMLConverter();
             var protocolBufferConverter = new ProtocolBufferConverter();
 
-            var cml = ResourceHelper.GetStringResource(cmlFile);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            var cml = ResourceHelper.GetStringResource(assembly, cmlFile);
             var shortName = cmlFile.Replace(".xml", "");
 
             // Import from CML

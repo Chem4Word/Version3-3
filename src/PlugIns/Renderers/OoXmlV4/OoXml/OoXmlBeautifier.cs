@@ -12,7 +12,6 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Renderer.OoXmlV4.Entities;
 using Chem4Word.Renderer.OoXmlV4.Enums;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -23,7 +22,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 {
     public class OoXmlBeautifier
     {
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         private List<BondLine> _thickBondLines;
@@ -41,6 +40,11 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         public void Beautify()
         {
+            string module = $"{MethodBase.GetCurrentMethod().Name}()";
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             _wedgeOrHatchBondLines = Outputs.BondLines.Where(t => t.Style == BondLineStyle.Wedge || t.Style == BondLineStyle.Hatch).ToList();
             _thickBondLines = Outputs.BondLines.Where(t => t.Style == BondLineStyle.Thick).ToList();
 
@@ -51,8 +55,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             // 5. Shrink Bond Lines so that they don't overlap any atom characters
             if (Inputs.Options.ClipBondLines)
             {
-                ShrinkBondLinesToExcludeAtomCharacters(Inputs.Progress);
-                ShrinkBondLinesThatCrossAtomCharacters(Inputs.Progress);
+                ShrinkBondLinesToExcludeOwnAtomCharacters(Inputs.Progress);
+                ShrinkBondLinesThatCrossOtherAtomCharacters(Inputs.Progress);
             }
 
             BeautifyDoubleBonds();
@@ -66,6 +70,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
 
             BeautifyStereoBondLines();
+
+            Inputs.Telemetry.Write(module, "Timing", $"Beautify took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)}ms");
         }
 
         private static bool IsLonger(Vector v1, Vector v2)
@@ -324,7 +330,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                                Dictionary<string, Point> originalPoints)
         {
             Point? intersection = GeometryTool.GetIntersection(line1.Start, line1.End, line2.Start, line2.End);
-            if (!intersection.HasValue) return;
+            if (!intersection.HasValue)
+            {
+                return;
+            }
 
             Point originalStart = originalPoints[startPropName];
             Point originalEnd = originalPoints[endPropName];
@@ -458,107 +467,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
         }
 
-        private void ShrinkBondLinesThatCrossAtomCharacters(Progress pb)
+        // Shrink bond lines so that they do not overlap this atom's label characters
+        private void ShrinkBondLinesToExcludeOwnAtomCharacters(Progress pb)
         {
-            // so that they do not overlap label characters at their ends
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            if (Outputs.AtomLabelCharacters.Count > 1)
-            {
-                pb.Show();
-            }
-            pb.Message = "Clipping Bond Lines - Pass 2";
-            pb.Value = 0;
-            pb.Maximum = Outputs.AtomLabelCharacters.Count;
-
-            foreach (AtomLabelCharacter alc in Outputs.AtomLabelCharacters)
-            {
-                pb.Increment(1);
-
-                double width = OoXmlHelper.ScaleCsTtfToCml(alc.Character.Width, Inputs.MeanBondLength);
-                double height = OoXmlHelper.ScaleCsTtfToCml(alc.Character.Height, Inputs.MeanBondLength);
-
-                if (alc.IsSmaller)
-                {
-                    // Shrink bounding box
-                    width *= OoXmlConstants.SubscriptScaleFactor;
-                    height *= OoXmlConstants.SubscriptScaleFactor;
-                }
-
-                // Create rectangle of the bounding box with a suitable clipping margin
-                Rect cbb = new Rect(alc.Position.X - OoXmlConstants.CmlCharacterMargin,
-                                    alc.Position.Y - OoXmlConstants.CmlCharacterMargin,
-                                    width + (OoXmlConstants.CmlCharacterMargin * 2),
-                                    height + (OoXmlConstants.CmlCharacterMargin * 2));
-
-                // Just in case we end up splitting a line into two
-                List<BondLine> extraBondLines = new List<BondLine>();
-
-                // Select Lines which may require trimming
-                // By using LINQ to implement the following SQL
-                // Where (L.Right Between Cbb.Left And Cbb.Right)
-                //    Or (L.Left Between Cbb.Left And Cbb.Right)
-                //    Or (L.Top Between Cbb.Top And Cbb.Botton)
-                //    Or (L.Bottom Between Cbb.Top And Cbb.Botton)
-
-                List<BondLine> bondLines = (from line in Outputs.BondLines
-                                            where (cbb.Left <= line.BoundingBox.Right && line.BoundingBox.Right <= cbb.Right)
-                                                  || (cbb.Left <= line.BoundingBox.Left && line.BoundingBox.Left <= cbb.Right)
-                                                  || (cbb.Top <= line.BoundingBox.Top && line.BoundingBox.Top <= cbb.Bottom)
-                                                  || (cbb.Top <= line.BoundingBox.Bottom && line.BoundingBox.Bottom <= cbb.Bottom)
-                                            select line).ToList();
-                foreach (BondLine bondLine in bondLines)
-                {
-                    if (!(bondLine.Bond.Stereo == BondStereo.Wedge
-                          || bondLine.Bond.Stereo == BondStereo.Hatch
-                          || bondLine.Bond.Stereo == BondStereo.Hatch))
-                    {
-                        Point start = new Point(bondLine.Start.X, bondLine.Start.Y);
-                        Point end = new Point(bondLine.End.X, bondLine.End.Y);
-
-                        int attempts = 0;
-                        if (CohenSutherland.ClipLine(cbb, ref start, ref end, out attempts))
-                        {
-                            bool bClipped = false;
-
-                            if (Math.Abs(bondLine.Start.X - start.X) < CoreConstants.Epsilon && Math.Abs(bondLine.Start.Y - start.Y) < CoreConstants.Epsilon)
-                            {
-                                bondLine.Start = new Point(end.X, end.Y);
-                                bClipped = true;
-                            }
-                            if (Math.Abs(bondLine.End.X - end.X) < CoreConstants.Epsilon && Math.Abs(bondLine.End.Y - end.Y) < CoreConstants.Epsilon)
-                            {
-                                bondLine.End = new Point(start.X, start.Y);
-                                bClipped = true;
-                            }
-
-                            if (!bClipped && bondLine.Bond != null)
-                            {
-                                // Line was clipped at both ends
-                                // 1. Generate new line
-                                BondLine extraLine = new BondLine(bondLine.Style, new Point(end.X, end.Y), new Point(bondLine.End.X, bondLine.End.Y), bondLine.Bond);
-                                extraBondLines.Add(extraLine);
-                                // 2. Trim existing line
-                                bondLine.End = new Point(start.X, start.Y);
-                            }
-                        }
-                        if (attempts >= 15)
-                        {
-                            Debug.WriteLine("Clipping failed !");
-                        }
-                    }
-                }
-
-                // Add any extra lines generated by this character into the List of Bond Lines
-                foreach (BondLine bl in extraBondLines)
-                {
-                    Outputs.BondLines.Add(bl);
-                }
-            }
-        }
-
-        private void ShrinkBondLinesToExcludeAtomCharacters(Progress pb)
-        {
-            // so that they do not overlap label characters of other Atoms
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             if (Outputs.ConvexHulls.Count > 1)
             {
@@ -618,6 +533,87 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                     }
                 }
             }
+
+            stopwatch.Stop();
+            Inputs.Telemetry.Write(module, "Timing", $"Clipping Bond Lines [{Inputs.Options.HullMode}] - Pass 1 took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)} ms");
+        }
+
+        // Shrink bond lines so that they do not overlap any atom's label characters
+        private void ShrinkBondLinesThatCrossOtherAtomCharacters(Progress pb)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            List<string> atomPaths = Outputs.AtomLabelCharacters
+                                            .Where(a => a.AtomPath.StartsWith("/m"))
+                                            .Select(a => a.AtomPath)
+                                            .Distinct()
+                                            .ToList();
+
+            if (atomPaths.Count > 1)
+            {
+                pb.Show();
+            }
+            pb.Message = "Clipping Bond Lines - Pass 2";
+            pb.Value = 0;
+            pb.Maximum = atomPaths.Count;
+
+            foreach (string path in atomPaths)
+            {
+                pb.Increment(1);
+
+                List<Point> clippingHull = Outputs.ConvexHulls[path];
+
+                Rect boundingBox = GeometryTool.GetBoundingBox(clippingHull);
+
+                // Select Lines which may require trimming
+                // By using LINQ to implement the following SQL
+                // Where (L.Right Between Cbb.Left And Cbb.Right)
+                //    Or (L.Left Between Cbb.Left And Cbb.Right)
+                //    Or (L.Top Between Cbb.Top And Cbb.Botton)
+                //    Or (L.Bottom Between Cbb.Top And Cbb.Botton)
+
+                List<BondLine> bondLines = (from line in Outputs.BondLines
+                                            where (boundingBox.Left <= line.BoundingBox.Right && line.BoundingBox.Right <= boundingBox.Right)
+                                                  || (boundingBox.Left <= line.BoundingBox.Left && line.BoundingBox.Left <= boundingBox.Right)
+                                                  || (boundingBox.Top <= line.BoundingBox.Top && line.BoundingBox.Top <= boundingBox.Bottom)
+                                                  || (boundingBox.Top <= line.BoundingBox.Bottom && line.BoundingBox.Bottom <= boundingBox.Bottom)
+                                            select line).ToList();
+
+                foreach (BondLine bondLine in bondLines)
+                {
+                    if (!(bondLine.Bond.Stereo == BondStereo.Wedge
+                          || bondLine.Bond.Stereo == BondStereo.Hatch
+                          || bondLine.Bond.Stereo == BondStereo.Thick))
+                    {
+                        bool intersects = !GeometryTool.Intersects(bondLine.Start, bondLine.End, clippingHull);
+                        if (intersects)
+                        {
+                            Point[] points = GeometryTool.ClipLineWithPolygon(bondLine.Start, bondLine.End, clippingHull, out bool _);
+
+                            // We only need to consider when the hull of an atom's symbol has cut through a bond line as shown below
+                            //
+                            // -----[H]------
+                            //
+                            if (points.Length == 4)
+                            {
+                                // 1. Generate new line
+                                BondLine extraLine = new BondLine(bondLine.Style, points[0], points[1], bondLine.Bond);
+                                Outputs.BondLines.Add(extraLine);
+
+                                // 2. Trim existing line
+                                bondLine.Start = points[2];
+                                bondLine.End = points[3];
+                            }
+                        }
+                    }
+                }
+            }
+
+            stopwatch.Stop();
+            Inputs.Telemetry.Write(module, "Timing", $"Clipping Bond Lines [{Inputs.Options.HullMode}] - Pass 2 took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)} ms");
         }
 
         private bool TrimBondLine(BondLine leftOrRight, BondLine line, bool isInRing)
@@ -644,6 +640,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 {
                     leftOrRight.Start = new Point(crossingPoint.Value.X, crossingPoint.Value.Y);
                 }
+
                 if (!isInRing)
                 {
                     l1 = GeometryTool.DistanceBetween(crossingPoint.Value, line.Start);

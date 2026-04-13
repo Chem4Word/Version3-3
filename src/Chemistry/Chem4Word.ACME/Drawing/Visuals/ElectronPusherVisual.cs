@@ -136,12 +136,10 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
                     AtomVisual secondChemistryVisual1 = secondChemistryVisuals[0] as AtomVisual;
                     AtomVisual secondChemistryVisual2 = secondChemistryVisuals[1] as AtomVisual;
-                    Point? start =
-                        secondChemistryVisual1.GetIntersection(secondChemistryVisual1.Position,
-                                                               secondChemistryVisual2.Position);
-                    Point? end =
-                        secondChemistryVisual2.GetIntersection(secondChemistryVisual1.Position,
-                                                               secondChemistryVisual2.Position);
+                    Point? start = secondChemistryVisual1.GetIntersection(secondChemistryVisual1.Position,
+                                                                          secondChemistryVisual2.Position);
+                    Point? end = secondChemistryVisual2.GetIntersection(secondChemistryVisual1.Position,
+                                                                        secondChemistryVisual2.Position);
                     dc.DrawLine(dashedPen, start ?? secondChemistryVisual1.Position, end ?? secondChemistryVisual2.Position);
                 }
             }

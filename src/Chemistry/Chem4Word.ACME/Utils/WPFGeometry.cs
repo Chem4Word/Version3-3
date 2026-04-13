@@ -147,7 +147,7 @@ namespace Chem4Word.ACME.Utils
             return geo;
         }
 
-        public static System.Windows.Media.Geometry CreateGeometry(DrawingGroup drawingGroup)
+        public static Geometry CreateGeometry(DrawingGroup drawingGroup)
         {
             var geometry = new GeometryGroup();
 

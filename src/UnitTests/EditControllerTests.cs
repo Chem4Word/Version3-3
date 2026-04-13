@@ -7,16 +7,18 @@
 
 using Chem4Word.ACME;
 using Chem4Word.ACME.Models;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using Xunit;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class EditControllerTests
     {
@@ -264,7 +266,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-With-Foliage.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly,"Two-Molecules-With-Foliage.xml"));
 
             var editController = new EditController(model);
 
@@ -296,7 +299,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("cyclohexylidenecyclohexane.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "cyclohexylidenecyclohexane.xml"));
 
             var editController = new EditController(model);
 
@@ -329,7 +333,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("cyclohexylidenecyclohexane.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "cyclohexylidenecyclohexane.xml"));
 
             var editController = new EditController(model);
 
@@ -361,7 +366,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("cyclohexylidenecyclohexane.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "cyclohexylidenecyclohexane.xml"));
 
             var editController = new EditController(model);
 
@@ -394,7 +400,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-With-Foliage.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-With-Foliage.xml"));
 
             var editController = new EditController(model);
 
@@ -426,7 +433,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-For-Joining.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-For-Joining.xml"));
 
             var editController = new EditController(model);
 
@@ -463,7 +471,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-For-Joining.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-For-Joining.xml"));
 
             var editController = new EditController(model);
 
@@ -497,7 +506,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-For-Joining.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-For-Joining.xml"));
 
             var editController = new EditController(model);
 
@@ -532,7 +542,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-For-Joining.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-For-Joining.xml"));
 
             var editController = new EditController(model);
 
@@ -848,7 +859,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-For-Joining.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-For-Joining.xml"));
 
             var editController = new EditController(model);
 
@@ -972,7 +984,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-For-Joining.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-For-Joining.xml"));
 
             var editController = new EditController(model);
 
@@ -1007,7 +1020,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-With-Foliage.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-With-Foliage.xml"));
 
             var editController = new EditController(model);
 
@@ -1038,7 +1052,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Molecules-With-Foliage.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly,"Two-Molecules-With-Foliage.xml"));
 
             var editController = new EditController(model);
 
@@ -1191,7 +1206,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var mc = new CMLConverter();
-            var model = mc.Import(ResourceHelper.GetStringResource("Two-Grouped-Molecules.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Grouped-Molecules.xml"));
 
             var editController = new EditController(model);
 

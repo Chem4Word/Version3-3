@@ -5,9 +5,11 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace Chem4Word.ACME.Drawing.Text
@@ -43,7 +45,7 @@ namespace Chem4Word.ACME.Drawing.Text
                                                                        FontWeights.Normal,
                                                                        FontStretches.Normal);
 
-        public static Typeface MoleculelabelTypeface { get; } = new Typeface(new FontFamily(FamilyName),
+        public static Typeface MoleculeLabelTypeface { get; } = new Typeface(new FontFamily(FamilyName),
                                                                              FontStyles.Normal,
                                                                              FontWeights.Normal,
                                                                              FontStretches.Normal);
@@ -52,8 +54,10 @@ namespace Chem4Word.ACME.Drawing.Text
         {
             if (!AtomLabelTypeface.TryGetGlyphTypeface(out _glyphTypeface))
             {
+                // We should never get here
+                string message = $"No glyphtypeface found";
+                Debug.WriteLine(message);
                 Debugger.Break();
-                throw new InvalidOperationException("No glyphtypeface found");
             }
         }
 
@@ -101,11 +105,9 @@ namespace Chem4Word.ACME.Drawing.Text
 
         public static GlyphInfo GetGlyphsAndInfo(string symbolText, float pixelsPerDip, out GlyphRun hydrogenGlyphRun, Point point, GlyphTypeface glyphTypeFace, double symbolSize)
         {
-            //measure the H atom first
             var glyphInfo = GetGlyphs(symbolText, glyphTypeFace, symbolSize);
             hydrogenGlyphRun = GetGlyphRun(glyphInfo, glyphTypeFace,
-                symbolSize, pixelsPerDip, point);
-            //work out exactly how much we should offset from the center to get to the bottom left
+                                           symbolSize, pixelsPerDip, point);
             return glyphInfo;
         }
 

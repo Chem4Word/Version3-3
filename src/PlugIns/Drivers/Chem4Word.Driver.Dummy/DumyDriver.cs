@@ -50,6 +50,7 @@ namespace Chem4Word.Driver.Dummy
             new DatabaseFileProperties
             {
                 IsSqliteDatabase = true,
+                Checked = true,
                 IsChem4Word = true,
                 Properties = new Dictionary<string, string>()
             };

@@ -8,7 +8,7 @@
 using Chem4Word.Model2;
 using System.Windows;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public static class TestHelpers
     {

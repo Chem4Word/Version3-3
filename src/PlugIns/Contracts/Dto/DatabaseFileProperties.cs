@@ -12,6 +12,7 @@ namespace IChem4Word.Contracts.Dto
     public class DatabaseFileProperties
     {
         public bool FileExists { get; set; }
+        public bool Checked { get; set; }
         public bool IsSqliteDatabase { get; set; }
         public bool IsReadOnly { get; set; }
         public bool IsChem4Word { get; set; }

@@ -123,6 +123,7 @@
     <Compile Include="AzureSettings.cs" />
     <Compile Include="Enums\CompassPoints.cs" />
     <Compile Include="Helpers\ApiResult.cs" />
+    <Compile Include="Helpers\Chem4WordException.cs" />
     <Compile Include="Helpers\ConfigWatcher.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Helpers\HttpErrorStatusCodeException.cs" />

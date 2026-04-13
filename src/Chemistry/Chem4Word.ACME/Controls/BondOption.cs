@@ -56,15 +56,15 @@ namespace Chem4Word.ACME
             DependencyProperty.Register("BondGraphic", typeof(System.Windows.Media.Drawing), typeof(BondOption),
                                         new PropertyMetadata(default(System.Windows.Media.Drawing)));
 
-        public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register("Description", typeof(string), typeof(BondOption),
-                                        new PropertyMetadata(default(string)));
-
         public string Description
         {
             get { return (string)GetValue(DescriptionProperty); }
             set { SetValue(DescriptionProperty, value); }
         }
+
+        public static readonly DependencyProperty DescriptionProperty =
+            DependencyProperty.Register("Description", typeof(string), typeof(BondOption),
+                                        new PropertyMetadata(default(string)));
 
         public override string ToString()
         {

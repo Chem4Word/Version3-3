@@ -978,6 +978,7 @@ namespace Chem4Word.ACME.Controls
                     fgv.SubscriptSize = Controller.SymbolSize * AcmeConstants.ScriptScalingFactor;
                     fgv.SuperscriptSize = Controller.SymbolSize * AcmeConstants.ScriptScalingFactor;
                     fgv.Standoff = Controller.Standoff;
+
                     fgv.Render();
 
                     AddVisual(fgv);
@@ -990,11 +991,15 @@ namespace Chem4Word.ACME.Controls
                 if (av.RefCount == 0) // it hasn't been added before
                 {
                     av.ChemicalVisuals = ChemicalVisuals;
+
+                    av.BackgroundColor = Background;
                     av.SymbolSize = Controller.SymbolSize;
                     av.SubscriptSize = Controller.SymbolSize * AcmeConstants.ScriptScalingFactor;
                     av.SuperscriptSize = Controller.SymbolSize * AcmeConstants.ScriptScalingFactor;
-                    av.BackgroundColor = Background;
+                    av.Standoff = Controller.Standoff;
+
                     av.DisplayOverbonding = DisplayOverbondedAtoms;
+
                     av.Render();
 
                     AddVisual(av);

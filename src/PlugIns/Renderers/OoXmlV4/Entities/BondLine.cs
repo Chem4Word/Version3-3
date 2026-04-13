@@ -136,7 +136,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (_start != value)
                 {
                     _end = value;
-                    AddOutlinePoints(nameof(End));
+                    AddOutlinePoints();
                 }
             }
         }
@@ -151,7 +151,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (_start != value)
                 {
                     _innerEnd = value;
-                    AddOutlinePoints(nameof(InnerEnd));
+                    AddOutlinePoints();
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (_start != value)
                 {
                     _innerStart = value;
-                    AddOutlinePoints(nameof(InnerStart));
+                    AddOutlinePoints();
                 }
             }
         }
@@ -177,7 +177,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (_start != value)
                 {
                     _leftTail = value;
-                    AddOutlinePoints(nameof(LeftTail));
+                    AddOutlinePoints();
                 }
             }
         }
@@ -218,7 +218,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (_start != value)
                 {
                     _outerEnd = value;
-                    AddOutlinePoints(nameof(OuterEnd));
+                    AddOutlinePoints();
                 }
             }
         }
@@ -231,7 +231,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (_start != value)
                 {
                     _outerStart = value;
-                    AddOutlinePoints(nameof(OuterStart));
+                    AddOutlinePoints();
                 }
             }
         }
@@ -244,7 +244,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (_start != value)
                 {
                     _rightTail = value;
-                    AddOutlinePoints(nameof(RightTail));
+                    AddOutlinePoints();
                 }
             }
         }
@@ -257,7 +257,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                 if (_start != value)
                 {
                     _start = value;
-                    AddOutlinePoints(nameof(Start));
+                    AddOutlinePoints();
                 }
             }
         }
@@ -444,7 +444,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         private static double BondOffset(double medianBondLength)
                     => medianBondLength * OoXmlConstants.MultipleBondOffsetPercentage;
 
-        private void AddOutlinePoints(string changed = null)
+        private void AddOutlinePoints()
         {
             switch (Style)
             {
@@ -475,15 +475,6 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
                     _outlines.Add(_outlines.Count, wedgePoints);
                     break;
             }
-
-            if (string.IsNullOrEmpty(changed))
-            {
-                Debug.WriteLine($"Bond '{BondPath}' Outlines: {_outlines.Count + 1}");
-            }
-            else
-            {
-                Debug.WriteLine($"Bond '{BondPath}' Outlines: {_outlines.Count + 1} Triggered by change of '{changed}'");
-            }
         }
 
         private Rect GetBoundingBox(List<Point> points)
@@ -506,19 +497,5 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         }
 
         #endregion Methods
-
-        [Obsolete("No Longer used")]
-        private static void TrimByVector(Point line1Start, Point line1End, Point line2Start, Point line2End, ref Vector vector)
-        {
-            Point? crossingPoint = GeometryTool.GetIntersection(line1Start, line1End, line2Start, line2End);
-            if (crossingPoint != null)
-            {
-                Vector v = crossingPoint.Value - line1Start;
-                if (v.Length < vector.Length)
-                {
-                    vector = v;
-                }
-            }
-        }
     }
 }

@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Helpers;
+using Chem4Word.Renderer.OoXmlV4.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,9 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         [JsonProperty]
         public bool ClipBondLines { get; set; }
+
+        [JsonProperty]
+        public HullType HullMode { get; set; }
 
         // Debugging
         [JsonProperty]
@@ -65,7 +69,7 @@ namespace Chem4Word.Renderer.OoXmlV4
         [JsonProperty]
         public bool ShowBondCrossingPoints { get; set; }
 
-        // Not serialised
+        // Not serialized
         public string SettingsPath { get; set; }
 
         public List<string> Errors { get; set; }
@@ -172,10 +176,12 @@ namespace Chem4Word.Renderer.OoXmlV4
         private void SetValuesFromCopy(OoXmlV4Options copy)
         {
             // Main User Options
-            ClipCrossingBonds = copy.ClipCrossingBonds;
+            // None
 
             // Debugging Options
+            ClipCrossingBonds = copy.ClipCrossingBonds;
             ClipBondLines = copy.ClipBondLines;
+            HullMode = copy.HullMode;
             ShowDoubleBondTrimmingLines = copy.ShowDoubleBondTrimmingLines;
             ShowCharacterBoundingBoxes = copy.ShowCharacterBoundingBoxes;
             ShowMoleculeBoundingBoxes = copy.ShowMoleculeBoundingBoxes;
@@ -198,7 +204,7 @@ namespace Chem4Word.Renderer.OoXmlV4
         {
             OoXmlV4Options clone = new OoXmlV4Options();
 
-            // Copy serialised properties
+            // Copy serialized properties
             clone.SetValuesFromCopy(this);
 
             clone.SettingsPath = SettingsPath;
@@ -209,10 +215,12 @@ namespace Chem4Word.Renderer.OoXmlV4
         public void RestoreDefaults()
         {
             // Main User Options
-            ClipCrossingBonds = false;
+            // None
 
             // Debugging Options
+            ClipCrossingBonds = false;
             ClipBondLines = true;
+            HullMode = HullType.SimpleHull;
             ShowDoubleBondTrimmingLines = false;
             ShowCharacterBoundingBoxes = false;
             ShowMoleculeBoundingBoxes = false;

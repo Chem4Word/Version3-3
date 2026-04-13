@@ -4,10 +4,11 @@
 //  The licence and further copyright text can be found in the file LICENCE.md
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
+
 using Chem4Word.Model2;
 using Xunit;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class PathTests
     {

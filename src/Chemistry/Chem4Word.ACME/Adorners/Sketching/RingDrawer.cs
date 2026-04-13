@@ -8,8 +8,8 @@
 using Chem4Word.ACME.Drawing;
 using Chem4Word.ACME.Drawing.LayoutSupport;
 using Chem4Word.ACME.Models;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -36,9 +36,9 @@ namespace Chem4Word.ACME.Adorners.Sketching
                     int newPlacementsCount = newPlacements.Count;
 
                     var locations = (from p in newPlacements.ToArray().Reverse()
-                                     select p.Position).ToArray();
+                                     select p.Position).ToList();
                     HashSet<NewAtomPlacement> visited = new HashSet<NewAtomPlacement>();
-                    Point? centroid = Geometry<Point>.GetCentroid(locations, p => p);
+                    Point? centroid = GeometryTool.GetCentroid(locations);
 
                     var startAt =
                         newPlacementsCount % 2; //place the double bonds in odd membered rings where they should start

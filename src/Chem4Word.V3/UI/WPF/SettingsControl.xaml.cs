@@ -13,6 +13,7 @@ using Chem4Word.Helpers;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Models;
 using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using Ookii.Dialogs.WinForms;
 using System;
 using System.Collections.Generic;
@@ -66,13 +67,13 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             ImplicitHydrogenMode.Items.Clear();
-            foreach (var keyValuePair in EnumHelper.GetEnumValuesWithDescriptions<HydrogenLabels>())
+            foreach (KeyValuePair<HydrogenLabels, string> keyValuePair in EnumHelper.GetEnumValuesWithDescriptions<HydrogenLabels>())
             {
-                var cbi = new ComboBoxItem
-                {
-                    Content = keyValuePair.Value,
-                    Tag = keyValuePair.Key
-                };
+                ComboBoxItem cbi = new ComboBoxItem
+                                   {
+                                       Content = keyValuePair.Value,
+                                       Tag = keyValuePair.Key
+                                   };
                 ImplicitHydrogenMode.Items.Add(cbi);
 
                 if (SystemOptions.ExplicitH == keyValuePair.Key)
@@ -90,9 +91,9 @@ namespace Chem4Word.UI.WPF
 
             if (!string.IsNullOrEmpty(ActiveTab))
             {
-                var tab = TabControl.Items
-                                    .Cast<TabItem>()
-                                    .FirstOrDefault(i => i.Name.Equals(ActiveTab));
+                TabItem tab = TabControl.Items
+                                        .Cast<TabItem>()
+                                        .FirstOrDefault(i => i.Name.Equals(ActiveTab));
                 if (tab != null)
                 {
                     tab.IsSelected = true;
@@ -184,7 +185,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-            var editor = Globals.Chem4WordV3.GetEditorPlugIn(SelectEditorPlugIn.SelectedItem.ToString());
+            IChem4WordEditor editor = Globals.Chem4WordV3.GetEditorPlugIn(SelectEditorPlugIn.SelectedItem.ToString());
             editor.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
             // ToDo: Fix top left
             editor.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
@@ -195,7 +196,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-            var renderer = Globals.Chem4WordV3.GetRendererPlugIn(SelectRendererPlugIn.SelectedItem.ToString());
+            IChem4WordRenderer renderer = Globals.Chem4WordV3.GetRendererPlugIn(SelectRendererPlugIn.SelectedItem.ToString());
             renderer.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
             // ToDo: Fix top left
             renderer.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
@@ -206,7 +207,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-            var searcher = Globals.Chem4WordV3.GetSearcherPlugIn(SelectSearcherPlugIn.SelectedItem.ToString());
+            IChem4WordSearcher searcher = Globals.Chem4WordV3.GetSearcherPlugIn(SelectSearcherPlugIn.SelectedItem.ToString());
             searcher.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
             // ToDo: Fix top left
             searcher.ChangeSettings(new Point(SystemOptions.WordTopLeft.X + CoreConstants.TopLeftOffset * 2, SystemOptions.WordTopLeft.Y + CoreConstants.TopLeftOffset * 2));
@@ -219,10 +220,10 @@ namespace Chem4Word.UI.WPF
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-                var pci = SelectEditorPlugIn.SelectedItem as PlugInComboItem;
+                PlugInComboItem pci = SelectEditorPlugIn.SelectedItem as PlugInComboItem;
                 SystemOptions.SelectedEditorPlugIn = pci?.Name;
                 SelectedEditorPlugInDescription.Text = pci?.Description;
-                var editor = Globals.Chem4WordV3.GetEditorPlugIn(pci.Name);
+                IChem4WordEditor editor = Globals.Chem4WordV3.GetEditorPlugIn(pci.Name);
                 SelectedEditorSettings.IsEnabled = editor.HasSettings;
 
                 Dirty = true;
@@ -237,10 +238,10 @@ namespace Chem4Word.UI.WPF
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-                var pci = SelectRendererPlugIn.SelectedItem as PlugInComboItem;
+                PlugInComboItem pci = SelectRendererPlugIn.SelectedItem as PlugInComboItem;
                 SystemOptions.SelectedRendererPlugIn = pci?.Name;
                 SelectedRendererDescription.Text = pci?.Description;
-                var renderer = Globals.Chem4WordV3.GetRendererPlugIn(pci.Name);
+                IChem4WordRenderer renderer = Globals.Chem4WordV3.GetRendererPlugIn(pci.Name);
                 SelectedRendererSettings.IsEnabled = renderer.HasSettings;
 
                 Dirty = true;
@@ -255,9 +256,9 @@ namespace Chem4Word.UI.WPF
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-                var pci = SelectSearcherPlugIn.SelectedItem as PlugInComboItem;
+                PlugInComboItem pci = SelectSearcherPlugIn.SelectedItem as PlugInComboItem;
                 SelectedSearcherDescription.Text = pci?.Description;
-                var searcher = Globals.Chem4WordV3.GetSearcherPlugIn(pci.Name);
+                IChem4WordSearcher searcher = Globals.Chem4WordV3.GetSearcherPlugIn(pci.Name);
                 SelectedSearcherSettings.IsEnabled = searcher.HasSettings;
             }
         }
@@ -429,21 +430,21 @@ namespace Chem4Word.UI.WPF
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-            var browser = new VistaFolderBrowserDialog();
+            VistaFolderBrowserDialog browser = new VistaFolderBrowserDialog();
             browser.Description = "Select a folder to set as your default location";
             browser.UseDescriptionForTitle = true;
             browser.RootFolder = Environment.SpecialFolder.Desktop;
             browser.ShowNewFolderButton = true;
             browser.SelectedPath = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
 
-            var result = browser.ShowDialog();
+            Forms.DialogResult result = browser.ShowDialog();
             if (result == Forms.DialogResult.OK
                 && Directory.Exists(browser.SelectedPath))
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Changing default library path to '{browser.SelectedPath}'");
 
                 DefaultLocation.Text = browser.SelectedPath;
-                var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
                 listOfDetectedLibraries.DefaultLocation = browser.SelectedPath;
                 new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                     .SaveSettingsFile(listOfDetectedLibraries);
@@ -463,11 +464,11 @@ namespace Chem4Word.UI.WPF
 
         private bool IsValidFileName(string suggestedName)
         {
-            var result = true;
+            bool result = true;
 
             // Check for reserved characters
-            var invalidFileNameChars = Path.GetInvalidFileNameChars();
-            foreach (var c in invalidFileNameChars)
+            char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+            foreach (char c in invalidFileNameChars)
             {
                 if (suggestedName.Contains(c))
                 {
@@ -524,23 +525,23 @@ namespace Chem4Word.UI.WPF
 
         private void OnLostFocus_LibraryName(object sender, RoutedEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
                 if (sender is TextBox textBox)
                 {
                     textBox.Background = SystemColors.WindowBrush;
-                    var trimmed = textBox.Text.Trim();
+                    string trimmed = textBox.Text.Trim();
                     if (IsValidFileName(trimmed))
                     {
-                        var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                        ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
                         if (listOfDetectedLibraries != null)
                         {
                             DatabaseDetails database = null;
 
-                            var oldFileName = string.Empty;
-                            var newFileName = $"{trimmed}.db";
+                            string oldFileName = string.Empty;
+                            string newFileName = $"{trimmed}.db";
 
                             if (textBox.DataContext is LibrariesSettingsGridSource source)
                             {
@@ -557,10 +558,10 @@ namespace Chem4Word.UI.WPF
                                 && !newFileName.Equals(oldFileName)
                                 && database != null)
                             {
-                                var fileInfo = new FileInfo(database.Connection);
+                                FileInfo fileInfo = new FileInfo(database.Connection);
 
-                                var canRename = !File.Exists(Path.Combine(fileInfo.DirectoryName, newFileName));
-                                var isUnique = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(newFileName.Replace(".db", "")));
+                                bool canRename = !File.Exists(Path.Combine(fileInfo.DirectoryName, newFileName));
+                                DatabaseDetails isUnique = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(newFileName.Replace(".db", "")));
 
                                 if (canRename && isUnique == null)
                                 {
@@ -573,7 +574,7 @@ namespace Chem4Word.UI.WPF
                                         File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic")), Path.Combine(fileInfo.DirectoryName, newFileName.Replace(".db", ".lic")));
                                     }
 
-                                    var selected = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(_selectedLibrary));
+                                    DatabaseDetails selected = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(n => n.DisplayName.Equals(_selectedLibrary));
                                     if (selected != null && selected.ShortFileName.Equals(oldFileName))
                                     {
                                         listOfDetectedLibraries.SelectedLibrary = newFileName.Replace(".db", "");
@@ -588,7 +589,7 @@ namespace Chem4Word.UI.WPF
                                 }
                                 else
                                 {
-                                    var message = $"Name clash; Can't rename '{oldFileName}' to '{newFileName}' in '{fileInfo.DirectoryName}'";
+                                    string message = $"Name clash; Can't rename '{oldFileName}' to '{newFileName}' in '{fileInfo.DirectoryName}'";
                                     Globals.Chem4WordV3.Telemetry.Write(module, "Warning", message);
                                     UserInteractions.WarnUser(message);
                                 }
@@ -618,31 +619,31 @@ namespace Chem4Word.UI.WPF
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-            var browser = new Forms.OpenFileDialog();
+            Forms.OpenFileDialog browser = new Forms.OpenFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
             browser.AddExtension = true;
             browser.Filter = "database files (*.db)|*.db";
             browser.ShowHelp = false;
 
-            var result = browser.ShowDialog();
+            Forms.DialogResult result = browser.ShowDialog();
             if (result == Forms.DialogResult.OK)
             {
-                var fileInfo = new FileInfo(browser.FileName);
+                FileInfo fileInfo = new FileInfo(browser.FileName);
                 if (Directory.Exists(fileInfo.DirectoryName)
                     && File.Exists(browser.FileName))
                 {
-                    var driver = (IChem4WordLibraryReader)Globals.Chem4WordV3.GetDriverPlugIn(CoreConstants.SQLiteStandardDriver);
+                    IChem4WordLibraryReader driver = (IChem4WordLibraryReader)Globals.Chem4WordV3.GetDriverPlugIn(CoreConstants.SQLiteStandardDriver);
                     if (driver != null)
                     {
-                        var details = new DatabaseDetails
-                        {
-                            Driver = CoreConstants.SQLiteStandardDriver,
-                            DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
-                            Connection = browser.FileName,
-                            ShortFileName = fileInfo.Name
-                        };
+                        DatabaseDetails details = new DatabaseDetails
+                                                  {
+                                                      Driver = CoreConstants.SQLiteStandardDriver,
+                                                      DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
+                                                      Connection = browser.FileName,
+                                                      ShortFileName = fileInfo.Name
+                                                  };
 
-                        var info = driver.GetDatabaseFileProperties(details.Connection);
+                        DatabaseFileProperties info = driver.GetDatabaseFileProperties(details.Connection);
                         if (!info.IsSqliteDatabase)
                         {
                             UserInteractions.WarnUser("Couldn't add this database, as it is not a SQLite database");
@@ -652,9 +653,9 @@ namespace Chem4Word.UI.WPF
                         {
                             details.Driver = GetDriverFromLicense(browser.FileName);
 
-                            var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                            var unique = listOfDetectedLibraries.AvailableDatabases
-                                                                .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
+                            ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                            DatabaseDetails unique = listOfDetectedLibraries.AvailableDatabases
+                                                                            .FirstOrDefault(n => n.DisplayName.Equals(details.DisplayName));
 
                             // Prevent add if there is a name clash
                             if (unique == null)
@@ -695,41 +696,41 @@ namespace Chem4Word.UI.WPF
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-            var browser = new Forms.SaveFileDialog();
+            Forms.SaveFileDialog browser = new Forms.SaveFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
             browser.AddExtension = true;
             browser.Filter = "*.db|*.db";
             browser.FileName = "New Library.db";
             browser.ShowHelp = false;
 
-            var result = browser.ShowDialog();
+            Forms.DialogResult result = browser.ShowDialog();
             if (result == Forms.DialogResult.OK)
             {
-                var fileName = browser.FileName;
+                string fileName = browser.FileName;
                 if (!fileName.EndsWith(".db"))
                 {
                     fileName += ".db";
                 }
-                var fileInfo = new FileInfo(fileName);
+                FileInfo fileInfo = new FileInfo(fileName);
                 if (Directory.Exists(fileInfo.DirectoryName))
                 {
-                    var displayName = fileInfo.Name.Replace(fileInfo.Extension, "");
-                    var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                    var existing = listOfDetectedLibraries.AvailableDatabases
-                                                          .FirstOrDefault(n => n.DisplayName.Equals(displayName));
+                    string displayName = fileInfo.Name.Replace(fileInfo.Extension, "");
+                    ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                    DatabaseDetails existing = listOfDetectedLibraries.AvailableDatabases
+                                                                      .FirstOrDefault(n => n.DisplayName.Equals(displayName));
 
                     if (existing == null)
                     {
-                        var driver = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn(CoreConstants.SQLiteStandardDriver);
+                        IChem4WordLibraryWriter driver = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn(CoreConstants.SQLiteStandardDriver);
                         if (driver != null)
                         {
-                            var details = new DatabaseDetails
-                            {
-                                Driver = CoreConstants.SQLiteStandardDriver,
-                                DisplayName = displayName,
-                                Connection = fileName,
-                                ShortFileName = fileInfo.Name
-                            };
+                            DatabaseDetails details = new DatabaseDetails
+                                                      {
+                                                          Driver = CoreConstants.SQLiteStandardDriver,
+                                                          DisplayName = displayName,
+                                                          Connection = fileName,
+                                                          ShortFileName = fileInfo.Name
+                                                      };
 
                             Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Created new library {details.DisplayName}");
                             driver.CreateNewDatabase(details.Connection);
@@ -755,7 +756,7 @@ namespace Chem4Word.UI.WPF
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
 
-            var host = new LibraryDownloadHost();
+            LibraryDownloadHost host = new LibraryDownloadHost();
             host.TopLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
             host.ShowDialog();
 
@@ -774,8 +775,8 @@ namespace Chem4Word.UI.WPF
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Removing library '{library.Name}'");
 
-                var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-                var item = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(r => r.DisplayName.Equals(library.Name));
+                ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                DatabaseDetails item = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(r => r.DisplayName.Equals(library.Name));
                 listOfDetectedLibraries.AvailableDatabases.Remove(item);
                 new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                     .SaveSettingsFile(listOfDetectedLibraries);
@@ -793,7 +794,7 @@ namespace Chem4Word.UI.WPF
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{library.Name}'");
 
-                var editor = new LibraryEditorHost();
+                LibraryEditorHost editor = new LibraryEditorHost();
                 editor.TopLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
                 editor.Telemetry = Globals.Chem4WordV3.Telemetry;
                 editor.SelectedDatabase = library.Name;
@@ -807,22 +808,22 @@ namespace Chem4Word.UI.WPF
         private string GetUserFromLicense(string filename)
         {
             // http://xpather.com/
-            var result = "Required";
+            string result = "Required";
 
-            var customerName = string.Empty;
-            var customerEmail = string.Empty;
+            string customerName = string.Empty;
+            string customerEmail = string.Empty;
 
             // Read driver name from license file if present
-            var licenseFile = filename.Replace(".db", ".lic");
+            string licenseFile = filename.Replace(".db", ".lic");
             if (File.Exists(licenseFile))
             {
-                var xDocument = XDocument.Parse(File.ReadAllText(licenseFile));
-                var nameElement = xDocument.XPathSelectElements("//Customer/Name").FirstOrDefault();
+                XDocument xDocument = XDocument.Parse(File.ReadAllText(licenseFile));
+                XElement nameElement = xDocument.XPathSelectElements("//Customer/Name").FirstOrDefault();
                 if (nameElement != null)
                 {
                     customerName = nameElement.Value.Trim();
                 }
-                var emailElement = xDocument.XPathSelectElements("//Customer/Email").FirstOrDefault();
+                XElement emailElement = xDocument.XPathSelectElements("//Customer/Email").FirstOrDefault();
                 if (emailElement != null)
                 {
                     customerEmail = emailElement.Value.Trim();
@@ -839,17 +840,17 @@ namespace Chem4Word.UI.WPF
         private string GetDriverFromLicense(string filename)
         {
             // // http://xpather.com/
-            var result = CoreConstants.SQLiteStandardDriver;
+            string result = CoreConstants.SQLiteStandardDriver;
 
             // Read driver name from license file if present
-            var licenseFile = filename.Replace(".db", ".lic");
+            string licenseFile = filename.Replace(".db", ".lic");
             if (File.Exists(licenseFile))
             {
-                var xDocument = XDocument.Parse(File.ReadAllText(licenseFile));
-                var attributes = xDocument.XPathSelectElements("//Attribute").ToList();
+                XDocument xDocument = XDocument.Parse(File.ReadAllText(licenseFile));
+                List<XElement> attributes = xDocument.XPathSelectElements("//Attribute").ToList();
                 if (attributes.Any())
                 {
-                    foreach (var element in attributes)
+                    foreach (XElement element in attributes)
                     {
                         if (element.FirstAttribute.Value.Equals("Driver"))
                         {
@@ -865,14 +866,17 @@ namespace Chem4Word.UI.WPF
 
         private void SetLibraryTabButtons()
         {
-            var hasPermission = FileSystemHelper.UserHasWritePermission(Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation);
-            CreateNewLibrary.IsEnabled = hasPermission;
-            DownloadLibrary.IsEnabled = hasPermission;
+            if (Globals.Chem4WordV3.ListOfDetectedLibraries != null)
+            {
+                bool hasPermission = FileSystemHelper.UserHasWritePermission(Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation);
+                CreateNewLibrary.IsEnabled = hasPermission;
+                DownloadLibrary.IsEnabled = hasPermission;
+            }
         }
 
         private void SetSelectedLibrary(string selectedLibrary)
         {
-            foreach (var item in LibrariesList.Items)
+            foreach (object item in LibrariesList.Items)
             {
                 if (item is LibrariesSettingsGridSource source
                     && source.Name.Equals(selectedLibrary))
@@ -952,11 +956,11 @@ namespace Chem4Word.UI.WPF
 
             foreach (IChem4WordEditor editor in Globals.Chem4WordV3.Editors)
             {
-                var pci = new PlugInComboItem
-                {
-                    Name = editor.Name,
-                    Description = editor.Description
-                };
+                PlugInComboItem pci = new PlugInComboItem
+                                      {
+                                          Name = editor.Name,
+                                          Description = editor.Description
+                                      };
                 int item = SelectEditorPlugIn.Items.Add(pci);
 
                 if (editor.Name.Equals(selectedEditor))
@@ -969,11 +973,11 @@ namespace Chem4Word.UI.WPF
 
             foreach (IChem4WordRenderer renderer in Globals.Chem4WordV3.Renderers)
             {
-                var pci = new PlugInComboItem
-                {
-                    Name = renderer.Name,
-                    Description = renderer.Description
-                };
+                PlugInComboItem pci = new PlugInComboItem
+                                      {
+                                          Name = renderer.Name,
+                                          Description = renderer.Description
+                                      };
                 int item = SelectRendererPlugIn.Items.Add(pci);
                 if (renderer.Name.Equals(selectedRenderer))
                 {
@@ -985,11 +989,11 @@ namespace Chem4Word.UI.WPF
 
             foreach (IChem4WordSearcher searcher in Globals.Chem4WordV3.Searchers.OrderBy(s => s.DisplayOrder))
             {
-                var pci = new PlugInComboItem
-                {
-                    Name = searcher.Name,
-                    Description = searcher.Description
-                };
+                PlugInComboItem pci = new PlugInComboItem
+                                      {
+                                          Name = searcher.Name,
+                                          Description = searcher.Description
+                                      };
                 int item = SelectSearcherPlugIn.Items.Add(pci);
                 if (SelectSearcherPlugIn.Items.Count == 1)
                 {
@@ -1031,7 +1035,7 @@ namespace Chem4Word.UI.WPF
             RemoveExplicitOnImportSearch.IsChecked = SystemOptions.RemoveExplicitHydrogensOnImportFromSearch;
             RemoveExplicitOnImportLibrary.IsChecked = SystemOptions.RemoveExplicitHydrogensOnImportFromLibrary;
 
-            foreach (var item in DefaultBondLength.Items)
+            foreach (object item in DefaultBondLength.Items)
             {
                 if (item is ComboBoxItem cbi)
                 {
@@ -1046,11 +1050,11 @@ namespace Chem4Word.UI.WPF
             ShowAtomsInColour.IsChecked = SystemOptions.ShowColouredAtoms;
             ShowAllCarbonAtoms.IsChecked = SystemOptions.ExplicitC;
 
-            foreach (var item in ImplicitHydrogenMode.Items)
+            foreach (object item in ImplicitHydrogenMode.Items)
             {
                 if (item is ComboBoxItem cbi)
                 {
-                    var tag = cbi.Tag.ToString();
+                    string tag = cbi.Tag.ToString();
                     if (Enum.TryParse(tag, out HydrogenLabels hydrogenLabels))
                     {
                         if (hydrogenLabels == SystemOptions.ExplicitH)
@@ -1084,25 +1088,25 @@ namespace Chem4Word.UI.WPF
                 ReloadGlobalListOfLibraries();
             }
 
-            var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
-            var data = new List<LibrariesSettingsGridSource>();
+            ListOfLibraries libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+            List<LibrariesSettingsGridSource> data = new List<LibrariesSettingsGridSource>();
 
             if (libraries != null)
             {
                 DefaultLocation.Text = libraries.DefaultLocation;
-                foreach (var database in libraries.AvailableDatabases)
+                foreach (DatabaseDetails database in libraries.AvailableDatabases)
                 {
-                    var isDefault = libraries.SelectedLibrary.Equals(database.DisplayName);
-                    var obj = new LibrariesSettingsGridSource
-                    {
-                        Name = database.DisplayName,
-                        FileName = database.ShortFileName,
-                        Connection = database.Connection,
-                        Count = GetPropertyValue(database, "Count", "?"),
-                        Dictionary = false,
-                        License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : GetUserFromLicense(database.Connection),
-                        IsDefault = isDefault
-                    };
+                    bool isDefault = libraries.SelectedLibrary.Equals(database.DisplayName);
+                    LibrariesSettingsGridSource obj = new LibrariesSettingsGridSource
+                                                      {
+                                                          Name = database.DisplayName,
+                                                          FileName = database.ShortFileName,
+                                                          Connection = database.Connection,
+                                                          Count = GetPropertyValue(database, "Count", "?"),
+                                                          Dictionary = false,
+                                                          License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : GetUserFromLicense(database.Connection),
+                                                          IsDefault = isDefault
+                                                      };
                     obj.Locked = database.IsLocked() ? "Yes" : "No";
 
                     data.Add(obj);

@@ -47,6 +47,9 @@ namespace Chem4Word.Helpers
 
                         if (frequency == 0)
                         {
+                            // We should never get here
+                            string message = $"The frequency read from the registry is zero !";
+                            Debug.WriteLine(message);
                             Debugger.Break();
                         }
 

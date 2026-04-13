@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Chem4Word.Core.Helpers
 {
@@ -28,7 +29,7 @@ namespace Chem4Word.Core.Helpers
         /// <returns></returns>
         public static string BackupFile(FileInfo file, DirectoryInfo directory, bool addPrefix, bool moveFile)
         {
-            var destination = Path.Combine(directory.FullName, file.Name);
+            string destination = Path.Combine(directory.FullName, file.Name);
 
             if (addPrefix)
             {
@@ -48,7 +49,7 @@ namespace Chem4Word.Core.Helpers
                 // This could be recursive ...
                 Debugger.Break();
 
-                var info = new FileInfo(destination);
+                FileInfo info = new FileInfo(destination);
                 BackupFile(info, directory, addPrefix, moveFile);
             }
 
@@ -66,12 +67,12 @@ namespace Chem4Word.Core.Helpers
             const int charsToCheck = 8096;
             const char nulChar = '\0';
 
-            var nulCount = 0;
+            int nulCount = 0;
 
-            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using (var streamReader = new StreamReader(fileStream))
+            FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using (StreamReader streamReader = new StreamReader(fileStream))
             {
-                for (var i = 0; i < charsToCheck; i++)
+                for (int i = 0; i < charsToCheck; i++)
                 {
                     if (streamReader.EndOfStream)
                     {
@@ -105,7 +106,7 @@ namespace Chem4Word.Core.Helpers
         /// <returns>true if file is in use</returns>
         public static bool FileIsInUse(string filePath, out string message)
         {
-            var result = false;
+            bool result = false;
             message = string.Empty;
 
             try
@@ -182,6 +183,24 @@ namespace Chem4Word.Core.Helpers
 
             // ToDo: Make this check the full file path
             return result.Substring(0, Math.Min(result.Length, 200));
+        }
+
+        public static string AssembliesLoaded()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+            List<string> dlls = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.Location).ToList();
+            dlls = dlls.OrderBy(s => s).ToList();
+
+            sb.AppendLine(".Net Assemblies loaded in memory");
+            foreach (string dll in dlls)
+            {
+                sb.AppendLine($"  {dll.Replace(localAppDataPath, "%LocalAppData%")}");
+            }
+
+            return sb.ToString();
         }
     }
 }

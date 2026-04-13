@@ -9,6 +9,7 @@ using Chem4Word.ACME.Models;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
+using Chem4Word.Model2.Formula;
 using IChem4Word.Contracts.Dto;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,7 +97,7 @@ namespace Chem4Word.Helpers
             {
                 Id = chemistryDto.Id,
                 Chemistry = chemistryDto.Chemistry,
-                Formula = chemistryDto.Formula,
+                Formula = FormulaHelper.ToUnicode(chemistryDto.Formula),
                 Name = chemistryDto.Name,
                 MolecularWeight = chemistryDto.MolWeight,
                 Tags = chemistryDto.Tags.Select(t => t.Text).ToList(),

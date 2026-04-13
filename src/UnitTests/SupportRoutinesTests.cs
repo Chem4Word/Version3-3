@@ -8,7 +8,7 @@
 using Chem4Word.ACME.Utils;
 using Xunit;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class SupportRoutinesTests
     {

@@ -1,0 +1,45 @@
+﻿Date = 2026-02-24
+Symbol = "Qy3-Hg7*"
+
+BenchmarkDotNet v0.15.6, Windows 11 (10.0.22631.6649/23H2/2023Update/SunValley3)
+Intel Core Ultra 7 165H 1.40GHz, 1 CPU, 22 logical and 16 physical cores
+  [Host]     : .NET Framework 4.8.1 (4.8.9310.0), X86 LegacyJIT
+  DefaultJob : .NET Framework 4.8.1 (4.8.9310.0), X86 LegacyJIT
+
+| Method                  | Mean       | Error      | StdDev    | Median     | Gen0    | Gen1    | Allocated |
+|------------------------ |-----------:|-----------:|----------:|-----------:|--------:|--------:|----------:|
+| BoundingBoxesWithMargin |   5.482 us |  0.3838 us |  1.132 us |   5.145 us |  0.9537 |  0.9537 |   4.89 KB |
+| SimpleHull              |  61.559 us |  2.0729 us |  5.881 us |  58.921 us |  8.2397 |  8.2397 |  42.27 KB |
+| ComplexHull             | 496.770 us | 19.5524 us | 56.100 us | 475.087 us | 43.4570 | 43.4570 | 224.33 KB |
+
+Date = 2026-02-25
+Symbol = "Qy3-Hg7*"
+
+Simpler InflateConvexHull
+
+BenchmarkDotNet v0.15.6, Windows 11 (10.0.22631.6649/23H2/2023Update/SunValley3)
+Intel Core Ultra 7 165H 1.40GHz, 1 CPU, 22 logical and 16 physical cores
+  [Host]     : .NET Framework 4.8.1 (4.8.9310.0), X86 LegacyJIT
+  DefaultJob : .NET Framework 4.8.1 (4.8.9310.0), X86 LegacyJIT
+
+| Method                  | Mean       | Error      | StdDev    | Median     | Gen0    | Gen1    | Allocated |
+|------------------------ |-----------:|-----------:|----------:|-----------:|--------:|--------:|----------:|
+| BoundingBoxesWithMargin |   5.541 us |  0.3860 us |  1.138 us |   5.465 us |  0.9537 |  0.9537 |   4.89 KB |
+| SimpleHull              |  60.521 us |  3.1354 us |  9.146 us |  57.117 us |  7.6904 |  7.6904 |  39.42 KB |
+| ComplexHull             | 497.599 us | 27.2585 us | 79.514 us | 465.125 us | 42.4805 | 42.4805 | 218.91 KB |
+
+Date = 2026-02-25
+Symbol = "Qy3-Hg7*"
+
+Simpler GetCentroid
+
+BenchmarkDotNet v0.15.6, Windows 11 (10.0.22631.6649/23H2/2023Update/SunValley3)
+Intel Core Ultra 7 165H 1.40GHz, 1 CPU, 22 logical and 16 physical cores
+  [Host]     : .NET Framework 4.8.1 (4.8.9310.0), X86 LegacyJIT
+  DefaultJob : .NET Framework 4.8.1 (4.8.9310.0), X86 LegacyJIT
+
+| Method                  | Mean       | Error      | StdDev     | Median     | Gen0    | Gen1    | Allocated |
+|------------------------ |-----------:|-----------:|-----------:|-----------:|--------:|--------:|----------:|
+| BoundingBoxesWithMargin |   4.672 us |  0.1802 us |  0.5054 us |   4.469 us |  0.9537 |  0.9537 |   4.89 KB |
+| SimpleHull              |  59.279 us |  2.8600 us |  8.4328 us |  56.117 us |  7.6904 |  7.6904 |  39.43 KB |
+| ComplexHull             | 511.897 us | 27.4984 us | 81.0797 us | 481.811 us | 42.4805 | 42.4805 | 218.91 KB |

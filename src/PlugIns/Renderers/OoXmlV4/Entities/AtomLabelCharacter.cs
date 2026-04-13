@@ -13,8 +13,8 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 {
     public class AtomLabelCharacter
     {
-        public string ParentMolecule { get; set; }
-        public string ParentAtom { get; set; }
+        public string MoleculePath { get; set; }
+        public string AtomPath { get; set; }
         public Point Position { get; set; }
         public TtfCharacter Character { get; set; }
         public string Colour { get; set; }
@@ -22,18 +22,18 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public bool IsSubScript { get; set; }
         public bool IsSuperScript { get; set; }
 
-        public AtomLabelCharacter(Point position, TtfCharacter character, string colour, string parentAtom, string parentMolecule)
+        public AtomLabelCharacter(Point position, TtfCharacter character, string colour, string atomPath, string moleculePath)
         {
             Position = position;
             Character = character;
             Colour = colour;
-            ParentAtom = parentAtom;
-            ParentMolecule = parentMolecule;
+            AtomPath = atomPath;
+            MoleculePath = moleculePath;
         }
 
         public override string ToString()
         {
-            return $"{Character.Character} of {ParentAtom} @ {PointHelper.AsString(Position)}";
+            return $"{Character.Character} of {AtomPath} @ {PointHelper.AsString(Position)}";
         }
     }
 }

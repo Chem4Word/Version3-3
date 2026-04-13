@@ -10,10 +10,11 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using Xunit;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class GeneralTests
     {
@@ -80,7 +81,8 @@ namespace Chem4WordTests
         public void CheckAtomRings(string element, int ringCount, bool isInRing)
         {
             var mc = new CMLConverter();
-            var m = mc.Import(ResourceHelper.GetStringResource("Two-Rings.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var m = mc.Import(ResourceHelper.GetStringResource(assembly , "Two-Rings.xml"));
 
             // Basic sanity checks
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");
@@ -103,7 +105,8 @@ namespace Chem4WordTests
         public void BalancingVectorIsCorrect(string cmlFile)
         {
             var cmlConverter = new CMLConverter();
-            var model = cmlConverter.Import(ResourceHelper.GetStringResource(cmlFile));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var model = cmlConverter.Import(ResourceHelper.GetStringResource(assembly, cmlFile));
 
             for (var i = 5; i < 200; i += 5)
             {

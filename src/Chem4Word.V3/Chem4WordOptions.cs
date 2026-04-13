@@ -201,7 +201,6 @@ namespace Chem4Word
                             if (string.IsNullOrEmpty(fileContents))
                             {
                                 RegistryHelper.StoreMessage(module, $"Setting {optionsFileForLogs} to defaults because it's empty");
-                                Debugger.Break();
 
                                 RestoreDefaults();
                                 PersistOptions(optionsFile);

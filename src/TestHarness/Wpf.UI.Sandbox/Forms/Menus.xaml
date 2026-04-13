@@ -16,18 +16,7 @@
                     <MenuItem.Template>
                         <ControlTemplate TargetType="{x:Type MenuItem}">
                             <ControlTemplate.Resources>
-                                <SolidColorBrush x:Key="&#347;" Color="#FFF0F0F0" />
-                                <SolidColorBrush x:Key="&#348;" Color="#FF999999" />
-                                <SolidColorBrush x:Key="&#349;" Color="#FF212121" />
-
-                                <SolidColorBrush x:Key="&#350;" Color="#FFD7D7D7" />
-
-                                <SolidColorBrush x:Key="&#351;" Color="#3DDADADA" />
-                                <SolidColorBrush x:Key="&#352;" Color="#FFDADADA" />
                                 <SolidColorBrush x:Key="&#353;" Color="#FF707070" />
-
-                                <SolidColorBrush x:Key="&#354;" Color="#3D26A0DA" />
-                                <SolidColorBrush x:Key="&#355;" Color="#FF26A0DA" />
 
                                 <SolidColorBrush x:Key="&#356;" Color="#3D26A0DA" />
                                 <SolidColorBrush x:Key="&#357;" Color="#FF26A0DA" />

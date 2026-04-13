@@ -11,7 +11,7 @@
     Height="600"
     Loaded="OnLoaded_FormulaTesting"
     mc:Ignorable="d">
-    <Grid>
+    <Grid d:IsLocked="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
@@ -27,8 +27,12 @@
             Grid.Column="0"
             Width="Auto"
             Height="Auto"
+            d:IsLocked="True"
             ShowFeedback="False" />
-        <Grid Grid.Row="1" Grid.Column="0">
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            d:IsLocked="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -36,28 +40,35 @@
             <Button
                 Grid.Column="0"
                 Width="100"
+                d:IsLocked="True"
                 Click="OnClick_LoadButton"
                 Content="Load" />
             <Button
                 Grid.Column="1"
                 Width="100"
+                d:IsLocked="True"
                 Click="OnClick_Formula"
                 Content="Show Formula" />
         </Grid>
         <Grid
             Grid.Row="0"
             Grid.RowSpan="2"
-            Grid.Column="1">
-            <Grid Background="LightGray">
+            Grid.Column="1"
+            d:IsLocked="True">
+            <Grid d:IsLocked="True" Background="LightGray">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Vertical">
+                <StackPanel
+                    Grid.Row="0"
+                    d:IsLocked="True"
+                    Orientation="Vertical">
                     <TextBlock
                         x:Name="Concise"
                         Margin="3"
                         Padding="3"
+                        d:IsLocked="True"
                         Background="White"
                         FontSize="18"
                         Text="..." />
@@ -65,13 +76,15 @@
                         x:Name="ConciseCompact"
                         Margin="3"
                         Padding="3"
+                        d:IsLocked="True"
                         Background="White"
                         FontSize="18"
                         Text="..." />
-                    <controls:FormulaBlock
+                    <TextBlock
                         x:Name="Unicode"
                         Margin="3"
                         Padding="3"
+                        d:IsLocked="True"
                         Background="White"
                         FontSize="18"
                         Text="..." />

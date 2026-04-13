@@ -99,7 +99,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         public Dictionary<string, ElectronVisual> ElectronVisuals { get; }
 
-        private readonly List<Visual> children = new List<Visual>();
+        private List<Visual> children = new List<Visual>();
 
         public double SymbolSize { get; set; }
         public Point Position { get; set; }
@@ -167,6 +167,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 var symbolText = new GlyphText(AtomSymbol,
                     AtomLabelTypeface, SymbolSize, PixelsPerDip());
                 symbolText.MeasureAtCenter(Position);
+
                 //grab the hull for later
                 if (symbolText.FlattenedPath != null)
                 {
@@ -228,7 +229,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             // Diag: Show the Hull
 #if DEBUG
 #if SHOWHULLS
-                ShowHull(Hull, drawingContext);
+            ShowHull(Hull, drawingContext);
 #endif
             // End Diag
 
@@ -245,12 +246,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
         private void ShowHull(List<Point> points, DrawingContext drawingContext)
         {
             var path = Utils.WPFGeometry.BuildPath(points);
-            // Diag: Show the Hull or it's Points
-#if SHOWHULLS
-            drawingContext.DrawGeometry(null, new Pen(new SolidColorBrush(Colors.Orange), 0.01), path.Data);
+            drawingContext.DrawGeometry(null, new Pen(new SolidColorBrush(Colors.GreenYellow), 0.01), path.Data);
             //ShowPoints(Hull, drawingContext);
-#endif
-            // End Diag
         }
 
         public void ShowPoints(List<Point> points, DrawingContext drawingContext)
@@ -440,7 +437,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
             for (int i = 0; i < Hull.Count; i++)
             {
                 Point? p;
-                if ((p = GeometryTool.GetIntersection(start, end, Hull[i], Hull[(i + 1) % Hull.Count])) != null)
+                if ((p = GeometryTool.GetIntersection(start, end,
+                                                      Hull[i], Hull[(i + 1) % Hull.Count])) != null)
                 {
                     return p;
                 }

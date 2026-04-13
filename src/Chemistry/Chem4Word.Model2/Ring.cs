@@ -5,9 +5,9 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -150,7 +150,8 @@ namespace Chem4Word.Model2
         {
             get
             {
-                return Geometry<Atom>.GetCentroid(Traverse().ToArray(), atom => atom.Position);
+                var points = GeometryTool.MakeConvexHull(Traverse().Select(a => a.Position).ToList());
+                return GeometryTool.GetCentroid(points);
             }
         }
 

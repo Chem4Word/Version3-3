@@ -140,12 +140,12 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <local:FormulaBlock
+                <TextBlock
                     Grid.Row="0"
                     d:IsLocked="True"
                     FontFamily="Segoe UI"
                     Foreground="{StaticResource Chem4WordBlue}"
-                    Formula="{Binding Path=Formula}" />
+                    Text="{Binding Path=Formula}" />
                 <Expander
                     Grid.Row="1"
                     MaxWidth="{Binding ElementName=LibraryTopGrid, Path=ActualWidth}"
@@ -190,13 +190,13 @@
                         FontFamily="Segoe UI"
                         Foreground="{StaticResource Chem4WordBlue}"
                         Text="{Binding Path=CustomControlTag}" />
-                    <local:FormulaBlock
+                    <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
                         d:IsLocked="True"
                         FontFamily="Segoe UI"
                         Foreground="{StaticResource Chem4WordBlue}"
-                        Formula="{Binding Path=Formula}" />
+                        Text="{Binding Path=Formula}" />
                 </Grid>
             </Grid>
             <!--  Top Panel for Catalogue Mode  -->
@@ -224,12 +224,12 @@
                         d:IsLocked="True"
                         Click="OnClick_CheckBox"
                         IsChecked="{Binding Path=IsChecked}" />
-                    <local:FormulaBlock
+                    <TextBlock
                         Grid.Column="1"
                         d:IsLocked="True"
                         FontFamily="Segoe UI"
                         Foreground="{StaticResource Chem4WordBlue}"
-                        Formula="{Binding Path=Formula}" />
+                        Text="{Binding Path=Formula}" />
                 </Grid>
                 <Expander
                     Grid.Row="1"

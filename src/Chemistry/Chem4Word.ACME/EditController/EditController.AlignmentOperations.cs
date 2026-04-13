@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using System;
 using System.Collections.Generic;
@@ -483,6 +484,10 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetry(module, "Warning", "Number of transforms and molecules are not equal");
                 WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+
+                // We should never get here
+                string message = $"Number of transforms and molecules are not equal";
+                Debug.WriteLine(message);
                 Debugger.Break();
             }
         }

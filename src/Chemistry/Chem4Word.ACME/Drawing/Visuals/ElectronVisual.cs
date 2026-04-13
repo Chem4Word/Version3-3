@@ -10,7 +10,6 @@ using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
-using Chem4Word.Model2.Geometry;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
@@ -139,7 +138,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 if (_centroid is null)
                 {
                     var convexHull = GeometryTool.MakeConvexHull(Hull);
-                    _centroid = Geometry<Point>.GetCentroid(convexHull.ToArray(), p => p);
+                    _centroid = GeometryTool.GetCentroid(convexHull);
                 }
                 return _centroid.Value;
             }

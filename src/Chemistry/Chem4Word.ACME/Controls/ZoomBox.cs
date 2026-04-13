@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -89,22 +90,28 @@ namespace Chem4Word.ACME.Controls
             _zoomThumb = Template.FindName("PART_ZoomThumb", this) as Thumb;
             if (_zoomThumb == null)
             {
+                // We should never get here
+                string message = $"PART_ZoomThumb template is missing!";
+                Debug.WriteLine(message);
                 Debugger.Break();
-                throw new Exception("PART_ZoomThumb template is missing!");
             }
 
             _zoomCanvas = Template.FindName("PART_ZoomCanvas", this) as Canvas;
             if (_zoomCanvas == null)
             {
+                // We should never get here
+                string message = $"PART_ZoomCanvas template is missing!";
+                Debug.WriteLine(message);
                 Debugger.Break();
-                throw new Exception("PART_ZoomCanvas template is missing!");
             }
 
             _zoomSlider = Template.FindName("PART_ZoomSlider", this) as Slider;
             if (_zoomSlider == null)
             {
+                // We should never get here
+                string message = $"PART_ZoomSlider template is missing!";
+                Debug.WriteLine(message);
                 Debugger.Break();
-                throw new Exception("PART_ZoomSlider template is missing!");
             }
 
             _zoomThumb.DragDelta += Thumb_DragDelta;

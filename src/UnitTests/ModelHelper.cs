@@ -7,7 +7,7 @@
 
 using Chem4Word.Model2;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public static class ModelHelper
     {

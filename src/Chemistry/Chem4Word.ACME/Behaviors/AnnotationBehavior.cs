@@ -7,6 +7,7 @@
 
 using Chem4Word.ACME.Adorners.Sketching;
 using Chem4Word.ACME.Controls;
+using Chem4Word.Core.Helpers;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Documents;
@@ -102,6 +103,9 @@ namespace Chem4Word.ACME.Behaviors
 
         public override void Abort()
         {
+            // We should never get here
+            string message = $"We should never get here !";
+            Debug.WriteLine(message);
             Debugger.Break();
         }
 

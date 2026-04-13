@@ -1621,8 +1621,7 @@ namespace Chem4Word.Model2
                     // If any targets found
                     foreach (var target in targets)
                     {
-                        var intersection = GeometryTool.GetIntersection(clippingTarget.Start, clippingTarget.End,
-                                                                              target.Start, target.End);
+                        var intersection = GeometryTool.GetIntersection(clippingTarget.Start, clippingTarget.End, target.Start, target.End);
                         if (intersection != null)
                         {
                             if (!PointIsAtEndOfALine(intersection.Value, clippingTarget, target))

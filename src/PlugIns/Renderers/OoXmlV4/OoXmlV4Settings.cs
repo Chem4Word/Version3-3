@@ -8,6 +8,7 @@
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Forms;
+using Chem4Word.Renderer.OoXmlV4.Enums;
 using IChem4Word.Contracts;
 using System;
 using System.Reflection;
@@ -22,7 +23,7 @@ namespace Chem4Word.Renderer.OoXmlV4
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         public IChem4WordTelemetry Telemetry { get; set; }
 
@@ -31,6 +32,7 @@ namespace Chem4Word.Renderer.OoXmlV4
         public OoXmlV4Options RendererOptions { get; set; }
 
         private bool _dirty;
+        private bool _inhibitEvents;
 
         public OoXmlV4Settings()
         {
@@ -111,10 +113,18 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void RestoreControls()
         {
+            _inhibitEvents = true;
+
+            ConvexHullMode.Items.Clear();
+            ConvexHullMode.Items.Add(HullType.BoundingBoxes);
+            ConvexHullMode.Items.Add(HullType.SimpleHull);
+            ConvexHullMode.Items.Add(HullType.ComplexHull);
+
             ClipCrossingBonds.Checked = RendererOptions.ClipCrossingBonds;
 
             // Debugging Options
             ClipBondLines.Checked = RendererOptions.ClipBondLines;
+            ConvexHullMode.SelectedItem = RendererOptions.HullMode;
             ShowCharacterBox.Checked = RendererOptions.ShowCharacterBoundingBoxes;
             ShowMoleculeBox.Checked = RendererOptions.ShowMoleculeBoundingBoxes;
             ShowRingCentres.Checked = RendererOptions.ShowRingCentres;
@@ -124,6 +134,8 @@ namespace Chem4Word.Renderer.OoXmlV4
             ShowBondDirection.Checked = RendererOptions.ShowBondDirection;
             ShowCharacterGroupsBox.Checked = RendererOptions.ShowCharacterGroupBoundingBoxes;
             ShowBondCrossingPoints.Checked = RendererOptions.ShowBondCrossingPoints;
+
+            _inhibitEvents = false;
         }
 
         private void OnFormClosing_Settings(object sender, FormClosingEventArgs e)
@@ -326,6 +338,21 @@ namespace Chem4Word.Renderer.OoXmlV4
             catch (Exception ex)
             {
                 new ReportError(Telemetry, TopLeft, module, ex).ShowDialog();
+            }
+        }
+
+        private void OnSelectedIndexChanged_ConvexHullMode(object sender, EventArgs e)
+        {
+            if (!_inhibitEvents)
+            {
+                if (ConvexHullMode.SelectedItem is HullType type)
+                {
+                    if (RendererOptions.HullMode != type)
+                    {
+                        RendererOptions.HullMode = type;
+                        _dirty = true;
+                    }
+                }
             }
         }
     }

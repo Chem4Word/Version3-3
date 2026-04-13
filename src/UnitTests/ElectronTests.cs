@@ -6,13 +6,15 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core.Enums;
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
 using System.Collections.Specialized;
+using System.Reflection;
 using Xunit;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class ElectronTests
     {
@@ -21,7 +23,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var cmlConverter = new CMLConverter();
-            var cml = ResourceHelper.GetStringResource("electron placement.xml");
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var cml = ResourceHelper.GetStringResource(assembly, "electron placement.xml");
 
             // Act
             var modelFromCml = cmlConverter.Import(cml);
@@ -44,7 +47,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var cmlConverter = new CMLConverter();
-            var cml = ResourceHelper.GetStringResource("electron placement.xml");
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var cml = ResourceHelper.GetStringResource(assembly, "electron placement.xml");
 
             // Act
             var modelFromCml = cmlConverter.Import(cml);
@@ -66,7 +70,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var cmlConverter = new CMLConverter();
-            var cml = ResourceHelper.GetStringResource("electron placement empty.xml");
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var cml = ResourceHelper.GetStringResource(assembly, "electron placement empty.xml");
             var modelFromCml = cmlConverter.Import(cml);
 
             // Act
@@ -95,7 +100,8 @@ namespace Chem4WordTests
         {
             // Arrange
             var cmlConverter = new CMLConverter();
-            var cml = ResourceHelper.GetStringResource("electron placement empty.xml");
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var cml = ResourceHelper.GetStringResource(assembly, "electron placement empty.xml");
             var modelFromCml = cmlConverter.Import(cml);
 
             // Act

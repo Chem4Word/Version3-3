@@ -13,10 +13,10 @@ using Chem4Word.Model2.Enums;
 using Chem4Word.Renderer.OoXmlV4.Entities;
 using Chem4Word.Renderer.OoXmlV4.Entities.Diagnostic;
 using Chem4Word.Renderer.OoXmlV4.Enums;
+using Chem4Word.Renderer.OoXmlV4.Helpers;
 using Chem4Word.Renderer.OoXmlV4.TTF;
 using DocumentFormat.OpenXml;
 using IChem4Word.Contracts;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -99,7 +99,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 _meanBondLength = CoreConstants.StandardBondLength;
             }
 
-            // Initialise progress monitoring
+            // Initialize progress monitoring
             Progress progress = new Progress
             {
                 TopLeft = _topLeft
@@ -309,43 +309,10 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             if (_options.ShowCharacterBoundingBoxes)
             {
-                foreach (Atom atom in _chemistryModel.GetAllAtoms())
+                foreach (AtomLabelCharacter character in _outputs.AtomLabelCharacters)
                 {
-                    List<AtomLabelCharacter> chars = _outputs.AtomLabelCharacters.FindAll(a => a.ParentAtom.Equals(atom.Path));
-                    Rect atomCharsRect = Rect.Empty;
-                    AddCharacterBoundingBoxes(chars, atomCharsRect);
-                    if (!atomCharsRect.IsEmpty)
-                    {
-                        DrawBox(atomCharsRect, OoXmlColours.Orange, 0.5);
-                    }
-
-                    List<AtomLabelCharacter> reactionCharacters = _outputs.AtomLabelCharacters.FindAll(a => a.ParentAtom.StartsWith("/rs"));
-                    atomCharsRect = Rect.Empty;
-                    AddCharacterBoundingBoxes(reactionCharacters, atomCharsRect);
-
-                    // Local Function
-                    void AddCharacterBoundingBoxes(List<AtomLabelCharacter> atomLabelCharacters, Rect rect)
-                    {
-                        foreach (AtomLabelCharacter alc in atomLabelCharacters)
-                        {
-                            Rect thisBoundingBox = new Rect(alc.Position,
-                                                            new Size(OoXmlHelper.ScaleCsTtfToCml(alc.Character.Width, _meanBondLength),
-                                                                     OoXmlHelper.ScaleCsTtfToCml(alc.Character.Height, _meanBondLength)));
-                            if (alc.IsSmaller)
-                            {
-                                thisBoundingBox = new Rect(alc.Position,
-                                                           new Size(
-                                                               OoXmlHelper.ScaleCsTtfToCml(alc.Character.Width, _meanBondLength) *
-                                                               OoXmlConstants.SubscriptScaleFactor,
-                                                               OoXmlHelper.ScaleCsTtfToCml(alc.Character.Height, _meanBondLength) *
-                                                               OoXmlConstants.SubscriptScaleFactor));
-                            }
-
-                            DrawBox(thisBoundingBox, OoXmlColours.Green, 0.25);
-
-                            rect.Union(thisBoundingBox);
-                        }
-                    }
+                    List<Point> boundingBox = OoXmlHelper.BoundingBox(character, _meanBondLength, 0);
+                    DrawPolygon(boundingBox, true, OoXmlColours.Green, 0.25);
                 }
             }
 
@@ -458,7 +425,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             Int64Value emuTop = OoXmlHelper.ScaleCmlToEmu(characterPosition.Y);
             Int64Value emuLeft = OoXmlHelper.ScaleCmlToEmu(characterPosition.X);
 
-            string parent = alc.ParentAtom.Equals(alc.ParentMolecule) ? alc.ParentMolecule : alc.ParentAtom;
+            string parent = alc.AtomPath.Equals(alc.MoleculePath) ? alc.MoleculePath : alc.AtomPath;
             string shapeName = $"Character {alc.Character.Character} of {parent}";
             Wps.WordprocessingShape wordprocessingShape = CreateShape(_ooxmlId++, shapeName);
             Wps.ShapeProperties shapeProperties = CreateShapeProperties(wordprocessingShape, emuTop, emuLeft, emuWidth, emuHeight);
@@ -620,25 +587,25 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             Point p1 = p0 + perpendicular;
             Point p2 = p0 - perpendicular;
 
-            Point[] r = GeometryTool.ClipLineWithPolygon(p1, p2, points, out _);
-            while (r.Length > 2)
+            Point[] result = GeometryTool.ClipLineWithPolygon(p1, p2, points, out _);
+            while (result.Length > 2)
             {
-                if (r.Length == 4)
+                if (result.Length == 4)
                 {
-                    lines.Add(new SimpleLine(r[1], r[2]));
+                    lines.Add(new SimpleLine(result[1], result[2]));
                 }
 
-                if (r.Length == 6)
+                if (result.Length == 6)
                 {
-                    lines.Add(new SimpleLine(r[1], r[2]));
-                    lines.Add(new SimpleLine(r[3], r[4]));
+                    lines.Add(new SimpleLine(result[1], result[2]));
+                    lines.Add(new SimpleLine(result[3], result[4]));
                 }
 
                 p0 += step;
                 p1 = p0 + perpendicular;
                 p2 = p0 - perpendicular;
 
-                r = GeometryTool.ClipLineWithPolygon(p1, p2, points, out _);
+                result = GeometryTool.ClipLineWithPolygon(p1, p2, points, out _);
             }
 
             // Define Tail Lines
@@ -2174,8 +2141,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void LoadFont()
         {
-            string json = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "Arial.json");
-            _TtfCharacterSet = JsonConvert.DeserializeObject<Dictionary<char, TtfCharacter>>(json);
+            _TtfCharacterSet = FontHelper.LoadFont("Arial.json");
         }
 
         private A.Point MakePoint(Point pp, Rect cmlExtents)

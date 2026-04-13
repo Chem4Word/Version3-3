@@ -127,7 +127,6 @@
     <Compile Include="FunctionalGroupPartType.cs" />
     <Compile Include="FunctionalGroups.cs" />
     <Compile Include="FunctionalGroupTerm.cs" />
-    <Compile Include="Geometry\Geometry.cs" />
     <Compile Include="Geometry\Packer.cs" />
     <Compile Include="Geometry\Separator.cs" />
     <Compile Include="Group.cs" />

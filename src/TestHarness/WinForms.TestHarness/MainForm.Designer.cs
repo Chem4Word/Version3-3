@@ -40,9 +40,9 @@
             this.DisplayHost = new System.Windows.Forms.Integration.ElementHost();
             this.Display = new Chem4Word.ACME.Display();
             this.RedoHost = new System.Windows.Forms.Integration.ElementHost();
-            this.RedoStack = new WinForms.TestHarness.StackViewer();
+            this.RedoStackViewer = new WinForms.TestHarness.StackViewer();
             this.UndoHost = new System.Windows.Forms.Integration.ElementHost();
-            this.UndoStack = new WinForms.TestHarness.StackViewer();
+            this.UndoStackViewer = new WinForms.TestHarness.StackViewer();
             this.Information1 = new System.Windows.Forms.Label();
             this.EditCml = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -159,7 +159,7 @@
             this.RedoHost.Size = new System.Drawing.Size(269, 438);
             this.RedoHost.TabIndex = 2;
             this.RedoHost.Text = "rightHost";
-            this.RedoHost.Child = this.RedoStack;
+            this.RedoHost.Child = this.RedoStackViewer;
             // 
             // UndoHost
             // 
@@ -169,7 +169,7 @@
             this.UndoHost.Size = new System.Drawing.Size(269, 438);
             this.UndoHost.TabIndex = 3;
             this.UndoHost.Text = "leftHost";
-            this.UndoHost.Child = this.UndoStack;
+            this.UndoHost.Child = this.UndoStackViewer;
             // 
             // Information1
             // 
@@ -423,8 +423,6 @@
         private System.Windows.Forms.Button SaveStructure;
         private System.Windows.Forms.Button ClearChemistry;
         private System.Windows.Forms.Button EditLabels;
-        private StackViewer UndoStack;
-        private StackViewer RedoStack;
         private System.Windows.Forms.Button LayoutStructure;
         private System.Windows.Forms.Button RenderOoXml;
         private System.Windows.Forms.Button ChangeOoXmlSettings;
@@ -434,6 +432,8 @@
         private System.Windows.Forms.Button CalculateProperties;
         private System.Windows.Forms.Label Information2;
         private System.Windows.Forms.Timer timer1;
+        private StackViewer RedoStackViewer;
+        private StackViewer UndoStackViewer;
     }
 }
 

@@ -5,11 +5,13 @@
   <Version>
     <Number>3.3.16 Release 14</Number>
     <IsBeta>false</IsBeta>
-    <Released>31-Jan-2026</Released>
+    <Released>30-Apr-2026</Released>
     <Changes>
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
+      <Change>Internal: Performance improvement in OoXml renderer</Change>
+      <Change>Internal: Added code to ensure a valid search path for assembly SQLite.Interop.dll exists</Change>
       <Change>Internal: Fix xaml binding errors (in ACME)</Change>
       <Change>Internal: Update to xUnit Test V3</Change>
       <Change>BugFix: Fix and Improve searching (ChEBI/PubChem/OPSIN)</Change>

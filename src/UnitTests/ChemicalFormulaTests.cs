@@ -5,14 +5,16 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Formula;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 
-namespace Chem4WordTests
+namespace Chem4WordUnitTests
 {
     public class ChemicalFormulaTests
     {
@@ -207,7 +209,8 @@ namespace Chem4WordTests
         {
             // Arrange
             CMLConverter mc = new CMLConverter();
-            Model model = mc.Import(ResourceHelper.GetStringResource("Multi-Level-Nested.xml"));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Model model = mc.Import(ResourceHelper.GetStringResource(assembly, "Multi-Level-Nested.xml"));
 
             string expectedConcise = "2 2 C 6 H 6 · 2 C 4 H 8";
             string expectedUnicode = "2 2 C₆H₆ · 2 C₄H₈";
@@ -239,7 +242,8 @@ namespace Chem4WordTests
         {
             // Arrange
             CMLConverter mc = new CMLConverter();
-            Model model = mc.Import(ResourceHelper.GetStringResource(cmlFile));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Model model = mc.Import(ResourceHelper.GetStringResource(assembly, cmlFile));
 
             // Act
             string actualConcise = model.ConciseFormula;
@@ -267,7 +271,8 @@ namespace Chem4WordTests
         {
             // Arrange
             CMLConverter mc = new CMLConverter();
-            Model model = mc.Import(ResourceHelper.GetStringResource(cmlFile));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Model model = mc.Import(ResourceHelper.GetStringResource(assembly, cmlFile));
 
             // Act
             FormulaHelper helper = new FormulaHelper(model);
@@ -292,7 +297,8 @@ namespace Chem4WordTests
         {
             // Arrange
             CMLConverter mc = new CMLConverter();
-            Model model = mc.Import(ResourceHelper.GetStringResource(cmlFile));
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Model model = mc.Import(ResourceHelper.GetStringResource(assembly, cmlFile));
             Molecule molecule = model.Molecules.Values.First(m => m.Molecules.Count > 1);
 
             // Act

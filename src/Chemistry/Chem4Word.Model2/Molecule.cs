@@ -84,8 +84,13 @@ namespace Chem4Word.Model2
                         return model.ExplicitC;
 
                     default:
-                        // Will we ever get here ???
-                        Debugger.Break();
+                        // We should never get here
+                        string message = $"The Parent of this molecule {Path} is not a Molecule or a Model !";
+                        Debug.WriteLine(message);
+                        if (!Debugger.IsAttached)
+                        {
+                            throw new Chem4WordException(message);
+                        }
                         return false;
                 }
             }
@@ -122,8 +127,15 @@ namespace Chem4Word.Model2
                         return model.ExplicitH;
 
                     default:
-                        // Will we ever get here ???
-                        Debugger.Break();
+
+                        // We should never get here
+                        string message = $"The Parent of this molecule {Path} is not a Molecule or a Model !";
+                        Debug.WriteLine(message);
+                        if (!Debugger.IsAttached)
+                        {
+                            throw new Chem4WordException(message);
+                        }
+
                         return HydrogenLabels.HeteroAndTerminal;
                 }
             }
