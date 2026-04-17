@@ -1147,6 +1147,7 @@ namespace Chem4Word.Model2.Converters.CML
                 }
             }
 
+            molecule.Parent = new Model();
             Molecule copy = molecule.Copy();
             copy.SplitIntoChildren();
 

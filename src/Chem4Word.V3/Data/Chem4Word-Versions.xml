@@ -9,7 +9,7 @@
     <Changes>
       <Change>...</Change>
       <Change>...</Change>
-      <Change>...</Change>
+      <Change>UI: Added ability to auto-set atom electron configurations</Change>
       <Change>Internal: Performance improvement in OoXml renderer</Change>
       <Change>Internal: Added code to ensure a valid search path for assembly SQLite.Interop.dll exists</Change>
       <Change>Internal: Fix xaml binding errors (in ACME)</Change>

@@ -18,7 +18,6 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -43,7 +42,7 @@ namespace Chem4Word.ACME.Controls
 
         private bool IsDirty { get; set; }
 
-        private bool AutomaticPlacement { get; set; }
+        private bool AutomaticElectronPlacement { get; set; }
 
         private bool _isLoading;
         private bool _inhibitEvents;
@@ -85,19 +84,29 @@ namespace Chem4Word.ACME.Controls
 
                 Atom atom = _atomPropertiesModel.Atom;
 
-                if (_atomPropertiesModel.Electrons.Any())
+                if (_atomPropertiesModel.AutomaticElectronPlacements.Any())
                 {
-                    ElectronsView.Atom = atom;
-                    ElectronsView.Electrons = new ObservableCollection<Electron>(atom.AllElectrons());
-                    ElectronsView.ElectronsListView.ItemsSource = null;
-                    ElectronsView.ElectronsListView.ItemsSource = ElectronsView.Electrons;
+                    AutomaticElectronPlacement = true;
 
-                    AutomaticPlacement = true;
+                    AutomaticElectrons.ParentAtom = atom;
+                    AutomaticElectrons.Model = AutomaticElectrons.Model = new AutomaticElectronsEditorModel();
+
+                    // Setup Automatic Electrons
+                    foreach (Electron electron in atom.AllElectrons())
+                    {
+                        AutomaticElectronItem item = new AutomaticElectronItem
+                        {
+                            ParentAtom = atom,
+                            Id = electron.Id,
+                            ElectronType = electron.TypeOfElectron
+                        };
+                        AutomaticElectrons.Model.AutomaticElectronItems.Add(item);
+                    }
                     SetupAutomatic();
                 }
                 else
                 {
-                    AutomaticPlacement = false;
+                    AutomaticElectronPlacement = false;
                     SetupManual();
                 }
             }
@@ -178,11 +187,9 @@ namespace Chem4Word.ACME.Controls
 
             HydrogensCompass.SelectedCompassPoint = _atomPropertiesModel.ExplicitHydrogenPlacement;
 
-            ElectronsCompass.Atom = _atomPropertiesModel.Atom;
-            ElectronsCompass.SelectedElectronDictionary = _atomPropertiesModel.ExplicitElectronPlacements;
-            ElectronsCompass.SelectedElectrons = _atomPropertiesModel.Atom.AllElectrons();
-
-            ElectronsView.Electrons = new ObservableCollection<Electron>(_atomPropertiesModel.Atom.AllElectrons());
+            ManualElectrons.Atom = _atomPropertiesModel.Atom;
+            ManualElectrons.SelectedElectronDictionary = _atomPropertiesModel.ManualElectronPlacements;
+            ManualElectrons.SelectedElectrons = _atomPropertiesModel.Atom.AllElectrons();
 
             FunctionalGroupsCompass.SelectedCompassPoint = _atomPropertiesModel.ExplicitFunctionalGroupPlacement;
 
@@ -229,8 +236,7 @@ namespace Chem4Word.ACME.Controls
             foreach (object item in AtomPicker.Items)
             {
                 AtomOption option = (AtomOption)item;
-                if (option.Element is Element el
-                    && el == selElement)
+                if (option.Element is Element el && el == selElement)
                 {
                     found = true;
                     newOption = option;
@@ -264,12 +270,17 @@ namespace Chem4Word.ACME.Controls
         {
             AtomOption option = AtomPicker.SelectedItem as AtomOption;
             _atomPropertiesModel.AddedElement = option?.Element;
-            ElectronsCompass.Atom = _atomPropertiesModel.Atom;
+            ManualElectrons.Atom = _atomPropertiesModel.Atom;
+
+            ElectronPlacementMode.IsEnabled = true;
+            ManualElectrons.IsEnabled = true;
+            AutomaticElectrons.IsEnabled = true;
+
             if (!_inhibitEvents)
             {
                 IsDirty = true;
                 ShowPreview();
-                ElectronsCompass.Refresh();
+                ManualElectrons.Refresh();
             }
         }
 
@@ -369,8 +380,7 @@ namespace Chem4Word.ACME.Controls
                 }
             }
 
-            if (_atomPropertiesModel.Element is FunctionalGroup functionalGroup
-                && functionalGroup.ShowInDropDown)
+            if (_atomPropertiesModel.Element is FunctionalGroup functionalGroup && functionalGroup.ShowInDropDown)
             {
                 FunctionalGroupPicker.SelectedItem = new AtomOption(functionalGroup);
             }
@@ -396,20 +406,24 @@ namespace Chem4Word.ACME.Controls
                         atom.ExplicitHPlacement = _atomPropertiesModel.ExplicitHydrogenPlacement;
 
                         atom.ClearElectrons();
-                        if (AutomaticPlacement)
+                        if (AutomaticElectronPlacement)
                         {
-                            // Use this in Automatic Placement (ListView) mode
-                            foreach (Electron electron in ElectronsView.Electrons)
+                            foreach (AutomaticElectronItem item in AutomaticElectrons.Model.AutomaticElectronItems)
                             {
-                                electron.Parent = atom;
+                                Electron electron = new Electron
+                                {
+                                    Parent = atom,
+                                    TypeOfElectron = item.ElectronType,
+                                    Count = item.ElectronType == ElectronType.Radical ? 1 : 2,
+                                };
                                 atom.AddElectron(electron);
                             }
+
+                            atom.UpdateElectronPlacements();
                         }
                         else
                         {
-                            // Use this in Manual Placement (Compass) Mode
-                            foreach (KeyValuePair<CompassPoints, ElectronType> pair in _atomPropertiesModel
-                                         .ExplicitElectronPlacements)
+                            foreach (KeyValuePair<CompassPoints, ElectronType> pair in _atomPropertiesModel.ManualElectronPlacements)
                             {
                                 Electron electron = new Electron
                                 {
@@ -498,18 +512,23 @@ namespace Chem4Word.ACME.Controls
             _inhibitEvents = true;
 
             // Clear Electrons
-            _atomPropertiesModel.ExplicitElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
+            _atomPropertiesModel.ManualElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
             _atomPropertiesModel.ExplicitHydrogenPlacement = null;
             _atomPropertiesModel.ExplicitFunctionalGroupPlacement = null;
-            ElectronsView.Electrons.Clear();
 
             HydrogensCompass.CompassControlType = CompassControlType.Hydrogens;
-            ElectronsCompass.CompassControlType = CompassControlType.Electrons;
+            ManualElectrons.CompassControlType = CompassControlType.Electrons;
 
             HydrogensCompass.SelectedCompassPoint = _atomPropertiesModel.ExplicitHydrogenPlacement;
-            ElectronsCompass.SelectedElectronDictionary = _atomPropertiesModel.ExplicitElectronPlacements;
+            ManualElectrons.SelectedElectronDictionary = _atomPropertiesModel.ManualElectronPlacements;
 
             AtomPicker.SelectedIndex = -1;
+
+            HydrogensCompass.IsEnabled = false;
+            ElectronPlacementMode.IsEnabled = false;
+            ManualElectrons.IsEnabled = false;
+            AutomaticElectrons.IsEnabled = false;
+
             SetVisibilityFlags(_atomPropertiesModel.Atom);
 
             // Clear the preview
@@ -528,12 +547,16 @@ namespace Chem4Word.ACME.Controls
             _atomPropertiesModel.ShowCompass = false;
 
             // Clear Electron settings
-            _atomPropertiesModel.ExplicitElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
+            _atomPropertiesModel.ManualElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
             _atomPropertiesModel.ExplicitHydrogenPlacement = null;
             _atomPropertiesModel.ExplicitFunctionalGroupPlacement = null;
-            ElectronsView.Electrons.Clear();
 
             FunctionalGroupPicker.SelectedIndex = -1;
+
+            HydrogensCompass.IsEnabled = false;
+            ElectronPlacementMode.IsEnabled = false;
+            ManualElectrons.IsEnabled = false;
+            AutomaticElectrons.IsEnabled = false;
 
             if (_atomPropertiesModel.IsFunctionalGroup
                 && _atomPropertiesModel.Element is FunctionalGroup fg)
@@ -563,9 +586,9 @@ namespace Chem4Word.ACME.Controls
                                                           || atom.IsTerminal;
 
                 // ToDo: Need to work out what the new rules are ...
-                //bool showHydrogenLabels = atom.ShowImplicitHydrogenCharacters;
-                //string atomSymbol = atom.AtomSymbol;
-                //_atomPropertiesModel.ShowCompass = showHydrogenLabels && atom.ImplicitHydrogenCount > 0 && atomSymbol != "";
+                //bool showHydrogenLabels = atom.ShowImplicitHydrogenCharacters
+                //string atomSymbol = atom.AtomSymbol
+                //_atomPropertiesModel.ShowCompass = showHydrogenLabels && atom.ImplicitHydrogenCount > 0 && atomSymbol != ""
                 _atomPropertiesModel.ShowCompass = true;
             }
         }
@@ -641,7 +664,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void OnCompassValueChanged_ElectronsCompass(object sender, WpfEventArgs e)
+        private void OnValueChanged_ManualElectrons(object sender, WpfEventArgs e)
         {
             if (sender is Compass compass)
             {
@@ -649,8 +672,7 @@ namespace Chem4Word.ACME.Controls
                 {
                     case CompassControlType.Electrons:
                         // No need to update the model here as data binding has done it for us
-                        foreach (KeyValuePair<CompassPoints, ElectronType> pair in _atomPropertiesModel
-                                     .ExplicitElectronPlacements)
+                        foreach (KeyValuePair<CompassPoints, ElectronType> pair in _atomPropertiesModel.ManualElectronPlacements)
                         {
                             Debug.WriteLine($"{pair.Key} {pair.Value}");
                         }
@@ -666,15 +688,12 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void OnElectronsValueChanged_ElectronsView(object sender, WpfEventArgs e)
+        private void OnValueChanged_AutomaticElectrons(object sender, WpfEventArgs e)
         {
-            if (sender is ElectronsView)
+            if (sender is ElectronsEditor && !_inhibitEvents)
             {
-                if (!_inhibitEvents)
-                {
-                    IsDirty = true;
-                    ShowPreview();
-                }
+                IsDirty = true;
+                ShowPreview();
             }
         }
 
@@ -685,51 +704,41 @@ namespace Chem4Word.ACME.Controls
             {
                 _inhibitEvents = true;
 
-                ElectronsView.DisableEvents();
-                ElectronsCompass.DisableEvents();
+                AutomaticElectrons.DisableEvents();
+                ManualElectrons.DisableEvents();
 
-                int index = 0;
+                _atomPropertiesModel.ManualElectronPlacements.Clear();
 
-                Vector bv = _atomPropertiesModel.Atom.BalancingVector();
-                double angle = Vector.AngleBetween(GeometryTool.ScreenNorth, bv);
-                CompassPoints cp = GeometryTool.SnapTo4NESW(angle);
+                Atom atom = _atomPropertiesModel.Atom;
+                atom.UpdateElectronPlacements();
 
-                _atomPropertiesModel.ExplicitElectronPlacements.Clear();
-                _atomPropertiesModel.Atom.ClearElectrons();
-
-                foreach (Electron electron in ElectronsView.Electrons)
+                foreach (Electron item in _atomPropertiesModel.Atom.AllElectrons())
                 {
-                    if (index != 0)
-                    {
-                        while (_atomPropertiesModel.ExplicitElectronPlacements.ContainsKey(cp))
-                        {
-                            cp = Model2.Helpers.Utils.NextCompassPoint(cp);
-                        }
-                    }
-                    _atomPropertiesModel.ExplicitElectronPlacements.Add(cp, electron.TypeOfElectron);
-                    _atomPropertiesModel.Atom.AddElectron(electron);
+                    CompassPoints cp = item.Placement;
 
-                    index++;
+                    while (_atomPropertiesModel.ManualElectronPlacements.ContainsKey(cp))
+                    {
+                        cp = Model2.Helpers.Utils.NextCompassPoint(cp);
+                    }
+
+                    _atomPropertiesModel.ManualElectronPlacements.Add(cp, item.TypeOfElectron);
                 }
 
-                ElectronsView.Electrons.Clear();
-                ElectronsView.ElectronsListView.ItemsSource = null;
+                ManualElectrons.SelectedElectronDictionary = _atomPropertiesModel.ManualElectronPlacements;
+                ManualElectrons.SelectedElectrons = _atomPropertiesModel.Atom.AllElectrons();
 
-                ElectronsCompass.SelectedElectronDictionary = _atomPropertiesModel.ExplicitElectronPlacements;
-                ElectronsCompass.SelectedElectrons = _atomPropertiesModel.Atom.AllElectrons();
-
-                AutomaticPlacement = false;
+                AutomaticElectronPlacement = false;
 
                 SetupManual();
 
-                ElectronsView.Electrons.Clear();
+                AutomaticElectrons.Model.AutomaticElectronItems.Clear();
 
                 _inhibitEvents = false;
 
                 ShowPreview();
 
-                ElectronsView.EnableEvents();
-                ElectronsCompass.EnableEvents();
+                AutomaticElectrons.EnableEvents();
+                ManualElectrons.EnableEvents();
 
                 IsDirty = true;
             }
@@ -742,40 +751,40 @@ namespace Chem4Word.ACME.Controls
             {
                 _inhibitEvents = true;
 
-                ElectronsView.DisableEvents();
-                ElectronsCompass.DisableEvents();
+                AutomaticElectrons.DisableEvents();
+                ManualElectrons.DisableEvents();
 
-                ElectronsView.Electrons.Clear();
-                _atomPropertiesModel.Electrons.Clear();
+                AutomaticElectrons.Model.AutomaticElectronItems.Clear();
+                AutomaticElectrons.ParentAtom = _atomPropertiesModel.Atom;
 
-                foreach (ElectronType electronType in _atomPropertiesModel.ExplicitElectronPlacements.Values)
+                int index = 0;
+                SortedDictionary<CompassPoints, ElectronType> temp = new SortedDictionary<CompassPoints, ElectronType>(_atomPropertiesModel.ManualElectronPlacements);
+                foreach (ElectronType electronType in temp.Values)
                 {
-                    Electron electron = new Electron
+                    AutomaticElectronItem item = new AutomaticElectronItem
                     {
-                        Parent = _atomPropertiesModel.Atom,
-                        TypeOfElectron = electronType,
-                        Count = electronType == ElectronType.Radical ? 1 : 2
+                        ParentAtom = _atomPropertiesModel.Atom,
+                        Id = $"{index++}",
+                        ElectronType = electronType
                     };
 
-                    ElectronsView.Electrons.Add(electron);
-                    _atomPropertiesModel.Electrons.Add(electron);
+                    AutomaticElectrons.Model.AutomaticElectronItems.Add(item);
                 }
 
-                _atomPropertiesModel.ExplicitElectronPlacements.Clear();
+                _atomPropertiesModel.ManualElectronPlacements.Clear();
 
-                ElectronsView.ElectronsListView.ItemsSource = null;
-                ElectronsView.ElectronsListView.ItemsSource = ElectronsView.Electrons;
-
-                AutomaticPlacement = true;
+                AutomaticElectronPlacement = true;
 
                 SetupAutomatic();
 
                 _inhibitEvents = false;
 
+                _atomPropertiesModel.MicroModel.AutoPlaceElectrons();
+
                 ShowPreview();
 
-                ElectronsView.EnableEvents();
-                ElectronsCompass.EnableEvents();
+                AutomaticElectrons.EnableEvents();
+                ManualElectrons.EnableEvents();
 
                 IsDirty = true;
             }
@@ -787,8 +796,11 @@ namespace Chem4Word.ACME.Controls
             ElectronPlacementMode.Content = "Automatic Placement";
             ElectronPlacementMode.ToolTip = "Switch to Manual Placement Mode";
 
-            ElectronsView.Visibility = Visibility.Visible;
-            ElectronsCompass.Visibility = Visibility.Collapsed;
+            AutomaticElectrons.Visibility = Visibility.Visible;
+            ManualElectrons.Visibility = Visibility.Collapsed;
+
+            AutomaticElectronPlacement = true;
+            _atomPropertiesModel.Atom.UpdateElectronPlacements();
         }
 
         private void SetupManual()
@@ -797,10 +809,10 @@ namespace Chem4Word.ACME.Controls
             ElectronPlacementMode.Content = "Manual Placement";
             ElectronPlacementMode.ToolTip = "Switch to Automatic Placement Mode";
 
-            ElectronsView.Visibility = Visibility.Collapsed;
-            ElectronsCompass.Visibility = Visibility.Visible;
+            AutomaticElectrons.Visibility = Visibility.Collapsed;
+            ManualElectrons.Visibility = Visibility.Visible;
 
-            ElectronsView.EnableAddRemoveButtons();
+            AutomaticElectronPlacement = false;
         }
     }
 }

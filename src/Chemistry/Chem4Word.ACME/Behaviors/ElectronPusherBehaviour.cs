@@ -87,10 +87,11 @@ namespace Chem4Word.ACME.Behaviors
         private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             var targetChemistry = CurrentEditor.ActiveChemistry;
-            if (!(targetChemistry is null) && !(StartChemistry is null) && targetChemistry != StartChemistry)
+            if (!(targetChemistry is null) && !(StartChemistry is null) && targetChemistry != StartChemistry 
+                && (targetChemistry is Atom || targetChemistry is Bond))
             {
-                var currentPos = e.GetPosition(CurrentEditor);
-                EditController.AddElectronPusher(StartChemistry, targetChemistry, ElectronPusherType, DrawAdorner.FirstControlPoint, DrawAdorner.SecondControlPoint);
+                EditController.AddElectronPusher(StartChemistry, targetChemistry, ElectronPusherType,
+                                                 DrawAdorner.FirstControlPoint, DrawAdorner.SecondControlPoint);
             }
             ClearTemporaries();
             CurrentEditor.ReleaseMouseCapture();

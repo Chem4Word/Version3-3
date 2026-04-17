@@ -23,7 +23,6 @@
       <cml:atom id="a9" elementType="O" x2="604.1025" y2="563.5">
         <cml:electron count="1" id="e2" c4w:electronType="Radical" />
       </cml:atom>
-
       <cml:atom id="a10" elementType="C" x2="517.5" y2="638.5" />
       <cml:atom id="a11" elementType="C" x2="539.1506" y2="651.0" />
       <cml:atom id="a12" elementType="C" x2="560.8013" y2="638.5" />

@@ -654,8 +654,9 @@ namespace Chem4Word.ACME.Controls
                         Y1 = start.Y - padding,
                         X2 = end.X - padding,
                         Y2 = end.Y - padding,
-                        Stroke = Brushes.Red,
-                        StrokeThickness = offset / 2.0
+                        StrokeThickness = offset / 2.0,
+                        StrokeEndLineCap = PenLineCap.Round,
+                        StrokeStartLineCap = PenLineCap.Round
                     };
 
                     string colour = AcmeConstants.DefaultTextColor;
@@ -676,9 +677,7 @@ namespace Chem4Word.ACME.Controls
                     {
                         Width = offset,
                         Height = offset,
-                        Stroke = Brushes.Red,
-                        StrokeThickness = 1.0,
-                        Fill = Brushes.Red
+                        StrokeThickness = 1.0
                     };
 
                     string colour = AcmeConstants.DefaultTextColor;

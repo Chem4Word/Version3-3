@@ -432,16 +432,25 @@ namespace Chem4Word.ACME
                 if (atomList.Length == 1 && atomList[0].Singleton)
                 {
                     Atom delAtom = atomList[0];
+                    var pushers = delAtom.ElectronPushers.ToList();
                     Molecule molecule = delAtom.Parent;
                     Model model = molecule.Model;
 
                     Action redo = () =>
                                   {
+                                      foreach (ElectronPusher pusher in pushers)
+                                      {
+                                          model.RemoveElectronPusher(pusher);
+                                      }
                                       model.RemoveMolecule(molecule);
                                   };
                     Action undo = () =>
                                   {
                                       model.AddMolecule(molecule);
+                                      foreach (ElectronPusher pusher in pushers)
+                                      {
+                                          model.AddElectronPusher(pusher);
+                                      }
                                   };
 
                     UndoManager.BeginUndoBlock();
@@ -867,6 +876,9 @@ namespace Chem4Word.ACME
                                   // Handle Electrons
                                   atom.ClearElectrons();
                                   atom.AddRangeOfElectrons(electronsAfter);
+
+                                  atom.UpdateElectronPlacements();
+
                                   atom.Parent.UpdateVisual();
 
                                   //freshen any selection adorner
@@ -890,6 +902,9 @@ namespace Chem4Word.ACME
                                   // Handle Electrons
                                   atom.ClearElectrons();
                                   atom.AddRangeOfElectrons(electronsBefore);
+
+                                  atom.UpdateElectronPlacements();
+
                                   atom.Parent.UpdateVisual();
 
                                   //freshen any selection adorner

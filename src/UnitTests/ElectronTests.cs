@@ -24,7 +24,7 @@ namespace Chem4WordUnitTests
             // Arrange
             var cmlConverter = new CMLConverter();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var cml = ResourceHelper.GetStringResource(assembly, "electron placement.xml");
+            var cml = ResourceHelper.GetStringResource(assembly, "electron placement manual.xml");
 
             // Act
             var modelFromCml = cmlConverter.Import(cml);
@@ -48,7 +48,7 @@ namespace Chem4WordUnitTests
             // Arrange
             var cmlConverter = new CMLConverter();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var cml = ResourceHelper.GetStringResource(assembly, "electron placement.xml");
+            var cml = ResourceHelper.GetStringResource(assembly, "electron placement manual.xml");
 
             // Act
             var modelFromCml = cmlConverter.Import(cml);
@@ -71,7 +71,7 @@ namespace Chem4WordUnitTests
             // Arrange
             var cmlConverter = new CMLConverter();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var cml = ResourceHelper.GetStringResource(assembly, "electron placement empty.xml");
+            var cml = ResourceHelper.GetStringResource(assembly, "electron placement automatic.xml");
             var modelFromCml = cmlConverter.Import(cml);
 
             // Act
@@ -101,7 +101,7 @@ namespace Chem4WordUnitTests
             // Arrange
             var cmlConverter = new CMLConverter();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var cml = ResourceHelper.GetStringResource(assembly, "electron placement empty.xml");
+            var cml = ResourceHelper.GetStringResource(assembly, "electron placement automatic.xml");
             var modelFromCml = cmlConverter.Import(cml);
 
             // Act
@@ -131,6 +131,33 @@ namespace Chem4WordUnitTests
             Assert.Equal(CompassPoints.NorthEast, electron.Placement);
             electron.ExplicitPlacement = CompassPoints.SouthWest;
             Assert.True(propOK, "Electron property change event did not bubble to Model level");
+        }
+
+        [Fact]
+        public void AutomaticElectronPlacement()
+        {
+            // Arrange
+            var cmlConverter = new CMLConverter();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var cml = ResourceHelper.GetStringResource(assembly, "electrons mishmash.xml");
+            var modelFromCml = cmlConverter.Import(cml);
+
+            // Act
+            var a1e1 = modelFromCml.GetByPath("/m1/a1/e1") as Electron;
+            var a2e1 = modelFromCml.GetByPath("/m1/a2/e1") as Electron;
+            var a3e1 = modelFromCml.GetByPath("/m1/a3/e1") as Electron;
+            var a5e1 = modelFromCml.GetByPath("/m1/a5/e1") as Electron;
+
+            var ep1 = a1e1.Placement;
+            var ep2 = a2e1.Placement;
+            var ep3 = a3e1.Placement;
+            var ep5 = a5e1.Placement;
+
+            // Assert
+            Assert.Equal(CompassPoints.West, ep1);
+            Assert.Equal(CompassPoints.NorthWest, ep2);
+            Assert.Equal(CompassPoints.NorthEast, ep3);
+            Assert.Equal(CompassPoints.South, ep5);
         }
     }
 }

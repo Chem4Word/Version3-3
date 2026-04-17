@@ -17,13 +17,16 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 {
     public class OoXmlElectron
     {
+        public string Path { get; set; }
+
         public Atom ParentAtom { get; set; }
+
         public double MeanBondLength { get; set; }
 
         public Point Position { get; set; }
         public string Colour { get; set; }
 
-        public Electron Electron { get; set; }
+        public ElectronType TypeOfElectron { get; set; }
         public CompassPoints ComputedPlacement { get; set; }
 
         public double RadicalDiameter { get; set; }
@@ -34,7 +37,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         {
             Points = new List<Point>();
 
-            switch (Electron.TypeOfElectron)
+            switch (TypeOfElectron)
             {
                 case ElectronType.Radical:
                     Points.Add(position);
@@ -65,7 +68,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public List<Point> Hull()
         {
             double width = Math.Ceiling(RadicalDiameter) + 1;
-            if (Electron.TypeOfElectron == ElectronType.Radical)
+            if (TypeOfElectron == ElectronType.Radical)
             {
                 return GeometryTool.HullOfCircle(Position, width);
             }

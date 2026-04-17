@@ -87,6 +87,7 @@ namespace Chem4Word.Model2
                         // We should never get here
                         string message = $"The Parent of this molecule {Path} is not a Molecule or a Model !";
                         Debug.WriteLine(message);
+                        Debugger.Break();
                         if (!Debugger.IsAttached)
                         {
                             throw new Chem4WordException(message);
@@ -127,10 +128,10 @@ namespace Chem4Word.Model2
                         return model.ExplicitH;
 
                     default:
-
                         // We should never get here
                         string message = $"The Parent of this molecule {Path} is not a Molecule or a Model !";
                         Debug.WriteLine(message);
+                        Debugger.Break();
                         if (!Debugger.IsAttached)
                         {
                             throw new Chem4WordException(message);
@@ -1086,6 +1087,11 @@ namespace Chem4Word.Model2
             }
 
             RebuildRings(true);
+
+            foreach (Atom atom in Atoms.Values)
+            {
+                atom.UpdateElectronPlacements();
+            }
         }
 
         public void UpdateVisual()
@@ -1125,6 +1131,8 @@ namespace Chem4Word.Model2
                 ExplicitH = ExplicitH
             };
 
+            copy.Parent = Parent;
+
             var aa = new Dictionary<string, Atom>();
 
             if (Atoms.Count > 0)
@@ -1132,9 +1140,9 @@ namespace Chem4Word.Model2
                 foreach (var atom in Atoms.Values)
                 {
                     var newAtom = atom.Copy();
+                    newAtom.Parent = copy;
 
                     copy.AddAtom(newAtom);
-                    newAtom.Parent = copy;
                     aa.Add(newAtom.Id, newAtom);
                 }
             }
@@ -2058,6 +2066,21 @@ namespace Chem4Word.Model2
             }
 
             return null;
+        }
+
+        public void UpdateElectronPlacements()
+        {
+            foreach (Atom atom in Atoms.Values)
+            {
+                if (atom.Electrons.Any())
+                {
+                    atom.UpdateElectronPlacements();
+                }
+                foreach (Molecule child in Molecules.Values)
+                {
+                    child.UpdateElectronPlacements();
+                }
+            }
         }
     }
 }

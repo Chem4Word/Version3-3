@@ -6,23 +6,22 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Annotations;
-using Chem4Word.Model2;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Chem4Word.ACME.Models
 {
-    public class NamesModel : INotifyPropertyChanged
+    public class AutomaticElectronsEditorModel : INotifyPropertyChanged
     {
-        private ObservableCollection<TextualProperty> _listOfNames;
+        private ObservableCollection<AutomaticElectronItem> _automaticElectronItems = new ObservableCollection<AutomaticElectronItem>();
 
-        public ObservableCollection<TextualProperty> ListOfNames
+        public ObservableCollection<AutomaticElectronItem> AutomaticElectronItems
         {
-            get { return _listOfNames; }
+            get { return _automaticElectronItems; }
             set
             {
-                _listOfNames = value;
+                _automaticElectronItems = value;
                 OnPropertyChanged();
             }
         }

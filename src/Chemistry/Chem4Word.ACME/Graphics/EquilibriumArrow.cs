@@ -41,7 +41,6 @@ namespace Chem4Word.ACME.Graphics
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            //base.OnRender(drawingContext);
             DrawArrowGeometry(drawingContext, new Pen(Stroke, StrokeThickness), Stroke);
         }
 

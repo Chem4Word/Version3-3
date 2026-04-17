@@ -94,6 +94,7 @@ namespace Chem4Word.ACME
             if (_model != null)
             {
                 _model.RescaleForXaml(false, _defaultBondLength);
+                _model.AutoPlaceElectrons();
 
                 ActiveController = new EditController(_model, ChemCanvas, HostingCanvas, ReactionBoxEditor, _used1DProperties, Telemetry)
                 {

@@ -20,8 +20,11 @@ namespace Chem4Word.ACME.Models
         private CompassPoints? _explicitHydrogenPlacement;
         private CompassPoints? _explicitFunctionalGroupPlacement;
 
-        private Dictionary<CompassPoints, ElectronType> _explicitElectronPlacements =
+        private Dictionary<CompassPoints, ElectronType> _manualElectronPlacements =
             new Dictionary<CompassPoints, ElectronType>();
+
+        private Dictionary<string, AutomaticElectronItem> _automaticElectronPlacements =
+            new Dictionary<string, AutomaticElectronItem>();
 
         private int? _charge;
         private string _isotope;
@@ -58,7 +61,12 @@ namespace Chem4Word.ACME.Models
         public Model MicroModel { get; set; }
 
         public Atom Atom
-        { get { return MicroModel.GetAllAtoms().FirstOrDefault(); } }
+        {
+            get
+            {
+                return MicroModel.GetAllAtoms().FirstOrDefault();
+            }
+        }
 
         public bool HasIsotopes
         {
@@ -117,14 +125,22 @@ namespace Chem4Word.ACME.Models
             }
         }
 
-        public List<Electron> Electrons { get; set; } = new List<Electron>();
-
-        public Dictionary<CompassPoints, ElectronType> ExplicitElectronPlacements
+        public Dictionary<CompassPoints, ElectronType> ManualElectronPlacements
         {
-            get => _explicitElectronPlacements;
+            get => _manualElectronPlacements;
             set
             {
-                _explicitElectronPlacements = value;
+                _manualElectronPlacements = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Dictionary<string, AutomaticElectronItem> AutomaticElectronPlacements
+        {
+            get => _automaticElectronPlacements;
+            set
+            {
+                _automaticElectronPlacements = value;
                 OnPropertyChanged();
             }
         }

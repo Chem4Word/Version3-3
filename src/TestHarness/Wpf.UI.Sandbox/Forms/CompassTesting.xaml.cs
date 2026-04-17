@@ -7,6 +7,7 @@
 
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Enums;
+using Chem4Word.ACME.Models;
 using Chem4Word.Core.Enums;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
@@ -22,7 +23,8 @@ namespace Wpf.UI.Sandbox.Forms
     /// </summary>
     public partial class CompassTesting : Window
     {
-        public Atom Atom { get; set; }
+        public Atom Atom1 { get; set; }
+        public Atom Atom2 { get; set; }
 
         public bool IsDirty { get; set; }
 
@@ -44,33 +46,51 @@ namespace Wpf.UI.Sandbox.Forms
             model.AddMolecule(molecule1);
             molecule1.Parent = model;
 
-            Atom atom = AddAtomToMolecule(molecule1, "a1");
+            Atom atom1 = AddAtomToMolecule(molecule1, "a1");
+            atom1.Element = ModelGlobals.PeriodicTable.N;
+            Atom1 = atom1;
+
+            Atom atom2 = AddAtomToMolecule(molecule1, "a2");
+            atom2.Element = ModelGlobals.PeriodicTable.O;
+            Atom2 = atom2;
+
+            model.Relabel(true);
+
+            // Setup test values
+            Compass3.Atom = atom1;
 
             Compass3.SelectedElectronDictionary = new Dictionary<CompassPoints, ElectronType>();
             Compass3.SelectedElectrons = new List<Electron>();
 
-            Electron electron = new Electron { Parent = atom, TypeOfElectron = ElectronType.Radical, Count = 1 };
-            atom.AddElectron(electron);
+            Electron electron = new Electron { Parent = atom1, TypeOfElectron = ElectronType.Radical, Count = 1 };
+            atom1.AddElectron(electron);
             Compass3.SelectedElectronDictionary.Add(CompassPoints.North, electron.TypeOfElectron);
             electron.ExplicitPlacement = CompassPoints.North;
             Compass3.SelectedElectrons.Add(electron);
 
-            electron = new Electron { Parent = atom, TypeOfElectron = ElectronType.LonePair, Count = 2 };
-            atom.AddElectron(electron);
+            electron = new Electron { Parent = atom1, TypeOfElectron = ElectronType.LonePair, Count = 2 };
+            atom1.AddElectron(electron);
             Compass3.SelectedElectronDictionary.Add(CompassPoints.NorthEast, electron.TypeOfElectron);
             electron.ExplicitPlacement = CompassPoints.NorthEast;
             Compass3.SelectedElectrons.Add(electron);
 
-            electron = new Electron { Parent = atom, TypeOfElectron = ElectronType.Carbenoid, Count = 2 };
-            atom.AddElectron(electron);
+            electron = new Electron { Parent = atom1, TypeOfElectron = ElectronType.Carbenoid, Count = 2 };
+            atom1.AddElectron(electron);
             Compass3.SelectedElectronDictionary.Add(CompassPoints.East, electron.TypeOfElectron);
             electron.ExplicitPlacement = CompassPoints.East;
             Compass3.SelectedElectrons.Add(electron);
 
-            model.Relabel(true);
+            // This would be copied from the source atom's electrons
+            AutomaticElectronsEditorModel automaticElectronsEditorModel = new AutomaticElectronsEditorModel();
+            automaticElectronsEditorModel.AutomaticElectronItems.Add(new AutomaticElectronItem
+                                                   {
+                                                       Id = "a1",
+                                                       ParentAtom = atom2,
+                                                       ElectronType = ElectronType.LonePair
+                                                   });
 
-            Atom = atom;
-            ElectronsView.Atom = atom;
+            ElectronsView.ParentAtom = atom2;
+            ElectronsView.Model = automaticElectronsEditorModel;
         }
 
         private void CompassTesting_OnContentRendered(object sender, EventArgs e)
@@ -115,7 +135,7 @@ namespace Wpf.UI.Sandbox.Forms
             }
         }
 
-        private void ElectronsView_OnElectronsValueChanged(object sender, WpfEventArgs e)
+        private void OnElectronsEditor_Changed(object sender, WpfEventArgs e)
         {
             Status4.Text = ElectronsView.ListElectrons();
         }

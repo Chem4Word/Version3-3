@@ -223,22 +223,21 @@ namespace Chem4Word.ACME.Utils
                 atomPropertiesModel.ExplicitH = atom.ExplicitH;
                 atomPropertiesModel.ExplicitHydrogenPlacement = atom.ExplicitHPlacement;
 
-                atomPropertiesModel.ExplicitElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
-                atomPropertiesModel.Electrons = new List<Electron>();
+                atomPropertiesModel.ManualElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
+                atomPropertiesModel.AutomaticElectronPlacements = new Dictionary<string, AutomaticElectronItem>();
 
                 if (atom.Electrons.Count > 0)
                 {
                     int manualPlacementsCount = atom.Electrons.Values.Count(e => e.ExplicitPlacement != null);
 
-                    CompassPoints cp = CompassPoints.North;
-
-                    foreach (Electron electron in atom.Electrons.Values)
+                    if (manualPlacementsCount > 0)
                     {
-                        ElectronType ty = electron.TypeOfElectron;
+                        CompassPoints cp = CompassPoints.North;
 
-                        // There are some manual placements
-                        if (manualPlacementsCount > 0)
+                        foreach (Electron electron in atom.Electrons.Values)
                         {
+                            ElectronType ty = electron.TypeOfElectron;
+
                             if (electron.ExplicitPlacement.HasValue)
                             {
                                 // This is a manual placement
@@ -247,19 +246,28 @@ namespace Chem4Word.ACME.Utils
                             else
                             {
                                 // This is an automatic placement - find the next free compass point
-                                while (atomPropertiesModel.ExplicitElectronPlacements.ContainsKey(cp))
+                                while (atomPropertiesModel.ManualElectronPlacements.ContainsKey(cp))
                                 {
                                     cp = Model2.Helpers.Utils.NextCompassPoint(cp);
                                 }
                             }
 
                             // Add to the explicit placements
-                            atomPropertiesModel.ExplicitElectronPlacements.Add(cp, ty);
+                            atomPropertiesModel.ManualElectronPlacements.Add(cp, ty);
                         }
-                        else
+                    }
+                    else
+                    {
+                        foreach (Electron electron in atom.Electrons.Values)
                         {
-                            // All are automatic placements
-                            atomPropertiesModel.Electrons.Add(electron);
+                            AutomaticElectronItem item = new AutomaticElectronItem
+                            {
+                                Id = electron.Id,
+                                ElectronType = electron.TypeOfElectron,
+                                ParentAtom = atom
+                            };
+
+                            atomPropertiesModel.AutomaticElectronPlacements.Add(electron.Id, item);
                         }
                     }
                 }

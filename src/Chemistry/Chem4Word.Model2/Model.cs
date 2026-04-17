@@ -1033,8 +1033,16 @@ namespace Chem4Word.Model2
             modelCopy.ShowMoleculeGrouping = ShowMoleculeGrouping;
             modelCopy.ShowMolecularWeight = ShowMolecularWeight;
             modelCopy.ShowMoleculeCaptions = ShowMoleculeCaptions;
-
+            modelCopy.AutoPlaceElectrons();
             return modelCopy;
+        }
+
+        public void AutoPlaceElectrons()
+        {
+            foreach (var molecule in Molecules.Values)
+            {
+                molecule.UpdateElectronPlacements();
+            }
         }
 
         public void SetUserOptions(RenderingOptions options)
@@ -1050,11 +1058,6 @@ namespace Chem4Word.Model2
         public RenderingOptions GetCurrentOptions()
         {
             return new RenderingOptions(this);
-        }
-
-        private void ClearMolecules()
-        {
-            _molecules.Clear();
         }
 
         public void RemoveExplicitHydrogens()

@@ -31,6 +31,7 @@ namespace Chem4Word.Model2
         private ElectronType _type;
         private StructuralObject _parent;
         private CompassPoints? _explicitPlacement;
+        private CompassPoints _implicitPlacement;
 
         #endregion Fields
 
@@ -96,11 +97,23 @@ namespace Chem4Word.Model2
         }
 
         /// <summary>
-        /// Used to explicitly set the placement of the electron
-        /// Use this when configuring from CML or the editor
-        /// But use the Placement property to get the actual placement
-        /// Set to null to clear any explicit placement
+        ///Used when automatically setting the placement of electrons around an atom.
+        /// This is set by the atom when it calls UpdateElectronPlacements, and is used as a fallback if ExplicitPlacement is not set.
+        /// Unlike ExplicitPlacement this cannot be null
         /// </summary>
+        public CompassPoints ImplicitPlacement
+        {
+            get
+            {
+                return _implicitPlacement;
+            }
+            set
+            {
+                _implicitPlacement = value;
+                OnPropertyChanged(nameof(Placement));
+            }
+        }
+
         public CompassPoints? ExplicitPlacement
         {
             get
@@ -115,24 +128,28 @@ namespace Chem4Word.Model2
         }
 
         /// <summary>
-        /// Where in space they are situated relative to the parent StructuralObject.
-        /// If null, let the atom work out where to shove the electrons.
+        /// Where in space this electron is situated relative to the parent StructuralObject.
         /// Use this when displaying atoms.
         /// </summary>
-        public CompassPoints? Placement
+        public CompassPoints Placement
         {
             get
             {
                 CompassPoints? result = ExplicitPlacement;
                 string type = "M";
-                if (ExplicitPlacement is null && Parent is Atom atom)
+                if (result is null)
                 {
                     type = "A";
-                    result = atom.GetEmptySpaceForElectrons(this);
+                    result = ImplicitPlacement;
                 }
 
+                //StackTrace stackTrace = new StackTrace(true);
+                //string stack = StackHelper.ShowStack(stackTrace);
+                //Debug.WriteLine($"Electron {Path} - Placement: {type} -> {result}\n{stack}");
+
                 Debug.WriteLine($"Electron {Path} - Placement: {type} -> {result}");
-                return result;
+
+                return result.Value;
             }
         }
 
@@ -262,5 +279,7 @@ namespace Chem4Word.Model2
         }
 
         #endregion IEquatable<Electron> Members
+
+      
     }
 }

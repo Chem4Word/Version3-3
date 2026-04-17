@@ -80,10 +80,10 @@
         </StackPanel>
 
         <Grid Grid.Row="1" Grid.Column="7">
-            <controls:ElectronsView
+            <controls:ElectronsEditor
                 x:Name="ElectronsView"
                 Width="154"
-                ElectronsValueChanged="ElectronsView_OnElectronsValueChanged" />
+                ElectronsValueChanged="OnElectronsEditor_Changed" />
         </Grid>
         <StackPanel
             Grid.Row="2"

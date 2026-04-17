@@ -5,12 +5,17 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using System.ComponentModel;
+
 namespace Chem4Word.Model2.Enums
 {
     public enum ElectronType
     {
+        [Description("Radical")]
         Radical = 1,
+        [Description("Lone Pair")]
         LonePair = 2,
+        [Description("Carbenoid")]
         Carbenoid = 3
     }
 }

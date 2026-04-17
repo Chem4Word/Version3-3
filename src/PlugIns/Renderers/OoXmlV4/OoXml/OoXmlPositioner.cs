@@ -879,22 +879,22 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 foreach (Electron electron in atom.AllElectrons())
                 {
-                    Electron copy = electron.Copy();
-
                     string colour = OoXmlColours.Black;
                     if (Inputs.Model.ShowColouredAtoms)
                     {
                         colour = atom.Element.Colour.Replace("#", "");
                     }
+
                     OoXmlElectron ooXmlElectron = new OoXmlElectron
                     {
+                        Path = electron.Path,
                         ParentAtom = atom,
                         Position = atom.Position,
                         Colour = colour,
                         RadicalDiameter = BondOffset() / 2,
                         MeanBondLength = Inputs.MeanBondLength,
-                        Electron = copy,
-                        ComputedPlacement = copy.Placement ?? CompassPoints.North
+                        TypeOfElectron = electron.TypeOfElectron,
+                        ComputedPlacement = electron.Placement
                     };
 
                     electronsToBeRendered.Add(ooXmlElectron);

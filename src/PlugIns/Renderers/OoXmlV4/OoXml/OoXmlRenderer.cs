@@ -208,19 +208,19 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             {
                 foreach (OoXmlElectron electron in listOfElectrons)
                 {
-                    switch (electron.Electron.TypeOfElectron)
+                    switch (electron.TypeOfElectron)
                     {
                         case ElectronType.Radical:
-                            DrawRadicalDot(electron.Points[0], electron.Electron.Path, BondOffset() / 2, electron.Colour, true);
+                            DrawRadicalDot(electron.Points[0], electron.Path, BondOffset() / 2, electron.Colour, true);
                             break;
 
                         case ElectronType.LonePair:
-                            DrawRadicalDot(electron.Points[0], electron.Electron.Path, BondOffset() / 2, electron.Colour, true);
-                            DrawRadicalDot(electron.Points[1], electron.Electron.Path, BondOffset() / 2, electron.Colour, true);
+                            DrawRadicalDot(electron.Points[0], electron.Path, BondOffset() / 2, electron.Colour, true);
+                            DrawRadicalDot(electron.Points[1], electron.Path, BondOffset() / 2, electron.Colour, true);
                             break;
 
                         case ElectronType.Carbenoid:
-                            DrawBondLine(electron.Points[0], electron.Points[1], electron.Electron.Path, BondLineStyle.Solid, electron.Colour);
+                            DrawBondLine(electron.Points[0], electron.Points[1], electron.Path, BondLineStyle.Solid, electron.Colour);
                             break;
                     }
                 }

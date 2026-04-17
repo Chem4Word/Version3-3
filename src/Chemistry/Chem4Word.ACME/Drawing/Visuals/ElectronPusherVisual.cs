@@ -21,6 +21,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
     /// </summary>
     public class ElectronPusherVisual : AtomVisual
     {
+        private BezierArrow _arrow;
+
         #region Properties
 
         public ElectronPusher ParentPusher { get; }
@@ -57,13 +59,14 @@ namespace Chem4Word.ACME.Drawing.Visuals
                                 ref lineStart, ref lineEnd,
                                 electronPusher.FirstControlPoint, electronPusher.SecondControlPoint);
 
-            Pen outline = new Pen(Brushes.DarkRed, 2);
-            BezierArrow arrow = null;
+            Pen pusherPen = new Pen(Brushes.DarkRed, 2);
+
+            _arrow = null;
 
             if (ParentPusher.PusherType == ElectronPusherType.CurlyArrow || ParentPusher.PusherType == ElectronPusherType.DoubleArrow)
             {
                 bool doubleHeaded = ParentPusher.PusherType == ElectronPusherType.DoubleArrow;
-                arrow = new BezierArrow
+                _arrow = new BezierArrow
                 {
                     StartPoint = lineStart.Value,
                     FirstControlPoint = ParentPusher.FirstControlPoint,
@@ -75,7 +78,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     ArrowEnds = ParentPusher.PusherType == ElectronPusherType.CurlyArrow
                                   ? ArrowEnds.End
                                   : ArrowEnds.Both,
-                    Stroke = outline.Brush
+                    Stroke = pusherPen.Brush
                 };
             }
             else if (ParentPusher.PusherType == ElectronPusherType.FishHook)
@@ -90,37 +93,37 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
                     ArrowHeadClosed = true,
 
-                    Stroke = outline.Brush
+                    Stroke = pusherPen.Brush
                 };
                 var offset = newFishHook.BarbOffset(ParentPusher.StartPoint, ParentPusher.EndPoint);
                 newFishHook.EndPoint -= offset;
-                arrow = newFishHook;
+                _arrow = newFishHook;
             }
 
             //draw the arrow
             using (DrawingContext dc = RenderOpen())
             {
-                arrow.DrawArrowGeometry(dc, outline, arrow.Stroke);
+                _arrow.DrawArrowGeometry(dc, pusherPen, _arrow.Stroke);
 
                 //draw an overlay
 
                 SolidColorBrush outliner;
 #if SHOWBOUNDS
-                outliner = new SolidColorBrush(Colors.LightGreen)
+                outliner = new SolidColorBrush(Colors.LightSalmon)
                 {
                     Opacity = 0.4d
                 };
 
-                dc.DrawLine(new Pen(outliner,3),  lineStart.Value, ParentPusher.FirstControlPoint);
-                dc.DrawRectangle(outliner, new Pen(outliner, 3), new Rect(ParentPusher.FirstControlPoint, new Size(5,5)));
-                dc.DrawLine(new Pen(outliner, 3), lineEnd.v, ParentPusher.SecondControlPoint);
-                dc.DrawEllipse(outliner, new Pen(outliner, 3), ParentPusher.SecondControlPoint, 5, 5);
+                dc.DrawLine(new Pen(outliner,1),  lineStart.Value, ParentPusher.FirstControlPoint);
+                dc.DrawEllipse(outliner, new Pen(outliner, 1), ParentPusher.FirstControlPoint, 5, 5);
+                dc.DrawLine(new Pen(outliner, 1), lineEnd.Value, ParentPusher.SecondControlPoint);
+                dc.DrawEllipse(outliner, new Pen(outliner, 1), ParentPusher.SecondControlPoint, 5, 5);
 #else
 
 #endif
                 outliner = new SolidColorBrush(Colors.Transparent) { Opacity = 0d };
-                Pen outlinePen = new Pen(outliner, arrow.StrokeThickness * 2);
-                arrow.DrawArrowGeometry(dc, outlinePen, outliner);
+                Pen outlinePen = new Pen(outliner, _arrow.StrokeThickness * 2);
+                _arrow.DrawArrowGeometry(dc, outlinePen, outliner);
 
                 //if the arrow ends in empty space between two atoms, draw a dashed line
                 if (secondChemistryVisuals.Count == 2)
@@ -145,6 +148,16 @@ namespace Chem4Word.ACME.Drawing.Visuals
             }
         }
 
+        /// <summary>
+        /// Adjusts the start and end points of the pusher to ensure that it starts and ends on the hull of the relevant chemistry visual(s)
+        /// </summary>
+        /// <param name="electronPusher"></param>
+        /// <param name="firstChemistryVisual"></param>
+        /// <param name="secondChemistryVisuals"></param>
+        /// <param name="lineStart"></param>
+        /// <param name="lineEnd"></param>
+        /// <param name="firstControlPoint"></param>
+        /// <param name="secondControlPoint"></param>
         public static void RecalcPusherMetrics(ElectronPusher electronPusher, ChemicalVisual firstChemistryVisual,
                                                List<DrawingVisual> secondChemistryVisuals,
                                                ref Point? lineStart, ref Point? lineEnd, Point firstControlPoint,

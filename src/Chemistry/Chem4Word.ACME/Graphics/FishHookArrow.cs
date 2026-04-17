@@ -1,4 +1,12 @@
-﻿using Chem4Word.Core;
+﻿// ---------------------------------------------------------------------------
+//  Copyright (c) 2026, The .NET Foundation.
+//  This software is released under the Apache Licence, Version 2.0.
+//  The licence and further copyright text can be found in the file LICENCE.md
+//  at the root directory of the distribution.
+// ---------------------------------------------------------------------------
+
+using Chem4Word.ACME.Utils;
+using Chem4Word.Core;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -10,7 +18,7 @@ namespace Chem4Word.ACME.Graphics
     {
         public Vector BarbOffset(Point startPoint, Point endPoint)
         {
-            var shaftLength = GetPathFigureLength(Shaft());
+            var shaftLength = WPFGeometry.GetPathFigureLength(Shaft());
             var shaftVector = endPoint - startPoint;
             var whl = GetWorkingHeadLength(shaftLength);
             shaftVector.Normalize();
@@ -20,7 +28,7 @@ namespace Chem4Word.ACME.Graphics
 
         public override PathFigure ArrowHeadGeometry(PathFigure line, bool reverse = false)
         {
-            var shaftLength = GetPathFigureLength(line);
+            var shaftLength = WPFGeometry.GetPathFigureLength(line);
             var headLength = GetWorkingHeadLength(shaftLength);
 
             Point[] ends = DetermineBarbEnds(EndPoint, SecondControlPoint, headLength, barbOffset: headLength * Math.Sin(HeadAngle));

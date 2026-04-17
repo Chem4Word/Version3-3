@@ -6,8 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Utils;
-using Chem4Word.Core.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

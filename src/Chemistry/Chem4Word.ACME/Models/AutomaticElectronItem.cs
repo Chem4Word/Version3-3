@@ -5,34 +5,47 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME.Annotations;
 using Chem4Word.Model2;
-using System.Collections.ObjectModel;
+using Chem4Word.Model2.Enums;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Chem4Word.ACME.Models
 {
-    public class NamesModel : INotifyPropertyChanged
+    public class AutomaticElectronItem : INotifyPropertyChanged
     {
-        private ObservableCollection<TextualProperty> _listOfNames;
+        public Atom ParentAtom { get; set; }
 
-        public ObservableCollection<TextualProperty> ListOfNames
+        public string Id { get; set; }
+
+        public ElectronType ElectronType { get; set; } = ElectronType.Radical;
+
+        private object _buttonContent;
+
+        public object ButtonContent
         {
-            get { return _listOfNames; }
+            get => _buttonContent;
             set
             {
-                _listOfNames = value;
+                _buttonContent = value;
                 OnPropertyChanged();
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }

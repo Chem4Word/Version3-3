@@ -207,7 +207,6 @@ namespace Chem4Word.ACME.Adorners.Sketching
         {
             if (CanRender)
             {
-                base.OnRender(drawingContext);
                 MyArrow.DrawArrowGeometry(drawingContext, DrawPen, MyArrow.Stroke);
             }
         }

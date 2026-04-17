@@ -58,7 +58,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             Point center = ParentVisual.Position;
 
             //first, work out from the placement property what the vector is
-            double offsetAngle = 45 * (int)ParentElectron.Placement.Value;
+            double offsetAngle = 45 * (int)ParentElectron.Placement;
 
             Matrix rotator = new Matrix();
             rotator.Rotate(offsetAngle);

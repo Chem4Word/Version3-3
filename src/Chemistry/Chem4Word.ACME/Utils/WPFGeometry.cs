@@ -296,5 +296,36 @@ namespace Chem4Word.ACME.Utils
 
             return null;
         }
+
+        /// <summary>
+        /// used to return the length of a line segment, or the length of a path figure describing an arrow shaft.  This is used to calculate the position of the arrow head on the shaft.
+        /// </summary>
+        /// <param name="line">PathFigure describing the arrow shaft</param>
+        /// <returns></returns>
+        public static double GetPathFigureLength(PathFigure line)
+        {
+            var pathbits = line.GetFlattenedPathFigure();
+
+            double length = 0.0;
+            var lastPoint = line.StartPoint;
+
+            foreach (PathSegment pathSegment in pathbits.Segments)
+            {
+                if (pathSegment is LineSegment ls)
+                {
+                    length += (ls.Point - lastPoint).Length;
+                    lastPoint = ls.Point;
+                }
+                else if (pathSegment is PolyLineSegment pls)
+                {
+                    foreach (Point plsPoint in pls.Points)
+                    {
+                        length += (plsPoint - lastPoint).Length;
+                        lastPoint = plsPoint;
+                    }
+                }
+            }
+            return length;
+        }
     }
 }

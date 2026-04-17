@@ -716,6 +716,13 @@ namespace Chem4Word.Core.Helpers
             return sector;
         }
 
+        public static CompassPoints SnapTo8(double angleFromNorth)
+        {
+            double tolerance = 22.5;
+            int sector = SnapAngleToTolerance(angleFromNorth, tolerance);
+            return (CompassPoints)(sector % 8);
+        }
+
         public static Vector SnapVectorToClock(Vector vector)
         {
             double angle = Vector.AngleBetween(vector, GeometryTool.ScreenNorth);
@@ -732,14 +739,14 @@ namespace Chem4Word.Core.Helpers
             return result;
         }
 
-        private static int SnapAngleToTolerance(double angleFromNorth, int tolerance)
+        private static int SnapAngleToTolerance(double angleFromNorth, double tolerance)
         {
             if (angleFromNorth < 0)
             {
                 angleFromNorth += 360.0;
             }
             double adjustedAngle = angleFromNorth + tolerance;
-            int sector = (int)adjustedAngle / (tolerance * 2);
+            int sector = (int)(adjustedAngle / (tolerance * 2));
             return sector;
         }
 

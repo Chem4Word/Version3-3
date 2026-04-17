@@ -142,8 +142,8 @@ namespace Chem4Word.ACME
         {
             get
             {
-                List<int> selectedBondTypes = (from bt in SelectedBondOptions
-                                               select bt.Id).Distinct().ToList();
+                List<int> selectedBondTypes = (from bondOption in GetSelectedBondOptions()
+                                               select bondOption.Id).Distinct().ToList();
 
                 switch (selectedBondTypes.Count)
                 {
@@ -171,22 +171,23 @@ namespace Chem4Word.ACME
         /// <summary>
         /// List of matching Bond Options for the selected bonds in the canvas
         /// </summary>
-        private List<BondOption> SelectedBondOptions
+        private List<BondOption> GetSelectedBondOptions()
         {
-            get
-            {
-                IEnumerable<Bond> selectedBonds = SelectedItems.OfType<Bond>();
+            IEnumerable<Bond> selectedBonds = SelectedItems.OfType<Bond>();
 
-                IEnumerable<BondOption> selbonds = (from Bond selbond in selectedBonds
-                                                    select new BondOption { Order = selbond.Order, Stereo = selbond.Stereo }).Distinct();
+            IEnumerable<BondOption> selbonds = (from Bond selbond in selectedBonds
+                                                select new BondOption { Order = selbond.Order, Stereo = selbond.Stereo })
+                .Distinct();
 
-                IEnumerable<BondOption> selOptions = from BondOption bo in _bondOptions.Values
-                                                     join selbond1 in selbonds
-                                                         on new { bo.Order, bo.Stereo } equals new { selbond1.Order, selbond1.Stereo }
-                                                     select new BondOption { Id = bo.Id, Order = bo.Order, Stereo = bo.Stereo };
+            IEnumerable<BondOption> selOptions = from BondOption bo in _bondOptions.Values
+                                                 join selbond1 in selbonds
+                                                     on new { bo.Order, bo.Stereo } equals new
+                                                         {
+                                                             selbond1.Order, selbond1.Stereo
+                                                         }
+                                                 select new BondOption { Id = bo.Id, Order = bo.Order, Stereo = bo.Stereo };
 
-                return selOptions.ToList();
-            }
+            return selOptions.ToList();
         }
 
         /// <summary>
@@ -532,6 +533,7 @@ namespace Chem4Word.ACME
         public string TotUpSelectedMwt()
         {
             string selectedMWT;
+            //set the molecular weight if you can
 
             double mwt = 0;
             foreach (Molecule molecule in SelectedItems.Where(m => m is Molecule))

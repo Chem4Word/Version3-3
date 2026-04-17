@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Drawing.Text;
-using Chem4Word.Model2;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
@@ -60,19 +59,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
             subscriptedGroup.DrawSelf(Context, Metrics, ParentVisual.PixelsPerDip(), Fill);
 
             CoreHull = FlattenedPath;
-        }
-
-        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
-        {
-            if (ParentAtom.Element is Element)
-            {
-                if (HullGeometry.FillContains(hitTestParameters.HitPoint))
-                {
-                    return new PointHitTestResult(this, hitTestParameters.HitPoint);
-                }
-            }
-
-            return null;
         }
     }
 }

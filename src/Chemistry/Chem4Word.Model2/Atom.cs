@@ -134,9 +134,9 @@ namespace Chem4Word.Model2
             {
                 if (Bonds.Count() == 1)
                 {
-                    var centroid = Parent.Centroid;
-                    var vector = Position - centroid;
-                    var angle = Vector.AngleBetween(GeometryTool.ScreenNorth, vector);
+                    Point centroid = Parent.Centroid;
+                    Vector vector = Position - centroid;
+                    double angle = Vector.AngleBetween(GeometryTool.ScreenNorth, vector);
                     return angle < 0 ? CompassPoints.West : CompassPoints.East;
                 }
 
@@ -254,7 +254,17 @@ namespace Chem4Word.Model2
             }
         }
 
-        public IEnumerable<Atom> Neighbours => Parent.GetAtomNeighbours(this);
+        public IEnumerable<Atom> Neighbours
+        {
+            get
+            {
+                if (Parent != null)
+                {
+                    return Parent.GetAtomNeighbours(this);
+                }
+                return new List<Atom>();
+            }
+        }
 
         public HashSet<Atom> NeighbourSet => new HashSet<Atom>(Neighbours);
 
@@ -267,7 +277,7 @@ namespace Chem4Word.Model2
             {
                 int result = 0;
 
-                var allRings = Parent.Rings;
+                ReadOnlyCollection<Ring> allRings = Parent.Rings;
                 foreach (Ring ring in allRings)
                 {
                     if (ring.Atoms.Contains(this))
@@ -287,9 +297,9 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var result = new List<Ring>();
+                List<Ring> result = new List<Ring>();
 
-                var allRings = Parent.Rings;
+                ReadOnlyCollection<Ring> allRings = Parent.Rings;
                 foreach (Ring ring in allRings)
                 {
                     if (ring.Atoms.Contains(this))
@@ -309,9 +319,9 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var result = false;
+                bool result = false;
 
-                var allRings = Parent.Rings;
+                ReadOnlyCollection<Ring> allRings = Parent.Rings;
                 foreach (Ring ring in allRings)
                 {
                     if (ring.Atoms.Contains(this))
@@ -379,6 +389,9 @@ namespace Chem4Word.Model2
             set
             {
                 _position = value;
+                //update any implicit electron placements that might be affected by the change in position
+                UpdateElectronPlacements();
+
                 OnPropertyChanged();
                 if (Bonds.Any())
                 {
@@ -386,8 +399,14 @@ namespace Chem4Word.Model2
                     {
                         bond.UpdateVisual();
                     }
+
+                    foreach (Atom neighbour in Neighbours)
+                    {
+                        neighbour.UpdateElectronPlacements();
+                    }
                 }
 
+                //refresh any attached electron pushers that might be affected by the change in position
                 if (ElectronPushers.Any())
                 {
                     foreach (ElectronPusher electronPusher in ElectronPushers)
@@ -395,6 +414,14 @@ namespace Chem4Word.Model2
                         electronPusher.UpdateVisual();
                     }
                 }
+            }
+        }
+
+        public void UpdateElectronPlacements()
+        {
+            if (Electrons.Any())
+            {
+                AutoPlaceElectrons();
             }
         }
 
@@ -427,7 +454,7 @@ namespace Chem4Word.Model2
 
                             if (Degree == 2)
                             {
-                                var bonds = Bonds.ToArray();
+                                Bond[] bonds = Bonds.ToArray();
                                 // This code is triggered when adding the first Atom to a bond
                                 //  at this point one of the atoms is undefined
                                 Atom a1 = bonds[0].OtherAtom(this);
@@ -671,26 +698,26 @@ namespace Chem4Word.Model2
         {
             // This code was adapted from an answer given by ChatGPT
 
-            var result = GeometryTool.ScreenNorth;
+            Vector result = GeometryTool.ScreenNorth;
 
             if (Bonds.Any())
             {
-                var angles = new List<double>();
-                foreach (var bond in Bonds)
+                List<double> angles = new List<double>();
+                foreach (Bond bond in Bonds)
                 {
-                    var otherAtom = bond.OtherAtom(this);
-                    var angle = Vector.AngleBetween(GeometryTool.ScreenNorth, otherAtom.Position - Position);
+                    Atom otherAtom = bond.OtherAtom(this);
+                    double angle = Vector.AngleBetween(GeometryTool.ScreenNorth, otherAtom.Position - Position);
                     angles.Add(angle);
                 }
 
                 if (angles.Count == 1)
                 {
-                    var otherAtom = Bonds.First().OtherAtom(this);
+                    Atom otherAtom = Bonds.First().OtherAtom(this);
                     result = Position - otherAtom.Position;
                 }
                 else
                 {
-                    var leastCrowdedAngle = FindLeastCrowdedAngle(angles);
+                    double leastCrowdedAngle = FindLeastCrowdedAngle(angles);
                     result = VectorFromNorth(leastCrowdedAngle);
                 }
             }
@@ -708,9 +735,9 @@ namespace Chem4Word.Model2
                 double maxGap = 0;
 
                 // Iterate through pairs of adjacent existing angles to find the largest gap
-                for (var i = 0; i < existingAngles.Count - 1; i++)
+                for (int i = 0; i < existingAngles.Count - 1; i++)
                 {
-                    var gap = existingAngles[i + 1] - existingAngles[i];
+                    double gap = existingAngles[i + 1] - existingAngles[i];
                     if (gap > maxGap)
                     {
                         maxGap = gap;
@@ -719,7 +746,7 @@ namespace Chem4Word.Model2
                 }
 
                 // Check for the gap between the first and last existing angles
-                var firstLastGap = 360 - (existingAngles[existingAngles.Count - 1] - existingAngles[0]);
+                double firstLastGap = 360 - (existingAngles[existingAngles.Count - 1] - existingAngles[0]);
                 if (firstLastGap > maxGap)
                 {
                     leastCrowdedAngle = (existingAngles[existingAngles.Count - 1] + existingAngles[0] + 360) / 2;
@@ -748,9 +775,9 @@ namespace Chem4Word.Model2
 
         public int UnprocessedDegree(Predicate<Atom> unprocessedTest, HashSet<Bond> excludeBonds)
         {
-            var unproc = from a in UnprocessedNeighbours(unprocessedTest)
-                         where !excludeBonds.Contains(this.BondBetween(a)) && unprocessedTest(a)
-                         select a;
+            IEnumerable<Atom> unproc = from a in UnprocessedNeighbours(unprocessedTest)
+                                       where !excludeBonds.Contains(this.BondBetween(a)) && unprocessedTest(a)
+                                       select a;
             return unproc.Count();
         }
 
@@ -790,7 +817,7 @@ namespace Chem4Word.Model2
 
         public Bond BondBetween(Atom atom)
         {
-            foreach (var parentBond in Parent._bonds)
+            foreach (Bond parentBond in Parent._bonds)
             {
                 if (parentBond.StartAtomInternalId.Equals(InternalId) && parentBond.EndAtomInternalId.Equals(atom.InternalId))
                 {
@@ -806,7 +833,7 @@ namespace Chem4Word.Model2
 
         private CompassPoints GetDefaultHOrientation()
         {
-            var orientation = CompassPoints.East;
+            CompassPoints orientation = CompassPoints.East;
 
             if (ImplicitHydrogenCount >= 1 && Bonds.Any())
             {
@@ -826,71 +853,6 @@ namespace Chem4Word.Model2
             return orientation;
         }
 
-        //tries to find a free space to stick the electrons once everything else is placed
-        public CompassPoints GetEmptySpaceForElectrons(Electron e)
-        {
-            HashSet<CompassPoints> freePoints = new HashSet<CompassPoints>
-                                     {
-                                         CompassPoints.North,
-                                         CompassPoints.NorthEast,
-                                         CompassPoints.East,
-                                         CompassPoints.SouthEast,
-                                         CompassPoints.South,
-                                         CompassPoints.SouthWest,
-                                         CompassPoints.West,
-                                         CompassPoints.NorthWest
-                                     };
-            CompassPoints whereTheHsGo = ImplicitHPlacement;
-            CompassPoints whereTheClutterIs =
-                GeometryTool.SnapTo4NESW(Vector.AngleBetween(GeometryTool.ScreenNorth, -BalancingVector()));
-
-            freePoints.Remove(whereTheHsGo);
-            freePoints.Remove(whereTheClutterIs);
-
-            foreach (Electron electron in Electrons.Values)
-            {
-                if (!(electron.ExplicitPlacement is null))
-                {
-                    freePoints.Remove(electron.ExplicitPlacement.Value);
-                }
-            }
-
-            IEnumerable<Electron> freeElectrons = from el in Electrons.Values
-                                                  where el.ExplicitPlacement is null
-                                                  select el;
-
-            foreach (Electron existingElectron in freeElectrons)
-            {
-                CompassPoints preferredSpot;
-                if (freePoints.Contains(CompassPoints.North))
-                {
-                    preferredSpot = CompassPoints.North;
-                }
-                else if (freePoints.Contains(CompassPoints.South))
-                {
-                    preferredSpot = CompassPoints.South;
-                }
-                else if (freePoints.Contains(CompassPoints.East))
-                {
-                    preferredSpot = CompassPoints.East;
-                }
-                else
-                {
-                    preferredSpot = CompassPoints.West;
-                }
-                if (e == existingElectron)
-                {
-                    return preferredSpot;
-                }
-                else
-                {
-                    freePoints.Remove(preferredSpot);
-                }
-            }
-            //should never get here
-            return CompassPoints.North;
-        }
-
         //notification methods
         public void UpdateVisual()
         {
@@ -904,6 +866,7 @@ namespace Chem4Word.Model2
                 electron.Parent = this;
                 AddElectron(electron);
             }
+            UpdateElectronPlacements();
         }
 
         public List<Electron> AllElectrons()
@@ -919,6 +882,7 @@ namespace Chem4Word.Model2
                                                      new List<Electron> { toAdd });
             OnCollectionChanged_Electrons(this, changedEventArgs);
             UpdateElectronPropertyHandlers(changedEventArgs);
+            UpdateElectronPlacements();
         }
 
         public void ClearElectrons()
@@ -927,6 +891,7 @@ namespace Chem4Word.Model2
             {
                 RemoveElectron(electron);
             }
+            UpdateElectronPlacements();
         }
 
         public void RemoveElectron(Electron toRemove)
@@ -976,7 +941,7 @@ namespace Chem4Word.Model2
 
         public override string ToString()
         {
-            var symbol = Element != null ? Element.Symbol : "???";
+            string symbol = Element != null ? Element.Symbol : "???";
             return $"Atom {Id} - {Path}: {symbol} @ {PointHelper.AsString(Position)}";
         }
 
@@ -1062,8 +1027,8 @@ namespace Chem4Word.Model2
             }
 
             // There are more slashes so must be a child of a molecule or reaction scheme
-            var firstId = path.Substring(0, nextSlashPos);
-            var remainder = path.Substring(nextSlashPos + 1);
+            string firstId = path.Substring(0, nextSlashPos);
+            string remainder = path.Substring(nextSlashPos + 1);
 
             foreach (Bond bond in Bonds)
             {
@@ -1078,7 +1043,7 @@ namespace Chem4Word.Model2
 
         public Atom Copy()
         {
-            var newAtom = new Atom
+            Atom newAtom = new Atom
             {
                 Id = Id,
                 Position = Position,
@@ -1091,12 +1056,17 @@ namespace Chem4Word.Model2
                 ExplicitFunctionalGroupPlacement = ExplicitFunctionalGroupPlacement
             };
 
-            foreach (Electron electron in Electrons.Values)
+            if (Electrons.Any())
             {
-                Electron newElectron = electron.Copy();
-                newAtom.AddElectron(newElectron);
-                newElectron.Parent = newAtom;
+                foreach (Electron electron in Electrons.Values)
+                {
+                    Electron newElectron = electron.Copy();
+                    newAtom.AddElectron(newElectron);
+                    newElectron.Parent = newAtom;
+                }
+                AutoPlaceElectrons();
             }
+
             return newAtom;
         }
 
@@ -1116,7 +1086,7 @@ namespace Chem4Word.Model2
                 List<ElectronPusher> pushers = new List<ElectronPusher>();
                 if (Parent != null && Parent.Model != null)
                 {
-                    foreach (var electronPusher in Parent.Model.ElectronPushers.Values)
+                    foreach (ElectronPusher electronPusher in Parent.Model.ElectronPushers.Values)
                     {
                         if (electronPusher.StartChemistry == this || electronPusher.EndChemistries.Contains(this))
                         {
@@ -1127,6 +1097,118 @@ namespace Chem4Word.Model2
 
                 return pushers;
             }
+        }
+
+        /// <summary>
+        /// Tries to place electrons automatically in a way that spaces them evenly
+        /// and keeps them away from bonds and implicit hydrogens
+        ///</summary>
+        private void AutoPlaceElectrons()
+        {
+            //build up a list of all the possible places we could put electrons
+            HashSet<CompassPoints> allFreePoints = new HashSet<CompassPoints>
+                                                {
+                                                    CompassPoints.North,
+                                                    CompassPoints.NorthEast,
+                                                    CompassPoints.East,
+                                                    CompassPoints.SouthEast,
+                                                    CompassPoints.South,
+                                                    CompassPoints.SouthWest,
+                                                    CompassPoints.West,
+                                                    CompassPoints.NorthWest
+                                                };
+            HashSet<CompassPoints> excludePoints = new HashSet<CompassPoints>();
+            //first take into account whether we have any implicit hydrogens and where they are
+            if (ImplicitHydrogenCount > 0 && AtomSymbol != "")
+            {
+                excludePoints.Add(ImplicitHPlacement);
+            }
+            //then take into account the clutter of the incoming bonds
+            foreach (Atom atom in Neighbours)
+            {
+                Vector adjacency = atom.Position - Position;
+                excludePoints.Add(ClutterPoint(adjacency));
+            }
+            //and then the clutter of any existing explicitly placed electrons
+            foreach (Electron electron in Electrons.Values.Where(e => e.ExplicitPlacement != null))
+            {
+                excludePoints.Add(electron.ExplicitPlacement.Value);
+            }
+
+            allFreePoints = new HashSet<CompassPoints>(allFreePoints.Except(excludePoints));
+
+            foreach (Electron electron in Electrons.Values.Where(e => e.ExplicitPlacement == null))
+            {
+                electron.ImplicitPlacement = GetPreferredSpot(allFreePoints);
+                allFreePoints.Remove(electron.ImplicitPlacement);
+            }
+
+            //compares the free points and picks the one with the
+            //most free points around it, to try to
+            //cluster electrons together where possible
+            CompassPoints GetPreferredSpot(HashSet<CompassPoints> freePoints)
+            {
+                Dictionary<CompassPoints, int> scores = new Dictionary<CompassPoints, int>();
+                foreach (CompassPoints point in freePoints)
+                {
+                    scores[point] = 0;
+                }
+                //for each empty position, count the adjacent empty positions
+                foreach (CompassPoints freePoint in freePoints)
+                {
+                    int total = Enum.GetNames(typeof(CompassPoints)).Length;
+                    //first clockwise
+                    int clockwiseScore = 0;
+                    int antiClockwiseScore = 0;
+                    for (int i = 1; i < 4; i++)
+                    {
+                        CompassPoints clockwisePoint = (CompassPoints)((int)(freePoint + i) % total);
+                        if (freePoints.Contains(clockwisePoint))
+                        {
+                            clockwiseScore++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    //then anticlockwise
+                    for (int i = 1; i < 4; i++)
+                    {
+                        CompassPoints anticlockwisePoint = (CompassPoints)((int)(freePoint - i + total) % total);
+                        if (freePoints.Contains(anticlockwisePoint))
+                        {
+                            antiClockwiseScore++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    //tot up the total
+                    //take the minimum of the clockwise and anticlockwise scores
+                    //this should prefer 'balanced' positions
+                    scores[freePoint] += Math.Min(clockwiseScore, antiClockwiseScore);
+                    if (freePoint == ClutterPoint(BalancingVector()))
+                    {
+                        scores[freePoint] += 1;
+                    }
+                }
+                //choose the position with the most free points around it
+                return scores.OrderByDescending(kvp => kvp.Value).First().Key;
+            }
+        }
+
+        /// <summary>
+        /// Works out roughly where on the compas a vector clutters  an atom's neighbourhood
+        /// </summary>
+        /// <param name="incomingBondVector"></param>
+        /// <returns></returns>
+        private CompassPoints ClutterPoint(Vector incomingBondVector)
+        {
+            return GeometryTool.SnapTo8(Vector.AngleBetween(GeometryTool.ScreenNorth, incomingBondVector));
         }
     }
 }

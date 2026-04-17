@@ -511,8 +511,8 @@ namespace Chem4WordUnitTests
         [InlineData("Testosterone.xml")]
         [InlineData("Phthalocyanine.xml")]
         [InlineData("CopperPhthalocyanine.xml")]
-        [InlineData("electron placement empty.xml")]
-        [InlineData("electron placement.xml")]
+        [InlineData("electron placement automatic.xml")]
+        [InlineData("electron placement manual.xml")]
         public void PBuffRoundTripFromCml(string cmlFile)
         {
             var sw = new Stopwatch();
@@ -520,7 +520,6 @@ namespace Chem4WordUnitTests
             var protocolBufferConverter = new ProtocolBufferConverter();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
-
             var cml = ResourceHelper.GetStringResource(assembly, cmlFile);
             var shortName = cmlFile.Replace(".xml", "");
 

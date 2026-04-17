@@ -11,6 +11,7 @@ using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Graphics;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
@@ -58,6 +59,14 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         public ElectronPusher ParentPusher { get; }
 
+        public double Length
+        {
+            get
+            {
+                return (ParentPusher.EndPoint - ParentPusher.StartPoint).Length;
+            }
+        }
+
         public ElectronPusherSelectionAdorner(EditorCanvas editorCanvas, ElectronPusherVisual electronPushervisual) : base(editorCanvas)
         {
             _adornedVisual = electronPushervisual;
@@ -69,7 +78,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
             _solidColorBrush = (SolidColorBrush)FindResource("GrabHandleFillBrush");
             _dashPen = new Pen((SolidColorBrush)FindResource(AcmeConstants.DrawAdornerBrush), 1);
-            _thumbWidth = 15;
+            _thumbWidth = 10;
             _halfThumbWidth = _thumbWidth / 2;
 
             BindHandlers();
@@ -77,7 +86,8 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         private void BuildHandle(DrawingContext drawingContext, Point centre, Brush handleFillBrush, Pen handleBorderPen)
         {
-            drawingContext.DrawEllipse(handleFillBrush, handleBorderPen, centre, _halfThumbWidth, _halfThumbWidth);
+            double radius = Math.Min(_halfThumbWidth, Length / 5);
+            drawingContext.DrawEllipse(handleFillBrush, handleBorderPen, centre, radius, radius);
         }
 
         protected void BindHandlers()
@@ -179,9 +189,9 @@ namespace Chem4Word.ACME.Adorners.Selectors
             MouseMove -= ThisAdorner_MouseMove;
         }
 
-        protected override void OnRender(DrawingContext dc)
+        protected override void OnRender(DrawingContext drawingContext)
         {
-            base.OnRender(dc);
+            base.OnRender(drawingContext);
             //draw dashed lines from the control points to the ends of the arrow
 
             Point? startPoint = ParentPusher.StartPoint;
@@ -244,20 +254,20 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 arrow = newFishHook;
             }
 
-            arrow.DrawArrowGeometry(dc, new Pen(traceBrush, 3), arrow.Stroke);
+            arrow.DrawArrowGeometry(drawingContext, new Pen(traceBrush, 3), arrow.Stroke);
 
-            dc.DrawLine(_dashPen, ParentPusher.StartPoint, _firstControlPointTemp);
-            dc.DrawLine(_dashPen, ParentPusher.EndPoint, _secondControlPointTemp);
+            drawingContext.DrawLine(_dashPen, ParentPusher.StartPoint, _firstControlPointTemp);
+            drawingContext.DrawLine(_dashPen, ParentPusher.EndPoint, _secondControlPointTemp);
 
             //draw the handles
-            BuildHandle(dc, _firstControlPointTemp, _solidColorBrush, _dashPen);
-            BuildHandle(dc, _secondControlPointTemp, _solidColorBrush, _dashPen);
+            BuildHandle(drawingContext, _firstControlPointTemp, _solidColorBrush, _dashPen);
+            BuildHandle(drawingContext, _secondControlPointTemp, _solidColorBrush, _dashPen);
 #if SHOWBOUNDS
             Brush overlayBrush = new SolidColorBrush(Colors.LightSalmon) { Opacity = 20 / 100.0 };
             Pen overlayPen = new Pen(overlayBrush, 2.0);
 #else
             Brush overlayBrush = Brushes.Transparent;
-            //overlayBrush.Opacity = 0.1;
+
             Pen overlayPen = new Pen(overlayBrush, 2.0)
             {
                 DashStyle = DashStyles.Dash
@@ -271,8 +281,8 @@ namespace Chem4Word.ACME.Adorners.Selectors
                                      new Point(_secondControlPointTemp.X + _thumbWidth, _secondControlPointTemp.Y + _thumbWidth));
             adornedElementRect.Union(newRect1);
             adornedElementRect.Union(newRect2);
-            //adornedElementRect.Inflate(5, 5);
-            //dc.DrawRectangle(overlayBrush, overlayPen, adornedElementRect);
+            adornedElementRect.Inflate(5, 5);
+            drawingContext.DrawRectangle(overlayBrush, overlayPen, adornedElementRect);
         }
     }
 }

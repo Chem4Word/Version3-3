@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Enums;
+using Chem4Word.ACME.Utils;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -142,7 +143,7 @@ namespace Chem4Word.ACME.Graphics
         public virtual PathFigure ArrowHeadGeometry(PathFigure line, bool reverse = false)
         {
             double localHeadLength;
-            var length = GetPathFigureLength(line);
+            var length = WPFGeometry.GetPathFigureLength(line);
 
             localHeadLength = GetWorkingHeadLength(length);
             var headAngleInRadians = HeadAngle / 360 * 2 * Math.PI;
@@ -191,6 +192,7 @@ namespace Chem4Word.ACME.Graphics
             tangentVector.Normalize();
             tangentVector *= localHeadLength;
 
+            //define the first barb
             PolyLineSegment polyseg = new PolyLineSegment();
 
             Matrix barbMatrix = new Matrix();
@@ -201,6 +203,7 @@ namespace Chem4Word.ACME.Graphics
 
             polyseg.Points.Add(endPoint);
 
+            //define the second barb
             barbMatrix.Rotate(-2 * HeadAngle);
             var secondBarb = tangentVector * barbMatrix;
             var pointB = endPoint + secondBarb;
@@ -224,37 +227,6 @@ namespace Chem4Word.ACME.Graphics
         }
 
         /// <summary>
-        /// used to return the length of the Shaft
-        /// </summary>
-        /// <param name="line">PathFigure describing the arrow shaft</param>
-        /// <returns></returns>
-        protected static double GetPathFigureLength(PathFigure line)
-        {
-            var pathbits = line.GetFlattenedPathFigure();
-
-            double length = 0.0;
-            var lastPoint = line.StartPoint;
-
-            foreach (PathSegment pathSegment in pathbits.Segments)
-            {
-                if (pathSegment is LineSegment ls)
-                {
-                    length += (ls.Point - lastPoint).Length;
-                    lastPoint = ls.Point;
-                }
-                else if (pathSegment is PolyLineSegment pls)
-                {
-                    foreach (Point plsPoint in pls.Points)
-                    {
-                        length += (plsPoint - lastPoint).Length;
-                        lastPoint = plsPoint;
-                    }
-                }
-            }
-            return length;
-        }
-
-        /// <summary>
         /// Draw the arrow
         /// </summary>
         /// <param name="drawingContext">DrawingContext provided by WPF</param>
@@ -273,10 +245,6 @@ namespace Chem4Word.ACME.Graphics
         {
             Brush overlayBrush;
             GetOverlayPen(out overlayBrush, out Pen overlayPen);
-
-            base.OnRender(drawingContext);
-
-            PathGeometry overlay;
 
             var shaftFigure = DrawTheShaft(drawingContext, outlinePen, overlayPen, overlayBrush);
 
@@ -297,9 +265,6 @@ namespace Chem4Word.ACME.Graphics
 
             PathGeometry geometry = new PathGeometry(pfc2);
             drawingContext.DrawGeometry(headFillBrush, outlinePen, geometry);
-            overlay = geometry.GetWidenedPathGeometry(overlayPen);
-
-            drawingContext.DrawGeometry(overlayBrush, overlayPen, overlay);
         }
 
         /// <summary>
@@ -332,7 +297,7 @@ namespace Chem4Word.ACME.Graphics
 #else
             overlayBrush = Brushes.Transparent;
 #endif
-            double overlayWidth = 2 * MaxHeadLength * Math.Sin(HeadAngle / 360 * 2 * Math.PI);
+            double overlayWidth = 3 * MaxHeadLength * Math.Sin(HeadAngle / 360 * 2 * Math.PI);
             pen = new Pen(overlayBrush, overlayWidth);
             pen.StartLineCap = PenLineCap.Round;
             pen.EndLineCap = PenLineCap.Round;

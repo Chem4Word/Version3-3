@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SHOWHULLS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -136,8 +136,8 @@
       <DependentUpon>CompassButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DragHandle.cs" />
-    <Compile Include="Controls\ElectronsView.xaml.cs">
-      <DependentUpon>ElectronsView.xaml</DependentUpon>
+    <Compile Include="Controls\ElectronsEditor.xaml.cs">
+      <DependentUpon>ElectronsEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextBlockHelper.cs" />
     <Compile Include="Controls\ReactionOption.cs" />
@@ -151,6 +151,7 @@
     <Compile Include="Converters\CompassControl\CompassTypeInverseToVisibility.cs" />
     <Compile Include="Converters\CompassControl\CompassTypeToVisibility.cs" />
     <Compile Include="Converters\DrawingToImageSourceConverter.cs" />
+    <Compile Include="Converters\ElectronTypeEnumToDescription.cs" />
     <Compile Include="Drawing\LayoutSupport\ThickBondLayout.cs" />
     <Compile Include="Drawing\Text\BlockTextSource.cs" />
     <Compile Include="Drawing\Text\BlockTextRunProperties.cs" />
@@ -298,6 +299,8 @@
     <Compile Include="Drawing\Text\SubscriptTextRunTypographyProperties.cs" />
     <Compile Include="Drawing\Text\LabelTextRunTypographyProperties.cs" />
     <Compile Include="Models\ChemistryObject.cs" />
+    <Compile Include="Models\AutomaticElectronItem.cs" />
+    <Compile Include="Models\AutomaticElectronsEditorModel.cs" />
     <Compile Include="Models\MoleculePropertiesModel.cs" />
     <Compile Include="Models\NamesModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
@@ -363,9 +366,9 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
-    <Page Include="Controls\ElectronsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Controls\ElectronsEditor.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\MoleculePropertyEditor.xaml">
       <SubType>Designer</SubType>
