@@ -45,7 +45,7 @@
             Grid.Row="0"
             Padding="0"
             d:IsLocked="True"
-            HorizontalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
             <ItemsControl
                 d:IsLocked="True"
@@ -56,7 +56,7 @@
                         <Grid Margin="3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="20" />
-                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="24" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -89,11 +89,12 @@
                                 Grid.Column="1"
                                 Margin="0,0,3,0"
                                 Padding="3"
+                                HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 ItemsSource="{Binding Source={StaticResource ElectronTypes}}"
                                 SelectedItem="{Binding ElectronType, Mode=TwoWay}"
-                                SelectionChanged="OnChanged_ElectronTypeCombo">
+                                SelectionChanged="OnSelectionChanged_ExistingElectronTypePicker">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
@@ -130,34 +131,34 @@
         <Grid Grid.Row="1" d:IsLocked="True">
             <Grid d:IsLocked="True">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="54" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button
-                    x:Name="Add"
+                    x:Name="AddElectron"
                     Grid.Column="0"
-                    Width="Auto"
+                    Width="50"
                     Margin="3,3,0,3"
                     d:IsLocked="True"
-                    Click="OnClick_Add">
+                    Click="OnClick_Add"
+                    Style="{StaticResource Acme.Control.Button.DialogButton}">
                     Add
                 </Button>
                 <ComboBox
                     x:Name="ComboBox"
                     Grid.Column="1"
+                    Width="Auto"
                     Margin="3"
                     HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
                     d:IsLocked="True"
                     ItemsSource="{Binding Source={StaticResource ElectronTypes}}"
-                    SelectionChanged="OnSelectionChanged_ElectronType">
+                    SelectionChanged="OnSelectionChanged_NewElectronTypePicker">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-
             </Grid>
         </Grid>
     </Grid>

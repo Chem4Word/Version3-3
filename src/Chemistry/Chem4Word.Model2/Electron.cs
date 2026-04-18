@@ -136,6 +136,8 @@ namespace Chem4Word.Model2
             get
             {
                 CompassPoints? result = ExplicitPlacement;
+
+#if DEBUG
                 string type = "M";
                 if (result is null)
                 {
@@ -148,7 +150,7 @@ namespace Chem4Word.Model2
                 //Debug.WriteLine($"Electron {Path} - Placement: {type} -> {result}\n{stack}");
 
                 Debug.WriteLine($"Electron {Path} - Placement: {type} -> {result}");
-
+#endif
                 return result.Value;
             }
         }

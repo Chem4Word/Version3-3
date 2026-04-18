@@ -1118,17 +1118,20 @@ namespace Chem4Word.Model2
                                                     CompassPoints.NorthWest
                                                 };
             HashSet<CompassPoints> excludePoints = new HashSet<CompassPoints>();
+
             //first take into account whether we have any implicit hydrogens and where they are
             if (ImplicitHydrogenCount > 0 && AtomSymbol != "")
             {
                 excludePoints.Add(ImplicitHPlacement);
             }
+
             //then take into account the clutter of the incoming bonds
             foreach (Atom atom in Neighbours)
             {
                 Vector adjacency = atom.Position - Position;
                 excludePoints.Add(ClutterPoint(adjacency));
             }
+
             //and then the clutter of any existing explicitly placed electrons
             foreach (Electron electron in Electrons.Values.Where(e => e.ExplicitPlacement != null))
             {
@@ -1153,6 +1156,7 @@ namespace Chem4Word.Model2
                 {
                     scores[point] = 0;
                 }
+
                 //for each empty position, count the adjacent empty positions
                 foreach (CompassPoints freePoint in freePoints)
                 {
@@ -1196,6 +1200,7 @@ namespace Chem4Word.Model2
                         scores[freePoint] += 1;
                     }
                 }
+
                 //choose the position with the most free points around it
                 return scores.OrderByDescending(kvp => kvp.Value).First().Key;
             }

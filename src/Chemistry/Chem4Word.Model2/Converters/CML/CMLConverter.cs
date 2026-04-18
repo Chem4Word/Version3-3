@@ -840,14 +840,22 @@ namespace Chem4Word.Model2.Converters.CML
         private XElement GetXElement(Atom atom)
         {
             var elementType = "";
-            if (atom.Element is Element element)
+            bool atomIsElement = true;
+
+            Element element = null;
+            FunctionalGroup functionalGroup = null;
+
+            if (atom.Element is Element e)
             {
+                element = e;
                 elementType = element.Symbol;
             }
 
-            if (atom.Element is FunctionalGroup functionalGroup)
+            if (atom.Element is FunctionalGroup fg)
             {
+                functionalGroup = fg;
                 elementType = functionalGroup.Name;
+                atomIsElement = false;
             }
 
             var result = new XElement(CMLNamespaces.cml + ModelConstants.TagAtom,
@@ -857,46 +865,51 @@ namespace Chem4Word.Model2.Converters.CML
                                       new XAttribute(ModelConstants.AttributeY2, SafeDouble.AsCMLString(atom.Position.Y))
             );
 
-            if (atom.FormalCharge != null && atom.FormalCharge.Value != 0)
+            if (atomIsElement)
             {
-                result.Add(new XAttribute(ModelConstants.AttributeFormalCharge, atom.FormalCharge.Value));
-            }
-
-            if (atom.IsotopeNumber != null && atom.IsotopeNumber.Value != 0)
-            {
-                result.Add(new XAttribute(ModelConstants.AttributeIsotopeNumber, atom.IsotopeNumber.Value));
-            }
-
-            if (atom.Element is Element element2
-                && element2 == ModelGlobals.PeriodicTable.C
-                && atom.ExplicitC != null)
-            {
-                result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeExplicitC, atom.ExplicitC));
-            }
-
-            if (atom.Element is Element
-                && atom.ExplicitH != null)
-            {
-                result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeExplicitH, atom.ExplicitH));
-            }
-
-            if (atom.Element is Element && atom.ExplicitHPlacement != null)
-            {
-                result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeHydrogenPlacement, atom.ExplicitHPlacement));
-            }
-
-            if (atom.Element is FunctionalGroup && atom.ExplicitFunctionalGroupPlacement != null)
-            {
-                result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeFunctionalGroupPlacement, atom.ExplicitFunctionalGroupPlacement));
-            }
-
-            if (atom.Electrons.Any())
-            {
-                foreach (Electron electron in atom.Electrons.Values)
+                // Persist properties of an Element
+                if (atom.FormalCharge != null && atom.FormalCharge.Value != 0)
                 {
-                    result.Add(new XElement(GetXElement(electron)));
+                    result.Add(new XAttribute(ModelConstants.AttributeFormalCharge, atom.FormalCharge.Value));
+                }
+
+                if (atom.IsotopeNumber != null && atom.IsotopeNumber.Value != 0)
+                {
+                    result.Add(new XAttribute(ModelConstants.AttributeIsotopeNumber, atom.IsotopeNumber.Value));
+                }
+
+                if (atom.IsCarbon && atom.ExplicitC != null)
+                {
+                    result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeExplicitC, atom.ExplicitC));
+                }
+
+                if (atom.ExplicitH != null)
+                {
+                    result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeExplicitH, atom.ExplicitH));
+                }
+
+                if (atom.ExplicitHPlacement != null)
+                {
+                    result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeHydrogenPlacement, atom.ExplicitHPlacement));
+                }
+
+                if (atom.Electrons.Any())
+                {
+                    foreach (Electron electron in atom.Electrons.Values)
+                    {
+                        result.Add(new XElement(GetXElement(electron)));
+                    }
                 }
             }
+            else
+            {
+                // Persist properties of a Functional Group
+                if (atom.ExplicitFunctionalGroupPlacement != null)
+                {
+                    result.Add(new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeFunctionalGroupPlacement, atom.ExplicitFunctionalGroupPlacement));
+                }
+            }
+
             return result;
         }
 
@@ -1218,6 +1231,7 @@ namespace Chem4Word.Model2.Converters.CML
                 atom.ExplicitHPlacement = CMLHelper.GetExplicitHPlacement(cmlElement);
                 atom.ExplicitFunctionalGroupPlacement = CMLHelper.GetExplicitGroupPlacement(cmlElement);
             }
+
             //get any electrons associated with the atom
             foreach (XElement electronElement in cmlElement.Elements(CMLNamespaces.cml + ModelConstants.TagElectron))
             {

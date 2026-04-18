@@ -30,10 +30,19 @@ namespace Chem4Word.ACME.Controls
         private AutomaticElectronsEditorModel _model;
 
         private int _id;
-
         private bool _inhibitEvents;
+        public ElectronType SelectedType = ElectronType.Radical;
+        public int ElectronsToBeAdded = 1;
+        private Atom _parentAtom;
 
-        public Atom ParentAtom { get; set; }
+        public Atom ParentAtom
+        {
+            get => _parentAtom;
+            set
+            {
+                _parentAtom = value;
+            }
+        }
 
         public event EventHandler<WpfEventArgs> ElectronsValueChanged;
 
@@ -86,19 +95,23 @@ namespace Chem4Word.ACME.Controls
             {
                 ParentAtom = ParentAtom,
                 Id = $"e{_id++}",
-                ElectronType = _selectedType
+                ElectronType = SelectedType
             };
 
+            DisableEvents();
             Model.AutomaticElectronItems.Add(item);
             RaiseChangedEvent();
+            EnableEvents();
         }
 
         private void OnDeleteRowClicked(object sender, RoutedEventArgs e)
         {
             if (sender is Button deleteButton && deleteButton.DataContext is AutomaticElectronItem item)
             {
+                DisableEvents();
                 Model.AutomaticElectronItems.Remove(item);
                 RaiseChangedEvent();
+                EnableEvents();
             }
         }
 
@@ -116,17 +129,17 @@ namespace Chem4Word.ACME.Controls
             return stringBuilder.ToString();
         }
 
-        private ElectronType _selectedType = ElectronType.Radical;
-
-        private void OnSelectionChanged_ElectronType(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_NewElectronTypePicker(object sender, SelectionChangedEventArgs e)
         {
             if (sender is ComboBox combo && combo.SelectedItem is ElectronType type)
             {
-                _selectedType = type;
+                SelectedType = type;
+                ElectronsToBeAdded = type == ElectronType.Radical ? 1 : 2;
+                RaiseChangedEvent();
             }
         }
 
-        private void OnChanged_ElectronTypeCombo(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged_ExistingElectronTypePicker(object sender, SelectionChangedEventArgs e)
         {
             if (sender is ComboBox combo
                 && combo.DataContext is AutomaticElectronItem item
@@ -134,6 +147,7 @@ namespace Chem4Word.ACME.Controls
             {
                 item.ElectronType = type;
                 item.ButtonContent = CreateElectronsModeCanvas(item);
+
                 OnPropertyChanged();
                 if (!_inhibitEvents)
                 {

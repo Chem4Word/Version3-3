@@ -228,36 +228,40 @@ namespace Chem4Word.ACME.Utils
 
                 if (atom.Electrons.Count > 0)
                 {
+                    // If there are a mixture of Manual placed electrons and Automatically placed electrons
+                    //   they will all be converted to Manul
                     int manualPlacementsCount = atom.Electrons.Values.Count(e => e.ExplicitPlacement != null);
 
                     if (manualPlacementsCount > 0)
                     {
-                        CompassPoints cp = CompassPoints.North;
+                        CompassPoints compassPoint = CompassPoints.North;
 
                         foreach (Electron electron in atom.Electrons.Values)
                         {
-                            ElectronType ty = electron.TypeOfElectron;
+                            ElectronType typeOfElectron = electron.TypeOfElectron;
 
                             if (electron.ExplicitPlacement.HasValue)
                             {
-                                // This is a manual placement
-                                cp = electron.ExplicitPlacement.Value;
+                                // This is a Manual placement - leave alone
+                                compassPoint = electron.ExplicitPlacement.Value;
                             }
                             else
                             {
-                                // This is an automatic placement - find the next free compass point
-                                while (atomPropertiesModel.ManualElectronPlacements.ContainsKey(cp))
+                                // This is an automatic placement
+                                //   find the next free compass point and convert to Manual
+                                while (atomPropertiesModel.ManualElectronPlacements.ContainsKey(compassPoint))
                                 {
-                                    cp = Model2.Helpers.Utils.NextCompassPoint(cp);
+                                    compassPoint = Model2.Helpers.Utils.NextCompassPoint(compassPoint);
                                 }
                             }
 
-                            // Add to the explicit placements
-                            atomPropertiesModel.ManualElectronPlacements.Add(cp, ty);
+                            // Add to the Manual placements
+                            atomPropertiesModel.ManualElectronPlacements.Add(compassPoint, typeOfElectron);
                         }
                     }
                     else
                     {
+                        // All electrons are Automatic
                         foreach (Electron electron in atom.Electrons.Values)
                         {
                             AutomaticElectronItem item = new AutomaticElectronItem
