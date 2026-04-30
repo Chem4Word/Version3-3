@@ -188,7 +188,7 @@ namespace Chem4Word
                 if (!string.IsNullOrEmpty(path))
                 {
                     var optionsFile = GetFileName(path);
-                    var optionsFileForLogs = optionsFile.Replace(SettingsPath, @"%LocalAppData%\Chem4Word.V3");
+                    var optionsFileForLogs = GdprHelper.ReplaceUserName(optionsFile);
 
                     var fileContents = string.Empty;
 

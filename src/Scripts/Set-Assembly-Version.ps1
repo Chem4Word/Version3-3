@@ -227,7 +227,7 @@ $replaceWith = 'var versionNumber = "' + "$($version)" + '.666";';
 # Update CustomAction.cs
 Write-Host " Updating 'CustomAction.cs'" -ForegroundColor Yellow
 
-$file = "$($pwd)\..\Installer\WiX.CustomAction.V6\CustomAction.cs"
+$file = "$($pwd)\..\Installer\WiX.CustomAction.V7\CustomAction.cs"
 Write-Host "$($file)" -ForegroundColor Green
 
 $findPattern = 'var versionNumber = .*'

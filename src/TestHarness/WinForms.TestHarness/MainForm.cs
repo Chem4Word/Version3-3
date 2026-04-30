@@ -67,8 +67,8 @@ namespace WinForms.TestHarness
             _telemetry = new TelemetryWriter(true, true, _helper);
             timer1.Enabled = true;
 
-            string location = Assembly.GetExecutingAssembly().Location;
-            string path = Path.GetDirectoryName(location);
+            //string location = Assembly.GetExecutingAssembly().Location;
+            //string path = Path.GetDirectoryName(location);
 
             // Use either path or null below
             _renderOptions = new OoXmlV4Options(null);
@@ -374,11 +374,6 @@ namespace WinForms.TestHarness
 
             if (model != null)
             {
-                if (model.MeanBondLength < 4 || model.MeanBondLength > 96)
-                {
-                    Debugger.Break();
-                }
-
                 if (model.AllErrors.Any())
                 {
                     List<string> lines = new List<string>();
@@ -914,7 +909,7 @@ namespace WinForms.TestHarness
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void OnTick_Timer1(object sender, EventArgs e)
         {
             if (_helper.GitStatusObtained)
             {

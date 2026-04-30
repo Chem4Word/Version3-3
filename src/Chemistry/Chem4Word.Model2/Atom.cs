@@ -217,6 +217,22 @@ namespace Chem4Word.Model2
             }
         }
 
+        public bool IsHydrogen
+        {
+            get
+            {
+                switch (_element)
+                {
+                    case Element element:
+                        return element == ModelGlobals.PeriodicTable.H;
+
+                    default:
+                        return false;
+                }
+            }
+        }
+
+
         public bool IsHetero
         {
             get

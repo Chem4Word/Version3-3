@@ -134,7 +134,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chem4Word.Driver.Open", "Pl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wpf.UI.Sandbox", "TestHarness\Wpf.UI.Sandbox\Wpf.UI.Sandbox.csproj", "{4538DF4E-A062-4FFC-BEB1-986F00678C83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiX.CustomAction.V6", "Installer\WiX.CustomAction.V6\WiX.CustomAction.V6.csproj", "{BCB8CF9F-2020-4AE0-8423-92F1DE5BFBC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiX.CustomAction.V7", "Installer\WiX.CustomAction\WiX.CustomAction.V7.csproj", "{BCB8CF9F-2020-4AE0-8423-92F1DE5BFBC8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject

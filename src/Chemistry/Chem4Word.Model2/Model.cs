@@ -521,9 +521,9 @@ namespace Chem4Word.Model2
             {
                 double weight = 0;
 
-                foreach (var atom in GetAllAtoms())
+                foreach (Molecule molecule in Molecules.Values)
                 {
-                    weight += atom.Element.AtomicWeight;
+                    weight += molecule.MolecularWeight;
                 }
 
                 return weight;

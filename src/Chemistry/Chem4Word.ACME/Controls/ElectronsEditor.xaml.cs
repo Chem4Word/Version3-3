@@ -13,6 +13,7 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
@@ -41,6 +42,7 @@ namespace Chem4Word.ACME.Controls
             set
             {
                 _parentAtom = value;
+                EnableAddAutomaticElectronButton();
             }
         }
 
@@ -68,14 +70,16 @@ namespace Chem4Word.ACME.Controls
                 Model = new AutomaticElectronsEditorModel();
             }
 
+            EnableAddAutomaticElectronButton();
             ComboBox.SelectedIndex = 0;
         }
 
-        private void RaiseChangedEvent()
+        private void RaiseChangedEvent(string button, string cause)
         {
             WpfEventArgs args = new WpfEventArgs
             {
-                Button = "ElectronsEditor"
+                Button = button,
+                Message = $"ElectronsEditor: {button} {cause}"
             };
 
             ElectronsValueChanged?.Invoke(this, args);
@@ -87,32 +91,6 @@ namespace Chem4Word.ACME.Controls
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void OnClick_Add(object sender, RoutedEventArgs e)
-        {
-            AutomaticElectronItem item = new AutomaticElectronItem
-            {
-                ParentAtom = ParentAtom,
-                Id = $"e{_id++}",
-                ElectronType = SelectedType
-            };
-
-            DisableEvents();
-            Model.AutomaticElectronItems.Add(item);
-            RaiseChangedEvent();
-            EnableEvents();
-        }
-
-        private void OnDeleteRowClicked(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button deleteButton && deleteButton.DataContext is AutomaticElectronItem item)
-            {
-                DisableEvents();
-                Model.AutomaticElectronItems.Remove(item);
-                RaiseChangedEvent();
-                EnableEvents();
-            }
         }
 
         public string ListElectrons()
@@ -129,13 +107,43 @@ namespace Chem4Word.ACME.Controls
             return stringBuilder.ToString();
         }
 
+        private void OnClick_Add(object sender, RoutedEventArgs e)
+        {
+            DisableEvents();
+
+            AutomaticElectronItem item = new AutomaticElectronItem
+            {
+                ParentAtom = ParentAtom,
+                Id = $"e{_id++}",
+                ElectronType = SelectedType
+            };
+
+            EnableEvents();
+
+            Model.AutomaticElectronItems.Add(item);
+
+            EnableAddAutomaticElectronButton();
+        }
+
+        private void OnDeleteRowClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button deleteButton && deleteButton.DataContext is AutomaticElectronItem item)
+            {
+                DisableEvents();
+                Model.AutomaticElectronItems.Remove(item);
+                EnableAddAutomaticElectronButton();
+                RaiseChangedEvent("DeletedElectron",$"Item {item.Id} '{item.ElectronType}' Deleted");
+                EnableEvents();
+            }
+        }
+
         private void OnSelectionChanged_NewElectronTypePicker(object sender, SelectionChangedEventArgs e)
         {
             if (sender is ComboBox combo && combo.SelectedItem is ElectronType type)
             {
                 SelectedType = type;
                 ElectronsToBeAdded = type == ElectronType.Radical ? 1 : 2;
-                RaiseChangedEvent();
+                EnableAddAutomaticElectronButton();
             }
         }
 
@@ -145,14 +153,23 @@ namespace Chem4Word.ACME.Controls
                 && combo.DataContext is AutomaticElectronItem item
                 && combo.SelectedItem is ElectronType type)
             {
-                item.ElectronType = type;
-                item.ButtonContent = CreateElectronsModeCanvas(item);
-
-                OnPropertyChanged();
                 if (!_inhibitEvents)
                 {
-                    RaiseChangedEvent();
+                    OnPropertyChanged();
+                    EnableAddAutomaticElectronButton();
+
+                    item.ElectronType = type;
+                    item.ButtonContent = CreateElectronsModeCanvas(item);
+                    RaiseChangedEvent("ChangedElectron", $"Setting {item.Id} type to '{type}'");
                 }
+            }
+        }
+
+        public void UpdateImages()
+        {
+            foreach (AutomaticElectronItem item in _model.AutomaticElectronItems)
+            {
+                item.ButtonContent = CreateElectronsModeCanvas(item);
             }
         }
 
@@ -269,6 +286,66 @@ namespace Chem4Word.ACME.Controls
         public void EnableEvents()
         {
             _inhibitEvents = false;
+        }
+
+        public void EnableAddAutomaticElectronButton()
+        {
+            if (ParentAtom == null)
+            {
+                AddElectron.IsEnabled = false;
+            }
+            else
+            {
+                // #1 Radical(s) and Carbenoid(s)
+                // These affect ImplicitH Count
+                // Radical count cannot exceed implicit H count
+                // Carbenoid count cannot exceed implicit H count /2 (rounded down)
+
+                // #2 Lone Pairs
+                // Subtract 14 from the group of the element.
+                //   The result gives you the number of lone pairs the atom can support.
+
+                // Or to make it even simpler, don't allow more than 4 radicals, 2 carbenoids, or 4 lone pairs.
+
+                int group = 0;
+                if (ParentAtom.Element is Element element)
+                {
+                    group = element.Group;
+                }
+
+                bool enableAdd = false;
+
+                int remaining;
+                switch (SelectedType)
+                {
+                    case ElectronType.Radical:
+                        remaining = ParentAtom.ImplicitHydrogenCount;
+                        if (remaining > 0)
+                        {
+                            enableAdd = true;
+                        }
+                        break;
+
+                    case ElectronType.LonePair:
+                        int possible = group - 14;
+                        int used = ParentAtom.Electrons.Values.Count(t => t.TypeOfElectron == ElectronType.LonePair);
+                        if (used < possible)
+                        {
+                            enableAdd = true;
+                        }
+                        break;
+
+                    case ElectronType.Carbenoid:
+                        remaining = ParentAtom.ImplicitHydrogenCount / 2;
+                        if (remaining > 0)
+                        {
+                            enableAdd = true;
+                        }
+                        break;
+                }
+
+                AddElectron.IsEnabled = enableAdd;
+            }
         }
     }
 }

@@ -802,7 +802,7 @@ namespace Chem4Word
                                 }
                                 else
                                 {
-                                    if (data.ToLower().Contains("v3000"))
+                                    if (data.Contains(ModelConstants.V3000))
                                     {
                                         UserInteractions.InformUser("Sorry, V3000 molfiles are not supported");
                                     }

@@ -38,7 +38,7 @@ namespace Chem4Word.ACME.Controls
         private const double WidthOfAtomMode = 650;
         private const double WidthOfFunctionalGroupMode = 580;
 
-        private bool _closedByUser;
+        private bool _userClickedOk;
 
         private bool IsDirty { get; set; }
 
@@ -83,10 +83,10 @@ namespace Chem4Word.ACME.Controls
                 AtomPath.Text = _atomPropertiesModel.Path;
 
                 Atom atom = _atomPropertiesModel.Atom;
+                AutomaticElectrons.ParentAtom = atom;
 
                 if (_atomPropertiesModel.AutomaticElectronPlacements.Any())
                 {
-                    AutomaticElectrons.ParentAtom = atom;
                     AutomaticElectrons.Model = AutomaticElectrons.Model = new AutomaticElectronsEditorModel();
 
                     // Setup Automatic Electrons
@@ -100,17 +100,6 @@ namespace Chem4Word.ACME.Controls
                         };
                         AutomaticElectrons.Model.AutomaticElectronItems.Add(item);
                     }
-                }
-
-                AutomaticElectronPlacement = !_atomPropertiesModel.ManualElectronPlacements.Any();
-
-                if (AutomaticElectronPlacement)
-                {
-                    SetupAutomaticElectronPlacement();
-                }
-                else
-                {
-                    SetupManualElectronPlacement();
                 }
             }
         }
@@ -215,15 +204,15 @@ namespace Chem4Word.ACME.Controls
         private void OnClick_Close(object sender, RoutedEventArgs e)
         {
             _atomPropertiesModel.Save = false;
-            _closedByUser = true;
+            _userClickedOk = true;
 
             Close();
         }
 
-        private void OnClick_Save(object sender, RoutedEventArgs e)
+        private void OnClick_Ok(object sender, RoutedEventArgs e)
         {
             _atomPropertiesModel.Save = true;
-            _closedByUser = true;
+            _userClickedOk = true;
 
             Close();
         }
@@ -275,15 +264,66 @@ namespace Chem4Word.ACME.Controls
             _atomPropertiesModel.AddedElement = option?.Element;
             ManualElectrons.Atom = _atomPropertiesModel.Atom;
 
-            ElectronPlacementMode.IsEnabled = true;
-            ManualElectrons.IsEnabled = true;
-            AutomaticElectrons.IsEnabled = true;
-
             if (!_inhibitEvents)
             {
                 IsDirty = true;
                 ShowPreview();
                 ManualElectrons.Refresh();
+            }
+        }
+
+        private void DisableElectronsControls()
+        {
+            ElectronPlacementMode.Visibility = Visibility.Visible;
+            ManualElectrons.Visibility = Visibility.Visible;
+            AutomaticElectrons.Visibility = Visibility.Visible;
+            ElectronsLabel.Visibility = Visibility.Visible;
+        }
+
+        private void EnableElectronsControls()
+        {
+            AutomaticElectronPlacement = !_atomPropertiesModel.ManualElectronPlacements.Any();
+
+            Atom atom = _atomPropertiesModel.Atom;
+            bool showElectronControls;
+
+            if (atom.IsCarbon)
+            {
+                showElectronControls = atom.ShowSymbol;
+            }
+            else
+            {
+                showElectronControls = true;
+            }
+
+            if (showElectronControls)
+            {
+                ElectronPlacementMode.Visibility = Visibility.Visible;
+                ManualElectrons.Visibility = Visibility.Visible;
+                AutomaticElectrons.Visibility = Visibility.Visible;
+                ElectronsLabel.Visibility = Visibility.Visible;
+
+                ElectronPlacementMode.IsEnabled = true;
+                ManualElectrons.IsEnabled = true;
+                AutomaticElectrons.IsEnabled = true;
+
+                if (AutomaticElectronPlacement)
+                {
+                    SetupAutomaticElectronPlacement();
+                    AutomaticElectrons.EnableAddAutomaticElectronButton();
+                    AutomaticElectrons.UpdateImages();
+                }
+                else
+                {
+                    SetupManualElectronPlacement();
+                }
+            }
+            else
+            {
+                ElectronPlacementMode.Visibility = Visibility.Collapsed;
+                ManualElectrons.Visibility = Visibility.Collapsed;
+                AutomaticElectrons.Visibility = Visibility.Collapsed;
+                ElectronsLabel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -408,38 +448,8 @@ namespace Chem4Word.ACME.Controls
                         atom.ExplicitH = _atomPropertiesModel.ExplicitH;
                         atom.ExplicitHPlacement = _atomPropertiesModel.ExplicitHydrogenPlacement;
 
-                        atom.ClearElectrons();
-                        if (AutomaticElectronPlacement)
-                        {
-                            foreach (AutomaticElectronItem item in AutomaticElectrons.Model.AutomaticElectronItems)
-                            {
-                                Electron electron = new Electron
-                                {
-                                    Parent = atom,
-                                    TypeOfElectron = item.ElectronType,
-                                    Count = item.ElectronType == ElectronType.Radical ? 1 : 2,
-                                };
-                                atom.AddElectron(electron);
-                            }
-
-                            atom.UpdateElectronPlacements();
-
-                            EnableAddAutomaticElectron();
-                        }
-                        else
-                        {
-                            foreach (KeyValuePair<CompassPoints, ElectronType> pair in _atomPropertiesModel.ManualElectronPlacements)
-                            {
-                                Electron electron = new Electron
-                                {
-                                    Count = pair.Value == ElectronType.Radical ? 1 : 2,
-                                    ExplicitPlacement = pair.Key,
-                                    Parent = atom,
-                                    TypeOfElectron = pair.Value
-                                };
-                                atom.AddElectron(electron);
-                            }
-                        }
+                        GatherElectrons(atom);
+                        EnableElectronsControls();
 
                         if (string.IsNullOrEmpty(_atomPropertiesModel.Isotope))
                         {
@@ -481,9 +491,44 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
+        private void GatherElectrons(Atom atom)
+        {
+            atom.ClearElectrons();
+
+            if (AutomaticElectronPlacement)
+            {
+                foreach (AutomaticElectronItem item in AutomaticElectrons.Model.AutomaticElectronItems)
+                {
+                    Electron electron = new Electron
+                    {
+                        Parent = atom,
+                        TypeOfElectron = item.ElectronType,
+                        Count = item.ElectronType == ElectronType.Radical ? 1 : 2,
+                    };
+                    atom.AddElectron(electron);
+                }
+            }
+            else
+            {
+                foreach (KeyValuePair<CompassPoints, ElectronType> pair in _atomPropertiesModel.ManualElectronPlacements)
+                {
+                    Electron electron = new Electron
+                    {
+                        Count = pair.Value == ElectronType.Radical ? 1 : 2,
+                        ExplicitPlacement = pair.Key,
+                        Parent = atom,
+                        TypeOfElectron = pair.Value
+                    };
+                    atom.AddElectron(electron);
+                }
+            }
+
+            atom.UpdateElectronPlacements();
+        }
+
         private void OnClosing_AtomPropertyEditor(object sender, CancelEventArgs e)
         {
-            if (!_closedByUser && IsDirty)
+            if (!_userClickedOk && IsDirty)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("Do you wish to save your changes?");
@@ -554,6 +599,9 @@ namespace Chem4Word.ACME.Controls
             Width = WidthOfAtomMode;
 
             _inhibitEvents = true;
+
+            _atomPropertiesModel.Atom.Element = null;
+
             AutomaticElectrons.DisableEvents();
             ManualElectrons.DisableEvents();
 
@@ -569,6 +617,7 @@ namespace Chem4Word.ACME.Controls
             HydrogensCompass.SelectedCompassPoint = _atomPropertiesModel.ExplicitHydrogenPlacement;
             ManualElectrons.SelectedElectronDictionary = _atomPropertiesModel.ManualElectronPlacements;
 
+            DisableElectronsControls();
             SetupAutomaticElectronPlacement();
             SetVisibilityFlags(_atomPropertiesModel.Atom);
 
@@ -603,6 +652,7 @@ namespace Chem4Word.ACME.Controls
             }
 
             FunctionalGroupsCompass.CompassControlType = CompassControlType.FunctionalGroups;
+            DisableElectronsControls();
 
             // Clear the preview
             Preview.Chemistry = new Model();
@@ -618,8 +668,7 @@ namespace Chem4Word.ACME.Controls
             {
                 ExplicitCheckBox.IsEnabled = !atom.IsSingleton;
 
-                bool canShowHydrogen =
-                    ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{atom.Element.Symbol}|");
+                bool canShowHydrogen = ModelGlobals.PeriodicTable.ImplicitHydrogenTargets.Contains($"|{atom.Element.Symbol}|");
 
                 _atomPropertiesModel.ShowHydrogenLabels = canShowHydrogen
                                                           || atom.IsHetero
@@ -730,72 +779,12 @@ namespace Chem4Word.ACME.Controls
 
         private void OnValueChanged_AutomaticElectrons(object sender, WpfEventArgs e)
         {
+            Debug.WriteLine(e.Button);
             if (sender is ElectronsEditor && !_inhibitEvents)
             {
                 IsDirty = true;
                 _atomPropertiesModel.Atom.UpdateElectronPlacements();
                 ShowPreview();
-            }
-        }
-
-        public void EnableAddAutomaticElectron()
-        {
-            if (_atomPropertiesModel.Atom == null)
-            {
-                AutomaticElectrons.AddElectron.IsEnabled = false;
-            }
-            else
-            {
-                // #1 Radical(s) and Carbenoid(s)
-                // These affect ImplicitH Count
-                // Radical count cannot exceed implicit H count
-                // Carbenoid count cannot exceed implicit H count /2 (rounded down)
-
-                // #2 Lone Pairs
-                // Subtract 14 from the group of the element.
-                //   The result gives you the number of lone pairs the atom can support.
-
-                // Or to make it even simpler, don't allow more than 4 radicals, 2 carbenoids, or 4 lone pairs.
-
-                Atom atom = _atomPropertiesModel.Atom;
-                int group = 0;
-                if (atom.Element is Element element)
-                {
-                    group = element.Group;
-                }
-
-                bool enableAdd = false;
-
-                int remaining;
-                switch (AutomaticElectrons.SelectedType)
-                {
-                    case ElectronType.Radical:
-                        remaining = atom.ImplicitHydrogenCount;
-                        if (remaining > 0)
-                        {
-                            enableAdd = true;
-                        }
-                        break;
-
-                    case ElectronType.LonePair:
-                        int possible = group - 14;
-                        int used = atom.Electrons.Values.Count(t => t.TypeOfElectron == ElectronType.LonePair);
-                        if (used < possible)
-                        {
-                            enableAdd = true;
-                        }
-                        break;
-
-                    case ElectronType.Carbenoid:
-                        remaining = atom.ImplicitHydrogenCount / 2;
-                        if (remaining > 0)
-                        {
-                            enableAdd = true;
-                        }
-                        break;
-                }
-
-                AutomaticElectrons.AddElectron.IsEnabled = enableAdd;
             }
         }
 
@@ -876,6 +865,7 @@ namespace Chem4Word.ACME.Controls
                 AutomaticElectronPlacement = true;
 
                 SetupAutomaticElectronPlacement();
+                AutomaticElectrons.UpdateImages();
 
                 _inhibitEvents = false;
 

@@ -57,7 +57,7 @@ c4w:tail
 ### Usage
 We will default where possible to established namespaces to handle reaction specific elements. As XML tags can be arbitrarily nested regardless of namespace, it makes sense to use existing standards where possible:
 
-
+## Reaction Elements
 We will use the existing CML-React vocabulary to describe reactions. This is standard within the CML namespace:
 ```xml
 <reactionScheme id="rs1"> <!--one and ONLY one of these ! -->

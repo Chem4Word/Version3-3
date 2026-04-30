@@ -1,6 +1,6 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <!-- For automatic upgrade to work only first three parts of version number are used -->
-  <Package Name="Chemistry Add-In for Microsoft Word 2026 Release 14" Manufacturer="Chem4Word" Version="3.3.16.9616" UpgradeCode="865226e7-d29d-49aa-a390-dda49979b102" Language="1033" InstallerVersion="200">
+  <Package Name="Chemistry Add-In for Microsoft Word 2026 Release 14" Manufacturer="Chem4Word" Version="3.3.16.9647" UpgradeCode="865226e7-d29d-49aa-a390-dda49979b102" Language="1033" InstallerVersion="200">
     <MajorUpgrade DowngradeErrorMessage="A newer version of Chem4Word is already installed." />
     <Media Id="1" Cabinet="product.cab" EmbedCab="yes" CompressionLevel="high" />
     <!-- EULA Must be edited in WordPad NOT Word -->
@@ -45,7 +45,7 @@
     <!-- Include our Custom Actions assembly -->
     <!-- https://blogs.msdn.microsoft.com/jschaffe/2012/10/23/creating-wix-custom-actions-in-c-and-passing-parameters/ -->
     <!-- https://www.codeproject.com/Articles/132918/Creating-Custom-Action-for-WIX-Written-in-Managed -->
-    <Binary Id="WiX.CustomAction.dll" SourceFile="..\Wix.CustomAction.V6\bin\x86\$(var.Configuration)\net452\WiX.CustomAction.V6.CA.dll" />
+    <Binary Id="WiX.CustomAction.dll" SourceFile="..\Wix.CustomAction\bin\x86\$(var.Configuration)\net472\WiX.CustomAction.V7.CA.dll" />
     <CustomAction Id="WordProcessCount" DllEntry="WordProcessCount" Return="check" Execute="immediate" BinaryRef="WiX.CustomAction.dll" />
     <CustomAction Id="CleanUserRegistry" DllEntry="CleanUserRegistry" Return="check" Execute="deferred" Impersonate="yes" BinaryRef="WiX.CustomAction.dll" />
     <CustomAction Id="CleanSystemRegistry" DllEntry="CleanSystemRegistry" Return="check" Execute="deferred" Impersonate="no" BinaryRef="WiX.CustomAction.dll" />
@@ -255,9 +255,6 @@
       <Component Id="EntityFramework.SqlServer">
         <File Id="EntityFramework.SqlServer.dll" Source="$(var.Chem4Word.V3.TargetDir)EntityFramework.SqlServer.dll" />
       </Component>
-      <Component Id="System.Data.Common">
-        <File Id="System.Data.Common.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Data.Common.dll" />
-      </Component>
       <Component Id="System.Data.SQLite">
         <File Id="System.Data.SQLite.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Data.SQLite.dll" />
       </Component>
@@ -318,18 +315,6 @@
       <Component Id="System.Diagnostics.DiagnosticSource">
         <File Id="System.Diagnostics.DiagnosticSource.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Diagnostics.DiagnosticSource.dll" />
       </Component>
-      <Component Id="System.Diagnostics.StackTrace">
-        <File Id="System.Diagnostics.StackTrace.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Diagnostics.StackTrace.dll" />
-      </Component>
-      <Component Id="System.Diagnostics.Tracing">
-        <File Id="System.Diagnostics.Tracing.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Diagnostics.Tracing.dll" />
-      </Component>
-      <Component Id="System.Globalization.Extensions">
-        <File Id="System.Globalization.Extensions.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Globalization.Extensions.dll" />
-      </Component>
-      <Component Id="System.IO.Compression">
-        <File Id="System.IO.Compression.dll" Source="$(var.Chem4Word.V3.TargetDir)System.IO.Compression.dll" />
-      </Component>
       <Component Id="System.IO.Packaging">
         <File Id="System.IO.Packaging.dll" Source="$(var.Chem4Word.V3.TargetDir)System.IO.Packaging.dll" />
       </Component>
@@ -338,12 +323,6 @@
       </Component>
       <Component Id="System.Memory">
         <File Id="System.Memory.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Memory.dll" />
-      </Component>
-      <Component Id="System.Net.Http">
-        <File Id="System.Net.Http.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Net.Http.dll" />
-      </Component>
-      <Component Id="System.Net.Sockets">
-        <File Id="System.Net.Sockets.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Net.Sockets.dll" />
       </Component>
       <Component Id="System.Numerics.Vectors">
         <File Id="System.Numerics.Vectors.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Numerics.Vectors.dll" />
@@ -354,29 +333,14 @@
       <Component Id="System.Runtime.CompilerServices.Unsafe">
         <File Id="System.Runtime.CompilerServices.Unsafe.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Runtime.CompilerServices.Unsafe.dll" />
       </Component>
-      <Component Id="System.Runtime.Serialization.Primitives">
-        <File Id="System.Runtime.Serialization.Primitives.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Runtime.Serialization.Primitives.dll" />
-      </Component>
-      <Component Id="System.Security.Cryptography.Algorithms">
-        <File Id="System.Security.Cryptography.Algorithms.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Security.Cryptography.Algorithms.dll" />
-      </Component>
-      <Component Id="System.Security.SecureString">
-        <File Id="System.Security.SecureString.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Security.SecureString.dll" />
-      </Component>
       <Component Id="System.Text.Encodings.Web">
         <File Id="System.Text.Encodings.Web.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Text.Encodings.Web.dll" />
       </Component>
       <Component Id="System.Text.Json">
         <File Id="System.Text.Json.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Text.Json.dll" />
       </Component>
-      <Component Id="System.Threading.Overlapped">
-        <File Id="System.Threading.Overlapped.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Threading.Overlapped.dll" />
-      </Component>
       <Component Id="System.Threading.Tasks.Extensions">
         <File Id="System.Threading.Tasks.Extensions.dll" Source="$(var.Chem4Word.V3.TargetDir)System.Threading.Tasks.Extensions.dll" />
-      </Component>
-      <Component Id="System.ValueTuple">
-        <File Id="System.ValueTuple.dll" Source="$(var.Chem4Word.V3.TargetDir)System.ValueTuple.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>

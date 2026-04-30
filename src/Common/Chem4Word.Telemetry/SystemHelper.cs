@@ -284,15 +284,24 @@ namespace Chem4Word.Telemetry
 
                 GetScreens();
 
-#if DEBUG
-                message = $"GetGitStatus started at {SafeDate.ToLongDate(DateTime.UtcNow)}";
-                StartUpTimings.Add(message);
-                Debug.WriteLine(message);
+                if (Debugger.IsAttached)
+                {
+                    message = $"GetGitStatus started at {SafeDate.ToLongDate(DateTime.UtcNow)}";
+                    StartUpTimings.Add(message);
+                    Debug.WriteLine(message);
 
-                Thread thread2 = new Thread(GetGitStatus);
-                thread2.SetApartmentState(ApartmentState.STA);
-                thread2.Start(null);
+                    Thread thread2 = new Thread(GetGitStatus);
+                    thread2.SetApartmentState(ApartmentState.STA);
+                    thread2.Start(null);
+                }
+                else
+                {
+#if DEBUG
+                    message = "GetGitStatus not run.";
+                    timings.Add(message);
+                    GitStatusObtained = true;
 #endif
+                }
 
                 sw.Stop();
 
@@ -401,6 +410,7 @@ namespace Chem4Word.Telemetry
                 }
 
                 List<string> result = new List<string> { "Git Origin", $"Source Code Folder '{_sourceCodeLocation}'" };
+                Debug.WriteLine($"Attempting to run from '{_sourceCodeLocation}'");
 
                 if (!gitFound)
                 {

@@ -6,7 +6,6 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core;
-using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using System;
 using System.Collections.Generic;

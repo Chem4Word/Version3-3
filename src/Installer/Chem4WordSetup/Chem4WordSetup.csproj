@@ -125,9 +125,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Installer.ico" />
     <Content Include="Resources\No.png" />
     <Content Include="Resources\Question.png" />

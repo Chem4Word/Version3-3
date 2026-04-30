@@ -11,7 +11,6 @@ using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static Chem4Word.Model2.ModelConstants;
 
@@ -137,20 +136,11 @@ namespace Chem4Word.Model2
             {
                 CompassPoints? result = ExplicitPlacement;
 
-#if DEBUG
-                string type = "M";
                 if (result is null)
                 {
-                    type = "A";
                     result = ImplicitPlacement;
                 }
 
-                //StackTrace stackTrace = new StackTrace(true);
-                //string stack = StackHelper.ShowStack(stackTrace);
-                //Debug.WriteLine($"Electron {Path} - Placement: {type} -> {result}\n{stack}");
-
-                Debug.WriteLine($"Electron {Path} - Placement: {type} -> {result}");
-#endif
                 return result.Value;
             }
         }

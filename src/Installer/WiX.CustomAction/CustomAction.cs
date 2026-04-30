@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-//  Copyright (c) 2025, The .NET Foundation.
+//  Copyright (c) 2026, The .NET Foundation.
 //  This software is released under the Apache License, Version 2.0.
 //  The license and further copyright text can be found in the file LICENSE.md
 //  at the root directory of the distribution.
@@ -17,7 +17,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using WixToolset.Dtf.WindowsInstaller;
 
-namespace WiX.CustomAction.V6
+namespace WiX.CustomAction.V7
 {
     public class CustomActions
     {
@@ -113,7 +113,7 @@ namespace WiX.CustomAction.V6
                     key = key = Registry.CurrentUser.CreateSubKey(actionsKey);
                 }
 
-                var versionNumber = "3.3.16.9616";
+                var versionNumber = "3.3.16.9647";
 
                 var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 key.SetValue(timestamp, $"[-] V{versionNumber} - Installed");

@@ -428,15 +428,23 @@ namespace Chem4Word.Model2
             {
                 double weight = 0;
 
+                double hydrogenWeight = ModelGlobals.PeriodicTable.H.AtomicWeight;
+
                 foreach (var atom in Atoms.Values)
                 {
                     weight += atom.Element.AtomicWeight;
+                    // Explicit Hydrogen atoms have -ve ImplicitHydrogenCount for some reason
+                    if (!atom.IsHydrogen)
+                    {
+                        weight += atom.ImplicitHydrogenCount * hydrogenWeight;
+                    }
                 }
 
                 foreach (var molecule in Molecules.Values)
                 {
                     weight += molecule.MolecularWeight;
                 }
+
                 return weight;
             }
         }

@@ -339,6 +339,7 @@
                                 Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                 Text="Hydrogens" />
                             <TextBlock
+                                x:Name="ElectronsLabel"
                                 Grid.Row="0"
                                 Grid.Column="2"
                                 Margin="5,5,5,0"
@@ -488,7 +489,7 @@
             <Button
                 Margin="5"
                 d:IsLocked="True"
-                Click="OnClick_Save"
+                Click="OnClick_Ok"
                 Content="OK"
                 Style="{StaticResource Acme.Control.Button.DialogButton}" />
             <Button

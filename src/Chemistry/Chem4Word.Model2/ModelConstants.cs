@@ -116,6 +116,8 @@ namespace Chem4Word.Model2
         public const string M_RAD = "M  RAD"; // Represents the tag in the MDL Properties Block for an Radical list
         public const string M_END = "M  END"; // Represents the tag in the MDL Properties Block terminating the MolFile
         public const string SDF_END = "$$$$"; // Represents the end of the SD file block
+        public const string V2000 = "V2000";  // Represents a V2 MolFile
+        public const string V3000 = "V2000";  // Represents a V2 MolFile
 
         public const double BondOffsetPercentage = 0.1d;
         public const double DefaultFontSize = 20.0d;

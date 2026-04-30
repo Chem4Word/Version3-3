@@ -100,8 +100,8 @@ namespace Chem4Word.Searcher.ChEBIPlugin
         {
             string file = molFile.ToUpper();
 
-            int idx1 = file.IndexOf("V2000");
-            int idx2 = file.IndexOf("M  END");
+            int idx1 = file.IndexOf(ModelConstants.V2000);
+            int idx2 = file.IndexOf(ModelConstants.M_END);
 
             return idx2 > idx1;
         }

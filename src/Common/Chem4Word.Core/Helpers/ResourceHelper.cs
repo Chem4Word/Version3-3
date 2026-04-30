@@ -61,7 +61,12 @@ namespace Chem4Word.Core.Helpers
                 temp = temp.Replace("\n", $"{etx}");
                 temp = temp.Replace("\r", $"{etx}");
                 var lines = temp.Split(etx);
-                data = string.Join(Environment.NewLine, lines);
+
+                // Trim the file if it's not a MOLFile
+                if (!data.Contains("M  END"))
+                {
+                    data = string.Join(Environment.NewLine, lines).Trim();
+                }
             }
 
             return data;

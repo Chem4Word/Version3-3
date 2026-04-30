@@ -43,7 +43,9 @@ namespace Chem4Word.Model2.Converters.MDL
             if (data != null)
             {
                 string dataAsString = (string)data;
-                if (!dataAsString.Contains("v3000") && !dataAsString.Contains("V3000"))
+                // Ensure that we have a valid V2 molfile
+                if (dataAsString.Contains(ModelConstants.V2000)
+                    && dataAsString.Contains(ModelConstants.M_END) )
                 {
                     model = new Model();
                     LineNumber = 0;
