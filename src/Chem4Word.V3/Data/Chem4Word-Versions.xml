@@ -10,6 +10,7 @@
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
+      <Change>BugFix: MOLFile Import map unknown Atoms to ?? pseudo functional group</Change>
       <Change>UI: Added ability to auto-set atom electron configurations</Change>
       <Change>UI: Added ability to create Electron pushers (between Atoms or Bonds)</Change>
       <Change>UI: Added ability to create Electrons (on Atoms)</Change>

@@ -199,7 +199,7 @@ namespace Chem4Word.Model2.Converters.MDL
 
                     // element type
                     string elType = GetSubString(line, 31, 3);
-                    var ok = AtomHelpers.TryParse(elType, true, out var eb);
+                    bool ok = AtomHelpers.TryParse(elType, true, out ElementBase eb);
                     if (ok)
                     {
                         if (eb is Element || eb is FunctionalGroup)
@@ -209,8 +209,8 @@ namespace Chem4Word.Model2.Converters.MDL
                     }
                     else
                     {
-                        _molecule.Errors.Add($"{elType} at Line {SdFileConverter.LineNumber} is not a valid Element");
-                        _molecule.Errors.Add($"{line}");
+                        thisAtom.Element = ModelGlobals.FunctionalGroupsList.FirstOrDefault(n => n.Name.Equals("??"));
+                        _molecule.Warnings.Add($"Atom line #{line} - Element or Functional Group {elType}, replaced with '??'");
                     }
 
                     // isotope
