@@ -110,12 +110,11 @@ namespace Chem4Word.ACME.Behaviors
             //check to see if we have already got an atom remembered
             if (_currentAtomVisual != null && !(_currentAtomVisual is HydrogenVisual))
             {
-                Point? lastPos;
-
                 if (Dragging(e))
                 {
                     CurrentStatus = (AcmeConstants.UnlockStandardMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                     //are we already on top of an atom?
+                    Point? lastPos;
                     if (targetedVisual is GroupVisual)
                     {
                         CurrentEditor.Cursor = Cursors.No;
@@ -129,21 +128,21 @@ namespace Chem4Word.ACME.Behaviors
                         //if we are stroking over an existing bond
                         //then draw a double bond adorner
 
-                        existingBond = _lastAtomVisual.ParentAtom.BondBetween(atomUnderCursor.ParentAtom);
+                        existingBond = _lastAtomVisual?.ParentAtom.BondBetween(atomUnderCursor.ParentAtom);
                         if (_lastAtomVisual != null &&
                             existingBond != null)
                         {
-                            if (existingBond.Order == ModelConstants.OrderSingle)
+                            switch (existingBond.Order)
                             {
-                                bondOrder = ModelConstants.OrderDouble;
-                            }
-                            else if (existingBond.Order == ModelConstants.OrderDouble)
-                            {
-                                bondOrder = ModelConstants.OrderTriple;
-                            }
-                            else if (existingBond.Order == ModelConstants.OrderTriple)
-                            {
-                                bondOrder = ModelConstants.OrderSingle;
+                                case ModelConstants.OrderSingle:
+                                    bondOrder = ModelConstants.OrderDouble;
+                                    break;
+                                case ModelConstants.OrderDouble:
+                                    bondOrder = ModelConstants.OrderTriple;
+                                    break;
+                                case ModelConstants.OrderTriple:
+                                    bondOrder = ModelConstants.OrderSingle;
+                                    break;
                             }
                         }
                     }

@@ -142,7 +142,6 @@ namespace Chem4Word.ACME
                         break;
 
                     case Model model:
-                        Debug.WriteLine("Using model as is");
                         chemistryModel = model;
                         break;
 
@@ -167,7 +166,7 @@ namespace Chem4Word.ACME
                     DrawChemistry(CurrentController);
 
                     sw.Stop();
-                    Debug.WriteLine($"Draw Chemistry took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, {sw.ElapsedTicks} ticks");
+                    Debug.WriteLine($"Draw Chemistry took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, [{sw.ElapsedTicks} ticks]");
                 }
             }
         }

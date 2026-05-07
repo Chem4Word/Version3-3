@@ -7,6 +7,7 @@
 
 using Chem4Word.ACME.Behaviors;
 using Chem4Word.ACME.Commands;
+using Chem4Word.ACME.Commands.Atom;
 using Chem4Word.ACME.Commands.Editing;
 using Chem4Word.ACME.Commands.Grouping;
 using Chem4Word.ACME.Commands.Layout.Alignment;
@@ -349,6 +350,15 @@ namespace Chem4Word.ACME
             EditActiveAtomPropertiesCommand = new EditActiveAtomPropertiesCommand(this);
             EditActiveBondPropertiesCommand = new EditActiveBondPropertiesCommand(this);
             PropertiesCommand = new EditSelectionPropertiesCommand(this);
+
+            //electrons
+            AddCarbenoidElectronsCommand = new AddCarbenoidElectronsCommand(this);
+            AddLonePairElectronsCommand = new AddLonePairElectronsCommand(this);
+            AddRadicalElectronsCommand = new AddRadicalElectronsCommand(this);
+
+            RemoveCarbenoidElectronsCommand = new RemoveCarbenoidElectronsCommand(this);
+            RemoveLonePairElectronsCommand = new RemoveLonePairElectronsCommand(this);
+            RemoveRadicalElectronsCommand = new RemoveRadicalElectronsCommand(this);
 
             FlipBondStereoCommand = new FlipBondStereoCommand(this);
         }

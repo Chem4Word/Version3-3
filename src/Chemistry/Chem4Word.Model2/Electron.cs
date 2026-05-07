@@ -26,7 +26,6 @@ namespace Chem4Word.Model2
     {
         #region Fields
 
-        private int _count;
         private ElectronType _type;
         private StructuralObject _parent;
         private CompassPoints? _explicitPlacement;
@@ -70,13 +69,18 @@ namespace Chem4Word.Model2
         {
             get
             {
-                return _count;
+                switch (TypeOfElectron)
+                {
+                    case ElectronType.Carbenoid:
+                    case ElectronType.LonePair:
+                        return 2;
+                    case ElectronType.Radical:
+                        return 1;
+                }
+
+                return 0;
             }
-            set
-            {
-                _count = value;
-                OnPropertyChanged();
-            }
+           
         }
 
         /// <summary>
@@ -92,6 +96,7 @@ namespace Chem4Word.Model2
             {
                 _type = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(Count));
             }
         }
 
@@ -194,7 +199,6 @@ namespace Chem4Word.Model2
             Electron newElectron = new Electron
             {
                 Id = Id,
-                Count = Count,
                 TypeOfElectron = TypeOfElectron,
                 ExplicitPlacement = ExplicitPlacement,
                 Parent = Parent

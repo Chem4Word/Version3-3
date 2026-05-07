@@ -20,12 +20,6 @@ namespace Chem4Word.ACME.Models
         private CompassPoints? _explicitHydrogenPlacement;
         private CompassPoints? _explicitFunctionalGroupPlacement;
 
-        private Dictionary<CompassPoints, ElectronType> _manualElectronPlacements =
-            new Dictionary<CompassPoints, ElectronType>();
-
-        private Dictionary<string, AutomaticElectronItem> _automaticElectronPlacements =
-            new Dictionary<string, AutomaticElectronItem>();
-
         private int? _charge;
         private string _isotope;
         private bool? _explicitC;
@@ -121,26 +115,6 @@ namespace Chem4Word.ACME.Models
             set
             {
                 _explicitFunctionalGroupPlacement = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Dictionary<CompassPoints, ElectronType> ManualElectronPlacements
-        {
-            get => _manualElectronPlacements;
-            set
-            {
-                _manualElectronPlacements = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Dictionary<string, AutomaticElectronItem> AutomaticElectronPlacements
-        {
-            get => _automaticElectronPlacements;
-            set
-            {
-                _automaticElectronPlacements = value;
                 OnPropertyChanged();
             }
         }

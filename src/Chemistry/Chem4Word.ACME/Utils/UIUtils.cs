@@ -11,12 +11,10 @@ using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Entities;
 using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Models;
-using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using IChem4Word.Contracts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
@@ -205,6 +203,52 @@ namespace Chem4Word.ACME.Utils
 
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
+            AtomPropertiesModel atomPropertiesModel = CreateMicroModel(atom, screenPosition, currentEditor);
+            AtomPropertyEditor atomPropertyEditor = new AtomPropertyEditor(atomPropertiesModel);
+
+            ShowDialog(atomPropertyEditor, currentEditor);
+            Application.Current.ShutdownMode = mode;
+
+            if (atomPropertiesModel.Save)
+            {
+                controller.UpdateAtom(atom, atomPropertiesModel);
+
+                controller.ClearSelection();
+                if (controller.ActiveBehavior is SelectBehaviour)
+                {
+                    controller.AddToSelection(atom);
+                }
+
+                if (atomPropertiesModel.AddedElement != null)
+                {
+                    AddOptionIfNeeded(atomPropertiesModel);
+                }
+                controller.SelectedElement = atomPropertiesModel.Element;
+            }
+            atomPropertyEditor.Close();
+
+            void AddOptionIfNeeded(AtomPropertiesModel model)
+            {
+                if (!controller.AtomOptions.Any(ao => ao.Element.Symbol == model.AddedElement.Symbol))
+                {
+                    AtomOption newOption = null;
+                    switch (model.AddedElement)
+                    {
+                        case Element elem:
+                            newOption = new AtomOption(elem);
+                            break;
+
+                        case FunctionalGroup group:
+                            newOption = new AtomOption(group);
+                            break;
+                    }
+                    controller.AtomOptions.Add(newOption);
+                }
+            }
+        }
+
+        private static AtomPropertiesModel CreateMicroModel(Atom atom, Point screenPosition, EditorCanvas currentEditor)
+        {
             AtomPropertiesModel atomPropertiesModel = new AtomPropertiesModel
             {
                 Centre = screenPosition,
@@ -222,59 +266,6 @@ namespace Chem4Word.ACME.Utils
                 atomPropertiesModel.ExplicitC = atom.ExplicitC;
                 atomPropertiesModel.ExplicitH = atom.ExplicitH;
                 atomPropertiesModel.ExplicitHydrogenPlacement = atom.ExplicitHPlacement;
-
-                atomPropertiesModel.ManualElectronPlacements = new Dictionary<CompassPoints, ElectronType>();
-                atomPropertiesModel.AutomaticElectronPlacements = new Dictionary<string, AutomaticElectronItem>();
-
-                if (atom.Electrons.Count > 0)
-                {
-                    // If there are a mixture of Manual placed electrons and Automatically placed electrons
-                    //   they will all be converted to Manul
-                    int manualPlacementsCount = atom.Electrons.Values.Count(e => e.ExplicitPlacement != null);
-
-                    if (manualPlacementsCount > 0)
-                    {
-                        CompassPoints compassPoint = CompassPoints.North;
-
-                        foreach (Electron electron in atom.Electrons.Values)
-                        {
-                            ElectronType typeOfElectron = electron.TypeOfElectron;
-
-                            if (electron.ExplicitPlacement.HasValue)
-                            {
-                                // This is a Manual placement - leave alone
-                                compassPoint = electron.ExplicitPlacement.Value;
-                            }
-                            else
-                            {
-                                // This is an automatic placement
-                                //   find the next free compass point and convert to Manual
-                                while (atomPropertiesModel.ManualElectronPlacements.ContainsKey(compassPoint))
-                                {
-                                    compassPoint = Model2.Helpers.Utils.NextCompassPoint(compassPoint);
-                                }
-                            }
-
-                            // Add to the Manual placements
-                            atomPropertiesModel.ManualElectronPlacements.Add(compassPoint, typeOfElectron);
-                        }
-                    }
-                    else
-                    {
-                        // All electrons are Automatic
-                        foreach (Electron electron in atom.Electrons.Values)
-                        {
-                            AutomaticElectronItem item = new AutomaticElectronItem
-                            {
-                                Id = electron.Id,
-                                ElectronType = electron.TypeOfElectron,
-                                ParentAtom = atom
-                            };
-
-                            atomPropertiesModel.AutomaticElectronPlacements.Add(electron.Id, item);
-                        }
-                    }
-                }
 
                 atomPropertiesModel.ShowHydrogenLabels = true;
             }
@@ -329,6 +320,7 @@ namespace Chem4Word.ACME.Utils
                 };
                 molecule.AddAtom(ac);
                 ac.Parent = molecule;
+
                 Bond b = new Bond(newAtom, ac) { Order = bond.Order };
                 if (bond.Stereo != BondStereo.None)
                 {
@@ -352,47 +344,7 @@ namespace Chem4Word.ACME.Utils
             }
             atomPropertiesModel.MicroModel.ScaleToAverageBondLength(20);
 
-            AtomPropertyEditor atomPropertyEditor = new AtomPropertyEditor(atomPropertiesModel);
-
-            ShowDialog(atomPropertyEditor, currentEditor);
-            Application.Current.ShutdownMode = mode;
-
-            if (atomPropertiesModel.Save)
-            {
-                controller.UpdateAtom(atom, atomPropertiesModel);
-
-                controller.ClearSelection();
-                if (controller.ActiveBehavior is SelectBehaviour)
-                {
-                    controller.AddToSelection(atom);
-                }
-
-                if (atomPropertiesModel.AddedElement != null)
-                {
-                    AddOptionIfNeeded(atomPropertiesModel);
-                }
-                controller.SelectedElement = atomPropertiesModel.Element;
-            }
-            atomPropertyEditor.Close();
-
-            void AddOptionIfNeeded(AtomPropertiesModel model)
-            {
-                if (!controller.AtomOptions.Any(ao => ao.Element.Symbol == model.AddedElement.Symbol))
-                {
-                    AtomOption newOption = null;
-                    switch (model.AddedElement)
-                    {
-                        case Element elem:
-                            newOption = new AtomOption(elem);
-                            break;
-
-                        case FunctionalGroup group:
-                            newOption = new AtomOption(group);
-                            break;
-                    }
-                    controller.AtomOptions.Add(newOption);
-                }
-            }
+            return atomPropertiesModel;
         }
 
         public static void EditMoleculeProperties(Molecule moleculeBeingEdited,
@@ -620,12 +572,69 @@ namespace Chem4Word.ACME.Utils
                             BuildAtomChargeMenu(cmi, controller, avParentAtom);
                             break;
 
-                        case "Radical":
+                        case "Electrons":
+                            BuildElectronsMenu(cmi, controller, avParentAtom);
                             break;
 
                         case "Properties...":
                             cmi.Command = controller.EditActiveAtomPropertiesCommand;
                             cmi.CommandParameter = avParentAtom;
+                            break;
+                    }
+                }
+            }
+        }
+
+        private static void BuildElectronsMenu(MenuItem cmi, EditController controller, Atom atom)
+        {
+            var atomPropertiesModel = new AtomPropertiesModel();
+            var submenuItems = cmi.Items;
+            foreach (var item in submenuItems)
+            {
+                if (item is MenuItem menuItem)
+                {
+                    switch (menuItem.Name)
+                    {
+                        case "AddRadicalMenuItem":
+                            menuItem.IsEnabled = EditController.CanAddRadical(atom);
+                            menuItem.Command = controller.AddRadicalElectronsCommand;
+                            menuItem.CommandParameter = atom;
+                            controller.AddRadicalElectronsCommand.RaiseCanExecChanged();
+                            break;
+
+                        case "RemoveRadicalMenuItem":
+                            menuItem.IsEnabled = EditController.CanRemoveRadical(atom);
+                            menuItem.Command = controller.RemoveRadicalElectronsCommand;
+                            menuItem.CommandParameter = atom;
+                            controller.RemoveRadicalElectronsCommand.RaiseCanExecChanged();
+                            break;
+
+                        case "AddLonePairMenuItem":
+                            menuItem.IsEnabled = EditController.CanAddLonePair(atom);
+                            menuItem.Command = controller.AddLonePairElectronsCommand;
+                            menuItem.CommandParameter = atom;
+                            controller.AddLonePairElectronsCommand.RaiseCanExecChanged(); ;
+                            break;
+
+                        case "RemoveLonePairMenuItem":
+                            menuItem.IsEnabled = EditController.CanRemoveLonePair(atom);
+                            menuItem.Command = controller.RemoveLonePairElectronsCommand;
+                            menuItem.CommandParameter = atom;
+                            controller.RemoveLonePairElectronsCommand.RaiseCanExecChanged(); ;
+                            break;
+
+                        case "AddCarbenoidMenuItem":
+                            menuItem.IsEnabled = EditController.CanAddCarbenoidElectrons(atom);
+                            menuItem.Command = controller.AddCarbenoidElectronsCommand;
+                            menuItem.CommandParameter = atom;
+                            controller.AddCarbenoidElectronsCommand.RaiseCanExecChanged();
+                            break;
+
+                        case "RemoveCarbenoidMenuItem":
+                            menuItem.IsEnabled = EditController.CanRemoveCarbenoidElectrons(atom);
+                            menuItem.Command = controller.RemoveCarbenoidElectronsCommand;
+                            menuItem.CommandParameter = atom;
+                            controller.RemoveCarbenoidElectronsCommand.RaiseCanExecChanged();
                             break;
                     }
                 }

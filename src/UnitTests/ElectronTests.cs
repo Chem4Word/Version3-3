@@ -78,7 +78,6 @@ namespace Chem4WordUnitTests
             var atom = modelFromCml.GetByPath("/m1/a3") as Atom;
             var electron = new Electron
             {
-                Count = 2,
                 TypeOfElectron = ElectronType.LonePair,
                 ExplicitPlacement = CompassPoints.NorthEast
             };
@@ -108,7 +107,6 @@ namespace Chem4WordUnitTests
             var atom = modelFromCml.GetByPath("/m1/a3") as Atom;
             var electron = new Electron
             {
-                Count = 2,
                 TypeOfElectron = ElectronType.LonePair,
                 ExplicitPlacement = CompassPoints.NorthEast
             };

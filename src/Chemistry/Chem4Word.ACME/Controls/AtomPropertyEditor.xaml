@@ -346,16 +346,6 @@
                                 d:IsLocked="True"
                                 Style="{StaticResource Acme.Controls.TextBlock.StdLabel}"
                                 Text="Electrons" />
-                            <ToggleButton
-                                x:Name="ElectronPlacementMode"
-                                Grid.Row="1"
-                                Grid.Column="2"
-                                Margin="2,0,2,5"
-                                d:IsLocked="True"
-                                Checked="OnSwitchToAutomatic"
-                                Content="Manual Placement"
-                                IsChecked="False"
-                                Unchecked="OnSwitchToManual" />
                             <ComboBox
                                 x:Name="ImplicitHydrogenMode"
                                 Grid.Row="1"
@@ -372,36 +362,15 @@
                                 VerticalAlignment="Top"
                                 d:IsLocked="True"
                                 CompassControlType="Hydrogens"
-                                CompassValueChanged="OnValueChanged_Hydrogens"
-                                SelectedCompassPoint="{Binding DataContext.ExplicitHydrogenPlacement, RelativeSource={RelativeSource AncestorType=Window}}" />
-                            <Grid
-                                x:Name="CompassOrListView"
-                                Grid.Row="2"
+                                SelectedCompassPoint="{Binding DataContext.ExplicitHydrogenPlacement, RelativeSource={RelativeSource AncestorType=Window}}"
+                                ValueChanged="OnValueChanged_Hydrogens" />
+                            <local:ElectronsControl
+                                x:Name="ElectronsControl"
+                                Grid.Row="1"
+                                Grid.RowSpan="2"
                                 Grid.Column="2"
-                                d:IsLocked="True">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="155" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="155" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <local:Compass
-                                    x:Name="ManualElectrons"
-                                    Grid.Row="0"
-                                    d:IsLocked="True"
-                                    CompassControlType="Electrons"
-                                    CompassValueChanged="OnValueChanged_ManualElectrons"
-                                    SelectedElectronDictionary="{Binding DataContext.ManualElectronPlacements, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    Visibility="Visible" />
-                                <local:ElectronsEditor
-                                    x:Name="AutomaticElectrons"
-                                    Grid.Row="0"
-                                    Width="154"
-                                    d:IsLocked="True"
-                                    ElectronsValueChanged="OnValueChanged_AutomaticElectrons"
-                                    Visibility="Collapsed" />
-                            </Grid>
+                                d:IsLocked="True"
+                                ValueChanged="OnValueChanged_ElectronsControl" />
                         </Grid>
                     </Grid>
                 </StackPanel>
@@ -468,8 +437,8 @@
                                 Margin="5"
                                 d:IsLocked="True"
                                 CompassControlType="FunctionalGroups"
-                                CompassValueChanged="OnValueChanged_FunctionalGroups"
-                                SelectedCompassPoint="{Binding DataContext.ExplicitFunctionalGroupPlacement, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                SelectedCompassPoint="{Binding DataContext.ExplicitFunctionalGroupPlacement, RelativeSource={RelativeSource AncestorType=Window}}"
+                                ValueChanged="OnValueChanged_FunctionalGroups" />
                         </Grid>
                     </Grid>
                 </Grid>

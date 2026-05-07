@@ -12,8 +12,9 @@ using Chem4Word.Core.Enums;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Helpers;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace Wpf.UI.Sandbox.Forms
@@ -23,82 +24,104 @@ namespace Wpf.UI.Sandbox.Forms
     /// </summary>
     public partial class CompassTesting : Window
     {
-        public Atom Atom1 { get; set; }
-        public Atom Atom2 { get; set; }
-
-        public bool IsDirty { get; set; }
+        private Model Model1 { get; set; }
+        private Atom Atom1 { get; set; }
+        private Model Model2 { get; set; }
+        private Atom Atom2 { get; set; }
+        private Model Model3 { get; set; }
+        private Atom Atom3 { get; set; }
 
         public CompassTesting()
         {
             InitializeComponent();
 
-            // Set some initial values for H and FG compasses
-            Compass1.SelectedCompassPoint = CompassPoints.East;
-            Compass2.SelectedCompassPoint = CompassPoints.West;
+            Model1 = CreateModel("N");
+            Atom1 = Model1.GetAllAtoms().First();
 
-            // Set some values for Electron Compass (Manual Placement) and ListView (Auto Placement)
+            Model2 = CreateModel("CH2OH");
+            Atom2 = Model2.GetAllAtoms().First();
+
+            Model3 = CreateModel("O");
+            Atom3 = Model3.GetAllAtoms().First();
+
+            AutomaticElectronsControlModel model = new AutomaticElectronsControlModel
+            {
+                ParentAtom = Atom3
+            };
+
+            Electron electron1 = ElectronHelper.MakeElectron(Atom3, 1, ElectronType.Radical);
+            Atom3.AddElectron(electron1);
+
+            Electron electron2 = ElectronHelper.MakeElectron(Atom3, 1, ElectronType.Radical, CompassPoints.East);
+            Atom3.AddElectron(electron2);
+
+            Atom3.UpdateElectronPlacements();
+
+            ElectronsControl.Model = new ElectronsControlModel(Atom3, ElectronsControl);
+        }
+
+        private void OnCompassValueChanged_Compass(object sender, WpfEventArgs e)
+        {
+            if (sender is Compass compass)
+            {
+                switch (compass.CompassControlType)
+                {
+                    case CompassControlType.Hydrogens:
+                        Atom1.ExplicitHPlacement = compass.SelectedCompassPoint;
+                        Display.Chemistry = Model1.Copy();
+                        break;
+
+                    case CompassControlType.FunctionalGroups:
+                        Atom2.ExplicitFunctionalGroupPlacement = compass.SelectedCompassPoint;
+                        Display.Chemistry = Model2.Copy();
+                        break;
+                }
+            }
+        }
+
+        private void OnValueChanged_Electrons(object sender, WpfEventArgs e)
+        {
+            Atom3 = ElectronsControl.Model.ParentAtom;
+            Atom3.UpdateElectronPlacements();
+            Display.Chemistry = Model3.Copy();
+        }
+
+        private Model CreateModel(string typeOfAtom)
+        {
             Model model = new Model();
 
-            Molecule molecule1 = new Molecule
+            Molecule molecule = new Molecule { Id = "m1" };
+            model.AddMolecule(molecule);
+            molecule.Parent = model;
+
+            AtomHelpers.TryParse(typeOfAtom, true, out ElementBase element);
+
+            Atom atom1 = AddAtomToMolecule(molecule, "a1");
+            atom1.Element = element;
+            atom1.Position = new Point(0, 0);
+            atom1.Parent = molecule;
+
+            Atom atom2 = AddAtomToMolecule(molecule, "a2");
+            atom2.Element = ModelGlobals.PeriodicTable.C;
+            atom2.Position = new Point(-20, 20);
+            atom2.ExplicitH = HydrogenLabels.None;
+            atom2.Parent = molecule;
+
+            Bond bond = new Bond(atom1, atom2)
             {
-                Id = "m1"
+                Order = "1"
             };
-            model.AddMolecule(molecule1);
-            molecule1.Parent = model;
-
-            Atom atom1 = AddAtomToMolecule(molecule1, "a1");
-            atom1.Element = ModelGlobals.PeriodicTable.N;
-            Atom1 = atom1;
-
-            Atom atom2 = AddAtomToMolecule(molecule1, "a2");
-            atom2.Element = ModelGlobals.PeriodicTable.O;
-            Atom2 = atom2;
+            molecule.AddBond(bond);
+            bond.Parent = molecule;
 
             model.Relabel(true);
 
-            // Setup test values
-            Compass3.Atom = atom1;
-
-            Compass3.SelectedElectronDictionary = new Dictionary<CompassPoints, ElectronType>();
-            Compass3.SelectedElectrons = new List<Electron>();
-
-            Electron electron = new Electron { Parent = atom1, TypeOfElectron = ElectronType.Radical, Count = 1 };
-            atom1.AddElectron(electron);
-            Compass3.SelectedElectronDictionary.Add(CompassPoints.North, electron.TypeOfElectron);
-            electron.ExplicitPlacement = CompassPoints.North;
-            Compass3.SelectedElectrons.Add(electron);
-
-            electron = new Electron { Parent = atom1, TypeOfElectron = ElectronType.LonePair, Count = 2 };
-            atom1.AddElectron(electron);
-            Compass3.SelectedElectronDictionary.Add(CompassPoints.NorthEast, electron.TypeOfElectron);
-            electron.ExplicitPlacement = CompassPoints.NorthEast;
-            Compass3.SelectedElectrons.Add(electron);
-
-            electron = new Electron { Parent = atom1, TypeOfElectron = ElectronType.Carbenoid, Count = 2 };
-            atom1.AddElectron(electron);
-            Compass3.SelectedElectronDictionary.Add(CompassPoints.East, electron.TypeOfElectron);
-            electron.ExplicitPlacement = CompassPoints.East;
-            Compass3.SelectedElectrons.Add(electron);
-
-            // This would be copied from the source atom's electrons
-            AutomaticElectronsEditorModel automaticElectronsEditorModel = new AutomaticElectronsEditorModel();
-            automaticElectronsEditorModel.AutomaticElectronItems.Add(new AutomaticElectronItem
-                                                   {
-                                                       Id = "a1",
-                                                       ParentAtom = atom2,
-                                                       ElectronType = ElectronType.LonePair
-                                                   });
-
-            ElectronsView.ParentAtom = atom2;
-            ElectronsView.Model = automaticElectronsEditorModel;
+            return model;
         }
 
         private void CompassTesting_OnContentRendered(object sender, EventArgs e)
         {
-            IsDirty = false;
-
-            Status3.Text = Compass3.ListCompassElectrons();
-            Status4.Text = ElectronsView.ListElectrons();
+            Display.Clear();
         }
 
         private static Atom AddAtomToMolecule(Molecule molecule, string id)
@@ -112,32 +135,6 @@ namespace Wpf.UI.Sandbox.Forms
             atom.Parent = molecule;
 
             return atom;
-        }
-
-        private void OnCompassValueChanged_Compass(object sender, WpfEventArgs e)
-        {
-            if (sender is Compass compass)
-            {
-                switch (compass.CompassControlType)
-                {
-                    case CompassControlType.Hydrogens:
-                        Status1.Text = $"Selected direction is {compass.SelectedCompassPoint}";
-                        break;
-
-                    case CompassControlType.FunctionalGroups:
-                        Status2.Text = $"Selected direction is {compass.SelectedCompassPoint}";
-                        break;
-
-                    case CompassControlType.Electrons:
-                        Status3.Text = Compass3.ListCompassElectrons();
-                        break;
-                }
-            }
-        }
-
-        private void OnElectronsEditor_Changed(object sender, WpfEventArgs e)
-        {
-            Status4.Text = ElectronsView.ListElectrons();
         }
     }
 }

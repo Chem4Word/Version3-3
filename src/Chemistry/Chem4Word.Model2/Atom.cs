@@ -190,7 +190,16 @@ namespace Chem4Word.Model2
                 switch (_element)
                 {
                     case Element _:
-                        return ExplicitH ?? Parent.InheritedHydrogenLabels;
+                        if (ExplicitH != null)
+                        {
+                            return ExplicitH.Value;
+                        }
+                        if (Parent != null)
+                        {
+                            return Parent.InheritedHydrogenLabels;
+                        }
+
+                        return HydrogenLabels.None;
 
                     default:
                         return HydrogenLabels.HeteroAndTerminal;
@@ -231,7 +240,6 @@ namespace Chem4Word.Model2
                 }
             }
         }
-
 
         public bool IsHetero
         {
@@ -641,13 +649,15 @@ namespace Chem4Word.Model2
 
                     foreach (Electron electron in Electrons.Values)
                     {
-                        if (electron.Count == 1 && electron.TypeOfElectron == ElectronType.Radical)
+                        switch (electron.Count)
                         {
-                            spares -= 1;
-                        }
-                        else if (electron.Count == 2 && electron.TypeOfElectron == ElectronType.Carbenoid)
-                        {
-                            spares -= 2;
+                            case 1 when electron.TypeOfElectron == ElectronType.Radical:
+                                spares -= 1;
+                                break;
+
+                            case 2 when electron.TypeOfElectron == ElectronType.Carbenoid:
+                                spares -= 2;
+                                break;
                         }
                     }
 
@@ -1136,7 +1146,7 @@ namespace Chem4Word.Model2
             HashSet<CompassPoints> excludePoints = new HashSet<CompassPoints>();
 
             //first take into account whether we have any implicit hydrogens and where they are
-            if (ImplicitHydrogenCount > 0 && AtomSymbol != "")
+            if (ShowImplicitHydrogenCharacters && ImplicitHydrogenCount > 0 && AtomSymbol != "")
             {
                 excludePoints.Add(ImplicitHPlacement);
             }
@@ -1158,8 +1168,17 @@ namespace Chem4Word.Model2
 
             foreach (Electron electron in Electrons.Values.Where(e => e.ExplicitPlacement == null))
             {
-                electron.ImplicitPlacement = GetPreferredSpot(allFreePoints);
-                allFreePoints.Remove(electron.ImplicitPlacement);
+                if (allFreePoints.Count > 0)
+                {
+                    electron.ImplicitPlacement = GetPreferredSpot(allFreePoints);
+                    allFreePoints.Remove(electron.ImplicitPlacement);
+                }
+                else
+                {
+                    double angleFromNorth = Vector.AngleBetween(GeometryTool.ScreenNorth, BalancingVector());
+                    CompassPoints placement = GeometryTool.SnapTo8(angleFromNorth);
+                    electron.ImplicitPlacement = placement;
+                }
             }
 
             //compares the free points and picks the one with the

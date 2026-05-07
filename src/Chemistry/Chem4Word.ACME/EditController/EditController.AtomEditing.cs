@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Adorners.Selectors;
+using Chem4Word.ACME.Commands.Atom;
 using Chem4Word.ACME.Commands.Editing;
 using Chem4Word.ACME.Commands.Sketching;
 using Chem4Word.ACME.Models;
@@ -28,6 +29,9 @@ namespace Chem4Word.ACME
 
         private AddAtomCommand _addAtomCommand;
         private PickElementCommand _pickElementCommand;
+        private AddCarbenoidElectronsCommand _addCarbenoidElectronsCommand;
+        private AddLonePairElectronsCommand _addLonePairElectronsCommand;
+        private AddRadicalElectronsCommand _addRadicalElectronsCommand;
 
         #endregion Fields
 
@@ -46,9 +50,296 @@ namespace Chem4Word.ACME
             }
         }
 
+        //electron handling
+        public AddCarbenoidElectronsCommand AddCarbenoidElectronsCommand
+        {
+            get
+            {
+                return _addCarbenoidElectronsCommand;
+            }
+            set
+            {
+                _addCarbenoidElectronsCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public AddLonePairElectronsCommand AddLonePairElectronsCommand
+        {
+            get
+            {
+                return _addLonePairElectronsCommand;
+            }
+            set
+            {
+                _addLonePairElectronsCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public AddRadicalElectronsCommand AddRadicalElectronsCommand
+        {
+            get
+            {
+                return _addRadicalElectronsCommand;
+            }
+            set
+            {
+                _addRadicalElectronsCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public RemoveCarbenoidElectronsCommand RemoveCarbenoidElectronsCommand { get; set; }
+        public RemoveLonePairElectronsCommand RemoveLonePairElectronsCommand { get; set; }
+        public RemoveRadicalElectronsCommand RemoveRadicalElectronsCommand { get; set; }
+
         #endregion Properties
 
         #region Methods
+
+        #region Static methods for Enabling Electron Controls
+
+        // #1 Radical(s) and Carbenoid(s)
+        // These affect ImplicitH Count
+        // Radical count cannot exceed implicit H count
+        // Carbenoid count cannot exceed implicit H count /2 (rounded down)
+
+        // #2 Lone Pairs
+        // Subtract 14 from the group of the element.
+        //   The result gives you the number of lone pairs the atom can support.
+
+        public static bool CanAddRadical(Atom atom)
+        {
+            int remaining = atom.ImplicitHydrogenCount;
+            return remaining > 0;
+        }
+
+        public static bool CanAddLonePair(Atom atom)
+        {
+            if (atom.Element is Element element)
+            {
+                int possible = element.Group - 14;
+                int used = atom.Electrons.Values.Count(t => t.TypeOfElectron == ElectronType.LonePair);
+                return used < possible;
+            }
+
+            return false;
+        }
+
+        public static bool CanAddCarbenoidElectrons(Atom atom)
+        {
+            if (atom is null)
+            {
+                return false;
+            }
+            int remaining = atom.ImplicitHydrogenCount / 2;
+            return remaining > 0;
+        }
+
+        public static bool CanAddAnyElectrons(Atom atom)
+        {
+            return CanAddLonePair(atom) || CanAddRadical(atom) || CanAddLonePair(atom);
+        }
+
+        public static bool CanRemoveRadical(Atom atom)
+        {
+            int used = atom.Electrons.Values.Count(t => t.TypeOfElectron == ElectronType.Radical);
+            return used > 0;
+        }
+
+        public static bool CanRemoveLonePair(Atom atom)
+        {
+            int used = atom.Electrons.Values.Count(t => t.TypeOfElectron == ElectronType.LonePair);
+            return used > 0;
+        }
+
+        public static bool CanRemoveCarbenoidElectrons(Atom atom)
+        {
+            int used = atom.Electrons.Values.Count(t => t.TypeOfElectron == ElectronType.Carbenoid);
+            return used > 0;
+        }
+
+        #endregion Static methods for Enabling Electron Controls
+
+        public void AddCarbenoidElectrons(Atom atom)
+        {
+            Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
+
+            var newElectron = new Electron { TypeOfElectron = ElectronType.Carbenoid, ExplicitPlacement = null };
+
+            (Action redoAction, Action undoAction) = AddElectronActions(atom, explicitElectrons, newElectron);
+            UndoManager.BeginUndoBlock();
+            UndoManager.RecordAction(undoAction, redoAction);
+            UndoManager.EndUndoBlock();
+            redoAction();
+        }
+
+        public void AddRadicalElectrons(Atom atom)
+        {
+            Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
+
+            var newElectron = new Electron { TypeOfElectron = ElectronType.Radical, ExplicitPlacement = null };
+
+            (Action redoAction, Action undoAction) = AddElectronActions(atom, explicitElectrons, newElectron);
+            UndoManager.BeginUndoBlock();
+            UndoManager.RecordAction(undoAction, redoAction);
+            UndoManager.EndUndoBlock();
+            redoAction();
+        }
+
+        public void AddLonePairElectrons(Atom atom)
+        {
+            Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
+
+            var newElectron = new Electron { TypeOfElectron = ElectronType.LonePair, ExplicitPlacement = null };
+
+            (Action redoAction, Action undoAction) = AddElectronActions(atom, explicitElectrons, newElectron);
+            UndoManager.BeginUndoBlock();
+            UndoManager.RecordAction(undoAction, redoAction);
+            UndoManager.EndUndoBlock();
+            redoAction();
+        }
+
+        private static (Action redoAction, Action undoAction) AddElectronActions(
+            Atom atom, Dictionary<string, CompassPoints> explicitElectrons, Electron newElectron)
+        {
+            var showSymbol = atom.ExplicitC;
+
+            Action redoAction = () =>
+                                {
+                                    foreach (Electron electron in atom.Electrons.Values)
+                                    {
+                                        if (electron.ExplicitPlacement != null)
+                                        {
+                                            explicitElectrons[electron.Path] = electron.Placement;
+                                            electron.ExplicitPlacement = null;
+                                        }
+                                    }
+
+                                    newElectron.Parent = atom;
+                                    atom.AddElectron(newElectron);
+                                    atom.UpdateElectronPlacements();
+                                    atom.ExplicitC = true;
+                                    atom.UpdateVisual();
+                                    foreach (Bond attachedBond in atom.Bonds)
+                                    {
+                                        attachedBond.UpdateVisual();
+                                    }
+                                };
+            Action undoAction = () =>
+                                {
+                                    atom.RemoveElectron(newElectron);
+                                    newElectron.Parent = null;
+                                    foreach (string path in explicitElectrons.Keys)
+                                    {
+                                        Electron electron = atom.GetByPath(path) as Electron;
+                                        if (electron != null)
+                                        {
+                                            electron.ExplicitPlacement = explicitElectrons[path];
+                                        }
+                                    }
+                                    atom.ExplicitC = showSymbol;
+                                    atom.UpdateElectronPlacements();
+                                    atom.UpdateVisual();
+                                    foreach (Bond attachedBond in atom.Bonds)
+                                    {
+                                        attachedBond.UpdateVisual();
+                                    }
+                                };
+            return (redoAction, undoAction);
+        }
+
+        public void RemoveCarbenoidElectrons(Atom atom)
+        {
+            Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
+
+            var oldElectron = atom.Electrons.Values.Where(e => e.TypeOfElectron == ElectronType.Carbenoid)
+                                  .FirstOrDefault();
+
+            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron);
+            UndoManager.BeginUndoBlock();
+            UndoManager.RecordAction(undoAction, redoAction);
+            UndoManager.EndUndoBlock();
+            redoAction();
+        }
+
+        public void RemoveRadicalElectrons(Atom atom)
+        {
+            Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
+
+            var oldElectron = atom.Electrons.Values.Where(e => e.TypeOfElectron == ElectronType.Radical)
+                                  .FirstOrDefault();
+
+            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron);
+            UndoManager.BeginUndoBlock();
+            UndoManager.RecordAction(undoAction, redoAction);
+            UndoManager.EndUndoBlock();
+            redoAction();
+        }
+
+        public void RemoveLonePairElectrons(Atom atom)
+        {
+            Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
+
+            var oldElectron = atom.Electrons.Values.Where(e => e.TypeOfElectron == ElectronType.LonePair)
+                                  .FirstOrDefault();
+
+            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron);
+            UndoManager.BeginUndoBlock();
+            UndoManager.RecordAction(undoAction, redoAction);
+            UndoManager.EndUndoBlock();
+            redoAction();
+        }
+
+        private static (Action redoAction, Action undoAction) RemoveElectronActions(
+           Atom atom, Dictionary<string, CompassPoints> explicitElectrons, Electron oldElectron)
+        {
+            var showSymbol = atom.ExplicitC;
+
+            Action redoAction = () =>
+            {
+                foreach (var keypair in atom.Electrons)
+                {
+                    if (keypair.Value.ExplicitPlacement != null)
+                    {
+                        explicitElectrons[keypair.Key.ToString()] = keypair.Value.Placement;
+                        keypair.Value.ExplicitPlacement = null;
+                    }
+                }
+
+                oldElectron.Parent = atom;
+                atom.RemoveElectron(oldElectron);
+                atom.UpdateElectronPlacements();
+                atom.ExplicitC = true;
+                atom.UpdateVisual();
+                foreach (Bond attachedBond in atom.Bonds)
+                {
+                    attachedBond.UpdateVisual();
+                }
+            };
+            Action undoAction = () =>
+            {
+                atom.AddElectron(oldElectron);
+                oldElectron.Parent = null;
+                foreach (string path in explicitElectrons.Keys)
+                {
+                    Electron electron = atom.GetByPath(path) as Electron;
+                    if (electron != null)
+                    {
+                        electron.ExplicitPlacement = explicitElectrons[electron.InternalId.ToString()];
+                    }
+                }
+                atom.ExplicitC = showSymbol;
+                atom.UpdateElectronPlacements();
+                atom.UpdateVisual();
+                foreach (Bond attachedBond in atom.Bonds)
+                {
+                    attachedBond.UpdateVisual();
+                }
+            };
+            return (redoAction, undoAction);
+        }
 
         /// <summary>
         /// Converts all implicit hydrogens on atoms of selected molecules (or all atoms if nothing is selected) to explicit hydrogens
@@ -826,7 +1117,7 @@ namespace Chem4Word.ACME
                 ElementBase elementBaseBefore = atom.Element;
                 int? chargeBefore = atom.FormalCharge;
                 int? isotopeBefore = atom.IsotopeNumber;
-                bool? explicitCBefore = atom.ExplicitC;
+                bool? explicitCarbonBefore = atom.ExplicitC;
 
                 HydrogenLabels? explicitHBefore = atom.ExplicitH;
                 CompassPoints? hydrogenPlacementBefore = atom.ExplicitHPlacement;
@@ -835,7 +1126,7 @@ namespace Chem4Word.ACME
                 ElementBase elementBaseAfter = atomPropertiesModel.Element;
                 int? chargeAfter = null;
                 int? isotopeAfter = null;
-                bool? explicitCAfter = null;
+                bool? explicitCarbonAfter = null;
 
                 HydrogenLabels? explicitHydrogensAfter = null;
                 CompassPoints? hydrogenPlacementAfter = null;
@@ -854,9 +1145,17 @@ namespace Chem4Word.ACME
                 else if (elementBaseAfter is Element)
                 {
                     chargeAfter = atomPropertiesModel.Charge;
-                    explicitCAfter = atomPropertiesModel.ExplicitC;
+
+                    explicitCarbonAfter = atomPropertiesModel.ExplicitC;
                     explicitHydrogensAfter = atomPropertiesModel.ExplicitH;
                     hydrogenPlacementAfter = atomPropertiesModel.ExplicitHydrogenPlacement;
+
+                    if (atom.IsCarbon && electronsAfter.Any())
+                    {
+                        explicitCarbonAfter = true;
+                        explicitHydrogensAfter = HydrogenLabels.All;
+                    }
+
                     if (!string.IsNullOrEmpty(atomPropertiesModel.Isotope))
                     {
                         isotopeAfter = int.Parse(atomPropertiesModel.Isotope);
@@ -868,7 +1167,7 @@ namespace Chem4Word.ACME
                                   atom.Element = elementBaseAfter;
                                   atom.FormalCharge = chargeAfter;
                                   atom.IsotopeNumber = isotopeAfter;
-                                  atom.ExplicitC = explicitCAfter;
+                                  atom.ExplicitC = explicitCarbonAfter;
                                   atom.ExplicitH = explicitHydrogensAfter;
                                   atom.ExplicitHPlacement = hydrogenPlacementAfter;
                                   atom.ExplicitFunctionalGroupPlacement = explicitFgPlacementAfter;
@@ -894,7 +1193,7 @@ namespace Chem4Word.ACME
                                   atom.Element = elementBaseBefore;
                                   atom.FormalCharge = chargeBefore;
                                   atom.IsotopeNumber = isotopeBefore;
-                                  atom.ExplicitC = explicitCBefore;
+                                  atom.ExplicitC = explicitCarbonBefore;
                                   atom.ExplicitH = explicitHBefore;
                                   atom.ExplicitHPlacement = hydrogenPlacementBefore;
                                   atom.ExplicitFunctionalGroupPlacement = explicitFgPlacementBefore;

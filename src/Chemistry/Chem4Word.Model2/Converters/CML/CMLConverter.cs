@@ -1248,7 +1248,6 @@ namespace Chem4Word.Model2.Converters.CML
         {
             Electron newElectron = new Electron
             {
-                Count = CMLHelper.GetElectronCount(electronElement),
                 Id = CMLHelper.GetId(electronElement),
                 ExplicitPlacement = CMLHelper.GetElectronPlacement(electronElement),
                 TypeOfElectron = CMLHelper.GetElectronType(electronElement)

@@ -16,9 +16,10 @@ namespace Chem4Word.Core.Helpers
             return value.Replace(Environment.UserName, "%UserName%");
         }
 
-        public static string ReplaceDl3Path(string location)
+        public static string ReplaceDl3Path(string value)
         {
-            string[] parts = location.Split('\\');
+            string temp = ReplaceUserName(value);
+            string[] parts = temp.Split('\\');
 
             int start = 0;
 

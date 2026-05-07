@@ -120,7 +120,6 @@ namespace Chem4Word.ACME.Controls
         {
             if (IsElectronsMode)
             {
-                // ToDo: Implement null (off) -> lone pair -> radical -> carbenoid singlet -> null (off)
                 ElectronType[] values = (ElectronType[])Enum.GetValues(typeof(ElectronType));
                 if (ElectronTypeValue == null)
                 {

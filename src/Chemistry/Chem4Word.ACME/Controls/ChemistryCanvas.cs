@@ -157,7 +157,7 @@ namespace Chem4Word.ACME.Controls
         /// <returns></returns>
         protected override Size MeasureOverride(Size constraint)
         {
-            Debug.WriteLine($"MeasureOverride() #{GetHashCode()} {_controller?.Model.ConciseFormula}");
+            Debug.WriteLine($"MeasureOverride() #{GetHashCode()} Formula: '{_controller?.Model.ConciseFormula}'");
             var size = GetBoundingBox();
 
             if (_controller != null

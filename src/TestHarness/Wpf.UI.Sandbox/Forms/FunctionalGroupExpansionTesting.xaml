@@ -10,7 +10,7 @@
     Height="600"
     Loaded="OnLoaded_FunctionalGroupExpansion"
     mc:Ignorable="d">
-    <Grid d:IsLocked="True">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
@@ -26,34 +26,23 @@
             Grid.Column="0"
             Width="Auto"
             Height="Auto"
-            d:IsLocked="True"
             ShowFeedback="False" />
         <ACME:Display
             x:Name="Display"
             Grid.Row="0"
             Grid.Column="1"
-            d:IsLocked="True"
             BorderBrush="Gold"
             BorderThickness="3"
             HighlightActive="False" />
-        <Grid
-            Grid.Row="1"
-            Grid.Column="0"
-            d:IsLocked="True">
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button
-                Grid.Column="0"
-                d:IsLocked="True"
-                Click="OnClick_LoadButton">
+            <Button Grid.Column="0" Click="OnClick_LoadButton">
                 Load
             </Button>
-            <Button
-                Grid.Column="1"
-                d:IsLocked="True"
-                Click="OnClick_ExpandButton">
+            <Button Grid.Column="1" Click="OnClick_ExpandButton">
                 Expand
             </Button>
         </Grid>

@@ -492,7 +492,6 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     Electron newElectron = new Electron()
                     {
                         Id = pbElectron.Id,
-                        Count = (int)pbElectron.Count,
                         TypeOfElectron = (ElectronType)pbElectron.ElectronType,
                         ExplicitPlacement = (CompassPoints?)pbElectron.Placement
                     };

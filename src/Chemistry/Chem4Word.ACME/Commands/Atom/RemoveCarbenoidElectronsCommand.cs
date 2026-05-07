@@ -5,22 +5,26 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-namespace Chem4Word.ACME.Commands.PropertyEdit
+namespace Chem4Word.ACME.Commands.Atom
 {
-    public class EditActiveAtomPropertiesCommand : BaseCommand
+    public class RemoveCarbenoidElectronsCommand : BaseCommand
     {
-        public EditActiveAtomPropertiesCommand(EditController controller) : base(controller)
+        private EditController _controller;
+
+        public RemoveCarbenoidElectronsCommand(EditController controller) : base(controller)
         {
+            _controller = controller;
         }
 
         public override bool CanExecute(object parameter)
         {
-            return true;
+            return EditController.CanRemoveCarbenoidElectrons(parameter as Model2.Atom);
         }
 
         public override void Execute(object parameter)
         {
-            EditController.EditAtomProperties(parameter as Model2.Atom);
+            _controller.RemoveCarbenoidElectrons(parameter as Model2.Atom);
+            _controller.RemoveFromSelection(parameter);
         }
     }
 }

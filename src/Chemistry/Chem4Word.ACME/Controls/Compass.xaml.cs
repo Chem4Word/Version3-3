@@ -10,11 +10,11 @@ using Chem4Word.Core.Enums;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -87,7 +87,7 @@ namespace Chem4Word.ACME.Controls
             DataContext = this;
         }
 
-        public event EventHandler<WpfEventArgs> CompassValueChanged;
+        public event EventHandler<WpfEventArgs> ValueChanged;
 
         public bool ElectronsMode
         {
@@ -292,6 +292,7 @@ namespace Chem4Word.ACME.Controls
 
             // Centre Button (C for Clear)
             Centre.IsElectronsMode = true;
+            Centre.ToolTip = "Clear Manual Electrons";
             Centre.ButtonContent = CreateCanvasWithSingleLetter(Centre, true);
         }
 
@@ -383,6 +384,13 @@ namespace Chem4Word.ACME.Controls
                         }
                     }
 
+                    SelectedElectrons = new List<Electron>();
+                    int index = 0;
+                    foreach (KeyValuePair<CompassPoints, ElectronType> kvp in SelectedElectronDictionary)
+                    {
+                        Electron electron = ElectronHelper.MakeElectron(Atom, index++, kvp.Value, kvp.Key);
+                        SelectedElectrons.Add(electron);
+                    }
                     SetButtonStates();
                 }
                 else
@@ -423,29 +431,10 @@ namespace Chem4Word.ACME.Controls
                     Button = button.Name
                 };
 
-                CompassValueChanged?.Invoke(this, args);
+                ValueChanged?.Invoke(this, args);
 
                 _inhibitEvents = false;
             }
-        }
-
-        public string ListCompassElectrons()
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            stringBuilder.AppendLine($"{SelectedElectronDictionary.Count} Electron Values selected");
-            foreach (KeyValuePair<CompassPoints, ElectronType> keyValuePair in SelectedElectronDictionary)
-            {
-                Electron electron = new Electron
-                {
-                    ExplicitPlacement = keyValuePair.Key,
-                    TypeOfElectron = keyValuePair.Value,
-                    Count = keyValuePair.Value == ElectronType.Radical ? 1 : 2
-                };
-                stringBuilder.AppendLine($"  {electron}");
-            }
-
-            return stringBuilder.ToString();
         }
 
         private List<CompassButton> GetAllButtons()

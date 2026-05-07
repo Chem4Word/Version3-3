@@ -19,7 +19,7 @@ namespace Chem4Word.ACME.Commands.Sketching
         public override bool CanExecute(object parameter)
         {
             var mols = EditController.SelectedItems.OfType<Molecule>().ToList();
-            var atoms = EditController.SelectedItems.OfType<Atom>().ToList();
+            var atoms = EditController.SelectedItems.OfType<Model2.Atom>().ToList();
             var bonds = EditController.SelectedItems.OfType<Bond>().ToList();
             var nothingSelected = EditController.SelectedItems.Count == 0;
 

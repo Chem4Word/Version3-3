@@ -13,8 +13,10 @@ namespace Chem4Word.Model2.Enums
     {
         [Description("Radical")]
         Radical = 1,
+
         [Description("Lone Pair")]
         LonePair = 2,
+
         [Description("Carbenoid")]
         Carbenoid = 3
     }

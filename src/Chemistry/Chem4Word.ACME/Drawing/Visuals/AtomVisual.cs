@@ -216,6 +216,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 AddVisualChild(ChargeChildVisual);
                 children.Add(ChargeChildVisual);
             }
+
             // Stage 8: draw any electrons
             foreach (var electron in ParentAtom.Electrons.Values)
             {

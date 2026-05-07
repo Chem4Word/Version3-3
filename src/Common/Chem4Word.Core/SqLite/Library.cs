@@ -71,6 +71,9 @@ namespace Chem4Word.Core.SqLite
                     string path = Environment.GetEnvironmentVariable("PATH");
                     if (path != null && !path.Contains(executingPath))
                     {
+#if DEBUG
+                        _telemetry.Write(module, "Information", $"Adding {GdprHelper.ReplaceDl3Path(executingPath)} to path");
+#endif
                         Environment.SetEnvironmentVariable("PATH", executingPath + ";" + path);
                     }
                 }

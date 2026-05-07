@@ -108,6 +108,12 @@
     <Compile Include="Behaviors\ElectronPusherBehaviour.cs" />
     <Compile Include="Behaviors\IgnoreMouseWheelBehavior.cs" />
     <Compile Include="Behaviors\ReactionBehavior.cs" />
+    <Compile Include="Commands\Atom\AddCarbenoidElectronsCommand.cs" />
+    <Compile Include="Commands\Atom\AddLonePairElectronsCommand.cs" />
+    <Compile Include="Commands\Atom\AddRadicalElectronsCommand.cs" />
+    <Compile Include="Commands\Atom\RemoveCarbenoidElectronsCommand.cs" />
+    <Compile Include="Commands\Atom\RemoveLonePairElectronsCommand.cs" />
+    <Compile Include="Commands\Atom\RemoveRadicalElectronsCommand.cs" />
     <Compile Include="Commands\BlockEditing\InsertTextCommand.cs" />
     <Compile Include="Commands\BlockEditing\SuperscriptCommand.cs" />
     <Compile Include="Commands\BlockEditing\SubscriptCommand.cs" />
@@ -139,8 +145,8 @@
       <DependentUpon>CompassButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DragHandle.cs" />
-    <Compile Include="Controls\ElectronsEditor.xaml.cs">
-      <DependentUpon>ElectronsEditor.xaml</DependentUpon>
+    <Compile Include="Controls\ElectronsControl.xaml.cs">
+      <DependentUpon>ElectronsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextBlockHelper.cs" />
     <Compile Include="Controls\ReactionOption.cs" />
@@ -175,6 +181,9 @@
     <Compile Include="EditController\EditController.Reactions.cs" />
     <Compile Include="EditController\EditController.Selection.cs" />
     <Compile Include="EditController\EditController.StateManagement.cs" />
+    <Compile Include="Controls\AutoElectronsControl.xaml.cs">
+      <DependentUpon>AutoElectronsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Enums\CompassControlType.cs" />
     <Compile Include="Graphics\BlockedArrow.cs" />
     <Compile Include="Graphics\DashedArrow.cs" />
@@ -303,9 +312,10 @@
     <Compile Include="Drawing\Text\LabelTextRunTypographyProperties.cs" />
     <Compile Include="Models\ChemistryObject.cs" />
     <Compile Include="Models\AutomaticElectronItem.cs" />
-    <Compile Include="Models\AutomaticElectronsEditorModel.cs" />
+    <Compile Include="Models\ElectronsControlModel.cs" />
     <Compile Include="Models\MoleculePropertiesModel.cs" />
     <Compile Include="Models\NamesModel.cs" />
+    <Compile Include="Models\AutomaticElectronsControlModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\NewAtomPlacement.cs" />
     <Compile Include="Controls\PTPopup.xaml.cs">
@@ -369,11 +379,11 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
-    <Page Include="Controls\ElectronsEditor.xaml">
+    <Page Include="Controls\MoleculePropertyEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\MoleculePropertyEditor.xaml">
+    <Page Include="Controls\ElectronsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -382,6 +392,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\TagItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\AutoElectronsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
