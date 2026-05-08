@@ -52,7 +52,7 @@ namespace Wpf.UI.Sandbox.Forms
             Electron electron1 = ElectronHelper.MakeElectron(Atom3, 1, ElectronType.Radical);
             Atom3.AddElectron(electron1);
 
-            Electron electron2 = ElectronHelper.MakeElectron(Atom3, 1, ElectronType.Radical, CompassPoints.East);
+            Electron electron2 = ElectronHelper.MakeElectron(Atom3, 2, ElectronType.Radical, CompassPoints.East);
             Atom3.AddElectron(electron2);
 
             Atom3.UpdateElectronPlacements();

@@ -129,15 +129,13 @@ namespace Chem4Word.ACME.Controls
 
         private void OnValueChanged_ManualElectrons(object sender, WpfEventArgs e)
         {
-            Debug.WriteLine("OnValueChanged_ManualElectrons() fired");
-
             if (_model != null && !_inhibitEvents)
             {
                 _model.UpdateParentAtom();
 
                 WpfEventArgs args = new WpfEventArgs
                 {
-                    Message = "ValueChanged_ManualElectrons"
+                    Message = $"ValueChanged_ManualElectrons - {e.Message}"
                 };
 
                 ValueChanged?.Invoke(this, args);
@@ -146,15 +144,13 @@ namespace Chem4Word.ACME.Controls
 
         private void OnValueChanged_AutomaticElectrons(object sender, WpfEventArgs e)
         {
-            Debug.WriteLine("OnValueChanged_AutomaticElectrons() fired");
-
             if (_model != null && !_inhibitEvents)
             {
                 _model.UpdateParentAtom();
 
                 WpfEventArgs args = new WpfEventArgs
                 {
-                    Message = "ValueChanged_AutomaticElectrons"
+                    Message = $"ValueChanged_AutomaticElectrons - {e.Message}"
                 };
 
                 ValueChanged?.Invoke(this, args);

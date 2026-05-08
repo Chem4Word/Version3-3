@@ -94,12 +94,7 @@ namespace Chem4Word.ACME.Models
                         // All electrons are Automatic
                         foreach (Electron electron in electrons)
                         {
-                            AutomaticElectronItem item = new AutomaticElectronItem
-                            {
-                                ElectronType = electron.TypeOfElectron,
-                                ParentAtom = ParentAtom,
-                                Id = electron.Id
-                            };
+                            AutomaticElectronItem item = MakeAutomaticElectronItem(ParentAtom, electron.Id, electron.TypeOfElectron);
                             _autoControl.Model.AutomaticElectronItems.Add(item);
                             _autoControl.Model.AutomaticElectronPlacements.Add(item.Id, item);
                         }
@@ -116,15 +111,10 @@ namespace Chem4Word.ACME.Models
             _autoControl.Model.AutomaticElectronItems = new ObservableCollection<AutomaticElectronItem>();
             _autoControl.Model.AutomaticElectronPlacements = new Dictionary<string, AutomaticElectronItem>();
 
-            int index = 0;
+            int index = 1;
             foreach (ElectronType electronType in _manualControl.SelectedElectronDictionary.Values)
             {
-                AutomaticElectronItem item = new AutomaticElectronItem
-                {
-                    ParentAtom = ParentAtom,
-                    Id = $"{index++}",
-                    ElectronType = electronType
-                };
+                AutomaticElectronItem item = MakeAutomaticElectronItem(ParentAtom, $"e{index++}", electronType);
 
                 _autoControl.Model.AutomaticElectronItems.Add(item);
                 _autoControl.Model.AutomaticElectronPlacements.Add(item.Id, item);
@@ -153,6 +143,7 @@ namespace Chem4Word.ACME.Models
                     cp = Model2.Helpers.Utils.NextCompassPoint(cp);
                 }
 
+                item.ExplicitPlacement = cp;
                 _manualControl.SelectedElectronDictionary.Add(cp, item.TypeOfElectron);
                 _manualControl.SelectedElectrons.Add(item);
             }
@@ -204,6 +195,18 @@ namespace Chem4Word.ACME.Models
 
             _autoControl.Model.AutomaticElectronPlacements = new Dictionary<string, AutomaticElectronItem>();
             _autoControl.Model.AutomaticElectronItems = new ObservableCollection<AutomaticElectronItem>();
+        }
+
+        public static AutomaticElectronItem MakeAutomaticElectronItem(Atom parent, string id, ElectronType type)
+        {
+            AutomaticElectronItem item = new AutomaticElectronItem
+            {
+                ParentAtom = parent,
+                Id = id,
+                ElectronType = type
+            };
+
+            return item;
         }
     }
 }

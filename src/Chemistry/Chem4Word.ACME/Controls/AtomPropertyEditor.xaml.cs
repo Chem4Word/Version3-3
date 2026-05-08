@@ -678,6 +678,8 @@ namespace Chem4Word.ACME.Controls
 
             if (!_inhibitEvents)
             {
+                Debug.WriteLine($"OnValueChanged_ElectronsControl() - {e.Message}");
+
                 if (ElectronsControl.Model.ParentAtom.Electrons.Count > 0)
                 {
                     _atomPropertiesModel.ExplicitH = HydrogenLabels.All;

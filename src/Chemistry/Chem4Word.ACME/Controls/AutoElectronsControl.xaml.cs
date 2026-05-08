@@ -13,7 +13,6 @@ using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Helpers;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +27,6 @@ namespace Chem4Word.ACME.Controls
     public partial class AutoElectronsControl : INotifyPropertyChanged
     {
         private AutomaticElectronsControlModel _model;
-        private int _id;
         private bool _inhibitEvents;
         private ElectronType _selectedType = ElectronType.Radical;
 
@@ -90,7 +88,7 @@ namespace Chem4Word.ACME.Controls
             WpfEventArgs args = new WpfEventArgs
             {
                 Button = button,
-                Message = $"ElectronsEditor: {button} {cause}"
+                Message = $"AutomaticElectronsEditor: {button} {cause}"
             };
 
             ValueChanged?.Invoke(this, args);
@@ -98,8 +96,6 @@ namespace Chem4Word.ACME.Controls
 
         private void OnSelectionChanged_NewElectronTypePicker(object sender, SelectionChangedEventArgs e)
         {
-            Debug.WriteLine("OnSelectionChanged_NewElectronTypePicker() fired");
-
             if (!_inhibitEvents)
             {
                 if (sender is ComboBox combo && combo.SelectedItem is ElectronType type)
@@ -107,20 +103,11 @@ namespace Chem4Word.ACME.Controls
                     _selectedType = type;
                     EnableAddAutomaticElectronButton();
                 }
-
-                WpfEventArgs args = new WpfEventArgs
-                {
-                    Message = "OnSelectionChanged_NewElectronTypePicker"
-                };
-
-                ValueChanged?.Invoke(this, args);
             }
         }
 
         private void OnSelectionChanged_ExistingElectronTypePicker(object sender, SelectionChangedEventArgs e)
         {
-            Debug.WriteLine("OnSelectionChanged_ExistingElectronTypePicker() fired");
-
             if (!_inhibitEvents)
             {
                 if (sender is ComboBox combo
@@ -133,69 +120,53 @@ namespace Chem4Word.ACME.Controls
                     item.ElectronType = type;
                     item.ButtonContent = CreateElectronsModeCanvas(item);
 
-                    RaiseChangedEvent("ChangedElectron", $"Setting {item.Id} type to '{type}'");
+                    RaiseChangedEvent("ChangedElectron", $"Electron {item.Id} set to '{type}'");
                     OnPropertyChanged();
                 }
-
-                WpfEventArgs args = new WpfEventArgs
-                {
-                    Message = "OnSelectionChanged_ExistingElectronTypePicker"
-                };
-
-                ValueChanged?.Invoke(this, args);
             }
         }
 
         private void OnDeleteRowClicked(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("OnDeleteRowClicked() fired");
-
             if (sender is Button deleteButton && deleteButton.DataContext is AutomaticElectronItem item)
             {
                 Model.AutomaticElectronItems.Remove(item);
                 ApplyAutomaticElectronsToAtom();
                 EnableAddAutomaticElectronButton();
-                RaiseChangedEvent("DeletedElectron", $"Item {item.Id} '{item.ElectronType}' Deleted");
+
+                RaiseChangedEvent("DeletedElectron", $"Deleted {item.Id} '{item.ElectronType}'");
             }
-
-            WpfEventArgs args = new WpfEventArgs
-            {
-                Message = "OnDeleteRowClicked"
-            };
-
-            ValueChanged?.Invoke(this, args);
         }
 
         private void OnClick_Add(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("OnClick_Add() fired");
+            int id = 0;
 
-            AutomaticElectronItem item = new AutomaticElectronItem
+            foreach (AutomaticElectronItem electronItem in Model.AutomaticElectronItems)
             {
-                ParentAtom = ParentAtom,
-                Id = $"e{_id++}",
-                ElectronType = _selectedType
-            };
+                if (int.TryParse(electronItem.Id.Substring(1), out int value))
+                {
+                    id = Math.Max(id, value);
+                }
+            }
 
+            id++;
+
+            AutomaticElectronItem item = ElectronsControlModel.MakeAutomaticElectronItem(ParentAtom, $"e{id}", _selectedType);
             Model.AutomaticElectronItems.Add(item);
             ApplyAutomaticElectronsToAtom();
             EnableAddAutomaticElectronButton();
 
-            WpfEventArgs args = new WpfEventArgs
-            {
-                Message = "OnClick_Add"
-            };
-
-            ValueChanged?.Invoke(this, args);
+            // No need to raise event here as OnSelectionChanged_ExistingElectronTypePicker is fired by AutomaticElectronItems.Add(...)
         }
 
         private void ApplyAutomaticElectronsToAtom()
         {
             _parentAtom.ClearElectrons();
-            int idx = 1;
+            int index = 1;
             foreach (AutomaticElectronItem item in Model.AutomaticElectronItems)
             {
-                Electron electron = ElectronHelper.MakeElectron(_parentAtom, idx++, item.ElectronType);
+                Electron electron = ElectronHelper.MakeElectron(_parentAtom, index++, item.ElectronType);
                 _parentAtom.AddElectron(electron);
             }
             _parentAtom.UpdateElectronPlacements();
