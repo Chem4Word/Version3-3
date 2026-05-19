@@ -22,7 +22,16 @@ namespace Chem4Word.ACME.Adorners.Feedback
             base.OnRender(drawingContext);
             StreamGeometry sg = new StreamGeometry();
 
-            Rect atomBounds = (TargetedVisual as AtomVisual).Bounds;
+            Rect atomBounds = Rect.Empty;
+
+            if (TargetedVisual is ElectronVisual ev)
+            {
+                atomBounds = ev.Bounds;
+            }
+            else if (TargetedVisual is AtomVisual av)
+            {
+                atomBounds = av.Bounds;
+            }
             atomBounds.Inflate(2.0, 2.0);
             Vector twiddle = new Vector(3, 0.0);
             using (StreamGeometryContext sgc = sg.Open())

@@ -99,6 +99,7 @@
     <Compile Include="Entities\AtomLabelCharacter.cs" />
     <Compile Include="Entities\BondLine.cs" />
     <Compile Include="Entities\MoleculeExtents.cs" />
+    <Compile Include="Helpers\BezierUtils.cs" />
     <Compile Include="Helpers\FontHelper.cs" />
     <Compile Include="OoXml\OoXmlBeautifier.cs" />
     <Compile Include="OoXml\OoXmlColours.cs" />

@@ -6,9 +6,11 @@
 // ---------------------------------------------------------------------------
 using Chem4Word.ACME.Adorners.Sketching;
 using Chem4Word.ACME.Controls;
+using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -87,8 +89,8 @@ namespace Chem4Word.ACME.Behaviors
         private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             var targetChemistry = CurrentEditor.ActiveChemistry;
-            if (!(targetChemistry is null) && !(StartChemistry is null) && targetChemistry != StartChemistry 
-                && (targetChemistry is Atom || targetChemistry is Bond))
+            if (!(targetChemistry is null) && !(StartChemistry is null) && targetChemistry != StartChemistry
+                && (targetChemistry is Atom || targetChemistry is Bond || targetChemistry is Electron))
             {
                 EditController.AddElectronPusher(StartChemistry, targetChemistry, ElectronPusherType,
                                                  DrawAdorner.FirstControlPoint, DrawAdorner.SecondControlPoint);
@@ -119,7 +121,7 @@ namespace Chem4Word.ACME.Behaviors
             LastPos = e.GetPosition(CurrentEditor);
             CurrentEditor.CaptureMouse();
             StartChemistry = CurrentEditor.ActiveChemistry;
-            if (!(StartChemistry is null) && (StartChemistry is Bond || StartChemistry is Atom))
+            if (!(StartChemistry is null) && (StartChemistry is Bond || StartChemistry is Atom || StartChemistry is Electron))
             {
                 IsDrawing = true;
             }
@@ -172,6 +174,16 @@ namespace Chem4Word.ACME.Behaviors
 
             layer.Remove(_adorner);
             _adorner = null;
+        }
+
+        public ElectronPusherBehaviour() : base()
+        {
+            PermittedHighlights = new HashSet<System.Type>
+                                  {
+                                      typeof(AtomVisual),
+                                      typeof(BondVisual),
+                                      typeof(ElectronVisual)
+                                  };
         }
     }
 }

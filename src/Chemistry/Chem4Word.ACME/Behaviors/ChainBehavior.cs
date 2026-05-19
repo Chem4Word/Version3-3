@@ -47,8 +47,11 @@ namespace Chem4Word.ACME.Behaviors
                 {
                     if (_currentAdorner != null)
                     {
-                        var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
-                        layer.Remove(_currentAdorner);
+                        AdornerLayer layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
+                        if (layer != null)
+                        {
+                            layer.Remove(_currentAdorner);
+                        }
                         _currentAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
                         _currentAdorner.MouseLeftButtonUp -= OnMouseLeftButtonUp_CurrentEditor;
                         _currentAdorner.PreviewKeyDown -= OnPreviewKeyDown_CurrentEditor;
@@ -90,7 +93,8 @@ namespace Chem4Word.ACME.Behaviors
                 _parent.MouseLeftButtonDown += OnMouseLeftButtonDown_CurrentEditor;
             }
 
-            CurrentStatus = (AcmeConstants.DefaultChainMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DefaultChainMessage, EditController.TotUpMolFormulae(),
+                             EditController.TotUpSelectedMwt());
         }
 
         private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
@@ -126,7 +130,8 @@ namespace Chem4Word.ACME.Behaviors
                 }
                 else
                 {
-                    CurrentStatus = (AcmeConstants.DragChainMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                    CurrentStatus = (AcmeConstants.DragChainMessage, EditController.TotUpMolFormulae(),
+                                     EditController.TotUpSelectedMwt());
                     var endPoint = e.GetPosition(EditController.EditingCanvas);
 
                     MarkOutAtoms(endPoint, e);
@@ -147,7 +152,8 @@ namespace Chem4Word.ACME.Behaviors
 
                     if (targetedVisual != null)
                     {
-                        Clashing = targetedVisual is ChemicalVisual && (targetedVisual as AtomVisual)?.ParentAtom != Target
+                        Clashing = targetedVisual is ChemicalVisual &&
+                                   (targetedVisual as AtomVisual)?.ParentAtom != Target
                                    || overWritingSelf;
                     }
 
@@ -179,11 +185,13 @@ namespace Chem4Word.ACME.Behaviors
                         }
                     }
 
-                    CurrentAdorner = new ChainAdorner(FirstPoint, CurrentEditor, EditController.EditBondThickness, Placements,
-                                                       endPoint, Target, Clashing);
+                    CurrentAdorner = new ChainAdorner(FirstPoint, CurrentEditor, EditController.EditBondThickness,
+                                                      Placements,
+                                                      endPoint, Target, Clashing);
                     if (!Clashing)
                     {
-                        CurrentStatus = ("Click to draw chain", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        CurrentStatus = ("Click to draw chain", EditController.TotUpMolFormulae(),
+                                         EditController.TotUpSelectedMwt());
                     }
                     else
                     {
@@ -328,6 +336,11 @@ namespace Chem4Word.ACME.Behaviors
 
             CurrentEditor.Cursor = _lastCursor;
             _parent = null;
+        }
+
+        public ChainBehavior() : base()
+        {
+            PermittedHighlights = new HashSet<System.Type> { typeof(AtomVisual) };
         }
     }
 }

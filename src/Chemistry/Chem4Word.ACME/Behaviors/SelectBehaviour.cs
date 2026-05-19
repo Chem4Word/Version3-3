@@ -225,7 +225,7 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.ReleaseMouseCapture();
 
             CurrentEditor.Focus();
-            var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
+            AdornerLayer layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
             layer?.Update();
 
             CurrentStatus = (AcmeConstants.SelectDefaultMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
@@ -281,6 +281,7 @@ namespace Chem4Word.ACME.Behaviors
         {
             //this is a *tunnelling* event which means it fires on the outmost
             //container before any of the visual children
+
             //TODO:  [DCD] Disable the hydrogen rotator selector
             var pos = Mouse.GetPosition(CurrentEditor);
             Vector shift; //how much we want to shift the objects by
@@ -665,6 +666,21 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.PreviewMouseRightButtonDown -= OnPreviewMouseRightButtonDown_CurrentEditor;
 
             _lassoAdorner = null;
+        }
+
+        public SelectBehaviour(): base()
+        {
+            PermittedHighlights = new HashSet<System.Type>
+            {
+                typeof(AtomVisual),
+                typeof(BondVisual),
+                typeof(GroupVisual),
+                typeof(ReactionVisual),
+                typeof(AnnotationVisual),
+                typeof(ElectronPusherVisual),
+                typeof(ElectronVisual),
+                typeof(FunctionalGroupVisual)
+             };
         }
     }
 }

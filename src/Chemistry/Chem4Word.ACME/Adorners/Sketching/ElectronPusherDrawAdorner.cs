@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 using Chem4Word.ACME.Controls;
-using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Graphics;
 using Chem4Word.Model2;
@@ -26,7 +25,6 @@ namespace Chem4Word.ACME.Adorners.Sketching
 
     public class ElectronPusherDrawAdorner : Adorner
     {
-        public Pen BondPen { get; }
         public bool CanRender { get; set; }
         public EditorCanvas CurrentEditor { get; }
         public Point FirstControlPoint { get; set; }
@@ -62,7 +60,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             switch (Source)
             {
                 case Electron electron:
-                    start = (CurrentEditor.ChemicalVisuals[electron] as ElectronVisual).Centroid;
+                    start = electron.Centroid;
                     break;
 
                 case Atom atom:
@@ -211,21 +209,30 @@ namespace Chem4Word.ACME.Adorners.Sketching
             }
         }
 
-        public static (Point StartPoint, Point EndPoint, Point FirstControlPoint, Point SecondControlPoint)
+        public static (Point FirstControlPoint, Point SecondControlPoint)
             RecalcControlPoints(ElectronPusher electronPusher, double modelMeanBondLength)
         {
             Point startPoint;
             Point newEndPoint = electronPusher.EndPoint;
-            if (electronPusher.StartChemistry is Atom atom)
+            switch (electronPusher.StartChemistry)
             {
-                startPoint = atom.Position;
+                case Atom atom:
+                    startPoint = atom.Position;
+                    break;
+
+                case Electron electron:
+                    startPoint = electron.Centroid;
+                    break;
+
+                //startChemistry is Bond
+                default:
+                    {
+                        Bond bond = electronPusher.StartChemistry as Bond;
+                        startPoint = bond.MidPoint;
+                        break;
+                    }
             }
-            else
-            //startChemistry is Bond
-            {
-                Bond bond = electronPusher.StartChemistry as Bond;
-                startPoint = bond.MidPoint;
-            }
+
             Vector spanVector = newEndPoint - startPoint;
             Vector halfSpan = spanVector / 2;
             Vector span = halfSpan;
@@ -252,7 +259,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             Point firstPoint = startPoint + (controlVector * rotateMatrix);
             rotateMatrix.Rotate(-angle);
             Point secondPoint = firstPoint + (span * rotateMatrix);
-            return (startPoint, newEndPoint, firstPoint, secondPoint);
+            return (firstPoint, secondPoint);
         }
     }
 }

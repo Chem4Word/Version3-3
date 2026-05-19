@@ -214,8 +214,7 @@ namespace Chem4Word.ACME
 
                                 affectedBonds.UnionWith(atom.Bonds);
                             }
-                            TransformAtomRelatedPushers(atomsToTransform, inverse);
-                            TransformBondRelatedPushers(affectedBonds.ToList(), inverse);
+                            TransformRelatedPushers(affectedBonds.ToList(), inverse);
                             parent.RootMolecule.UpdateVisual();
                             foreach (Atom o in atomsToTransform)
                             {
@@ -234,8 +233,7 @@ namespace Chem4Word.ACME
 
                                 affectedBonds.UnionWith(atom.Bonds);
                             }
-                            TransformAtomRelatedPushers(atomsToTransform, operation);
-                            TransformBondRelatedPushers(affectedBonds.ToList(), operation);
+                            TransformRelatedPushers(affectedBonds.ToList(), operation);
                             parent.RootMolecule.UpdateVisual();
                             foreach (Atom o in atomsToTransform)
                             {

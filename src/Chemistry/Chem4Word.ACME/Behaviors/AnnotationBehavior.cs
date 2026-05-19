@@ -7,7 +7,8 @@
 
 using Chem4Word.ACME.Adorners.Sketching;
 using Chem4Word.ACME.Controls;
-using Chem4Word.Core.Helpers;
+using Chem4Word.ACME.Drawing.Visuals;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Documents;
@@ -28,10 +29,13 @@ namespace Chem4Word.ACME.Behaviors
             {
                 if (_currentAdorner != null)
                 {
-                    var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
-                    layer.Remove(_currentAdorner);
-                    _currentAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentAdorner;
-                    _currentAdorner = null;
+                    AdornerLayer layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
+                    if (layer != null)
+                    {
+                        layer.Remove(_currentAdorner);
+                        _currentAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentAdorner;
+                        _currentAdorner = null;
+                    }
                 }
                 _currentAdorner = value;
                 if (_currentAdorner != null)
@@ -99,6 +103,10 @@ namespace Chem4Word.ACME.Behaviors
 
         public AnnotationBehavior() : base()
         {
+            PermittedHighlights = new HashSet<System.Type>
+            {
+                typeof(AnnotationVisual)
+            };
         }
 
         public override void Abort()

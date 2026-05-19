@@ -16,9 +16,15 @@ namespace Chem4Word.Core.Helpers
             return value.Replace(Environment.UserName, "%UserName%");
         }
 
+        public static string ReplaceLocalAppData(string value)
+        {
+            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            return value.Replace(localAppDataPath, "%LocalAppData%");
+        }
+
         public static string ReplaceDl3Path(string value)
         {
-            string temp = ReplaceUserName(value);
+            string temp = ReplaceLocalAppData(value);
             string[] parts = temp.Split('\\');
 
             int start = 0;

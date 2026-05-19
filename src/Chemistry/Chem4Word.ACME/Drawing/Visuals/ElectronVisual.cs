@@ -74,7 +74,9 @@ namespace Chem4Word.ACME.Drawing.Visuals
             unitVector.Normalize();
             placementVector = endPoint.Value - center + unitVector * (ParentVisual.SymbolSize / 4);
             Point electronCenter = center + placementVector;
+            ParentElectron.Centroid = electronCenter;
 
+            Geometry overlayGeometry;
             //this is the centre of the electron symbol
             //if we're drawing a radical, then draw a simple dot
             double radius = SymbolSize / 10;
@@ -83,6 +85,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
             {
                 offset = radius;
                 Context.DrawEllipse(Fill, null, electronCenter, radius, radius);
+                overlayGeometry = new EllipseGeometry(electronCenter, radius, radius);
             }
             else //two electrons - draw a pair of dots or a line for carbenoids
             {
@@ -99,20 +102,32 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     offset = radius * 4;
                     perpendicular *= offset;
                     Context.DrawLine(pen, electronCenter + perpendicular, electronCenter - perpendicular);
+                    overlayGeometry = new LineGeometry(electronCenter + perpendicular, electronCenter - perpendicular);
                 }
                 else //draw two dots
                 {
                     offset = radius * 2;
                     perpendicular *= offset;
                     Context.DrawEllipse(Fill, pen, electronCenter + perpendicular, radius, radius);
+                    overlayGeometry = new EllipseGeometry(electronCenter + perpendicular, radius, radius);
                     Context.DrawEllipse(Fill, pen, electronCenter - perpendicular, radius, radius);
+                    overlayGeometry = new GeometryGroup
+                    {
+                        Children = new GeometryCollection
+                                                     {
+                                                         overlayGeometry,
+                                                         new EllipseGeometry(
+                                                             electronCenter - perpendicular, radius, radius)
+                                                     }
+                    };
                 }
             }
 
-            //now draw a transparent circle on top of the electron visual to aid hit testing
-            var overlay = new EllipseGeometry(electronCenter, offset, offset);
+            //now draw a transparent overlay on top of the electron visual to aid hit testing
 
-            Context.DrawGeometry(Brushes.Transparent, null, overlay);
+            overlayGeometry = overlayGeometry.GetWidenedPathGeometry(new Pen(Brushes.Transparent, AcmeConstants.BondThickness * 6));
+
+            Context.DrawGeometry(Brushes.Transparent, null, overlayGeometry);
             Metrics = new AtomTextMetrics
             {
                 TotalBoundingBox = new Rect(new Point(electronCenter.X - offset, electronCenter.Y - offset),
@@ -120,7 +135,15 @@ namespace Chem4Word.ACME.Drawing.Visuals
             };
 
             //fix the hull for future use
-            CoreHull = WPFGeometry.GetGeoPoints(overlay);
+            CoreHull = WPFGeometry.GetGeoPoints(overlayGeometry);
+        }
+
+        public override Rect Bounds
+        {
+            get
+            {
+                return Metrics.TotalBoundingBox;
+            }
         }
 
         public override List<Point> Hull

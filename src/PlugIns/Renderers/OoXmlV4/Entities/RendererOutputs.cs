@@ -17,7 +17,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         public List<AtomLabelCharacter> AtomLabelCharacters { get; } = new List<AtomLabelCharacter>();
 
         // Electrons
-        public Dictionary<string, List<OoXmlElectron>> AtomsWithElectrons { get; set; } = new Dictionary<string, List<OoXmlElectron>>();
+        public Dictionary<string, OoXmlElectron> Electrons { get; set; } = new Dictionary<string, OoXmlElectron>();
 
         // Electrons Pushers
         public List<OoXmlElectronPusher> Pushers { get; } = new List<OoXmlElectronPusher>();

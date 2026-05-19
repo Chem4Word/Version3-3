@@ -85,6 +85,14 @@ namespace Chem4Word.ACME.Behaviors
                         break;
                     }
 
+                case ElectronVisual electronVisual:
+                    {
+                        var electron = electronVisual.ParentElectron;
+                        EditController.RemoveSpecificElectron(electron);
+                        CurrentStatus = ("Electron deleted", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                        break;
+                    }
+
                 case AtomVisual atomVisual:
                     {
                         var atom = atomVisual.ParentAtom;
@@ -108,6 +116,7 @@ namespace Chem4Word.ACME.Behaviors
                         CurrentStatus = ("Bond deleted", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                         break;
                     }
+
                 case AnnotationVisual annotationVisual:
                     {
                         var annotation = annotationVisual.ParentAnnotation;
@@ -135,6 +144,20 @@ namespace Chem4Word.ACME.Behaviors
                 CurrentEditor.Cursor = _cursor;
                 CurrentStatus = ("", "", "");
             }
+        }
+
+        public DeleteBehavior() : base()
+        {
+            PermittedHighlights = new HashSet<System.Type>
+                                  {
+                                      typeof(AtomVisual),
+                                      typeof(BondVisual),
+                                      typeof(GroupVisual),
+                                      typeof(ReactionVisual),
+                                      typeof(AnnotationVisual),
+                                      typeof(ElectronPusherVisual),
+                                      typeof(ElectronVisual)
+                                  };
         }
     }
 }

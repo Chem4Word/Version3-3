@@ -152,24 +152,6 @@ namespace Chem4Word.ACME
             }
         }
 
-        public void BeginUndoBlock()
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                //push a buffer record onto the stack
-                if (_transactionLevel == 0)
-                {
-                    _undoStack.Push(_startBracket);
-                }
-                _transactionLevel++;
-            }
-            catch (Exception exception)
-            {
-                WriteTelemetryException(module, exception);
-            }
-        }
-
         public void RecordAction(Action undoAction, Action redoAction, [CallerMemberName] string desc = null)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
@@ -196,14 +178,45 @@ namespace Chem4Word.ACME
         }
 
         /// <summary>
-        /// Ends a transaction block.  Transactions may be nested
+        /// Starts a transaction block.  Transactions may be nested.
+        /// </summary>
+        public void BeginUndoBlock()
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            try
+            {
+                //push a buffer record onto the stack
+                if (_transactionLevel == 0)
+                {
+                    _undoStack.Push(_startBracket);
+                }
+
+                int before = _transactionLevel;
+                _transactionLevel++;
+#if DEBUG
+                WriteTelemetry(module, "Information", $"Depth++ {before} -> {_transactionLevel}");
+#endif
+            }
+            catch (Exception exception)
+            {
+                WriteTelemetryException(module, exception);
+            }
+        }
+
+        /// <summary>
+        /// Ends a transaction block.  Transactions may be nested.
         /// </summary>
         public void EndUndoBlock()
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
+                int before = _transactionLevel;
                 _transactionLevel--;
+
+#if DEBUG
+                WriteTelemetry(module, "Information", $"Depth-- {before} -> {_transactionLevel}");
+#endif
 
                 if (_transactionLevel < 0)
                 {

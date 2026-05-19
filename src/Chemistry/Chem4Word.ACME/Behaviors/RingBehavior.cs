@@ -32,10 +32,6 @@ namespace Chem4Word.ACME.Behaviors
 
         public bool Clashing { get; private set; } = false;
 
-        public RingBehavior()
-        {
-        }
-
         public int RingSize { get; set; }
 
         public FixedRingAdorner CurrentAdorner
@@ -45,8 +41,8 @@ namespace Chem4Word.ACME.Behaviors
             {
                 if (_currentAdorner != null)
                 {
-                    var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
-                    layer.Remove(_currentAdorner);
+                    AdornerLayer layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
+                    layer?.Remove(_currentAdorner);
                     _currentAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentAdorner;
                     _currentAdorner = null;
                 }
@@ -467,6 +463,15 @@ namespace Chem4Word.ACME.Behaviors
                 _parent.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentEditor;
             }
             _parent = null;
+        }
+
+        public RingBehavior() : base()
+        {
+            PermittedHighlights = new HashSet<System.Type>
+                                  {
+                                      typeof(AtomVisual),
+                                      typeof(BondVisual),
+                                  };
         }
     }
 }

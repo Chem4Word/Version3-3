@@ -7,10 +7,7 @@
 
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Drawing.Visuals;
-using Chem4Word.ACME.Enums;
-using Chem4Word.ACME.Graphics;
 using Chem4Word.Model2;
-using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -191,9 +188,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            base.OnRender(drawingContext);
             //draw dashed lines from the control points to the ends of the arrow
-
             Point? startPoint = ParentPusher.StartPoint;
             Point? endPoint = ParentPusher.EndPoint;
             Point? lineStart = startPoint;
@@ -205,7 +200,30 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 secondChemistryVisuals.Add(CurrentEditor.ChemicalVisuals[chemistry] as ChemicalVisual);
             }
 
-            ChemicalVisual startVisual = CurrentEditor.ChemicalVisuals[ParentPusher.StartChemistry] as ChemicalVisual;
+            ChemicalVisual startVisual = null;
+
+            switch (ParentPusher.StartChemistry)
+            {
+                case Atom _:
+                case Bond _:
+                    startVisual = CurrentEditor.ChemicalVisuals[ParentPusher.StartChemistry] as ChemicalVisual;
+                    break;
+
+                case Electron electron:
+                    {
+                        AtomVisual parentAtomVisual = CurrentEditor.ChemicalVisuals[electron.Parent] as AtomVisual;
+                        foreach (ElectronVisual childVisual in parentAtomVisual.ElectronVisuals.Values)
+                        {
+                            if (childVisual.ParentElectron == ParentPusher.StartChemistry)
+                            {
+                                startVisual = childVisual;
+                            }
+                        }
+
+                        break;
+                    }
+            }
+
             ElectronPusher electronPusher = ParentPusher;
 
             ElectronPusherVisual.RecalcPusherMetrics(electronPusher, startVisual, secondChemistryVisuals, ref lineStart, ref lineEnd, startPoint.Value, endPoint.Value);
@@ -215,46 +233,6 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
             _newFirstControlPoint = UnadjustedControlPoint(_firstControlPointTemp, ParentPusher.StartPoint);
             _newSecondControlPoint = UnadjustedControlPoint(_secondControlPointTemp, ParentPusher.EndPoint);
-
-            BezierArrow arrow = null;
-
-            if (ParentPusher.PusherType == ElectronPusherType.CurlyArrow || ParentPusher.PusherType == ElectronPusherType.DoubleArrow)
-            {
-                bool doubleHeaded = ParentPusher.PusherType == ElectronPusherType.DoubleArrow;
-                arrow = new BezierArrow
-                {
-                    StartPoint = lineStart.Value,
-                    FirstControlPoint = _newFirstControlPoint,
-                    SecondControlPoint = _newSecondControlPoint,
-                    EndPoint = lineEnd.Value,
-                    MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
-                    HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
-                    ArrowHeadClosed = true,
-                    ArrowEnds = ParentPusher.PusherType == ElectronPusherType.CurlyArrow
-                                ? ArrowEnds.End
-                                : ArrowEnds.Both,
-                    Stroke = traceBrush
-                };
-            }
-            else if (ParentPusher.PusherType == ElectronPusherType.FishHook)
-            {
-                var newFishHook = new FishHookArrow
-                {
-                    StartPoint = lineStart.Value,
-                    EndPoint = lineEnd.Value,
-                    FirstControlPoint = _newFirstControlPoint,
-                    SecondControlPoint = _newSecondControlPoint,
-                    MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
-                    HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
-                    ArrowHeadClosed = true,
-                    Stroke = traceBrush
-                };
-                var offset = newFishHook.BarbOffset(ParentPusher.StartPoint, ParentPusher.EndPoint);
-                newFishHook.EndPoint -= offset;
-                arrow = newFishHook;
-            }
-
-            arrow.DrawArrowGeometry(drawingContext, new Pen(traceBrush, 3), arrow.Stroke);
 
             drawingContext.DrawLine(_dashPen, ParentPusher.StartPoint, _firstControlPointTemp);
             drawingContext.DrawLine(_dashPen, ParentPusher.EndPoint, _secondControlPointTemp);
@@ -273,15 +251,22 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 DashStyle = DashStyles.Dash
             };
 #endif
-            //draw a big transparent rectangle over the whole thing to capture hit testing
+            
+            var pusherVisual = CurrentEditor.ChemicalVisuals[ParentPusher];
+
+            //delegated the drawing of the arrow to the parent pusher visual
+            (pusherVisual as ElectronPusherVisual)?.DrawMainArrowGeometry(drawingContext, new Pen(traceBrush, 3), secondChemistryVisuals);
+
             Rect adornedElementRect = _adornedVisual.Bounds;
-            Rect newRect1 = new Rect(new Point(_firstControlPointTemp.X - _thumbWidth, _firstControlPointTemp.Y - _thumbWidth),
-                                     new Point(_firstControlPointTemp.X + _thumbWidth, _firstControlPointTemp.Y + _thumbWidth));
-            Rect newRect2 = new Rect(new Point(_secondControlPointTemp.X - _thumbWidth, _secondControlPointTemp.Y - _thumbWidth),
-                                     new Point(_secondControlPointTemp.X + _thumbWidth, _secondControlPointTemp.Y + _thumbWidth));
+            Rect newRect1 = new Rect(new Point(_firstControlPointTemp.X - _thumbWidth * 2, _firstControlPointTemp.Y - _thumbWidth * 2),
+                                     new Point(_firstControlPointTemp.X + _thumbWidth * 2, _firstControlPointTemp.Y + _thumbWidth * 2));
+            Rect newRect2 = new Rect(new Point(_secondControlPointTemp.X - _thumbWidth * 2, _secondControlPointTemp.Y - _thumbWidth * 2),
+                                     new Point(_secondControlPointTemp.X + _thumbWidth * 2, _secondControlPointTemp.Y + _thumbWidth * 2));
             adornedElementRect.Union(newRect1);
             adornedElementRect.Union(newRect2);
-            adornedElementRect.Inflate(5, 5);
+            adornedElementRect.Union(pusherVisual.Drawing.Bounds);
+            adornedElementRect.Inflate(_thumbWidth * 4, _thumbWidth * 4);
+            //draw a big transparent rectangle over the whole thing to capture hit testing
             drawingContext.DrawRectangle(overlayBrush, overlayPen, adornedElementRect);
         }
     }

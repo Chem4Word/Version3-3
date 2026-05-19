@@ -68,7 +68,39 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 {
                     StructuralObject startChemistry = electronPusher.StartChemistry;
                     Point startPoint = GetPoint(startChemistry, electronPusher.FirstControlPoint);
-                    Point endPoint = GetPoint(electronPusher.EndChemistries[0], electronPusher.FirstControlPoint);
+                    if (startChemistry is Atom atom)
+                    {
+                        if (atom.FormalCharge.HasValue && atom.FormalCharge.Value < 0)
+                        {
+                            AtomLabelCharacter charge = Outputs.AtomLabelCharacters
+                                                               .FirstOrDefault(a => a.AtomPath == atom.Path && a.Character.Character.Equals('-'));
+                            if (charge != null)
+                            {
+                                double margin = Inputs.MeanBondLength * OoXmlConstants.MultipleBondOffsetPercentage / 5;
+                                List<Point> corners = OoXmlHelper.BoundingBox(charge, Inputs.MeanBondLength, margin);
+
+                                double offsetX = (corners[2].X - corners[0].X) / 2;
+                                double offsetY = (corners[2].Y - corners[0].Y) / 2;
+                                startPoint = new Point(charge.Position.X + offsetX, charge.Position.Y + offsetY);
+
+                                Point[] points = GeometryTool.ClipLineWithPolygon(startPoint, electronPusher.FirstControlPoint, corners, out _);
+                                switch (points.Length)
+                                {
+                                    case 2:
+                                    case 3:
+                                        startPoint = points[1];
+                                        break;
+
+                                    default:
+                                        Debugger.Break();
+                                        startPoint = charge.Position; // ToDo: Check this if it ever occurs
+                                        break;
+                                }
+                            }
+                        }
+                    }
+
+                    Point endPoint = GetPoint(electronPusher.EndChemistries[0], electronPusher.SecondControlPoint);
 
                     OoXmlElectronPusher pusher = new OoXmlElectronPusher
                     {
@@ -80,10 +112,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                         Path = electronPusher.Path
                     };
 
+                    pusher.CalculateBoundingBox();
+                    //Outputs.Diagnostics.Rectangles.Add(new DiagnosticRectangle(pusher.BoundingBox, OoXmlColours.DarkOrange));
+
                     if (electronPusher.EndChemistries.Count == 2)
                     {
                         Point pseudoBondStart = GetPoint(electronPusher.EndChemistries[0], electronPusher.FirstControlPoint, false);
-                        Point pseudoBondEnd = GetPoint(electronPusher.EndChemistries[1], electronPusher.FirstControlPoint, false);
+                        Point pseudoBondEnd = GetPoint(electronPusher.EndChemistries[1], electronPusher.SecondControlPoint, false);
 
                         // Adjust the end point
                         endPoint = GeometryTool.GetMidPoint(pseudoBondStart, pseudoBondEnd);
@@ -164,14 +199,45 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                     }
                     break;
 
+                case Electron electron:
+                    OoXmlElectron ooXmlElectron = Outputs.Electrons[electron.Path];
+                    result = ooXmlElectron.Position;
+                    if (clip)
+                    {
+                        Point point1 = ooXmlElectron.Position;
+                        Point point2 = point1 + (controlPoint - point1);
+                        if (Outputs.ConvexHulls.TryGetValue(electron.Parent.Path, out List<Point> hull))
+                        {
+                            Point[] points = GeometryTool.ClipLineWithPolygon(point1, point2, hull, out _);
+                            switch (points.Length)
+                            {
+                                case 2:
+                                case 3:
+                                    result = points[1];
+                                    break;
+
+                                default:
+                                    Debugger.Break();
+                                    result = point1; // ToDo: Check this if it ever occurs
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+
                 case Bond bond:
                     result = bond.MidPoint;
                     if (clip)
                     {
                         List<Point> hullOfBondLines = ConvexHullOfBondLines(bond.Path);
 
+                        //Outputs.Diagnostics.Polygons.Add(new DiagnosticPolygon(hullOfBondLines, OoXmlColours.Green));
+
                         Point point1 = bond.MidPoint;
                         Point point2 = point1 + (controlPoint - point1);
+
+                        //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(point1, OoXmlColours.Purple, BondOffset() / 2, false));
+                        //Outputs.Diagnostics.Points.Add(new DiagnosticSpot(point2, OoXmlColours.Blue, BondOffset() / 2, false));
 
                         Point[] points = GeometryTool.ClipLineWithPolygon(point1, point2, hullOfBondLines, out _);
                         switch (points.Length)
@@ -875,8 +941,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             {
                 List<Point> hull = ConvexHullOfCharacters(atom.Path);
 
-                List<OoXmlElectron> electronsToBeRendered = new List<OoXmlElectron>();
-
                 foreach (Electron electron in atom.AllElectrons())
                 {
                     string colour = OoXmlColours.Black;
@@ -897,14 +961,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                         ComputedPlacement = electron.Placement
                     };
 
-                    electronsToBeRendered.Add(ooXmlElectron);
-
                     ProcessElectron(ooXmlElectron, hull);
-                    hull = CombinedConvexHull(hull, ooXmlElectron.Hull());
-                }
 
-                // Set the outputs property
-                Outputs.AtomsWithElectrons.Add(atom.Path, electronsToBeRendered);
+                    hull = CombinedConvexHull(hull, ooXmlElectron.Hull());
+
+                    Outputs.Electrons.Add(electron.Path, ooXmlElectron);
+                }
 
                 // Update Convex Hull of the atom which now includes the electrons
                 Outputs.ConvexHulls[atom.Path] = hull;

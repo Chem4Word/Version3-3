@@ -35,6 +35,11 @@ namespace Chem4Word.ACME.Behaviors
 
         public NRingBehavior()
         {
+            PermittedHighlights = new HashSet<Type>
+                                  {
+                                      typeof(AtomVisual),
+                                      typeof(BondVisual),
+                                  };
         }
 
         public bool MouseIsDown { get; set; }
@@ -88,8 +93,11 @@ namespace Chem4Word.ACME.Behaviors
         {
             if (_currentAdorner != null)
             {
-                var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
-                layer.Remove(_currentAdorner);
+                AdornerLayer layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
+                if (layer != null)
+                {
+                    layer.Remove(_currentAdorner);
+                }
                 _currentAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_CurrentAdorner;
                 _currentAdorner.MouseLeftButtonUp -= OnMouseLeftButtonUp_CurrentAdorner;
                 _currentAdorner.PreviewKeyDown -= OnKeyDown_CurrentAdorner;

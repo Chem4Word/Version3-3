@@ -8,6 +8,8 @@
 using Chem4Word.ACME.Controls;
 using Chem4Word.Model2.Annotations;
 using Microsoft.Xaml.Behaviors;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -52,6 +54,8 @@ namespace Chem4Word.ACME.Behaviors
                 }
             }
         }
+
+        public HashSet<Type> PermittedHighlights { get; set; }
 
         private void OnPreviewKeyDown_CurrentEditor(object sender, KeyEventArgs e)
         {

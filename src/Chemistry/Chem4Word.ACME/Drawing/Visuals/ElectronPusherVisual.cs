@@ -11,6 +11,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 
@@ -40,8 +41,18 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
         public override void Render()
         {
-            var firstChemistryVisual = ChemicalVisuals[ParentPusher.StartChemistry] as ChemicalVisual;
+            if (ParentPusher.StartChemistry == null)
+            {
+                Debugger.Break();
+            }
 
+            if (ParentPusher.EndChemistries == null || ParentPusher.EndChemistries.Count == 0)
+            {
+                Debugger.Break();
+            }
+
+            ChemicalVisual firstChemistryVisual = null;
+            firstChemistryVisual = GetAssociatedVisual(ParentPusher.StartChemistry);
             Point? startPoint = new Point(0, 0);
             Point? endPoint = new Point(0, 0);
 
@@ -51,7 +62,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
             foreach (StructuralObject structuralObject in ParentPusher.EndChemistries)
             {
-                secondChemistryVisuals.Add(ChemicalVisuals[structuralObject]);
+                secondChemistryVisuals.Add(GetAssociatedVisual(structuralObject));
             }
 
             ElectronPusher electronPusher = ParentPusher;
@@ -63,9 +74,9 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
             _arrow = null;
 
-            if (ParentPusher.PusherType == ElectronPusherType.CurlyArrow || ParentPusher.PusherType == ElectronPusherType.DoubleArrow)
+            if (ParentPusher.PusherType == ElectronPusherType.CurlyArrow ||
+                ParentPusher.PusherType == ElectronPusherType.DoubleArrow)
             {
-                bool doubleHeaded = ParentPusher.PusherType == ElectronPusherType.DoubleArrow;
                 _arrow = new BezierArrow
                 {
                     StartPoint = lineStart.Value,
@@ -76,8 +87,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
                     ArrowHeadClosed = true,
                     ArrowEnds = ParentPusher.PusherType == ElectronPusherType.CurlyArrow
-                                  ? ArrowEnds.End
-                                  : ArrowEnds.Both,
+                                 ? ArrowEnds.End
+                                 : ArrowEnds.Both,
                     Stroke = pusherPen.Brush
                 };
             }
@@ -92,7 +103,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     MaxHeadLength = ACMEGlobals.ElectronPusherHeadSize,
                     HeadFractionLength = ACMEGlobals.ElectronPusherHeadFractionLength,
                     ArrowHeadClosed = true,
-
                     Stroke = pusherPen.Brush
                 };
                 var offset = newFishHook.BarbOffset(ParentPusher.StartPoint, ParentPusher.EndPoint);
@@ -103,49 +113,67 @@ namespace Chem4Word.ACME.Drawing.Visuals
             //draw the arrow
             using (DrawingContext dc = RenderOpen())
             {
-                _arrow.DrawArrowGeometry(dc, pusherPen, _arrow.Stroke);
+                DrawMainArrowGeometry(dc, pusherPen, secondChemistryVisuals);
+            }
+        }
 
-                //draw an overlay
+        public void DrawMainArrowGeometry(DrawingContext dc, Pen pusherPen, List<DrawingVisual> secondChemistryVisuals)
+        {
+            _arrow.DrawArrowGeometry(dc, pusherPen, pusherPen.Brush);
 
-                SolidColorBrush outliner;
+            //draw an overlay
+
+            SolidColorBrush outliner;
 #if SHOWBOUNDS
                 outliner = new SolidColorBrush(Colors.LightSalmon)
                 {
                     Opacity = 0.4d
                 };
 
-                dc.DrawLine(new Pen(outliner,1),  lineStart.Value, ParentPusher.FirstControlPoint);
-                dc.DrawEllipse(outliner, new Pen(outliner, 1), ParentPusher.FirstControlPoint, 5, 5);
-                dc.DrawLine(new Pen(outliner, 1), lineEnd.Value, ParentPusher.SecondControlPoint);
-                dc.DrawEllipse(outliner, new Pen(outliner, 1), ParentPusher.SecondControlPoint, 5, 5);
 #else
 
 #endif
-                outliner = new SolidColorBrush(Colors.Transparent) { Opacity = 0d };
-                Pen outlinePen = new Pen(outliner, _arrow.StrokeThickness * 2);
-                _arrow.DrawArrowGeometry(dc, outlinePen, outliner);
+            outliner = new SolidColorBrush(Colors.Transparent) { Opacity = 0d };
+            Pen outlinePen = new Pen(outliner, _arrow.StrokeThickness * 2);
+            _arrow.DrawArrowGeometry(dc, outlinePen, outliner);
 
-                //if the arrow ends in empty space between two atoms, draw a dashed line
-                if (secondChemistryVisuals.Count == 2)
+            //if the arrow ends in empty space between two atoms, draw a dashed line
+            if (secondChemistryVisuals.Count == 2)
+            {
+                Brush dashedBrush = new SolidColorBrush(Colors.DarkRed) { Opacity = 0.5d };
+                Pen dashedPen = new Pen(dashedBrush, 1) { DashStyle = DashStyles.Dash, };
+
+                AtomVisual secondChemistryVisual1 = secondChemistryVisuals[0] as AtomVisual;
+                AtomVisual secondChemistryVisual2 = secondChemistryVisuals[1] as AtomVisual;
+                Point? start = secondChemistryVisual1.GetIntersection(secondChemistryVisual1.Position,
+                                                                      secondChemistryVisual2.Position);
+                Point? end = secondChemistryVisual2.GetIntersection(secondChemistryVisual1.Position,
+                                                                    secondChemistryVisual2.Position);
+                dc.DrawLine(dashedPen, start ?? secondChemistryVisual1.Position,
+                            end ?? secondChemistryVisual2.Position);
+            }
+        }
+
+        private ChemicalVisual GetAssociatedVisual(StructuralObject associatedChemistry)
+        {
+            ChemicalVisual startVisual = null;
+            if (associatedChemistry is Atom atom || associatedChemistry is Bond bond)
+            {
+                startVisual = ChemicalVisuals[associatedChemistry] as ChemicalVisual;
+            }
+            else if (associatedChemistry is Electron electron)
+            {
+                AtomVisual parentAtomVisual = ChemicalVisuals[electron.Parent] as AtomVisual;
+                foreach (ElectronVisual childVisual in parentAtomVisual.ElectronVisuals.Values)
                 {
-                    Brush dashedBrush = new SolidColorBrush(Colors.DarkRed)
+                    if (childVisual.ParentElectron == associatedChemistry)
                     {
-                        Opacity = 0.5d
-                    };
-                    Pen dashedPen = new Pen(dashedBrush, 1)
-                    {
-                        DashStyle = DashStyles.Dash,
-                    };
-
-                    AtomVisual secondChemistryVisual1 = secondChemistryVisuals[0] as AtomVisual;
-                    AtomVisual secondChemistryVisual2 = secondChemistryVisuals[1] as AtomVisual;
-                    Point? start = secondChemistryVisual1.GetIntersection(secondChemistryVisual1.Position,
-                                                                          secondChemistryVisual2.Position);
-                    Point? end = secondChemistryVisual2.GetIntersection(secondChemistryVisual1.Position,
-                                                                        secondChemistryVisual2.Position);
-                    dc.DrawLine(dashedPen, start ?? secondChemistryVisual1.Position, end ?? secondChemistryVisual2.Position);
+                        startVisual = childVisual;
+                    }
                 }
             }
+
+            return startVisual;
         }
 
         /// <summary>
@@ -164,19 +192,44 @@ namespace Chem4Word.ACME.Drawing.Visuals
                                                Point secondControlPoint)
         {
             //first, work out where the pusher should start from
-            if (firstChemistryVisual is AtomVisual av)
+            if (firstChemistryVisual is ElectronVisual ev)
+            {
+                lineStart = ev.GetIntersection(ev.Centroid, ev.Centroid + (firstControlPoint - ev.Centroid) * 10) ??
+                            ev.Centroid;
+            }
+            else if (firstChemistryVisual is AtomVisual av)
             {
                 //TODO: why would this be null?
                 //answer: it's null because the first control point sits *inside* the hull of the drawing visual!
                 //so we push it out ten times in the right direction
-                lineStart = av.GetIntersection(av.ParentAtom.Position, av.ParentAtom.Position + (firstControlPoint - av.ParentAtom.Position) * 10) ?? av.Position;
+
+                //if the atom is carrying a negative charge, the start point will be inside the hull of the charge visual, not the atom visual
+                if (av.ParentAtom.FormalCharge.HasValue && av.ParentAtom.FormalCharge.Value < 0)
+                {
+                    ChargeVisual chargeVisual = av.ChargeChildVisual;
+                    Point chargeVisualCentroid = chargeVisual.Centroid;
+
+                    lineStart = chargeVisual.GetIntersection(chargeVisualCentroid,
+                                                             chargeVisualCentroid + (firstControlPoint - chargeVisualCentroid) * 10) ??
+                                chargeVisual.Centroid;
+                }
+                //otherwise root to the atom visual
+                else
+                {
+                    lineStart = av.GetIntersection(av.ParentAtom.Position,
+                                                   av.ParentAtom.Position +
+                                                   (firstControlPoint - av.ParentAtom.Position) * 10) ?? av.Position;
+                }
             }
             else if (firstChemistryVisual is BondVisual bv)
             {
                 //TODO: why would this be null?
                 //answer: it's null because the first control point sits *inside* the hull of the drawing visual!
                 //so we push it out ten times in the right direction
-                lineStart = bv.GetIntersection(bv.ParentBond.MidPoint, bv.ParentBond.MidPoint + (firstControlPoint - bv.ParentBond.MidPoint) * 10) ?? bv.ParentBond.MidPoint;
+                lineStart = bv.GetIntersection(bv.ParentBond.MidPoint,
+                                               bv.ParentBond.MidPoint +
+                                               (firstControlPoint - bv.ParentBond.MidPoint) * 10) ??
+                            bv.ParentBond.MidPoint;
             }
 
             //now work out where the pusher should end
@@ -193,19 +246,36 @@ namespace Chem4Word.ACME.Drawing.Visuals
                 switch (secondChemistryVisuals[0])
                 {
                     case AtomVisual a:
-                        lineEnd = a.GetIntersection(a.Position, a.Position + (secondControlPoint - a.Position) * 10) ?? a.Position;
+                        lineEnd = a.GetIntersection(a.Position, a.Position + (secondControlPoint - a.Position) * 10) ??
+                                  a.Position;
                         break;
 
                     case BondVisual bv:
-                        lineEnd = bv.GetIntersection(bv.ParentBond.MidPoint, bv.ParentBond.MidPoint + (secondControlPoint - bv.ParentBond.MidPoint) * 10) ??
+                        lineEnd = bv.GetIntersection(bv.ParentBond.MidPoint,
+                                                     bv.ParentBond.MidPoint +
+                                                     (secondControlPoint - bv.ParentBond.MidPoint) * 10) ??
                                   bv.ParentBond.MidPoint;
                         break;
                 }
             }
         }
 
+        //overrides hit testing to expose atoms and bonds as hit test targets, even though the electron pusher visual is technically "on top" of them in the z-order
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
         {
+            ChemicalVisual startChemistryVisual = GetAssociatedVisual(ParentPusher.StartChemistry);
+            if (startChemistryVisual?.HitTest(hitTestParameters.HitPoint) != null)
+            {
+                return new PointHitTestResult(startChemistryVisual, hitTestParameters.HitPoint);
+            }
+
+            ChemicalVisual endChemistryVisual = GetAssociatedVisual(ParentPusher.EndChemistries[0]);
+
+            if (endChemistryVisual?.HitTest(hitTestParameters.HitPoint) != null)
+            {
+                return new PointHitTestResult(endChemistryVisual, hitTestParameters.HitPoint);
+            }
+
             return new PointHitTestResult(this, hitTestParameters.HitPoint);
         }
     }

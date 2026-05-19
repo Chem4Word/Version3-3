@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using static Chem4Word.Model2.ModelConstants;
 
 namespace Chem4Word.Model2
@@ -74,13 +75,13 @@ namespace Chem4Word.Model2
                     case ElectronType.Carbenoid:
                     case ElectronType.LonePair:
                         return 2;
+
                     case ElectronType.Radical:
                         return 1;
                 }
 
                 return 0;
             }
-           
         }
 
         /// <summary>
@@ -165,6 +166,9 @@ namespace Chem4Word.Model2
                 OnPropertyChanged();
             }
         }
+
+        //set only on drawing
+        public Point Centroid { get; set; }
 
         #endregion Properties
 
@@ -275,7 +279,5 @@ namespace Chem4Word.Model2
         }
 
         #endregion IEquatable<Electron> Members
-
-      
     }
 }

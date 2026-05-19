@@ -10,6 +10,7 @@ using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using static Chem4Word.ACME.Drawing.Text.GlyphUtils;
@@ -76,7 +77,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
                 foreach (ElectronVisual electronVisual in ElectronVisuals.Values)
                 {
-                    tempHull.AddRange(electronVisual.Metrics.Corners);
+                    tempHull.AddRange(electronVisual.CoreHull);
                 }
 
                 return GeometryTool.MakeConvexHull(tempHull);
@@ -94,7 +95,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         public double SuperscriptSize { get; set; }
 
         public HydrogenVisual HydrogenChildVisual { get; set; }
-        private ChargeVisual ChargeChildVisual { get; set; }
+        public ChargeVisual ChargeChildVisual { get; set; }
         public IsotopeVisual IsotopeChildVisual { get; set; }
 
         public Dictionary<string, ElectronVisual> ElectronVisuals { get; }
@@ -407,6 +408,16 @@ namespace Chem4Word.ACME.Drawing.Visuals
             {
                 if (ParentAtom.Element is Element)
                 {
+                    if (ElectronVisuals.Any())
+                    {
+                        foreach (ElectronVisual electronVisual in ElectronVisuals.Values)
+                        {
+                            if (electronVisual.HullGeometry.FillContains(hitTestParameters.HitPoint))
+                            {
+                                return new PointHitTestResult(electronVisual, hitTestParameters.HitPoint);
+                            }
+                        }
+                    }
                     if (HydrogenChildVisual != null &&
                         HydrogenChildVisual.HullGeometry.FillContains(hitTestParameters.HitPoint))
                     {

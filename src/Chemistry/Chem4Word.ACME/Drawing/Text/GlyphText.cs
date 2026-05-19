@@ -164,7 +164,7 @@ namespace Chem4Word.ACME.Drawing.Text
     public class ChargeLabelText : GlyphText
     {
         public ChargeLabelText(string text, float pixelsPerDip, double superScriptSize)
-            : base(text, GlyphUtils.AtomLabelTypeface, superScriptSize, pixelsPerDip)
+            : base(text, GlyphUtils.ChargeTypeface, superScriptSize, pixelsPerDip)
         {
         }
     }

@@ -13,6 +13,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -196,6 +197,11 @@ namespace Chem4Word.ACME.Behaviors
                         case HydrogenVisual _:
                             CurrentStatus = (AcmeConstants.DefaultRotateHydrogenMessage, "", "");
                             CurrentEditor.Cursor = Cursors.Hand;
+                            break;
+
+                        case ElectronVisual ev: 
+                            CurrentStatus = (AcmeConstants.DrawElectronPusherMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+                            CurrentEditor.Cursor = Cursors.SizeAll;
                             break;
 
                         case AtomVisual av:
@@ -547,6 +553,18 @@ namespace Chem4Word.ACME.Behaviors
             CurrentEditor.PreviewMouseRightButtonUp -= OnPreviewMouseRightButtonUp_CurrentEditor;
             CurrentStatus = ("", "", "");
             CurrentEditor.Cursor = _lastCursor;
+        }
+
+        public DrawBehavior() : base()
+        {
+            PermittedHighlights = new HashSet<Type>()
+                {
+                typeof(AtomVisual),
+                typeof(BondVisual),
+                typeof(HydrogenVisual),
+                typeof(ReactionVisual),
+                typeof(FunctionalGroupVisual)
+            };
         }
     }
 }

@@ -122,6 +122,13 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             _boundingBoxOfAllAtoms = _chemistryModel.BoundingBoxOfCmlPoints;
             _boundingBoxOfEverything = OoXmlHelper.GetAllCharacterExtents(_chemistryModel, _outputs);
 
+            foreach (OoXmlElectronPusher pusher in _outputs.Pushers)
+            {
+                Rect pusherBounds = pusher.BoundingBox;
+                pusherBounds.Inflate(OoXmlConstants.DrawingMargin, OoXmlConstants.DrawingMargin);
+                _boundingBoxOfEverything.Union(pusherBounds);
+            }
+
             // This is where we make it all "tidy"
             OoXmlBeautifier beautifier = new OoXmlBeautifier(_inputs, _outputs);
             beautifier.Beautify();
@@ -204,25 +211,22 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
 
             // Render the Electrons
-            foreach (List<OoXmlElectron> listOfElectrons in _outputs.AtomsWithElectrons.Values)
+            foreach (OoXmlElectron electron in _outputs.Electrons.Values)
             {
-                foreach (OoXmlElectron electron in listOfElectrons)
+                switch (electron.TypeOfElectron)
                 {
-                    switch (electron.TypeOfElectron)
-                    {
-                        case ElectronType.Radical:
-                            DrawRadicalDot(electron.Points[0], electron.Path, BondOffset() / 2, electron.Colour, true);
-                            break;
+                    case ElectronType.Radical:
+                        DrawRadicalDot(electron.Points[0], electron.Path, BondOffset() / 2, electron.Colour, true);
+                        break;
 
-                        case ElectronType.LonePair:
-                            DrawRadicalDot(electron.Points[0], electron.Path, BondOffset() / 2, electron.Colour, true);
-                            DrawRadicalDot(electron.Points[1], electron.Path, BondOffset() / 2, electron.Colour, true);
-                            break;
+                    case ElectronType.LonePair:
+                        DrawRadicalDot(electron.Points[0], electron.Path, BondOffset() / 2, electron.Colour, true);
+                        DrawRadicalDot(electron.Points[1], electron.Path, BondOffset() / 2, electron.Colour, true);
+                        break;
 
-                        case ElectronType.Carbenoid:
-                            DrawBondLine(electron.Points[0], electron.Points[1], electron.Path, BondLineStyle.Solid, electron.Colour);
-                            break;
-                    }
+                    case ElectronType.Carbenoid:
+                        DrawBondLine(electron.Points[0], electron.Points[1], electron.Path, BondLineStyle.Solid, electron.Colour);
+                        break;
                 }
             }
 

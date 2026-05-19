@@ -70,9 +70,6 @@ namespace Chem4Word.ACME.Adorners.Selectors
             IsHitTestVisible = true;
 
             Focusable = true;
-
-            //TODO: [DCD] Investigate crash
-            //Keyboard.Focus(this);
         }
 
         protected void DisableHandlers()
@@ -110,9 +107,6 @@ namespace Chem4Word.ACME.Adorners.Selectors
             BigThumb.MouseLeftButtonDown += OnMouseLeftButtonDown_BigThumb;
 
             BigThumb.Focusable = true;
-
-            //TODO: [DCD] Investigate crash
-            //Keyboard.Focus(BigThumb);
         }
 
         /// <summary>

@@ -1114,6 +1114,16 @@ namespace Chem4Word.Model2
                 {
                     foreach (ElectronPusher electronPusher in Parent.Model.ElectronPushers.Values)
                     {
+                        if (electronPusher.StartChemistry is Electron electron)
+                        {
+                            if (electron.Parent is Atom atom)
+                            {
+                                if (atom == this)
+                                {
+                                    pushers.Add(electronPusher);
+                                }
+                            }
+                        }
                         if (electronPusher.StartChemistry == this || electronPusher.EndChemistries.Contains(this))
                         {
                             pushers.Add(electronPusher);

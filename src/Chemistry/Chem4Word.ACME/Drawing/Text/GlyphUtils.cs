@@ -5,11 +5,8 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
-using System;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace Chem4Word.ACME.Drawing.Text
@@ -39,6 +36,11 @@ namespace Chem4Word.ACME.Drawing.Text
                                                                        FontStyles.Normal,
                                                                        FontWeights.Normal,
                                                                        FontStretches.Normal);
+
+        public static Typeface ChargeTypeface { get; } = new Typeface(new FontFamily(FamilyName),
+                                                                         FontStyles.Normal,
+                                                                         FontWeights.ExtraBold,
+                                                                         FontStretches.Normal);
 
         public static Typeface BlockTypeface { get; } = new Typeface(new FontFamily(FamilyName),
                                                                        FontStyles.Normal,

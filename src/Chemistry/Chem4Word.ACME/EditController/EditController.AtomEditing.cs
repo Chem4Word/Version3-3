@@ -254,10 +254,12 @@ namespace Chem4Word.ACME
         {
             Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
 
-            var oldElectron = atom.Electrons.Values.Where(e => e.TypeOfElectron == ElectronType.Carbenoid)
-                                  .FirstOrDefault();
+            Electron oldElectron = atom.Electrons.Values
+                                       .FirstOrDefault(e => e.TypeOfElectron == ElectronType.Carbenoid);
 
-            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron);
+            List<ElectronPusher> pushers = atom.ElectronPushers;
+
+            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron, pushers);
             UndoManager.BeginUndoBlock();
             UndoManager.RecordAction(undoAction, redoAction);
             UndoManager.EndUndoBlock();
@@ -268,10 +270,12 @@ namespace Chem4Word.ACME
         {
             Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
 
-            var oldElectron = atom.Electrons.Values.Where(e => e.TypeOfElectron == ElectronType.Radical)
-                                  .FirstOrDefault();
+            Electron oldElectron = atom.Electrons.Values
+                                       .FirstOrDefault(e => e.TypeOfElectron == ElectronType.Radical);
 
-            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron);
+            List<ElectronPusher> pushers = atom.ElectronPushers;
+
+            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron, pushers);
             UndoManager.BeginUndoBlock();
             UndoManager.RecordAction(undoAction, redoAction);
             UndoManager.EndUndoBlock();
@@ -282,23 +286,46 @@ namespace Chem4Word.ACME
         {
             Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
 
-            var oldElectron = atom.Electrons.Values.Where(e => e.TypeOfElectron == ElectronType.LonePair)
-                                  .FirstOrDefault();
+            Electron oldElectron = atom.Electrons.Values
+                                       .FirstOrDefault(e => e.TypeOfElectron == ElectronType.LonePair);
 
-            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron);
+            List<ElectronPusher> pushers = atom.ElectronPushers;
+
+            (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, oldElectron, pushers);
             UndoManager.BeginUndoBlock();
             UndoManager.RecordAction(undoAction, redoAction);
             UndoManager.EndUndoBlock();
             redoAction();
         }
 
+        public void RemoveSpecificElectron(Electron electron)
+        {
+            Dictionary<string, CompassPoints> explicitElectrons = new Dictionary<string, CompassPoints>();
+
+            if (electron.Parent is Atom atom)
+            {
+                List<ElectronPusher> pushers = atom.ElectronPushers;
+
+                (Action redoAction, Action undoAction) = RemoveElectronActions(atom, explicitElectrons, electron, pushers);
+                UndoManager.BeginUndoBlock();
+                UndoManager.RecordAction(undoAction, redoAction);
+                UndoManager.EndUndoBlock();
+                redoAction();
+            }
+        }
+
         private static (Action redoAction, Action undoAction) RemoveElectronActions(
-           Atom atom, Dictionary<string, CompassPoints> explicitElectrons, Electron oldElectron)
+           Atom atom, Dictionary<string, CompassPoints> explicitElectrons, Electron oldElectron, List<ElectronPusher> pushers)
         {
             var showSymbol = atom.ExplicitC;
 
             Action redoAction = () =>
             {
+                foreach (var pusher in pushers.Where(p => p.StartChemistry.Path == oldElectron.Path))
+                {
+                    atom.Parent.Model.RemoveElectronPusher(pusher);
+                }
+
                 foreach (var keypair in atom.Electrons)
                 {
                     if (keypair.Value.ExplicitPlacement != null)
@@ -317,11 +344,22 @@ namespace Chem4Word.ACME
                 {
                     attachedBond.UpdateVisual();
                 }
+                foreach (ElectronPusher pusher in atom.ElectronPushers)
+                {
+                    pusher.UpdateVisual();
+                }
             };
+
             Action undoAction = () =>
             {
                 atom.AddElectron(oldElectron);
-                oldElectron.Parent = null;
+                oldElectron.Parent = atom;
+
+                foreach (var pusher in pushers)
+                {
+                    atom.Parent.Model.AddElectronPusher(pusher);
+                }
+
                 foreach (string path in explicitElectrons.Keys)
                 {
                     Electron electron = atom.GetByPath(path) as Electron;
@@ -336,6 +374,10 @@ namespace Chem4Word.ACME
                 foreach (Bond attachedBond in atom.Bonds)
                 {
                     attachedBond.UpdateVisual();
+                }
+                foreach (ElectronPusher pusher in atom.ElectronPushers)
+                {
+                    pusher.UpdateVisual();
                 }
             };
             return (redoAction, undoAction);
@@ -864,7 +906,10 @@ namespace Chem4Word.ACME
                                   {
                                       ClearSelection();
 
-                                      DeleteElectronPushers(associatedPushers.ToList());
+                                      foreach (ElectronPusher pusher in associatedPushers)
+                                      {
+                                          molecule.Model.RemoveElectronPusher(pusher);
+                                      }
 
                                       int theoreticalRings = molecule.TheoreticalRings;
                                       foreach (Bond deleteBond in deleteBonds)
@@ -954,7 +999,10 @@ namespace Chem4Word.ACME
                     Dictionary<Atom, bool?> explicitFlags = new Dictionary<Atom, bool?>();
 
                     //get rid of the pushers first
-                    DeleteElectronPushers(associatedPushers.ToList());
+                    foreach (ElectronPusher pusher in associatedPushers)
+                    {
+                        molecule.Model.RemoveElectronPusher(pusher);
+                    }
                     //add all the relevant atoms and bonds to a new molecule
                     //grab the model for future reference
                     Model parentModel = null;
@@ -1046,7 +1094,10 @@ namespace Chem4Word.ACME
                                   {
                                       ClearSelection();
 
-                                      DeleteElectronPushers(associatedPushers.ToList());
+                                      foreach (ElectronPusher pusher in associatedPushers)
+                                      {
+                                          molecule.Model.RemoveElectronPusher(pusher);
+                                      }
 
                                       foreach (Molecule newmol in newMolecules)
                                       {
@@ -1138,6 +1189,10 @@ namespace Chem4Word.ACME
                 List<Electron> electronsAfter = new List<Electron>();
                 electronsAfter.AddRange(atomPropertiesModel.MicroModel.GetAllAtoms().First().Electrons.Values);
 
+                // Handle Pushers
+                List<ElectronPusher> pushersBefore = new List<ElectronPusher>();
+                pushersBefore.AddRange(atom.ElectronPushers.Where(p => p.StartChemistry is Electron));
+
                 if (elementBaseAfter is FunctionalGroup)
                 {
                     explicitFgPlacementAfter = atomPropertiesModel.ExplicitFunctionalGroupPlacement;
@@ -1178,6 +1233,26 @@ namespace Chem4Word.ACME
 
                                   atom.UpdateElectronPlacements();
 
+                                  // Handle Pushers
+                                  List<string> paths = atom.AllElectrons().Select(p => p.Path).ToList();
+                                  foreach (ElectronPusher pusher in pushersBefore)
+                                  {
+                                      if (paths.Contains(pusher.StartChemistry.Path))
+                                      {
+                                          foreach (string path in paths)
+                                          {
+                                              if (atom.Parent.Model.GetByPath(path) is Electron electron)
+                                              {
+                                                  pusher.StartChemistry = electron;
+                                              }
+                                          }
+                                      }
+                                      else
+                                      {
+                                          atom.Parent.Model.RemoveElectronPusher(pusher);
+                                      }
+                                  }
+
                                   atom.Parent.UpdateVisual();
 
                                   //freshen any selection adorner
@@ -1203,6 +1278,12 @@ namespace Chem4Word.ACME
                                   atom.AddRangeOfElectrons(electronsBefore);
 
                                   atom.UpdateElectronPlacements();
+
+                                  // Handle Pushers
+                                  foreach (ElectronPusher pusher in pushersBefore)
+                                  {
+                                      atom.Parent.Model.AddElectronPusher(pusher);
+                                  }
 
                                   atom.Parent.UpdateVisual();
 

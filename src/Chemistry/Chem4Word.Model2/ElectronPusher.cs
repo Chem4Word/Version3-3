@@ -145,6 +145,9 @@ namespace Chem4Word.Model2
                     case Bond b:
                         return b.MidPoint;
 
+                    case Electron e:
+                        return e.Centroid;
+
                     default:
                         return new Point(0, 0);
                 }

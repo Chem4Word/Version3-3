@@ -8,8 +8,6 @@
 using Chem4Word.ACME.Models;
 using Chem4Word.Core.UI.Wpf;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -48,11 +46,6 @@ namespace Chem4Word.ACME.Controls
         public ElectronsControl()
         {
             InitializeComponent();
-
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                //
-            }
         }
 
         public event EventHandler<WpfEventArgs> ValueChanged;

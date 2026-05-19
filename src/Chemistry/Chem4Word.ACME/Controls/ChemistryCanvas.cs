@@ -649,6 +649,10 @@ namespace Chem4Word.ACME.Controls
         {
             switch (value)
             {
+                case ElectronVisual ev:
+                    _highlightAdorner = new AtomHoverAdorner(this, ev);
+                    break;
+
                 case GroupVisual gv:
                     _highlightAdorner = new GroupHoverAdorner(this, gv);
                     break;
@@ -1081,58 +1085,71 @@ namespace Chem4Word.ACME.Controls
 
         public ChemicalVisual GetTargetedVisual(Point p)
         {
+           
             _visuals.Clear();
+            //do a quick filtering by the SupportedHighlight associated with the current Behavior
+            EditController editController = Controller as EditController;
 
-            // Re-Populate _visuals via ResultCallback with *ALL* ChemicalVisual's which are under the mouse cursor
-            // GroupVisual's seem to be added first (with outermost first) one for each Group
-            // Next are any BondVisual's one for each Bond
+            if (editController == null) //we're not in editing mode
+            {
+                return null;
+            }
+
+            // Re-Populate _visuals via ResultCallback with *ALL* ChemicalVisuals which are under the mouse cursor
+            // GroupVisuals seem to be added first (with outermost first) one for each Group
+            // Next are any BondVisuals one for each Bond
             // Next is the AtomVisual for the Atom
             VisualTreeHelper.HitTest(this, null, ResultCallback, new PointHitTestParameters(p));
 
-            // First try to get a GroupVisual
-            // HACK: [DCD] What guarantees that the first one found is the "top level" group?
-            ChemicalVisual result = _visuals.FirstOrDefault(v => v is GroupVisual);
-
-            //first try to see if we can locate the hydrogen visual
-            if (result == null)
+            if (!_visuals.Any())
             {
-                result = _visuals.FirstOrDefault(v => v is HydrogenVisual);
+                return null;
             }
 
-            // If not successful try to get an ElectronPusherVisual (should only ever be one!)
-            if (result == null)
+            ChemicalVisual result = _visuals.FirstOrDefault(v => v is GroupVisual)
+                                    ?? _visuals.FirstOrDefault(v => v is ElectronVisual) // Try to locate an ElectronVisual
+                                    ?? _visuals.FirstOrDefault(v => v is ReactionVisual) // Locate a ReactionVisual
+                                    ?? _visuals.FirstOrDefault(v => v is HydrogenVisual) // Locate a HydrogenVisual
+                                    ?? _visuals.FirstOrDefault(v => v is AtomVisual && !(v is ElectronPusherVisual)) // Locate an AtomVisual
+                                    ?? _visuals.FirstOrDefault(v => v is BondVisual) // Locate a BondVisual
+                                    ?? _visuals.FirstOrDefault(v => v is ElectronPusherVisual); // Locate an ElectronPusherVisual
+            
+            if (result != null && editController.ActiveBehavior.PermittedHighlights.Contains(result.GetType()))
             {
-                result = _visuals.FirstOrDefault(v => v is ElectronPusherVisual);
+                return result;
             }
 
-            // If not successful try to get an AtomVisual (should only ever be one!)
-            if (result == null)
-            {
-                result = _visuals.FirstOrDefault(v => v is AtomVisual);
-            }
-
-            // Finally get first ChemicalVisual which ought to be a BondVisual
-            if (result == null)
-            {
-                result = _visuals.FirstOrDefault();
-            }
-
-            return result;
+            //we're not editing so return nowt
+            return null;
         }
 
         private HitTestResultBehavior ResultCallback(HitTestResult result)
         {
-            if (result.VisualHit is ElectronPusherVisual epv)
+            switch (result.VisualHit)
             {
-                _visuals.Add(epv);
-            }
-            else if (result.VisualHit is HydrogenVisual hv)
-            {
-                _visuals.Add(hv);
-            }
-            else if (result.VisualHit is ChemicalVisual cv)
-            {
-                _visuals.Add(cv);
+                case ReactionVisual rv:
+                    _visuals.Add(rv);
+                    break;
+
+                case ElectronVisual ev:
+                    _visuals.Add(ev);
+                    break;
+
+                case ElectronPusherVisual epv:
+                    _visuals.Add(epv);
+                    break;
+
+                case HydrogenVisual hv:
+                    _visuals.Add(hv);
+                    break;
+
+                case AtomVisual av:
+                    _visuals.Add(av);
+                    break;
+
+                case BondVisual bv:
+                    _visuals.Add(bv);
+                    break;
             }
 
             return HitTestResultBehavior.Continue;

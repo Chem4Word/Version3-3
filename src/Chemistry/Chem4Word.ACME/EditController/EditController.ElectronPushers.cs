@@ -39,10 +39,9 @@ namespace Chem4Word.ACME
                 SecondControlPoint = secondControlPoint,
                 PusherType = electronPusherType
             };
+
             try
             {
-                Point startPoint, endPoint;
-
                 WriteTelemetry(module, "Debug", $"Adding Electron Pusher ");
 
                 //check to see if we're forming a new bond between atoms
@@ -53,24 +52,36 @@ namespace Chem4Word.ACME
                     //between the two atoms
                     ep.EndChemistries.Add(startAtom);
                     ep.EndChemistries.Add(endAtom);
-                    (startPoint, endPoint, ep.FirstControlPoint, ep.SecondControlPoint) = ElectronPusherDrawAdorner.RecalcControlPoints(ep, Model.MeanBondLength);
+                }
+                else if (startChemistry is Electron electron && targetChemistry is Atom endAtom1 &&
+                         (electron.Parent as Atom).BondBetween(endAtom1) is null)
+                {
+                    //we're forming a new bond so the electron pusher ends in empty space
+                    //between the two atoms
+                    ep.EndChemistries.Add(electron.Parent);
+                    ep.EndChemistries.Add(endAtom1);
                 }
                 else if (startChemistry is Bond startBond && targetChemistry is Atom endAtom2 &&
                          !startBond.GetAtoms().Contains(endAtom2))
                 {
                     ep.EndChemistries.Add(endAtom2);
-                    //add the closest of the two atoms to the external atom in the bond
-                    if ((startBond.StartAtom.Position - endAtom2.Position).Length <
-                        (startBond.EndAtom.Position - endAtom2.Position).Length)
+                    //if source and target are in different molecules
+                    //then we are forming a nascent bond
+                    if (startBond.Parent != endAtom2.Parent)
                     {
-                        ep.EndChemistries.Add(startBond.StartAtom);
-                    }
-                    else
-                    {
-                        ep.EndChemistries.Add(startBond.EndAtom);
+                        //add the closest of the two atoms to the external atom in the bond
+                        if ((startBond.StartAtom.Position - endAtom2.Position).Length <
+                            (startBond.EndAtom.Position - endAtom2.Position).Length)
+                        {
+                            ep.EndChemistries.Add(startBond.StartAtom);
+                        }
+                        else
+                        {
+                            ep.EndChemistries.Add(startBond.EndAtom);
+                        }
                     }
 
-                    (startPoint, endPoint, ep.FirstControlPoint, ep.SecondControlPoint) = ElectronPusherDrawAdorner.RecalcControlPoints(ep, Model.MeanBondLength);
+                    (ep.FirstControlPoint, ep.SecondControlPoint) = ElectronPusherDrawAdorner.RecalcControlPoints(ep, Model.MeanBondLength);
                 }
                 else
                 {
@@ -84,6 +95,7 @@ namespace Chem4Word.ACME
                               };
                 Action undo = () =>
                               {
+                                  ClearSelection();
                                   Model.RemoveElectronPusher(ep);
                                   ep.Parent = null;
                               };
@@ -143,9 +155,9 @@ namespace Chem4Word.ACME
                                   pusher.Parent = Model;
                                   AddToSelection(pusher);
                               };
-                redo();
                 UndoManager.RecordAction(undo, redo);
                 UndoManager.EndUndoBlock();
+                redo();
             }
             catch (Exception exception)
             {
@@ -155,37 +167,16 @@ namespace Chem4Word.ACME
 
         private void TransformAllElectronPushers(Molecule molecule, Transform transform)
         {
-            TransformAtomRelatedPushers(molecule.Atoms.Values.ToList(), transform);
-            TransformBondRelatedPushers(molecule.Bonds.ToList(), transform);
+            TransformRelatedPushers(molecule.Bonds.ToList(), transform);
         }
 
-        private void TransformBondRelatedPushers(List<Bond> moleculeBonds, Transform transform)
+        private void TransformRelatedPushers(List<Bond> moleculeBonds, Transform transform)
         {
             foreach (ElectronPusher ep in Model.ElectronPushers.Values)
             {
-                if (moleculeBonds.Contains(ep.StartChemistry))
+                if (moleculeBonds.Contains(ep.StartChemistry) || ep.EndChemistries.Any(c => moleculeBonds.Contains(c)))
                 {
                     ep.FirstControlPoint = transform.Transform(ep.FirstControlPoint);
-                    ep.UpdateVisual();
-                }
-                if (ep.EndChemistries.Any(c => moleculeBonds.Contains(c)))
-                {
-                    ep.SecondControlPoint = transform.Transform(ep.SecondControlPoint);
-                    ep.UpdateVisual();
-                }
-            }
-        }
-
-        private void TransformAtomRelatedPushers(List<Atom> atomsValues, Transform transform)
-        {
-            foreach (ElectronPusher ep in Model.ElectronPushers.Values)
-            {
-                if (atomsValues.Contains(ep.StartChemistry))
-                {
-                    ep.FirstControlPoint = transform.Transform(ep.FirstControlPoint);
-                }
-                if (ep.EndChemistries.Any(c => atomsValues.Contains(c)))
-                {
                     ep.SecondControlPoint = transform.Transform(ep.SecondControlPoint);
                 }
                 ep.UpdateVisual();

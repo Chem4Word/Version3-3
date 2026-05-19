@@ -479,49 +479,51 @@ namespace Chem4Word.ACME
         //annotation editing
         private void CreateBlockEditor(Reaction reaction, bool editingReagents)
         {
-            string blocktext;
-            Rect block;
-            _selReactionVisual = EditingCanvas.ChemicalVisuals[reaction] as ReactionVisual; //should NOT be null!
-
-            //remove the reaction from the selection, otherwise the adorner gets in the way
-
-            RemoveFromSelection(reaction);
-
-            //decide whether we're doing reagents or conditions
-            if (editingReagents)
+            if (EditingCanvas.ChemicalVisuals[reaction] is ReactionVisual visual)
             {
-                block = _selReactionVisual.ReagentsBlockRect;
-                blocktext = reaction.ReagentText;
+                _selReactionVisual = visual;
+
+                //remove the reaction from the selection, otherwise the adorner gets in the way
+                RemoveFromSelection(reaction);
+
+                //decide whether we're doing reagents or conditions
+                Rect block;
+                string blockText;
+                if (editingReagents)
+                {
+                    block = _selReactionVisual.ReagentsBlockRect;
+                    blockText = reaction.ReagentText;
+                }
+                else
+                {
+                    block = _selReactionVisual.ConditionsBlockRect;
+                    blockText = reaction.ConditionsText;
+                }
+
+                //make the block a bit bigger
+                block.Inflate(AcmeConstants.BlockTextPadding, AcmeConstants.BlockTextPadding);
+
+                //locate the editor properly
+                BlockEditor.Controller = this;
+                BlockEditor.MinWidth = block.Width;
+                BlockEditor.MinHeight = block.Height;
+                BlockEditor.Visibility = Visibility.Visible;
+                BlockEditor.EditingReagents = editingReagents;
+                Canvas.SetLeft(BlockEditor, block.Left);
+                Canvas.SetTop(BlockEditor, block.Top);
+
+                if (!string.IsNullOrEmpty(blockText))
+                {
+                    BlockEditor.LoadDocument(blockText);
+                }
+
+                ActiveBlockEditor = BlockEditor;
+                BlockEditor.Completed += OnEditorClosed_BlockEditor;
+                BlockEditor.SelectionChanged += OnSelectionChanged_BlockEditor;
+                IsBlockEditing = true;
+                SendStatus((EditingTextStatus, TotUpMolFormulae(), TotUpSelectedMwt()));
+                BlockEditor.Focus();
             }
-            else
-            {
-                block = _selReactionVisual.ConditionsBlockRect;
-                blocktext = reaction.ConditionsText;
-            }
-
-            //make the block a bit bigger
-            block.Inflate(AcmeConstants.BlockTextPadding, AcmeConstants.BlockTextPadding);
-
-            //locate the editor properly
-            BlockEditor.Controller = this;
-            BlockEditor.MinWidth = block.Width;
-            BlockEditor.MinHeight = block.Height;
-            BlockEditor.Visibility = Visibility.Visible;
-            BlockEditor.EditingReagents = editingReagents;
-            Canvas.SetLeft(BlockEditor, block.Left);
-            Canvas.SetTop(BlockEditor, block.Top);
-
-            if (!string.IsNullOrEmpty(blocktext))
-            {
-                BlockEditor.LoadDocument(blocktext);
-            }
-
-            ActiveBlockEditor = BlockEditor;
-            BlockEditor.Completed += OnEditorClosed_BlockEditor;
-            BlockEditor.SelectionChanged += OnSelectionChanged_BlockEditor;
-            IsBlockEditing = true;
-            SendStatus((EditingTextStatus, TotUpMolFormulae(), TotUpSelectedMwt()));
-            BlockEditor.Focus();
         }
 
         /// <summary>
@@ -584,7 +586,13 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                CreateBlockEditor(SelectedItems[0] as Reaction, editingReagents: true);
+                if (SelectedItems.Count > 0)
+                {
+                    if (SelectedItems[0] is Reaction reaction)
+                    {
+                        CreateBlockEditor(reaction, editingReagents: true);
+                    }
+                }
             }
             catch (Exception exception)
             {
@@ -600,7 +608,13 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                CreateBlockEditor(SelectedItems[0] as Reaction, editingReagents: false);
+                if (SelectedItems.Count > 0)
+                {
+                    if (SelectedItems[0] is Reaction reaction)
+                    {
+                        CreateBlockEditor(reaction, editingReagents: false);
+                    }
+                }
             }
             catch (Exception exception)
             {

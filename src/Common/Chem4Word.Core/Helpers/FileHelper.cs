@@ -189,15 +189,13 @@ namespace Chem4Word.Core.Helpers
         {
             StringBuilder sb = new StringBuilder();
 
-            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
             List<string> dlls = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.Location).ToList();
             dlls = dlls.OrderBy(s => s).ToList();
 
             sb.AppendLine(".Net Assemblies loaded in memory");
             foreach (string dll in dlls)
             {
-                sb.AppendLine($"  {dll.Replace(localAppDataPath, "%LocalAppData%")}");
+                sb.AppendLine($"  {GdprHelper.ReplaceLocalAppData(dll)}");
             }
 
             return sb.ToString();

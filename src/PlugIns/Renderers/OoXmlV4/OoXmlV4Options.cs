@@ -220,7 +220,7 @@ namespace Chem4Word.Renderer.OoXmlV4
             // Debugging Options
             ClipCrossingBonds = false;
             ClipBondLines = true;
-            HullMode = HullType.SimpleHull;
+            HullMode = HullType.ComplexHull;
             ShowDoubleBondTrimmingLines = false;
             ShowCharacterBoundingBoxes = false;
             ShowMoleculeBoundingBoxes = false;

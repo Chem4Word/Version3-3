@@ -193,7 +193,7 @@ namespace Chem4Word.ACME.Utils
             }
         }
 
-        public static void DrawGeometry(StreamGeometryContext ctx, System.Windows.Media.Geometry geo)
+        public static void DrawGeometry(StreamGeometryContext ctx, Geometry geo)
         {
             var pathGeometry = geo as PathGeometry ?? PathGeometry.CreateFromGeometry(geo);
             foreach (var figure in pathGeometry.Figures)
@@ -240,10 +240,10 @@ namespace Chem4Word.ACME.Utils
             }
         }
 
-        public static Point[] GetIntersectionPoints(System.Windows.Media.Geometry g1, System.Windows.Media.Geometry g2)
+        public static Point[] GetIntersectionPoints(Geometry g1, Geometry g2)
         {
-            System.Windows.Media.Geometry og1 = g1.GetWidenedPathGeometry(new Pen(Brushes.Black, 1.0));
-            System.Windows.Media.Geometry og2 = g2.GetWidenedPathGeometry(new Pen(Brushes.Black, 1.0));
+            Geometry og1 = g1.GetWidenedPathGeometry(new Pen(Brushes.Black, 1.0));
+            Geometry og2 = g2.GetWidenedPathGeometry(new Pen(Brushes.Black, 1.0));
             CombinedGeometry cg = new CombinedGeometry(GeometryCombineMode.Intersect, og1, og2);
             PathGeometry pg = cg.GetFlattenedPathGeometry();
             Point[] result = new Point[pg.Figures.Count];
@@ -255,7 +255,7 @@ namespace Chem4Word.ACME.Utils
             return result;
         }
 
-        public static List<Point> GetGeoPoints(System.Windows.Media.Geometry geo)
+        public static List<Point> GetGeoPoints(Geometry geo)
         {
             List<Point> retval = new List<Point>();
             var pg = geo.GetFlattenedPathGeometry(0.01, ToleranceType.Relative);
@@ -291,7 +291,7 @@ namespace Chem4Word.ACME.Utils
             if (glyphRun != null)
             {
                 var geo = glyphRun.BuildGeometry();
-                return WPFGeometry.GetGeoPoints(geo);
+                return GetGeoPoints(geo);
             }
 
             return null;

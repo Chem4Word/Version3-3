@@ -10,6 +10,7 @@ using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
@@ -17,6 +18,8 @@ namespace Chem4Word.ACME.Drawing.Visuals
 {
     public class ChargeVisual : ChildTextVisual
     {
+        private Point _chargeCenter;
+
         public ChargeVisual(AtomVisual parentVisual,
                             DrawingContext drawingContext, AtomTextMetrics mainAtomMetrics, AtomTextMetrics hMetrics)
         {
@@ -45,20 +48,28 @@ namespace Chem4Word.ACME.Drawing.Visuals
         private ChargeLabelText DrawChargeOrRadical(DrawingContext drawingContext, string chargeString, Brush fill)
         {
             ChargeLabelText chargeText = new ChargeLabelText(chargeString, PixelsPerDip(), ParentVisual.SuperscriptSize);
+            CoreHull = new List<Point>();
 
             //center the charge text on the atom to start with
             Point chargeCenter = ParentVisual.Position;
-            var parentBoundingBox = ParentMetrics.TotalBoundingBox;
+            Rect parentBoundingBox = ParentMetrics.TotalBoundingBox;
 
-            chargeText.MeasureAtCenter(chargeCenter);
-            var chargeBoundingBox = chargeText.TextMetrics.TotalBoundingBox;
+            _chargeCenter = chargeCenter;
+            chargeText.MeasureAtCenter(_chargeCenter);
+            Rect chargeBoundingBox = chargeText.TextMetrics.TotalBoundingBox;
 
             SetMultipleCharges();
 
-            chargeText.MeasureAtCenter(chargeCenter);
+            chargeText.MeasureAtCenter(_chargeCenter);
 
             chargeText.Fill = fill;
             chargeText.DrawAtBottomLeft(chargeText.TextMetrics.BoundingBox.BottomLeft, drawingContext);
+
+            if (chargeText.FlattenedPath != null)
+            {
+                CoreHull.AddRange(chargeText.FlattenedPath);
+            }
+
             return chargeText;
             //local function
             //places multiple charges on an atom
@@ -71,14 +82,14 @@ namespace Chem4Word.ACME.Drawing.Visuals
                     {
                         //need to take into account width of subscripted hydrogen when placing charge
                         case CompassPoints.North:
-                            chargeCenter.Y -= parentBoundingBox.Height / 2;
-                            chargeCenter.X += chargeBoundingBox.Width + Math.Max(parentBoundingBox.Width, hbb.Width) / 2;
+                            _chargeCenter.Y -= parentBoundingBox.Height / 2;
+                            _chargeCenter.X += chargeBoundingBox.Width + Math.Max(parentBoundingBox.Width, hbb.Width) / 2;
                             break;
 
                         case CompassPoints.South:
                         case CompassPoints.West:
-                            chargeCenter.Y -= parentBoundingBox.Height / 2;
-                            chargeCenter.X += (chargeBoundingBox.Width + parentBoundingBox.Width) / 2;
+                            _chargeCenter.Y -= parentBoundingBox.Height / 2;
+                            _chargeCenter.X += (chargeBoundingBox.Width + parentBoundingBox.Width) / 2;
                             break;
 
                         //hydrogen is out of the way
@@ -86,23 +97,31 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             {
                                 if (chargeString == ModelConstants.EnDashSymbol)
                                 {
-                                    chargeCenter.Y -= (parentBoundingBox.Height + chargeBoundingBox.Width * 1.1) / 2;
+                                    _chargeCenter.Y -= (parentBoundingBox.Height + chargeBoundingBox.Width * 1.1) / 2;
                                 }
                                 else
                                 {
-                                    chargeCenter.Y -= (parentBoundingBox.Height + chargeBoundingBox.Height * 1.1) / 2;
+                                    _chargeCenter.Y -= (parentBoundingBox.Height + chargeBoundingBox.Height * 1.1) / 2;
                                 }
 
-                                chargeCenter.X += parentBoundingBox.Width / 2;
+                                _chargeCenter.X += parentBoundingBox.Width / 2;
                                 break;
                             }
                     }
                 }
                 else //no hydrogens!
                 {
-                    chargeCenter.Y -= parentBoundingBox.Height / 2;
-                    chargeCenter.X = ParentVisual.Position.X + (chargeBoundingBox.Width + parentBoundingBox.Width) / 2;
+                    _chargeCenter.Y -= parentBoundingBox.Height / 2;
+                    _chargeCenter.X = ParentVisual.Position.X + (chargeBoundingBox.Width + parentBoundingBox.Width) / 2;
                 }
+            }
+        }
+
+        public Point Centroid
+        {
+            get
+            {
+                return _chargeCenter;
             }
         }
     }
