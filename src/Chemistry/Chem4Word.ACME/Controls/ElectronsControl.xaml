@@ -41,6 +41,5 @@
             x:FieldModifier="public"
             ValueChanged="OnValueChanged_AutomaticElectrons"
             Visibility="Collapsed" />
-
     </Grid>
 </UserControl>

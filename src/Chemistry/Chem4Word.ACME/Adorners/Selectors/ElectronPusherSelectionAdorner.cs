@@ -39,7 +39,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private Point _newFirstControlPoint;
         private readonly ElectronPusherVisual _adornedVisual;
 
-        private const double DispOffsetFactor = 0.5;
+        private const double DisplacementOffsetFactor = 0.5;
 
         public bool Resizing
         {
@@ -64,13 +64,12 @@ namespace Chem4Word.ACME.Adorners.Selectors
             }
         }
 
-        public ElectronPusherSelectionAdorner(EditorCanvas editorCanvas, ElectronPusherVisual electronPushervisual) : base(editorCanvas)
+        public ElectronPusherSelectionAdorner(EditorCanvas editorCanvas, ElectronPusherVisual electronPusherVisual) : base(editorCanvas)
         {
-            _adornedVisual = electronPushervisual;
-            ParentPusher = electronPushervisual.ParentPusher;
+            _adornedVisual = electronPusherVisual;
+            ParentPusher = electronPusherVisual.ParentPusher;
 
             _firstControlPointTemp = AdjustedControlPoint(ParentPusher.FirstControlPoint, ParentPusher.StartPoint);
-
             _secondControlPointTemp = AdjustedControlPoint(ParentPusher.SecondControlPoint, ParentPusher.EndPoint);
 
             _solidColorBrush = (SolidColorBrush)FindResource("GrabHandleFillBrush");
@@ -129,7 +128,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             e.Handled = true;
         }
 
-        private void ThisAdorner_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ThisAdorner_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (Resizing)
             {
@@ -139,7 +138,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             Resizing = false;
         }
 
-        private void ThisAdorner_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ThisAdorner_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             OriginalLocation = e.GetPosition(CurrentEditor);
             CurrentLocation = OriginalLocation;
@@ -152,8 +151,8 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 _draggedControlPoint = DraggedControlPoint.SecondControlPoint;
             }
 
-            Resizing = _draggedControlPoint == DraggedControlPoint.FirstControlPoint ||
-                      _draggedControlPoint == DraggedControlPoint.SecondControlPoint;
+            Resizing = _draggedControlPoint == DraggedControlPoint.FirstControlPoint
+                       || _draggedControlPoint == DraggedControlPoint.SecondControlPoint;
 
             e.Handled = true;
         }
@@ -166,13 +165,13 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private Point UnadjustedControlPoint(Point adjustedPoint, Point reference)
         {
             Vector offsetVector = adjustedPoint - reference;
-            return offsetVector / DispOffsetFactor + reference;
+            return offsetVector / DisplacementOffsetFactor + reference;
         }
 
         private Point AdjustedControlPoint(Point unadjustedPoint, Point reference)
         {
             Vector offsetVector = unadjustedPoint - reference;
-            return offsetVector * DispOffsetFactor + reference;
+            return offsetVector * DisplacementOffsetFactor + reference;
         }
 
         public Point CurrentLocation { get; set; }
@@ -251,21 +250,22 @@ namespace Chem4Word.ACME.Adorners.Selectors
                 DashStyle = DashStyles.Dash
             };
 #endif
-            
+
             var pusherVisual = CurrentEditor.ChemicalVisuals[ParentPusher];
 
             //delegated the drawing of the arrow to the parent pusher visual
             (pusherVisual as ElectronPusherVisual)?.DrawMainArrowGeometry(drawingContext, new Pen(traceBrush, 3), secondChemistryVisuals);
 
             Rect adornedElementRect = _adornedVisual.Bounds;
-            Rect newRect1 = new Rect(new Point(_firstControlPointTemp.X - _thumbWidth * 2, _firstControlPointTemp.Y - _thumbWidth * 2),
-                                     new Point(_firstControlPointTemp.X + _thumbWidth * 2, _firstControlPointTemp.Y + _thumbWidth * 2));
-            Rect newRect2 = new Rect(new Point(_secondControlPointTemp.X - _thumbWidth * 2, _secondControlPointTemp.Y - _thumbWidth * 2),
-                                     new Point(_secondControlPointTemp.X + _thumbWidth * 2, _secondControlPointTemp.Y + _thumbWidth * 2));
+            Rect newRect1 = new Rect(new Point(_firstControlPointTemp.X - _thumbWidth, _firstControlPointTemp.Y - _thumbWidth),
+                                     new Point(_firstControlPointTemp.X + _thumbWidth, _firstControlPointTemp.Y + _thumbWidth));
+            Rect newRect2 = new Rect(new Point(_secondControlPointTemp.X - _thumbWidth, _secondControlPointTemp.Y - _thumbWidth),
+                                     new Point(_secondControlPointTemp.X + _thumbWidth, _secondControlPointTemp.Y + _thumbWidth));
+
             adornedElementRect.Union(newRect1);
             adornedElementRect.Union(newRect2);
             adornedElementRect.Union(pusherVisual.Drawing.Bounds);
-            adornedElementRect.Inflate(_thumbWidth * 4, _thumbWidth * 4);
+
             //draw a big transparent rectangle over the whole thing to capture hit testing
             drawingContext.DrawRectangle(overlayBrush, overlayPen, adornedElementRect);
         }

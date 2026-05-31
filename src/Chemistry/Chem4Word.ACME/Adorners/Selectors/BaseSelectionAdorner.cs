@@ -66,7 +66,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
         private void BondToLayer()
         {
             AdornerLayer = AdornerLayer.GetAdornerLayer(CurrentEditor);
-            AdornerLayer.Add(this);
+            AdornerLayer?.Add(this);
         }
 
         ~BaseSelectionAdorner()
@@ -161,7 +161,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
             CurrentEditor.RaiseEvent(e);
         }
 
-        protected virtual void OnPreviewMouseLeftButtonDown_BaseSelectionAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        protected virtual void OnPreviewMouseLeftButtonDown_BaseSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
             if (BlockPMD)
             {
@@ -172,7 +172,7 @@ namespace Chem4Word.ACME.Adorners.Selectors
 
         public bool BlockPMD { get; set; }
 
-        protected virtual void OnMouseLeftButtonDown_BaseSelectionAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        protected virtual void OnMouseLeftButtonDown_BaseSelectionAdorner(object sender, MouseButtonEventArgs e)
         {
             CurrentEditor.RaiseEvent(e);
         }

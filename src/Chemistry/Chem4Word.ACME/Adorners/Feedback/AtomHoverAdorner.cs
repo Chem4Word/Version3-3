@@ -6,6 +6,8 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.ACME.Drawing.Visuals;
+using Chem4Word.Core.Helpers;
+using Chem4Word.Model2;
 using System.Windows;
 using System.Windows.Media;
 
@@ -28,11 +30,26 @@ namespace Chem4Word.ACME.Adorners.Feedback
             {
                 atomBounds = ev.Bounds;
             }
-            else if (TargetedVisual is AtomVisual av)
+            else if (TargetedVisual is AtomVisual av && av.ParentAtom != null)
             {
                 atomBounds = av.Bounds;
             }
-            atomBounds.Inflate(2.0, 2.0);
+            else if (TargetedVisual is ElectronPusherVisual epv)
+            {
+                atomBounds = epv.Bounds;
+                ElectronPusher pusher = epv.ParentPusher;
+                Rect r1 = GeometryTool.BoundingBoxOfPoint(AdjustedControlPoint(pusher.FirstControlPoint, pusher.StartPoint), 4.0);
+                Rect r2 = GeometryTool.BoundingBoxOfPoint(AdjustedControlPoint(pusher.SecondControlPoint, pusher.EndPoint), 4.0);
+                atomBounds.Union(r1);
+                atomBounds.Union(r2);
+                atomBounds.Inflate(3.0, 3.0);
+            }
+
+            if (atomBounds != Rect.Empty)
+            {
+                atomBounds.Inflate(2.0, 2.0);
+            }
+
             Vector twiddle = new Vector(3, 0.0);
             using (StreamGeometryContext sgc = sg.Open())
             {
@@ -49,6 +66,14 @@ namespace Chem4Word.ACME.Adorners.Feedback
             }
 
             drawingContext.DrawGeometry(BracketBrush, BracketPen, sg);
+        }
+
+        private const double DisplacementOffsetFactor = 0.5;
+
+        private Point AdjustedControlPoint(Point unadjustedPoint, Point reference)
+        {
+            Vector offsetVector = unadjustedPoint - reference;
+            return offsetVector * DisplacementOffsetFactor + reference;
         }
     }
 }

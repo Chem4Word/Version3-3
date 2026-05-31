@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Chem4Word.ACME</RootNamespace>
     <AssemblyName>Chem4Word.ACME</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -528,4 +528,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>echo "Copying files"
+xcopy "$(TargetDir)$(TargetName)*.*" "$(SolutionDir)\bin" /C /f /r /y /i</PostBuildEvent>
+  </PropertyGroup>
 </Project>

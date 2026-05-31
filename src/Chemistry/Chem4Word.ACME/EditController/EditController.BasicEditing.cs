@@ -72,6 +72,16 @@ namespace Chem4Word.ACME
                     DeleteElectronPushers(pushers);
                 }
 
+                if (annotations.Any())
+                {
+                    DeleteAnnotations(annotations);
+                }
+
+                if (reactions.Any())
+                {
+                    DeleteReactions(reactions);
+                }
+
                 if (molecules.Any())
                 {
                     DeleteMolecules(molecules);
@@ -80,16 +90,6 @@ namespace Chem4Word.ACME
                 if (atoms.Any() || bonds.Any())
                 {
                     DeleteAtomsAndBonds(atoms, bonds);
-                }
-
-                if (reactions.Any())
-                {
-                    DeleteReactions(reactions);
-                }
-
-                if (annotations.Any())
-                {
-                    DeleteAnnotations(annotations);
                 }
 
                 ClearSelection();

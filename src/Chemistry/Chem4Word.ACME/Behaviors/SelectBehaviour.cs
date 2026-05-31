@@ -592,8 +592,7 @@ namespace Chem4Word.ACME.Behaviors
         private void RemoveAdorner(Adorner adorner)
         {
             var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
-
-            layer.Remove(adorner);
+            layer?.Remove(adorner);
         }
 
         private StreamGeometry GetPolyGeometry()
@@ -668,7 +667,7 @@ namespace Chem4Word.ACME.Behaviors
             _lassoAdorner = null;
         }
 
-        public SelectBehaviour(): base()
+        public SelectBehaviour() : base()
         {
             PermittedHighlights = new HashSet<System.Type>
             {

@@ -59,11 +59,10 @@ function Update-SourceVersion
 
 function Update-AllAssemblyInfoFiles ($version)
 {
-   #Write-Host "Searching '$path'"
-   foreach ($file in "AssemblyInfo.cs", "AssemblyInfo.vb" ) 
+   foreach ($file in "AssemblyInfo.cs" ) 
    {
 		Get-ChildItem $path -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
-		Get-ChildItem "..\..\..\Secure-Libraries\Chem4Word.Driver.Closed"  -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
+		Get-ChildItem "..\..\..\Secure-Libraries\V3.3\Chem4Word.Driver.Closed" -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
    }
 }
 
@@ -128,7 +127,7 @@ CD "$($pwd)"
 # ---------------------------------------------------------- #
 
 # Update Assembly Info files
-Write-Host "Searching for files in $($pwd)\$($path)" -ForegroundColor Green
+Write-Host "Searching for files ..." -ForegroundColor Green
 Update-AllAssemblyInfoFiles "$($version).$($delta.Days)"
 
 $number = "$($version) $($name)"
@@ -227,7 +226,7 @@ $replaceWith = 'var versionNumber = "' + "$($version)" + '.666";';
 # Update CustomAction.cs
 Write-Host " Updating 'CustomAction.cs'" -ForegroundColor Yellow
 
-$file = "$($pwd)\..\Installer\WiX.CustomAction.V7\CustomAction.cs"
+$file = "$($pwd)\..\Installer\WiX.CustomAction\CustomAction.cs"
 Write-Host "$($file)" -ForegroundColor Green
 
 $findPattern = 'var versionNumber = .*'

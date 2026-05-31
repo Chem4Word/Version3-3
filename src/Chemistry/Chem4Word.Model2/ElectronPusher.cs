@@ -158,36 +158,37 @@ namespace Chem4Word.Model2
         {
             get
             {
-                if (EndChemistries.Count == 1)
-                {
-                    var endChemistry = EndChemistries[0];
-                    switch (endChemistry)
-                    {
-                        case Atom a:
-                            return a.Position;
+                Point result = new Point(0, 0);
 
-                        case Bond b:
-                            return b.MidPoint;
+                switch (EndChemistries.Count)
+                {
+                    case 1:
+                        StructuralObject endChemistry = EndChemistries[0];
+                        switch (endChemistry)
+                        {
+                            case Atom a:
+                                result = a.Position;
+                                break;
 
-                        default:
-                            return new Point(0, 0);
-                    }
+                            case Bond b:
+                                result = b.MidPoint;
+                                break;
+                        }
+                        break;
+
+                    case 2:
+                        if (EndChemistries[0] is Atom a1 && EndChemistries[1] is Atom a2)
+                        {
+                            result = GeometryTool.GetMidPoint(a1.Position, a2.Position);
+                        }
+                        break;
                 }
-                else if (EndChemistries.Count == 2)
-                //two atoms
-                {
-                    return GeometryTool.GetMidPoint((EndChemistries[0] as Atom).Position,
-                                                    (EndChemistries[1] as Atom).Position);
-                }
-                else
-                {
-                    return new Point(0, 0);
-                }
+
+                return result;
             }
         }
 
-        public Point
-            FirstControlPoint
+        public Point FirstControlPoint
         {
             get
             {

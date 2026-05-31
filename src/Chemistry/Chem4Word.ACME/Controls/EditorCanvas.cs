@@ -159,8 +159,8 @@ namespace Chem4Word.ACME.Controls
                                                        bond.Placement, bond.Centroid, bond.SubsidiaryRing?.Centroid, Controller.Standoff);
                     descriptor.Start = startAtomPosition;
                     descriptor.End = endAtomPosition;
-                    var bondgeom = descriptor.DefiningGeometry;
-                    Utils.WPFGeometry.DrawGeometry(ghostContext, bondgeom);
+                    var geometry = descriptor.DefiningGeometry;
+                    Utils.WPFGeometry.DrawGeometry(ghostContext, geometry);
                 }
                 ghostContext.Close();
             }
@@ -178,7 +178,7 @@ namespace Chem4Word.ACME.Controls
             MoleculeSelectionAdorner result = null;
 
             var layer = AdornerLayer.GetAdornerLayer(this);
-            var children = layer.GetAdorners(this);
+            var children = layer?.GetAdorners(this);
             if (children != null)
             {
                 foreach (var adorner in children)
@@ -204,7 +204,7 @@ namespace Chem4Word.ACME.Controls
             SingleObjectSelectionAdorner result = null;
 
             var layer = AdornerLayer.GetAdornerLayer(this);
-            var children = layer.GetAdorners(this);
+            var children = layer?.GetAdorners(this);
             if (children != null)
             {
                 foreach (var adorner in children)

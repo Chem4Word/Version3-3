@@ -101,7 +101,6 @@ Please note that the following NuGet packages can't be updated
 'System.Data.SQLite.* 1.0.119.0' is the last supported version which will run in a VSTO
 'Perfolizer 0.7.1' is not compatible with 'BenchmarkDotNet 0.15.8 constraint: Perfolizer (= 0.6.1)'.
 
-
 ## Acknowledgements
 1. [CEVOpen](https://github.com/petermr/CEVOpen) - This data represents about 2100 unique chemical names of volatile plant chemicals (essential oils) from the EssoilDB 1.0 database (compiled from the scientific literature over about 10 years in Dr Yadav's laboratory). They are made available for re-use by anyone for any purpose (CC0). We would appreciate acknowledgement of EssoilDB and the following people who extracted and cleaned the data during 2019. (Gitanjali Yadav, Ambarish Kumar, Peter Murray-Rust).
 

@@ -29,7 +29,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             _brush = (Brush)FindResource(AcmeConstants.AdornerBorderBrush);
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(currentEditor);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
         }
 
         public Point TopLeft { get; private set; }

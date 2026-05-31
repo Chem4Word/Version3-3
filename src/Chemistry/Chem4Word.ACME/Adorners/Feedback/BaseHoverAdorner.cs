@@ -30,7 +30,7 @@ namespace Chem4Word.ACME.Adorners.Feedback
             TargetedVisual = targetedVisual;
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
         }
     }
 }

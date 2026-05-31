@@ -38,7 +38,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             MouseLeftButtonUp += OnMouseLeftButtonUp_DrawReactionAdorner;
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
 
             Focusable = true;
             Focus();

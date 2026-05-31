@@ -137,6 +137,11 @@ namespace Chem4Word.Core.Helpers
             return results;
         }
 
+        public static Rect BoundingBoxOfPoint(Point centre, double size)
+        {
+            return new Rect(centre.X - size / 2, centre.Y - size / 2, size, size);
+        }
+
         public static List<Point> HullOfCircle(Point centre, double diameter, int numPoints = 36)
         {
             List<Point> result = new List<Point>();
@@ -386,8 +391,14 @@ namespace Chem4Word.Core.Helpers
             return (Math.Abs(totalAngle) > 1);
         }
 
-        // https://stackoverflow.com/questions/1119451/how-to-tell-if-a-line-intersects-a-polygon-in-c
-        public static bool Intersects(Point lineP1, Point lineP2, List<Point> polygon)
+        /// <summary>
+        /// Determines if a line intersects with a polygon
+        /// </summary>
+        /// <param name="lineStart"></param>
+        /// <param name="lineEnd"></param>
+        /// <param name="polygon"></param>
+        /// <returns></returns>
+        public static bool Intersects(Point lineStart, Point lineEnd, List<Point> polygon)
         {
             if (polygon == null || !polygon.Any())
             {
@@ -395,8 +406,8 @@ namespace Chem4Word.Core.Helpers
                 Debugger.Break();
                 return false;
             }
-            int side = GetSide(lineP1, lineP2, polygon.First());
-            return side != 0 && polygon.All(x => GetSide(lineP1, lineP2, x) == side);
+            int side = GetSide(lineStart, lineEnd, polygon.First());
+            return side != 0 && polygon.All(x => GetSide(lineStart, lineEnd, x) == side);
         }
 
         private static int GetSide(Point lineP1, Point lineP2, Point queryP)

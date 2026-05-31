@@ -18,7 +18,7 @@ namespace Chem4Word.ACME.Commands.Atom
 
         public override bool CanExecute(object parameter)
         {
-            return EditController.CanAddCarbenoidElectrons(parameter as Model2.Atom); 
+            return EditController.CanAddCarbenoidElectrons(parameter as Model2.Atom);
         }
 
         public override void Execute(object parameter)

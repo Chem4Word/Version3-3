@@ -117,14 +117,15 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                     if (electronPusher.EndChemistries.Count == 2)
                     {
-                        Point pseudoBondStart = GetPoint(electronPusher.EndChemistries[0], electronPusher.FirstControlPoint, false);
-                        Point pseudoBondEnd = GetPoint(electronPusher.EndChemistries[1], electronPusher.SecondControlPoint, false);
+                        Point nascentBondStart = GetPoint(electronPusher.EndChemistries[0], electronPusher.FirstControlPoint, false);
+                        Point nascentBondEnd = GetPoint(electronPusher.EndChemistries[1], electronPusher.SecondControlPoint, false);
 
                         // Adjust the end point
-                        endPoint = GeometryTool.GetMidPoint(pseudoBondStart, pseudoBondEnd);
+                        endPoint = GeometryTool.GetMidPoint(nascentBondStart, nascentBondEnd);
 
-                        // Draw the fake bond
-                        //Outputs.Diagnostics.Lines.Add(new DiagnosticLine(pseudoBondStart, pseudoBondEnd, BondLineStyle.Zero, OoXmlColours.DarkGreen));
+                        // Draw the nascent bond
+                        Outputs.BondLines.Add(new BondLine(BondLineStyle.Nascent, nascentBondStart, nascentBondEnd,
+                                                           Inputs.Model.ShowColouredAtoms ? OoXmlColours.DarkRed : OoXmlColours.Black));
 
                         pusher.EndPoint = endPoint;
                     }

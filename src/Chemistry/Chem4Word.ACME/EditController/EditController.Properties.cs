@@ -13,6 +13,7 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -151,18 +152,67 @@ namespace Chem4Word.ACME
                         break;
 
                     case TranslateTransform translate:
-                        result.Add(
-                            $"{typeName} by {SafeDouble.AsString(translate.X)},{SafeDouble.AsString(translate.Y)}");
+                        result.Add($"{typeName} by {SafeDouble.AsString(translate.X)},{SafeDouble.AsString(translate.Y)}");
                         break;
 
                     case RotateTransform rotate:
-                        result.Add(
-                            $"{typeName} by {SafeDouble.AsString(rotate.Angle)} degrees about {SafeDouble.AsString(rotate.CenterX)},{SafeDouble.AsString(rotate.CenterY)}");
+                        result.Add($"{typeName} by {SafeDouble.AsString(rotate.Angle)} degrees about {SafeDouble.AsString(rotate.CenterX)},{SafeDouble.AsString(rotate.CenterY)}");
                         break;
 
                     case ScaleTransform scale:
-                        result.Add(
-                            $"{typeName} by {SafeDouble.AsString(scale.ScaleX)},{SafeDouble.AsString(scale.ScaleY)} about {SafeDouble.AsString(scale.CenterX)},{SafeDouble.AsString(scale.CenterY)}");
+                        result.Add($"{typeName} by {SafeDouble.AsString(scale.ScaleX)},{SafeDouble.AsString(scale.ScaleY)} about {SafeDouble.AsString(scale.CenterX)},{SafeDouble.AsString(scale.CenterY)}");
+                        break;
+
+                    default:
+                        result.Add($"{typeName} ???");
+                        break;
+                }
+            }
+            catch
+            {
+                // Do Nothing
+            }
+
+            return result;
+        }
+
+        private List<string> DecodeTransform(GeneralTransform generalTransform)
+        {
+            List<string> result = new List<string>();
+
+            try
+            {
+                string typeName = generalTransform.GetType().Name.Replace("GeneralTransform", "");
+
+                switch (generalTransform)
+                {
+                    case TransformGroup group:
+                        result.Add($"{typeName}");
+                        foreach (Transform child in group.Children)
+                        {
+                            result.AddRange(DecodeTransform(child));
+                        }
+
+                        break;
+
+                    case TranslateTransform translate:
+                        result.Add($"{typeName} by {SafeDouble.AsString(translate.X)},{SafeDouble.AsString(translate.Y)}");
+                        break;
+
+                    case RotateTransform rotate:
+                        result.Add($"{typeName} by {SafeDouble.AsString(rotate.Angle)} degrees about {SafeDouble.AsString(rotate.CenterX)},{SafeDouble.AsString(rotate.CenterY)}");
+                        break;
+
+                    case ScaleTransform scale:
+                        result.Add($"{typeName} by {SafeDouble.AsString(scale.ScaleX)},{SafeDouble.AsString(scale.ScaleY)} about {SafeDouble.AsString(scale.CenterX)},{SafeDouble.AsString(scale.CenterY)}");
+                        break;
+
+                    case MatrixTransform transform:
+                        string customString = string.Format(CultureInfo.InvariantCulture,
+                                                            "M11={0}, M12={1}, M21={2}, M22={3}, OffsetX={4}, OffsetY={5}",
+                                                            transform.Matrix.M11, transform.Matrix.M12, transform.Matrix.M21, transform.Matrix.M22,
+                                                            transform.Matrix.OffsetX, transform.Matrix.OffsetY);
+                        result.Add($"{typeName} {customString}");
                         break;
 
                     default:
@@ -261,43 +311,47 @@ namespace Chem4Word.ACME
         /// within a selection
         /// </summary>
         /// <param name="operation">Transform to apply to the selection</param>
-        /// <param name="objectsToTransform">List<BaseObject> to transform</param>
+        /// <param name="objectsToTransform">List of StructuralObject(s) to transform</param>
         public void TransformObjects(Transform operation, List<StructuralObject> objectsToTransform)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             List<Molecule> molecules = objectsToTransform.OfType<Molecule>().ToList();
             List<Reaction> reactions = objectsToTransform.OfType<Reaction>().ToList();
             List<Annotation> annotations = objectsToTransform.OfType<Annotation>().ToList();
-            List<ElectronPusher> electronPushers = Model.ElectronPushers.Values.ToList();
+
+            (List<ElectronPusher> firstControlPoints, List<ElectronPusher> secondControlPoints, List<ElectronPusher> pushers) = AffectedPushers(molecules);
+
             try
             {
                 string countMolString = molecules == null ? "{null}" : $"{molecules.Count}";
                 string countReactString = reactions == null ? "{null}" : $"{reactions.Count}";
                 string countAnnotationString = annotations == null ? "{null}" : $"{annotations.Count}";
+                string countPushersString = pushers == null ? "{null}" : $"{pushers.Count}";
+
                 IEnumerable<Molecule> rootMolecules = from m in molecules
                                                       where m.RootMolecule == m
                                                       select m;
                 Molecule[] moleculesToTransform = rootMolecules.ToArray();
-                string transform = string.Join(";", DecodeTransform(operation));
+                string transformAsString = string.Join(";", DecodeTransform(operation));
+                GeneralTransform inverse = operation.Inverse;
+                string inverseTransformAsString = string.Join(";", DecodeTransform(inverse));
 
                 Action undo = () =>
                 {
                     SuppressEditorRedraw(true);
                     ClearSelection();
 
-                    GeneralTransform inverse = operation.Inverse;
+                    WriteTelemetry(module, "Debug", $"Transform: {inverseTransformAsString}");
 
-                    for (int i = 0; i < moleculesToTransform.Count(); i++)
+                    WriteTelemetry(module, "Debug", $"Molecules: {countMolString}");
+                    WriteTelemetry(module, "Debug", $"Reactions: {countReactString}");
+                    WriteTelemetry(module, "Debug", $"Annotations: {countAnnotationString}");
+                    WriteTelemetry(module, "Debug", $"Pushers: {countPushersString}");
+
+                    foreach (Molecule molecule in moleculesToTransform)
                     {
-                        WriteTelemetry(module, "Debug",
-                                       $"Molecules: {countMolString} Transform: {transform}");
-                        Transform(moleculesToTransform[i], (Transform)inverse);
+                        Transform(molecule, (Transform)inverse);
                     }
-
-                    WriteTelemetry(module, "Debug",
-                                   $"Reactions: {countReactString} Transform: {transform}");
-                    WriteTelemetry(module, "Debug",
-                                   $"Annotations: {countAnnotationString} Transform: {transform}");
 
                     foreach (Reaction reaction in reactions)
                     {
@@ -327,31 +381,40 @@ namespace Chem4Word.ACME
                         ann.UpdateVisual();
                     }
 
-                    foreach (ElectronPusher ep in electronPushers)
+                    foreach (ElectronPusher pusher in firstControlPoints)
                     {
-                        ep.UpdateVisual();
+                        pusher.FirstControlPoint = inverse.Transform(pusher.FirstControlPoint);
                     }
+                    foreach (ElectronPusher pusher in secondControlPoints)
+                    {
+                        pusher.SecondControlPoint = inverse.Transform(pusher.SecondControlPoint);
+                    }
+                    foreach (ElectronPusher pusher in pushers)
+                    {
+                        pusher.UpdateVisual();
+                    }
+
                     AddObjectListToSelection(molecules.Cast<StructuralObject>().ToList());
                     AddObjectListToSelection(reactions.Cast<StructuralObject>().ToList());
                     AddObjectListToSelection(annotations.Cast<StructuralObject>().ToList());
-                    AddObjectListToSelection(electronPushers.Cast<StructuralObject>().ToList());
                 };
 
                 Action redo = () =>
                 {
                     SuppressEditorRedraw(true);
                     ClearSelection();
-                    for (int i = 0; i < moleculesToTransform.Count(); i++)
-                    {
-                        WriteTelemetry(module, "Debug",
-                                       $"Molecules: {countMolString} Transform: {transform}");
-                        Transform(moleculesToTransform[i], operation);
-                    }
 
-                    WriteTelemetry(module, "Debug",
-                                   $"Reactions: {countReactString} Transform: {transform}");
-                    WriteTelemetry(module, "Debug",
-                                   $"Annotations: {countAnnotationString} Transform: {transform}");
+                    WriteTelemetry(module, "Debug", $"Transform: {transformAsString}");
+
+                    WriteTelemetry(module, "Debug", $"Molecules: {countMolString}");
+                    WriteTelemetry(module, "Debug", $"Reactions: {countReactString}");
+                    WriteTelemetry(module, "Debug", $"Annotations: {countAnnotationString}");
+                    WriteTelemetry(module, "Debug", $"Pushers: {countPushersString}");
+
+                    foreach (Molecule molecule in moleculesToTransform)
+                    {
+                        Transform(molecule, operation);
+                    }
 
                     foreach (Reaction reaction in reactions)
                     {
@@ -364,11 +427,6 @@ namespace Chem4Word.ACME
                         ann.Position = operation.Transform(ann.Position);
                     }
 
-                    //foreach (ElectronPusher pusher in electronPushers)
-                    //{
-                    //    pusher.FirstControlPoint = operation.Transform(pusher.FirstControlPoint);
-                    //    pusher.SecondControlPoint = operation.Transform(pusher.SecondControlPoint);
-                    //}
                     SuppressEditorRedraw(false);
 
                     foreach (Molecule mol in moleculesToTransform)
@@ -385,16 +443,25 @@ namespace Chem4Word.ACME
                     {
                         ann.UpdateVisual();
                     }
-                    foreach (ElectronPusher ep in electronPushers)
+
+                    foreach (ElectronPusher pusher in firstControlPoints)
                     {
-                        ep.UpdateVisual();
+                        pusher.FirstControlPoint = operation.Transform(pusher.FirstControlPoint);
+                    }
+                    foreach (ElectronPusher pusher in secondControlPoints)
+                    {
+                        pusher.SecondControlPoint = operation.Transform(pusher.SecondControlPoint);
+                    }
+                    foreach (ElectronPusher pusher in pushers)
+                    {
+                        pusher.UpdateVisual();
                     }
 
                     AddObjectListToSelection(molecules.Cast<StructuralObject>().ToList());
                     AddObjectListToSelection(reactions.Cast<StructuralObject>().ToList());
                     AddObjectListToSelection(annotations.Cast<StructuralObject>().ToList());
-                    //AddObjectListToSelection(electronPushers.Cast<StructuralObject>().ToList());
                 };
+
                 UndoManager.BeginUndoBlock();
                 UndoManager.RecordAction(undo, redo);
                 UndoManager.EndUndoBlock();
@@ -406,6 +473,75 @@ namespace Chem4Word.ACME
             }
 
             CheckModelIntegrity(module);
+        }
+
+        private (List<ElectronPusher> First, List<ElectronPusher> Second, List<ElectronPusher> Affected) AffectedPushers(List<Molecule> molecules)
+        {
+            List<Atom> atoms = new List<Atom>();
+            List<Bond> bonds = new List<Bond>();
+            List<Electron> electrons = new List<Electron>();
+
+            Dictionary<string, ElectronPusher> affectedElectronPushers = new Dictionary<string, ElectronPusher>();
+            Dictionary<string, ElectronPusher> affectedFirstControlPoint = new Dictionary<string, ElectronPusher>();
+            Dictionary<string, ElectronPusher> affectedSecondControlPoint = new Dictionary<string, ElectronPusher>();
+
+            foreach (Molecule molecule in molecules)
+            {
+                atoms.AddRange(molecule.Atoms.Values);
+                bonds.AddRange(molecule.Bonds);
+            }
+
+            foreach (Atom atom in atoms)
+            {
+                electrons.AddRange(atom.AllElectrons());
+            }
+
+            foreach (ElectronPusher pusher in Model.ElectronPushers.Values)
+            {
+                // Handle StartChemistry
+                if (atoms.Contains(pusher.StartChemistry))
+                {
+                    affectedFirstControlPoint[pusher.Path] = pusher;
+                }
+                if (bonds.Contains(pusher.StartChemistry))
+                {
+                    affectedFirstControlPoint[pusher.Path] = pusher;
+                }
+                if (electrons.Contains(pusher.StartChemistry))
+                {
+                    affectedFirstControlPoint[pusher.Path] = pusher;
+                }
+
+                // Handle EndChemistries[]
+                foreach (StructuralObject endChemistry in pusher.EndChemistries)
+                {
+                    if (atoms.Contains(endChemistry))
+                    {
+                        affectedSecondControlPoint[pusher.Path] = pusher;
+                    }
+
+                    if (electrons.Contains(endChemistry))
+                    {
+                        affectedSecondControlPoint[pusher.Path] = pusher;
+                    }
+
+                    if (bonds.Contains(endChemistry))
+                    {
+                        affectedSecondControlPoint[pusher.Path] = pusher;
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<string, ElectronPusher> pair in affectedFirstControlPoint)
+            {
+                affectedElectronPushers[pair.Key] = pair.Value;
+            }
+            foreach (KeyValuePair<string, ElectronPusher> pair in affectedSecondControlPoint)
+            {
+                affectedElectronPushers[pair.Key] = pair.Value;
+            }
+
+            return (affectedFirstControlPoint.Values.ToList(), affectedSecondControlPoint.Values.ToList(), affectedElectronPushers.Values.ToList());
         }
 
         /// <summary>
@@ -432,7 +568,8 @@ namespace Chem4Word.ACME
                     mol.UpdateVisual();
                 }
             }
-            TransformAllElectronPushers(molecule, operation);
+
+            //TransformAllElectronPushers(molecule, operation);
         }
 
         /// <summary>
@@ -458,10 +595,10 @@ namespace Chem4Word.ACME
 
                     for (int i = 0; i < moleculesToTransform.Length; i++)
                     {
-                        string transform = string.Join(";", DecodeTransform(operations[i]));
+                        GeneralTransform inverse = operations[i].Inverse;
+                        string transform = string.Join(";", DecodeTransform(inverse));
                         WriteTelemetry(module, "Debug",
                                        $"Molecules: {countString} Transform: {transform}");
-                        GeneralTransform inverse = operations[i].Inverse;
                         Transform(moleculesToTransform[i], (Transform)inverse);
                     }
 

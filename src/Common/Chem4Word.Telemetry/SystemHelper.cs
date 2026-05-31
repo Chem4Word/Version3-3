@@ -299,11 +299,7 @@ namespace Chem4Word.Telemetry
                 }
                 else
                 {
-#if DEBUG
-                    message = "GetGitStatus not run.";
-                    timings.Add(message);
                     GitStatusObtained = true;
-#endif
                 }
 
                 sw.Stop();
@@ -470,6 +466,10 @@ namespace Chem4Word.Telemetry
 
                 StartUpTimings.Add(message);
                 Debug.WriteLine(message);
+            }
+            else
+            {
+                GitStatusObtained = true;
             }
         }
 

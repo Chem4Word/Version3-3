@@ -642,7 +642,7 @@ namespace Chem4Word
                 if (Globals.Chem4WordV3.ChemistryAllowed)
                 {
                     var sb = new StringBuilder();
-                    sb.Append("All molecule files (*.cml, *.mol, *.sdf)|*.cml;*.mol;*.sdf");
+                    sb.Append("All molecule files (*.cml, *.mol, *.sdf, *.el)|*.cml;*.mol;*.sdf;*.el");
                     sb.Append("|CML molecule files (*.cml)|*.cml");
                     sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
                     sb.Append("|SketchEl molecule files (*.el)|*.el");
@@ -921,7 +921,7 @@ namespace Chem4Word
                     {
                         if (document != null)
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Started document Name: '{document.Name}' Id: [{document.DocID}] ");
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Started editing structure in document [{document.DocID}] ");
                             if (Globals.Chem4WordV3.SystemOptions == null)
                             {
                                 Globals.Chem4WordV3.LoadOptions();

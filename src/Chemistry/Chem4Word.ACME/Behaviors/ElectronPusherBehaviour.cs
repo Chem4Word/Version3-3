@@ -88,15 +88,17 @@ namespace Chem4Word.ACME.Behaviors
 
         private void OnMouseLeftButtonUp_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
-            var targetChemistry = CurrentEditor.ActiveChemistry;
+            StructuralObject targetChemistry = CurrentEditor.ActiveChemistry;
             if (!(targetChemistry is null) && !(StartChemistry is null) && targetChemistry != StartChemistry
-                && (targetChemistry is Atom || targetChemistry is Bond || targetChemistry is Electron))
+                && (targetChemistry is Atom || targetChemistry is Bond))
             {
+                bool shiftClicking = KeyboardUtils.HoldingDownShift();
                 EditController.AddElectronPusher(StartChemistry, targetChemistry, ElectronPusherType,
-                                                 DrawAdorner.FirstControlPoint, DrawAdorner.SecondControlPoint);
+                                                 DrawAdorner.FirstControlPoint, DrawAdorner.SecondControlPoint, shiftClicking);
             }
             ClearTemporaries();
             CurrentEditor.ReleaseMouseCapture();
+            CurrentStatus = ("", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
             MouseIsDown = false;
         }
 
@@ -106,7 +108,7 @@ namespace Chem4Word.ACME.Behaviors
 
             if (_adorner != null)
             {
-                RemoveEPAdorner();
+                RemovePusherAdorner();
             }
             if (Dragging(e))
             {
@@ -124,6 +126,7 @@ namespace Chem4Word.ACME.Behaviors
             if (!(StartChemistry is null) && (StartChemistry is Bond || StartChemistry is Atom || StartChemistry is Electron))
             {
                 IsDrawing = true;
+                CurrentStatus = (AcmeConstants.DrawElectronPusherMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
             }
             else
             {
@@ -152,7 +155,7 @@ namespace Chem4Word.ACME.Behaviors
         {
             if (DrawAdorner != null)
             {
-                RemoveEPAdorner();
+                RemovePusherAdorner();
             }
 
             IsDrawing = false;
@@ -168,11 +171,10 @@ namespace Chem4Word.ACME.Behaviors
             return e.LeftButton == MouseButtonState.Pressed && IsDrawing;
         }
 
-        private void RemoveEPAdorner()
+        private void RemovePusherAdorner()
         {
             var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
-
-            layer.Remove(_adorner);
+            layer?.Remove(_adorner);
             _adorner = null;
         }
 

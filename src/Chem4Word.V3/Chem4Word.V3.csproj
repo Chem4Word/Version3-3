@@ -28,7 +28,7 @@
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>Chem4Word</RootNamespace>
     <AssemblyName>Chem4Word.V3</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -823,10 +823,10 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>rem dir "$(SolutionDir)\..\..\Secure-Libraries\Chem4Word.Driver.Closed\bin\$(ConfigurationName)\Chem4Word.Driver.Closed.*"
+    <PostBuildEvent>rem dir "$(SolutionDir)\..\..\Secure-Libraries\V3.3\Chem4Word.Driver.Closed\bin\$(ConfigurationName)\Chem4Word.Driver.Closed.*"
 
-if exist "$(SolutionDir)\..\..\Secure-Libraries\Chem4Word.Driver.Closed\bin\$(ConfigurationName)\Chem4Word.Driver.Closed.dll" (
-xcopy "$(SolutionDir)\..\..\Secure-Libraries\Chem4Word.Driver.Closed\bin\$(ConfigurationName)\Chem4Word.Driver.Closed.*" "$(TargetDir)PlugIns\" /C /f /r /y /i
+if exist "$(SolutionDir)\..\..\Secure-Libraries\V3.3\Chem4Word.Driver.Closed\bin\$(ConfigurationName)\Chem4Word.Driver.Closed.dll" (
+xcopy "$(SolutionDir)\..\..\Secure-Libraries\V3.3\Chem4Word.Driver.Closed\bin\$(ConfigurationName)\Chem4Word.Driver.Closed.*" "$(TargetDir)PlugIns\" /C /f /r /y /i
 ) else (
 echo Can't find secure driver
 ) 

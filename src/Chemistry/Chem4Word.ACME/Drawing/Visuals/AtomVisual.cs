@@ -418,8 +418,9 @@ namespace Chem4Word.ACME.Drawing.Visuals
                             }
                         }
                     }
-                    if (HydrogenChildVisual != null &&
-                        HydrogenChildVisual.HullGeometry.FillContains(hitTestParameters.HitPoint))
+
+                    if (HydrogenChildVisual != null
+                        && HydrogenChildVisual.HullGeometry.FillContains(hitTestParameters.HitPoint))
                     {
                         return new PointHitTestResult(HydrogenChildVisual, hitTestParameters.HitPoint);
                     }

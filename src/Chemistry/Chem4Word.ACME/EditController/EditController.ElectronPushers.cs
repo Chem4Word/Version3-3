@@ -27,9 +27,10 @@ namespace Chem4Word.ACME
         /// <param name="electronPusherType"></param>
         /// <param name="firstControlPoint"></param>
         /// <param name="secondControlPoint"></param>
+        /// <param name="shiftIsDown"></param>
         public void AddElectronPusher(StructuralObject startChemistry, StructuralObject targetChemistry,
                                       ElectronPusherType electronPusherType, Point firstControlPoint,
-                                      Point secondControlPoint)
+                                      Point secondControlPoint, bool shiftIsDown)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             ElectronPusher ep = new ElectronPusher
@@ -45,33 +46,39 @@ namespace Chem4Word.ACME
                 WriteTelemetry(module, "Debug", $"Adding Electron Pusher ");
 
                 //check to see if we're forming a new bond between atoms
-                if (startChemistry is Atom startAtom && targetChemistry is Atom endAtom &&
-                    startAtom.BondBetween(endAtom) is null)
+                if (startChemistry is Atom startAtom && targetChemistry is Atom endAtom
+                                                     && startAtom.BondBetween(endAtom) is null)
                 {
+                    if (shiftIsDown)
                     //we're forming a new bond so the electron pusher ends in empty space
                     //between the two atoms
-                    ep.EndChemistries.Add(startAtom);
+                    {
+                        ep.EndChemistries.Add(startAtom);
+                    }
                     ep.EndChemistries.Add(endAtom);
                 }
-                else if (startChemistry is Electron electron && targetChemistry is Atom endAtom1 &&
-                         (electron.Parent as Atom).BondBetween(endAtom1) is null)
+                else if (startChemistry is Electron electron && targetChemistry is Atom endAtom1
+                                                             && (electron.Parent as Atom).BondBetween(endAtom1) is null)
                 {
                     //we're forming a new bond so the electron pusher ends in empty space
                     //between the two atoms
-                    ep.EndChemistries.Add(electron.Parent);
+                    if (shiftIsDown)
+                    {
+                        ep.EndChemistries.Add(electron.Parent);
+                    }
                     ep.EndChemistries.Add(endAtom1);
                 }
-                else if (startChemistry is Bond startBond && targetChemistry is Atom endAtom2 &&
-                         !startBond.GetAtoms().Contains(endAtom2))
+                else if (startChemistry is Bond startBond && targetChemistry is Atom endAtom2
+                                                          && !startBond.GetAtoms().Contains(endAtom2))
                 {
                     ep.EndChemistries.Add(endAtom2);
                     //if source and target are in different molecules
                     //then we are forming a nascent bond
-                    if (startBond.Parent != endAtom2.Parent)
+                    if (shiftIsDown)
                     {
                         //add the closest of the two atoms to the external atom in the bond
-                        if ((startBond.StartAtom.Position - endAtom2.Position).Length <
-                            (startBond.EndAtom.Position - endAtom2.Position).Length)
+                        if ((startBond.StartAtom.Position - endAtom2.Position).Length
+                            < (startBond.EndAtom.Position - endAtom2.Position).Length)
                         {
                             ep.EndChemistries.Add(startBond.StartAtom);
                         }
@@ -163,11 +170,6 @@ namespace Chem4Word.ACME
             {
                 WriteTelemetryException(module, exception);
             }
-        }
-
-        private void TransformAllElectronPushers(Molecule molecule, Transform transform)
-        {
-            TransformRelatedPushers(molecule.Bonds.ToList(), transform);
         }
 
         private void TransformRelatedPushers(List<Bond> moleculeBonds, Transform transform)

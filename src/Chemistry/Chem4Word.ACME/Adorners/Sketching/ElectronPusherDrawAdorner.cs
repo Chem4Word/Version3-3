@@ -55,7 +55,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             DrawPen = new Pen(drawingBrush, drawThickness);
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
             Point start, end;
             switch (Source)
             {

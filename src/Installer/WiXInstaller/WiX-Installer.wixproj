@@ -5,7 +5,6 @@
     <Name>WiX-Installer</Name>
     <Configurations>Debug;Release;Setup;Vso-Ci</Configurations>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="WixToolset.Util.wixext" Version="7.0.0" />
     <PackageReference Include="WixToolset.NetFx.wixext" Version="7.0.0" />

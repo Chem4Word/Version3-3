@@ -42,7 +42,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             DashedPen.DashStyle = DashStyles.Dash;
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
 
             FirstPoint = firstPoint; //where the adorner is anchored
             Placements = placements; //list of placement points to draw the chain to

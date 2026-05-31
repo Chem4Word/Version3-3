@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
       <AcceptEula>wix7</AcceptEula>
-      <TargetFramework>net472</TargetFramework>
+      <TargetFramework>net48</TargetFramework>
     <Configurations>Debug;Release;Setup;Vso-Ci</Configurations>
     <Platforms>AnyCPU;x86</Platforms>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>

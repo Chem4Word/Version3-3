@@ -23,7 +23,6 @@ namespace Chem4Word.ACME.Commands.Atom
 
         public override void Execute(object parameter)
         {
-
             _controller.RemoveLonePairElectrons(parameter as Model2.Atom);
             _controller.RemoveFromSelection(parameter);
         }

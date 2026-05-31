@@ -39,7 +39,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             }
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
             Placements = placements;
             Unsaturated = unsaturated;
             CurrentEditor = (EditorCanvas)adornedElement;

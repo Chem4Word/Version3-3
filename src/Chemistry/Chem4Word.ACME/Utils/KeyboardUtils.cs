@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Chem4Word.ACME.Utils
 {
-    public class KeyboardUtils
+    public static class KeyboardUtils
     {
         public static bool HoldingDownControl() => Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 

@@ -214,7 +214,6 @@ namespace Chem4Word.ACME.Behaviors
                 if ((preferredPlacements ?? altPlacements) != null)
                 {
                     FillExistingAtoms(preferredPlacements, altPlacements, newAtomPlacements, CurrentEditor);
-
                     EditController.DrawRing(newAtomPlacements, Unsaturated, startAt);
                 }
             }

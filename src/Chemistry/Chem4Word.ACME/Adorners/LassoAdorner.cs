@@ -28,7 +28,7 @@ namespace Chem4Word.ACME.Adorners
             _dashPen.DashStyle = DashStyles.Dash;
             CurrentEditor = (EditorCanvas)adornedElement;
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
 
             Focusable = true;
             Focus();

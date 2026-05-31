@@ -54,8 +54,6 @@ namespace Chem4Word.Core.SqLite
                 // CoPilot suggested fix for occasional error, with tweak to ensure path only set once.
                 //  "Unable to find an entry point named 'SI3eae3b91c35710f2' in DLL 'SQLite.Interop.dll'."
 
-                // ToDo: Add some telemetry ...
-
                 string executingPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 bool is64 = Environment.Is64BitProcess;
                 string source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, is64 ? "x64" : "x86", "SQLite.Interop.dll");
@@ -63,7 +61,7 @@ namespace Chem4Word.Core.SqLite
                 {
                     string dest = Path.Combine(executingPath, "SQLite.Interop.dll");
 
-                    if (!File.Exists(dest))
+                    if (File.Exists(source) && !File.Exists(dest))
                     {
                         File.Copy(source, dest, overwrite: true);
                     }

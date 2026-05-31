@@ -240,7 +240,7 @@ namespace Chem4Word.ACME
                 {
                     Adorner selectionAdorner = SelectionAdorners[bond];
                     selectionAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_SelAdorner;
-                    layer.Remove(selectionAdorner);
+                    layer?.Remove(selectionAdorner);
                     SelectionAdorners.Remove(bond);
                 }
             }
@@ -305,7 +305,7 @@ namespace Chem4Word.ACME
                 {
                     MultiAdorner.MouseLeftButtonDown -= OnMouseLeftButtonDown_SelAdorner;
                     AdornerLayer layer = AdornerLayer.GetAdornerLayer(EditingCanvas);
-                    layer.Remove(MultiAdorner);
+                    layer?.Remove(MultiAdorner);
                     MultiAdorner = null;
                 }
 
@@ -344,7 +344,7 @@ namespace Chem4Word.ACME
                         msAdorner.DragIsCompleted -= OnDragCompleted_MolAdorner;
                     }
 
-                    layer.Remove(selectionAdorner);
+                    layer?.Remove(selectionAdorner);
                     SelectionAdorners.Remove(oldObject);
                 }
             }

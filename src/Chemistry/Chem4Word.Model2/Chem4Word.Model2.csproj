@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Chem4Word.Model2</RootNamespace>
     <AssemblyName>Chem4Word.Model2</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
@@ -209,4 +209,8 @@
   </Target>
   <Import Project="..\..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('..\..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
   <Import Project="..\..\packages\Grpc.Tools.2.80.0\build\Grpc.Tools.targets" Condition="Exists('..\..\packages\Grpc.Tools.2.80.0\build\Grpc.Tools.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>echo "Copying files"
+xcopy "$(TargetDir)$(TargetName)*.*" "$(SolutionDir)\bin" /C /f /r /y /i</PostBuildEvent>
+  </PropertyGroup>
 </Project>

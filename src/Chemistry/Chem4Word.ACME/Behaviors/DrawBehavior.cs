@@ -138,9 +138,11 @@ namespace Chem4Word.ACME.Behaviors
                                 case ModelConstants.OrderSingle:
                                     bondOrder = ModelConstants.OrderDouble;
                                     break;
+
                                 case ModelConstants.OrderDouble:
                                     bondOrder = ModelConstants.OrderTriple;
                                     break;
+
                                 case ModelConstants.OrderTriple:
                                     bondOrder = ModelConstants.OrderSingle;
                                     break;
@@ -199,7 +201,7 @@ namespace Chem4Word.ACME.Behaviors
                             CurrentEditor.Cursor = Cursors.Hand;
                             break;
 
-                        case ElectronVisual ev: 
+                        case ElectronVisual ev:
                             CurrentStatus = (AcmeConstants.DrawElectronPusherMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
                             CurrentEditor.Cursor = Cursors.SizeAll;
                             break;
@@ -372,8 +374,7 @@ namespace Chem4Word.ACME.Behaviors
         private void RemoveAdorner(ref DrawBondAdorner adorner)
         {
             var layer = AdornerLayer.GetAdornerLayer(CurrentEditor);
-
-            layer.Remove(adorner);
+            layer?.Remove(adorner);
             adorner = null;
         }
 

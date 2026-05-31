@@ -53,8 +53,6 @@ namespace Chem4Word.ACME.Drawing.Visuals
 
             ChemicalVisual firstChemistryVisual = null;
             firstChemistryVisual = GetAssociatedVisual(ParentPusher.StartChemistry);
-            Point? startPoint = new Point(0, 0);
-            Point? endPoint = new Point(0, 0);
 
             Point? lineStart = new Point(0, 0);
             Point? lineEnd = new Point(0, 0);
@@ -186,10 +184,10 @@ namespace Chem4Word.ACME.Drawing.Visuals
         /// <param name="lineEnd"></param>
         /// <param name="firstControlPoint"></param>
         /// <param name="secondControlPoint"></param>
-        public static void RecalcPusherMetrics(ElectronPusher electronPusher, ChemicalVisual firstChemistryVisual,
-                                               List<DrawingVisual> secondChemistryVisuals,
-                                               ref Point? lineStart, ref Point? lineEnd, Point firstControlPoint,
-                                               Point secondControlPoint)
+        public static void RecalcPusherMetrics(ElectronPusher electronPusher,
+                                               ChemicalVisual firstChemistryVisual, List<DrawingVisual> secondChemistryVisuals,
+                                               ref Point? lineStart, ref Point? lineEnd,
+                                               Point firstControlPoint, Point secondControlPoint)
         {
             //first, work out where the pusher should start from
             if (firstChemistryVisual is ElectronVisual ev)

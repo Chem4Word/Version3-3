@@ -18,6 +18,7 @@ using Chem4Word.ACME.Commands.Sketching;
 using Chem4Word.ACME.Commands.Undo;
 using Chem4Word.ACME.Controls;
 using Chem4Word.ACME.Enums;
+using Chem4Word.ACME.Models;
 using Chem4Word.ACME.Utils;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI.Wpf;
@@ -183,9 +184,10 @@ namespace Chem4Word.ACME
             IEnumerable<BondOption> selOptions = from BondOption bo in _bondOptions.Values
                                                  join selbond1 in selbonds
                                                      on new { bo.Order, bo.Stereo } equals new
-                                                         {
-                                                             selbond1.Order, selbond1.Stereo
-                                                         }
+                                                     {
+                                                         selbond1.Order,
+                                                         selbond1.Stereo
+                                                     }
                                                  select new BondOption { Id = bo.Id, Order = bo.Order, Stereo = bo.Stereo };
 
             return selOptions.ToList();
@@ -497,7 +499,7 @@ namespace Chem4Word.ACME
         /// <param name="source">Calling procedure name</param>
         /// <param name="level">Error level</param>
         /// <param name="message">Actual error message</param>
-        private void WriteTelemetry(string source, string level, string message)
+        public void WriteTelemetry(string source, string level, string message)
         {
             Telemetry?.Write(source, level, message);
         }
@@ -599,6 +601,34 @@ namespace Chem4Word.ACME
             }
 
             return string.Empty;
+        }
+
+        public bool VerifyRingPlacements(List<NewAtomPlacement> placements)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
+            WriteTelemetry(module, "Debug", ListRingPlacements(placements));
+
+            bool result = true;
+
+            if (placements[0].ExistingAtom != null)
+            {
+                Guid start = placements[0].ExistingAtom.Parent.InternalId;
+
+                for (int i = 1; i < placements.Count; i++)
+                {
+                    NewAtomPlacement placement = placements[i];
+
+                    if (placement.ExistingAtom != null && placement.ExistingAtom.Parent.InternalId != start)
+                    {
+                        WriteTelemetry(module, "Warning", "Can't create new ring because at least one new atom would have a different parent molecule!");
+                        result = false;
+                        break;
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

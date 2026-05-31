@@ -55,7 +55,7 @@ namespace Chem4Word.ACME.Adorners
             controller.EditingCanvas)
         {
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(controller.EditingCanvas);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
             PreviewMouseMove += OnPreviewMouseMove_PartialGhostAdorner;
             PreviewMouseUp += OnPreviewMouseUp_PartialGhostAdorner;
             MouseUp += OnMouseUp_PartialGhostAdorner;

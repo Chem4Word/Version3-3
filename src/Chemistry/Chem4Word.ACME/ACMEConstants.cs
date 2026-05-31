@@ -58,7 +58,7 @@ namespace Chem4Word.ACME
         public const string DrawAtomMessage = "Click to draw atom";
 
         //electron pushers
-        public const string DrawElectronPusherMessage = "Click to place electron pusher; drag to size and position; [Esc] to cancel.";
+        public const string DrawElectronPusherMessage = "Drag pusher to size and position; [Shift] to drop nascent bond.";
 
         //ring drawing
         public const string DefaultDrawRingMessage = "Drag on atom, bond or free space to draw ring.";
@@ -79,10 +79,12 @@ namespace Chem4Word.ACME
         public const double ThumbWidth = 22;
 
         public const string HoverAdornerColorDef = "#FFFF8C00";     //dark orange
+
         //additional colours purely for testing
         //public const string HoverAdornerColorDef = "#a242fc";     //horrible violet colour that is very visible on all backgrounds and doesn't cause eye strain like the orange did
         //public const string HoverAdornerColorDef = "#05ffbc";     //horrible turquoise colour that is very visible on all backgrounds and doesn't cause eye strain like the orange did
         public const string ThumbAdornerFillColorDef = "#FFFFA500"; //orange
+
         public const string Chem4WordColorDef = "#2A579A";
         public const string GroupBracketColorDef = "#FF00BFFF";           //deep sky blue
         public const string DefaultTextColor = "#000000";

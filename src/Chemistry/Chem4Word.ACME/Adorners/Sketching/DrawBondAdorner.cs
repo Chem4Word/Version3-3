@@ -64,7 +64,7 @@ namespace Chem4Word.ACME.Adorners.Sketching
             PreviewKeyDown += OnPreviewKeyDown_DrawBondAdorner;
 
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-            myAdornerLayer.Add(this);
+            myAdornerLayer?.Add(this);
 
             Focusable = true;
             Focus();

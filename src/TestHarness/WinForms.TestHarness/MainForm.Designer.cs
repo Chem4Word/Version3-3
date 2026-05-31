@@ -69,7 +69,7 @@
             // 
             this.LoadStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.LoadStructure.Enabled = false;
-            this.LoadStructure.Location = new System.Drawing.Point(12, 501);
+            this.LoadStructure.Location = new System.Drawing.Point(12, 525);
             this.LoadStructure.Name = "LoadStructure";
             this.LoadStructure.Size = new System.Drawing.Size(75, 23);
             this.LoadStructure.TabIndex = 0;
@@ -98,7 +98,7 @@
             // 
             this.Undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Undo.Enabled = false;
-            this.Undo.Location = new System.Drawing.Point(186, 501);
+            this.Undo.Location = new System.Drawing.Point(186, 525);
             this.Undo.Name = "Undo";
             this.Undo.Size = new System.Drawing.Size(75, 23);
             this.Undo.TabIndex = 11;
@@ -111,7 +111,7 @@
             // 
             this.Redo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Redo.Enabled = false;
-            this.Redo.Location = new System.Drawing.Point(186, 559);
+            this.Redo.Location = new System.Drawing.Point(186, 583);
             this.Redo.Name = "Redo";
             this.Redo.Size = new System.Drawing.Size(75, 23);
             this.Redo.TabIndex = 12;
@@ -137,7 +137,7 @@
             this.LayoutPanel.Name = "LayoutPanel";
             this.LayoutPanel.RowCount = 1;
             this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.LayoutPanel.Size = new System.Drawing.Size(1113, 444);
+            this.LayoutPanel.Size = new System.Drawing.Size(1160, 468);
             this.LayoutPanel.TabIndex = 13;
             // 
             // DisplayHost
@@ -146,7 +146,7 @@
             this.DisplayHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DisplayHost.Location = new System.Drawing.Point(278, 3);
             this.DisplayHost.Name = "DisplayHost";
-            this.DisplayHost.Size = new System.Drawing.Size(557, 438);
+            this.DisplayHost.Size = new System.Drawing.Size(604, 462);
             this.DisplayHost.TabIndex = 1;
             this.DisplayHost.Text = "centreHost";
             this.DisplayHost.Child = this.Display;
@@ -154,9 +154,9 @@
             // RedoHost
             // 
             this.RedoHost.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RedoHost.Location = new System.Drawing.Point(841, 3);
+            this.RedoHost.Location = new System.Drawing.Point(888, 3);
             this.RedoHost.Name = "RedoHost";
-            this.RedoHost.Size = new System.Drawing.Size(269, 438);
+            this.RedoHost.Size = new System.Drawing.Size(269, 462);
             this.RedoHost.TabIndex = 2;
             this.RedoHost.Text = "rightHost";
             this.RedoHost.Child = this.RedoStackViewer;
@@ -166,7 +166,7 @@
             this.UndoHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.UndoHost.Location = new System.Drawing.Point(3, 3);
             this.UndoHost.Name = "UndoHost";
-            this.UndoHost.Size = new System.Drawing.Size(269, 438);
+            this.UndoHost.Size = new System.Drawing.Size(269, 462);
             this.UndoHost.TabIndex = 3;
             this.UndoHost.Text = "leftHost";
             this.UndoHost.Child = this.UndoStackViewer;
@@ -175,7 +175,7 @@
             // 
             this.Information1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Information1.AutoSize = true;
-            this.Information1.Location = new System.Drawing.Point(12, 463);
+            this.Information1.Location = new System.Drawing.Point(12, 487);
             this.Information1.Name = "Information1";
             this.Information1.Size = new System.Drawing.Size(16, 13);
             this.Information1.TabIndex = 14;
@@ -204,7 +204,7 @@
             this.groupBox1.Controls.Add(this.SearchPubChem);
             this.groupBox1.Controls.Add(this.EditWithAcme);
             this.groupBox1.Controls.Add(this.EditCml);
-            this.groupBox1.Location = new System.Drawing.Point(874, 480);
+            this.groupBox1.Location = new System.Drawing.Point(921, 504);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(251, 102);
             this.groupBox1.TabIndex = 16;
@@ -287,7 +287,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox2.Controls.Add(this.ChangeOoXmlSettings);
-            this.groupBox2.Location = new System.Drawing.Point(279, 501);
+            this.groupBox2.Location = new System.Drawing.Point(279, 525);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(108, 81);
             this.groupBox2.TabIndex = 17;
@@ -311,7 +311,7 @@
             // 
             this.ShowCml.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ShowCml.Enabled = false;
-            this.ShowCml.Location = new System.Drawing.Point(12, 530);
+            this.ShowCml.Location = new System.Drawing.Point(12, 554);
             this.ShowCml.Name = "ShowCml";
             this.ShowCml.Size = new System.Drawing.Size(156, 23);
             this.ShowCml.TabIndex = 18;
@@ -324,7 +324,7 @@
             // 
             this.SaveStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SaveStructure.Enabled = false;
-            this.SaveStructure.Location = new System.Drawing.Point(93, 501);
+            this.SaveStructure.Location = new System.Drawing.Point(93, 525);
             this.SaveStructure.Name = "SaveStructure";
             this.SaveStructure.Size = new System.Drawing.Size(75, 23);
             this.SaveStructure.TabIndex = 19;
@@ -337,7 +337,7 @@
             // 
             this.ClearChemistry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ClearChemistry.Enabled = false;
-            this.ClearChemistry.Location = new System.Drawing.Point(186, 530);
+            this.ClearChemistry.Location = new System.Drawing.Point(186, 554);
             this.ClearChemistry.Name = "ClearChemistry";
             this.ClearChemistry.Size = new System.Drawing.Size(75, 23);
             this.ClearChemistry.TabIndex = 0;
@@ -349,7 +349,7 @@
             // 
             this.RenderOoXml.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RenderOoXml.Enabled = false;
-            this.RenderOoXml.Location = new System.Drawing.Point(12, 559);
+            this.RenderOoXml.Location = new System.Drawing.Point(12, 583);
             this.RenderOoXml.Name = "RenderOoXml";
             this.RenderOoXml.Size = new System.Drawing.Size(156, 23);
             this.RenderOoXml.TabIndex = 21;
@@ -362,7 +362,7 @@
             // 
             this.Information2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Information2.AutoSize = true;
-            this.Information2.Location = new System.Drawing.Point(12, 480);
+            this.Information2.Location = new System.Drawing.Point(12, 504);
             this.Information2.Name = "Information2";
             this.Information2.Size = new System.Drawing.Size(16, 13);
             this.Information2.TabIndex = 22;
@@ -376,7 +376,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1137, 587);
+            this.ClientSize = new System.Drawing.Size(1184, 611);
             this.Controls.Add(this.Information2);
             this.Controls.Add(this.RenderOoXml);
             this.Controls.Add(this.ClearChemistry);

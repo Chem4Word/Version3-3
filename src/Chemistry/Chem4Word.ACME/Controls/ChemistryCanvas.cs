@@ -640,7 +640,7 @@ namespace Chem4Word.ACME.Controls
             if (_highlightAdorner != null)
             {
                 var layer = AdornerLayer.GetAdornerLayer(this);
-                layer.Remove(_highlightAdorner);
+                layer?.Remove(_highlightAdorner);
                 _highlightAdorner = null;
             }
         }
@@ -1085,7 +1085,6 @@ namespace Chem4Word.ACME.Controls
 
         public ChemicalVisual GetTargetedVisual(Point p)
         {
-           
             _visuals.Clear();
             //do a quick filtering by the SupportedHighlight associated with the current Behavior
             EditController editController = Controller as EditController;
@@ -1113,7 +1112,7 @@ namespace Chem4Word.ACME.Controls
                                     ?? _visuals.FirstOrDefault(v => v is AtomVisual && !(v is ElectronPusherVisual)) // Locate an AtomVisual
                                     ?? _visuals.FirstOrDefault(v => v is BondVisual) // Locate a BondVisual
                                     ?? _visuals.FirstOrDefault(v => v is ElectronPusherVisual); // Locate an ElectronPusherVisual
-            
+
             if (result != null && editController.ActiveBehavior.PermittedHighlights.Contains(result.GetType()))
             {
                 return result;

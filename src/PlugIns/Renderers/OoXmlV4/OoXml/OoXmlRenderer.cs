@@ -754,6 +754,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 case BondLineStyle.Solid:
                 case BondLineStyle.Zero:
                 case BondLineStyle.Half:
+                case BondLineStyle.Nascent:
                 case BondLineStyle.Dotted: // Diagnostics
                 case BondLineStyle.Dashed: // Diagnostics
                     DrawStraightLine(bondStart, bondEnd, bondPath, lineStyle, colour, lineWidth);
@@ -1965,6 +1966,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             switch (lineStyle)
             {
                 case BondLineStyle.Zero:
+                case BondLineStyle.Nascent:
                     outline.Append(new A.PresetDash { Val = A.PresetLineDashValues.SystemDot });
                     break;
 

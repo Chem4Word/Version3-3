@@ -270,6 +270,27 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
 
         #region Constructors
 
+        /// <summary>
+        /// Simple line used for nascent bonds
+        /// </summary>
+        /// <param name="style"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="colour"></param>
+        public BondLine(BondLineStyle style, Point start, Point end, string colour)
+        {
+            Style = style;
+            _start = start;
+            _end = end;
+            Colour = colour;
+        }
+
+        /// <summary>
+        /// Normal Bond with less options
+        /// </summary>
+        /// <param name="style"></param>
+        /// <param name="bond"></param>
+        /// <param name="medianBondLength">optional</param>
         public BondLine(BondLineStyle style, Bond bond, double medianBondLength = 0.0)
         {
             Style = style;
@@ -287,6 +308,14 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
             }
         }
 
+        /// <summary>
+        /// Normal bond
+        /// </summary>
+        /// <param name="style"></param>
+        /// <param name="startPoint"></param>
+        /// <param name="endPoint"></param>
+        /// <param name="bond"></param>
+        /// <param name="medianBondLength">optional</param>
         public BondLine(BondLineStyle style, Point startPoint, Point endPoint, Bond bond, double medianBondLength = 0.0)
         {
             Style = style;
