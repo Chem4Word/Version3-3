@@ -82,7 +82,7 @@ namespace Chem4WordUnitTests
         {
             var mc = new CMLConverter();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var m = mc.Import(ResourceHelper.GetStringResource(assembly , "Two-Rings.xml"));
+            var m = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Rings.xml"));
 
             // Basic sanity checks
             Assert.True(m.Molecules.Count == 1, $"Expected 1 Molecule; Got {m.Molecules.Count}");

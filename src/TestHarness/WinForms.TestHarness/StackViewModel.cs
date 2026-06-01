@@ -52,7 +52,6 @@ namespace WinForms.TestHarness
 
                     ChemistryItems.Add(chemistry);
                 }
-
             }
             catch (Exception exception)
             {

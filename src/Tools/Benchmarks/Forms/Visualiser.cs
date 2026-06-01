@@ -58,7 +58,7 @@ namespace Performance.Forms
                 using (Pen pen = new Pen(Color.Orange, 2)) { e.Graphics.DrawPolygon(pen, pts); }
             }
 
-            Rectangle r = new Rectangle((int)AtomPosition.X -5, (int)AtomPosition.Y - 5, 10, 10);
+            Rectangle r = new Rectangle((int)AtomPosition.X - 5, (int)AtomPosition.Y - 5, 10, 10);
             e.Graphics.FillEllipse(new SolidBrush(Color.Chartreuse), r);
         }
     }

@@ -170,7 +170,7 @@ namespace Chem4Word.ACME.Models
             if (InAutomaticMode)
             {
                 electrons = new List<Electron>();
-                int index = 0;
+                int index = 1;
                 foreach (AutomaticElectronItem placement in _autoControl.Model.AutomaticElectronItems)
                 {
                     ElectronType electronType = placement.ElectronType;

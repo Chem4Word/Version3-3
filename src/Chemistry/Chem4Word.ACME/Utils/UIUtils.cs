@@ -284,7 +284,7 @@ namespace Chem4Word.ACME.Utils
             atomPropertiesModel.MicroModel = new Model();
             atomPropertiesModel.MicroModel.SetUserOptions(currentEditor.Controller.Model.GetCurrentOptions());
 
-            Molecule molecule = new Molecule { Id = "mx" };
+            Molecule molecule = new Molecule { Id = atom.Parent.Path.Substring(1) };
 
             atomPropertiesModel.MicroModel.AddMolecule(molecule);
             molecule.Parent = atomPropertiesModel.MicroModel;

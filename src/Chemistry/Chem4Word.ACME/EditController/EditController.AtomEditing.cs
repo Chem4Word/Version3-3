@@ -1190,8 +1190,52 @@ namespace Chem4Word.ACME
                 electronsAfter.AddRange(atomPropertiesModel.MicroModel.GetAllAtoms().First().Electrons.Values);
 
                 // Handle Pushers
-                List<ElectronPusher> pushersBefore = new List<ElectronPusher>();
-                pushersBefore.AddRange(atom.ElectronPushers.Where(p => p.StartChemistry is Electron));
+                List<ElectronPusher> affectedPushers = new List<ElectronPusher>();
+                List<ElectronPusher> addedPushers = new List<ElectronPusher>();
+                List<ElectronPusher> removedPushers = new List<ElectronPusher>();
+                foreach (ElectronPusher pusher in Model.ElectronPushers.Values.ToList())
+                {
+                    if (pusher.StartChemistry.Path.StartsWith(atom.Path))
+                    {
+                        affectedPushers.Add(pusher);
+                    }
+                }
+
+                foreach (ElectronPusher pusher in affectedPushers)
+                {
+                    bool found = false;
+                    foreach (Electron beforeElectron in electronsBefore)
+                    {
+                        foreach (Electron afterElectron in electronsAfter)
+                        {
+                            if (beforeElectron.Path == afterElectron.Path)
+                            {
+                                found = true;
+                                ElectronPusher newPusher = new ElectronPusher
+                                {
+                                    StartChemistry = afterElectron,
+                                    FirstControlPoint = pusher.FirstControlPoint,
+                                    SecondControlPoint = pusher.SecondControlPoint
+                                };
+                                newPusher.EndChemistries.AddRange(pusher.EndChemistries);
+                                removedPushers.Add(pusher);
+                                addedPushers.Add(newPusher);
+                            }
+                            if (found)
+                            {
+                                break; // Out of foreach (Electron afterElectron in electronsAfter)
+                            }
+                        }
+                        if (found)
+                        {
+                            break; // Out of foreach (Electron beforeElectron in electronsBefore)
+                        }
+                    }
+                    if (!found)
+                    {
+                        removedPushers.Add(pusher);
+                    }
+                }
 
                 if (elementBaseAfter is FunctionalGroup)
                 {
@@ -1218,82 +1262,84 @@ namespace Chem4Word.ACME
                 }
 
                 Action redo = () =>
-                              {
-                                  atom.Element = elementBaseAfter;
-                                  atom.FormalCharge = chargeAfter;
-                                  atom.IsotopeNumber = isotopeAfter;
-                                  atom.ExplicitC = explicitCarbonAfter;
-                                  atom.ExplicitH = explicitHydrogensAfter;
-                                  atom.ExplicitHPlacement = hydrogenPlacementAfter;
-                                  atom.ExplicitFunctionalGroupPlacement = explicitFgPlacementAfter;
+                {
+                    atom.Element = elementBaseAfter;
+                    atom.FormalCharge = chargeAfter;
+                    atom.IsotopeNumber = isotopeAfter;
+                    atom.ExplicitC = explicitCarbonAfter;
+                    atom.ExplicitH = explicitHydrogensAfter;
+                    atom.ExplicitHPlacement = hydrogenPlacementAfter;
+                    atom.ExplicitFunctionalGroupPlacement = explicitFgPlacementAfter;
 
-                                  // Handle Electrons
-                                  atom.ClearElectrons();
-                                  atom.AddRangeOfElectrons(electronsAfter);
+                    // Handle Electrons
+                    atom.ClearElectrons();
+                    atom.AddRangeOfElectrons(electronsAfter);
 
-                                  atom.UpdateElectronPlacements();
+                    atom.UpdateElectronPlacements();
 
-                                  // Handle Pushers
-                                  List<string> paths = atom.AllElectrons().Select(p => p.Path).ToList();
-                                  foreach (ElectronPusher pusher in pushersBefore)
-                                  {
-                                      if (paths.Contains(pusher.StartChemistry.Path))
-                                      {
-                                          foreach (string path in paths)
-                                          {
-                                              if (atom.Parent.Model.GetByPath(path) is Electron electron)
-                                              {
-                                                  pusher.StartChemistry = electron;
-                                              }
-                                          }
-                                      }
-                                      else
-                                      {
-                                          atom.Parent.Model.RemoveElectronPusher(pusher);
-                                      }
-                                  }
+                    atom.Parent.UpdateVisual();
 
-                                  atom.Parent.UpdateVisual();
+                    // Handle Pushers
+                    foreach (ElectronPusher pusher in addedPushers)
+                    {
+                        Model.AddElectronPusher(pusher);
+                    }
+                    foreach (ElectronPusher pusher in removedPushers)
+                    {
+                        Model.RemoveElectronPusher(pusher);
+                    }
+                    foreach (ElectronPusher pusher in Model.ElectronPushers.Values)
+                    {
+                        pusher.UpdateVisual();
+                    }
 
-                                  //freshen any selection adorner
-                                  if (SelectedItems.Contains(atom))
-                                  {
-                                      RemoveFromSelection(atom);
-                                      AddToSelection(atom);
-                                  }
-                              };
+                    //freshen any selection adorner
+                    if (SelectedItems.Contains(atom))
+                    {
+                        RemoveFromSelection(atom);
+                        AddToSelection(atom);
+                    }
+                };
 
                 Action undo = () =>
-                              {
-                                  atom.Element = elementBaseBefore;
-                                  atom.FormalCharge = chargeBefore;
-                                  atom.IsotopeNumber = isotopeBefore;
-                                  atom.ExplicitC = explicitCarbonBefore;
-                                  atom.ExplicitH = explicitHBefore;
-                                  atom.ExplicitHPlacement = hydrogenPlacementBefore;
-                                  atom.ExplicitFunctionalGroupPlacement = explicitFgPlacementBefore;
+                {
+                    atom.Element = elementBaseBefore;
+                    atom.FormalCharge = chargeBefore;
+                    atom.IsotopeNumber = isotopeBefore;
+                    atom.ExplicitC = explicitCarbonBefore;
+                    atom.ExplicitH = explicitHBefore;
+                    atom.ExplicitHPlacement = hydrogenPlacementBefore;
+                    atom.ExplicitFunctionalGroupPlacement = explicitFgPlacementBefore;
 
-                                  // Handle Electrons
-                                  atom.ClearElectrons();
-                                  atom.AddRangeOfElectrons(electronsBefore);
+                    // Handle Electrons
+                    atom.ClearElectrons();
+                    atom.AddRangeOfElectrons(electronsBefore);
 
-                                  atom.UpdateElectronPlacements();
+                    atom.UpdateElectronPlacements();
 
-                                  // Handle Pushers
-                                  foreach (ElectronPusher pusher in pushersBefore)
-                                  {
-                                      atom.Parent.Model.AddElectronPusher(pusher);
-                                  }
+                    atom.Parent.UpdateVisual();
 
-                                  atom.Parent.UpdateVisual();
+                    // Handle Pushers
+                    foreach (ElectronPusher pusher in addedPushers)
+                    {
+                        Model.RemoveElectronPusher(pusher);
+                    }
+                    foreach (ElectronPusher pusher in removedPushers)
+                    {
+                        Model.AddElectronPusher(pusher);
+                    }
+                    foreach (ElectronPusher pusher in Model.ElectronPushers.Values)
+                    {
+                        pusher.UpdateVisual();
+                    }
 
-                                  //freshen any selection adorner
-                                  if (SelectedItems.Contains(atom))
-                                  {
-                                      RemoveFromSelection(atom);
-                                      AddToSelection(atom);
-                                  }
-                              };
+                    //freshen any selection adorner
+                    if (SelectedItems.Contains(atom))
+                    {
+                        RemoveFromSelection(atom);
+                        AddToSelection(atom);
+                    }
+                };
 
                 UndoManager.BeginUndoBlock();
                 UndoManager.RecordAction(undo, redo);

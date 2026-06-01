@@ -167,7 +167,9 @@ namespace Chem4Word.Model2
             }
         }
 
-        //set only on drawing
+        /// <summary>
+        /// Set only on drawing
+        /// </summary>
         public Point Centroid { get; set; }
 
         #endregion Properties
@@ -191,7 +193,7 @@ namespace Chem4Word.Model2
             string placement = ExplicitPlacement != null
                 ? $"{ExplicitPlacement} - M"
                 : "Auto";
-            return $"{TypeOfElectron} [{Count}] {placement}";
+            return $"{TypeOfElectron} [{Count}] {placement} {Path}";
         }
 
         /// <summary>

@@ -70,10 +70,10 @@ namespace Chem4Word.UI.WPF
             foreach (KeyValuePair<HydrogenLabels, string> keyValuePair in EnumHelper.GetEnumValuesWithDescriptions<HydrogenLabels>())
             {
                 ComboBoxItem cbi = new ComboBoxItem
-                                   {
-                                       Content = keyValuePair.Value,
-                                       Tag = keyValuePair.Key
-                                   };
+                {
+                    Content = keyValuePair.Value,
+                    Tag = keyValuePair.Key
+                };
                 ImplicitHydrogenMode.Items.Add(cbi);
 
                 if (SystemOptions.ExplicitH == keyValuePair.Key)
@@ -636,12 +636,12 @@ namespace Chem4Word.UI.WPF
                     if (driver != null)
                     {
                         DatabaseDetails details = new DatabaseDetails
-                                                  {
-                                                      Driver = CoreConstants.SQLiteStandardDriver,
-                                                      DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
-                                                      Connection = browser.FileName,
-                                                      ShortFileName = fileInfo.Name
-                                                  };
+                        {
+                            Driver = CoreConstants.SQLiteStandardDriver,
+                            DisplayName = fileInfo.Name.Replace(fileInfo.Extension, ""),
+                            Connection = browser.FileName,
+                            ShortFileName = fileInfo.Name
+                        };
 
                         DatabaseFileProperties info = driver.GetDatabaseFileProperties(details.Connection);
                         if (!info.IsSqliteDatabase)
@@ -725,12 +725,12 @@ namespace Chem4Word.UI.WPF
                         if (driver != null)
                         {
                             DatabaseDetails details = new DatabaseDetails
-                                                      {
-                                                          Driver = CoreConstants.SQLiteStandardDriver,
-                                                          DisplayName = displayName,
-                                                          Connection = fileName,
-                                                          ShortFileName = fileInfo.Name
-                                                      };
+                            {
+                                Driver = CoreConstants.SQLiteStandardDriver,
+                                DisplayName = displayName,
+                                Connection = fileName,
+                                ShortFileName = fileInfo.Name
+                            };
 
                             Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Created new library {details.DisplayName}");
                             driver.CreateNewDatabase(details.Connection);
@@ -957,10 +957,10 @@ namespace Chem4Word.UI.WPF
             foreach (IChem4WordEditor editor in Globals.Chem4WordV3.Editors)
             {
                 PlugInComboItem pci = new PlugInComboItem
-                                      {
-                                          Name = editor.Name,
-                                          Description = editor.Description
-                                      };
+                {
+                    Name = editor.Name,
+                    Description = editor.Description
+                };
                 int item = SelectEditorPlugIn.Items.Add(pci);
 
                 if (editor.Name.Equals(selectedEditor))
@@ -974,10 +974,10 @@ namespace Chem4Word.UI.WPF
             foreach (IChem4WordRenderer renderer in Globals.Chem4WordV3.Renderers)
             {
                 PlugInComboItem pci = new PlugInComboItem
-                                      {
-                                          Name = renderer.Name,
-                                          Description = renderer.Description
-                                      };
+                {
+                    Name = renderer.Name,
+                    Description = renderer.Description
+                };
                 int item = SelectRendererPlugIn.Items.Add(pci);
                 if (renderer.Name.Equals(selectedRenderer))
                 {
@@ -990,10 +990,10 @@ namespace Chem4Word.UI.WPF
             foreach (IChem4WordSearcher searcher in Globals.Chem4WordV3.Searchers.OrderBy(s => s.DisplayOrder))
             {
                 PlugInComboItem pci = new PlugInComboItem
-                                      {
-                                          Name = searcher.Name,
-                                          Description = searcher.Description
-                                      };
+                {
+                    Name = searcher.Name,
+                    Description = searcher.Description
+                };
                 int item = SelectSearcherPlugIn.Items.Add(pci);
                 if (SelectSearcherPlugIn.Items.Count == 1)
                 {
@@ -1098,15 +1098,15 @@ namespace Chem4Word.UI.WPF
                 {
                     bool isDefault = libraries.SelectedLibrary.Equals(database.DisplayName);
                     LibrariesSettingsGridSource obj = new LibrariesSettingsGridSource
-                                                      {
-                                                          Name = database.DisplayName,
-                                                          FileName = database.ShortFileName,
-                                                          Connection = database.Connection,
-                                                          Count = GetPropertyValue(database, "Count", "?"),
-                                                          Dictionary = false,
-                                                          License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : GetUserFromLicense(database.Connection),
-                                                          IsDefault = isDefault
-                                                      };
+                    {
+                        Name = database.DisplayName,
+                        FileName = database.ShortFileName,
+                        Connection = database.Connection,
+                        Count = GetPropertyValue(database, "Count", "?"),
+                        Dictionary = false,
+                        License = GetPropertyValue(database, "Type", "Free").Equals("Free") ? "N/A" : GetUserFromLicense(database.Connection),
+                        IsDefault = isDefault
+                    };
                     obj.Locked = database.IsLocked() ? "Yes" : "No";
 
                     data.Add(obj);

@@ -8,9 +8,11 @@
 using Chem4Word.ACME.Commands;
 using Chem4Word.ACME.Commands.PropertyEdit;
 using Chem4Word.ACME.Utils;
+using Chem4Word.Core.Enums;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using Chem4Word.Model2.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -336,6 +338,34 @@ namespace Chem4Word.ACME
                 GeneralTransform inverse = operation.Inverse;
                 string inverseTransformAsString = string.Join(";", DecodeTransform(inverse));
 
+                List<Electron> beforeElectrons = new List<Electron>();
+                List<Electron> afterElectrons = new List<Electron>();
+
+                if (operation is RotateTransform rotate)
+                {
+                    foreach (Molecule molecule in molecules)
+                    {
+                        foreach (Atom atom in molecule.Atoms.Values)
+                        {
+                            foreach (Electron electron in atom.AllElectrons())
+                            {
+                                if (electron.ExplicitPlacement.HasValue)
+                                {
+                                    beforeElectrons.Add(electron);
+                                    CompassPoints placement = electron.ExplicitPlacement.Value;
+                                    double angle = placement.ToDegrees();
+                                    angle = (angle + rotate.Angle) % 360;
+
+                                    CompassPoints newPlacement = GeometryTool.SnapTo8(angle);
+                                    Electron copy = electron.Copy();
+                                    copy.ExplicitPlacement = newPlacement;
+                                    afterElectrons.Add(copy);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Action undo = () =>
                 {
                     SuppressEditorRedraw(true);
@@ -379,6 +409,15 @@ namespace Chem4Word.ACME
                     foreach (Annotation ann in annotations)
                     {
                         ann.UpdateVisual();
+                    }
+
+                    foreach (Electron electron in beforeElectrons)
+                    {
+                        StructuralObject thing = Model.GetByPath(electron.Path);
+                        if (thing is Electron e)
+                        {
+                            e.ExplicitPlacement = electron.ExplicitPlacement;
+                        }
                     }
 
                     foreach (ElectronPusher pusher in firstControlPoints)
@@ -442,6 +481,15 @@ namespace Chem4Word.ACME
                     foreach (Annotation ann in annotations)
                     {
                         ann.UpdateVisual();
+                    }
+
+                    foreach (Electron electron in afterElectrons)
+                    {
+                        StructuralObject thing = Model.GetByPath(electron.Path);
+                        if (thing is Electron e)
+                        {
+                            e.ExplicitPlacement = electron.ExplicitPlacement;
+                        }
                     }
 
                     foreach (ElectronPusher pusher in firstControlPoints)

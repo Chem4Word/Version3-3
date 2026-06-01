@@ -385,7 +385,7 @@ namespace Chem4Word.ACME.Controls
                     }
 
                     SelectedElectrons = new List<Electron>();
-                    int index = 0;
+                    int index = 1;
                     foreach (KeyValuePair<CompassPoints, ElectronType> kvp in SelectedElectronDictionary)
                     {
                         Electron electron = ElectronHelper.MakeElectron(Atom, index++, kvp.Value, kvp.Key);

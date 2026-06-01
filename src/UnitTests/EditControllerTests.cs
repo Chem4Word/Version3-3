@@ -267,7 +267,7 @@ namespace Chem4WordUnitTests
             // Arrange
             var mc = new CMLConverter();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var model = mc.Import(ResourceHelper.GetStringResource(assembly,"Two-Molecules-With-Foliage.xml"));
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-With-Foliage.xml"));
 
             var editController = new EditController(model);
 
@@ -1053,7 +1053,7 @@ namespace Chem4WordUnitTests
             // Arrange
             var mc = new CMLConverter();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var model = mc.Import(ResourceHelper.GetStringResource(assembly,"Two-Molecules-With-Foliage.xml"));
+            var model = mc.Import(ResourceHelper.GetStringResource(assembly, "Two-Molecules-With-Foliage.xml"));
 
             var editController = new EditController(model);
 

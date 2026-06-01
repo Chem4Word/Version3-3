@@ -10,14 +10,14 @@
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
-      <Change>Can toggle between creating nascent bonds or pushing directly to an atom</Change>
       <Change>Fixed Long standing bug in nRing drawing</Change>
       <Change>BugFix: MOLFile Import map unknown Atoms to ?? pseudo functional group</Change>
       <Change>UI: Added ability to auto-set atom electron configurations</Change>
+      <Change>UI: Can now toggle between creating nascent bonds or pushing directly to an atom</Change>
       <Change>UI: Added ability to create Electron pushers (between Atoms or Bonds)</Change>
       <Change>UI: Added ability to create Electrons (on Atoms)</Change>
       <Change>UI: Editor now supports electron pushers</Change>
-      <Change>UI: Added ability to right click on an atom to add/remove electrons</Change>
+      <Change>UI: Added ability to right-click on an atom to add/remove electrons</Change>
       <Change>BugFix: Fix and Improve searching (ChEBI/PubChem/OPSIN)</Change>
       <Change>Internal: Improved SQLite error handling</Change>
       <Change>Internal: Added code to ensure a valid search path for assembly SQLite.Interop.dll exists</Change>

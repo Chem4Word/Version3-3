@@ -581,7 +581,6 @@ namespace Chem4Word.ACME
                     }
                 }
 
-
                 //local function
                 void MakeRingUnsaturated(List<NewAtomPlacement> list)
                 {
