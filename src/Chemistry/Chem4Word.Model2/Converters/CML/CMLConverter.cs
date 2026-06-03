@@ -383,7 +383,11 @@ namespace Chem4Word.Model2.Converters.CML
                     {
                         foreach (ElectronPusher electronPusher in model.ElectronPushers.Values)
                         {
-                            root.Add(GetXElement(electronPusher));
+                            XElement element = GetXElement(electronPusher);
+                            if (element != null)
+                            {
+                                root.Add(element);
+                            }
                         }
                     }
                     // Add namespaces etc
@@ -510,17 +514,27 @@ namespace Chem4Word.Model2.Converters.CML
             var firstControlPoint = PointHelper.AsCMLString(electronPusher.FirstControlPoint);
             var secondControlPoint = PointHelper.AsCMLString(electronPusher.SecondControlPoint);
 
-            var startChemistryRefs = electronPusher.StartChemistry.Path;
-            var endChemistryRefs = electronPusher.EndChemistriesAsString();
-            var result = new XElement(CMLNamespaces.c4w + ModelConstants.TagElectronPusher,
-                                      new XAttribute(ModelConstants.AttributeId, electronPusher.Id),
-                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint, firstControlPoint),
-                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint, secondControlPoint),
-                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstChemistryRef, startChemistryRefs),
-                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondChemistryRefs, endChemistryRefs),
-                                      new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType, electronPusher.PusherType.ToString())
-                                     );
-            return result;
+            if (electronPusher.StartChemistry != null)
+            {
+                var startChemistryPath = electronPusher.StartChemistry.Path;
+                var endChemistriesAsString = electronPusher.EndChemistriesAsString();
+                var result = new XElement(CMLNamespaces.c4w + ModelConstants.TagElectronPusher,
+                                          new XAttribute(ModelConstants.AttributeId, electronPusher.Id),
+                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint,
+                                                         firstControlPoint),
+                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint,
+                                                         secondControlPoint),
+                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstChemistryRef,
+                                                         startChemistryPath),
+                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondChemistryRefs,
+                                                         endChemistriesAsString),
+                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType,
+                                                         electronPusher.PusherType.ToString())
+                );
+                return result;
+            }
+
+            return null;
         }
 
         #region Export Helpers

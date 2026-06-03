@@ -1245,7 +1245,7 @@ namespace Chem4WordUnitTests
         [Theory]
         [InlineData("AlignLefts", 0.75, 0.75, 0.5, 2.5)]
         [InlineData("AlignCentres", 1.625, 0.75, 1.625, 2.5)]
-        [InlineData("AlignRights", 2.25, 0.75, 2.5, 2.5)]
+        [InlineData("AlignRights", 1.25, 0.75, 1.5, 2.5)]
         [InlineData("AlignTops", 0.75, 0.75, 2.5, 0.5)]
         [InlineData("AlignMiddles", 0.75, 1.625, 2.5, 1.625)]
         [InlineData("AlignBottoms", 0.75, 2.25, 2.5, 2.5)]
@@ -1379,8 +1379,8 @@ namespace Chem4WordUnitTests
             // Assert
             CheckUndoStack(expectedStack, undoStack1);
             CheckUndoStack(expectedStack, undoStack2);
-            Assert.Equal(m1.Centre, new Point(m1x, m1y));
-            Assert.Equal(m2.Centre, new Point(m2x, m2y));
+            Assert.Equal(new Point(m1x, m1y), m1.Centre);
+            Assert.Equal(new Point(m2x, m2y), m2.Centre);
         }
 
         [Fact]

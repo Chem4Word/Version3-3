@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core;
 using Chem4Word.Model2;
 using System;
 using System.Collections.Generic;
@@ -117,30 +116,43 @@ namespace Chem4Word.ACME
                 List<Molecule> moleculesToAlign = objects.OfType<Molecule>().ToList();
                 List<Annotation> annotationsToAlign = objects.OfType<Annotation>().ToList();
 
-                double top = Math.Min(moleculesToAlign.Select(m => m.Top)
-                                                      .DefaultIfEmpty(CoreConstants.Epsilon).Min(),
-                                      annotationsToAlign.Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Top)
-                                                        .DefaultIfEmpty(CoreConstants.Epsilon).Min());
+                double top = double.MaxValue;
 
-                foreach (Molecule molecule in moleculesToAlign)
+                if (moleculesToAlign.Any())
                 {
-                    TranslateTransform transform = new TranslateTransform { Y = top - molecule.Top };
-                    moleculeTransforms.Add(transform);
+                    top = Math.Min(top, moleculesToAlign.Select(m => m.Top).Min());
                 }
 
-                foreach (var annotation in annotationsToAlign)
+                if (annotationsToAlign.Any())
                 {
-                    TranslateTransform transform = new TranslateTransform
+                    top = Math.Min(top, annotationsToAlign.Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Top).Min());
+                }
+
+                if (top < double.MaxValue)
+                {
+                    foreach (Molecule molecule in moleculesToAlign)
                     {
-                        Y = top - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Top
-                    };
-                    annotationTransforms.Add(transform);
-                }
+                        TranslateTransform transform = new TranslateTransform
+                        {
+                            Y = top - molecule.Top
+                        };
+                        moleculeTransforms.Add(transform);
+                    }
 
-                UndoManager.BeginUndoBlock();
-                AlignMolecules(moleculesToAlign, moleculeTransforms);
-                AlignAnnotations(annotationsToAlign, annotationTransforms);
-                UndoManager.EndUndoBlock();
+                    foreach (Annotation annotation in annotationsToAlign)
+                    {
+                        TranslateTransform transform = new TranslateTransform
+                        {
+                            Y = top - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Top
+                        };
+                        annotationTransforms.Add(transform);
+                    }
+
+                    UndoManager.BeginUndoBlock();
+                    AlignMolecules(moleculesToAlign, moleculeTransforms);
+                    AlignAnnotations(annotationsToAlign, annotationTransforms);
+                    UndoManager.EndUndoBlock();
+                }
             }
             catch (Exception exception)
             {
@@ -204,31 +216,43 @@ namespace Chem4Word.ACME
                 List<Molecule> moleculesToAlign = objects.OfType<Molecule>().ToList();
                 List<Annotation> annotationsToAlign = objects.OfType<Annotation>().ToList();
 
-                double stupidMax = -100;
+                double bottom = double.MinValue;
 
-                double bottom = Math.Max(moleculesToAlign.Select(m => m.Bottom)
-                                                         .DefaultIfEmpty(stupidMax).Max(),
-                                         annotationsToAlign
-                                             .Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Bottom)
-                                             .DefaultIfEmpty(stupidMax).Max());
-
-                foreach (Molecule molecule in moleculesToAlign)
+                if (moleculesToAlign.Any())
                 {
-                    TranslateTransform transform = new TranslateTransform { Y = bottom - molecule.Bottom };
-                    moleculeTransforms.Add(transform);
+                    bottom = Math.Max(bottom, moleculesToAlign.Select(m => m.Bottom).Max());
                 }
 
-                foreach (Annotation annotation in annotationsToAlign)
+                if (annotationsToAlign.Any())
                 {
-                    TranslateTransform transform = new TranslateTransform();
-                    transform.Y = bottom - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Bottom;
-                    annotationTransforms.Add(transform);
+                    bottom = Math.Max(bottom, annotationsToAlign.Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Bottom).Max());
                 }
 
-                UndoManager.BeginUndoBlock();
-                AlignMolecules(moleculesToAlign, moleculeTransforms);
-                AlignAnnotations(annotationsToAlign, annotationTransforms);
-                UndoManager.EndUndoBlock();
+                if (bottom > double.MinValue)
+                {
+                    foreach (Molecule molecule in moleculesToAlign)
+                    {
+                        TranslateTransform transform = new TranslateTransform
+                        {
+                            Y = bottom - molecule.Bottom
+                        };
+                        moleculeTransforms.Add(transform);
+                    }
+
+                    foreach (Annotation annotation in annotationsToAlign)
+                    {
+                        TranslateTransform transform = new TranslateTransform
+                        {
+                            Y = bottom - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Bottom
+                        };
+                        annotationTransforms.Add(transform);
+                    }
+
+                    UndoManager.BeginUndoBlock();
+                    AlignMolecules(moleculesToAlign, moleculeTransforms);
+                    AlignAnnotations(annotationsToAlign, annotationTransforms);
+                    UndoManager.EndUndoBlock();
+                }
             }
             catch (Exception exception)
             {
@@ -378,32 +402,43 @@ namespace Chem4Word.ACME
                 List<Molecule> moleculesToAlign = objects.OfType<Molecule>().ToList();
                 List<Annotation> annotationsToAlign = objects.OfType<Annotation>().ToList();
 
-                double stupidMin = 1.0E6;
+                double left = double.MaxValue;
 
-                double left = Math.Min(moleculesToAlign.Select(m => m.Left)
-                                                       .DefaultIfEmpty(stupidMin).Min(),
-                                       annotationsToAlign
-                                           .Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Left)
-                                           .DefaultIfEmpty(stupidMin).Min());
-
-                foreach (Molecule molecule in moleculesToAlign)
+                if (moleculesToAlign.Any())
                 {
-                    TranslateTransform transform = new TranslateTransform();
-                    transform.X = left - molecule.Left;
-                    moleculeTransforms.Add(transform);
+                    left = Math.Min(left, moleculesToAlign.Select(m => m.Left).Min());
                 }
 
-                foreach (Annotation annotation in annotationsToAlign)
+                if (annotationsToAlign.Any())
                 {
-                    TranslateTransform transform = new TranslateTransform();
-                    transform.X = left - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Left;
-                    annotationTransforms.Add(transform);
+                    left = Math.Min(left, annotationsToAlign.Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Left).Min());
                 }
 
-                UndoManager.BeginUndoBlock();
-                AlignMolecules(moleculesToAlign, moleculeTransforms);
-                AlignAnnotations(annotationsToAlign, annotationTransforms);
-                UndoManager.EndUndoBlock();
+                if (left < double.MaxValue)
+                {
+                    foreach (Molecule molecule in moleculesToAlign)
+                    {
+                        TranslateTransform transform = new TranslateTransform
+                        {
+                            X = left - molecule.Left
+                        };
+                        moleculeTransforms.Add(transform);
+                    }
+
+                    foreach (Annotation annotation in annotationsToAlign)
+                    {
+                        TranslateTransform transform = new TranslateTransform
+                        {
+                            X = left - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Left
+                        };
+                        annotationTransforms.Add(transform);
+                    }
+
+                    UndoManager.BeginUndoBlock();
+                    AlignMolecules(moleculesToAlign, moleculeTransforms);
+                    AlignAnnotations(annotationsToAlign, annotationTransforms);
+                    UndoManager.EndUndoBlock();
+                }
             }
             catch (Exception exception)
             {
@@ -429,32 +464,43 @@ namespace Chem4Word.ACME
                 List<Molecule> moleculesToAlign = objects.OfType<Molecule>().ToList();
                 List<Annotation> annotationsToAlign = objects.OfType<Annotation>().ToList();
 
-                double stupidMax = -100;
+                double right = double.MinValue;
 
-                double right = Math.Max(moleculesToAlign.Select(m => m.Right)
-                                                        .DefaultIfEmpty(stupidMax).Max(),
-                                        annotationsToAlign
-                                            .Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Right)
-                                            .DefaultIfEmpty(stupidMax).Max());
-
-                foreach (Molecule molecule in moleculesToAlign)
+                if (moleculesToAlign.Any())
                 {
-                    TranslateTransform transform = new TranslateTransform();
-                    transform.X = right - molecule.Right;
-                    moleculeTransforms.Add(transform);
+                    right = Math.Max(right, moleculesToAlign.Select(m => m.Left).Max());
                 }
 
-                foreach (Annotation annotation in annotationsToAlign)
+                if (annotationsToAlign.Any())
                 {
-                    TranslateTransform transform = new TranslateTransform();
-                    transform.X = right - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Right;
-                    annotationTransforms.Add(transform);
+                    right = Math.Max(right, annotationsToAlign.Select(a => EditingCanvas.ChemicalVisuals[a].ContentBounds.Left).Max());
                 }
 
-                UndoManager.BeginUndoBlock();
-                AlignMolecules(moleculesToAlign, moleculeTransforms);
-                AlignAnnotations(annotationsToAlign, annotationTransforms);
-                UndoManager.EndUndoBlock();
+                if (right > double.MinValue)
+                {
+                    foreach (Molecule molecule in moleculesToAlign)
+                    {
+                        TranslateTransform transform = new TranslateTransform
+                        {
+                            X = right - molecule.Right
+                        };
+                        moleculeTransforms.Add(transform);
+                    }
+
+                    foreach (Annotation annotation in annotationsToAlign)
+                    {
+                        TranslateTransform transform = new TranslateTransform
+                        {
+                            X = right - EditingCanvas.ChemicalVisuals[annotation].ContentBounds.Right
+                        };
+                        annotationTransforms.Add(transform);
+                    }
+
+                    UndoManager.BeginUndoBlock();
+                    AlignMolecules(moleculesToAlign, moleculeTransforms);
+                    AlignAnnotations(annotationsToAlign, annotationTransforms);
+                    UndoManager.EndUndoBlock();
+                }
             }
             catch (Exception exception)
             {

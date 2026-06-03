@@ -645,8 +645,7 @@ namespace Chem4Word.ACME
                     {
                         GeneralTransform inverse = operations[i].Inverse;
                         string transform = string.Join(";", DecodeTransform(inverse));
-                        WriteTelemetry(module, "Debug",
-                                       $"Molecules: {countString} Transform: {transform}");
+                        WriteTelemetry(module, "Debug", $"Molecule[{i}] Transform: {transform}");
                         Transform(moleculesToTransform[i], (Transform)inverse);
                     }
 
@@ -667,8 +666,7 @@ namespace Chem4Word.ACME
                     for (int i = 0; i < moleculesToTransform.Length; i++)
                     {
                         string transform = string.Join(";", DecodeTransform(operations[i]));
-                        WriteTelemetry(module, "Debug",
-                                       $"Molecules: {countString} Transform: {transform}");
+                        WriteTelemetry(module, "Debug", $"Molecule[{i}] Transform: {transform}");
                         Transform(moleculesToTransform[i], operations[i]);
                     }
 
