@@ -54,9 +54,9 @@ namespace Chem4Word.Model2
         {
             if (e.OldItems != null)
             {
-                foreach (var oldItem in e.OldItems)
+                foreach (object oldItem in e.OldItems)
                 {
-                    var mol = ((Molecule)oldItem);
+                    Molecule mol = ((Molecule)oldItem);
                     mol.AtomsChanged -= OnCollectionChanged_Atoms;
                     mol.BondsChanged -= OnCollectionChanged_Bonds;
                     mol.ElectronsChanged -= OnCollectionChanged_Electrons;
@@ -66,9 +66,9 @@ namespace Chem4Word.Model2
 
             if (e.NewItems != null)
             {
-                foreach (var newItem in e.NewItems)
+                foreach (object newItem in e.NewItems)
                 {
-                    var mol = ((Molecule)newItem);
+                    Molecule mol = ((Molecule)newItem);
                     mol.AtomsChanged += OnCollectionChanged_Atoms;
                     mol.BondsChanged += OnCollectionChanged_Bonds;
                     mol.ElectronsChanged += OnCollectionChanged_Electrons;
@@ -81,7 +81,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = ElectronsChanged;
+                NotifyCollectionChangedEventHandler temp = ElectronsChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -90,7 +90,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = MoleculesChanged;
+                NotifyCollectionChangedEventHandler temp = MoleculesChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -106,7 +106,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = PropertyChanged;
+                PropertyChangedEventHandler temp = PropertyChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -130,7 +130,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = AnnotationsChanged;
+                NotifyCollectionChangedEventHandler temp = AnnotationsChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -173,7 +173,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = ElectronPushersChanged;
+                NotifyCollectionChangedEventHandler temp = ElectronPushersChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -189,7 +189,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = BondsChanged;
+                NotifyCollectionChangedEventHandler temp = BondsChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -205,7 +205,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = AtomsChanged;
+                NotifyCollectionChangedEventHandler temp = AtomsChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -270,11 +270,11 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var count = 0;
+                int count = 0;
 
                 if (ReactionSchemes.Count > 0)
                 {
-                    foreach (var scheme in ReactionSchemes.Values)
+                    foreach (ReactionScheme scheme in ReactionSchemes.Values)
                     {
                         count += scheme.Reactions.Count;
                     }
@@ -301,11 +301,11 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var result = 0;
+                int result = 0;
 
-                var allAtoms = GetAllAtoms();
+                List<Atom> allAtoms = GetAllAtoms();
 
-                foreach (var atom in allAtoms)
+                foreach (Atom atom in allAtoms)
                 {
                     if (atom.Element is FunctionalGroup)
                     {
@@ -326,9 +326,9 @@ namespace Chem4Word.Model2
             {
                 bool result = false;
 
-                var allAtoms = GetAllAtoms();
+                List<Atom> allAtoms = GetAllAtoms();
 
-                foreach (var atom in allAtoms)
+                foreach (Atom atom in allAtoms)
                 {
                     if (atom.Element is FunctionalGroup)
                     {
@@ -350,7 +350,7 @@ namespace Chem4Word.Model2
             {
                 bool result = false;
 
-                foreach (var child in Molecules.Values)
+                foreach (Molecule child in Molecules.Values)
                 {
                     if (child.Molecules.Count > 0)
                     {
@@ -367,7 +367,7 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var list = new List<TextualProperty>();
+                List<TextualProperty> list = new List<TextualProperty>();
 
                 // Add 2D if relevant
                 if (TotalAtomsCount > 0)
@@ -379,6 +379,7 @@ namespace Chem4Word.Model2
                         FullType = "2D",
                         Value = "2D"
                     });
+
                     list.Add(new TextualProperty
                     {
                         Id = "c0",
@@ -386,14 +387,36 @@ namespace Chem4Word.Model2
                         FullType = "UnicodeFormula",
                         Value = UnicodeFormula
                     });
-                    //add the molecular weight
-                    list.Add(new TextualProperty
+
+                    if (Molecules.Count == 1)
                     {
-                        Id = "w0",
-                        TypeCode = "W",
-                        FullType = "MolecularWeight",
-                        Value = SafeDouble.AsCMLString(MolecularWeight)
-                    });
+                        //add the overall molecular weight
+                        list.Add(new TextualProperty
+                        {
+                            Id = "w0",
+                            TypeCode = "W",
+                            FullType = "MolecularWeight",
+                            Value = SafeDouble.AsCMLString(MolecularWeight)
+                        });
+                    }
+                    else
+                    {
+                        if (HasNestedMolecules)
+                        {
+                            foreach (Molecule molecule in Molecules.Values)
+                            {
+                                //add the molecular weight of the top level molecule
+                                list.Add(new TextualProperty
+                                {
+                                    Id = $"w{molecule.Path}",
+                                    TypeCode = "W",
+                                    FullType = "MolecularWeight",
+                                    Value = SafeDouble.AsCMLString(molecule.MolecularWeight)
+                                });
+                            }
+                        }
+                    }
+
                     list.Add(new TextualProperty
                     {
                         Id = "S",
@@ -403,7 +426,7 @@ namespace Chem4Word.Model2
                     });
                 }
 
-                foreach (var child in Molecules.Values)
+                foreach (Molecule child in Molecules.Values)
                 {
                     list.AddRange(child.AllTextualProperties);
                 }
@@ -426,7 +449,7 @@ namespace Chem4Word.Model2
             {
                 int count = 0;
 
-                foreach (var molecule in Molecules.Values)
+                foreach (Molecule molecule in Molecules.Values)
                 {
                     count += molecule.AtomCount;
                 }
@@ -452,7 +475,7 @@ namespace Chem4Word.Model2
             {
                 int count = 0;
 
-                foreach (var molecule in Molecules.Values)
+                foreach (Molecule molecule in Molecules.Values)
                 {
                     count += molecule.BondCount;
                 }
@@ -474,8 +497,8 @@ namespace Chem4Word.Model2
                 bonds = GetAllBonds().Where(b => !b.IsBondToH()).ToList();
             }
 
-            var lengths = new List<double>(bonds.Count);
-            foreach (var bond in bonds)
+            List<double> lengths = new List<double>(bonds.Count);
+            foreach (Bond bond in bonds)
             {
                 lengths.Add(bond.BondLength);
             }
@@ -491,10 +514,10 @@ namespace Chem4Word.Model2
             get
             {
                 double result = 0.0;
-                var bonds = GetAllBonds();
-                var lengths = new List<double>(bonds.Count);
+                List<Bond> bonds = GetAllBonds();
+                List<double> lengths = new List<double>(bonds.Count);
 
-                foreach (var bond in bonds)
+                foreach (Bond bond in bonds)
                 {
                     lengths.Add(bond.BondLength);
                 }
@@ -534,16 +557,16 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var result = ConciseFormula;
+                string result = ConciseFormula;
 
                 // Get Captions and Names
-                var properties = AllTextualProperties.Where(p => p.TypeCode.Equals("L")).ToList();
+                List<TextualProperty> properties = AllTextualProperties.Where(p => p.TypeCode.Equals("L")).ToList();
                 properties.AddRange(AllTextualProperties.Where(p => p.TypeCode.Equals("N")));
 
                 // Sorting by Full type should put captions first then our names
                 properties = properties.OrderBy(p => p.FullType).ToList();
 
-                foreach (var property in properties)
+                foreach (TextualProperty property in properties)
                 {
                     // Is long enough, not inchi related, not a special string, not a number
                     if (property.Value.Length > 3
@@ -571,7 +594,7 @@ namespace Chem4Word.Model2
             {
                 Rect boundingBox = Rect.Empty;
 
-                foreach (var mol in Molecules.Values)
+                foreach (Molecule mol in Molecules.Values)
                 {
                     boundingBox.Union(mol.BoundingBox);
                 }
@@ -585,7 +608,7 @@ namespace Chem4Word.Model2
                     }
                 }
 
-                foreach (var ann in Annotations.Values)
+                foreach (Annotation ann in Annotations.Values)
                 {
                     // Use a very small rectangle here
                     Rect rectangle = new Rect(ann.Position, new Size(0.1, 0.1));
@@ -605,7 +628,7 @@ namespace Chem4Word.Model2
             {
                 if (_boundingBox == Rect.Empty)
                 {
-                    var allAtoms = GetAllAtoms();
+                    List<Atom> allAtoms = GetAllAtoms();
 
                     Rect boundingBox = Rect.Empty;
 
@@ -614,7 +637,7 @@ namespace Chem4Word.Model2
                         boundingBox = allAtoms[0].BoundingBox(FontSize);
                         for (int i = 1; i < allAtoms.Count; i++)
                         {
-                            var atom = allAtoms[i];
+                            Atom atom = allAtoms[i];
                             boundingBox.Union(atom.BoundingBox(FontSize));
                         }
                     }
@@ -652,10 +675,10 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var list = new List<string>();
+                List<string> list = new List<string>();
                 list.AddRange(GeneralWarnings);
 
-                foreach (var molecule in Molecules.Values)
+                foreach (Molecule molecule in Molecules.Values)
                 {
                     list.AddRange(molecule.Warnings);
                 }
@@ -671,10 +694,10 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var list = new List<string>();
+                List<string> list = new List<string>();
                 list.AddRange(GeneralErrors);
 
-                foreach (var molecule in Molecules.Values)
+                foreach (Molecule molecule in Molecules.Values)
                 {
                     list.AddRange(molecule.Errors);
                 }
@@ -690,7 +713,7 @@ namespace Chem4Word.Model2
         {
             get
             {
-                var allBonds = GetAllBonds();
+                List<Bond> allBonds = GetAllBonds();
                 double fontSize = ModelConstants.DefaultFontSize * ModelConstants.ScaleFactorForXaml;
 
                 if (allBonds.Any())
@@ -732,7 +755,7 @@ namespace Chem4Word.Model2
             {
                 if (!ReactionSchemes.Any())
                 {
-                    var rs = new ReactionScheme();
+                    ReactionScheme rs = new ReactionScheme();
                     AddReactionScheme(rs);
                 }
                 return ReactionSchemes.Values.First();
@@ -807,7 +830,7 @@ namespace Chem4Word.Model2
 
         public bool RemoveMolecule(Molecule mol)
         {
-            var res = _molecules.Remove(mol.InternalId);
+            bool res = _molecules.Remove(mol.InternalId);
             if (res)
             {
                 NotifyCollectionChangedEventArgs e =
@@ -849,27 +872,27 @@ namespace Chem4Word.Model2
             int annotationCount = 0;
             int epCount = 0;
 
-            foreach (var molecule in GetAllMolecules())
+            foreach (Molecule molecule in GetAllMolecules())
             {
-                var number = molecule.Id.Substring(1);
+                string number = molecule.Id.Substring(1);
                 if (int.TryParse(number, out int n))
                 {
                     molCount = Math.Max(molCount, n);
                 }
             }
 
-            foreach (var atom in GetAllAtoms())
+            foreach (Atom atom in GetAllAtoms())
             {
-                var number = atom.Id.Substring(1);
+                string number = atom.Id.Substring(1);
                 if (int.TryParse(number, out int n))
                 {
                     atomCount = Math.Max(atomCount, n);
                 }
             }
 
-            foreach (var bond in GetAllBonds())
+            foreach (Bond bond in GetAllBonds())
             {
-                var number = bond.Id.Substring(1);
+                string number = bond.Id.Substring(1);
                 if (int.TryParse(number, out int n))
                 {
                     bondCount = Math.Max(bondCount, n);
@@ -878,7 +901,7 @@ namespace Chem4Word.Model2
 
             foreach (ReactionScheme scheme in GetAllReactionSchemes())
             {
-                var number = scheme.Id.Substring(1);
+                string number = scheme.Id.Substring(1);
                 if (int.TryParse(number, out int n))
                 {
                     reactionSchemeCount = Math.Max(reactionSchemeCount, n);
@@ -887,7 +910,7 @@ namespace Chem4Word.Model2
 
             foreach (Reaction reaction in GetAllReactions())
             {
-                var number = reaction.Id.Substring(1);
+                string number = reaction.Id.Substring(1);
                 if (int.TryParse(number, out int n))
                 {
                     reactionCount = Math.Max(reactionCount, n);
@@ -917,16 +940,16 @@ namespace Chem4Word.Model2
 
         private IEnumerable<Reaction> GetAllReactions()
         {
-            var reactions = from rs in GetAllReactionSchemes()
-                            from r in rs.Reactions.Values
-                            select r;
+            IEnumerable<Reaction> reactions = from rs in GetAllReactionSchemes()
+                                              from r in rs.Reactions.Values
+                                              select r;
             return reactions;
         }
 
         private IEnumerable<ReactionScheme> GetAllReactionSchemes()
         {
-            var schemes = from rs in ReactionSchemes.Values
-                          select rs;
+            IEnumerable<ReactionScheme> schemes = from rs in ReactionSchemes.Values
+                                                  select rs;
             return schemes;
         }
 
@@ -949,7 +972,7 @@ namespace Chem4Word.Model2
 
             if (ReactionSchemes.Count > 0)
             {
-                foreach (var scheme in ReactionSchemes.Values)
+                foreach (ReactionScheme scheme in ReactionSchemes.Values)
                 {
                     scheme.ReLabel(ref reactionSchemeCount, ref reactionCount);
                 }
@@ -957,7 +980,7 @@ namespace Chem4Word.Model2
 
             if (Annotations.Count > 0)
             {
-                foreach (var annotation in Annotations.Values)
+                foreach (Annotation annotation in Annotations.Values)
                 {
                     annotation.ReLabel(ref annotationCount);
                 }
@@ -974,7 +997,7 @@ namespace Chem4Word.Model2
 
         public void Refresh()
         {
-            foreach (var molecule in Molecules.Values)
+            foreach (Molecule molecule in Molecules.Values)
             {
                 molecule.Refresh();
             }
@@ -982,13 +1005,13 @@ namespace Chem4Word.Model2
 
         public Model Copy()
         {
-            var modelCopy = new Model();
+            Model modelCopy = new Model();
 
             if (Molecules.Count > 0)
             {
-                foreach (var child in Molecules.Values)
+                foreach (Molecule child in Molecules.Values)
                 {
-                    var molCopy = child.Copy();
+                    Molecule molCopy = child.Copy();
                     modelCopy.AddMolecule(molCopy);
                     molCopy.Parent = modelCopy;
                 }
@@ -996,9 +1019,9 @@ namespace Chem4Word.Model2
 
             if (ReactionSchemes.Count > 0)
             {
-                foreach (var rs in ReactionSchemes.Values)
+                foreach (ReactionScheme rs in ReactionSchemes.Values)
                 {
-                    var schemeCopy = rs.Copy(modelCopy);
+                    ReactionScheme schemeCopy = rs.Copy(modelCopy);
                     modelCopy.AddReactionScheme(schemeCopy);
                     schemeCopy.Parent = modelCopy;
                 }
@@ -1006,9 +1029,9 @@ namespace Chem4Word.Model2
 
             if (Annotations.Count > 0)
             {
-                foreach (var ann in Annotations.Values)
+                foreach (Annotation ann in Annotations.Values)
                 {
-                    var annCopy = ann.Copy();
+                    Annotation annCopy = ann.Copy();
                     modelCopy.AddAnnotation(annCopy);
                     annCopy.Parent = modelCopy;
                 }
@@ -1039,7 +1062,7 @@ namespace Chem4Word.Model2
 
         public void AutoPlaceElectrons()
         {
-            foreach (var molecule in Molecules.Values)
+            foreach (Molecule molecule in Molecules.Values)
             {
                 molecule.UpdateElectronPlacements();
             }
@@ -1062,15 +1085,15 @@ namespace Chem4Word.Model2
 
         public void RemoveExplicitHydrogens()
         {
-            var targets = GetHydrogenTargets();
+            HydrogenTargets targets = GetHydrogenTargets();
 
             if (targets.Atoms.Any())
             {
-                foreach (var bond in targets.Bonds)
+                foreach (Bond bond in targets.Bonds)
                 {
                     bond.Parent.RemoveBond(bond);
                 }
-                foreach (var atom in targets.Atoms)
+                foreach (Atom atom in targets.Atoms)
                 {
                     atom.Parent.RemoveAtom(atom);
                 }
@@ -1079,18 +1102,18 @@ namespace Chem4Word.Model2
 
         public HydrogenTargets GetHydrogenTargets(List<Molecule> molecules = null)
         {
-            var targets = new HydrogenTargets();
+            HydrogenTargets targets = new HydrogenTargets();
 
             if (molecules == null)
             {
-                var allHydrogens = GetAllAtoms().Where(a => a.Element.Symbol.Equals("H")).ToList();
+                List<Atom> allHydrogens = GetAllAtoms().Where(a => a.Element.Symbol.Equals("H")).ToList();
                 ProcessHydrogens(allHydrogens);
             }
             else
             {
-                foreach (var mol in molecules)
+                foreach (Molecule mol in molecules)
                 {
-                    var allHydrogens = mol.Atoms.Values.Where(a => a.Element.Symbol.Equals("H")).ToList();
+                    List<Atom> allHydrogens = mol.Atoms.Values.Where(a => a.Element.Symbol.Equals("H")).ToList();
                     ProcessHydrogens(allHydrogens);
                 }
             }
@@ -1102,7 +1125,7 @@ namespace Chem4Word.Model2
             {
                 if (hydrogens.Any())
                 {
-                    foreach (var hydrogen in hydrogens)
+                    foreach (Atom hydrogen in hydrogens)
                     {
                         // Terminal Atom?
                         if (hydrogen.Degree == 1)
@@ -1170,7 +1193,7 @@ namespace Chem4Word.Model2
 
         public void SetAnnotationSize(double newSize)
         {
-            foreach (var annotation in Annotations)
+            foreach (KeyValuePair<Guid, Annotation> annotation in Annotations)
             {
                 annotation.Value.SymbolSize = newSize;
             }
@@ -1182,8 +1205,8 @@ namespace Chem4Word.Model2
             {
                 ScaleToAverageBondLength(newLength);
 
-                var bb = BoundingBoxWithFontSize;
-                var c = new Point(bb.Left + bb.Width / 2, bb.Top + bb.Height / 2);
+                Rect bb = BoundingBoxWithFontSize;
+                Point c = new Point(bb.Left + bb.Width / 2, bb.Top + bb.Height / 2);
                 RepositionAll(c.X - centre.X, c.Y - centre.Y);
                 _boundingBox = Rect.Empty;
             }
@@ -1232,11 +1255,11 @@ namespace Chem4Word.Model2
 
         public List<TextualProperty> GetUniqueNames()
         {
-            var result = new Dictionary<string, TextualProperty>();
+            Dictionary<string, TextualProperty> result = new Dictionary<string, TextualProperty>();
 
-            foreach (var mol in GetAllMolecules())
+            foreach (Molecule mol in GetAllMolecules())
             {
-                foreach (var property in mol.AllTextualProperties.Where(x => x.TypeCode.Equals("N")))
+                foreach (TextualProperty property in mol.AllTextualProperties.Where(x => x.TypeCode.Equals("N")))
                 {
                     if (!result.ContainsKey(property.Id))
                     {
@@ -1250,11 +1273,11 @@ namespace Chem4Word.Model2
 
         public List<TextualProperty> GetUniqueFormulae()
         {
-            var result = new Dictionary<string, TextualProperty>();
+            Dictionary<string, TextualProperty> result = new Dictionary<string, TextualProperty>();
 
-            foreach (var mol in GetAllMolecules())
+            foreach (Molecule mol in GetAllMolecules())
             {
-                foreach (var property in mol.AllTextualProperties.Where(x => x.TypeCode.Equals("F") || x.TypeCode.Equals("W")))
+                foreach (TextualProperty property in mol.AllTextualProperties.Where(x => x.TypeCode.Equals("F") || x.TypeCode.Equals("W")))
                 {
                     if (!result.ContainsKey(property.Id))
                     {
@@ -1268,11 +1291,11 @@ namespace Chem4Word.Model2
 
         public List<TextualProperty> GetUniqueCaptions()
         {
-            var result = new Dictionary<string, TextualProperty>();
+            Dictionary<string, TextualProperty> result = new Dictionary<string, TextualProperty>();
 
-            foreach (var mol in GetAllMolecules())
+            foreach (Molecule mol in GetAllMolecules())
             {
-                foreach (var property in mol.Captions)
+                foreach (TextualProperty property in mol.Captions)
                 {
                     if (!result.ContainsKey(property.Id))
                     {
@@ -1316,44 +1339,20 @@ namespace Chem4Word.Model2
 
         public TextualProperty GetTextPropertyById(string id)
         {
-            TextualProperty tp = null;
+            TextualProperty textualProperty = null;
 
-            foreach (var molecule in GetAllMolecules())
+            List<TextualProperty> allTextualProperties = AllTextualProperties;
+
+            foreach (TextualProperty property in allTextualProperties)
             {
-                if (id.StartsWith(molecule.Id))
+                if (property.Id == id)
                 {
-                    if (id.EndsWith("f0"))
-                    {
-                        tp = new TextualProperty
-                        {
-                            Id = $"{molecule.Id}.f0",
-                            Value = molecule.UnicodeFormula,
-                            FullType = "ConciseFormula"
-                        };
-                        break;
-                    }
-
-                    tp = molecule.Formulas.SingleOrDefault(f => f.Id.Equals(id));
-                    if (tp != null)
-                    {
-                        break;
-                    }
-
-                    tp = molecule.Names.SingleOrDefault(n => n.Id.Equals(id));
-                    if (tp != null)
-                    {
-                        break;
-                    }
-
-                    tp = molecule.Captions.SingleOrDefault(l => l.Id.Equals(id));
-                    if (tp != null)
-                    {
-                        break;
-                    }
+                    textualProperty = property;
+                    break;
                 }
             }
 
-            return tp;
+            return textualProperty;
         }
 
         public List<Molecule> GetAllMolecules()
@@ -1403,7 +1402,7 @@ namespace Chem4Word.Model2
                 XamlBondLength = newLength;
                 ScaledForXaml = true;
 
-                var middle = BoundingBoxOfCmlPoints;
+                Rect middle = BoundingBoxOfCmlPoints;
 
                 if (forDisplay)
                 {
@@ -1421,22 +1420,22 @@ namespace Chem4Word.Model2
         /// </summary>
         public List<string> CheckIntegrity()
         {
-            var mols = GetAllMolecules();
-            var result = new List<string>();
+            List<Molecule> mols = GetAllMolecules();
+            List<string> result = new List<string>();
 
             foreach (Molecule mol in mols)
             {
                 result.AddRange(mol.CheckIntegrity());
             }
 
-            var atoms = GetAllAtoms().ToList();
-            foreach (var atom in atoms)
+            List<Atom> atoms = GetAllAtoms().ToList();
+            foreach (Atom atom in atoms)
             {
-                var matches = atoms.Where(a => a.Id != atom.Id && SamePoint(atom.Position, a.Position, MeanBondLength * ModelConstants.BondOffsetPercentage)).ToList();
+                List<Atom> matches = atoms.Where(a => a.Id != atom.Id && SamePoint(atom.Position, a.Position, MeanBondLength * ModelConstants.BondOffsetPercentage)).ToList();
                 if (matches.Any())
                 {
-                    var plural = matches.Count > 1 ? "s" : "";
-                    var clashes = matches.Select(a => a.Id);
+                    string plural = matches.Count > 1 ? "s" : "";
+                    IEnumerable<string> clashes = matches.Select(a => a.Id);
                     result.Add($"Atom {atom.Id} - {atom.Element.Symbol} @ {PointHelper.AsString(atom.Position)} clashes with atom{plural} {string.Join(",", clashes)}");
                 }
             }
@@ -1488,7 +1487,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = ReactionSchemesChanged;
+                NotifyCollectionChangedEventHandler temp = ReactionSchemesChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -1497,9 +1496,9 @@ namespace Chem4Word.Model2
         {
             if (e.OldItems != null)
             {
-                foreach (var oldItem in e.OldItems)
+                foreach (object oldItem in e.OldItems)
                 {
-                    var rs = ((ReactionScheme)oldItem);
+                    ReactionScheme rs = ((ReactionScheme)oldItem);
                     rs.ReactionsChanged -= OnCollectionChanged_Reactions;
                     rs.PropertyChanged -= OnPropertyChanged_ChemObject;
                 }
@@ -1507,9 +1506,9 @@ namespace Chem4Word.Model2
 
             if (e.NewItems != null)
             {
-                foreach (var newItem in e.NewItems)
+                foreach (object newItem in e.NewItems)
                 {
-                    var rs = ((ReactionScheme)newItem);
+                    ReactionScheme rs = ((ReactionScheme)newItem);
                     rs.ReactionsChanged += OnCollectionChanged_Reactions;
                     rs.PropertyChanged += OnPropertyChanged_ChemObject;
                 }
@@ -1520,9 +1519,9 @@ namespace Chem4Word.Model2
         {
             if (e.OldItems != null)
             {
-                foreach (var oldItem in e.OldItems)
+                foreach (object oldItem in e.OldItems)
                 {
-                    var ann = ((Annotation)oldItem);
+                    Annotation ann = ((Annotation)oldItem);
 
                     ann.PropertyChanged -= OnPropertyChanged_ChemObject;
                 }
@@ -1530,9 +1529,9 @@ namespace Chem4Word.Model2
 
             if (e.NewItems != null)
             {
-                foreach (var newItem in e.NewItems)
+                foreach (object newItem in e.NewItems)
                 {
-                    var ann = ((Annotation)newItem);
+                    Annotation ann = ((Annotation)newItem);
                     ann.PropertyChanged += OnPropertyChanged_ChemObject;
                 }
             }
@@ -1542,18 +1541,18 @@ namespace Chem4Word.Model2
         {
             if (e.OldItems != null)
             {
-                foreach (var oldItem in e.OldItems)
+                foreach (object oldItem in e.OldItems)
                 {
-                    var ep = ((ElectronPusher)oldItem);
+                    ElectronPusher ep = ((ElectronPusher)oldItem);
                     ep.PropertyChanged -= OnPropertyChanged_ChemObject;
                 }
             }
 
             if (e.NewItems != null)
             {
-                foreach (var newItem in e.NewItems)
+                foreach (object newItem in e.NewItems)
                 {
-                    var ep = ((ElectronPusher)newItem);
+                    ElectronPusher ep = ((ElectronPusher)newItem);
                     ep.PropertyChanged += OnPropertyChanged_ChemObject;
                 }
             }
@@ -1568,7 +1567,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                var temp = ReactionsChanged;
+                NotifyCollectionChangedEventHandler temp = ReactionsChanged;
                 temp?.Invoke(sender, e);
             }
         }
@@ -1591,7 +1590,7 @@ namespace Chem4Word.Model2
         {
             CrossedBonds = new Dictionary<string, CrossedBonds>();
 
-            foreach (var molecule in Molecules.Values)
+            foreach (Molecule molecule in Molecules.Values)
             {
                 DetectCrossingLines(molecule);
             }
@@ -1599,10 +1598,10 @@ namespace Chem4Word.Model2
 
         private void DetectCrossingLines(Molecule molecule)
         {
-            var clippingTargets = new List<ClippingTarget>();
+            List<ClippingTarget> clippingTargets = new List<ClippingTarget>();
 
             // Step 1 - Fill list with simple facilitating class
-            foreach (var bond in molecule.Bonds)
+            foreach (Bond bond in molecule.Bonds)
             {
                 clippingTargets.Add(new ClippingTarget(bond));
             }
@@ -1611,32 +1610,32 @@ namespace Chem4Word.Model2
             clippingTargets.Sort();
 
             // Step 3 - Do the sweep
-            foreach (var clippingTarget in clippingTargets)
+            foreach (ClippingTarget clippingTarget in clippingTargets)
             {
                 // Determine if the bounding box of this line intersects with the next one
-                var targets = clippingTargets
-                              .Where(a => a.BoundingBox.IntersectsWith(clippingTarget.BoundingBox))
-                              .ToList();
+                List<ClippingTarget> targets = clippingTargets
+                                               .Where(a => a.BoundingBox.IntersectsWith(clippingTarget.BoundingBox))
+                                               .ToList();
                 targets.Remove(clippingTarget);
 
                 if (targets.Count > 0)
                 {
                     // If any targets found
-                    foreach (var target in targets)
+                    foreach (ClippingTarget target in targets)
                     {
-                        var intersection = GeometryTool.GetIntersection(clippingTarget.Start, clippingTarget.End, target.Start, target.End);
+                        Point? intersection = GeometryTool.GetIntersection(clippingTarget.Start, clippingTarget.End, target.Start, target.End);
                         if (intersection != null)
                         {
                             if (!PointIsAtEndOfALine(intersection.Value, clippingTarget, target))
                             {
                                 // Construct key
-                                var names = new List<string>
-                                            {
-                                                target.Name,
-                                                clippingTarget.Name
-                                            };
+                                List<string> names = new List<string>
+                                                     {
+                                                         target.Name,
+                                                         clippingTarget.Name
+                                                     };
                                 names.Sort(); // Alphabetically
-                                var key = string.Join("|", names);
+                                string key = string.Join("|", names);
 
                                 if (!CrossedBonds.ContainsKey(key))
                                 {
@@ -1654,7 +1653,7 @@ namespace Chem4Word.Model2
             }
 
             // Finally recurse into any child molecules
-            foreach (var child in molecule.Molecules.Values)
+            foreach (Molecule child in molecule.Molecules.Values)
             {
                 DetectCrossingLines(child);
             }
@@ -1668,64 +1667,64 @@ namespace Chem4Word.Model2
 
         private int ExpandFunctionalGroup(Atom atom, string expansion)
         {
-            var result = 0;
+            int result = 0;
 
             // Expansion must be defined
             if (!string.IsNullOrEmpty(expansion))
             {
-                var converter = new CMLConverter();
-                var donorModel = converter.Import(expansion);
+                CMLConverter converter = new CMLConverter();
+                Model donorModel = converter.Import(expansion);
 
                 // Expansion must be valid CML
                 if (donorModel != null)
                 {
-                    var stars = donorModel.GetAllAtoms().Where(a => a.Element.Name.Equals("*")).ToList();
+                    List<Atom> stars = donorModel.GetAllAtoms().Where(a => a.Element.Name.Equals("*")).ToList();
                     // Expansion must have only one star atom
                     if (stars.Count == 1)
                     {
                         Debug.WriteLine($"Expanding {atom.Element.Name} in molecule {atom.Parent.Id}");
 
-                        var recipientMolecule = atom.Parent;
+                        Molecule recipientMolecule = atom.Parent;
 
                         // Match FG Expansion scale to that of Model
                         donorModel.ScaleToAverageBondLength(MeanBondLength);
 
-                        var donorMolecule = donorModel.Molecules.First().Value;
+                        Molecule donorMolecule = donorModel.Molecules.First().Value;
                         donorMolecule.Id = "donor";
 
                         // ReLabel to ensure there are no clashes when joining the two molecules
-                        var atomCount = recipientMolecule.MaxAtomId() + 100;
-                        var bondCount = recipientMolecule.MaxBondId() + 100;
-                        var molCount = 100;
+                        int atomCount = recipientMolecule.MaxAtomId() + 100;
+                        int bondCount = recipientMolecule.MaxBondId() + 100;
+                        int molCount = 100;
                         donorMolecule.ReLabel(ref molCount, ref atomCount, ref bondCount, true);
 
                         Debug.WriteLine($"  Adding donor molecule {donorMolecule.Id}");
                         recipientMolecule.AddMolecule(donorMolecule);
                         donorMolecule.Parent = recipientMolecule.Parent;
 
-                        var donorAtoms = donorMolecule.Atoms.Values.ToList();
+                        List<Atom> donorAtoms = donorMolecule.Atoms.Values.ToList();
                         // star atom may be anywhere in the model
-                        var starAtom = donorAtoms.First(a => a.Element.Name.Equals("*"));
+                        Atom starAtom = donorAtoms.First(a => a.Element.Name.Equals("*"));
 
-                        var recipientBond = atom.Bonds.First();
-                        var donorBond = starAtom.Bonds.First();
+                        Bond recipientBond = atom.Bonds.First();
+                        Bond donorBond = starAtom.Bonds.First();
 
                         // Move the expansion into place
-                        var recipientPosition = atom.Bonds.First().OtherAtom(atom).Position;
-                        var donorAttachmentPoint = starAtom.Position;
+                        Point recipientPosition = atom.Bonds.First().OtherAtom(atom).Position;
+                        Point donorAttachmentPoint = starAtom.Position;
 
-                        var offsetX = recipientPosition.X - donorAttachmentPoint.X;
-                        var offsetY = recipientPosition.Y - donorAttachmentPoint.Y;
+                        double offsetX = recipientPosition.X - donorAttachmentPoint.X;
+                        double offsetY = recipientPosition.Y - donorAttachmentPoint.Y;
                         donorMolecule.RepositionAll(-offsetX, -offsetY);
 
                         // Rotate the expansion
-                        var recipientBondAngle = recipientBond.AngleStartingAt(atom);
-                        var donorBondAngle = donorBond.AngleStartingAt(donorBond.OtherAtom(starAtom));
+                        double recipientBondAngle = recipientBond.AngleStartingAt(atom);
+                        double donorBondAngle = donorBond.AngleStartingAt(donorBond.OtherAtom(starAtom));
                         donorMolecule.RotateAbout(starAtom.Position, recipientBondAngle - donorBondAngle);
 
                         // Get the atoms which determine the fusing points
-                        var donorAtom = donorBond.GetAtoms().First(a => !a.Element.Name.Equals("*"));
-                        var recipientAtom = recipientBond.OtherAtom(atom);
+                        Atom donorAtom = donorBond.GetAtoms().First(a => !a.Element.Name.Equals("*"));
+                        Atom recipientAtom = recipientBond.OtherAtom(atom);
 
                         // -----------------------------------------------------------------
                         // Order of removing molecules should preserve ordering of molecules
@@ -1744,15 +1743,15 @@ namespace Chem4Word.Model2
                         donorMolecule.RemoveAtom(starAtom);
 
                         // Join the two molecules via a new bond
-                        var joiningBond = new Bond(recipientAtom, donorAtom)
-                        {
-                            Order = recipientBond.Order,
-                            Stereo = recipientBond.Stereo,
-                            Id = $"b{++bondCount}"
-                        };
+                        Bond joiningBond = new Bond(recipientAtom, donorAtom)
+                                           {
+                                               Order = recipientBond.Order,
+                                               Stereo = recipientBond.Stereo,
+                                               Id = $"b{++bondCount}"
+                                           };
 
-                        var parentOfFunctionalGroupMolecule = recipientMolecule.Parent;
-                        var parentId = string.Empty;
+                        IChemistryContainer parentOfFunctionalGroupMolecule = recipientMolecule.Parent;
+                        string parentId = string.Empty;
                         if (parentOfFunctionalGroupMolecule is Model)
                         {
                             parentId = "model";
@@ -1764,7 +1763,7 @@ namespace Chem4Word.Model2
 
                         // Create new combined molecule
                         Debug.WriteLine($"  Joining molecules {recipientMolecule.Id} and {donorMolecule.Id} by new bond {joiningBond.Id}");
-                        var newMolecule = Molecule.Join(recipientMolecule, donorMolecule, joiningBond);
+                        Molecule newMolecule = Molecule.Join(recipientMolecule, donorMolecule, joiningBond);
                         Debug.WriteLine($"  New molecule is {newMolecule.Id}");
 
                         Debug.WriteLine($"  Removing recipient molecule {recipientMolecule.Id}");
@@ -1799,14 +1798,14 @@ namespace Chem4Word.Model2
 
         public int ExpandAllFunctionalGroups()
         {
-            var result = 0;
+            int result = 0;
 
-            var allMolecules = GetAllMolecules();
-            foreach (var molecule in allMolecules)
+            List<Molecule> allMolecules = GetAllMolecules();
+            foreach (Molecule molecule in allMolecules)
             {
-                var allAtoms = molecule.Atoms.Values.ToList();
+                List<Atom> allAtoms = molecule.Atoms.Values.ToList();
 
-                foreach (var atom in allAtoms)
+                foreach (Atom atom in allAtoms)
                 {
                     if (atom.Bonds.Count() == 1
                         && atom.Element is FunctionalGroup fg)
@@ -1870,8 +1869,8 @@ namespace Chem4Word.Model2
             }
 
             // There are more slashes so must be a child of a molecule or reaction scheme
-            var firstId = path.Substring(0, nextSlashPos);
-            var remainder = path.Substring(nextSlashPos + 1);
+            string firstId = path.Substring(0, nextSlashPos);
+            string remainder = path.Substring(nextSlashPos + 1);
 
             foreach (Molecule molecule in Molecules.Values)
             {

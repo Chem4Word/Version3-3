@@ -500,7 +500,7 @@ namespace Chem4Word
                 CollectAndSendMsiLogs();
 
                 // Early check for updates but with longer that normal period
-                UpdateHelper.CheckForUpdates(30);
+                UpdateHelper.CheckForUpdates(30, nameof(OnTimerElapsed));
             }
         }
 
@@ -1699,7 +1699,7 @@ namespace Chem4Word
                     }
 
                     UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnWindowBeforeRightClick));
                 }
             }
         }
@@ -1840,7 +1840,7 @@ namespace Chem4Word
                 }
 
                 UpdateHelper.ClearSettings();
-                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnCommandBarButtonClick));
             }
         }
 
@@ -2095,7 +2095,7 @@ namespace Chem4Word
                     {
                         autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                     }
-                    UpdateHelper.CheckForUpdates(autoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnNewDocument));
                 }
             }
         }
@@ -2175,7 +2175,7 @@ namespace Chem4Word
                         {
                             autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                         }
-                        UpdateHelper.CheckForUpdates(autoUpdateFrequency);
+                        UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnDocumentChange));
                     }
                 }
                 else
@@ -2344,7 +2344,7 @@ namespace Chem4Word
                     {
                         autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                     }
-                    UpdateHelper.CheckForUpdates(autoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnDocumentOpen));
                 }
             }
         }
@@ -2438,7 +2438,7 @@ namespace Chem4Word
                     {
                         autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                     }
-                    UpdateHelper.CheckForUpdates(autoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnDocumentBeforeSave));
                 }
             }
         }
@@ -2514,7 +2514,7 @@ namespace Chem4Word
                     {
                         autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                     }
-                    UpdateHelper.CheckForUpdates(autoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnDocumentBeforeClose));
                 }
             }
         }
@@ -2579,7 +2579,7 @@ namespace Chem4Word
                     }
 
                     UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnWindowSelectionChange));
                 }
             }
         }
@@ -3061,7 +3061,7 @@ namespace Chem4Word
                         EventsEnabled = false;
                         CustomRibbon.PerformEdit();
                         EventsEnabled = true;
-                        UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                        UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnWindowBeforeDoubleClick));
                         cancel = true;
                     }
                 }
@@ -3078,7 +3078,7 @@ namespace Chem4Word
                     }
 
                     UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnWindowBeforeDoubleClick));
                 }
             }
         }
@@ -3118,7 +3118,7 @@ namespace Chem4Word
                     }
 
                     UpdateHelper.ClearSettings();
-                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnWindowActivate));
                 }
             }
         }
@@ -3232,7 +3232,7 @@ namespace Chem4Word
                 }
 
                 UpdateHelper.ClearSettings();
-                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnContentControlAfterAdd));
             }
         }
 
@@ -3265,7 +3265,7 @@ namespace Chem4Word
                 }
 
                 UpdateHelper.ClearSettings();
-                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnContentControlBeforeDelete));
             }
         }
 
@@ -3298,7 +3298,7 @@ namespace Chem4Word
                 }
 
                 UpdateHelper.ClearSettings();
-                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnContentControlOnExit));
             }
         }
 
@@ -3337,7 +3337,7 @@ namespace Chem4Word
                 }
 
                 UpdateHelper.ClearSettings();
-                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency);
+                UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnContentControlOnEnter));
             }
         }
 

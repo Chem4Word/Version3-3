@@ -54,7 +54,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             PositionElectronPushers();
             PositionReactionTexts();
             PositionAnnotationTexts();
-            PositionMolecularWeight();
 
             // We are done now so we can return the final values
             return Outputs;
@@ -1583,7 +1582,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
         }
 
-        private void PositionMolecule(Molecule mol, Progress pb, ref int molNumber)
+        private void PositionMolecule(Molecule mol, Progress pb, ref int molNumber, bool addMolecularWeight = true)
         {
             molNumber++;
 
@@ -1612,7 +1611,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             // Recurse into any child molecules
             foreach (Molecule child in mol.Molecules.Values)
             {
-                PositionMolecule(child, pb, ref molNumber);
+                PositionMolecule(child, pb, ref molNumber, addMolecularWeight: false);
             }
 
             // Determine Extents
@@ -1734,6 +1733,18 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 AddMoleculeCaptionsAsCharacters(mol.Captions.ToList(), point, mol.Path);
 
                 // Recalculate as we have just added extra characters
+                thisMoleculeExtents.SetExternalCharacterExtents(CharacterExtents(mol, thisMoleculeExtents.MoleculeBracketsExtents));
+            }
+
+            if (Inputs.Model.ShowMolecularWeight && addMolecularWeight)
+            {
+                Point point = new Point(thisMoleculeExtents.MoleculeBracketsExtents.Left
+                                        + thisMoleculeExtents.MoleculeBracketsExtents.Width / 2,
+                                        thisMoleculeExtents.ExternalCharacterExtents.Bottom
+                                        + Inputs.MeanBondLength * OoXmlConstants.MultipleBondOffsetPercentage / 2);
+
+                AddMolecularWeightAsCharacters(SafeDouble.AsCMLString(mol.MolecularWeight), point, $"{mol.Path}/molWeight");
+
                 thisMoleculeExtents.SetExternalCharacterExtents(CharacterExtents(mol, thisMoleculeExtents.MoleculeBracketsExtents));
             }
         }

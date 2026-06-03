@@ -99,7 +99,7 @@ namespace Chem4Word
 
         private void OnClick_RenderAs(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -116,15 +116,15 @@ namespace Chem4Word
 
                 if (Globals.Chem4WordV3.ChemistryAllowed)
                 {
-                    var application = Globals.Chem4WordV3.Application;
-                    var document = application.ActiveDocument;
+                    Word.Application application = Globals.Chem4WordV3.Application;
+                    Word.Document document = application.ActiveDocument;
                     Word.ContentControl contentControl = null;
 
                     try
                     {
-                        var b = sender as RibbonButton;
+                        RibbonButton b = sender as RibbonButton;
 
-                        var selection = application.Selection;
+                        Word.Selection selection = application.Selection;
 
                         CustomXMLPart customXmlPart = null;
 
@@ -134,8 +134,8 @@ namespace Chem4Word
                             if (contentControl.Title != null && contentControl.Title.Equals(CoreConstants.ContentControlTitle))
                             {
                                 string chosenState = b.Tag.ToString();
-                                var prefix = "2D";
-                                var guid = contentControl.Tag;
+                                string prefix = "2D";
+                                string guid = contentControl.Tag;
                                 if (guid.Contains(":"))
                                 {
                                     prefix = CustomXmlPartHelper.PrefixFromTag(contentControl.Tag);
@@ -144,7 +144,7 @@ namespace Chem4Word
 
                                 if (!prefix.Equals(chosenState))
                                 {
-                                    var renderer =
+                                    IChem4WordRenderer renderer =
                                         Globals.Chem4WordV3.GetRendererPlugIn(
                                             Globals.Chem4WordV3.SystemOptions.SelectedRendererPlugIn);
                                     if (renderer != null)
@@ -177,7 +177,7 @@ namespace Chem4Word
                                                     renderer.Properties = new Dictionary<string, string> { { "Guid", guid } };
                                                     renderer.Cml = customXmlPart.XML;
 
-                                                    var tempfileName = renderer.Render();
+                                                    string tempfileName = renderer.Render();
                                                     if (File.Exists(tempfileName))
                                                     {
                                                         ChemistryHelper.Insert2D(document, contentControl.ID, tempfileName, guid);
@@ -189,9 +189,9 @@ namespace Chem4Word
                                                 }
                                                 else
                                                 {
-                                                    var used1D = ChemistryHelper.GetUsed1D(document, CustomXmlPartHelper.GuidFromTag(contentControl.Tag));
-                                                    var conv = new CMLConverter();
-                                                    var model = conv.Import(customXmlPart.XML, used1D);
+                                                    List<string> used1D = ChemistryHelper.GetUsed1D(document, CustomXmlPartHelper.GuidFromTag(contentControl.Tag));
+                                                    CMLConverter conv = new CMLConverter();
+                                                    Model model = conv.Import(customXmlPart.XML, used1D);
 
                                                     string text;
                                                     if (chosenState.Equals("c0"))
@@ -226,7 +226,7 @@ namespace Chem4Word
                     }
                     catch (Exception ex)
                     {
-                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                        using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                         {
                             form.ShowDialog();
                         }
@@ -252,15 +252,15 @@ namespace Chem4Word
 
         private void AddDynamicMenuItems()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             try
             {
                 ShowAsMenu.Items.Clear();
 
-                var application = Globals.Chem4WordV3.Application;
-                var document = application.ActiveDocument;
-                var selection = application.Selection;
+                Word.Application application = Globals.Chem4WordV3.Application;
+                Word.Document document = application.ActiveDocument;
+                Word.Selection selection = application.Selection;
                 Word.ContentControl contentControl = null;
                 CustomXMLPart customXmlPart = null;
 
@@ -269,7 +269,7 @@ namespace Chem4Word
                     contentControl = selection.ContentControls[1];
                     if (contentControl.Title != null && contentControl.Title.Equals(CoreConstants.ContentControlTitle))
                     {
-                        var prefix = "2D";
+                        string prefix = "2D";
                         if (contentControl.Tag.Contains(":"))
                         {
                             prefix = CustomXmlPartHelper.PrefixFromTag(contentControl.Tag);
@@ -278,19 +278,19 @@ namespace Chem4Word
                         customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(document, contentControl.Tag);
                         if (customXmlPart != null)
                         {
-                            var used1D = ChemistryHelper.GetUsed1D(document, CustomXmlPartHelper.GuidFromTag(contentControl.Tag));
-                            var cml = customXmlPart.XML;
-                            var converter = new CMLConverter();
-                            var model = converter.Import(cml, used1D);
+                            List<string> used1D = ChemistryHelper.GetUsed1D(document, CustomXmlPartHelper.GuidFromTag(contentControl.Tag));
+                            string cml = customXmlPart.XML;
+                            CMLConverter converter = new CMLConverter();
+                            Model model = converter.Import(cml, used1D);
 
-                            var list = model.AllTextualProperties;
-                            var addedNames = new Dictionary<string, string>();
-                            var separatorAdded = false;
-                            foreach (var item in list)
+                            List<TextualProperty> list = model.AllTextualProperties;
+                            Dictionary<string, string> addedNames = new Dictionary<string, string>();
+                            bool separatorAdded = false;
+                            foreach (TextualProperty item in list)
                             {
                                 if (item.IsValid && !item.FullType.ToLower().Contains("auxinfo"))
                                 {
-                                    var compactValue = item.Value.Replace(" ", "").ToLower();
+                                    string compactValue = item.Value.Replace(" ", "").ToLower();
                                     switch (item.TypeCode)
                                     {
                                         case "S":
@@ -302,9 +302,9 @@ namespace Chem4Word
                                             break;
 
                                         case "2D":
-                                            var ribbonButton2d = MakeRibbonButton(item, prefix);
-                                            ribbonButton2d.SuperTip = "Render as 2D image";
-                                            ShowAsMenu.Items.Add(ribbonButton2d);
+                                            RibbonButton ribbonButton2D = MakeRibbonButton(item, prefix);
+                                            ribbonButton2D.SuperTip = "Render as 2D image";
+                                            ShowAsMenu.Items.Add(ribbonButton2D);
                                             break;
 
                                         case "N": // Name
@@ -312,7 +312,7 @@ namespace Chem4Word
                                             {
                                                 addedNames.Add(compactValue, compactValue);
 
-                                                var ribbonButtonN = MakeRibbonButton(item, prefix);
+                                                RibbonButton ribbonButtonN = MakeRibbonButton(item, prefix);
                                                 ribbonButtonN.SuperTip = "Render as name";
                                                 ShowAsMenu.Items.Add(ribbonButtonN);
                                             }
@@ -323,7 +323,7 @@ namespace Chem4Word
                                             {
                                                 addedNames.Add(compactValue, compactValue);
 
-                                                var ribbonButtonC = MakeRibbonButton(item, prefix);
+                                                RibbonButton ribbonButtonC = MakeRibbonButton(item, prefix);
                                                 ribbonButtonC.SuperTip = "Render as caption";
                                                 ShowAsMenu.Items.Add(ribbonButtonC);
                                             }
@@ -334,7 +334,7 @@ namespace Chem4Word
                                             {
                                                 addedNames.Add(compactValue, compactValue);
 
-                                                var ribbonButtonF = MakeRibbonButton(item, prefix);
+                                                RibbonButton ribbonButtonF = MakeRibbonButton(item, prefix);
                                                 if (item.FullType.ToLower().Contains("formula"))
                                                 {
                                                     ribbonButtonF.Label = item.Value;
@@ -356,8 +356,10 @@ namespace Chem4Word
                                             {
                                                 addedNames.Add(compactValue, compactValue);
 
-                                                var ribbonButtonW = MakeRibbonButton(item, prefix);
-                                                ribbonButtonW.SuperTip = "Render as molecular weight";
+                                                RibbonButton ribbonButtonW = MakeRibbonButton(item, prefix);
+                                                ribbonButtonW.SuperTip = item.Id == "w0"
+                                                    ? "Render as overall molecular weight"
+                                                    : "Render as molecular weight";
                                                 ShowAsMenu.Items.Add(ribbonButtonW);
                                             }
                                             break;
@@ -370,7 +372,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -379,7 +381,7 @@ namespace Chem4Word
             // Local function to create a ribbon button
             RibbonButton MakeRibbonButton(TextualProperty item, string prefix)
             {
-                var ribbonButton = Factory.CreateRibbonButton();
+                RibbonButton ribbonButton = Factory.CreateRibbonButton();
                 ribbonButton.Tag = item.Id;
                 if (prefix.Equals(ribbonButton.Tag))
                 {
@@ -887,7 +889,7 @@ namespace Chem4Word
 
                 if (checkForUpdates && Globals.Chem4WordV3.SystemOptions != null)
                 {
-                    UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency);
+                    UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency, nameof(AfterButtonChecks));
                 }
 
                 if (Globals.Chem4WordV3.PlugInsHaveBeenLoaded)
@@ -2530,7 +2532,7 @@ namespace Chem4Word
 
                 if (Globals.Chem4WordV3.SystemOptions != null)
                 {
-                    var behind = UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency);
+                    var behind = UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency, nameof(OnClick_CheckForUpdates));
                     if (Globals.Chem4WordV3.IsEndOfLife)
                     {
                         UserInteractions.InformUser("This version of Chem4Word is no longer supported");

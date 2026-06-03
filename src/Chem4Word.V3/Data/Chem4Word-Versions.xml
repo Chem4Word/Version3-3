@@ -7,9 +7,7 @@
     <IsBeta>false</IsBeta>
     <Released>17-Jun-2026</Released>
     <Changes>
-      <Change>...</Change>
-      <Change>...</Change>
-      <Change>...</Change>
+      <Change>Improvement to how Molecular Weight can be rendered in a Word document</Change>
       <Change>Fixed Long standing bug in nRing drawing</Change>
       <Change>BugFix: MOLFile Import map unknown Atoms to ?? pseudo functional group</Change>
       <Change>UI: Added ability to auto-set atom electron configurations</Change>

@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2;
+using System.Windows;
 
 namespace Chem4WordUnitTests
 {
@@ -16,20 +17,20 @@ namespace Chem4WordUnitTests
         // [2]--[3]
         public static Model ConstructChain()
         {
-            var model = new Model();
+            Model model = new Model();
 
-            var molecule1 = new Molecule
+            Molecule molecule1 = new Molecule
             {
                 Id = "m1"
             };
             model.AddMolecule(molecule1);
             molecule1.Parent = model;
 
-            var atom1 = AddAtomToMolecule(molecule1, "a1");
-            var atom2 = AddAtomToMolecule(molecule1, "a2");
-            var atom3 = AddAtomToMolecule(molecule1, "a3");
-            var atom4 = AddAtomToMolecule(molecule1, "a4");
-            var atom5 = AddAtomToMolecule(molecule1, "a5");
+            Atom atom1 = AddAtomToMolecule(molecule1, "a1");
+            Atom atom2 = AddAtomToMolecule(molecule1, "a2");
+            Atom atom3 = AddAtomToMolecule(molecule1, "a3");
+            Atom atom4 = AddAtomToMolecule(molecule1, "a4");
+            Atom atom5 = AddAtomToMolecule(molecule1, "a5");
 
             AddBondBetween(molecule1, atom1, atom2, "b1");
             AddBondBetween(molecule1, atom2, atom3, "b2");
@@ -48,20 +49,20 @@ namespace Chem4WordUnitTests
         // [2]--[3]
         public static Model ConstructRing()
         {
-            var model = new Model();
+            Model model = new Model();
 
-            var molecule1 = new Molecule
+            Molecule molecule1 = new Molecule
             {
                 Id = "m1"
             };
             model.AddMolecule(molecule1);
             molecule1.Parent = model;
 
-            var atom1 = AddAtomToMolecule(molecule1, "a1");
-            var atom2 = AddAtomToMolecule(molecule1, "a2");
-            var atom3 = AddAtomToMolecule(molecule1, "a3");
-            var atom4 = AddAtomToMolecule(molecule1, "a4");
-            var atom5 = AddAtomToMolecule(molecule1, "a5");
+            Atom atom1 = AddAtomToMolecule(molecule1, "a1");
+            Atom atom2 = AddAtomToMolecule(molecule1, "a2");
+            Atom atom3 = AddAtomToMolecule(molecule1, "a3");
+            Atom atom4 = AddAtomToMolecule(molecule1, "a4");
+            Atom atom5 = AddAtomToMolecule(molecule1, "a5");
 
             AddBondBetween(molecule1, atom1, atom2, "b1");
             AddBondBetween(molecule1, atom2, atom3, "b2");
@@ -78,17 +79,17 @@ namespace Chem4WordUnitTests
 
         public static Model ConstructSingleMolecule()
         {
-            var model = new Model();
+            Model model = new Model();
 
-            var molecule1 = new Molecule
+            Molecule molecule1 = new Molecule
             {
                 Id = "m1"
             };
             model.AddMolecule(molecule1);
             molecule1.Parent = model;
 
-            var atom1 = AddAtomToMolecule(molecule1, "a1");
-            var atom2 = AddAtomToMolecule(molecule1, "a2");
+            Atom atom1 = AddAtomToMolecule(molecule1, "a1");
+            Atom atom2 = AddAtomToMolecule(molecule1, "a2");
 
             AddBondBetween(molecule1, atom1, atom2, "b1");
 
@@ -99,31 +100,31 @@ namespace Chem4WordUnitTests
 
         public static Model ConstructMultiLevelMolecule()
         {
-            var model = new Model();
+            Model model = new Model();
 
-            var molecule0 = new Molecule
+            Molecule molecule0 = new Molecule
             {
                 Id = "m0"
             };
             model.AddMolecule(molecule0);
             molecule0.Parent = model;
 
-            var molecule1 = new Molecule
+            Molecule molecule1 = new Molecule
             {
                 Id = "m1"
             };
             molecule0.AddMolecule(molecule1);
             molecule1.Parent = molecule0;
 
-            var molecule2 = new Molecule
+            Molecule molecule2 = new Molecule
             {
                 Id = "m2"
             };
             molecule1.AddMolecule(molecule2);
             molecule2.Parent = molecule1;
 
-            var atom1 = AddAtomToMolecule(molecule2, "a1");
-            var atom2 = AddAtomToMolecule(molecule2, "a2");
+            Atom atom1 = AddAtomToMolecule(molecule2, "a1");
+            Atom atom2 = AddAtomToMolecule(molecule2, "a2");
 
             AddBondBetween(molecule2, atom1, atom2, "b1");
 
@@ -132,9 +133,151 @@ namespace Chem4WordUnitTests
             return model;
         }
 
+        public static Model CreateBadModel()
+        {
+            Model model = new Model();
+            Atom atom1 = new Atom
+            {
+                Position = new Point(0, 0),
+                Element = ModelGlobals.PeriodicTable.C
+            };
+
+            Atom atom2 = new Atom
+            {
+                Position = new Point(10, 10),
+                Element = ModelGlobals.PeriodicTable.C
+            };
+
+            Molecule molecule1 = new Molecule();
+            molecule1.AddAtom(atom1);
+            atom1.Parent = molecule1;
+            molecule1.AddAtom(atom2);
+            atom2.Parent = molecule1;
+
+            Bond bond1 = new Bond(atom1, atom2)
+            {
+                Order = ModelConstants.OrderSingle
+            };
+            molecule1.AddBond(bond1);
+            bond1.Parent = molecule1;
+
+            Bond bond2 = new Bond(atom1, atom2)
+            {
+                Order = ModelConstants.OrderSingle
+            };
+            molecule1.AddBond(bond2);
+            bond2.Parent = molecule1;
+
+            model.AddMolecule(molecule1);
+            molecule1.Parent = model;
+
+            model.Relabel(true);
+
+            return model;
+        }
+
+        public static Model CreateSingleMolecule()
+        {
+            Model model = new Model();
+            Atom atom1 = new Atom
+            {
+                Position = new Point(0, 0),
+                Element = ModelGlobals.PeriodicTable.C
+            };
+
+            Atom atom2 = new Atom
+            {
+                Position = new Point(10, 10),
+                Element = ModelGlobals.PeriodicTable.C
+            };
+
+            Molecule molecule1 = new Molecule();
+            molecule1.AddAtom(atom1);
+            atom1.Parent = molecule1;
+            molecule1.AddAtom(atom2);
+            atom2.Parent = molecule1;
+
+            Bond bond1 = new Bond(atom1, atom2)
+            {
+                Order = ModelConstants.OrderSingle
+            };
+            molecule1.AddBond(bond1);
+            bond1.Parent = molecule1;
+
+            model.AddMolecule(molecule1);
+            molecule1.Parent = model;
+
+            model.Relabel(true);
+
+            return model;
+        }
+
+        public static Model CreateTwoFlatMolecules()
+        {
+            Model model = new Model();
+            Atom atom1 = new Atom
+            {
+                Position = new Point(0, 0),
+                Element = ModelGlobals.PeriodicTable.C
+            };
+
+            Atom atom2 = new Atom
+            {
+                Position = new Point(10, 10),
+                Element = ModelGlobals.PeriodicTable.C
+            };
+
+            Bond bond1 = new Bond(atom1, atom2)
+            {
+                Order = ModelConstants.OrderSingle
+            };
+
+            Molecule molecule1 = new Molecule();
+            molecule1.AddAtom(atom1);
+            atom1.Parent = molecule1;
+            molecule1.AddAtom(atom2);
+            atom2.Parent = molecule1;
+            molecule1.AddBond(bond1);
+            bond1.Parent = molecule1;
+
+            Atom atom3 = new Atom
+            {
+                Position = new Point(20, 20),
+                Element = ModelGlobals.PeriodicTable.C
+            };
+
+            Atom atom4 = new Atom
+            {
+                Position = new Point(30, 30),
+                Element = ModelGlobals.PeriodicTable.C
+            };
+
+            Bond bond2 = new Bond(atom3, atom4)
+            {
+                Order = ModelConstants.OrderSingle
+            };
+
+            Molecule molecule2 = new Molecule();
+            molecule2.AddAtom(atom3);
+            atom1.Parent = molecule2;
+            molecule2.AddAtom(atom4);
+            atom2.Parent = molecule2;
+            molecule2.AddBond(bond2);
+            bond2.Parent = molecule2;
+
+            model.AddMolecule(molecule1);
+            molecule1.Parent = model;
+            model.AddMolecule(molecule2);
+            molecule2.Parent = model;
+
+            model.Relabel(true);
+
+            return model;
+        }
+
         private static Atom AddAtomToMolecule(Molecule molecule, string id)
         {
-            var atom = new Atom
+            Atom atom = new Atom
             {
                 Id = id,
                 Element = ModelGlobals.PeriodicTable.C
@@ -147,7 +290,7 @@ namespace Chem4WordUnitTests
 
         private static void AddBondBetween(Molecule molecule, Atom atom1, Atom atom2, string id)
         {
-            var bond = new Bond(atom1, atom2)
+            Bond bond = new Bond(atom1, atom2)
             {
                 Id = id,
                 Order = ModelConstants.OrderSingle

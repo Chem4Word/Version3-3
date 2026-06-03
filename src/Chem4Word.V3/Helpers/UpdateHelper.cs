@@ -28,7 +28,7 @@ namespace Chem4Word.Helpers
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        public static int CheckForUpdates(int frequency)
+        public static int CheckForUpdates(int frequency, string source)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
@@ -48,7 +48,7 @@ namespace Chem4Word.Helpers
                         if (frequency == 0)
                         {
                             // We should never get here
-                            string message = $"The frequency read from the registry is zero !";
+                            string message = "The frequency read from the registry is zero !";
                             Debug.WriteLine(message);
                             Debugger.Break();
                         }
@@ -62,7 +62,8 @@ namespace Chem4Word.Helpers
 
                         if (doCheck)
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Last check {delta.TotalDays:0} day(s) ago; Check frequency {frequency} days.");
+                            int documentsCount = Globals.Chem4WordV3.Application.Documents.Count;
+                            Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Last check {delta.TotalDays:0} day(s) ago; Check frequency {frequency} days; Source: {source}; Documents: {documentsCount}");
                             Debug.WriteLine("Saving date last checked in Registry as Today");
                             RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordRegistryKey);
                             registryKey?.SetValue(CoreConstants.RegistryValueNameLastCheck, DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));

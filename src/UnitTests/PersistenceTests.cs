@@ -10,6 +10,7 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -201,7 +202,7 @@ namespace Chem4WordUnitTests
         {
             // Arrange
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var model = CreateSingleMolecule();
+            var model = ModelHelper.CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model);
@@ -216,7 +217,7 @@ namespace Chem4WordUnitTests
         {
             // Arrange
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var model = CreateTwoFlatMolecules();
+            var model = ModelHelper.CreateTwoFlatMolecules();
 
             // Act
             var cml = new CMLConverter().Export(model);
@@ -231,7 +232,7 @@ namespace Chem4WordUnitTests
         {
             // Arrange
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var model = CreateSingleMolecule();
+            var model = ModelHelper.CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.ChemDraw);
@@ -246,7 +247,7 @@ namespace Chem4WordUnitTests
         {
             // Arrange
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var model = CreateSingleMolecule();
+            var model = ModelHelper.CreateSingleMolecule();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.MarvinJs);
@@ -261,7 +262,7 @@ namespace Chem4WordUnitTests
         {
             // Arrange
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var model = CreateTwoFlatMolecules();
+            var model = ModelHelper.CreateTwoFlatMolecules();
 
             // Act
             var cml = new CMLConverter().Export(model, format: CmlFormat.ChemDraw);
@@ -269,105 +270,6 @@ namespace Chem4WordUnitTests
             // Assert
             var expected = ResourceHelper.GetStringResource(assembly, "TwoMoleculesWithCmlRoot.xml");
             Assert.Equal(expected, cml);
-        }
-
-        private Model CreateSingleMolecule()
-        {
-            var model = new Model();
-            var atom1 = new Atom
-            {
-                Position = new Point(0, 0),
-                Element = ModelGlobals.PeriodicTable.C
-            };
-
-            var atom2 = new Atom
-            {
-                Position = new Point(10, 10),
-                Element = ModelGlobals.PeriodicTable.C
-            };
-
-            var molecule1 = new Molecule();
-            molecule1.AddAtom(atom1);
-            atom1.Parent = molecule1;
-            molecule1.AddAtom(atom2);
-            atom2.Parent = molecule1;
-
-            var bond1 = new Bond(atom1, atom2)
-            {
-                Order = ModelConstants.OrderSingle
-            };
-            molecule1.AddBond(bond1);
-            bond1.Parent = molecule1;
-
-            model.AddMolecule(molecule1);
-            molecule1.Parent = model;
-
-            model.Relabel(true);
-
-            return model;
-        }
-
-        private Model CreateTwoFlatMolecules()
-        {
-            var model = new Model();
-            var atom1 = new Atom
-            {
-                Position = new Point(0, 0),
-                Element = ModelGlobals.PeriodicTable.C
-            };
-
-            var atom2 = new Atom
-            {
-                Position = new Point(10, 10),
-                Element = ModelGlobals.PeriodicTable.C
-            };
-
-            var bond1 = new Bond(atom1, atom2)
-            {
-                Order = ModelConstants.OrderSingle
-            };
-
-            var molecule1 = new Molecule();
-            molecule1.AddAtom(atom1);
-            atom1.Parent = molecule1;
-            molecule1.AddAtom(atom2);
-            atom2.Parent = molecule1;
-            molecule1.AddBond(bond1);
-            bond1.Parent = molecule1;
-
-            var atom3 = new Atom
-            {
-                Position = new Point(20, 20),
-                Element = ModelGlobals.PeriodicTable.C
-            };
-
-            var atom4 = new Atom
-            {
-                Position = new Point(30, 30),
-                Element = ModelGlobals.PeriodicTable.C
-            };
-
-            var bond2 = new Bond(atom3, atom4)
-            {
-                Order = ModelConstants.OrderSingle
-            };
-
-            var molecule2 = new Molecule();
-            molecule2.AddAtom(atom3);
-            atom1.Parent = molecule2;
-            molecule2.AddAtom(atom4);
-            atom2.Parent = molecule2;
-            molecule2.AddBond(bond2);
-            bond2.Parent = molecule2;
-
-            model.AddMolecule(molecule1);
-            molecule1.Parent = model;
-            model.AddMolecule(molecule2);
-            molecule2.Parent = model;
-
-            model.Relabel(true);
-
-            return model;
         }
 
         [Fact]
@@ -418,6 +320,24 @@ namespace Chem4WordUnitTests
             Assert.True(molecule_2.Molecules.Count == 0, $"Expected 0 Molecule; Got {molecule_2.Molecules.Count}");
             Assert.True(molecule_2.Atoms.Count == 6, $"Expected 6 Atoms; Got {molecule_2.Atoms.Count}");
         }
+
+        //[Fact]
+        //public void SdfExport_BadModel()
+        //{
+        //    // Arrange
+        //    var model = ModelHelper.CreateBadModel();
+
+        //    var mc = new SdFileConverter();
+
+        //    // Act
+        //    var sdf = mc.Export(model);
+
+        //    var lines = sdf.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+        //    var distinct = lines.Distinct().ToArray();
+
+        //    // Assert
+        //    Assert.True(lines.Length != distinct.Length, "Line counts should not match");
+        //}
 
         // SDFile and MOLFile import
         [Fact]
