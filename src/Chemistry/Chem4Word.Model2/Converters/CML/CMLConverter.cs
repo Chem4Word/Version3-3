@@ -514,20 +514,20 @@ namespace Chem4Word.Model2.Converters.CML
             var firstControlPoint = PointHelper.AsCMLString(electronPusher.FirstControlPoint);
             var secondControlPoint = PointHelper.AsCMLString(electronPusher.SecondControlPoint);
 
-            if (electronPusher.StartChemistry != null)
+            if (electronPusher.StartChemistry != null && electronPusher.EndChemistries.Any())
             {
                 var startChemistryPath = electronPusher.StartChemistry.Path;
                 var endChemistriesAsString = electronPusher.EndChemistriesAsString();
                 var result = new XElement(CMLNamespaces.c4w + ModelConstants.TagElectronPusher,
                                           new XAttribute(ModelConstants.AttributeId, electronPusher.Id),
-                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint,
-                                                         firstControlPoint),
-                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint,
-                                                         secondControlPoint),
                                           new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstChemistryRef,
                                                          startChemistryPath),
                                           new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondChemistryRefs,
                                                          endChemistriesAsString),
+                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint,
+                                                         firstControlPoint),
+                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint,
+                                                         secondControlPoint),
                                           new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType,
                                                          electronPusher.PusherType.ToString())
                 );

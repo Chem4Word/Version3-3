@@ -357,12 +357,15 @@ namespace Chem4Word.ACME
                                       Model.RemoveAnnotation(annotation);
                                       annotation.Parent = null;
                                   }
+
                                   foreach (ElectronPusher pusher in pusherList)
                                   {
                                       RemoveFromSelection(pusher);
                                       Model.RemoveElectronPusher(pusher);
                                       pusher.Parent = null;
                                   }
+
+                                  Model.Relabel(false);
                               };
                 Action redo = () =>
                               {
@@ -393,6 +396,8 @@ namespace Chem4Word.ACME
                                       pusher.Parent = Model;
                                       Model.AddElectronPusher(pusher);
                                   }
+
+                                  Model.Relabel(false);
                               };
 
                 UndoManager.BeginUndoBlock();
