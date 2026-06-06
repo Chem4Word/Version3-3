@@ -60,6 +60,8 @@ namespace Chem4Word.ACME
         //electron pushers
         public const string DrawElectronPusherMessage = "Drag pusher to size and position; [Shift] to drop nascent bond.";
 
+        public const string DefaultPusherMessage = "Click and drag on object to start drawing arrow.";
+
         //ring drawing
         public const string DefaultDrawRingMessage = "Drag on atom, bond or free space to draw ring.";
 

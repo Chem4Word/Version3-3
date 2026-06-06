@@ -1744,11 +1744,11 @@ namespace Chem4Word.Model2
 
                         // Join the two molecules via a new bond
                         Bond joiningBond = new Bond(recipientAtom, donorAtom)
-                                           {
-                                               Order = recipientBond.Order,
-                                               Stereo = recipientBond.Stereo,
-                                               Id = $"b{++bondCount}"
-                                           };
+                        {
+                            Order = recipientBond.Order,
+                            Stereo = recipientBond.Stereo,
+                            Id = $"b{++bondCount}"
+                        };
 
                         IChemistryContainer parentOfFunctionalGroupMolecule = recipientMolecule.Parent;
                         string parentId = string.Empty;

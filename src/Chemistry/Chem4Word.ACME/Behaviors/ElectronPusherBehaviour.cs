@@ -83,6 +83,8 @@ namespace Chem4Word.ACME.Behaviors
             if (e.Key == Key.Escape)
             {
                 Abort();
+                CurrentStatus = (AcmeConstants.DefaultPusherMessage, EditController.TotUpMolFormulae(),
+                                 EditController.TotUpSelectedMwt());
             }
         }
 
@@ -95,10 +97,12 @@ namespace Chem4Word.ACME.Behaviors
                 bool shiftClicking = KeyboardUtils.HoldingDownShift();
                 EditController.AddElectronPusher(StartChemistry, targetChemistry, ElectronPusherType,
                                                  DrawAdorner.FirstControlPoint, DrawAdorner.SecondControlPoint, shiftClicking);
+                CurrentStatus = (AcmeConstants.DefaultPusherMessage, EditController.TotUpMolFormulae(),
+                                 EditController.TotUpSelectedMwt());
             }
             ClearTemporaries();
             CurrentEditor.ReleaseMouseCapture();
-            CurrentStatus = ("", EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
+            CurrentStatus = (AcmeConstants.DefaultPusherMessage, EditController.TotUpMolFormulae(), EditController.TotUpSelectedMwt());
             MouseIsDown = false;
         }
 
