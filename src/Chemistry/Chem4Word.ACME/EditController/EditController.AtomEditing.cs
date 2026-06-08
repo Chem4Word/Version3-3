@@ -201,10 +201,14 @@ namespace Chem4Word.ACME
             redoAction();
         }
 
-        private static (Action redoAction, Action undoAction) AddElectronActions(
+        private (Action redoAction, Action undoAction) AddElectronActions(
             Atom atom, Dictionary<string, CompassPoints> explicitElectrons, Electron newElectron)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
             var showSymbol = atom.ExplicitC;
+
+            WriteTelemetry(module, "Information", $"Adding a {newElectron.TypeOfElectron} Electron to {atom.Path}");
 
             Action redoAction = () =>
                                 {
@@ -314,10 +318,14 @@ namespace Chem4Word.ACME
             }
         }
 
-        private static (Action redoAction, Action undoAction) RemoveElectronActions(
+        private (Action redoAction, Action undoAction) RemoveElectronActions(
            Atom atom, Dictionary<string, CompassPoints> explicitElectrons, Electron oldElectron, List<ElectronPusher> pushers)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+
             var showSymbol = atom.ExplicitC;
+
+            WriteTelemetry(module, "Information", $"Deleting a {oldElectron.TypeOfElectron} Electron from {atom.Path}");
 
             Action redoAction = () =>
             {

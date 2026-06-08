@@ -33,7 +33,7 @@ namespace Chem4Word.ACME
                                       Point secondControlPoint, bool shiftIsDown)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            ElectronPusher ep = new ElectronPusher
+            ElectronPusher newPusher = new ElectronPusher
             {
                 StartChemistry = startChemistry,
                 FirstControlPoint = firstControlPoint,
@@ -43,35 +43,38 @@ namespace Chem4Word.ACME
 
             try
             {
-                WriteTelemetry(module, "Debug", $"Adding Electron Pusher ");
+                WriteTelemetry(module, "Information", $"Adding Electron Pusher starting at '{startChemistry.Path}'");
 
                 //check to see if we're forming a new bond between atoms
-                if (startChemistry is Atom startAtom && targetChemistry is Atom endAtom
-                                                     && startAtom.BondBetween(endAtom) is null)
+                if (startChemistry is Atom startAtom
+                    && targetChemistry is Atom endAtom
+                    && startAtom.BondBetween(endAtom) is null)
                 {
                     if (shiftIsDown)
                     //we're forming a new bond so the electron pusher ends in empty space
                     //between the two atoms
                     {
-                        ep.EndChemistries.Add(startAtom);
+                        newPusher.EndChemistries.Add(startAtom);
                     }
-                    ep.EndChemistries.Add(endAtom);
+                    newPusher.EndChemistries.Add(endAtom);
                 }
-                else if (startChemistry is Electron electron && targetChemistry is Atom endAtom1
-                                                             && (electron.Parent as Atom).BondBetween(endAtom1) is null)
+                else if (startChemistry is Electron electron
+                         && targetChemistry is Atom endAtom1
+                         && (electron.Parent as Atom).BondBetween(endAtom1) is null)
                 {
                     //we're forming a new bond so the electron pusher ends in empty space
                     //between the two atoms
                     if (shiftIsDown)
                     {
-                        ep.EndChemistries.Add(electron.Parent);
+                        newPusher.EndChemistries.Add(electron.Parent);
                     }
-                    ep.EndChemistries.Add(endAtom1);
+                    newPusher.EndChemistries.Add(endAtom1);
                 }
-                else if (startChemistry is Bond startBond && targetChemistry is Atom endAtom2
-                                                          && !startBond.GetAtoms().Contains(endAtom2))
+                else if (startChemistry is Bond startBond
+                         && targetChemistry is Atom endAtom2
+                         && !startBond.GetAtoms().Contains(endAtom2))
                 {
-                    ep.EndChemistries.Add(endAtom2);
+                    newPusher.EndChemistries.Add(endAtom2);
                     //if source and target are in different molecules
                     //then we are forming a nascent bond
                     if (shiftIsDown)
@@ -80,31 +83,36 @@ namespace Chem4Word.ACME
                         if ((startBond.StartAtom.Position - endAtom2.Position).Length
                             < (startBond.EndAtom.Position - endAtom2.Position).Length)
                         {
-                            ep.EndChemistries.Add(startBond.StartAtom);
+                            newPusher.EndChemistries.Add(startBond.StartAtom);
                         }
                         else
                         {
-                            ep.EndChemistries.Add(startBond.EndAtom);
+                            newPusher.EndChemistries.Add(startBond.EndAtom);
                         }
                     }
 
-                    (ep.FirstControlPoint, ep.SecondControlPoint) = ElectronPusherDrawAdorner.RecalcControlPoints(ep, Model.MeanBondLength);
+                    (newPusher.FirstControlPoint, newPusher.SecondControlPoint) = ElectronPusherDrawAdorner.RecalcControlPoints(newPusher, Model.MeanBondLength);
                 }
                 else
                 {
-                    ep.EndChemistries.Add(targetChemistry);
+                    newPusher.EndChemistries.Add(targetChemistry);
                 }
+
+                WriteTelemetry(module, "Information",
+                               newPusher.EndChemistries.Count == 1
+                                   ? $"Electron Pusher EndChemistries[0] is '{newPusher.EndChemistriesAsString()}'"
+                                   : $"Electron Pusher EndChemistries are '{newPusher.EndChemistriesAsString()}'");
 
                 Action redo = () =>
                               {
-                                  Model.AddElectronPusher(ep);
-                                  ep.Parent = Model;
+                                  Model.AddElectronPusher(newPusher);
+                                  newPusher.Parent = Model;
                               };
                 Action undo = () =>
                               {
                                   ClearSelection();
-                                  Model.RemoveElectronPusher(ep);
-                                  ep.Parent = null;
+                                  Model.RemoveElectronPusher(newPusher);
+                                  newPusher.Parent = null;
                               };
 
                 UndoManager.BeginUndoBlock();
@@ -123,8 +131,6 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
-
                 UndoManager.BeginUndoBlock();
 
                 foreach (ElectronPusher pusher in electronPushers)
@@ -145,7 +151,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, "Information", $"Deleting Electron Pusher {pusher.Path}");
 
                 UndoManager.BeginUndoBlock();
 

@@ -84,7 +84,7 @@ namespace Chem4Word.Navigator
                                 {
                                     CustomControlTag = CustomXmlPartHelper.GuidFromTag(ccs?.Tag),
                                     Chemistry = part.XML,
-                                    Formula = chemModel.ConciseFormula
+                                    Formula = chemModel.UnicodeFormula
                                 };
 
                     var chemistryObjects = items.ToList();
@@ -184,7 +184,7 @@ namespace Chem4Word.Navigator
                     {
                         CustomControlTag = matchingCC.Tag,
                         Chemistry = newXmlPart.XML,
-                        Formula = chemModel.ConciseFormula
+                        Formula = chemModel.UnicodeFormula
                     };
                     try
                     {
