@@ -271,7 +271,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         #region Constructors
 
         /// <summary>
-        /// Simple line used for nascent bonds
+        /// Bond line used for nascent bonds
         /// </summary>
         /// <param name="style"></param>
         /// <param name="start"></param>
@@ -286,7 +286,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         }
 
         /// <summary>
-        /// Normal Bond with less options
+        /// Normal Bond with fewer parameters
         /// </summary>
         /// <param name="style"></param>
         /// <param name="bond"></param>
@@ -309,7 +309,7 @@ namespace Chem4Word.Renderer.OoXmlV4.Entities
         }
 
         /// <summary>
-        /// Normal bond
+        /// Normal bond line
         /// </summary>
         /// <param name="style"></param>
         /// <param name="startPoint"></param>

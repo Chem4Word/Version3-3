@@ -846,7 +846,10 @@ namespace Chem4Word.UI.WPF
                                             // Tidy Up the structures
                                             if (Globals.Chem4WordV3.SystemOptions.RemoveExplicitHydrogensOnImportFromFile)
                                             {
-                                                model.RemoveExplicitHydrogens();
+                                                if (!model.HasElectronPushers)
+                                                {
+                                                    model.RemoveExplicitHydrogens();
+                                                }
                                             }
 
                                             model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength,

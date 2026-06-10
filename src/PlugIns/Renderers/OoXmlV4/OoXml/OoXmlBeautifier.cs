@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 
 namespace Chem4Word.Renderer.OoXmlV4.OoXml
@@ -390,6 +391,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void ShrinkBondLine(Point start, Point end, KeyValuePair<string, List<Point>> hull, BondLine bondLine, int index)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             Point[] result = GeometryTool.ClipLineWithPolygon(start, end, hull.Value, out bool lineStartsOutsidePolygon);
 
             Point newStart;
@@ -461,9 +464,50 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                     }
                     break;
 
+                case 4:
+                    if (bondLine.Style == BondLineStyle.Nascent)
+                    {
+                        bondLine.Start = new Point(result[0].X, result[0].Y);
+                        bondLine.End = new Point(result[1].X, result[1].Y);
+
+                        BondLine clone = bondLine.Copy();
+                        clone.Start = new Point(result[2].X, result[2].Y);
+                        clone.End = new Point(result[3].X, result[3].Y);
+                        Outputs.BondLines.Add(clone);
+                    }
+                    else
+                    {
+                        ListClippingResult();
+                        Debugger.Break();
+                    }
+                    break;
+
                 default:
+                    ListClippingResult();
                     Debugger.Break();
                     break;
+            }
+
+            void ListClippingResult()
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append("Shrinking bond line");
+
+                if (bondLine.Bond != null)
+                {
+                    stringBuilder.Append($" for bond {bondLine.Bond.Path}");
+                }
+                stringBuilder.Append($" from {PointHelper.AsCMLString(bondLine.Start)} to {PointHelper.AsCMLString(bondLine.End)}");
+                stringBuilder.Append($" resulted in {result.Length} segments");
+                stringBuilder.AppendLine("");
+
+                for (int i = 0; i < result.Length; i++)
+                {
+                    Point point = result[i];
+                    stringBuilder.AppendLine($"Point[{i}]: {PointHelper.AsCMLString(point)}");
+                }
+
+                Inputs.Telemetry.Write(module, "Warning", stringBuilder.ToString().Trim());
             }
         }
 
@@ -492,6 +536,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                             where line.StartAtomPath == hull.Key || line.EndAtomPath == hull.Key
                                             select line)
                     .ToList();
+
+                // Add in any nascent bonds being drawn so that they can be clipped
+                bondLines.AddRange(Outputs.BondLines.Where(t => t.Style == BondLineStyle.Nascent));
 
                 foreach (BondLine bondLine in bondLines)
                 {
@@ -584,28 +631,32 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 foreach (BondLine bondLine in bondLines)
                 {
-                    if (!(bondLine.Bond.Stereo == BondStereo.Wedge
-                          || bondLine.Bond.Stereo == BondStereo.Hatch
-                          || bondLine.Bond.Stereo == BondStereo.Thick))
+                    // Exclude any nascent bonds being drawn
+                    if (bondLine.Style != BondLineStyle.Nascent)
                     {
-                        bool intersects = !GeometryTool.Intersects(bondLine.Start, bondLine.End, clippingHull);
-                        if (intersects)
+                        if (!(bondLine.Bond.Stereo == BondStereo.Wedge
+                              || bondLine.Bond.Stereo == BondStereo.Hatch
+                              || bondLine.Bond.Stereo == BondStereo.Thick))
                         {
-                            Point[] points = GeometryTool.ClipLineWithPolygon(bondLine.Start, bondLine.End, clippingHull, out bool _);
-
-                            // We only need to consider when the hull of an atom's symbol has cut through a bond line as shown below
-                            //
-                            // -----[H]------
-                            //
-                            if (points.Length == 4)
+                            bool intersects = !GeometryTool.Intersects(bondLine.Start, bondLine.End, clippingHull);
+                            if (intersects)
                             {
-                                // 1. Generate new line
-                                BondLine extraLine = new BondLine(bondLine.Style, points[0], points[1], bondLine.Bond);
-                                Outputs.BondLines.Add(extraLine);
+                                Point[] points = GeometryTool.ClipLineWithPolygon(bondLine.Start, bondLine.End, clippingHull, out bool _);
 
-                                // 2. Trim existing line
-                                bondLine.Start = points[2];
-                                bondLine.End = points[3];
+                                // We only need to consider when the hull of an atom's symbol has cut through a bond line as shown below
+                                //
+                                // -----[H]------
+                                //
+                                if (points.Length == 4)
+                                {
+                                    // 1. Generate new line
+                                    BondLine extraLine = new BondLine(bondLine.Style, points[0], points[1], bondLine.Bond);
+                                    Outputs.BondLines.Add(extraLine);
+
+                                    // 2. Trim existing line
+                                    bondLine.Start = points[2];
+                                    bondLine.End = points[3];
+                                }
                             }
                         }
                     }

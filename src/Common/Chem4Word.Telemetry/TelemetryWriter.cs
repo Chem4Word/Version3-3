@@ -318,15 +318,11 @@ namespace Chem4Word.Telemetry
 
             WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, lines));
 
-            if (_isBeta)
-            {
-                WritePrivate("StartUp", "Information", $"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
-                WritePrivate("StartUp", "Information", $"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
-
-                WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, OfficeHelper.GetWinWordSearchPaths()));
-            }
-
+            WritePrivate("StartUp", "Information", $"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
+            WritePrivate("StartUp", "Information", $"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
 #endif
+
+            WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, OfficeHelper.GetWinWordSearchPaths()));
 
             AddChartGeneratorProperties();
 

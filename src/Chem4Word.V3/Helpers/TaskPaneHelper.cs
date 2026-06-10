@@ -65,7 +65,10 @@ namespace Chem4Word.Helpers
                     {
                         if (Globals.Chem4WordV3.SystemOptions.RemoveExplicitHydrogensOnImportFromLibrary)
                         {
-                            model.RemoveExplicitHydrogens();
+                            if (!model.HasElectronPushers)
+                            {
+                                model.RemoveExplicitHydrogens();
+                            }
                         }
 
                         var outcome = model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength,

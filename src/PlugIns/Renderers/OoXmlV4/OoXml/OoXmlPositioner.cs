@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml;
@@ -61,6 +62,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void PositionElectronPushers()
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             if (Inputs.Model.HasElectronPushers)
             {
                 foreach (ElectronPusher electronPusher in Inputs.Model.ElectronPushers.Values)
@@ -91,6 +94,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                         break;
 
                                     default:
+                                        ListClippingResult(module, $"Electron Pusher {electronPusher.Path} Start", points, startPoint, electronPusher.FirstControlPoint);
                                         Debugger.Break();
                                         startPoint = charge.Position; // ToDo: Check this if it ever occurs
                                         break;
@@ -149,8 +153,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                         }
                         else
                         {
+                            ListClippingResult(module, $"Electron Pusher {electronPusher.Path} End", ends, endPoint, electronPusher.SecondControlPoint);
                             Debug.WriteLine("Something has gone wrong, we should have had two points");
-                            Debugger.Break();
+                            Debugger.Break(); // ToDo: Check this if it ever occurs
                         }
                     }
 
@@ -169,6 +174,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private Point GetPoint(StructuralObject startChemistry, Point controlPoint, bool clip = true)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             // Ensure we return a point that is within the overall structure
             Point result = Inputs.Model.BoundingBoxOfCmlPoints.TopLeft;
 
@@ -191,6 +198,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                     break;
 
                                 default:
+                                    ListClippingResult(module, $"Atom {atom.Path}", points, point1, point2);
                                     Debugger.Break();
                                     result = point1; // ToDo: Check this if it ever occurs
                                     break;
@@ -217,6 +225,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                     break;
 
                                 default:
+                                    ListClippingResult(module, $"Electron {electron.Path}", points, point1, point2);
                                     Debugger.Break();
                                     result = point1; // ToDo: Check this if it ever occurs
                                     break;
@@ -248,6 +257,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                 break;
 
                             default:
+                                ListClippingResult(module, $"Bond {bond.Path}", points, point1, point2);
                                 Debugger.Break();
                                 result = point1; // ToDo: Check this if it ever occurs
                                 break;
@@ -258,7 +268,27 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
 
             return result;
+
         }
+
+        void ListClippingResult(string module, string path, Point[] points, Point point1, Point point2)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append($"Clipping line for {path}");
+
+            stringBuilder.Append($" from {PointHelper.AsCMLString(point1)} to {PointHelper.AsCMLString(point2)}");
+            stringBuilder.Append($" resulted in {points.Length} segments");
+            stringBuilder.AppendLine("");
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                Point point = points[i];
+                stringBuilder.AppendLine($"Point[{i}]: {PointHelper.AsCMLString(point)}");
+            }
+
+            Inputs.Telemetry.Write(module, "Warning", stringBuilder.ToString().Trim());
+        }
+
 
         private Point[] DetermineBarbEnds(Point endPoint, Point controlPoint,
                                   double headLength = 8.0, double barbOffset = 4.0)
