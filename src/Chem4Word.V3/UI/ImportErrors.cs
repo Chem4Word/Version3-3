@@ -22,7 +22,7 @@ namespace Chem4Word.UI
 
         public Model Model { get; set; }
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         private DialogResult _dialogResult = DialogResult.Abort;
 

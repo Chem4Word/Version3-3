@@ -5,7 +5,7 @@
   <Version>
     <Number>3.3.16 Release 14</Number>
     <IsBeta>false</IsBeta>
-    <Released>17-Jun-2026</Released>
+    <Released>29-Jun-2026</Released>
     <Changes>
       <Change>BugFix: Top Alignment of molecules and Annotations fixed</Change>
       <Change>Improvement to how Molecular Weight can be rendered in a Word document</Change>

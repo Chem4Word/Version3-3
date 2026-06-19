@@ -63,7 +63,7 @@ namespace Chem4Word.Model2
             return Symbol.GetHashCode();
         }
 
-        public override bool Equals(System.Object obj)
+        public override bool Equals(Object obj)
         {
             // If parameter is null return false.
             if (obj == null)
@@ -73,7 +73,7 @@ namespace Chem4Word.Model2
 
             // If parameter cannot be cast to Element return false.
             Element p = obj as Element;
-            if ((System.Object)p == null)
+            if ((Object)p == null)
             {
                 return false;
             }
@@ -97,7 +97,7 @@ namespace Chem4Word.Model2
         public static bool operator ==(Element a, Element b)
         {
             // If both are null, or both are same instance, return true.
-            if (System.Object.ReferenceEquals(a, b))
+            if (ReferenceEquals(a, b))
             {
                 return true;
             }

@@ -19,7 +19,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
 {
     public partial class EditorHost : Form
     {
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         public double DefaultBondLength { get; set; }
 

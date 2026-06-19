@@ -60,7 +60,7 @@ namespace Chem4Word.Shared
             int hKey, string lpValueName,
             int lpReserved,
             ref uint lpType,
-            System.Text.StringBuilder lpData,
+            StringBuilder lpData,
             ref uint lpcbData);
 
         #endregion Read 64bit Reg from 32bit app

@@ -209,19 +209,19 @@ namespace Chem4Word.ACME.Drawing.Visuals
             }
         }
 
-        public override System.Windows.Media.Geometry HullGeometry
+        public override Geometry HullGeometry
         {
             get
             {
                 //need to combine the actually filled atom area
                 //with a stroked outline of it, to give a sufficient margin
-                System.Windows.Media.Geometry geo1 = Utils.WPFGeometry.BuildPolyPath(Hull);
+                Geometry geo1 = WPFGeometry.BuildPolyPath(Hull);
                 CombinedGeometry cg = new CombinedGeometry(geo1, geo1.GetWidenedPathGeometry(new Pen(Brushes.Black, Standoff)));
                 return cg;
             }
         }
 
-        public override System.Windows.Media.Geometry WidenedHullGeometry => HullGeometry;
+        public override Geometry WidenedHullGeometry => HullGeometry;
 
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
         {

@@ -178,6 +178,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Protobuf>
     <Protobuf Include="Converters\ProtocolBuffers\electronPusher.proto" />
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\PeriodicTable.xlsx" />
     <EmbeddedResource Include="Resources\PropertyTypes.json" />

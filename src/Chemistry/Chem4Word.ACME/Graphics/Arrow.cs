@@ -119,7 +119,7 @@ namespace Chem4Word.ACME.Graphics
         /// <summary>
         /// Standard override for Shapes
         /// </summary>
-        protected override System.Windows.Media.Geometry DefiningGeometry
+        protected override Geometry DefiningGeometry
         {
             //all rendering handled in OnRender
             get { return Geometry.Empty; }

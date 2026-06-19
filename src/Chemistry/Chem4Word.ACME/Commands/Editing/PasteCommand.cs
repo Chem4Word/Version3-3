@@ -76,11 +76,11 @@ namespace Chem4Word.ACME.Commands.Editing
                 {
                     if (buffer != null && buffer.AllErrors.Any())
                     {
-                        Chem4Word.Core.UserInteractions.InformUser("Unable to paste text as chemistry: " + Environment.NewLine + string.Join(Environment.NewLine, buffer.AllErrors));
+                        Core.UserInteractions.InformUser("Unable to paste text as chemistry: " + Environment.NewLine + string.Join(Environment.NewLine, buffer.AllErrors));
                     }
                     else
                     {
-                        Chem4Word.Core.UserInteractions.InformUser("Unable to paste text as chemistry: unknown error.");
+                        Core.UserInteractions.InformUser("Unable to paste text as chemistry: unknown error.");
                     }
                 }
                 else

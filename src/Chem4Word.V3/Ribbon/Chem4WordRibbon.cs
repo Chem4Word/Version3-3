@@ -68,7 +68,7 @@ namespace Chem4Word
             {
                 Chem4Word.Chem4WordV3.SetGlobalRibbon(this);
 
-                var tab = this.Tabs[0];
+                var tab = Tabs[0];
 
                 var tabLabel = "Chemistry";
 #if DEBUG
@@ -633,26 +633,26 @@ namespace Chem4Word
 
         private static void InsertFile()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            var application = Globals.Chem4WordV3.Application;
-            var activeDocument = application.ActiveDocument;
+            Word.Application application = Globals.Chem4WordV3.Application;
+            Word.Document activeDocument = application.ActiveDocument;
 
             try
             {
                 Globals.Chem4WordV3.EvaluateChemistryAllowed();
                 if (Globals.Chem4WordV3.ChemistryAllowed)
                 {
-                    var sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder();
                     sb.Append("All molecule files (*.cml, *.mol, *.sdf, *.el)|*.cml;*.mol;*.sdf;*.el");
                     sb.Append("|CML molecule files (*.cml)|*.cml");
                     sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
                     sb.Append("|SketchEl molecule files (*.el)|*.el");
 
-                    var ofd = new OpenFileDialog();
+                    OpenFileDialog ofd = new OpenFileDialog();
                     ofd.Filter = sb.ToString();
 
-                    var dialogResult = ofd.ShowDialog();
+                    DialogResult dialogResult = ofd.ShowDialog();
                     if (dialogResult == DialogResult.OK)
                     {
                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Importing file '{ofd.SafeFileName}'");
@@ -665,14 +665,15 @@ namespace Chem4Word
                             }
                             else
                             {
-                                var fileType = Path.GetExtension(ofd.FileName).ToLower();
+                                string fileType = Path.GetExtension(ofd.FileName).ToLower();
+                                string converterException = string.Empty;
                                 Model model = null;
-                                string data;
-                                string cml;
 
-                                using (var fileStream = new FileStream(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                                string data;
+
+                                using (FileStream fileStream = new FileStream(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
-                                    using (var textReader = new StreamReader(fileStream, true))
+                                    using (StreamReader textReader = new StreamReader(fileStream, true))
                                     {
                                         data = textReader.ReadToEnd();
                                     }
@@ -681,48 +682,69 @@ namespace Chem4Word
                                 switch (fileType)
                                 {
                                     case ".cml":
-                                        var cmlConverter = new CMLConverter();
-                                        model = cmlConverter.Import(data);
-                                        if (!data.Contains("<c4w:showColouredAtoms>"))
+                                        CMLConverter cmlConverter = new CMLConverter();
+                                        try
                                         {
-                                            model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
-                                            model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
-                                            model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
-                                            model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
+                                            model = cmlConverter.Import(data);
+                                            if (!data.Contains("<c4w:showColouredAtoms>"))
+                                            {
+                                                model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
+                                                model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
+                                                model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
+                                                model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
+                                            }
+                                            if (!data.Contains("<c4w:showMolecularWeight>"))
+                                            {
+                                                model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
+                                                model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
+                                            }
                                         }
-                                        if (!data.Contains("<c4w:showMolecularWeight>"))
+                                        catch (Exception exception)
                                         {
-                                            model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
-                                            model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
+                                            converterException = exception.Message + Environment.NewLine + exception.StackTrace;
+                                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", "CML File:" + Environment.NewLine + data);
                                         }
-
                                         break;
 
                                     case ".mol":
                                     case ".sdf":
-                                        var sdFileConverter = new SdFileConverter();
-                                        model = sdFileConverter.Import(data);
+                                        try
+                                        {
+                                            SdFileConverter sdFileConverter = new SdFileConverter();
+                                            model = sdFileConverter.Import(data);
 
-                                        model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
-                                        model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
-                                        model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
-                                        model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
-                                        model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
-                                        model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
-
+                                            model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
+                                            model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
+                                            model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
+                                            model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
+                                            model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
+                                            model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
+                                        }
+                                        catch (Exception exception)
+                                        {
+                                            converterException = exception.Message + Environment.NewLine + exception.StackTrace;
+                                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", "MOL/SDF File:" + Environment.NewLine + data);
+                                        }
                                         break;
 
                                     case ".el":
-                                        var sketchElConverter = new SketchElConverter();
-                                        model = sketchElConverter.Import(data);
+                                        try
+                                        {
+                                            SketchElConverter sketchElConverter = new SketchElConverter();
+                                            model = sketchElConverter.Import(data);
 
-                                        model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
-                                        model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
-                                        model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
-                                        model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
-                                        model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
-                                        model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
-
+                                            model.ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms;
+                                            model.ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping;
+                                            model.ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC;
+                                            model.ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH;
+                                            model.ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight;
+                                            model.ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions;
+                                        }
+                                        catch (Exception exception)
+                                        {
+                                            converterException = exception.Message + Environment.NewLine + exception.StackTrace;
+                                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", "SketchEl File:" + Environment.NewLine + data);
+                                        }
                                         break;
 
                                     default:
@@ -744,7 +766,7 @@ namespace Chem4Word
                                             Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.AllWarnings));
                                         }
 
-                                        var importErrors = new ImportErrors();
+                                        ImportErrors importErrors = new ImportErrors();
                                         importErrors.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                                         model.ScaleToAverageBondLength(Globals.Chem4WordV3.SystemOptions.BondLength);
                                         importErrors.Model = model;
@@ -764,25 +786,25 @@ namespace Chem4Word
                                             }
                                         }
 
-                                        var outcome = model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength,
+                                        string outcome = model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength,
                                                                Globals.Chem4WordV3.SystemOptions.SetBondLengthOnImportFromFile);
                                         if (!string.IsNullOrEmpty(outcome))
                                         {
                                             Globals.Chem4WordV3.Telemetry.Write(module, "Information", outcome);
                                         }
 
-                                        var cmlConverter = new CMLConverter();
-                                        cml = cmlConverter.Export(model);
+                                        CMLConverter cmlConverter = new CMLConverter();
+                                        string cml = cmlConverter.Export(model);
 
-                                        var has2D = model.HasReactions
-                                                        || model.HasAnnotations
-                                                        || model.TotalAtomsCount > 0
-                                                        && (model.TotalBondsCount == 0
-                                                            || model.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
+                                        bool has2D = model.HasReactions
+                                                     || model.HasAnnotations
+                                                     || model.TotalAtomsCount > 0
+                                                     && (model.TotalBondsCount == 0
+                                                         || model.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
 
                                         if (has2D)
                                         {
-                                            var cc = ChemistryHelper.Insert2DChemistry(activeDocument, cml, true);
+                                            Word.ContentControl cc = ChemistryHelper.Insert2DChemistry(activeDocument, cml, true);
                                             if (cc != null)
                                             {
                                                 // Move selection point into the Content Control which was just inserted
@@ -793,7 +815,7 @@ namespace Chem4Word
                                         {
                                             if (model.Molecules.Any() && model.Molecules.Values.First().Names.Any())
                                             {
-                                                var cc = ChemistryHelper.Insert1DChemistry(activeDocument, model.Molecules.Values.First().Names[0].Value, false,
+                                                Word.ContentControl cc = ChemistryHelper.Insert1DChemistry(activeDocument, model.Molecules.Values.First().Names[0].Value, false,
                                                                                            $"{model.Molecules.Values.First().Names[0].Id}:{model.CustomXmlPartGuid}");
                                                 activeDocument.CustomXMLParts.Add(XmlHelper.AddHeader(cml));
                                                 if (cc != null)
@@ -813,9 +835,8 @@ namespace Chem4Word
                                     }
                                     else
                                     {
-                                        var x = new Exception("Could not import file");
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", data);
-                                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, x))
+                                        Exception exception = new Chem4WordException(converterException);
+                                        using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, exception))
                                         {
                                             form.ShowDialog();
                                         }
@@ -830,9 +851,9 @@ namespace Chem4Word
                     UserInteractions.InformUser("Can't insert chemistry here because " + Globals.Chem4WordV3.ChemistryProhibitedReason);
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, exception))
                 {
                     form.ShowDialog();
                 }
@@ -884,7 +905,7 @@ namespace Chem4Word
                 }
 
                 // Only do update check if we are not coming from an update button
-                var checkForUpdates = true;
+                bool checkForUpdates = true;
                 if (button != null)
                 {
                     checkForUpdates = !button.Label.ToLower().Contains("update");
@@ -892,7 +913,8 @@ namespace Chem4Word
 
                 if (checkForUpdates && Globals.Chem4WordV3.SystemOptions != null)
                 {
-                    UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency, nameof(AfterButtonChecks));
+                    string buttonName = button?.Name;
+                    UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency, $"{nameof(AfterButtonChecks)} [{buttonName}]");
                 }
 
                 if (Globals.Chem4WordV3.PlugInsHaveBeenLoaded)
@@ -1728,7 +1750,7 @@ namespace Chem4Word
                         {
                             if (searcher.DisplayOrder >= 0)
                             {
-                                var ribbonButton = this.Factory.CreateRibbonButton();
+                                var ribbonButton = Factory.CreateRibbonButton();
 
                                 ribbonButton.Label = searcher.ShortName;
                                 ribbonButton.Tag = searcher.Name;

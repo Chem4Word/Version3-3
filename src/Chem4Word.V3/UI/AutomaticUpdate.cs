@@ -36,7 +36,7 @@ namespace Chem4Word.UI
 
         private bool _closedByCode = false;
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         public AutomaticUpdate(IChem4WordTelemetry telemetry)
         {

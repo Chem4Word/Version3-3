@@ -28,9 +28,9 @@ namespace Chem4Word.Core.UI.Forms
         private string _operation = string.Empty;
         private string _callStack = string.Empty;
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
-        public ReportError(IChem4WordTelemetry telemetry, System.Windows.Point topLeft, string operation, Exception ex)
+        public ReportError(IChem4WordTelemetry telemetry, Point topLeft, string operation, Exception exception)
         {
             InitializeComponent();
 
@@ -40,11 +40,11 @@ namespace Chem4Word.Core.UI.Forms
                 _telemetry = telemetry;
 
                 _operation = operation;
-                _callStack = ex.ToString();
-                _exceptionMessage = ex.Message;
-                if (ex.InnerException != null)
+                _callStack = exception.StackTrace;
+                _exceptionMessage = exception.Message;
+                if (exception.InnerException != null)
                 {
-                    _exceptionMessage += Environment.NewLine + ex.InnerException.Message;
+                    _exceptionMessage += Environment.NewLine + exception.InnerException.Message;
                 }
             }
             catch (Exception)
@@ -59,8 +59,8 @@ namespace Chem4Word.Core.UI.Forms
             {
                 Left = (int)TopLeft.X;
                 Top = (int)TopLeft.Y;
-                var screen = Screen.FromControl(this);
-                var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
+                Screen screen = Screen.FromControl(this);
+                Point sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                 Left = (int)sensible.X;
                 Top = (int)sensible.Y;
             }
@@ -83,6 +83,8 @@ namespace Chem4Word.Core.UI.Forms
 
         private void OnFormClosing_ReportError(object sender, FormClosingEventArgs e)
         {
+            Hide();
+
             if (_telemetry != null)
             {
                 if (!string.IsNullOrEmpty(_exceptionMessage))
@@ -110,7 +112,7 @@ namespace Chem4Word.Core.UI.Forms
 
         private void OnLinkClicked_KBLinkLabel(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
             Process.Start("https://www.chem4word.co.uk/knowledge-base/");
         }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 
 namespace Chem4Word.Core.Helpers
 {
@@ -33,22 +34,22 @@ namespace Chem4Word.Core.Helpers
                     HttpResponseMessage response = _httpClient.SendAsync(request).Result;
 
                     result.StatusCode = response.StatusCode;
-                    result.Content = response.Content.ReadAsStringAsync().Result;
                     result.Message = $"{response.ReasonPhrase}";
+                    result.Content = response.Content.ReadAsStringAsync().Result;
                 }
                 catch (HttpRequestException httpRequestException)
                 {
                     result.StatusCode = HttpStatusCode.InternalServerError;
                     result.Message = httpRequestException.Message;
+                    result.Content = httpRequestException.Message + Environment.NewLine + httpRequestException.StackTrace;
                     Debugger.Break();
-                    Console.WriteLine($"Request error: {httpRequestException.Message}");
                 }
                 catch (Exception exception)
                 {
                     result.StatusCode = HttpStatusCode.InternalServerError;
                     result.Message = exception.Message;
+                    result.Content = exception.Message + Environment.NewLine + exception.StackTrace;
                     Debugger.Break();
-                    Console.WriteLine($"Unexpected error: {exception.Message}");
                 }
             }
 

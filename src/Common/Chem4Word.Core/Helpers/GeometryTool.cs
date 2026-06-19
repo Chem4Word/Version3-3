@@ -736,7 +736,7 @@ namespace Chem4Word.Core.Helpers
 
         public static Vector SnapVectorToClock(Vector vector)
         {
-            double angle = Vector.AngleBetween(vector, GeometryTool.ScreenNorth);
+            double angle = Vector.AngleBetween(vector, ScreenNorth);
             angle = Math.Round(angle / 30.0) * 30;
 
             int clock = Convert.ToInt32(angle);
@@ -744,7 +744,7 @@ namespace Chem4Word.Core.Helpers
             Matrix rotator = new Matrix();
             rotator.Rotate(-clock);
 
-            Vector result = GeometryTool.ScreenNorth;
+            Vector result = ScreenNorth;
             result *= rotator;
 
             return result;

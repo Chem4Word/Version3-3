@@ -125,6 +125,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\Images\ArrowLeft.png" />
     <None Include="Resources\Images\ArrowRight.png" />

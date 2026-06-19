@@ -21,7 +21,7 @@ namespace Chem4Word.UI.WPF
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
         public string VersionString { get; set; }
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         public AboutHost()
         {

@@ -62,7 +62,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
         public string ChebiId { get; set; }
         public string SettingsPath { get; set; }
         public IChem4WordTelemetry Telemetry { get; set; }
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
         public ChEBIOptions UserOptions { get; set; }
 
         #endregion Properties
@@ -133,10 +133,26 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     ApiResult apiResult = HttpHelper.InvokeGet(api, headers);
                     if (apiResult.StatusCode == HttpStatusCode.OK)
                     {
-                        ProcessSearchResponse(apiResult.Content);
+                        if (apiResult.Content.ToLower().Contains("<!doctype html"))
+                        {
+                            Telemetry.Write(module, "Warning", "Showing user html result of web call");
+                            Telemetry.Write(module, "Debug", apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
+
+                            Screen screen = Screen.FromControl(SearchButton);
+                            HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL OPSIN Search Error", apiResult.Content);
+                            viewer.ShowDialog(this);
+                        }
+                        else
+                        {
+                            ProcessSearchResponse(apiResult.Content);
+                        }
                     }
                     else
                     {
+                        if (!string.IsNullOrEmpty(apiResult.Content))
+                        {
+                            Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                        }
                         ChEbiSearchResult data = ProcessSearchResponse(apiResult.Content);
                         Telemetry.Write(module, "Exception", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
                     }
@@ -231,6 +247,10 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     }
                     else
                     {
+                        if (!string.IsNullOrEmpty(apiResult.Content))
+                        {
+                            Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                        }
                         Telemetry.Write(module, "Exception", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }

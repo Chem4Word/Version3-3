@@ -14,7 +14,7 @@ namespace Chem4Word.Core.UI.Forms
 {
     public partial class Progress : Form
     {
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         public int Value
         {
@@ -116,7 +116,7 @@ namespace Chem4Word.Core.UI.Forms
                 Top = (int)sensible.Y;
             }
 #if DEBUG
-            this.TopMost = false;
+            TopMost = false;
 #endif
         }
     }

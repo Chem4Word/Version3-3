@@ -327,18 +327,21 @@ namespace Chem4Word.Helpers
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            string primaryDomain = CoreConstants.OurDomains.FirstOrDefault();
+            string primaryDomain = CoreConstants.OurDomains.First();
             string versionsFileMarker = "<Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>";
 
             string versionsFile = $"{CoreConstants.Chem4WordVersionFiles}/Chem4Word-Versions.xml";
 
             string contents = null;
 
-            var securityProtocol = ServicePointManager.SecurityProtocol;
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            SecurityProtocolType securityProtocol = ServicePointManager.SecurityProtocol;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             bool foundOurXmlFile = false;
-            foreach (var domain in CoreConstants.OurDomains)
+            foreach (string domain in CoreConstants.OurDomains)
             {
                 using (HttpClient client = new HttpClient())
                 {
@@ -350,19 +353,26 @@ namespace Chem4Word.Helpers
 
                         client.DefaultRequestHeaders.Add("user-agent", "Chem4Word VersionChecker");
                         client.BaseAddress = new Uri(domain);
-                        var response = client.GetAsync(versionsFile).Result;
-                        response.EnsureSuccessStatusCode();
-
-                        string result = response.Content.ReadAsStringAsync().Result;
-                        if (result.Contains(versionsFileMarker))
+                        HttpResponseMessage response = client.GetAsync(versionsFile).Result;
+                        if (response.IsSuccessStatusCode)
                         {
-                            foundOurXmlFile = true;
-                            contents = domain.Equals(primaryDomain) ? result : result.Replace(primaryDomain, domain);
+                            string result = response.Content.ReadAsStringAsync().Result;
+                            if (result.Contains(versionsFileMarker))
+                            {
+                                foundOurXmlFile = true;
+                                contents = domain.Equals(primaryDomain) ? result : result.Replace(primaryDomain, domain);
+                            }
+                            else
+                            {
+                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"Chem4Word-Versions.xml at {domain} is corrupt");
+                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", result);
+                            }
                         }
                         else
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"Chem4Word-Versions.xml at {domain} is corrupt");
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", result);
+                            stopwatch.Stop();
+                            Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Looking for Chem4Word-Versions.xml took {stopwatch.Elapsed}");
+                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"Response code for {versionsFile} is {response.ReasonPhrase} [{(int)response.StatusCode}]");
                         }
                     }
                     catch (ArgumentNullException nex)
@@ -394,6 +404,18 @@ namespace Chem4Word.Helpers
             }
 
             ServicePointManager.SecurityProtocol = securityProtocol;
+
+            stopwatch.Stop();
+
+            if (!string.IsNullOrEmpty(contents))
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Looking for Chem4Word-Versions.xml took {stopwatch.Elapsed}");
+            }
+            else
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", "Chem4Word-Versions.xml not downloaded");
+            }
+
             return contents;
         }
 

@@ -90,7 +90,7 @@ namespace Chem4Word.ACME.Controls
         {
             var elementBlocks = VisualTreeHelpers.FindAllChildren<TextBlock>(sender as Border);
             SelectedElement = (elementBlocks.ToList()[0].Tag as Element);
-            ElementSelected?.Invoke(sender, new ElementEventArgs { SelectedElement = this.SelectedElement });
+            ElementSelected?.Invoke(sender, new ElementEventArgs { SelectedElement = SelectedElement });
         }
     }
 }

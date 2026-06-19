@@ -714,11 +714,11 @@ namespace Chem4Word.Model2
             get
             {
                 List<Bond> allBonds = GetAllBonds();
-                double fontSize = ModelConstants.DefaultFontSize * ModelConstants.ScaleFactorForXaml;
+                double fontSize = DefaultFontSize * ScaleFactorForXaml;
 
                 if (allBonds.Any())
                 {
-                    fontSize = XamlBondLength * ModelConstants.FontSizePercentageBond;
+                    fontSize = XamlBondLength * FontSizePercentageBond;
                 }
 
                 return fontSize;
@@ -1370,11 +1370,11 @@ namespace Chem4Word.Model2
         {
             if (ScaledForXaml)
             {
-                double newLength = CoreConstants.StandardBondLength / ModelConstants.ScaleFactorForXaml;
+                double newLength = CoreConstants.StandardBondLength / ScaleFactorForXaml;
 
                 if (TotalBondsCount > 0 && MeanBondLength > 0)
                 {
-                    newLength = MeanBondLength / ModelConstants.ScaleFactorForXaml;
+                    newLength = MeanBondLength / ScaleFactorForXaml;
                 }
 
                 ScaleToAverageBondLength(newLength);
@@ -1391,11 +1391,11 @@ namespace Chem4Word.Model2
 
                 if (TotalBondsCount > 0 && MeanBondLength > 0)
                 {
-                    newLength = MeanBondLength * ModelConstants.ScaleFactorForXaml;
+                    newLength = MeanBondLength * ScaleFactorForXaml;
                 }
                 else
                 {
-                    newLength = preferredBondLength * ModelConstants.ScaleFactorForXaml;
+                    newLength = preferredBondLength * ScaleFactorForXaml;
                 }
 
                 ScaleToAverageBondLength(newLength);
@@ -1431,7 +1431,7 @@ namespace Chem4Word.Model2
             List<Atom> atoms = GetAllAtoms().ToList();
             foreach (Atom atom in atoms)
             {
-                List<Atom> matches = atoms.Where(a => a.Id != atom.Id && SamePoint(atom.Position, a.Position, MeanBondLength * ModelConstants.BondOffsetPercentage)).ToList();
+                List<Atom> matches = atoms.Where(a => a.Id != atom.Id && SamePoint(atom.Position, a.Position, MeanBondLength * BondOffsetPercentage)).ToList();
                 if (matches.Any())
                 {
                     string plural = matches.Count > 1 ? "s" : "";

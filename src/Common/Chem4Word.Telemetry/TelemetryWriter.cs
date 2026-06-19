@@ -56,6 +56,10 @@ namespace Chem4Word.Telemetry
 
         public void Write(string source, string level, string message)
         {
+            if (level == "Exception")
+            {
+                Debugger.Break();
+            }
             var unwanted = "Chem4Word.V3.";
             if (source.StartsWith(unwanted))
             {

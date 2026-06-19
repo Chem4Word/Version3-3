@@ -69,12 +69,12 @@ namespace Chem4Word.ACME.Adorners
             CurrentEditingCanvas.RaiseEvent(e);
         }
 
-        private void OnPreviewMouseUp_PartialGhostAdorner(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnPreviewMouseUp_PartialGhostAdorner(object sender, MouseButtonEventArgs e)
         {
             CurrentEditingCanvas.RaiseEvent(e);
         }
 
-        private void OnPreviewMouseMove_PartialGhostAdorner(object sender, System.Windows.Input.MouseEventArgs e)
+        private void OnPreviewMouseMove_PartialGhostAdorner(object sender, MouseEventArgs e)
         {
             CurrentEditingCanvas.RaiseEvent(e);
         }

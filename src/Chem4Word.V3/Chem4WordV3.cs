@@ -373,6 +373,7 @@ namespace Chem4Word
 
             try
             {
+                // Set timer to fire every second
                 _timer = new System.Timers.Timer(1000);
                 _timer.Elapsed += OnTimerElapsed;
                 _timer.AutoReset = true;
@@ -3351,8 +3352,8 @@ namespace Chem4Word
         /// </summary>
         private void InternalStartup()
         {
-            this.Startup += new EventHandler(C4WAddIn_Startup);
-            this.Shutdown += new EventHandler(C4WAddIn_Shutdown);
+            Startup += new EventHandler(C4WAddIn_Startup);
+            Shutdown += new EventHandler(C4WAddIn_Shutdown);
         }
 
         #endregion VSTO generated code

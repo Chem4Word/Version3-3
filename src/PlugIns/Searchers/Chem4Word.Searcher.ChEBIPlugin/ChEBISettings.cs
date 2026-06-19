@@ -41,7 +41,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
         public ChEBIOptions SearcherOptions { get; set; }
         public string SettingsPath { get; set; }
         public IChem4WordTelemetry Telemetry { get; set; }
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         #endregion Properties
 
@@ -71,7 +71,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
         }
 
-        private void OnClick_SetDefaults(object sender, System.EventArgs e)
+        private void OnClick_SetDefaults(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             Telemetry.Write(module, "Action", "Triggered");

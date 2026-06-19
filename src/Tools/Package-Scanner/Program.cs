@@ -68,7 +68,7 @@ namespace PackageScanner
                         section = 1;
                     }
 
-                    if (line.Equals("## Acknowledgements"))
+                    if (line.Equals("## Acknowledgements") || line.StartsWith("Please note"))
                     {
                         section = 2;
                     }

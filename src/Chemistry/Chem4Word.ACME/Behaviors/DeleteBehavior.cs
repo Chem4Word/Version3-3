@@ -60,7 +60,7 @@ namespace Chem4Word.ACME.Behaviors
             }
         }
 
-        private void OnMouseLeftButtonDown_CurrentEditor(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown_CurrentEditor(object sender, MouseButtonEventArgs e)
         {
             var hitTestResult = CurrentEditor.ActiveVisual;
             switch (hitTestResult)

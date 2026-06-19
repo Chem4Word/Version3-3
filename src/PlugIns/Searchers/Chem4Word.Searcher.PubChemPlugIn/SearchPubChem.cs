@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME.Utils;
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
@@ -254,14 +255,30 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     ApiResult apiResult = HttpHelper.InvokeGet(webCall);
                     if (apiResult.StatusCode == HttpStatusCode.OK)
                     {
-                        if (ParseResponseBody(apiResult.Content))
+                        if (apiResult.Content.ToLower().Contains("<!doctype html"))
                         {
-                            EnableButtons();
-                            FillListView();
+                            Telemetry.Write(module, "Warning", "Showing user html result of web call");
+                            Telemetry.Write(module, "Debug", apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
+
+                            Screen screen = Screen.FromControl(SearchButton);
+                            HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL PubChem Search Error", apiResult.Content);
+                            viewer.ShowDialog(this);
+                        }
+                        else
+                        {
+                            if (ParseResponseBody(apiResult.Content))
+                            {
+                                EnableButtons();
+                                FillListView();
+                            }
                         }
                     }
                     else
                     {
+                        if (!string.IsNullOrEmpty(apiResult.Content))
+                        {
+                            Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                        }
                         Telemetry.Write(module, "Exception", $"{apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
@@ -408,41 +425,53 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             ApiResult apiResult = HttpHelper.InvokeGet(webCall);
             if (apiResult.StatusCode == HttpStatusCode.OK)
             {
-                XDocument xDocument = XDocument.Parse(apiResult.Content);
-                if (xDocument != null)
+                if (apiResult.Content.ToLower().Contains("<!doctype html"))
                 {
-                    IEnumerable<XElement> compounds = xDocument.XPathSelectElements("//DocSum");
-                    if (compounds.Any())
-                    {
-                        foreach (XElement compound in compounds)
-                        {
-                            XElement id = compound.XPathSelectElement("./Id");
-                            XElement name = compound.XPathSelectElement("./Item[@Name='IUPACName']");
-                            XElement formula = compound.XPathSelectElement("./Item[@Name='MolecularFormula']");
-                            ListViewItem lvi = new ListViewItem(id.Value);
+                    Telemetry.Write(module, "Warning", "Showing user html result of web call");
+                    Telemetry.Write(module, "Debug", apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
 
-                            lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, name.Value));
-                            lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, formula.Value));
-
-                            Results.Items.Add(lvi);
-                            // Add to a list view ...
-                        }
-
-                        Results.Enabled = true;
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Something went wrong");
-                        Debugger.Break();
-                    }
+                    Screen screen = Screen.FromControl(SearchButton);
+                    HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL PubChem Search Error", apiResult.Content);
+                    viewer.ShowDialog(this);
                 }
                 else
                 {
-                    Telemetry.Write(module, "Exception", $"Error parsing {apiResult.Content}");
+                    XDocument xDocument = XDocument.Parse(apiResult.Content);
+                    if (xDocument != null)
+                    {
+                        IEnumerable<XElement> compounds = xDocument.XPathSelectElements("//DocSum").ToList();
+                        if (compounds.Any())
+                        {
+                            foreach (XElement compound in compounds)
+                            {
+                                XElement id = compound.XPathSelectElement("./Id");
+                                XElement name = compound.XPathSelectElement("./Item[@Name='IUPACName']");
+                                XElement formula = compound.XPathSelectElement("./Item[@Name='MolecularFormula']");
+
+                                ListViewItem lvi = new ListViewItem(id?.Value);
+                                lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, name?.Value));
+                                lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, formula?.Value));
+
+                                Results.Items.Add(lvi);
+                                // Add to a list view ...
+                            }
+
+                            Results.Enabled = true;
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Something went wrong");
+                            Debugger.Break();
+                        }
+                    }
                 }
             }
             else
             {
+                if (!string.IsNullOrEmpty(apiResult.Content))
+                {
+                    Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                }
                 Telemetry.Write(module, "Exception", $"{apiResult.StatusCode} - {apiResult.Message}");
             }
         }
@@ -524,6 +553,10 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     }
                     else
                     {
+                        if (!string.IsNullOrEmpty(apiResult.Content))
+                        {
+                            Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                        }
                         StringBuilder sb = new StringBuilder();
                         sb.AppendLine($"Bad request. Status code: {apiResult.StatusCode}");
                         UserInteractions.AlertUser(sb.ToString());

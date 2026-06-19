@@ -16,7 +16,7 @@ namespace Chem4Word.UI
     {
         public string WebPage { get; set; }
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         public UpdateFailure()
         {

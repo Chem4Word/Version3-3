@@ -585,7 +585,7 @@ namespace Chem4Word.Model2
 
                     if (_isAllenic)
                     {
-                        result = ModelConstants.AllenicCarbonSymbol;
+                        result = AllenicCarbonSymbol;
                     }
                 }
 
@@ -802,7 +802,7 @@ namespace Chem4Word.Model2
         public int UnprocessedDegree(Predicate<Atom> unprocessedTest, HashSet<Bond> excludeBonds)
         {
             IEnumerable<Atom> unproc = from a in UnprocessedNeighbours(unprocessedTest)
-                                       where !excludeBonds.Contains(this.BondBetween(a)) && unprocessedTest(a)
+                                       where !excludeBonds.Contains(BondBetween(a)) && unprocessedTest(a)
                                        select a;
             return unproc.Count();
         }
@@ -1007,7 +1007,7 @@ namespace Chem4Word.Model2
             {
                 return false;
             }
-            return other.InternalId == this.InternalId;
+            return other.InternalId == InternalId;
         }
 
         /// <summary>

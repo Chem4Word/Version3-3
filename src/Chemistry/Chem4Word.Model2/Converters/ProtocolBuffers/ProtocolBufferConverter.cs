@@ -511,9 +511,9 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
                     EndAtomInternalId = atomLookup[bond.EndAtomID].InternalId,
                     StartAtomInternalId = atomLookup[bond.StartAtomID].InternalId,
                     Order = bond.Order,
-                    Stereo = (Enums.BondStereo)bond.Stereo,
+                    Stereo = (BondStereo)bond.Stereo,
                     Parent = newMol,
-                    ExplicitPlacement = (Enums.BondDirection?)bond.Placement
+                    ExplicitPlacement = (BondDirection?)bond.Placement
                 };
 
                 if (!newBond.StartAtomInternalId.Equals(newBond.EndAtomInternalId))

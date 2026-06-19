@@ -140,30 +140,30 @@ namespace Chem4Word.Model2
             {
                 if (value.Equals("0.5"))
                 {
-                    value = ModelConstants.OrderPartial01;
+                    value = OrderPartial01;
                     ResetStereo();
                 }
                 if (value.Equals("1") || value.Equals("S"))
                 {
-                    value = ModelConstants.OrderSingle;
+                    value = OrderSingle;
                 }
                 if (value.Equals("1.5"))
                 {
-                    value = ModelConstants.OrderPartial12;
+                    value = OrderPartial12;
                     ResetStereo();
                 }
                 if (value.Equals("2") || value.Equals("D"))
                 {
-                    value = ModelConstants.OrderDouble;
+                    value = OrderDouble;
                 }
                 if (value.Equals("3") || value.Equals("T"))
                 {
-                    value = ModelConstants.OrderTriple;
+                    value = OrderTriple;
                     ResetStereo();
                 }
                 if (value.Equals("0"))
                 {
-                    value = ModelConstants.OrderZero;
+                    value = OrderZero;
                     ResetStereo();
                 }
 
@@ -200,29 +200,29 @@ namespace Chem4Word.Model2
         {
             switch (order)
             {
-                case ModelConstants.OrderZero:
-                case ModelConstants.OrderOther:
+                case OrderZero:
+                case OrderOther:
                     return 0;
 
-                case ModelConstants.OrderPartial01:
+                case OrderPartial01:
                     return 0.5;
 
-                case ModelConstants.OrderSingle:
+                case OrderSingle:
                     return 1;
 
-                case ModelConstants.OrderPartial12:
+                case OrderPartial12:
                     return 1.5;
 
-                case ModelConstants.OrderAromatic:
+                case OrderAromatic:
                     return 1.5;
 
-                case ModelConstants.OrderDouble:
+                case OrderDouble:
                     return 2;
 
-                case ModelConstants.OrderPartial23:
+                case OrderPartial23:
                     return 2.5;
 
-                case ModelConstants.OrderTriple:
+                case OrderTriple:
                     return 3;
 
                 default:
@@ -900,34 +900,34 @@ namespace Chem4Word.Model2
             switch (val)
             {
                 case 0:
-                    return ModelConstants.OrderZero;
+                    return OrderZero;
 
                 case 0.5:
-                    return ModelConstants.OrderPartial01;
+                    return OrderPartial01;
 
                 case 1:
-                    return ModelConstants.OrderSingle;
+                    return OrderSingle;
 
                 case 1.5 when isAromatic:
-                    return ModelConstants.OrderAromatic;
+                    return OrderAromatic;
 
                 case 1.5:
-                    return ModelConstants.OrderPartial12;
+                    return OrderPartial12;
 
                 case 2:
-                    return ModelConstants.OrderDouble;
+                    return OrderDouble;
 
                 case 2.5:
-                    return ModelConstants.OrderPartial23;
+                    return OrderPartial23;
 
                 case 3:
-                    return ModelConstants.OrderTriple;
+                    return OrderTriple;
 
                 case 4:
-                    return ModelConstants.OrderAromatic;
+                    return OrderAromatic;
 
                 default:
-                    return ModelConstants.OrderZero;
+                    return OrderZero;
             }
         }
 
@@ -980,7 +980,7 @@ namespace Chem4Word.Model2
             {
                 return false;
             }
-            return other.InternalId == this.InternalId;
+            return other.InternalId == InternalId;
         }
 
         public override StructuralObject GetByPath(string path)

@@ -8,6 +8,7 @@
 using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Core.UI;
+using Chem4Word.Core.UI.Forms;
 using Chem4Word.Model2.Converters.CML;
 using IChem4Word.Contracts;
 using System;
@@ -70,21 +71,37 @@ namespace Chem4Word.Searcher.OpsinPlugIn
                 ApiResult apiResult = HttpHelper.InvokeGet(webCall, headers);
                 if (apiResult.StatusCode == HttpStatusCode.OK)
                 {
-                    CMLConverter cmlConverter = new CMLConverter();
-                    Model2.Model model = cmlConverter.Import(apiResult.Content);
-                    if (model.MeanBondLength < CoreConstants.MinimumBondLength - CoreConstants.BondLengthTolerance
-                        || model.MeanBondLength > CoreConstants.MaximumBondLength + CoreConstants.BondLengthTolerance)
+                    if (apiResult.Content.ToLower().Contains("<!doctype html"))
                     {
-                        model.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
+                        Telemetry.Write(module, "Warning", "Showing user html result of web call");
+                        Telemetry.Write(module, "Debug", apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
+
+                        Screen screen = Screen.FromControl(SearchButton);
+                        HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL OPSIN Search Error", apiResult.Content);
+                        viewer.ShowDialog(this);
                     }
+                    else
+                    {
+                        CMLConverter cmlConverter = new CMLConverter();
+                        Model2.Model model = cmlConverter.Import(apiResult.Content);
+                        if (model.MeanBondLength < CoreConstants.MinimumBondLength - CoreConstants.BondLengthTolerance
+                            || model.MeanBondLength > CoreConstants.MaximumBondLength + CoreConstants.BondLengthTolerance)
+                        {
+                            model.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
+                        }
 
-                    Cml = cmlConverter.Export(model);
+                        Cml = cmlConverter.Export(model);
 
-                    display1.Chemistry = Cml;
-                    ImportButton.Enabled = true;
+                        display1.Chemistry = Cml;
+                        ImportButton.Enabled = true;
+                    }
                 }
                 else
                 {
+                    if (!string.IsNullOrEmpty(apiResult.Content))
+                    {
+                        Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                    }
                     Telemetry.Write(module, "Warning", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode}");
                     LabelInfo.Text = $"No match for '{searchFor}' found";
                     ImportButton.Enabled = false;

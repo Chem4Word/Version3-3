@@ -26,7 +26,7 @@ namespace Chem4Word.UI.WPF
 
         private bool _closedInCode = false;
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         public Chem4WordOptions SystemOptions { get; set; }
 

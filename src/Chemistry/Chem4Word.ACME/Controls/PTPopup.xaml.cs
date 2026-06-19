@@ -45,7 +45,7 @@ namespace Chem4Word.ACME
             Close();
         }
 
-        private void OnPreviewKeyDown_PTPickerWindow(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnPreviewKeyDown_PTPickerWindow(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {

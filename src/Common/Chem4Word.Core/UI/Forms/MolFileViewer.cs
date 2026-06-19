@@ -15,10 +15,11 @@ namespace Chem4Word.Core.UI.Forms
     public partial class MolFileViewer : Form
     {
         public string Message { get; set; }
-        public System.Windows.Point TopLeft { get; set; }
-        private Screen _screen;
+        public Point TopLeft { get; set; }
 
-        public MolFileViewer(System.Windows.Point topLeft, Screen screen, string sdFile)
+        private readonly Screen _screen;
+
+        public MolFileViewer(Point topLeft, Screen screen, string sdFile)
         {
             InitializeComponent();
             _screen = screen;

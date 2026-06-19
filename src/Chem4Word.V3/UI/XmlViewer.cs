@@ -33,7 +33,7 @@ namespace Chem4Word.UI
         private readonly Color AttributeNameColor = Color.Red;
         private readonly Color AttributeValueColor = Color.Blue;
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         public string XmlString { get; set; }
 

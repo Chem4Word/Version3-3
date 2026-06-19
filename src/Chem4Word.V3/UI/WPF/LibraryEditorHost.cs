@@ -27,7 +27,7 @@ namespace Chem4Word.UI.WPF
         public IChem4WordTelemetry Telemetry { get; set; }
         public string SelectedDatabase { get; set; }
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
 
         private IChem4WordLibraryWriter _driver;
 

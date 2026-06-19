@@ -26,7 +26,7 @@ namespace Chem4Word.UI.WPF
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
 
-        public System.Windows.Point TopLeft { get; set; }
+        public Point TopLeft { get; set; }
         public string Cml { get; set; }
         public List<string> Used1D { get; set; }
         public string Message { get; set; }

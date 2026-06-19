@@ -30,7 +30,7 @@ Azure Devops Build must be set to use VS2022 build agent
 |DocumentFormat.OpenXml.Framework|3.5.1|MIT|2|
 |DocumentFormat.OpenXml|3.5.1|MIT|2|
 |DotNetProjects.WpfToolkit.Input|6.1.94|MS-PL|1|
-|EntityFramework|6.5.1|Apache-2.0|3|
+|EntityFramework|6.5.2|Apache-2.0|3|
 |Google.Protobuf|3.34.1|BSD-3-Clause|2|
 |Grpc.Tools|2.80.0|Apache-2.0|1|
 |Jacobslusser.ScintillaNET|3.6.3|MIT|1|
@@ -50,6 +50,7 @@ Azure Devops Build must be set to use VS2022 build agent
 |Microsoft.Identity.Client|4.83.3|MIT|3|
 |Microsoft.IdentityModel.Abstractions|8.17.0|MIT|3|
 |Microsoft.NETCore.Platforms|7.0.4|MIT|2|
+|Microsoft.Web.WebView2|1.0.4022.49|Microsoft|1|
 |Microsoft.Xaml.Behaviors.Wpf|1.1.142|MIT|1|
 |Newtonsoft.Json|13.0.4|MIT|14|
 |Ookii.Dialogs.WinForms|4.0.0|BSD-3-Clause|1|

@@ -21,7 +21,7 @@ namespace Chem4Word.ACME.Drawing.Visuals
         public Annotation ParentAnnotation { get; }
         public BlockTextSource TextSource { get; set; }
 
-        public AnnotationVisual(Model2.Annotation annotation, bool isEditable = true) : base()
+        public AnnotationVisual(Annotation annotation, bool isEditable = true) : base()
         {
             ParentAnnotation = annotation;
             IsEditable = isEditable;
