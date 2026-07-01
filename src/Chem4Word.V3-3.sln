@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11911.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D4427174-46F5-4058-8934-4CEAFDBAF60D}"
 	ProjectSection(SolutionItems) = preProject
@@ -92,6 +92,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{53F5
 		Scripts\Set-Assembly-Version.ps1 = Scripts\Set-Assembly-Version.ps1
 		Scripts\Sign-Assembly.ps1 = Scripts\Sign-Assembly.ps1
 		Scripts\Sign-Files.cmd = Scripts\Sign-Files.cmd
+		Scripts\Sign-Multiple-Assemblies.ps1 = Scripts\Sign-Multiple-Assemblies.ps1
 		Scripts\Update-Readme.ps1 = Scripts\Update-Readme.ps1
 	EndProjectSection
 EndProject

@@ -11,7 +11,7 @@
 #   -TargetFileName $(TargetFileName) ^
 #   -TargetPath $(TargetPath)
 
-# .\SignAssemby.ps1 -TargetFileName "Chem4Word-Setup.exe" -TargetPath "C:\Dev\vso\chem4word\Version3\src\Installer\Chem4WordSetup\bin\Debug\Chem4Word-Setup.exe"
+# .\Sign-Assemby.ps1 -TargetFileName "Chem4Word-Setup.exe" -TargetPath "C:\Dev\vso\chem4word\Version3\src\Installer\Chem4WordSetup\bin\Debug\Chem4Word-Setup.exe"
 
 param
 (

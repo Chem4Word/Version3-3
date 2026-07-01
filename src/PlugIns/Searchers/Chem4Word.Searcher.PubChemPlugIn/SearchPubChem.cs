@@ -55,7 +55,8 @@ namespace Chem4Word.Searcher.PubChemPlugIn
         private string _webEnv;
         private int _lastResult;
         private int _firstResult;
-        //private const int _numResults = 20;
+
+        private DateTime _lastSearch = DateTime.MinValue;
 
         private Dictionary<string, string> _structureCache = new Dictionary<string, string>();
 
@@ -227,8 +228,17 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             {
                 try
                 {
+                    if (_lastSearch > DateTime.MinValue && DateTime.UtcNow.Subtract(_lastSearch).TotalSeconds < 1)
+                    {
+                        Telemetry.Write(module, "Information", "Searches are being throttled to 1 per second");
+                        ErrorsAndWarnings.Text = "PubChem searches are limited to 1 per second, please try again";
+                        return;
+                    }
+
                     string webCall = string.Empty;
                     int startFrom;
+
+                    _lastSearch = DateTime.UtcNow;
 
                     switch (direction)
                     {
@@ -268,6 +278,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                         {
                             if (ParseResponseBody(apiResult.Content))
                             {
+                                Telemetry.Write(module, "Information", $"Showing {_firstResult + 1} to {_lastResult} [of {_resultsCount}]");
                                 EnableButtons();
                                 FillListView();
                             }
@@ -322,7 +333,6 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             {
                 // Set form title
                 Text = $"Search PubChem - Showing {_firstResult + 1} to {_lastResult} [of {_resultsCount}]";
-
                 GetData(string.Join(",", _ids));
             }
             else
