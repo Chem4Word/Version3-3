@@ -3,6 +3,24 @@
 <ChangeLog>
   <Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>
   <Version>
+    <Number>3.3.17 Release 15</Number>
+    <IsBeta>false</IsBeta>
+    <Released>01-Sep-2026</Released>
+    <Changes>
+      <Change>...</Change>
+      <Change>...</Change>
+      <Change>...</Change>
+      <Change>...</Change>
+      <Change>...</Change>
+      <Change>...</Change>
+      <Change>...</Change>
+      <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
+      <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
+      <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
+    </Changes>
+    <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.17.Release.15.msi</Url>
+  </Version>
+  <Version>
     <Number>3.3.16 Release 14</Number>
     <IsBeta>false</IsBeta>
     <Released>01-Jul-2026</Released>
@@ -14,10 +32,10 @@
       <Change>UI: Added ability to create Electrons (on Atoms)</Change>
       <Change>UI: Editor now supports electron pushers</Change>
       <Change>UI: Added ability to right-click on an atom to add/remove electrons</Change>
-      <Change>BugFix: Fixed Long standing bug in nRing drawing</Change>
-      <Change>BugFix: MOLFile Import map unknown Atoms to ?? pseudo functional group</Change>
-      <Change>BugFix: Top Alignment of molecules and Annotations fixed</Change>
-      <Change>BugFix: Fix and Improve searching (ChEBI/PubChem/OPSIN)</Change>
+      <Change>Bug Fix: Fixed Long standing bug in nRing drawing</Change>
+      <Change>Bug Fix: MOLFile Import map unknown Atoms to ?? pseudo functional group</Change>
+      <Change>Bug Fix: Top Alignment of molecules and Annotations fixed</Change>
+      <Change>Bug Fix: Fix and Improve searching (ChEBI/PubChem/OPSIN)</Change>
       <Change>Internal: Improved SQLite error handling</Change>
       <Change>Internal: Added code to ensure a valid search path for assembly SQLite.Interop.dll exists</Change>
       <Change>Internal: Updated to WiX 7</Change>
@@ -28,11 +46,7 @@
       <Change>Internal: Fix xaml binding errors (in ACME)</Change>
       <Change>Internal: Refactor of generation of Concise Formula</Change>
       <Change>Internal: Added GetByPath function for key model objects</Change>
-      <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
-      <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
-      <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>
     </Changes>
-    <Url>https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.16.Release.14.msi</Url>
   </Version>
   <Version>
     <Number>3.3.15 Release 12</Number>

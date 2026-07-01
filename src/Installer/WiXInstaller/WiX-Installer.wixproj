@@ -1,7 +1,7 @@
 <Project Sdk="WixToolset.Sdk/7.0.0">
   <PropertyGroup>
     <AcceptEula>wix7</AcceptEula>
-    <OutputName>Chem4Word-Setup.3.3.16.Release.14</OutputName>
+    <OutputName>Chem4Word-Setup.3.3.17.Release.15</OutputName>
     <Name>WiX-Installer</Name>
     <Configurations>Debug;Release;Setup;Vso-Ci</Configurations>
   </PropertyGroup>
