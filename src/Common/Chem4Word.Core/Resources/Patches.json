@@ -55,5 +55,11 @@
       "CREATE INDEX ChemicalCaptions_Idx1 ON ChemicalCaptions (ChemistryID);",
       "CREATE INDEX TaggedChemistry_Idx1 ON TaggedChemistry (ChemistryID);"
     ]
+  },
+  {
+    "version": "3.3.2",
+    "scripts": [
+      "ALTER TABLE Gallery ADD COLUMN UnicodeFormula STRING;"
+    ]
   }
 ]

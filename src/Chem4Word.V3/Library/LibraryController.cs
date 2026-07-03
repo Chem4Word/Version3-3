@@ -8,9 +8,14 @@
 using Chem4Word.ACME.Models;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Helpers;
+using Chem4Word.Model2;
+using Chem4Word.Model2.Converters.CML;
 using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 
@@ -53,17 +58,56 @@ namespace Chem4Word.Library
             {
                 ChemistryItems.Clear();
 
-                var dataObjects = _driver.GetAllChemistry();
+                List<long> idsToUpdate = new List<long>();
+                List<ChemistryDataObject> dataObjects = _driver.GetAllChemistry();
 
-                foreach (var dto in dataObjects)
+                // Search for structures with missing MolWeights or Unicode Formula
+                foreach (ChemistryDataObject chemistryDto in dataObjects)
                 {
-                    var obj = DtoHelper.CreateFromDto(dto);
+                    if (chemistryDto.MolWeight == 0.0
+                        || string.IsNullOrEmpty(chemistryDto.UnicodeFormula))
+                    {
+                        idsToUpdate.Add(chemistryDto.Id);
+                    }
+                }
+
+                // Did we find any?
+                if (idsToUpdate.Any())
+                {
+                    IChem4WordLibraryWriter fixer = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn("SQLite Standard");
+                    fixer.FileName = _driver.FileName;
+                    fixer.StartTransaction();
+
+                    // If so update the MolWeight of them
+                    CMLConverter cmlConverter = new CMLConverter();
+                    foreach (long id in idsToUpdate)
+                    {
+                        ChemistryDataObject dto = dataObjects.FirstOrDefault(d => d.Id == id);
+                        if (dto != null)
+                        {
+                            ChemistryObject obj = DtoHelper.CreateFromDto(dto);
+                            string cml = obj.CmlFromChemistry();
+                            Model model = cmlConverter.Import(cml);
+                            dto.MolWeight = model.MolecularWeight;
+                            dto.UnicodeFormula = model.UnicodeFormula;
+                            fixer.UpdateMetaData(dto);
+                        }
+                    }
+
+                    fixer.CommitTransaction();
+
+                    dataObjects = _driver.GetAllChemistry();
+                }
+
+                foreach (ChemistryDataObject dto in dataObjects)
+                {
+                    ChemistryObject obj = DtoHelper.CreateFromDto(dto);
                     ChemistryItems.Add(obj);
                 }
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }

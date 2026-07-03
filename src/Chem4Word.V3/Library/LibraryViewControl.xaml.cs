@@ -41,6 +41,18 @@ namespace Chem4Word.Library
 
         private void OnLoaded_LibraryViewControl(object sender, RoutedEventArgs e)
         {
+            ReLoadListOfLibraries();
+
+            // Sort the list of structures by lower case name
+            var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
+            if (view != null)
+            {
+                view.CustomSort = new ChemistryObjectComparer();
+            }
+        }
+
+        public void ReLoadListOfLibraries()
+        {
             // Disable the selection changed event while loading the combo box
             LibrarySelector.SelectionChanged -= OnSelectionChanged_LibrarySelector;
 
@@ -65,13 +77,6 @@ namespace Chem4Word.Library
 
                 // Enable the selection changed event
                 LibrarySelector.SelectionChanged += OnSelectionChanged_LibrarySelector;
-            }
-
-            // Sort the list of structures by lower case name
-            var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
-            if (view != null)
-            {
-                view.CustomSort = new ChemistryObjectComparer();
             }
         }
 

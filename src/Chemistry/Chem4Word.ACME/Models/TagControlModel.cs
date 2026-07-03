@@ -15,6 +15,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Chem4Word.ACME.Models
 {
@@ -128,16 +129,53 @@ namespace Chem4Word.ACME.Models
                     Margin = new Thickness(2.0)
                 };
 
-                autoCompleteBox.KeyUp += OnKeyUp_TextBox;
-                autoCompleteBox.DropDownClosed += OnDropDownClosed_AutoCompleteBox;
+                autoCompleteBox.KeyUp += (s, e) =>
+                                         {
+                                             Dispatcher.BeginInvoke(
+                                                 DispatcherPriority.Background,
+                                                 new Action(() => OnKeyUp_TextBox(s, e)));
+                                         };
+
+                autoCompleteBox.DropDownClosed += (s, e) =>
+                                                  {
+                                                      Dispatcher.BeginInvoke(
+                                                          DispatcherPriority.Background,
+                                                          new Action(() => OnDropDownClosed_AutoCompleteBox(s, e)));
+                                                  };
+
+                DataObject.AddPastingHandler(autoCompleteBox, OnPaste_AutoCompleteBox);
 
                 // Add at end
-                CurrentTags.Add(autoCompleteBox);
+                Dispatcher.BeginInvoke(
+                    DispatcherPriority.Background,
+                    new Action(() => CurrentTags.Add(autoCompleteBox)));
             }
 
             #endregion Tag Management
 
             #region Event handlers
+
+            private void OnPaste_AutoCompleteBox(object sender, DataObjectPastingEventArgs e)
+            {
+                e.Handled = true;
+
+                if (sender is AutoCompleteBox autoCompleteBox)
+                {
+                    string pastedText = e.DataObject.GetData(DataFormats.UnicodeText) as string;
+                    pastedText = pastedText?.Trim();
+
+                    if (!string.IsNullOrEmpty(pastedText))
+                    {
+                        // Defer text update to avoid dispatcher suspension crash
+                        Dispatcher.BeginInvoke(
+                            DispatcherPriority.Background,
+                            new Action(() =>
+                                       {
+                                           autoCompleteBox.Text = pastedText;
+                                       }));
+                    }
+                }
+            }
 
             private void OnDropDownClosed_AutoCompleteBox(object sender, RoutedPropertyChangedEventArgs<bool> e)
             {

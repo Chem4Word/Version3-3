@@ -49,6 +49,7 @@ namespace Chem4Word.UI.WPF
         public Point TopLeft { get; set; }
         public string ActiveTab { get; set; }
         public bool Dirty { get; set; }
+        public bool LibrariesChanged { get; set; }
 
         private bool _loading;
         private string _selectedLibrary;
@@ -667,6 +668,8 @@ namespace Chem4Word.UI.WPF
                                     .SaveSettingsFile(listOfDetectedLibraries);
                                 ReloadGlobalListOfLibraries();
                                 LoadLibrariesListTab();
+
+                                LibrariesChanged = true;
                             }
                             else
                             {
@@ -740,6 +743,8 @@ namespace Chem4Word.UI.WPF
                                 .SaveSettingsFile(listOfDetectedLibraries);
                             ReloadGlobalListOfLibraries();
                             LoadLibrariesListTab();
+
+                            LibrariesChanged = true;
                         }
                     }
                     else
@@ -778,10 +783,13 @@ namespace Chem4Word.UI.WPF
                 ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
                 DatabaseDetails item = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(r => r.DisplayName.Equals(library.Name));
                 listOfDetectedLibraries.AvailableDatabases.Remove(item);
+
                 new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
                     .SaveSettingsFile(listOfDetectedLibraries);
                 ReloadGlobalListOfLibraries();
                 LoadLibrariesListTab();
+
+                LibrariesChanged = true;
             }
         }
 

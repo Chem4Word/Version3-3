@@ -324,7 +324,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Grid d:IsLocked="True">
+                <Grid Margin="5,0,5,0" d:IsLocked="True">
                     <TextBox
                         Name="SearchBox"
                         Grid.Column="0"
@@ -575,7 +575,7 @@
                         d:IsLocked="True"
                         Foreground="Black"
                         Style="{StaticResource DefaultLabelStyle}"
-                        Text="{Binding Path=SelectedChemistryObject.Formula}" />
+                        Text="{Binding Path=SelectedChemistryObject.UnicodeFormula}" />
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="0"

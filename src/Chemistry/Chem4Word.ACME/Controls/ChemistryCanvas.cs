@@ -305,6 +305,7 @@ namespace Chem4Word.ACME.Controls
 
         private void OnReactionSchemesChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
         {
+            // Nothing to de here yet !
         }
 
         public bool AutoResize = true;
@@ -468,8 +469,7 @@ namespace Chem4Word.ACME.Controls
             rv.RefCount = refcount;
         }
 
-        private void OnMoleculesChanged_Model(object sender,
-                                            NotifyCollectionChangedEventArgs e)
+        private void OnMoleculesChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
@@ -492,8 +492,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void OnBondsChanged_Model(object sender,
-                                        NotifyCollectionChangedEventArgs e)
+        private void OnBondsChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
@@ -516,8 +515,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void OnAtomsChanged_Model(object sender,
-                                        NotifyCollectionChangedEventArgs e)
+        private void OnAtomsChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
@@ -540,8 +538,7 @@ namespace Chem4Word.ACME.Controls
             }
         }
 
-        private void OnReactionsChanged_Model(object sender,
-                                          NotifyCollectionChangedEventArgs e)
+        private void OnReactionsChanged_Model(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {

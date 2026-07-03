@@ -268,10 +268,9 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
 
             return result;
-
         }
 
-        void ListClippingResult(string module, string path, Point[] points, Point point1, Point point2)
+        private void ListClippingResult(string module, string path, Point[] points, Point point1, Point point2)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"Clipping line for {path}");
@@ -288,7 +287,6 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             Inputs.Telemetry.Write(module, "Warning", stringBuilder.ToString().Trim());
         }
-
 
         private Point[] DetermineBarbEnds(Point endPoint, Point controlPoint,
                                   double headLength = 8.0, double barbOffset = 4.0)

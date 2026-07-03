@@ -139,8 +139,6 @@ namespace WinForms.TestHarness
             StatusPanel.Label1Text = e.Message;
             StatusPanel.Label2Text = e.MolecularWeight;
             StatusPanel.Label3Text = e.Formula;
-
-            SetFormTitle(true, e.UniCodeFormula);
         }
 
         private List<string> SimulateGetUsed1DLabels(string cml)
@@ -324,6 +322,22 @@ namespace WinForms.TestHarness
                         }
                         break;
                 }
+            }
+        }
+
+        private void OnTick_Timer1(object sender, EventArgs e)
+        {
+            switch (_editorType)
+            {
+                case "ACME":
+                    if (elementHost1.Child is Editor acmeEditor)
+                    {
+                        if (acmeEditor.ActiveController?.Model != null)
+                        {
+                            SetFormTitle(acmeEditor.IsDirty, acmeEditor.ActiveController.Model?.UnicodeFormula);
+                        }
+                    }
+                    break;
             }
         }
     }

@@ -32,14 +32,12 @@ namespace Chem4Word.Telemetry
         private static bool _machineIdWritten;
 
         private readonly bool _permissionGranted;
-        private readonly bool _isBeta;
 
         public int BufferCount() => _azureServiceBusWriter.BufferCount;
 
         public TelemetryWriter(bool permissionGranted, bool isBeta, SystemHelper helper)
         {
-            _permissionGranted = permissionGranted;
-            _isBeta = isBeta;
+            _permissionGranted = isBeta || permissionGranted;
             _helper = helper;
 
             if (_helper == null)
@@ -56,11 +54,7 @@ namespace Chem4Word.Telemetry
 
         public void Write(string source, string level, string message)
         {
-            if (level == "Exception")
-            {
-                Debugger.Break();
-            }
-            var unwanted = "Chem4Word.V3.";
+            string unwanted = "Chem4Word.V3.";
             if (source.StartsWith(unwanted))
             {
                 source = source.Remove(0, unwanted.Length);
@@ -84,9 +78,10 @@ namespace Chem4Word.Telemetry
 
             try
             {
-                var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                            $@"Chem4Word.V3\Telemetry\{SafeDate.ToIsoShortDate(DateTime.UtcNow)}.log");
-                using (var w = File.AppendText(fileName))
+                // Always write to log file
+                string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                               $@"Chem4Word.V3\Telemetry\{SafeDate.ToIsoShortDate(DateTime.UtcNow)}.log");
+                using (StreamWriter w = File.AppendText(fileName))
                 {
                     if (!_machineIdWritten)
                     {
@@ -96,7 +91,7 @@ namespace Chem4Word.Telemetry
                             _machineIdWritten = true;
                         }
                     }
-                    var logMessage = $"[{SafeDate.ToShortTime(DateTime.UtcNow)}] {source} - {level} - {message}";
+                    string logMessage = $"[{SafeDate.ToShortTime(DateTime.UtcNow)}] {source} - {level} - {message}";
                     w.WriteLine(logMessage);
                 }
             }
@@ -105,6 +100,7 @@ namespace Chem4Word.Telemetry
                 // Do nothing
             }
 
+            // Send to Azure if permission granted
             if (_permissionGranted)
             {
                 WritePrivate(source, level, message);
@@ -120,17 +116,17 @@ namespace Chem4Word.Telemetry
 
                     if (!_gitInfoSent && !string.IsNullOrEmpty(_helper.GitStatus))
                     {
-                        var tracking = _helper.GitStatus
-                                              .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-                                              .FirstOrDefault(l => l.StartsWith("##"));
+                        string tracking = _helper.GitStatus
+                                                 .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                                                 .FirstOrDefault(l => l.StartsWith("##"));
 
                         if (!string.IsNullOrEmpty(tracking))
                         {
-                            var idxStart = tracking.IndexOf('[');
-                            var idxEnd = tracking.IndexOf(']');
+                            int idxStart = tracking.IndexOf('[');
+                            int idxEnd = tracking.IndexOf(']');
                             if (idxStart > 0 && idxEnd > 0)
                             {
-                                var info = tracking.Substring(idxStart, idxEnd - idxStart + 1);
+                                string info = tracking.Substring(idxStart, idxEnd - idxStart + 1);
 
                                 if (info.Contains("behind"))
                                 {
@@ -145,9 +141,9 @@ namespace Chem4Word.Telemetry
                             }
                         }
 
-                        var failedToFetch = _helper.GitStatus
-                                                   .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-                                                   .FirstOrDefault(l => l.Contains("is not a git command"));
+                        string failedToFetch = _helper.GitStatus
+                                                      .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                                                      .FirstOrDefault(l => l.Contains("is not a git command"));
                         if (!string.IsNullOrEmpty(failedToFetch))
                         {
                             // One of these two commands is required to be run, most likely the first one ...
@@ -165,7 +161,7 @@ namespace Chem4Word.Telemetry
 
         public void SendZipFile(byte[] bytes, string fileName)
         {
-            var message = new ServiceBusMessage(bytes)
+            ServiceBusMessage message = new ServiceBusMessage(bytes)
             {
                 ContentType = "application/zip"
             };
@@ -182,7 +178,7 @@ namespace Chem4Word.Telemetry
         /// </summary>
         private void FixUpWordVersion()
         {
-            var product = _helper.WordProduct;
+            string product = _helper.WordProduct;
             if (product.Contains("[16."))
             {
                 // If this is Office 2016/2019/2021/2024/365
@@ -219,7 +215,7 @@ namespace Chem4Word.Telemetry
                 WritePrivate("StartUp", "Timing", string.Join(Environment.NewLine, _helper.StartUpTimings));
             }
 
-            var lines = new List<string>();
+            List<string> lines = new List<string>();
 
             if (_helper.SystemUtcDateTime > DateTime.MinValue)
             {
@@ -233,12 +229,12 @@ namespace Chem4Word.Telemetry
                 lines.Add($"Calculated UTC Offset is {_helper.UtcOffset}");
                 if (_helper.UtcOffset > 0)
                 {
-                    var delta = TimeSpan.FromTicks(_helper.UtcOffset);
+                    TimeSpan delta = TimeSpan.FromTicks(_helper.UtcOffset);
                     lines.Add($"System UTC DateTime is {delta} ahead of Server time");
                 }
                 if (_helper.UtcOffset < 0)
                 {
-                    var delta = TimeSpan.FromTicks(0 - _helper.UtcOffset);
+                    TimeSpan delta = TimeSpan.FromTicks(0 - _helper.UtcOffset);
                     lines.Add($"System UTC DateTime is {delta} behind Server time");
                 }
 
@@ -260,8 +256,8 @@ namespace Chem4Word.Telemetry
             if (!string.IsNullOrEmpty(_wmiHelper.AntiVirusStatus))
             {
                 lines.Add("AntiVirus:");
-                var products = _wmiHelper.AntiVirusStatus.Split(';');
-                foreach (var product in products)
+                string[] products = _wmiHelper.AntiVirusStatus.Split(';');
+                foreach (string product in products)
                 {
                     lines.Add($"  {product}");
                 }
@@ -276,7 +272,7 @@ namespace Chem4Word.Telemetry
             if (_helper.AllAddIns != null && _helper.AllAddIns.Count > 0)
             {
                 lines = new List<string>();
-                foreach (var addIn in _helper.AllAddIns)
+                foreach (AddInProperties addIn in _helper.AllAddIns)
                 {
                     if (addIn.LoadBehaviour >= 0 && !string.IsNullOrEmpty(addIn.Description))
                     {
@@ -289,10 +285,10 @@ namespace Chem4Word.Telemetry
 #if DEBUG
             lines = new List<string>();
 
-            var clientName = Environment.GetEnvironmentVariable("CLIENTNAME");
-            var userDomainName = Environment.UserDomainName;
-            var userName = Environment.UserName;
-            var machineName = Environment.MachineName;
+            string clientName = Environment.GetEnvironmentVariable("CLIENTNAME");
+            string userDomainName = Environment.UserDomainName;
+            string userName = Environment.UserName;
+            string machineName = Environment.MachineName;
             string userSummary;
 
             if (userDomainName.Equals(machineName))
@@ -344,8 +340,8 @@ namespace Chem4Word.Telemetry
             }
             else
             {
-                var bits = Environment.Is64BitOperatingSystem ? "64bit" : "32bit";
-                var culture = CultureInfo.CurrentCulture.Name;
+                string bits = Environment.Is64BitOperatingSystem ? "64bit" : "32bit";
+                string culture = CultureInfo.CurrentCulture.Name;
                 WritePrivate("StartUp", "Information", $"{_wmiHelper.OSCaption} {bits} [{_wmiHelper.OSVersion}] {culture}");
             }
 
@@ -380,8 +376,8 @@ namespace Chem4Word.Telemetry
 
         private string GetVersionNumber()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var productVersion = assembly.GetName().Version;
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Version productVersion = assembly.GetName().Version;
             return productVersion.ToString();
         }
 
@@ -390,10 +386,10 @@ namespace Chem4Word.Telemetry
             Debug.WriteLine($"{operation} - {level} - {message}");
 
             // Default values to ensure we have something to log
-            var processId = 666;
-            var machineId = Guid.Empty.ToString("D");
+            int processId = 666;
+            string machineId = Guid.Empty.ToString("D");
             // This is updated automatically by Set-Assembly-Version.ps1
-            var versionNumber = "3.3.17.666";
+            string versionNumber = "3.3.17.666";
 
             try
             {
@@ -441,7 +437,7 @@ namespace Chem4Word.Telemetry
                 }
             }
 
-            var outputMessage = new OutputMessage(processId)
+            OutputMessage outputMessage = new OutputMessage(processId)
             {
                 MachineId = machineId,
                 Operation = operation,

@@ -205,8 +205,7 @@ namespace Chem4Word.Model2
         {
             if (!InhibitEvents)
             {
-                NotifyCollectionChangedEventHandler temp = AtomsChanged;
-                temp?.Invoke(sender, e);
+                AtomsChanged?.Invoke(sender, e);
             }
         }
 

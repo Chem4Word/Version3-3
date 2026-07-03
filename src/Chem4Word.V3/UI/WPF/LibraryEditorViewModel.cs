@@ -8,9 +8,11 @@
 using Chem4Word.ACME.Models;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Helpers;
+using Chem4Word.Model2;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Converters.CML;
 using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -70,18 +72,19 @@ namespace Chem4Word.UI.WPF
 
         private void LoadChemistryItems()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 ChemistryItems.Clear();
 
-                var idsToUpdate = new List<long>();
-                var dataObjects = _driver.GetAllChemistry();
+                List<long> idsToUpdate = new List<long>();
+                List<ChemistryDataObject> dataObjects = _driver.GetAllChemistry();
 
-                // Search for structures with missing MolWeights
-                foreach (var chemistryDto in dataObjects)
+                // Search for structures with missing MolWeights or Unicode Formula
+                foreach (ChemistryDataObject chemistryDto in dataObjects)
                 {
-                    if (chemistryDto.MolWeight == 0.0)
+                    if (chemistryDto.MolWeight == 0.0
+                        || string.IsNullOrEmpty(chemistryDto.UnicodeFormula))
                     {
                         idsToUpdate.Add(chemistryDto.Id);
                     }
@@ -93,16 +96,17 @@ namespace Chem4Word.UI.WPF
                     _driver.StartTransaction();
 
                     // If so update the MolWeight of them
-                    var cmlConverter = new CMLConverter();
-                    foreach (var id in idsToUpdate)
+                    CMLConverter cmlConverter = new CMLConverter();
+                    foreach (long id in idsToUpdate)
                     {
-                        var dto = dataObjects.FirstOrDefault(d => d.Id == id);
+                        ChemistryDataObject dto = dataObjects.FirstOrDefault(d => d.Id == id);
                         if (dto != null)
                         {
-                            var obj = DtoHelper.CreateFromDto(dto);
-                            var cml = obj.CmlFromChemistry();
-                            var model = cmlConverter.Import(cml);
+                            ChemistryObject obj = DtoHelper.CreateFromDto(dto);
+                            string cml = obj.CmlFromChemistry();
+                            Model model = cmlConverter.Import(cml);
                             dto.MolWeight = model.MolecularWeight;
+                            dto.UnicodeFormula = model.UnicodeFormula;
                             _driver.UpdateChemistry(dto);
                         }
                     }
@@ -112,9 +116,9 @@ namespace Chem4Word.UI.WPF
                     dataObjects = _driver.GetAllChemistry();
                 }
 
-                foreach (var chemistryDto in dataObjects)
+                foreach (ChemistryDataObject chemistryDto in dataObjects)
                 {
-                    var obj = DtoHelper.CreateFromDto(chemistryDto);
+                    ChemistryObject obj = DtoHelper.CreateFromDto(chemistryDto);
                     obj.SetDriver(_driver);
                     ChemistryItems.Add(obj);
                 }
@@ -122,7 +126,7 @@ namespace Chem4Word.UI.WPF
             catch (Exception ex)
             {
                 Debug.WriteLine($"{module} {ex.Message}");
-                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -131,7 +135,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnCollectionChanged_ChemistryItems(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 switch (e.Action)
@@ -146,7 +150,7 @@ namespace Chem4Word.UI.WPF
             catch (Exception ex)
             {
                 Debug.WriteLine($"{module} {ex.Message}");
-                using (var form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(_telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }

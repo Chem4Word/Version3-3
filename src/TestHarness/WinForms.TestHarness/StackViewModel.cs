@@ -43,7 +43,8 @@ namespace WinForms.TestHarness
                     ChemistryObject chemistry = new ChemistryObject();
                     Model clone = model.Copy();
 
-                    chemistry.Formula = clone.UnicodeFormula;
+                    chemistry.ConciseFormula = clone.ConciseFormula;
+                    chemistry.UnicodeFormula = clone.UnicodeFormula;
                     chemistry.Name = $"Mean Bond Length: {SafeDouble.AsString(clone.MeanBondLength)}";
 
                     chemistry.ChemicalNames.Add($"Molecular Weight: {SafeDouble.AsString4(clone.MolecularWeight)}");

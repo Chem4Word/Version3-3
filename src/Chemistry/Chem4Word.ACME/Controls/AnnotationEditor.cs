@@ -83,22 +83,27 @@ namespace Chem4Word.ACME.Controls
         //see https://thomaslevesque.com/2015/09/05/wpf-prevent-the-user-from-pasting-an-image-in-a-richtextbox/
         private void OnPasting_AnnotationEditor(object sender, DataObjectPastingEventArgs e)
         {
-            if (e.FormatToApply == DataFormats.Bitmap
-                || e.FormatToApply == DataFormats.Dib
-                || e.FormatToApply == DataFormats.FileDrop)
-            {
-                e.CancelCommand();
-            }
-            else if (e.FormatToApply == DataFormats.Rtf)
-            {
-                var plainText = e.DataObject.GetData(DataFormats.Text);
-                var dataObject = new DataObject();
-                if (plainText != null)
-                {
-                    dataObject.SetData(DataFormats.UnicodeText, plainText);
-                }
+            e.Handled = true;
 
-                e.DataObject = dataObject;
+            if (sender is AnnotationEditor)
+            {
+                if (e.FormatToApply == DataFormats.Bitmap
+                    || e.FormatToApply == DataFormats.Dib
+                    || e.FormatToApply == DataFormats.FileDrop)
+                {
+                    e.CancelCommand();
+                }
+                else if (e.FormatToApply == DataFormats.Rtf)
+                {
+                    var plainText = e.DataObject.GetData(DataFormats.Text);
+                    var dataObject = new DataObject();
+                    if (plainText != null)
+                    {
+                        dataObject.SetData(DataFormats.UnicodeText, plainText);
+                    }
+
+                    e.DataObject = dataObject;
+                }
             }
         }
 

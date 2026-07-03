@@ -24,6 +24,11 @@ namespace Chem4Word.Driver.Dummy
         public string BackupFolder { get; set; }
         public string FileName { get; set; }
 
+        public void UpdateMetaData(ChemistryDataObject chemistry)
+        {
+            Debugger.Break();
+        }
+
         public void StartTransaction()
         {
             Debugger.Break();

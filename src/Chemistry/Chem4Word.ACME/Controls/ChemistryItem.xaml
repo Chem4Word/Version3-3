@@ -145,7 +145,7 @@
                     d:IsLocked="True"
                     FontFamily="Segoe UI"
                     Foreground="{StaticResource Chem4WordBlue}"
-                    Text="{Binding Path=Formula}" />
+                    Text="{Binding Path=UnicodeFormula}" />
                 <Expander
                     Grid.Row="1"
                     MaxWidth="{Binding ElementName=LibraryTopGrid, Path=ActualWidth}"
@@ -196,7 +196,7 @@
                         d:IsLocked="True"
                         FontFamily="Segoe UI"
                         Foreground="{StaticResource Chem4WordBlue}"
-                        Text="{Binding Path=Formula}" />
+                        Text="{Binding Path=UnicodeFormula}" />
                 </Grid>
             </Grid>
             <!--  Top Panel for Catalogue Mode  -->
@@ -229,7 +229,7 @@
                         d:IsLocked="True"
                         FontFamily="Segoe UI"
                         Foreground="{StaticResource Chem4WordBlue}"
-                        Text="{Binding Path=Formula}" />
+                        Text="{Binding Path=UnicodeFormula}" />
                 </Grid>
                 <Expander
                     Grid.Row="1"

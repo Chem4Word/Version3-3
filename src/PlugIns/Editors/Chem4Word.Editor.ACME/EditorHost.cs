@@ -140,8 +140,6 @@ namespace Chem4Word.Editor.ACME
             StatusPanel.Label1Text = e.Message;
             StatusPanel.Label2Text = e.MolecularWeight;
             StatusPanel.Label3Text = e.Formula;
-
-            SetFormTitle(true, e.UniCodeFormula);
         }
 
         private void OnClick_Ok(object sender, EventArgs e)
@@ -210,8 +208,15 @@ namespace Chem4Word.Editor.ACME
             }
         }
 
-        private void OnClick_Save(object sender, EventArgs e)
+        private void OnTick_Timer1(object sender, EventArgs e)
         {
+            if (elementHost1.Child is Chem4Word.ACME.Editor acmeEditor)
+            {
+                if (acmeEditor.ActiveController?.Model != null)
+                {
+                    SetFormTitle(acmeEditor.IsDirty, acmeEditor.ActiveController.Model?.UnicodeFormula);
+                }
+            }
         }
     }
 }

@@ -30,6 +30,8 @@ namespace Chem4Word.UI.WPF
 
         public Chem4WordOptions SystemOptions { get; set; }
 
+        public bool LibrariesChanged { get; set; }
+
         public string ActiveTab { get; set; }
 
         public SettingsHost()
@@ -44,19 +46,26 @@ namespace Chem4Word.UI.WPF
             {
                 case "ok":
                     DialogResult = DialogResult.OK;
-                    if (elementHost1.Child is SettingsControl sc)
+                    if (elementHost1.Child is SettingsControl settingsControl1)
                     {
-                        if (sc.Dirty)
+                        LibrariesChanged = settingsControl1.LibrariesChanged;
+
+                        if (settingsControl1.Dirty)
                         {
-                            SystemOptions = sc.SystemOptions;
+                            SystemOptions = settingsControl1.SystemOptions;
                             SystemOptions.Save();
-                            sc.Dirty = false;
+                            settingsControl1.Dirty = false;
                         }
                         Hide();
                     }
                     break;
 
                 case "cancel":
+                    if (elementHost1.Child is SettingsControl settingsControl2)
+                    {
+                        LibrariesChanged = settingsControl2.LibrariesChanged;
+                    }
+
                     DialogResult = DialogResult.Cancel;
                     _closedInCode = true;
                     Hide();
@@ -69,12 +78,12 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
             try
             {
-                var sc = new SettingsControl();
-                elementHost1.Child = sc;
-                sc.TopLeft = TopLeft;
-                sc.SystemOptions = SystemOptions;
-                sc.ActiveTab = ActiveTab;
-                sc.OnButtonClick += OnClick_WpfButton;
+                SettingsControl settingsControl = new SettingsControl();
+                elementHost1.Child = settingsControl;
+                settingsControl.TopLeft = TopLeft;
+                settingsControl.SystemOptions = SystemOptions;
+                settingsControl.ActiveTab = ActiveTab;
+                settingsControl.OnButtonClick += OnClick_WpfButton;
 
                 using (new WaitCursor())
                 {
@@ -82,8 +91,8 @@ namespace Chem4Word.UI.WPF
                     {
                         Left = (int)TopLeft.X;
                         Top = (int)TopLeft.Y;
-                        var screen = Screen.FromControl(this);
-                        var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
+                        Screen screen = Screen.FromControl(this);
+                        Point sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                         Left = (int)sensible.X;
                         Top = (int)sensible.Y;
                     }
@@ -101,8 +110,10 @@ namespace Chem4Word.UI.WPF
         {
             if (!_closedInCode)
             {
-                if (elementHost1.Child is SettingsControl sc && sc.Dirty)
+                if (elementHost1.Child is SettingsControl settingsControl && settingsControl.Dirty)
                 {
+                    LibrariesChanged = settingsControl.LibrariesChanged;
+
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine("Do you wish to save your changes?");
                     sb.AppendLine("  Click 'Yes' to save your changes and exit.");
@@ -117,7 +128,7 @@ namespace Chem4Word.UI.WPF
                             break;
 
                         case DialogResult.Yes:
-                            SystemOptions = sc.SystemOptions;
+                            SystemOptions = settingsControl.SystemOptions;
                             SystemOptions.Save();
                             DialogResult = DialogResult.OK;
                             break;

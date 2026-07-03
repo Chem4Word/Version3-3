@@ -24,6 +24,8 @@ namespace IChem4Word.Contracts
 
         void UpdateChemistry(ChemistryDataObject chemistry);
 
+        void UpdateMetaData(ChemistryDataObject chemistry);
+
         void DeleteAllChemistry();
 
         void DeleteChemistryById(long id);

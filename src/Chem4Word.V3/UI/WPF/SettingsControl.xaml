@@ -590,7 +590,7 @@
                             d:IsLocked="True"
                             Orientation="Horizontal">
                             <StaticResource ResourceKey="BrowseFolder" />
-                            <TextBlock VerticalAlignment="Center" d:IsLocked="True">Select Folder</TextBlock>
+                            <TextBlock VerticalAlignment="Center" d:IsLocked="True">Select Libraries Folder</TextBlock>
                         </StackPanel>
                     </Button>
                     <ListView
@@ -706,7 +706,7 @@
                                     Data="M 20 14 H 14 V 20 H 10 V 14 H 4 V 10 H 10 V 4 H 14 V 10 H 20 V 14 Z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
-                                <TextBlock VerticalAlignment="Center" d:IsLocked="True">Add Library</TextBlock>
+                                <TextBlock VerticalAlignment="Center" d:IsLocked="True">Add Existing Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
@@ -729,7 +729,7 @@
                                     Data="M 15.05 18.59 L 21.84 18.59 L 21.5 23.81 L 20.77 30.21 L 25.95 27.87 L 31.83 25.71 L 33.98 32.37 L 28.09 34.01 L 22.31 34.99 L 23.89 36.48 L 25.76 38.45 L 27.92 40.91 L 30.38 43.85 L 24.75 47.84 L 21.79 43.46 L 18.33 37.76 L 16.65 40.87 L 15.07 43.58 L 13.6 45.91 L 12.23 47.84 L 6.7 43.85 L 9.23 40.78 L 11.37 38.29 L 13.12 36.35 L 14.48 34.99 L 3 32.37 L 5.16 25.71 L 8.63 26.98 L 11.59 28.16 L 14.04 29.25 L 15.98 30.26 L 15.59 26.35 L 15.3 23.1 L 15.12 20.51 L 15.05 18.59 Z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
-                                <TextBlock VerticalAlignment="Center" d:IsLocked="True">New Library</TextBlock>
+                                <TextBlock VerticalAlignment="Center" d:IsLocked="True">Create Empty Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
@@ -776,7 +776,7 @@
                                     Data="M 9 3 V 4 H 4 V 6 H 5 V 19 A 2 2 0 0 0 7 21 H 17 A 2 2 0 0 0 19 19 V 6 H 20 V 4 H 15 V 3 H 9 M 7 6 H 17 V 19 H 7 V 6 M 9 8 V 17 H 11 V 8 H 9 M 13 8 V 17 H 15 V 8 H 13 Z"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
-                                <TextBlock VerticalAlignment="Center" d:IsLocked="True">Remove Library</TextBlock>
+                                <TextBlock VerticalAlignment="Center" d:IsLocked="True">Remove Selected Library</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button
@@ -800,7 +800,7 @@
                                     Data="M 16.84 2.73 C 16.45 2.73 16.07 2.88 15.77 3.17 L 13.65 5.29 L 18.95 10.6 L 21.07 8.5 C 21.67 7.89 21.67 6.94 21.07 6.36 L 17.9 3.17 C 17.6 2.88 17.22 2.73 16.84 2.73 M 12.94 6 L 4.84 14.11 L 7.4 14.39 L 7.58 16.68 L 9.86 16.85 L 10.15 19.41 L 18.25 11.3 M 4.25 15.04 L 2.5 21.73 L 9.2 19.94 L 8.96 17.78 L 6.65 17.61 L 6.47 15.29"
                                     Fill="{StaticResource Chem4WordBlue}"
                                     Stretch="Uniform" />
-                                <TextBlock VerticalAlignment="Center" d:IsLocked="True">Edit Library</TextBlock>
+                                <TextBlock VerticalAlignment="Center" d:IsLocked="True">Edit Selected Library</TextBlock>
                             </StackPanel>
                         </Button>
                     </StackPanel>

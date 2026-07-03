@@ -17,7 +17,8 @@ namespace IChem4Word.Contracts.Dto
         public string DataType { get; set; }
 
         public string Name { get; set; }
-        public string Formula { get; set; }
+        public string ConciseFormula { get; set; }
+        public string UnicodeFormula { get; set; }
         public double MolWeight { get; set; }
 
         public List<ChemistryTagDataObject> Tags { get; set; } = new List<ChemistryTagDataObject>();

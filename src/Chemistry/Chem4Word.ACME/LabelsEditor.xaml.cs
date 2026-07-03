@@ -121,8 +121,8 @@ namespace Chem4Word.ACME
 
             if (EditedModel != null)
             {
-                OverallConciseFormulaPanel.Children.Clear();
-                OverallConciseFormulaPanel.Children.Add(TextBlockHelper.FromUnicode(EditedModel.UnicodeFormula));
+                OverallUnicodeFormulaPanel.Children.Clear();
+                OverallUnicodeFormulaPanel.Children.Add(TextBlockHelper.FromUnicode(EditedModel.UnicodeFormula));
 
                 TreeViewItem root = new TreeViewItem
                 {
@@ -131,9 +131,6 @@ namespace Chem4Word.ACME
                     Style = seed.Style,
                     ItemContainerStyle = seed.ItemContainerStyle,
                     Template = seed.Template,
-                    //DataContext = EditedModel,
-                    //HorizontalContentAlignment = HorizontalAlignment.Left,
-                    //VerticalContentAlignment = VerticalAlignment.Center
                 };
                 TreeView.Items.Add(root);
                 root.IsExpanded = true;

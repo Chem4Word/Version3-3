@@ -35,6 +35,7 @@
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.editor1 = new Chem4Word.ACME.Editor();
             this.StatusPanel = new Chem4Word.Core.UI.Controls.EditorHostStatusPanel();
+            this.Timer1 = new System.Windows.Forms.Timer(this.components);
             this.LayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,6 +84,12 @@
             this.StatusPanel.OnClickOkEventHandler += new System.EventHandler(this.OnClick_Ok);
             this.StatusPanel.OnClickCancelEventHandler += new System.EventHandler(this.OnClick_Cancel);
             // 
+            // Timer1
+            // 
+            this.Timer1.Enabled = true;
+            this.Timer1.Interval = 250;
+            this.Timer1.Tick += new System.EventHandler(this.OnTick_Timer1);
+            // 
             // EditorHost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -108,5 +115,6 @@
         private System.Windows.Forms.Integration.ElementHost elementHost1;
         private Chem4Word.ACME.Editor editor1;
         private Core.UI.Controls.EditorHostStatusPanel StatusPanel;
+        private System.Windows.Forms.Timer Timer1;
     }
 }

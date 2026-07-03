@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 
 namespace Chem4Word.Core.Helpers
 {

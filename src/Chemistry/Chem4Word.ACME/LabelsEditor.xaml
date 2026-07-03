@@ -38,7 +38,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel
-            x:Name="OverallConciseFormulaPanel"
+            x:Name="OverallUnicodeFormulaPanel"
             Grid.Row="0"
             Height="Auto"
             MinHeight="16"

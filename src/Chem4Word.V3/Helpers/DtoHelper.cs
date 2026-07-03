@@ -9,7 +9,6 @@ using Chem4Word.ACME.Models;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
-using Chem4Word.Model2.Formula;
 using IChem4Word.Contracts.Dto;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,41 +26,42 @@ namespace Chem4Word.Helpers
         /// <returns></returns>
         public static ChemistryDataObject CreateFromModel(Model model, string dataType)
         {
-            var dto = new ChemistryDataObject
+            ChemistryDataObject dto = new ChemistryDataObject
             {
                 DataType = dataType,
                 Name = model.QuickName,
-                Formula = model.ConciseFormula,
+                ConciseFormula = model.ConciseFormula,
+                UnicodeFormula = model.UnicodeFormula,
                 MolWeight = model.MolecularWeight
             };
 
             if (dataType.Equals("cml"))
             {
-                var cc = new CMLConverter();
+                CMLConverter cc = new CMLConverter();
                 dto.Chemistry = Encoding.UTF8.GetBytes(cc.Export(model));
             }
             else
             {
-                var pbc = new ProtocolBufferConverter();
+                ProtocolBufferConverter pbc = new ProtocolBufferConverter();
                 dto.Chemistry = pbc.Export(model);
             }
 
             // Lists of ChemistryNameDataObject for TreeView
-            foreach (var property in model.GetUniqueNames())
+            foreach (TextualProperty property in model.GetUniqueNames())
             {
-                var chemistryNameDataObject = CreateNamesFromModel(property);
+                ChemistryNameDataObject chemistryNameDataObject = CreateNamesFromModel(property);
                 dto.Names.Add(chemistryNameDataObject);
             }
 
-            foreach (var property in model.GetUniqueFormulae())
+            foreach (TextualProperty property in model.GetUniqueFormulae())
             {
-                var chemistryNameDataObject = CreateNamesFromModel(property);
+                ChemistryNameDataObject chemistryNameDataObject = CreateNamesFromModel(property);
                 dto.Formulae.Add(chemistryNameDataObject);
             }
 
-            foreach (var property in model.GetUniqueCaptions())
+            foreach (TextualProperty property in model.GetUniqueCaptions())
             {
-                var chemistryNameDataObject = CreateNamesFromModel(property);
+                ChemistryNameDataObject chemistryNameDataObject = CreateNamesFromModel(property);
                 dto.Captions.Add(chemistryNameDataObject);
             }
 
@@ -70,14 +70,14 @@ namespace Chem4Word.Helpers
             // Local Function
             ChemistryNameDataObject CreateNamesFromModel(TextualProperty textualProperty)
             {
-                var nameDataObject = new ChemistryNameDataObject
+                ChemistryNameDataObject nameDataObject = new ChemistryNameDataObject
                 {
                     Name = textualProperty.Value
                 };
 
                 if (textualProperty.FullType.Contains(":"))
                 {
-                    var parts = textualProperty.FullType.Split(':');
+                    string[] parts = textualProperty.FullType.Split(':');
                     nameDataObject.NameSpace = parts[0];
                     nameDataObject.Tag = parts[1];
                 }
@@ -93,11 +93,12 @@ namespace Chem4Word.Helpers
 
         public static ChemistryObject CreateFromDto(ChemistryDataObject chemistryDto)
         {
-            var obj = new ChemistryObject
+            ChemistryObject obj = new ChemistryObject
             {
                 Id = chemistryDto.Id,
                 Chemistry = chemistryDto.Chemistry,
-                Formula = FormulaHelper.ToUnicode(chemistryDto.Formula),
+                ConciseFormula = chemistryDto.ConciseFormula,
+                UnicodeFormula = chemistryDto.UnicodeFormula,
                 Name = chemistryDto.Name,
                 MolecularWeight = chemistryDto.MolWeight,
                 Tags = chemistryDto.Tags.Select(t => t.Text).ToList(),
@@ -109,11 +110,11 @@ namespace Chem4Word.Helpers
             };
 
             // List of captions and names to be shown inline in the custom UserControl ChemistryItem
-            var listOfNames = chemistryDto.Captions.Select(c => c.Name).ToList();
+            List<string> listOfNames = chemistryDto.Captions.Select(c => c.Name).ToList();
             listOfNames.AddRange(chemistryDto.Names.Select(t => t.Name).ToList());
 
             obj.ChemicalNames = new List<string>();
-            foreach (var name in listOfNames.Distinct())
+            foreach (string name in listOfNames.Distinct())
             {
                 // Is long enough, not a special string, not a number
                 if (name.Length > 3

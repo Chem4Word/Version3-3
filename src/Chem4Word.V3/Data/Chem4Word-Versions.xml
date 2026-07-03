@@ -12,8 +12,10 @@
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
-      <Change>...</Change>
-      <Change>...</Change>
+      <Change>Bug Fix: General - Unicode Formula in Title Bars</Change>
+      <Change>Bug Fix: Library Editor - On completion of editing the newly added structure should be selected</Change>
+      <Change>Bug Fix: Library Editor - Is sometimes overwriting user-assigned name</Change>
+      <Change>Bug Fix: Fix issue when pasting text into right hand panel of Library Editor</Change>
       <Change>Please note any previous beta versions V3.3.2 and below will cease to allow insertion or editing of chemistry</Change>
       <Change>If you like our product, please consider buying us a coffee at https://www.buymeacoffee.com/chem4word</Change>
       <Change>Please download Chem4Word-Setup.exe via https://www.chem4word.co.uk/download/ if you encounter any difficulties updating</Change>

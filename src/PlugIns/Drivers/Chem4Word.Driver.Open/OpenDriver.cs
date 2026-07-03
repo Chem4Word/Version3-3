@@ -112,6 +112,19 @@ namespace Chem4Word.Driver.Open
             return result;
         }
 
+        public void UpdateMetaData(ChemistryDataObject chemistry)
+        {
+            if (_transaction != null)
+            {
+                _library.UpdateChemistryCommand(_transaction.Connection, chemistry, true);
+            }
+            else
+            {
+                var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+                library.UpdateChemistry(chemistry, true);
+            }
+        }
+
         public void UpdateChemistry(ChemistryDataObject chemistry)
         {
             if (_transaction != null)

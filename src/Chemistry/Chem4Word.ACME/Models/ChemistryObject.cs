@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.Model2;
 using Chem4Word.Model2.Annotations;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
@@ -58,9 +59,9 @@ namespace Chem4Word.ACME.Models
 
             if (_chemistry is byte[] bytes)
             {
-                var pbc = new ProtocolBufferConverter();
-                var model = pbc.Import(bytes);
-                var cc = new CMLConverter();
+                ProtocolBufferConverter pbc = new ProtocolBufferConverter();
+                Model model = pbc.Import(bytes);
+                CMLConverter cc = new CMLConverter();
                 return cc.Export(model);
             }
 
@@ -81,21 +82,26 @@ namespace Chem4Word.ACME.Models
 
         public ChemistryDataObject ConvertToDto()
         {
-            var isByte = _chemistry is byte[];
+            bool isByte = _chemistry is byte[];
 
-            var chem = new ChemistryDataObject
+            ChemistryDataObject chem = new ChemistryDataObject
             {
                 Id = Id,
                 DataType = isByte ? "pbuff" : "cml",
                 Chemistry = isByte ? (byte[])_chemistry : Encoding.UTF8.GetBytes((string)_chemistry),
                 Name = Name,
-                Formula = Formula,
+                ConciseFormula = ConciseFormula,
+                UnicodeFormula = UnicodeFormula,
                 MolWeight = MolecularWeight,
                 Names = Names,
                 Formulae = Formulae,
                 Captions = Captions
             };
 
+            if (Name == UnicodeFormula || Name == ConciseFormula)
+            {
+                Debugger.Break();
+            }
             return chem;
         }
 
@@ -117,9 +123,11 @@ namespace Chem4Word.ACME.Models
         }
 
         /// <summary>
-        /// Formula of the structure
+        /// Concise Formula of the structure
         /// </summary>
-        public string Formula { get; set; }
+        public string ConciseFormula { get; set; }
+
+        public string UnicodeFormula { get; set; }
 
         private string _name;
 
@@ -132,7 +140,7 @@ namespace Chem4Word.ACME.Models
             set
             {
                 // Ensure that only strings are accepted here
-                var type = value.GetType().ToString();
+                string type = value.GetType().ToString();
                 if (type.Equals("System.String"))
                 {
                     _name = value;

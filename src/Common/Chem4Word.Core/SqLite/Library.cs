@@ -208,7 +208,8 @@ namespace Chem4Word.Core.SqLite
                                     Chemistry = (byte[])chemistry["chemistry"],
                                     DataType = chemistry["datatype"] as string,
                                     Name = chemistry["name"] as string,
-                                    Formula = chemistry["formula"] as string,
+                                    ConciseFormula = chemistry["formula"] as string,
+                                    UnicodeFormula = chemistry["unicodeformula"] as string,
                                     Names = GetChemicalNamesCommand(conn, id),
                                     Formulae = GetChemicalFormulaeCommand(conn, id),
                                     Captions = GetChemicalCaptionsCommand(conn, id),
@@ -347,9 +348,9 @@ namespace Chem4Word.Core.SqLite
             SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
             command.Parameters.Add("@blob", DbType.Binary, chemistry.Chemistry.Length).Value = chemistry.Chemistry;
             command.Parameters.Add("@name", DbType.String, chemistry.Name.Length).Value = chemistry.Name;
-            command.Parameters.Add("@formula", DbType.String, chemistry.Formula.Length).Value = chemistry.Formula;
+            command.Parameters.Add("@formula", DbType.String, chemistry.ConciseFormula.Length).Value = chemistry.ConciseFormula;
             command.Parameters.Add("@weight", DbType.Double).Value = chemistry.MolWeight;
-            command.Parameters.Add("@datatype", DbType.String, chemistry.Formula.Length).Value = chemistry.DataType;
+            command.Parameters.Add("@datatype", DbType.String, chemistry.DataType.Length).Value = chemistry.DataType;
 
             command.ExecuteNonQuery();
 
@@ -376,55 +377,77 @@ namespace Chem4Word.Core.SqLite
             return id;
         }
 
-        public void UpdateChemistry(ChemistryDataObject chemistry)
+        public void UpdateChemistry(ChemistryDataObject chemistry, bool metaDataOnly = false)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            _telemetry.Write(module, "Information", $"Updating Id:{chemistry.Id} Formula: {chemistry.Formula}; Name {chemistry.Name}");
+            _telemetry.Write(module, "Information",
+                             $"Updating Id:{chemistry.Id}{Environment.NewLine}Formula: {chemistry.UnicodeFormula}{Environment.NewLine}Name {chemistry.Name}");
 
             using (SQLiteConnection conn = LibraryConnection())
             {
-                UpdateChemistryCommand(conn, chemistry);
+                UpdateChemistryCommand(conn, chemistry, metaDataOnly);
             }
         }
 
-        public void UpdateChemistryCommand(SQLiteConnection conn, ChemistryDataObject chemistry)
+        public void UpdateChemistryCommand(SQLiteConnection conn, ChemistryDataObject chemistry, bool metaDataOnly = false)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("UPDATE GALLERY");
-            sb.AppendLine("SET Name = @name, Chemistry = @blob, Formula = @formula, MolWeight = @weight, DataType = @datatype");
-            sb.AppendLine("WHERE ID = @id");
-
-            SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
-            command.Parameters.Add("@id", DbType.Int64).Value = chemistry.Id;
-            command.Parameters.Add("@blob", DbType.Binary, chemistry.Chemistry.Length).Value = chemistry.Chemistry;
-            command.Parameters.Add("@name", DbType.String, chemistry.Name.Length).Value = chemistry.Name;
-            command.Parameters.Add("@formula", DbType.String, chemistry.Formula.Length).Value = chemistry.Formula;
-            command.Parameters.Add("@weight", DbType.Double).Value = chemistry.MolWeight;
-            command.Parameters.Add("@datatype", DbType.String, chemistry.DataType.Length).Value = chemistry.DataType;
-
-            command.ExecuteNonQuery();
-
-            DeleteNamesCommand(conn, chemistry.Id);
-            foreach (ChemistryNameDataObject name in chemistry.Names)
+            if (metaDataOnly)
             {
-                AddNameCommand(conn, name, chemistry.Id);
-            }
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("UPDATE GALLERY");
+                sb.AppendLine("SET Name = @name, Formula = @formula, UnicodeFormula = @unicodeFormula, MolWeight = @weight, DataType = @datatype");
+                sb.AppendLine("WHERE ID = @id");
 
-            DeleteFormulaeCommand(conn, chemistry.Id);
-            foreach (ChemistryNameDataObject formula in chemistry.Formulae)
+                SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
+                command.Parameters.Add("@id", DbType.Int64).Value = chemistry.Id;
+                command.Parameters.Add("@name", DbType.String, chemistry.Name.Length).Value = chemistry.Name;
+                command.Parameters.Add("@formula", DbType.String, chemistry.ConciseFormula.Length).Value = chemistry.ConciseFormula;
+                command.Parameters.Add("@unicodeFormula", DbType.String, chemistry.UnicodeFormula.Length).Value = chemistry.UnicodeFormula;
+                command.Parameters.Add("@weight", DbType.Double).Value = chemistry.MolWeight;
+                command.Parameters.Add("@datatype", DbType.String, chemistry.DataType.Length).Value = chemistry.DataType;
+
+                command.ExecuteNonQuery();
+            }
+            else
             {
-                AddFormulaCommand(conn, formula, chemistry.Id);
-            }
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("UPDATE GALLERY");
+                sb.AppendLine("SET Name = @name, Chemistry = @blob, Formula = @formula, UnicodeFormula = @unicodeFormula, MolWeight = @weight, DataType = @datatype");
+                sb.AppendLine("WHERE ID = @id");
 
-            DeleteCaptionsCommand(conn, chemistry.Id);
-            foreach (ChemistryNameDataObject caption in chemistry.Captions)
-            {
-                AddCaptionCommand(conn, caption, chemistry.Id);
-            }
+                SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
+                command.Parameters.Add("@id", DbType.Int64).Value = chemistry.Id;
+                command.Parameters.Add("@blob", DbType.Binary, chemistry.Chemistry.Length).Value = chemistry.Chemistry;
+                command.Parameters.Add("@name", DbType.String, chemistry.Name.Length).Value = chemistry.Name;
+                command.Parameters.Add("@formula", DbType.String, chemistry.ConciseFormula.Length).Value = chemistry.ConciseFormula;
+                command.Parameters.Add("@unicodeFormula", DbType.String, chemistry.UnicodeFormula.Length).Value = chemistry.UnicodeFormula;
+                command.Parameters.Add("@weight", DbType.Double).Value = chemistry.MolWeight;
+                command.Parameters.Add("@datatype", DbType.String, chemistry.DataType.Length).Value = chemistry.DataType;
 
-            //ToDo: [V3.3] Update/Replace :-
-            // chemistry.Tags
+                command.ExecuteNonQuery();
+
+                DeleteNamesCommand(conn, chemistry.Id);
+                foreach (ChemistryNameDataObject name in chemistry.Names)
+                {
+                    AddNameCommand(conn, name, chemistry.Id);
+                }
+
+                DeleteFormulaeCommand(conn, chemistry.Id);
+                foreach (ChemistryNameDataObject formula in chemistry.Formulae)
+                {
+                    AddFormulaCommand(conn, formula, chemistry.Id);
+                }
+
+                DeleteCaptionsCommand(conn, chemistry.Id);
+                foreach (ChemistryNameDataObject caption in chemistry.Captions)
+                {
+                    AddCaptionCommand(conn, caption, chemistry.Id);
+                }
+
+                //ToDo: [V3.3] Update/Replace :-
+                // chemistry.Tags
+            }
         }
 
         public ChemistryDataObject GetChemistryById(long id)
@@ -443,7 +466,8 @@ namespace Chem4Word.Core.SqLite
                             result.DataType = chemistry["datatype"] as string;
                             result.Chemistry = (byte[])chemistry["Chemistry"];
                             result.Name = chemistry["name"] as string;
-                            result.Formula = chemistry["formula"] as string;
+                            result.ConciseFormula = chemistry["formula"] as string;
+                            result.UnicodeFormula = chemistry["unicodeFormula"] as string;
 
                             // Handle new field(s) which might be null
                             string molWeight = chemistry["molweight"].ToString();
@@ -467,7 +491,7 @@ namespace Chem4Word.Core.SqLite
         private SQLiteDataReader GetChemistryByIdCommand(SQLiteConnection conn, long id)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("SELECT Id, Chemistry, Name, Formula, MolWeight, DataType");
+            sb.AppendLine("SELECT Id, Chemistry, Name, Formula, UnicodeFormula, MolWeight, DataType");
             sb.AppendLine("FROM Gallery");
             sb.AppendLine("WHERE ID = @id");
 
@@ -837,7 +861,7 @@ namespace Chem4Word.Core.SqLite
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("SELECT Id, Chemistry, Name, Formula, MolWeight, DataType");
+            sb.AppendLine("SELECT Id, Chemistry, Name, Formula, UnicodeFormula, MolWeight, DataType");
             sb.AppendLine("FROM Gallery");
             sb.AppendLine("ORDER BY Name");
 

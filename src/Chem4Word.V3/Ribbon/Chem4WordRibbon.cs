@@ -424,6 +424,8 @@ namespace Chem4Word
 
             using (var cursor = new WaitCursor())
             {
+                bool librariesChanged = false;
+
                 CloseLibraryTaskPane();
 
                 if (Globals.Chem4WordV3.EventsEnabled)
@@ -442,10 +444,11 @@ namespace Chem4Word
                         settingsHost.ActiveTab = tabName;
 
                         var dr = settingsHost.ShowDialog();
+                        librariesChanged = settingsHost.LibrariesChanged;
                         if (dr == DialogResult.OK)
                         {
                             Globals.Chem4WordV3.SystemOptions = settingsHost.SystemOptions.Clone();
-                            // Re create telemetry object as it may now be disabled
+                            // Re-create telemetry object as it may now be disabled
                             Globals.Chem4WordV3.Telemetry = new TelemetryWriter(
                                 Globals.Chem4WordV3.SystemOptions.TelemetryEnabled,
                                 Globals.Chem4WordV3.IsBeta,
@@ -454,6 +457,15 @@ namespace Chem4Word
                             {
                                 Globals.Chem4WordV3.Telemetry.Write(module, "Exception", string.Join(Environment.NewLine, settingsHost.SystemOptions.Errors));
                             }
+                        }
+
+                        if (librariesChanged)
+                        {
+                            Globals.Chem4WordV3.ListOfDetectedLibraries
+                                = new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
+                                    .GetListOfLibraries(silent: true);
+
+                            RefreshLibraryPane();
                         }
                     }
                     catch (Exception ex)
@@ -468,6 +480,26 @@ namespace Chem4Word
 
                     app.ActiveWindow.SetFocus();
                     app.Activate();
+                }
+            }
+        }
+
+        private void RefreshLibraryPane()
+        {
+            var app = Globals.Chem4WordV3.Application;
+
+            foreach (var taskPane in Globals.Chem4WordV3.CustomTaskPanes)
+            {
+                if (app.ActiveWindow == taskPane.Window && taskPane.Title == CoreConstants.LibraryTaskPaneTitle)
+                {
+                    ShowLibrary.Label = "Show";
+                    ShowLibrary.Checked = false;
+                    Globals.Chem4WordV3.LibraryState = false;
+
+                    if (taskPane.Control is LibraryHost host)
+                    {
+                        host.Refresh();
+                    }
                 }
             }
         }
@@ -2189,10 +2221,7 @@ namespace Chem4Word
                             {
                                 ShowLibrary.Checked = taskPane.Visible;
                             }
-                            //if (ShowLibrary.Checked)
-                            //{
-                            //    (taskPane.Control as LibraryHost)?.Refresh();
-                            //}
+
                             ShowLibrary.Label = ShowLibrary.Checked ? "Hide" : "Show";
                         }
                     }

@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorHost));
             this.LayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.StatusPanel = new Chem4Word.Core.UI.Controls.EditorHostStatusPanel();
+            this.Timer1 = new System.Windows.Forms.Timer(this.components);
             this.LayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,6 +84,12 @@
             this.StatusPanel.OnClickOkEventHandler += new System.EventHandler(this.OnClickOk_StatusPanel);
             this.StatusPanel.OnClickCancelEventHandler += new System.EventHandler(this.OnClickCancel_StatusPanel);
             // 
+            // Timer1
+            // 
+            this.Timer1.Enabled = true;
+            this.Timer1.Interval = 250;
+            this.Timer1.Tick += new System.EventHandler(this.OnTick_Timer1);
+            // 
             // EditorHost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -105,6 +113,7 @@
         private System.Windows.Forms.TableLayoutPanel LayoutPanel;
         private System.Windows.Forms.Integration.ElementHost elementHost1;
         private Chem4Word.Core.UI.Controls.EditorHostStatusPanel StatusPanel;
+        private System.Windows.Forms.Timer Timer1;
     }
 }
 
