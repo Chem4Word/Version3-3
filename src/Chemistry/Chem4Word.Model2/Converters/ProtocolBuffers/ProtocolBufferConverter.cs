@@ -45,6 +45,12 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             pbModel.ShowMolecularWeight = model.ShowMolecularWeight;
             pbModel.ShowMoleculeCaptions = model.ShowMoleculeCaptions;
 
+            pbModel.SubstanceName = model.SubstanceName;
+            foreach (string tag in model.SubstanceTags)
+            {
+                pbModel.SubstanceTags.Add(tag);
+            }
+
             //add annotations
             foreach (var ann in model.Annotations.Values)
             {
@@ -313,6 +319,19 @@ namespace Chem4Word.Model2.Converters.ProtocolBuffers
             if (protoBuffModel.ShowMoleculeCaptions.HasValue)
             {
                 result.ShowMoleculeCaptions = protoBuffModel.ShowMoleculeCaptions.Value;
+            }
+
+            if (!string.IsNullOrEmpty(protoBuffModel.SubstanceName))
+            {
+                result.SubstanceName = protoBuffModel.SubstanceName;
+            }
+            if (protoBuffModel.SubstanceTags.Any())
+            {
+                foreach (string tag in protoBuffModel.SubstanceTags)
+                {
+                    result.SubstanceTags.Add(tag);
+                }
+                result.SubstanceName = protoBuffModel.SubstanceName;
             }
 
             ImportMolecules(protoBuffModel, result, moleculeLookup);

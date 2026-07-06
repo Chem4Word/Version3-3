@@ -59,10 +59,10 @@ namespace Chem4Word.Library
                 ChemistryItems.Clear();
 
                 List<long> idsToUpdate = new List<long>();
-                List<ChemistryDataObject> dataObjects = _driver.GetAllChemistry();
+                List<ChemistryDataTransferObject> dataObjects = _driver.GetAllChemistry();
 
                 // Search for structures with missing MolWeights or Unicode Formula
-                foreach (ChemistryDataObject chemistryDto in dataObjects)
+                foreach (ChemistryDataTransferObject chemistryDto in dataObjects)
                 {
                     if (chemistryDto.MolWeight == 0.0
                         || string.IsNullOrEmpty(chemistryDto.UnicodeFormula))
@@ -82,7 +82,7 @@ namespace Chem4Word.Library
                     CMLConverter cmlConverter = new CMLConverter();
                     foreach (long id in idsToUpdate)
                     {
-                        ChemistryDataObject dto = dataObjects.FirstOrDefault(d => d.Id == id);
+                        ChemistryDataTransferObject dto = dataObjects.FirstOrDefault(d => d.Id == id);
                         if (dto != null)
                         {
                             ChemistryObject obj = DtoHelper.CreateFromDto(dto);
@@ -99,7 +99,7 @@ namespace Chem4Word.Library
                     dataObjects = _driver.GetAllChemistry();
                 }
 
-                foreach (ChemistryDataObject dto in dataObjects)
+                foreach (ChemistryDataTransferObject dto in dataObjects)
                 {
                     ChemistryObject obj = DtoHelper.CreateFromDto(dto);
                     ChemistryItems.Add(obj);

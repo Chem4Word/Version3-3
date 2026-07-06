@@ -560,7 +560,7 @@
                         Margin="5"
                         d:IsLocked="True"
                         PreviewTextInput="OnPreviewTextInput_SubstanceName"
-                        Text="{Binding Mode=TwoWay, Path=SelectedChemistryObject.Name}" />
+                        Text="{Binding Mode=TwoWay, Path=SelectedChemistryObject.SubstanceName}" />
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"

@@ -98,6 +98,9 @@ namespace Chem4Word.Model2
         public const string TagShowMoleculeGrouping = "showMoleculeGrouping";
         public const string TagSubstance = "substance";
         public const string TagSubstanceList = "substanceList";
+        public const string TagSubstanceName = "substanceName";
+        public const string TagSubstanceTags = "substanceTags";
+        public const string TagSubstanceTag = "substanceTag";
         public const string TagXmlPartGuid = "customXmlPartGuid";
         public const string ValueChem4WordCaption = "chem4word:Caption";
         public const string ValueChem4WordFormula = "chem4word:Formula";

@@ -80,7 +80,7 @@
     <Compile Include="DatabaseDetails.cs" />
     <Compile Include="Dto\ChemistryNameDataObject.cs" />
     <Compile Include="ListOfLibraries.cs" />
-    <Compile Include="Dto\ChemistryDataObject.cs" />
+    <Compile Include="Dto\ChemistryDataTransferObject.cs" />
     <Compile Include="Dto\ChemistryTagDataObject.cs" />
     <Compile Include="Dto\LibraryTagDataObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

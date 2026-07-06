@@ -19,17 +19,17 @@ namespace Chem4Word.Helpers
     public static class DtoHelper
     {
         /// <summary>
-        /// Creates a ChemistryDataObject from a model
+        /// Creates a ChemistryDataTransferObject from a model
         /// </summary>
         /// <param name="model"></param>
         /// <param name="dataType"></param>
         /// <returns></returns>
-        public static ChemistryDataObject CreateFromModel(Model model, string dataType)
+        public static ChemistryDataTransferObject CreateFromModel(Model model, string dataType)
         {
-            ChemistryDataObject dto = new ChemistryDataObject
+            ChemistryDataTransferObject dto = new ChemistryDataTransferObject
             {
                 DataType = dataType,
-                Name = model.QuickName,
+                SubstanceName = model.QuickName,
                 ConciseFormula = model.ConciseFormula,
                 UnicodeFormula = model.UnicodeFormula,
                 MolWeight = model.MolecularWeight
@@ -65,6 +65,19 @@ namespace Chem4Word.Helpers
                 dto.Captions.Add(chemistryNameDataObject);
             }
 
+            if (!string.IsNullOrEmpty(model.SubstanceName))
+            {
+                dto.SubstanceName = model.SubstanceName;
+            }
+
+            if (model.SubstanceTags.Any())
+            {
+                foreach (string tag in model.SubstanceTags)
+                {
+                    dto.Tags.Add(new ChemistryTagDataObject { Text = tag });
+                }
+            }
+
             return dto;
 
             // Local Function
@@ -91,7 +104,7 @@ namespace Chem4Word.Helpers
             }
         }
 
-        public static ChemistryObject CreateFromDto(ChemistryDataObject chemistryDto)
+        public static ChemistryObject CreateFromDto(ChemistryDataTransferObject chemistryDto)
         {
             ChemistryObject obj = new ChemistryObject
             {
@@ -99,7 +112,7 @@ namespace Chem4Word.Helpers
                 Chemistry = chemistryDto.Chemistry,
                 ConciseFormula = chemistryDto.ConciseFormula,
                 UnicodeFormula = chemistryDto.UnicodeFormula,
-                Name = chemistryDto.Name,
+                SubstanceName = chemistryDto.SubstanceName,
                 MolecularWeight = chemistryDto.MolWeight,
                 Tags = chemistryDto.Tags.Select(t => t.Text).ToList(),
 

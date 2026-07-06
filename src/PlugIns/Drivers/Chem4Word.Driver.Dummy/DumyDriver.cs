@@ -24,7 +24,7 @@ namespace Chem4Word.Driver.Dummy
         public string BackupFolder { get; set; }
         public string FileName { get; set; }
 
-        public void UpdateMetaData(ChemistryDataObject chemistry)
+        public void UpdateMetaData(ChemistryDataTransferObject chemistry)
         {
             Debugger.Break();
         }
@@ -62,16 +62,16 @@ namespace Chem4Word.Driver.Dummy
 
         public Dictionary<string, int> GetSubstanceNamesWithIds() => new Dictionary<string, int>();
 
-        public List<ChemistryDataObject> GetAllChemistry() => new List<ChemistryDataObject>();
+        public List<ChemistryDataTransferObject> GetAllChemistry() => new List<ChemistryDataTransferObject>();
 
-        public long AddChemistry(ChemistryDataObject chemistry) => -1;
+        public long AddChemistry(ChemistryDataTransferObject chemistry) => -1;
 
-        public void UpdateChemistry(ChemistryDataObject chemistry)
+        public void UpdateChemistry(ChemistryDataTransferObject chemistry)
         {
             Debugger.Break();
         }
 
-        public ChemistryDataObject GetChemistryById(long id) => new ChemistryDataObject();
+        public ChemistryDataTransferObject GetChemistryById(long id) => new ChemistryDataTransferObject();
 
         public void DeleteAllChemistry()
         {

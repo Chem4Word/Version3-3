@@ -45,10 +45,14 @@ namespace WinForms.TestHarness
 
                     chemistry.ConciseFormula = clone.ConciseFormula;
                     chemistry.UnicodeFormula = clone.UnicodeFormula;
-                    chemistry.Name = $"Mean Bond Length: {SafeDouble.AsString(clone.MeanBondLength)}";
+                    chemistry.SubstanceName = $"Mean Bond Length: {SafeDouble.AsString(clone.MeanBondLength)}";
 
                     chemistry.ChemicalNames.Add($"Molecular Weight: {SafeDouble.AsString4(clone.MolecularWeight)}");
-                    //chemistry.ChemicalNames.Add($"CustomXml Part Guid: {clone.CustomXmlPartGuid}");
+                    if (!string.IsNullOrEmpty(clone.CustomXmlPartGuid))
+                    {
+                        chemistry.ChemicalNames.Add($"CustomXml Part Guid: {clone.CustomXmlPartGuid}");
+                    }
+
                     chemistry.Chemistry = clone;
 
                     ChemistryItems.Add(chemistry);

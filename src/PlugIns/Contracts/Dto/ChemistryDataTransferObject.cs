@@ -9,14 +9,14 @@ using System.Collections.Generic;
 
 namespace IChem4Word.Contracts.Dto
 {
-    public class ChemistryDataObject
+    public class ChemistryDataTransferObject
     {
         public long Id { get; set; }
 
         public byte[] Chemistry { get; set; }
         public string DataType { get; set; }
 
-        public string Name { get; set; }
+        public string SubstanceName { get; set; }
         public string ConciseFormula { get; set; }
         public string UnicodeFormula { get; set; }
         public double MolWeight { get; set; }

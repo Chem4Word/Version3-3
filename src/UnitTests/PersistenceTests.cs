@@ -434,7 +434,6 @@ namespace Chem4WordUnitTests
         [InlineData("electron placement manual.xml")]
         public void PBuffRoundTripFromCml(string cmlFile)
         {
-            var sw = new Stopwatch();
             var cmlConverter = new CMLConverter();
             var protocolBufferConverter = new ProtocolBufferConverter();
 
@@ -443,16 +442,13 @@ namespace Chem4WordUnitTests
             var shortName = cmlFile.Replace(".xml", "");
 
             // Import from CML
-            sw.Start();
             var modelFromCml = cmlConverter.Import(cml);
-            sw.Stop();
             Assert.NotNull(modelFromCml);
 
             Debug.WriteLine($"{shortName} - Atoms: {modelFromCml.GetAllAtoms().Count} Bonds: {modelFromCml.GetAllBonds().Count}");
-            Debug.WriteLine($"{shortName} - Import from CML took {sw.ElapsedMilliseconds}ms");
 
             // Export to CML
-            sw.Reset();
+            var sw = new Stopwatch();
             sw.Start();
             cml = cmlConverter.Export(modelFromCml);
             sw.Stop();
@@ -473,17 +469,17 @@ namespace Chem4WordUnitTests
             // Import from Protocol Buffer byte[]
             sw.Reset();
             sw.Start();
-            var modelFromProtoBufer = protocolBufferConverter.Import(protocolBufferBytes);
+            var modelFromProtoBuffer = protocolBufferConverter.Import(protocolBufferBytes);
             sw.Stop();
 
             Debug.WriteLine($"{shortName} - Import from Protocol Buffer took {sw.ElapsedMilliseconds}ms");
 
             // A few sanity checks
-            Assert.NotNull(modelFromProtoBufer);
-            Assert.True(modelFromProtoBufer.Molecules.Count == modelFromCml.Molecules.Count);
-            Assert.True(modelFromProtoBufer.Molecules.First().Value.Atoms.Count == modelFromCml.Molecules.First().Value.Atoms.Count);
-            Assert.True(modelFromProtoBufer.Molecules.First().Value.Bonds.Count == modelFromCml.Molecules.First().Value.Bonds.Count);
-            Assert.True(modelFromProtoBufer.Molecules.First().Value.Rings.Count == modelFromCml.Molecules.First().Value.Rings.Count);
+            Assert.NotNull(modelFromProtoBuffer);
+            Assert.True(modelFromProtoBuffer.Molecules.Count == modelFromCml.Molecules.Count);
+            Assert.True(modelFromProtoBuffer.Molecules.First().Value.Atoms.Count == modelFromCml.Molecules.First().Value.Atoms.Count);
+            Assert.True(modelFromProtoBuffer.Molecules.First().Value.Bonds.Count == modelFromCml.Molecules.First().Value.Bonds.Count);
+            Assert.True(modelFromProtoBuffer.Molecules.First().Value.Rings.Count == modelFromCml.Molecules.First().Value.Rings.Count);
         }
     }
 }

@@ -182,10 +182,10 @@ namespace Chem4Word.Core.SqLite
         /// This is called via Microsoft.Office.Tools.CustomTaskPanel.OnVisibleChanged and Chem4Word.CustomRibbon.OnShowLibraryClick
         /// </summary>
         /// <returns></returns>
-        public List<ChemistryDataObject> GetAllChemistry()
+        public List<ChemistryDataTransferObject> GetAllChemistry()
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            List<ChemistryDataObject> results = new List<ChemistryDataObject>();
+            List<ChemistryDataTransferObject> results = new List<ChemistryDataTransferObject>();
 
             try
             {
@@ -202,12 +202,12 @@ namespace Chem4Word.Core.SqLite
                             while (chemistry.Read())
                             {
                                 long id = (long)chemistry["Id"];
-                                ChemistryDataObject dto = new ChemistryDataObject
+                                ChemistryDataTransferObject dto = new ChemistryDataTransferObject
                                 {
                                     Id = id,
                                     Chemistry = (byte[])chemistry["chemistry"],
                                     DataType = chemistry["datatype"] as string,
-                                    Name = chemistry["name"] as string,
+                                    SubstanceName = chemistry["name"] as string,
                                     ConciseFormula = chemistry["formula"] as string,
                                     UnicodeFormula = chemistry["unicodeformula"] as string,
                                     Names = GetChemicalNamesCommand(conn, id),
@@ -270,7 +270,7 @@ namespace Chem4Word.Core.SqLite
             return results;
         }
 
-        public long AddChemistry(ChemistryDataObject chemistry)
+        public long AddChemistry(ChemistryDataTransferObject chemistry)
         {
             long result;
 
@@ -336,7 +336,7 @@ namespace Chem4Word.Core.SqLite
             command.ExecuteNonQuery();
         }
 
-        public long AddChemistryCommand(SQLiteConnection conn, ChemistryDataObject chemistry)
+        public long AddChemistryCommand(SQLiteConnection conn, ChemistryDataTransferObject chemistry)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -347,7 +347,7 @@ namespace Chem4Word.Core.SqLite
 
             SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
             command.Parameters.Add("@blob", DbType.Binary, chemistry.Chemistry.Length).Value = chemistry.Chemistry;
-            command.Parameters.Add("@name", DbType.String, chemistry.Name.Length).Value = chemistry.Name;
+            command.Parameters.Add("@name", DbType.String, chemistry.SubstanceName.Length).Value = chemistry.SubstanceName;
             command.Parameters.Add("@formula", DbType.String, chemistry.ConciseFormula.Length).Value = chemistry.ConciseFormula;
             command.Parameters.Add("@weight", DbType.Double).Value = chemistry.MolWeight;
             command.Parameters.Add("@datatype", DbType.String, chemistry.DataType.Length).Value = chemistry.DataType;
@@ -371,18 +371,22 @@ namespace Chem4Word.Core.SqLite
                 AddCaptionCommand(conn, caption, id);
             }
 
-            //ToDo: [V3.3] Insert :-
-            // chemistry.Tags
+            List<string> tags = new List<string>();
+            foreach (ChemistryTagDataObject chemistryTag in chemistry.Tags)
+            {
+                tags.Add(chemistryTag.Text);
+            }
+            AddTagsCommand(conn, id, tags);
 
             return id;
         }
 
-        public void UpdateChemistry(ChemistryDataObject chemistry, bool metaDataOnly = false)
+        public void UpdateChemistry(ChemistryDataTransferObject chemistry, bool metaDataOnly = false)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             _telemetry.Write(module, "Information",
-                             $"Updating Id:{chemistry.Id}{Environment.NewLine}Formula: {chemistry.UnicodeFormula}{Environment.NewLine}Name {chemistry.Name}");
+                             $"Updating Id:{chemistry.Id}{Environment.NewLine}Formula: {chemistry.UnicodeFormula}{Environment.NewLine}SubstanceName: {chemistry.SubstanceName}");
 
             using (SQLiteConnection conn = LibraryConnection())
             {
@@ -390,7 +394,7 @@ namespace Chem4Word.Core.SqLite
             }
         }
 
-        public void UpdateChemistryCommand(SQLiteConnection conn, ChemistryDataObject chemistry, bool metaDataOnly = false)
+        public void UpdateChemistryCommand(SQLiteConnection conn, ChemistryDataTransferObject chemistry, bool metaDataOnly = false)
         {
             if (metaDataOnly)
             {
@@ -401,7 +405,7 @@ namespace Chem4Word.Core.SqLite
 
                 SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
                 command.Parameters.Add("@id", DbType.Int64).Value = chemistry.Id;
-                command.Parameters.Add("@name", DbType.String, chemistry.Name.Length).Value = chemistry.Name;
+                command.Parameters.Add("@name", DbType.String, chemistry.SubstanceName.Length).Value = chemistry.SubstanceName;
                 command.Parameters.Add("@formula", DbType.String, chemistry.ConciseFormula.Length).Value = chemistry.ConciseFormula;
                 command.Parameters.Add("@unicodeFormula", DbType.String, chemistry.UnicodeFormula.Length).Value = chemistry.UnicodeFormula;
                 command.Parameters.Add("@weight", DbType.Double).Value = chemistry.MolWeight;
@@ -419,7 +423,7 @@ namespace Chem4Word.Core.SqLite
                 SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
                 command.Parameters.Add("@id", DbType.Int64).Value = chemistry.Id;
                 command.Parameters.Add("@blob", DbType.Binary, chemistry.Chemistry.Length).Value = chemistry.Chemistry;
-                command.Parameters.Add("@name", DbType.String, chemistry.Name.Length).Value = chemistry.Name;
+                command.Parameters.Add("@name", DbType.String, chemistry.SubstanceName.Length).Value = chemistry.SubstanceName;
                 command.Parameters.Add("@formula", DbType.String, chemistry.ConciseFormula.Length).Value = chemistry.ConciseFormula;
                 command.Parameters.Add("@unicodeFormula", DbType.String, chemistry.UnicodeFormula.Length).Value = chemistry.UnicodeFormula;
                 command.Parameters.Add("@weight", DbType.Double).Value = chemistry.MolWeight;
@@ -445,14 +449,18 @@ namespace Chem4Word.Core.SqLite
                     AddCaptionCommand(conn, caption, chemistry.Id);
                 }
 
-                //ToDo: [V3.3] Update/Replace :-
-                // chemistry.Tags
+                List<string> tags = new List<string>();
+                foreach (ChemistryTagDataObject chemistryTag in chemistry.Tags)
+                {
+                    tags.Add(chemistryTag.Text);
+                }
+                AddTagsCommand(conn, chemistry.Id, tags);
             }
         }
 
-        public ChemistryDataObject GetChemistryById(long id)
+        public ChemistryDataTransferObject GetChemistryById(long id)
         {
-            ChemistryDataObject result = new ChemistryDataObject();
+            ChemistryDataTransferObject result = new ChemistryDataTransferObject();
 
             using (SQLiteConnection conn = LibraryConnection())
             {
@@ -465,7 +473,7 @@ namespace Chem4Word.Core.SqLite
                             result.Id = id;
                             result.DataType = chemistry["datatype"] as string;
                             result.Chemistry = (byte[])chemistry["Chemistry"];
-                            result.Name = chemistry["name"] as string;
+                            result.SubstanceName = chemistry["name"] as string;
                             result.ConciseFormula = chemistry["formula"] as string;
                             result.UnicodeFormula = chemistry["unicodeFormula"] as string;
 

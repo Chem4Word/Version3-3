@@ -17,7 +17,7 @@ namespace Chem4Word.Helpers
         {
             if (x is ChemistryObject xo && y is ChemistryObject yo)
             {
-                return string.Compare(xo.Name, yo.Name, StringComparison.OrdinalIgnoreCase);
+                return string.Compare(xo.SubstanceName, yo.SubstanceName, StringComparison.OrdinalIgnoreCase);
             }
 
             return 0;

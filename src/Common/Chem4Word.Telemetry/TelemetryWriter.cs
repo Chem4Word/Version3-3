@@ -244,16 +244,16 @@ namespace Chem4Word.Telemetry
             // Log Wmi Gathered Data
             lines = new List<string>();
 
-            lines.Add($"SYS: {_wmiHelper.Manufacturer} - {_wmiHelper.Model} - {_wmiHelper.SystemFamily}");
-            lines.Add($"CPU: {_wmiHelper.CpuName}");
-            lines.Add($"CPU Cores: {_wmiHelper.LogicalProcessors}");
-            lines.Add($"CPU Speed: {_wmiHelper.CpuSpeed}");
-            lines.Add($"Memory: {_wmiHelper.TotalPhysicalMemory}");
+            lines.Add($"SYS: {_wmiHelper?.Manufacturer} - {_wmiHelper?.Model} - {_wmiHelper?.SystemFamily}");
+            lines.Add($"CPU: {_wmiHelper?.CpuName}");
+            lines.Add($"CPU Cores: {_wmiHelper?.LogicalProcessors}");
+            lines.Add($"CPU Speed: {_wmiHelper?.CpuSpeed}");
+            lines.Add($"Memory: {_wmiHelper?.TotalPhysicalMemory}");
             lines.Add($"Booted Up: {_helper.LastBootUpTime}");
             lines.Add($"Logged In: {_helper.LastLoginTime}");
-            lines.Add($"Type: {_wmiHelper.ProductType}");
+            lines.Add($"Type: {_wmiHelper?.ProductType}");
 
-            if (!string.IsNullOrEmpty(_wmiHelper.AntiVirusStatus))
+            if (!string.IsNullOrEmpty(_wmiHelper?.AntiVirusStatus))
             {
                 lines.Add("AntiVirus:");
                 string[] products = _wmiHelper.AntiVirusStatus.Split(';');

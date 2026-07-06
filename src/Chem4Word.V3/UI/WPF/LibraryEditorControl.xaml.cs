@@ -45,6 +45,7 @@ using DataFormats = System.Windows.DataFormats;
 using DataObject = System.Windows.DataObject;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using ListBox = System.Windows.Controls.ListBox;
+using Model = Chem4Word.Model2.Model;
 using Size = System.Windows.Size;
 using TextBox = System.Windows.Controls.TextBox;
 using UserControl = System.Windows.Controls.UserControl;
@@ -208,6 +209,7 @@ namespace Chem4Word.UI.WPF
                     editor.Cml = beforeCml;
                     Model model = new CMLConverter().Import(beforeCml);
                     string beforeFormula = model.ConciseFormula;
+                    UpdateModelProperties(model, item);
                     if (string.IsNullOrEmpty(beforeCml))
                     {
                         RenderingOptions renderingOptions = new RenderingOptions
@@ -269,10 +271,12 @@ namespace Chem4Word.UI.WPF
                         }
 
                         long edited = 0;
-                        ChemistryDataObject dto = DtoHelper.CreateFromModel(afterModel, CoreConstants.DefaultSaveFormat);
+                        ChemistryDataTransferObject dto = DtoHelper.CreateFromModel(afterModel, CoreConstants.DefaultSaveFormat);
+                        UpdateModelProperties(model, dto);
+
                         if (item.Id == 0)
                         {
-                            dto.Name = afterModel.QuickName;
+                            dto.SubstanceName = afterModel.SubstanceName;
 
                             // Add New Chemistry
                             long newId = _driver.AddChemistry(dto);
@@ -288,11 +292,11 @@ namespace Chem4Word.UI.WPF
 
                             if (afterFormula.Equals(beforeFormula))
                             {
-                                dto.Name = item.Name;
+                                dto.SubstanceName = item.SubstanceName;
                             }
                             else
                             {
-                                dto.Name = afterModel.QuickName;
+                                dto.SubstanceName = afterModel.QuickName;
                             }
 
                             // Update Existing Chemistry
@@ -348,7 +352,7 @@ namespace Chem4Word.UI.WPF
             }
         }
 
-        private static void RefreshItemProperties(ChemistryObject item, ChemistryDataObject dto)
+        private static void RefreshItemProperties(ChemistryObject item, ChemistryDataTransferObject dto)
         {
             // Refresh other properties of the item
             item.Chemistry = dto.Chemistry;
@@ -356,34 +360,6 @@ namespace Chem4Word.UI.WPF
             item.Names = dto.Names;
             item.Formulae = dto.Formulae;
             item.Captions = dto.Captions;
-        }
-
-        public void UpdateStatusBar()
-        {
-            StringBuilder sb = new StringBuilder();
-            if (DataContext is LibraryEditorViewModel controller)
-            {
-                int items = controller.ChemistryItems.Count;
-
-                if (SearchBox.Text.Length == 0)
-                {
-                    sb.Append($"Showing all {items} items");
-                }
-                else
-                {
-                    sb.Append($"Showing {_filteredItems} from {items}");
-                }
-
-                if (_checkedItems > 0)
-                {
-                    sb.Append($" ({_checkedItems} checked)");
-                }
-                StatusBar.Text = sb.ToString();
-            }
-            else
-            {
-                StatusBar.Text = string.Empty;
-            }
         }
 
         private void OnValueChanged_Slider(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -629,7 +605,7 @@ namespace Chem4Word.UI.WPF
                                   if (ci is ChemistryObject item)
                                   {
                                       string queryString = searchFor.ToUpper();
-                                      if (item.Name.ToUpper().Contains(queryString)
+                                      if (item.SubstanceName.ToUpper().Contains(queryString)
                                           || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString))
                                           || item.Tags.Any(n => n.ToUpper().Contains(queryString)))
                                       {
@@ -703,9 +679,9 @@ namespace Chem4Word.UI.WPF
                             CMLConverter cmlConverter = new CMLConverter();
                             Model afterModel = cmlConverter.Import(editLabelsHost.Cml);
 
-                            ChemistryDataObject dto = DtoHelper.CreateFromModel(afterModel, CoreConstants.DefaultSaveFormat);
+                            ChemistryDataTransferObject dto = DtoHelper.CreateFromModel(afterModel, CoreConstants.DefaultSaveFormat);
                             dto.Id = item.Id;
-                            dto.Name = item.Name;
+                            UpdateModelProperties(afterModel, dto);
 
                             // Save to database
                             _driver.UpdateChemistry(dto);
@@ -895,7 +871,7 @@ namespace Chem4Word.UI.WPF
 
                                             model.Relabel(true);
 
-                                            ChemistryDataObject dto = DtoHelper.CreateFromModel(model, CoreConstants.DefaultSaveFormat);
+                                            ChemistryDataTransferObject dto = DtoHelper.CreateFromModel(model, CoreConstants.DefaultSaveFormat);
                                             _driver.AddChemistry(dto);
                                         }
 
@@ -991,7 +967,7 @@ namespace Chem4Word.UI.WPF
                 Cancel.Visibility = Visibility.Visible;
                 Cancel.IsEnabled = true;
 
-                List<ChemistryDataObject> dto = _driver.GetAllChemistry();
+                List<ChemistryDataTransferObject> dto = _driver.GetAllChemistry();
                 int total = dto.Count;
                 if (total > 0)
                 {
@@ -1005,7 +981,7 @@ namespace Chem4Word.UI.WPF
                     ProtocolBufferConverter protocolBufferConverter = new ProtocolBufferConverter();
                     _driver.StartTransaction();
 
-                    foreach (ChemistryDataObject obj in dto)
+                    foreach (ChemistryDataTransferObject obj in dto)
                     {
                         progress++;
                         ShowProgress(progress, $"Structure #{obj.Id} [{progress}/{total}]");
@@ -1019,6 +995,8 @@ namespace Chem4Word.UI.WPF
                         {
                             model = protocolBufferConverter.Import(obj.Chemistry);
                         }
+
+                        UpdateModelProperties(model, obj);
 
                         if (!string.IsNullOrEmpty(Globals.Chem4WordV3.Helper.MachineId))
                         {
@@ -1037,25 +1015,25 @@ namespace Chem4Word.UI.WPF
                             model.ReLabelGuids();
                             model.Relabel(true);
 
-                            ChemistryDataObject chemistryDataObject = DtoHelper.CreateFromModel(model, obj.DataType);
-                            chemistryDataObject.Id = obj.Id;
+                            ChemistryDataTransferObject chemistryDataTransferObject = DtoHelper.CreateFromModel(model, obj.DataType);
+                            chemistryDataTransferObject.Id = obj.Id;
 
-                            foreach (ChemistryNameDataObject formula in chemistryDataObject.Formulae)
+                            foreach (ChemistryNameDataObject formula in chemistryDataTransferObject.Formulae)
                             {
                                 formula.ChemistryId = obj.Id;
                             }
 
-                            foreach (ChemistryNameDataObject name in chemistryDataObject.Names)
+                            foreach (ChemistryNameDataObject name in chemistryDataTransferObject.Names)
                             {
                                 name.ChemistryId = obj.Id;
                             }
 
-                            foreach (ChemistryNameDataObject caption in chemistryDataObject.Captions)
+                            foreach (ChemistryNameDataObject caption in chemistryDataTransferObject.Captions)
                             {
                                 caption.ChemistryId = obj.Id;
                             }
 
-                            _driver.UpdateChemistry(chemistryDataObject);
+                            _driver.UpdateChemistry(chemistryDataTransferObject);
 
                             updated++;
                         }
@@ -1138,7 +1116,7 @@ namespace Chem4Word.UI.WPF
                             int exported = 0;
                             int progress = 0;
 
-                            List<ChemistryDataObject> dto = _driver.GetAllChemistry();
+                            List<ChemistryDataTransferObject> dto = _driver.GetAllChemistry();
                             int total = dto.Count;
                             if (total > 0)
                             {
@@ -1147,7 +1125,7 @@ namespace Chem4Word.UI.WPF
                                 CMLConverter cmlConverter = new CMLConverter();
                                 ProtocolBufferConverter protocolBufferConverter = new ProtocolBufferConverter();
 
-                                foreach (ChemistryDataObject obj in dto)
+                                foreach (ChemistryDataTransferObject obj in dto)
                                 {
                                     progress++;
                                     ShowProgress(progress, $"Structure #{obj.Id} [{progress}/{total}]");
@@ -1162,13 +1140,15 @@ namespace Chem4Word.UI.WPF
                                         model = protocolBufferConverter.Import(obj.Chemistry);
                                     }
 
+                                    UpdateModelProperties(model, obj);
+
                                     string filename = Path.Combine(browser.SelectedPath,
                                                                    FileHelper.SuggestedFileName(
                                                                        new Dictionary<string, string>
                                                                        {
                                                                            { "Id", $"{obj.Id:000000000}" },
                                                                            { "Formula", model.ConciseFormula },
-                                                                           { "QuickName", model.QuickName }
+                                                                           { "QuickName", model.SubstanceName },
                                                                        }))
                                                       + ".cml";
 
@@ -1353,6 +1333,54 @@ namespace Chem4Word.UI.WPF
             _cancelRequested = true;
 
             _telemetry.Write(module, "Information", "Initiating cancel of Property Calculations");
+        }
+
+        public void UpdateStatusBar()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (DataContext is LibraryEditorViewModel controller)
+            {
+                int items = controller.ChemistryItems.Count;
+
+                if (SearchBox.Text.Length == 0)
+                {
+                    sb.Append($"Showing all {items} items");
+                }
+                else
+                {
+                    sb.Append($"Showing {_filteredItems} from {items}");
+                }
+
+                if (_checkedItems > 0)
+                {
+                    sb.Append($" ({_checkedItems} checked)");
+                }
+                StatusBar.Text = sb.ToString();
+            }
+            else
+            {
+                StatusBar.Text = string.Empty;
+            }
+        }
+
+        private void UpdateModelProperties(Model model, ChemistryObject item)
+        {
+            model.SubstanceName = item.SubstanceName;
+
+            foreach (string tag in item.Tags)
+            {
+                model.SubstanceTags.Add(tag);
+            }
+        }
+
+        private void UpdateModelProperties(Model model, ChemistryDataTransferObject dto)
+        {
+            model.SubstanceName = dto.SubstanceName;
+
+            foreach (ChemistryTagDataObject tag in dto.Tags)
+            {
+                model.SubstanceTags.Add(tag.Text);
+            }
         }
     }
 }

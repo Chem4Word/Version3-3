@@ -31,7 +31,7 @@ namespace Chem4Word.Driver.Open
         public void StartTransaction()
         {
             _library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
-            var connection = _library.LibraryConnection();
+            SQLiteConnection connection = _library.LibraryConnection();
             _transaction = connection.BeginTransaction();
         }
 
@@ -39,11 +39,11 @@ namespace Chem4Word.Driver.Open
         {
             if (_transaction != null)
             {
-                var conn = _transaction.Connection;
+                SQLiteConnection conn = _transaction.Connection;
                 _transaction.Commit();
 
 #if DEBUG
-                var command = new SQLiteCommand("VACUUM", conn);
+                SQLiteCommand command = new SQLiteCommand("VACUUM", conn);
                 command.ExecuteNonQuery();
 #endif
 
@@ -59,7 +59,7 @@ namespace Chem4Word.Driver.Open
         {
             if (_transaction != null)
             {
-                var conn = _transaction.Connection;
+                SQLiteConnection conn = _transaction.Connection;
                 _transaction.Rollback();
 
                 conn.Close();
@@ -79,23 +79,23 @@ namespace Chem4Word.Driver.Open
 
         public DatabaseFileProperties GetDatabaseFileProperties(string fileName)
         {
-            var library = new Library(Telemetry, fileName, BackupFolder, TopLeft);
+            Library library = new Library(Telemetry, fileName, BackupFolder, TopLeft);
             return library.Database;
         }
 
         public Dictionary<string, int> GetSubstanceNamesWithIds()
         {
-            var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+            Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
             return library.GetSubstanceNamesWithIds();
         }
 
-        public List<ChemistryDataObject> GetAllChemistry()
+        public List<ChemistryDataTransferObject> GetAllChemistry()
         {
-            var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+            Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
             return library.GetAllChemistry();
         }
 
-        public long AddChemistry(ChemistryDataObject chemistry)
+        public long AddChemistry(ChemistryDataTransferObject chemistry)
         {
             long result = -1;
 
@@ -105,14 +105,14 @@ namespace Chem4Word.Driver.Open
             }
             else
             {
-                var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+                Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
                 result = library.AddChemistry(chemistry);
             }
 
             return result;
         }
 
-        public void UpdateMetaData(ChemistryDataObject chemistry)
+        public void UpdateMetaData(ChemistryDataTransferObject chemistry)
         {
             if (_transaction != null)
             {
@@ -120,12 +120,12 @@ namespace Chem4Word.Driver.Open
             }
             else
             {
-                var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+                Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
                 library.UpdateChemistry(chemistry, true);
             }
         }
 
-        public void UpdateChemistry(ChemistryDataObject chemistry)
+        public void UpdateChemistry(ChemistryDataTransferObject chemistry)
         {
             if (_transaction != null)
             {
@@ -133,20 +133,20 @@ namespace Chem4Word.Driver.Open
             }
             else
             {
-                var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+                Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
                 library.UpdateChemistry(chemistry);
             }
         }
 
-        public ChemistryDataObject GetChemistryById(long id)
+        public ChemistryDataTransferObject GetChemistryById(long id)
         {
-            var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+            Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
             return library.GetChemistryById(id);
         }
 
         public void DeleteAllChemistry()
         {
-            var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+            Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
             library.DeleteAllChemistry();
         }
 
@@ -158,20 +158,20 @@ namespace Chem4Word.Driver.Open
             }
             else
             {
-                var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+                Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
                 library.DeleteChemistryById(id);
             }
         }
 
         public void AddTags(long id, List<string> tags)
         {
-            var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+            Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
             library.AddTags(id, tags);
         }
 
         public List<LibraryTagDataObject> GetAllTags()
         {
-            var library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
+            Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
             return library.GetAllTags();
         }
     }

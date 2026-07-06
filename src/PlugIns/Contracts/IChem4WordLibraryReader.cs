@@ -16,9 +16,9 @@ namespace IChem4Word.Contracts
 
         Dictionary<string, int> GetSubstanceNamesWithIds();
 
-        List<ChemistryDataObject> GetAllChemistry();
+        List<ChemistryDataTransferObject> GetAllChemistry();
 
-        ChemistryDataObject GetChemistryById(long id);
+        ChemistryDataTransferObject GetChemistryById(long id);
 
         List<LibraryTagDataObject> GetAllTags();
     }

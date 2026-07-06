@@ -80,48 +80,6 @@ namespace Chem4Word.ACME.Models
             }
         }
 
-        public ChemistryDataObject ConvertToDto()
-        {
-            bool isByte = _chemistry is byte[];
-
-            ChemistryDataObject chem = new ChemistryDataObject
-            {
-                Id = Id,
-                DataType = isByte ? "pbuff" : "cml",
-                Chemistry = isByte ? (byte[])_chemistry : Encoding.UTF8.GetBytes((string)_chemistry),
-                Name = Name,
-                ConciseFormula = ConciseFormula,
-                UnicodeFormula = UnicodeFormula,
-                MolWeight = MolecularWeight,
-                Names = Names,
-                Formulae = Formulae,
-                Captions = Captions
-            };
-
-            if (Name == UnicodeFormula || Name == ConciseFormula)
-            {
-                Debugger.Break();
-            }
-            return chem;
-        }
-
-        private void Save()
-        {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
-            try
-            {
-                if (_driver != null)
-                {
-                    _driver.UpdateChemistry(ConvertToDto());
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                Debugger.Break();
-            }
-        }
-
         /// <summary>
         /// Concise Formula of the structure
         /// </summary>
@@ -129,22 +87,23 @@ namespace Chem4Word.ACME.Models
 
         public string UnicodeFormula { get; set; }
 
-        private string _name;
+        private string _substanceName;
 
         /// <summary>
         /// Name of the structure
         /// </summary>
-        public string Name
+        public string SubstanceName
         {
-            get => _name;
+            get => _substanceName;
             set
             {
                 // Ensure that only strings are accepted here
                 string type = value.GetType().ToString();
                 if (type.Equals("System.String"))
                 {
-                    _name = value;
-                    if (!Initializing)
+                    string lastName = _substanceName;
+                    _substanceName = value;
+                    if (!Initializing && lastName != _substanceName)
                     {
                         Save();
                     }
@@ -203,6 +162,75 @@ namespace Chem4Word.ACME.Models
             {
                 _tags = value;
                 OnPropertyChanged();
+            }
+        }
+
+        public ChemistryDataTransferObject ConvertToDto()
+        {
+            bool isByte = _chemistry is byte[];
+
+            Model model;
+            if (isByte)
+            {
+                ProtocolBufferConverter converter = new ProtocolBufferConverter();
+                model = converter.Import((byte[])Chemistry);
+                UpdateProperties();
+                Chemistry = converter.Export(model);
+            }
+            else
+            {
+                CMLConverter converter = new CMLConverter();
+                model = converter.Import((string)Chemistry);
+                UpdateProperties();
+                Chemistry = converter.Export(model);
+            }
+
+            if (SubstanceName == UnicodeFormula || SubstanceName == ConciseFormula)
+            {
+                Debugger.Break();
+            }
+
+            ChemistryDataTransferObject chem = new ChemistryDataTransferObject
+            {
+                Id = Id,
+                DataType = isByte ? "pbuff" : "cml",
+                Chemistry = isByte ? (byte[])_chemistry : Encoding.UTF8.GetBytes((string)_chemistry),
+                SubstanceName = SubstanceName,
+                ConciseFormula = ConciseFormula,
+                UnicodeFormula = UnicodeFormula,
+                MolWeight = MolecularWeight,
+                Names = Names,
+                Formulae = Formulae,
+                Captions = Captions
+            };
+
+            return chem;
+
+            void UpdateProperties()
+            {
+                model.SubstanceName = SubstanceName;
+
+                foreach (string tag in Tags)
+                {
+                    model.SubstanceTags.Add(tag);
+                }
+            }
+        }
+
+        private void Save()
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            try
+            {
+                if (_driver != null)
+                {
+                    _driver.UpdateChemistry(ConvertToDto());
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                Debugger.Break();
             }
         }
 

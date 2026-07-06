@@ -23,22 +23,22 @@ namespace Chem4Word.Model2.Converters.CML
     {
         public Model Import(object data, List<string> protectedLabels = null, bool relabel = true)
         {
-            var newModel = new Model();
+            Model newModel = new Model();
 
             if (data != null)
             {
-                var cml = (string)data;
+                string cml = (string)data;
 
-                if (CanImport(cml, out var reason))
+                if (CanImport(cml, out string reason))
                 {
                     if (cml.Contains("http://www.chemaxon.com") || cml.Contains("<MDocument>"))
                     {
                         // Strip all xml namespaces to make it easier to process
                         cml = RemoveNamespaces(cml);
 
-                        var temp = XDocument.Parse(cml);
+                        XDocument temp = XDocument.Parse(cml);
 
-                        var mol = temp.Descendants(ModelConstants.TagMolecule).FirstOrDefault();
+                        XElement mol = temp.Descendants(ModelConstants.TagMolecule).FirstOrDefault();
 
                         if (mol != null)
                         {
@@ -60,7 +60,7 @@ namespace Chem4Word.Model2.Converters.CML
                     XElement explicitC = CMLHelper.GetExplicitCarbonTag(root);
                     if (explicitC != null
                         && !string.IsNullOrEmpty(explicitC.Value)
-                        && bool.TryParse(explicitC.Value, out var result1))
+                        && bool.TryParse(explicitC.Value, out bool result1))
                     {
                         newModel.ExplicitC = result1;
                     }
@@ -117,6 +117,21 @@ namespace Chem4Word.Model2.Converters.CML
                         newModel.CustomXmlPartGuid = customXmlPartGuid.Value;
                     }
 
+                    // Only import if set
+                    XElement substanceName = CMLHelper.GetSubstanceName(root);
+                    if (substanceName != null && !string.IsNullOrEmpty(substanceName.Value))
+                    {
+                        newModel.SubstanceName = substanceName.Value;
+                    }
+
+                    // Only import if set
+                    List<XElement> substanceTags = CMLHelper.GetSubstanceTags(root);
+                    foreach (XElement tag in substanceTags)
+                    {
+                        newModel.SubstanceTags.Add(tag.Value);
+                    }
+
+                    // Now import the molecules
                     List<XElement> moleculeElements = CMLHelper.GetMolecules(root);
 
                     foreach (XElement meElement in moleculeElements)
@@ -194,9 +209,9 @@ namespace Chem4Word.Model2.Converters.CML
 
                     #region Fix any annotations without SymbolSize set
 
-                    var symbolSize = Math.Round(newModel.MeanBondLength / 5.0) * 5;
+                    double symbolSize = Math.Round(newModel.MeanBondLength / 5.0) * 5;
 
-                    foreach (var annotation in newModel.Annotations.Values)
+                    foreach (Annotation annotation in newModel.Annotations.Values)
                     {
                         if (annotation.SymbolSize == 0)
                         {
@@ -221,9 +236,9 @@ namespace Chem4Word.Model2.Converters.CML
         private bool CanImport(string cml, out string reason)
         {
             reason = "";
-            var result = true;
+            bool result = true;
 
-            var contents = cml.ToUpper();
+            string contents = cml.ToUpper();
 
             // https://chemapps.stolaf.edu/iupac/cdx/sdk/IntroExampleSimple.htm
             if (contents.Contains("<CDXML") && contents.Contains("</CDXML>"))
@@ -248,7 +263,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private Annotation GetAnnotation(XElement cmlElement)
         {
-            var newAnnotation = new Annotation();
+            Annotation newAnnotation = new Annotation();
 
             string xaml = cmlElement.CreateNavigator().InnerXml;
             if (!string.IsNullOrEmpty(xaml))
@@ -331,11 +346,11 @@ namespace Chem4Word.Model2.Converters.CML
         {
             RelabelIfRequired();
 
-            var selectedFormat = model.Molecules.Count > 1
+            CmlFormat selectedFormat = model.Molecules.Count > 1
                 ? CmlFormat.Default :
                 format;
 
-            var xd = new XDocument();
+            XDocument xd = new XDocument();
             XElement root = null;
 
             switch (selectedFormat)
@@ -349,6 +364,7 @@ namespace Chem4Word.Model2.Converters.CML
                         root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagXmlPartGuid, model.CustomXmlPartGuid));
                     }
 
+                    // Top Level settings
                     root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagExplicitC, model.ExplicitC));
                     root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagExplicitH, model.ExplicitH));
                     root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowColouredAtoms, model.ShowColouredAtoms));
@@ -357,15 +373,26 @@ namespace Chem4Word.Model2.Converters.CML
                     root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowMolecularWeight, model.ShowMolecularWeight));
                     root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowMoleculeCaptions, model.ShowMoleculeCaptions));
 
+                    // Substance Name and Tags (originating from a library)
+                    if (!string.IsNullOrEmpty(model.SubstanceName))
+                    {
+                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagSubstanceName, model.SubstanceName));
+                    }
+
+                    if (model.SubstanceTags.Any())
+                    {
+                        root.Add(GetXElement(model.SubstanceTags));
+                    }
+
                     // Build document
-                    foreach (var molecule in model.Molecules.Values)
+                    foreach (Molecule molecule in model.Molecules.Values)
                     {
                         root.Add(GetMoleculeElement(molecule));
                     }
 
                     if (model.HasReactions)
                     {
-                        foreach (var scheme in model.ReactionSchemes.Values)
+                        foreach (ReactionScheme scheme in model.ReactionSchemes.Values)
                         {
                             root.Add(GetXElement(scheme));
                         }
@@ -373,7 +400,7 @@ namespace Chem4Word.Model2.Converters.CML
 
                     if (model.HasAnnotations)
                     {
-                        foreach (var annotation in model.Annotations.Values)
+                        foreach (Annotation annotation in model.Annotations.Values)
                         {
                             root.Add(GetXElement(annotation));
                         }
@@ -413,16 +440,16 @@ namespace Chem4Word.Model2.Converters.CML
                     root = new XElement(CMLNamespaces.chemaxion + ModelConstants.NSCML);
 
                     // Build document structure
-                    var mDocument = new XElement(CMLNamespaces.chemaxion + "MDocument");
+                    XElement mDocument = new XElement(CMLNamespaces.chemaxion + "MDocument");
                     root.Add(mDocument);
-                    var mChemicalStructure = new XElement(CMLNamespaces.chemaxion + "MChemicalStruct");
+                    XElement mChemicalStructure = new XElement(CMLNamespaces.chemaxion + "MChemicalStruct");
                     mDocument.Add(mChemicalStructure);
 
                     // Import the molecule
                     mChemicalStructure.Add(GetMoleculeElement(model.Molecules.Values.First(), format));
 
                     // Correct the namespaces of the imported molecule
-                    foreach (var element in mChemicalStructure.Descendants())
+                    foreach (XElement element in mChemicalStructure.Descendants())
                     {
                         element.Name = CMLNamespaces.chemaxion + element.Name.LocalName;
                     }
@@ -444,7 +471,7 @@ namespace Chem4Word.Model2.Converters.CML
             // Local Function
             void RelabelIfRequired()
             {
-                var relabelRequired = false;
+                bool relabelRequired = false;
 
                 // Handle case where id's are null
                 foreach (Molecule molecule in model.Molecules.Values)
@@ -509,27 +536,38 @@ namespace Chem4Word.Model2.Converters.CML
             }
         }
 
+        private XElement GetXElement(List<string> tags)
+        {
+            XElement element = new XElement(CMLNamespaces.c4w + ModelConstants.TagSubstanceTags);
+            foreach (string tag in tags)
+            {
+                element.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagSubstanceTag, tag));
+            }
+
+            return element;
+        }
+
         private XElement GetXElement(ElectronPusher electronPusher)
         {
-            var firstControlPoint = PointHelper.AsCMLString(electronPusher.FirstControlPoint);
-            var secondControlPoint = PointHelper.AsCMLString(electronPusher.SecondControlPoint);
+            string firstControlPoint = PointHelper.AsCMLString(electronPusher.FirstControlPoint);
+            string secondControlPoint = PointHelper.AsCMLString(electronPusher.SecondControlPoint);
 
             if (electronPusher.StartChemistry != null && electronPusher.EndChemistries.Any())
             {
-                var startChemistryPath = electronPusher.StartChemistry.Path;
-                var endChemistriesAsString = electronPusher.EndChemistriesAsString();
-                var result = new XElement(CMLNamespaces.c4w + ModelConstants.TagElectronPusher,
-                                          new XAttribute(ModelConstants.AttributeId, electronPusher.Id),
-                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstChemistryRef,
-                                                         startChemistryPath),
-                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondChemistryRefs,
-                                                         endChemistriesAsString),
-                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint,
-                                                         firstControlPoint),
-                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint,
-                                                         secondControlPoint),
-                                          new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType,
-                                                         electronPusher.PusherType.ToString())
+                string startChemistryPath = electronPusher.StartChemistry.Path;
+                string endChemistriesAsString = electronPusher.EndChemistriesAsString();
+                XElement result = new XElement(CMLNamespaces.c4w + ModelConstants.TagElectronPusher,
+                                               new XAttribute(ModelConstants.AttributeId, electronPusher.Id),
+                                               new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstChemistryRef,
+                                                              startChemistryPath),
+                                               new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondChemistryRefs,
+                                                              endChemistriesAsString),
+                                               new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrFirstControlPoint,
+                                                              firstControlPoint),
+                                               new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrSecondControlPoint,
+                                                              secondControlPoint),
+                                               new XAttribute(CMLNamespaces.c4w + ModelConstants.AttrElectronPusherType,
+                                                              electronPusher.PusherType.ToString())
                 );
                 return result;
             }
@@ -542,7 +580,7 @@ namespace Chem4Word.Model2.Converters.CML
         // <cml:label id="m1.l1" dictRef="chem4word:Caption "value="C19"/>
         private XElement GetCaptionXElement(TextualProperty label)
         {
-            var result = new XElement(CMLNamespaces.cml + ModelConstants.TagLabel);
+            XElement result = new XElement(CMLNamespaces.cml + ModelConstants.TagLabel);
 
             if (label.Id != null)
             {
@@ -562,7 +600,7 @@ namespace Chem4Word.Model2.Converters.CML
         // <cml:name id="m1.n1" dictRef="chem4word:Synonym">m1.n1</cml:name>
         private XElement GetNameXElement(TextualProperty name)
         {
-            var result = new XElement(CMLNamespaces.cml + ModelConstants.TagName, name.Value);
+            XElement result = new XElement(CMLNamespaces.cml + ModelConstants.TagName, name.Value);
 
             if (name.Id != null)
             {
@@ -626,7 +664,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private XElement GetMoleculeElement(Molecule mol, CmlFormat format = CmlFormat.Default)
         {
-            var molElement = new XElement(CMLNamespaces.cml + ModelConstants.TagMolecule, new XAttribute(ModelConstants.AttributeId, mol.Id));
+            XElement molElement = new XElement(CMLNamespaces.cml + ModelConstants.TagMolecule, new XAttribute(ModelConstants.AttributeId, mol.Id));
 
             if (format == CmlFormat.Default)
             {
@@ -704,7 +742,7 @@ namespace Chem4Word.Model2.Converters.CML
                 if (mol.Atoms.Count > 0)
                 {
                     // Add atomArray element, then add atoms to it
-                    var aaElement = new XElement(CMLNamespaces.cml + ModelConstants.TagAtomArray);
+                    XElement aaElement = new XElement(CMLNamespaces.cml + ModelConstants.TagAtomArray);
                     foreach (Atom atom in mol.Atoms.Values)
                     {
                         aaElement.Add(GetXElement(atom));
@@ -715,7 +753,7 @@ namespace Chem4Word.Model2.Converters.CML
                 if (mol.Bonds.Count > 0)
                 {
                     // Add bondArray element, then add bonds to it
-                    var baElement = new XElement(CMLNamespaces.cml + ModelConstants.TagBondArray);
+                    XElement baElement = new XElement(CMLNamespaces.cml + ModelConstants.TagBondArray);
                     foreach (Bond bond in mol.Bonds)
                     {
                         baElement.Add(GetXElement(bond, format));
@@ -729,18 +767,18 @@ namespace Chem4Word.Model2.Converters.CML
 
         private XElement GetXElement(Bond bond, CmlFormat format = CmlFormat.Default)
         {
-            var order = bond.Order;
+            string order = bond.Order;
             if (format != CmlFormat.Default
                 && bond.OrderValue != null)
             {
                 order = bond.OrderValue.Value.ToString(CultureInfo.InvariantCulture);
             }
 
-            var result = new XElement(CMLNamespaces.cml + ModelConstants.TagBond,
-                                      new XAttribute(ModelConstants.AttributeId, bond.Id),
-                                      new XAttribute(ModelConstants.AttributeAtomRefs2, $"{bond.StartAtom.Id} {bond.EndAtom.Id}"),
-                                      new XAttribute(ModelConstants.AttributeOrder, order),
-                                      GetStereoXElement(bond));
+            XElement result = new XElement(CMLNamespaces.cml + ModelConstants.TagBond,
+                                           new XAttribute(ModelConstants.AttributeId, bond.Id),
+                                           new XAttribute(ModelConstants.AttributeAtomRefs2, $"{bond.StartAtom.Id} {bond.EndAtom.Id}"),
+                                           new XAttribute(ModelConstants.AttributeOrder, order),
+                                           GetStereoXElement(bond));
 
             if (bond.ExplicitPlacement != null)
             {
@@ -752,8 +790,8 @@ namespace Chem4Word.Model2.Converters.CML
 
         private XElement GetXElement(ReactionScheme scheme)
         {
-            var rsElement = new XElement(CMLNamespaces.cml + ModelConstants.TagReactionScheme,
-                                         new XAttribute(ModelConstants.AttributeId, scheme.Id));
+            XElement rsElement = new XElement(CMLNamespaces.cml + ModelConstants.TagReactionScheme,
+                                              new XAttribute(ModelConstants.AttributeId, scheme.Id));
             if (scheme.Reactions.Any())
             {
                 foreach (Reaction reaction in scheme.Reactions.Values)
@@ -766,10 +804,10 @@ namespace Chem4Word.Model2.Converters.CML
 
         private XElement GetXElement(Reaction reaction)
         {
-            var reactionElement = new XElement(CMLNamespaces.cml + ModelConstants.TagReaction,
-                                               new XAttribute(ModelConstants.AttributeId, reaction.Id),
-                                               new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeArrowHead, PointHelper.AsCMLString(reaction.HeadPoint)),
-                                               new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeArrowTail, PointHelper.AsCMLString(reaction.TailPoint)));
+            XElement reactionElement = new XElement(CMLNamespaces.cml + ModelConstants.TagReaction,
+                                                    new XAttribute(ModelConstants.AttributeId, reaction.Id),
+                                                    new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeArrowHead, PointHelper.AsCMLString(reaction.HeadPoint)),
+                                                    new XAttribute(CMLNamespaces.c4w + ModelConstants.AttributeArrowTail, PointHelper.AsCMLString(reaction.TailPoint)));
 
             switch (reaction.ReactionType)
             {
@@ -810,7 +848,7 @@ namespace Chem4Word.Model2.Converters.CML
             //do the reagents and conditions
             if (!string.IsNullOrEmpty(reaction.ReagentText) && !XAMLHelper.IsEmptyDocument(reaction.ReagentText))
             {
-                var reagentText = new XElement(CMLNamespaces.c4w + ModelConstants.TagReagentText);
+                XElement reagentText = new XElement(CMLNamespaces.c4w + ModelConstants.TagReagentText);
                 XElement reagentTextElement = XElement.Parse(reaction.ReagentText);
                 AddXAMLNamespaces(reagentTextElement);
                 reagentText.Add(reagentTextElement);
@@ -818,7 +856,7 @@ namespace Chem4Word.Model2.Converters.CML
             }
             if (!string.IsNullOrEmpty(reaction.ConditionsText) && !XAMLHelper.IsEmptyDocument(reaction.ConditionsText))
             {
-                var conditionsText = new XElement(CMLNamespaces.c4w + ModelConstants.TagConditionsText);
+                XElement conditionsText = new XElement(CMLNamespaces.c4w + ModelConstants.TagConditionsText);
                 XElement conditionsTextElement = XElement.Parse(reaction.ConditionsText);
                 AddXAMLNamespaces(conditionsTextElement);
                 conditionsText.Add(conditionsTextElement);
@@ -828,8 +866,8 @@ namespace Chem4Word.Model2.Converters.CML
             //do the reactants and products
             if (reaction.Reactants.Any())
             {
-                var reactantListElement = new XElement(CMLNamespaces.cml + ModelConstants.TagReactantList);
-                foreach (var reactant in reaction.Reactants.Values)
+                XElement reactantListElement = new XElement(CMLNamespaces.cml + ModelConstants.TagReactantList);
+                foreach (Molecule reactant in reaction.Reactants.Values)
                 {
                     XElement reactantElement = new XElement(CMLNamespaces.cml + ModelConstants.TagReactant, new XAttribute(CMLNamespaces.cml + ModelConstants.AttributeRef, reactant.Id));
                     reactantListElement.Add(reactantElement);
@@ -839,8 +877,8 @@ namespace Chem4Word.Model2.Converters.CML
 
             if (reaction.Products.Any())
             {
-                var productListElement = new XElement(CMLNamespaces.cml + ModelConstants.TagProductList);
-                foreach (var product in reaction.Products.Values)
+                XElement productListElement = new XElement(CMLNamespaces.cml + ModelConstants.TagProductList);
+                foreach (Molecule product in reaction.Products.Values)
                 {
                     XElement productElement = new XElement(CMLNamespaces.cml + ModelConstants.TagProduct, new XAttribute(CMLNamespaces.cml + ModelConstants.AttributeRef, product.Id));
                     productListElement.Add(productElement);
@@ -853,7 +891,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private XElement GetXElement(Atom atom)
         {
-            var elementType = "";
+            string elementType = "";
             bool atomIsElement = true;
 
             Element element = null;
@@ -872,11 +910,11 @@ namespace Chem4Word.Model2.Converters.CML
                 atomIsElement = false;
             }
 
-            var result = new XElement(CMLNamespaces.cml + ModelConstants.TagAtom,
-                                      new XAttribute(ModelConstants.AttributeId, atom.Id),
-                                      new XAttribute(ModelConstants.AttributeElementType, elementType),
-                                      new XAttribute(ModelConstants.AttributeX2, SafeDouble.AsCMLString(atom.Position.X)),
-                                      new XAttribute(ModelConstants.AttributeY2, SafeDouble.AsCMLString(atom.Position.Y))
+            XElement result = new XElement(CMLNamespaces.cml + ModelConstants.TagAtom,
+                                           new XAttribute(ModelConstants.AttributeId, atom.Id),
+                                           new XAttribute(ModelConstants.AttributeElementType, elementType),
+                                           new XAttribute(ModelConstants.AttributeX2, SafeDouble.AsCMLString(atom.Position.X)),
+                                           new XAttribute(ModelConstants.AttributeY2, SafeDouble.AsCMLString(atom.Position.Y))
             );
 
             if (atomIsElement)
@@ -950,7 +988,7 @@ namespace Chem4Word.Model2.Converters.CML
         // <cml:formula id="m1.f1" convention="chemspider:Smiles" inline="m1.f1" concise="C 6 H 14 Li 1 N 1" />
         private XElement GetXElement(TextualProperty f, string concise)
         {
-            var result = new XElement(CMLNamespaces.cml + ModelConstants.TagFormula);
+            XElement result = new XElement(CMLNamespaces.cml + ModelConstants.TagFormula);
 
             if (f.Id != null)
             {
@@ -978,7 +1016,7 @@ namespace Chem4Word.Model2.Converters.CML
         // <cml:formula id="m1.f0" concise="C 6 H 14 Li 1 N 1" />
         private XElement GetXElement(string concise, string molId)
         {
-            var result = new XElement(CMLNamespaces.cml + ModelConstants.TagFormula);
+            XElement result = new XElement(CMLNamespaces.cml + ModelConstants.TagFormula);
 
             if (concise != null)
             {
@@ -991,7 +1029,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private XElement GetXElement(Annotation annotation)
         {
-            var result = new XElement(CMLNamespaces.c4w + ModelConstants.TagAnnotation);
+            XElement result = new XElement(CMLNamespaces.c4w + ModelConstants.TagAnnotation);
             if (annotation != null)
             {
                 if (!string.IsNullOrEmpty(annotation.Xaml) && !XAMLHelper.IsEmptyDocument(annotation.Xaml))
@@ -1041,7 +1079,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private static Molecule GetMolecule(XElement cmlElement)
         {
-            var molecule = new Molecule();
+            Molecule molecule = new Molecule();
 
             string showBracketsValue = cmlElement.Attribute(CMLNamespaces.c4w + ModelConstants.AttributeShowMoleculeBrackets)?.Value;
             if (!string.IsNullOrEmpty(showBracketsValue))
@@ -1090,7 +1128,7 @@ namespace Chem4Word.Model2.Converters.CML
             molecule.Warnings = new List<string>();
 
             // Task 736 - Handle ChemDraw 19.1 cml variant
-            var childMolecules = new List<XElement>();
+            List<XElement> childMolecules = new List<XElement>();
             if (cmlElement.Document?.Root != null
                 && cmlElement.Document.Root.Name.LocalName != ModelConstants.TagMolecule)
             {
@@ -1110,7 +1148,7 @@ namespace Chem4Word.Model2.Converters.CML
                 newMol.Parent = molecule;
             }
 
-            var reverseAtomLookup = new Dictionary<string, Guid>();
+            Dictionary<string, Guid> reverseAtomLookup = new Dictionary<string, Guid>();
             foreach (XElement atomElement in atomElements)
             {
                 Atom newAtom = GetAtom(atomElement);
@@ -1134,17 +1172,17 @@ namespace Chem4Word.Model2.Converters.CML
                 }
 
                 // Check for duplicate bond
-                var duplicates = (from b in molecule.Bonds
-                                  where b.StartAtomInternalId == newBond.StartAtomInternalId && b.EndAtomInternalId == newBond.EndAtomInternalId
-                                      || b.EndAtomInternalId == newBond.StartAtomInternalId && b.StartAtomInternalId == newBond.EndAtomInternalId
-                                  select b).Any();
+                bool duplicates = (from b in molecule.Bonds
+                                   where b.StartAtomInternalId == newBond.StartAtomInternalId && b.EndAtomInternalId == newBond.EndAtomInternalId
+                                         || b.EndAtomInternalId == newBond.StartAtomInternalId && b.StartAtomInternalId == newBond.EndAtomInternalId
+                                   select b).Any();
                 if (duplicates)
                 {
                     molecule.Errors.Add($"Duplicate bond {newBond.Id}: atoms [{bondElement.Attribute("atomRefs2").Value}] are already connected by a bond.");
                 }
 
                 // Check for bond with same start and end atom
-                var invalid = newBond.StartAtomInternalId == newBond.EndAtomInternalId;
+                bool invalid = newBond.StartAtomInternalId == newBond.EndAtomInternalId;
                 if (!invalid)
                 {
                     molecule.AddBond(newBond);
@@ -1215,7 +1253,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private static Atom GetAtom(XElement cmlElement)
         {
-            var atom = new Atom();
+            Atom atom = new Atom();
 
             atom.Messages = new List<string>();
             string atomLabel = CMLHelper.GetId(cmlElement);
@@ -1271,7 +1309,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private static Bond GetBond(XElement cmlElement, Dictionary<string, Guid> reverseAtomLookup)
         {
-            var bond = new Bond();
+            Bond bond = new Bond();
 
             string[] atomRefs = cmlElement.Attribute(ModelConstants.AttributeAtomRefs2)?.Value.Split(' ');
             if (atomRefs?.Length == 2)
@@ -1315,7 +1353,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private static ReactionScheme GetReactionScheme(XElement cmlElement, Model newModel)
         {
-            var scheme = new ReactionScheme();
+            ReactionScheme scheme = new ReactionScheme();
             string idValue = cmlElement.Attribute(ModelConstants.AttributeId)?.Value;
             if (!string.IsNullOrEmpty(idValue))
             {
@@ -1333,7 +1371,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private static Reaction GetReaction(XElement cmlElement, Model model)
         {
-            var reaction = new Reaction();
+            Reaction reaction = new Reaction();
             string idValue = cmlElement.Attribute(ModelConstants.AttributeId)?.Value;
             if (!string.IsNullOrEmpty(idValue))
             {
@@ -1398,14 +1436,14 @@ namespace Chem4Word.Model2.Converters.CML
 
             //text boxes that go above and below the arrow
             XElement reagentElement = cmlElement.Element(CMLNamespaces.c4w + ModelConstants.TagReagentText);
-            var reagentText = reagentElement?.ToString();
+            string reagentText = reagentElement?.ToString();
             if (!string.IsNullOrEmpty(reagentText))
             {
                 reaction.ReagentText = reagentElement.CreateNavigator().InnerXml;
             }
 
             XElement conditionsElement = cmlElement.Element(CMLNamespaces.c4w + ModelConstants.TagConditionsText);
-            var conditionsText = conditionsElement?.ToString();
+            string conditionsText = conditionsElement?.ToString();
             if (!string.IsNullOrEmpty(conditionsText))
             {
                 reaction.ConditionsText = conditionsElement.CreateNavigator().InnerXml;
@@ -1415,7 +1453,7 @@ namespace Chem4Word.Model2.Converters.CML
             XElement reactantListElement = cmlElement.Element(CMLNamespaces.cml + ModelConstants.TagReactantList);
             if (reactantListElement != null)
             {
-                foreach (var reactantElement in reactantListElement.Elements(CMLNamespaces.cml + ModelConstants.TagReactant))
+                foreach (XElement reactantElement in reactantListElement.Elements(CMLNamespaces.cml + ModelConstants.TagReactant))
                 {
                     if (reactantElement.Attribute(CMLNamespaces.cml + ModelConstants.AttributeRef) != null)
                     {
@@ -1430,7 +1468,7 @@ namespace Chem4Word.Model2.Converters.CML
             XElement productListElement = cmlElement.Element(CMLNamespaces.cml + ModelConstants.TagProductList);
             if (productListElement != null)
             {
-                foreach (var productElement in productListElement.Elements(CMLNamespaces.cml + ModelConstants.TagProduct))
+                foreach (XElement productElement in productListElement.Elements(CMLNamespaces.cml + ModelConstants.TagProduct))
                 {
                     if (productElement.Attribute(CMLNamespaces.cml + ModelConstants.AttributeRef) != null)
                     {
@@ -1447,7 +1485,7 @@ namespace Chem4Word.Model2.Converters.CML
 
         private static Molecule GetParticipant(XElement participant, Model model)
         {
-            foreach (var molecule in model.Molecules.Values)
+            foreach (Molecule molecule in model.Molecules.Values)
             {
                 if (molecule.Id == participant.Attribute(CMLNamespaces.cml + ModelConstants.AttributeRef).Value)
                 {
@@ -1461,7 +1499,7 @@ namespace Chem4Word.Model2.Converters.CML
         // <cml:formula id="m1.f0" concise="C 6 H 14 Li 1 N 1" />
         private static TextualProperty GetFormula(XElement cmlElement)
         {
-            var formula = new TextualProperty();
+            TextualProperty formula = new TextualProperty();
 
             if (cmlElement.Attribute(ModelConstants.AttributeId) != null)
             {
@@ -1499,7 +1537,7 @@ namespace Chem4Word.Model2.Converters.CML
                 string dictrefValue = cmlElement.Attribute(ModelConstants.AttributeDictRef)?.Value;
                 if (dictrefValue != null && dictrefValue.Equals(ModelConstants.ValueChem4WordCaption))
                 {
-                    var result = new TextualProperty
+                    TextualProperty result = new TextualProperty
                     {
                         FullType = ModelConstants.ValueChem4WordCaption
                     };
@@ -1525,7 +1563,7 @@ namespace Chem4Word.Model2.Converters.CML
         // <cml:name id="m1.n1" dictRef="chem4word:Synonym">m1.n1</cml:name>
         private static TextualProperty GetName(XElement cmlElement)
         {
-            var name = new TextualProperty
+            TextualProperty name = new TextualProperty
             {
                 Id = cmlElement.Attribute(ModelConstants.AttributeId)?.Value
             };

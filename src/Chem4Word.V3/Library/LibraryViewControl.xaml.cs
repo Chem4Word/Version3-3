@@ -253,7 +253,7 @@ namespace Chem4Word.Library
                                           var item = ci as ChemistryObject;
                                           var queryString = searchFor.ToUpper();
                                           return item != null
-                                                 && (item.Name.ToUpper().Contains(queryString)
+                                                 && (item.SubstanceName.ToUpper().Contains(queryString)
                                                      || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString)));
                                       };
                     }

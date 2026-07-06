@@ -20,11 +20,11 @@ namespace IChem4Word.Contracts
 
         void CreateNewDatabase(string filename);
 
-        long AddChemistry(ChemistryDataObject chemistry);
+        long AddChemistry(ChemistryDataTransferObject chemistry);
 
-        void UpdateChemistry(ChemistryDataObject chemistry);
+        void UpdateChemistry(ChemistryDataTransferObject chemistry);
 
-        void UpdateMetaData(ChemistryDataObject chemistry);
+        void UpdateMetaData(ChemistryDataTransferObject chemistry);
 
         void DeleteAllChemistry();
 

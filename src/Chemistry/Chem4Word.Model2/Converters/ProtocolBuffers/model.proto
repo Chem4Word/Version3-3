@@ -19,7 +19,7 @@ import "google/protobuf/wrappers.proto";
 
 message PBModel
 {
-	map<string,PBMolecule> Molecules = 1;
+	map<string, PBMolecule> Molecules = 1;
 	map<string, PBReactionScheme> ReactionSchemes = 2;
 	map<string, PBAnnotation> Annotations = 3;
 	google.protobuf.BoolValue ExplicitC = 4;
@@ -31,4 +31,6 @@ message PBModel
 	google.protobuf.BoolValue ShowMoleculeCaptions = 9;
 	google.protobuf.BoolValue ShowMoleculeGrouping = 10;
 	map<string, PBElectronPusher> ElectronPushers = 11;
+	string SubstanceName = 12;
+	repeated string SubstanceTags = 13;
 }

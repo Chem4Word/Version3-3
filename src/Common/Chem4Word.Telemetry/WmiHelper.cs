@@ -298,14 +298,14 @@ namespace Chem4Word.Telemetry
 
         private void GetWin32ComputerSystemProductData()
         {
-            var fields = new List<string> { "UUID" };
+            List<string> fields = new List<string> { "UUID" };
 
-            var sysObjects = GetWmiObjects(@"root\CIMV2", "Win32_ComputerSystemProduct", fields);
+            ManagementObjectCollection sysObjects = GetWmiObjects(@"root\CIMV2", "Win32_ComputerSystemProduct", fields);
 
-            foreach (var managementBaseObject in sysObjects)
+            foreach (ManagementBaseObject managementBaseObject in sysObjects)
             {
-                var mgtObject = (ManagementObject)managementBaseObject;
-                foreach (var field in fields)
+                ManagementObject mgtObject = (ManagementObject)managementBaseObject;
+                foreach (string field in fields)
                 {
                     switch (field)
                     {
@@ -351,14 +351,14 @@ namespace Chem4Word.Telemetry
 
         private void GetWin32ComputerSystemData()
         {
-            var fields = new List<string> { "Manufacturer", "Model", "SystemFamily", "TotalPhysicalMemory" };
+            List<string> fields = new List<string> { "Manufacturer", "Model", "SystemFamily", "TotalPhysicalMemory" };
 
-            var sysObjects = GetWmiObjects(@"root\CIMV2", "Win32_ComputerSystem", fields);
+            ManagementObjectCollection sysObjects = GetWmiObjects(@"root\CIMV2", "Win32_ComputerSystem", fields);
 
-            foreach (var managementBaseObject in sysObjects)
+            foreach (ManagementBaseObject managementBaseObject in sysObjects)
             {
-                var mgtObject = (ManagementObject)managementBaseObject;
-                foreach (var field in fields)
+                ManagementObject mgtObject = (ManagementObject)managementBaseObject;
+                foreach (string field in fields)
                 {
                     switch (field)
                     {
@@ -398,8 +398,8 @@ namespace Chem4Word.Telemetry
                         case "TotalPhysicalMemory":
                             try
                             {
-                                var temp = ObjectAsString(mgtObject[field]);
-                                var memory = ulong.Parse(temp);
+                                string temp = ObjectAsString(mgtObject[field]);
+                                ulong memory = ulong.Parse(temp);
                                 _totalPhysicalMemory = SafeDouble.AsString0((double)memory / (1024 * 1024 * 1024)) + "GiB";
                             }
                             catch
@@ -414,14 +414,14 @@ namespace Chem4Word.Telemetry
 
         private void GetWin32ProcessorData()
         {
-            var fields = new List<string> { "Name", "NumberOfLogicalProcessors", "MaxClockSpeed" };
+            List<string> fields = new List<string> { "Name", "NumberOfLogicalProcessors", "MaxClockSpeed" };
 
-            var sysObjects = GetWmiObjects(@"root\CIMV2", "Win32_Processor", fields);
+            ManagementObjectCollection sysObjects = GetWmiObjects(@"root\CIMV2", "Win32_Processor", fields);
 
-            foreach (var managementBaseObject in sysObjects)
+            foreach (ManagementBaseObject managementBaseObject in sysObjects)
             {
-                var mgtObject = (ManagementObject)managementBaseObject;
-                foreach (var field in fields)
+                ManagementObject mgtObject = (ManagementObject)managementBaseObject;
+                foreach (string field in fields)
                 {
                     switch (field)
                     {
@@ -450,7 +450,7 @@ namespace Chem4Word.Telemetry
                         case "MaxClockSpeed":
                             try
                             {
-                                var speed = SafeDouble.Parse(ObjectAsString(mgtObject[field])) / 1024;
+                                double speed = SafeDouble.Parse(ObjectAsString(mgtObject[field])) / 1024;
                                 _cpuSpeed = SafeDouble.AsString(speed) + "GHz";
                             }
                             catch
@@ -465,21 +465,21 @@ namespace Chem4Word.Telemetry
 
         private void GetWin32OperatingSystemData()
         {
-            var fields = new List<string> { "ProductType", "Caption", "Version", "OperatingSystemSKU" };
+            List<string> fields = new List<string> { "ProductType", "Caption", "Version", "OperatingSystemSKU" };
 
-            var sysObjects = GetWmiObjects(@"root\CIMV2", "Win32_OperatingSystem", fields);
+            ManagementObjectCollection sysObjects = GetWmiObjects(@"root\CIMV2", "Win32_OperatingSystem", fields);
 
-            foreach (var managementBaseObject in sysObjects)
+            foreach (ManagementBaseObject managementBaseObject in sysObjects)
             {
-                var mgtObject = (ManagementObject)managementBaseObject;
-                foreach (var field in fields)
+                ManagementObject mgtObject = (ManagementObject)managementBaseObject;
+                foreach (string field in fields)
                 {
                     switch (field)
                     {
                         case "ProductType":
                             try
                             {
-                                var productType = int.Parse(ObjectAsString(mgtObject[field]));
+                                int productType = int.Parse(ObjectAsString(mgtObject[field]));
                                 switch (productType)
                                 {
                                     case 1:
@@ -577,33 +577,33 @@ namespace Chem4Word.Telemetry
             // Only works if not a server
             if (!string.IsNullOrEmpty(ProductType) && ProductType.Equals(Workstation))
             {
-                var fields = new List<string> { "DisplayName", "ProductState" };
+                List<string> fields = new List<string> { "DisplayName", "ProductState" };
 
-                var sysObjects = GetWmiObjects(@"root\SecurityCenter2", "AntiVirusProduct", fields);
+                ManagementObjectCollection sysObjects = GetWmiObjects(@"root\SecurityCenter2", "AntiVirusProduct", fields);
 
                 try
                 {
-                    var products = new List<string>();
+                    List<string> products = new List<string>();
 
-                    foreach (var managementBaseObject in sysObjects)
+                    foreach (ManagementBaseObject managementBaseObject in sysObjects)
                     {
-                        var mgtObject = (ManagementObject)managementBaseObject;
+                        ManagementObject mgtObject = (ManagementObject)managementBaseObject;
 
-                        var product = ObjectAsString(mgtObject["DisplayName"]);
-                        var status = int.Parse(ObjectAsString(mgtObject["ProductState"]));
+                        string product = ObjectAsString(mgtObject["DisplayName"]);
+                        int status = int.Parse(ObjectAsString(mgtObject["ProductState"]));
 
-                        var hex = Hex(status);
-                        var bin = Binary(status);
-                        var reversed = Reverse(bin);
+                        string hex = Hex(status);
+                        string bin = Binary(status);
+                        string reversed = Reverse(bin);
 
                         // https://blogs.msdn.microsoft.com/alejacma/2008/05/12/how-to-get-antivirus-information-with-wmi-vbscript/#comment-442
                         // 19th bit = Not so sure but, AV is turned on (I wouldn't be sure it's enabled)
                         // 13th bit = On Access Scanning (Memory Resident Scanning) is on, this tells you that the product is scanning every file that you open as opposed to just scanning at regular intervals.
                         //  5th Bit = If this is true (==1) the virus scanner is out of date
 
-                        var enabled = GetBit(reversed, 18);
-                        var scanning = GetBit(reversed, 12);
-                        var outdated = GetBit(reversed, 4);
+                        bool enabled = GetBit(reversed, 18);
+                        bool scanning = GetBit(reversed, 12);
+                        bool outdated = GetBit(reversed, 4);
 
                         products.Add($"{product} Status: {status} [0x{hex}] --> Enabled: {enabled} Scanning: {scanning} Outdated: {outdated}");
                     }
@@ -623,17 +623,30 @@ namespace Chem4Word.Telemetry
             // https://stackoverflow.com/questions/28989279/communicating-with-non-english-wmi
             // https://www.autoitscript.com/autoit3/docs/appendix/OSLangCodes.htm
 
-            var options = new ConnectionOptions
-            {
-                Locale = "MS_409" // en-US
-            };
-            var scope = new ManagementScope($"{nameSpace}", options);
+            ConnectionOptions options = new ConnectionOptions
+                                        {
+                                            Locale = "MS_409" // en-US
+                                        };
+            ManagementScope scope = new ManagementScope($"{nameSpace}", options);
             scope.Connect();
 
-            var objectQuery = new ObjectQuery($"SELECT {string.Join(",", fields)} FROM {className}");
+            ManagementClass mc = new ManagementClass(scope, new ManagementPath(className), null);
+            HashSet<string> validFields = mc.Properties
+                                            .Cast<PropertyData>()
+                                            .Select(p => p.Name)
+                                            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            var searcher = new ManagementObjectSearcher(scope, objectQuery);
-            var objects = searcher.Get();
+            List<string> safeFields = fields.Where(f => validFields.Contains(f)).ToList();
+
+            // If none are valid, fall back to SELECT *
+            string selectClause = safeFields.Count > 0
+                ? string.Join(",", safeFields)
+                : "*";
+
+            ObjectQuery objectQuery = new ObjectQuery($"SELECT {selectClause} FROM {className}");
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, objectQuery);
+            ManagementObjectCollection objects = searcher.Get();
 
             return objects;
         }
@@ -644,7 +657,7 @@ namespace Chem4Word.Telemetry
         {
             if (input != null)
             {
-                var temp = input.ToString();
+                string temp = input.ToString();
 
                 // Replace tab with space
                 temp = temp.Replace("\t", " ");

@@ -1952,7 +1952,7 @@ namespace Chem4Word
                                             // Re- Read the Library Names
                                             Globals.Chem4WordV3.LoadNamesFromLibrary();
 
-                                            UserInteractions.InformUser($"Structure '{dto.Name}' added into Library");
+                                            UserInteractions.InformUser($"Structure '{dto.SubstanceName}' added into Library");
                                             Globals.Chem4WordV3.Telemetry?.Write(module, "Information", $"Structure '{model.ConciseFormula}' added into Library");
                                         }
                                     }

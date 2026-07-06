@@ -234,6 +234,9 @@ namespace Chem4Word.Model2
         public bool ShowMoleculeCaptions { get; set; } = false;
         public bool ShowMolecularWeight { get; set; } = false;
 
+        public string SubstanceName { get; set; } = string.Empty;
+        public List<string> SubstanceTags { get; set; } = new List<string>();
+
         public bool InhibitEvents { get; set; }
 
         internal List<string> GeneralErrors { get; }

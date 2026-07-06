@@ -12,6 +12,7 @@
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
+      <Change>Enhancement: Ensure that Substance Name and Tags are persisted</Change>
       <Change>Bug Fix: General - Unicode Formula in Title Bars</Change>
       <Change>Bug Fix: Library Editor - On completion of editing the newly added structure should be selected</Change>
       <Change>Bug Fix: Library Editor - Is sometimes overwriting user-assigned name</Change>
