@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ACMEConstants.cs" />
+    <Compile Include="Adorners\Feedback\AnnotationHoverAdorner.cs" />
     <Compile Include="Adorners\Feedback\ReactionHoverAdorner.cs" />
     <Compile Include="Adorners\Selectors\ElectronPusherSelectionAdorner.cs" />
     <Compile Include="Adorners\Sketching\ElectronPusherDrawAdorner.cs" />

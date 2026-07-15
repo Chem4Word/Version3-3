@@ -15,33 +15,16 @@ namespace Chem4Word.ACME.Adorners.Feedback
     {
         private const double Spacing = 2.0;
 
-        public GroupHoverAdorner(UIElement adornedElement, GroupVisual targetedVisual) : base(adornedElement, targetedVisual)
+        public GroupHoverAdorner(UIElement adornedElement, GroupVisual targetedVisual) 
+            : base(adornedElement, targetedVisual)
         {
+            //calls directly into base constructor
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            StreamGeometry sg = new StreamGeometry();
-
-            Rect atomBounds = TargetedVisual.ContentBounds;
-            atomBounds.Inflate(Spacing, Spacing);
-            Vector twiddle = new Vector(3, 0.0);
-            using (StreamGeometryContext sgc = sg.Open())
-            {
-                sgc.BeginFigure(atomBounds.TopLeft + twiddle, false, false);
-                sgc.LineTo(atomBounds.TopLeft, true, true);
-                sgc.LineTo(atomBounds.BottomLeft, true, true);
-                sgc.LineTo(atomBounds.BottomLeft + twiddle, true, true);
-
-                sgc.BeginFigure(atomBounds.TopRight - twiddle, false, false);
-                sgc.LineTo(atomBounds.TopRight, true, true);
-                sgc.LineTo(atomBounds.BottomRight, true, true);
-                sgc.LineTo(atomBounds.BottomRight - twiddle, true, true);
-                sgc.Close();
-            }
-
-            drawingContext.DrawGeometry(BracketBrush, BracketPen, sg);
+            DrawBrackets(TargetedVisual.ContentBounds);
         }
     }
 }

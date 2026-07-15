@@ -171,7 +171,7 @@ namespace Chem4Word.ACME.Models
 
                 Element element = Element as Element;
                 temp.Add(new IsotopeValue { Label = "", Mass = null });
-                if (element != null && element.IsotopeMasses != null)
+                if (element != null)
                 {
                     foreach (int mass in element.IsotopeMasses)
                     {

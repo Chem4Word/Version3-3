@@ -674,6 +674,10 @@ namespace Chem4Word.ACME.Controls
                     _highlightAdorner = new ReactionHoverAdorner(this, rv);
                     break;
 
+                case AnnotationVisual anv:
+                    _highlightAdorner = new AnnotationHoverAdorner(this, anv);
+                    break;
+
                 default:
                     _highlightAdorner = null;
                     break;
@@ -1091,11 +1095,11 @@ namespace Chem4Word.ACME.Controls
                 return null;
             }
 
-            // Re-Populate _visuals via ResultCallback with *ALL* ChemicalVisuals which are under the mouse cursor
+            // Re-Populate _visuals via VisualHitTestCallBack with *ALL* ChemicalVisuals which are under the mouse cursor
             // GroupVisuals seem to be added first (with outermost first) one for each Group
             // Next are any BondVisuals one for each Bond
             // Next is the AtomVisual for the Atom
-            VisualTreeHelper.HitTest(this, null, ResultCallback, new PointHitTestParameters(p));
+            VisualTreeHelper.HitTest(this, null, VisualHitTestCallBack, new PointHitTestParameters(p));
 
             if (!_visuals.Any())
             {
@@ -1108,7 +1112,8 @@ namespace Chem4Word.ACME.Controls
                                     ?? _visuals.FirstOrDefault(v => v is HydrogenVisual) // Locate a HydrogenVisual
                                     ?? _visuals.FirstOrDefault(v => v is AtomVisual && !(v is ElectronPusherVisual)) // Locate an AtomVisual
                                     ?? _visuals.FirstOrDefault(v => v is BondVisual) // Locate a BondVisual
-                                    ?? _visuals.FirstOrDefault(v => v is ElectronPusherVisual); // Locate an ElectronPusherVisual
+                                    ?? _visuals.FirstOrDefault(v => v is ElectronPusherVisual) // Locate an ElectronPusherVisual
+                                    ?? _visuals.FirstOrDefault(v => v is AnnotationVisual); // Locate an AnnotationVisual
 
             if (result != null && editController.ActiveBehavior.PermittedHighlights.Contains(result.GetType()))
             {
@@ -1119,7 +1124,7 @@ namespace Chem4Word.ACME.Controls
             return null;
         }
 
-        private HitTestResultBehavior ResultCallback(HitTestResult result)
+        private HitTestResultBehavior VisualHitTestCallBack(HitTestResult result)
         {
             switch (result.VisualHit)
             {
@@ -1145,6 +1150,10 @@ namespace Chem4Word.ACME.Controls
 
                 case BondVisual bv:
                     _visuals.Add(bv);
+                    break;
+
+                case AnnotationVisual anv:
+                    _visuals.Add(anv);
                     break;
             }
 

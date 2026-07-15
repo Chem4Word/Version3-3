@@ -32,5 +32,26 @@ namespace Chem4Word.ACME.Adorners.Feedback
             var myAdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
             myAdornerLayer?.Add(this);
         }
+
+        protected static StreamGeometry DrawBrackets(Rect visualBounds)
+        {
+            StreamGeometry sg = new StreamGeometry();
+            Vector twiddle = new Vector(3, 0.0);
+            using (StreamGeometryContext sgc = sg.Open())
+            {
+                sgc.BeginFigure(visualBounds.TopLeft + twiddle, false, false);
+                sgc.LineTo(visualBounds.TopLeft, true, true);
+                sgc.LineTo(visualBounds.BottomLeft, true, true);
+                sgc.LineTo(visualBounds.BottomLeft + twiddle, true, true);
+
+                sgc.BeginFigure(visualBounds.TopRight - twiddle, false, false);
+                sgc.LineTo(visualBounds.TopRight, true, true);
+                sgc.LineTo(visualBounds.BottomRight, true, true);
+                sgc.LineTo(visualBounds.BottomRight - twiddle, true, true);
+                sgc.Close();
+            }
+
+            return sg;
+        }
     }
 }

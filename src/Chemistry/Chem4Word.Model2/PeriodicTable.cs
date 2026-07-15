@@ -194,7 +194,15 @@ namespace Chem4Word.Model2
 
             if (charge > 0)
             {
-                int vDiff = 4 - valence;
+                int vDiff;
+                if (element.Valencies.Length > 0)
+                {
+                    vDiff = 4 - element.Valencies[0];
+                }
+                else
+                {
+                    vDiff = 4;
+                }
                 if (charge < vDiff)
                 {
                     diff += charge;
@@ -222,16 +230,24 @@ namespace Chem4Word.Model2
         /// <returns></returns>
         private int GetValence(Element element, int sumOfBondOrder)
         {
-            //find the first possible valence that accommodates the bond order sum
-            foreach (int v in element.Valencies)
+            if (element.Valencies.Length > 0)
+                //find the first possible valence that accommodates the bond order sum
             {
-                if (v >= sumOfBondOrder)
+                foreach (int v in element.Valencies)
                 {
-                    return v;
+                    if (v >= sumOfBondOrder)
+                    {
+                        return v;
+                    }
                 }
+
+                //if we've run out of valences that might cope, return the last one
+                return element.Valencies.Last();
             }
-            //if we've run out of valences that might cope, return the last one
-            return element.Valencies.Last();
+            else
+            {
+                return -1;
+            }
         }
 
         private object this[string propertyName]
@@ -314,19 +330,26 @@ namespace Chem4Word.Model2
 
         private static int[] IntArrayFromString(string ints)
         {
-            int[] result = null;
+            List<int> result = new List<int>();
 
             if (!string.IsNullOrEmpty(ints))
             {
                 string[] vv = ints.Split('|');
-                result = new int[vv.Length];
                 for (int i = 0; i < vv.Length; i++)
                 {
-                    result[i] = int.Parse(vv[i]);
+                    result.Add(int.Parse(vv[i]));
                 }
             }
 
-            return result;
+            if (result.Any())
+            {
+                int[] sorted = result
+                               .OrderBy(x => x)
+                               .ToArray();
+                return sorted;
+            }
+
+            return Array.Empty<int>();
         }
     }
 }

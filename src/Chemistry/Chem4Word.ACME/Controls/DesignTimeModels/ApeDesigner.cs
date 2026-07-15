@@ -109,7 +109,7 @@ namespace Chem4Word.ACME.Controls.DesignTimeModels
 
             var e = Element as Element;
             IsotopeMasses.Add(new IsotopeValue { Label = "", Mass = null });
-            if (e != null && e.IsotopeMasses != null)
+            if (e != null)
             {
                 foreach (int mass in e.IsotopeMasses)
                 {
