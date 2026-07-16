@@ -433,8 +433,9 @@ namespace Chem4Word.Model2
                 foreach (var atom in Atoms.Values)
                 {
                     weight += atom.Element.AtomicWeight;
-                    // Explicit Hydrogen atoms have -ve ImplicitHydrogenCount for some reason
-                    if (!atom.IsHydrogen)
+
+                    // Handle undefined ImplicitHydrogenCount (which is -1)
+                    if (atom.ImplicitHydrogenCount > 0)
                     {
                         weight += atom.ImplicitHydrogenCount * hydrogenWeight;
                     }

@@ -37,11 +37,11 @@
     <Launch Condition="Installed OR (NOT CHEM4WORDV2)" Message="Please uninstall version 2 of Chem4Word, then run this installer again." />
     <!-- Ensure Windows 7 plus -->
     <!-- https://msdn.microsoft.com/library/aa370556.aspx -->
-    <Launch Condition="Installed OR (VersionNT &gt;= 601)" Message="This application is only supported on Windows 7, Windows Server 2008 R2, or higher." />
-    <!-- Ensure .Net Framework 4.7.2 -->
+    <Launch Condition="Installed OR (VersionNT &gt;= 1000)" Message="This application is only supported on Windows 10, or higher." />
+    <!-- Ensure .Net Framework 4.6.2 -->
     <!-- https://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx#detect_net -->
     <PropertyRef Id="NETFRAMEWORK45" />
-    <Launch Condition="Installed OR NETFRAMEWORK45 &gt;= &quot;#461308&quot;" Message="This application requires .NET Framework 4.7.1. Please install the .NET Framework then run this installer again." />
+    <Launch Condition="Installed OR NETFRAMEWORK45 &gt;= &quot;#528040&quot;" Message="This application requires .NET Framework 4.8. Please install the .NET Framework then run this installer again." />
     <!-- Include our Custom Actions assembly -->
     <!-- https://blogs.msdn.microsoft.com/jschaffe/2012/10/23/creating-wix-custom-actions-in-c-and-passing-parameters/ -->
     <!-- https://www.codeproject.com/Articles/132918/Creating-Custom-Action-for-WIX-Written-in-Managed -->

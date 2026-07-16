@@ -32,6 +32,7 @@ namespace Chem4WordSetup
                 }
                 string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 key.SetValue($"{timestamp} [{procId}.{_counter++.ToString("000")}]", $"[{procId}] {action}");
+                key.Dispose();
             }
         }
     }

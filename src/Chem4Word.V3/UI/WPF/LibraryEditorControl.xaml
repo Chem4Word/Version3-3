@@ -472,10 +472,13 @@
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <wpfToolkit:VirtualizingWrapPanel
+                            CacheMode="BitmapCache"
                             ItemSize="{Binding ElementName=EditorControl, Path=ItemSize, Mode=OneWay}"
                             MouseWheelDeltaItem="1"
+                            RenderOptions.BitmapScalingMode="HighQuality"
                             ScrollUnit="Item"
-                            SpacingMode="None" />
+                            SpacingMode="None"
+                            VirtualizingStackPanel.VirtualizationMode="Recycling" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>

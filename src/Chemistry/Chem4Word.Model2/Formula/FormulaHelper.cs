@@ -440,7 +440,7 @@ namespace Chem4Word.Model2.Formula
                                         break;
 
                                     case "R":
-                                        // Ignore pseudo Element(s)
+                                        // Ignore resides
                                         break;
 
                                     default:

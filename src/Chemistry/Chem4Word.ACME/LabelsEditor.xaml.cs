@@ -155,10 +155,7 @@ namespace Chem4Word.ACME
                     {
                         Style = seed.Style,
                         ItemContainerStyle = seed.ItemContainerStyle,
-                        Template = seed.Template,
-                        //DataContext = EditedModel,
-                        //HorizontalContentAlignment = HorizontalAlignment.Left,
-                        //VerticalContentAlignment = VerticalAlignment.Center
+                        Template = seed.Template
                     };
 
                     if (molecule.Atoms.Count == 0)
@@ -178,7 +175,12 @@ namespace Chem4Word.ACME
                         {
                             Orientation = Orientation.Horizontal
                         };
-                        stackPanel.Children.Add(TextBlockHelper.FromUnicode(molecule.UnicodeFormula));
+                        var unicode = molecule.UnicodeFormula;
+                        if (string.IsNullOrEmpty(unicode))
+                        {
+                            unicode = molecule.Path;
+                        }
+                        stackPanel.Children.Add(TextBlockHelper.FromUnicode(unicode));
 
                         tvi.Header = stackPanel;
                         tvi.Tag = molecule;

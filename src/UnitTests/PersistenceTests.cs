@@ -50,11 +50,11 @@ namespace Chem4WordUnitTests
         [InlineData("Benzene.xml", 1, 6, 6, 1, 78.109, 1, 2, 2)]
         [InlineData("Testosterone.xml", 1, 25, 28, 4, 288.430, 4, 4, 2)]
         [InlineData("Phthalocyanine.xml", 1, 58, 66, 9, 514.552, 8, 2, 3)]
-        [InlineData("CopperPhthalocyanine.xml", 1, 57, 68, 12, 575.070, 12, 1, 0)]
-        [InlineData("Pseudo-R.xml", 1, 7, 7, 1, 76.099, 1, 0, 0)]
-        [InlineData("Pseudo-X.xml", 1, 7, 7, 1, 76.099, 1, 0, 0)]
-        [InlineData("Pseudo-D.xml", 1, 7, 7, 1, 78.109, 1, 0, 0)]
-        [InlineData("Pseudo-T.xml", 1, 7, 7, 1, 79.109, 1, 0, 0)]
+        [InlineData("CopperPhthalocyanine.xml", 1, 57, 68, 12, 576.08, 12, 1, 0)]
+        [InlineData("Pseudo-R.xml", 1, 7, 7, 1, 77.109, 1, 0, 0)]
+        [InlineData("Pseudo-X.xml", 1, 7, 7, 1, 77.109, 1, 0, 0)]
+        [InlineData("Pseudo-D.xml", 1, 7, 7, 1, 79.120, 1, 0, 0)]
+        [InlineData("Pseudo-T.xml", 1, 7, 7, 1, 80.120, 1, 0, 0)]
         public void CmlImport(string file, int molecules, int atoms, int bonds, int allRings, double expectedWeight, int placementRings, int names, int formulas)
         {
             var mc = new CMLConverter();

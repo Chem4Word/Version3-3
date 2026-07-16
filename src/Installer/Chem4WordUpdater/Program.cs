@@ -20,7 +20,14 @@ namespace Chem4WordUpdater
         [STAThread]
         private static void Main(string[] args)
         {
-            if (args.Length == 1)
+            Version osVer = Environment.OSVersion.Version;
+
+            if (!(osVer.Major >= 10))
+            {
+                // Running Windows 10 or 11
+                MessageBox.Show("You must be running Windows 10 or 11", "Chem4Word Update Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+            else if (args.Length == 1)
             {
                 bool created;
                 using (new Mutex(true, "e02309d1-6734-4b66-a31d-76439a9ee978", out created))

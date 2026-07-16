@@ -34,6 +34,7 @@ namespace Chem4Word.ACME.Utils
 
                 string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 key.SetValue($"{timestamp} [{procId}.{_counter++.ToString("000")}]", $"[{procId}] {module} {exception}");
+                key.Dispose();
             }
         }
     }

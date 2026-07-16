@@ -427,7 +427,7 @@ namespace WinForms.TestHarness
                 }
 
                 _currentModel = poppedModel;
-                ShowChemistry($"Undo -> {_currentModel.ConciseFormula}", _currentModel);
+                ShowChemistry($"Undo -> {_currentModel.UnicodeFormula}", _currentModel);
             }
             catch (Exception exception)
             {
@@ -454,7 +454,7 @@ namespace WinForms.TestHarness
                 }
 
                 _currentModel = poppedModel;
-                ShowChemistry($"Redo -> {_currentModel.ConciseFormula}", _currentModel);
+                ShowChemistry($"Redo -> {_currentModel.UnicodeFormula}", _currentModel);
             }
             catch (Exception exception)
             {
@@ -868,7 +868,7 @@ namespace WinForms.TestHarness
                 model.EnsureBondLength(DefaultBondLength, false);
                 _currentModel = model;
 
-                ShowChemistry($"{captionPrefix} {model.ConciseFormula}", _currentModel);
+                ShowChemistry($"{captionPrefix} {model.UnicodeFormula}", _currentModel);
             }
             else
             {
@@ -905,7 +905,7 @@ namespace WinForms.TestHarness
 
                 _currentModel = copy;
 
-                ShowChemistry($"{changedProperties} changed properties; {copy.ConciseFormula}", copy);
+                ShowChemistry($"{changedProperties} changed properties; {copy.UnicodeFormula}", copy);
             }
         }
 

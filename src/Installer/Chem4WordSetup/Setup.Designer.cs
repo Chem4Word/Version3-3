@@ -95,7 +95,7 @@
             // WindowsInstalled
             // 
             this.WindowsInstalled.BackColor = System.Drawing.Color.Transparent;
-            this.WindowsInstalled.Description = "Windows 7 or newer";
+            this.WindowsInstalled.Description = "Windows 10 or newer";
             this.WindowsInstalled.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.WindowsInstalled.Indicator = global::Chem4WordSetup.Properties.Resources.Question;
             this.WindowsInstalled.Location = new System.Drawing.Point(178, 6);

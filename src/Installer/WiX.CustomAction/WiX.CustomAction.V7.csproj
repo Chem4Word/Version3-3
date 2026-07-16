@@ -6,6 +6,7 @@
     <Platforms>AnyCPU;x86</Platforms>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
   </PropertyGroup>
+  
   <ItemGroup>
     <Compile Include="..\..\Shared\OfficeHelper.cs" Link="OfficeHelper.cs" />
     <Compile Include="..\..\Shared\RegistryWOW6432.cs" Link="RegistryWOW6432.cs" />

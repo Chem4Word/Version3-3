@@ -25,6 +25,15 @@ namespace Chem4WordSetup
             {
                 if (created)
                 {
+                    Version osVer = Environment.OSVersion.Version;
+
+                    if (!(osVer.Major >= 10))
+                    {
+                        // Running Windows 10 or 11
+                        MessageBox.Show("You must be running Windows 10 or 11", "Chem4Word Setup Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        return;
+                    }
+
                     Version version = Assembly.GetExecutingAssembly().GetName().Version;
 
                     RegistryHelper.WriteAction($"Starting Setup V{version}");

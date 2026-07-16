@@ -36,8 +36,8 @@ namespace Chem4WordUpdater
             InitializeComponent();
             if (args.Length > 0)
             {
-                var ok = true;
-                var parts = args[0].ToLower().Split(new char[] { '/', '.', '-' }, StringSplitOptions.RemoveEmptyEntries);
+                bool ok = true;
+                string[] parts = args[0].ToLower().Split(new char[] { '/', '.', '-' }, StringSplitOptions.RemoveEmptyEntries);
 
                 // Check 1 ensure that website is the source
                 if (!(parts[0].Equals("https:") || parts[0].Equals("http:")))
@@ -48,7 +48,7 @@ namespace Chem4WordUpdater
                 if (ok)
                 {
                     // Check 2 ensure that chem4word occurs twice
-                    var x = parts.Where(p => p.Contains("chem4word")).Count();
+                    int x = parts.Where(p => p.Contains("chem4word")).Count();
                     if (x != 2)
                     {
                         ok = false;
@@ -100,7 +100,7 @@ namespace Chem4WordUpdater
 
         private void OnTick_timer1(object sender, EventArgs e)
         {
-            var wordCount = ShowWordProcesses();
+            int wordCount = ShowWordProcesses();
             if (wordCount == 0 && _downloadCompleted)
             {
                 RegistryHelper.WriteAction("Conditions right to run Update");
@@ -111,8 +111,8 @@ namespace Chem4WordUpdater
 
                 RegistryHelper.WriteAction("Running Chem4Word Update");
                 const int retryLimit = 3;
-                var exitCode = -1;
-                var retries = 0;
+                int exitCode = -1;
+                int retries = 0;
                 while (exitCode != 0 && retries < retryLimit)
                 {
                     exitCode = ProcessHelper.RunMsi(_downloadedFile);
@@ -154,10 +154,10 @@ namespace Chem4WordUpdater
 
         private int ShowWordProcesses()
         {
-            var processes = Process.GetProcessesByName("winword");
+            Process[] processes = Process.GetProcessesByName("winword");
 
             WordInstances.Items.Clear();
-            foreach (var proc in processes)
+            foreach (Process proc in processes)
             {
                 WordInstances.Items.Add($"[{proc.Id}] - {proc.ProcessName}");
             }
@@ -172,9 +172,9 @@ namespace Chem4WordUpdater
 
         private bool DownloadFile(string url)
         {
-            var started = false;
+            bool started = false;
 
-            var securityProtocol = ServicePointManager.SecurityProtocol;
+            SecurityProtocolType securityProtocol = ServicePointManager.SecurityProtocol;
 
             _sw = new Stopwatch();
             _sw.Start();
@@ -185,13 +185,13 @@ namespace Chem4WordUpdater
 
                 RegistryHelper.WriteAction($"Downloading {url}");
 
-                var parts = url.Split('/');
-                var filename = parts[parts.Length - 1];
+                string[] parts = url.Split('/');
+                string filename = parts[parts.Length - 1];
 
                 _msiOriginalFileName = filename;
-                var guid = Guid.NewGuid().ToString("N");
+                string guid = Guid.NewGuid().ToString("N");
 
-                var downloadPath = FolderHelper.GetPath(KnownFolder.Downloads);
+                string downloadPath = FolderHelper.GetPath(KnownFolder.Downloads);
                 if (!Directory.Exists(downloadPath))
                 {
                     downloadPath = Path.GetTempPath();
@@ -249,7 +249,7 @@ namespace Chem4WordUpdater
             }
             else
             {
-                var fi = new FileInfo(_downloadedFile);
+                FileInfo fi = new FileInfo(_downloadedFile);
                 if (fi.Length == 0)
                 {
                     _retryCount++;
@@ -270,9 +270,9 @@ namespace Chem4WordUpdater
                     UpdateNow.Enabled = false;
                     Information.Text = "Your update has been downloaded.  It will be automatically installed once all Microsoft Word processes are closed.";
                     RegistryHelper.WriteAction($"Downloading of {_downloadTarget} took {_sw.ElapsedMilliseconds.ToString("#,##0", CultureInfo.InvariantCulture)}ms");
-                    var seconds = _sw.ElapsedMilliseconds / 1000.0;
-                    var kiloBytes = fi.Length / 1024.0;
-                    var speed = kiloBytes / seconds / 1000.0;
+                    double seconds = _sw.ElapsedMilliseconds / 1000.0;
+                    double kiloBytes = fi.Length / 1024.0;
+                    double speed = kiloBytes / seconds / 1000.0;
                     RegistryHelper.WriteAction($"Download speed {speed.ToString("#,##0.000", CultureInfo.InvariantCulture)}MiB/s");
                 }
             }

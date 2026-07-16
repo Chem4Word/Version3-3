@@ -66,6 +66,7 @@ namespace Chem4Word.UI.WPF
         private int _filteredItems;
         private int _checkedItems;
         private bool _isLoading;
+        private bool _cancelRequested = false;
 
         private List<string> _lastTags = new List<string>();
 
@@ -83,31 +84,7 @@ namespace Chem4Word.UI.WPF
             InitializeComponent();
 
             DataObject.AddPastingHandler(SubstanceName, OnPasteSubstanceName);
-        }
-
-        private void OnPasteSubstanceName(object sender, DataObjectPastingEventArgs e)
-        {
-            // Stop WPF from doing synchronous UI updates
-            e.Handled = true;
-
-            if (sender is TextBox textBox)
-            {
-                // Extract pasted text
-                string pastedText = e.DataObject.GetData(DataFormats.UnicodeText) as string;
-                pastedText = pastedText?.Trim();
-
-                if (!string.IsNullOrEmpty(pastedText))
-                {
-                    // Defer the update to avoid dispatcher suspension crash
-                    Dispatcher.BeginInvoke(
-                        DispatcherPriority.Background,
-                        new Action(() =>
-                                   {
-                                       textBox.Text = pastedText;
-                                       textBox.SelectionLength = pastedText.Length;
-                                   }));
-                }
-            }
+            DataObject.AddPastingHandler(SearchBox, OnPasteSearchBox);
         }
 
         public Size ItemSize
@@ -209,6 +186,7 @@ namespace Chem4Word.UI.WPF
                     editor.Cml = beforeCml;
                     Model model = new CMLConverter().Import(beforeCml);
                     string beforeFormula = model.ConciseFormula;
+                    string beforeSubstanceName = item.SubstanceName;
                     UpdateModelProperties(model, item);
                     if (string.IsNullOrEmpty(beforeCml))
                     {
@@ -276,7 +254,7 @@ namespace Chem4Word.UI.WPF
 
                         if (item.Id == 0)
                         {
-                            dto.SubstanceName = afterModel.SubstanceName;
+                            dto.SubstanceName = afterModel.QuickName;
 
                             // Add New Chemistry
                             long newId = _driver.AddChemistry(dto);
@@ -290,14 +268,9 @@ namespace Chem4Word.UI.WPF
                         {
                             dto.Id = item.Id;
 
-                            if (afterFormula.Equals(beforeFormula))
-                            {
-                                dto.SubstanceName = item.SubstanceName;
-                            }
-                            else
-                            {
-                                dto.SubstanceName = afterModel.QuickName;
-                            }
+                            dto.SubstanceName = string.IsNullOrEmpty(beforeSubstanceName)
+                                ? afterModel.QuickName
+                                : beforeSubstanceName;
 
                             // Update Existing Chemistry
                             _driver.UpdateChemistry(dto);
@@ -1199,6 +1172,47 @@ namespace Chem4Word.UI.WPF
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private void OnPasteSearchBox(object sender, DataObjectPastingEventArgs e)
+        {
+            // Stop WPF from doing synchronous UI updates
+            e.Handled = true;
+
+            if (sender is TextBox textBox)
+            {
+                HandlePaste(e, textBox);
+            }
+        }
+
+        private void OnPasteSubstanceName(object sender, DataObjectPastingEventArgs e)
+        {
+            // Stop WPF from doing synchronous UI updates
+            e.Handled = true;
+
+            if (sender is TextBox textBox)
+            {
+                HandlePaste(e, textBox);
+            }
+        }
+
+        private void HandlePaste(DataObjectPastingEventArgs e, TextBox textBox)
+        {
+            // Extract pasted text
+            string pastedText = e.DataObject.GetData(DataFormats.UnicodeText) as string;
+            pastedText = pastedText?.Trim();
+
+            if (!string.IsNullOrEmpty(pastedText))
+            {
+                // Defer the update to avoid dispatcher suspension crash
+                Dispatcher.BeginInvoke(
+                    DispatcherPriority.Background,
+                    new Action(() =>
+                               {
+                                   textBox.Text = pastedText;
+                                   textBox.SelectionLength = pastedText.Length;
+                               }));
+            }
+        }
+
         private void OnPreviewTextInput_SubstanceName(object sender, TextCompositionEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
@@ -1323,8 +1337,6 @@ namespace Chem4Word.UI.WPF
 
             _lastTags = tags;
         }
-
-        private bool _cancelRequested = false;
 
         private void OnClick_CancelButton(object sender, RoutedEventArgs e)
         {

@@ -288,7 +288,9 @@ namespace Chem4Word
                             bool separatorAdded = false;
                             foreach (TextualProperty item in list)
                             {
-                                if (item.IsValid && !item.FullType.ToLower().Contains("auxinfo"))
+                                if (item.IsValid
+                                    && !string.IsNullOrEmpty(item.Value)
+                                    && !item.FullType.ToLower().Contains("auxinfo"))
                                 {
                                     string compactValue = item.Value.Replace(" ", "").ToLower();
                                     switch (item.TypeCode)

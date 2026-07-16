@@ -25,10 +25,10 @@ namespace Chem4Word.Helpers
 
         public static void StoreMessage(string module, string message)
         {
-            var key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordMessagesRegistryKey);
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordMessagesRegistryKey);
             if (key != null)
             {
-                var procId = 0;
+                int procId = 0;
                 try
                 {
                     procId = Process.GetCurrentProcess().Id;
@@ -38,17 +38,18 @@ namespace Chem4Word.Helpers
                     //
                 }
 
-                var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 key.SetValue($"{timestamp} [{procId}.{_counter++:000}]", $"[{procId}] {module} {message}");
+                key.Dispose();
             }
         }
 
         public static void StoreException(string module, Exception exception)
         {
-            var key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordExceptionsRegistryKey);
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordExceptionsRegistryKey);
             if (key != null)
             {
-                var procId = 0;
+                int procId = 0;
                 try
                 {
                     procId = Process.GetCurrentProcess().Id;
@@ -58,16 +59,17 @@ namespace Chem4Word.Helpers
                     //
                 }
 
-                var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 key.SetValue($"{timestamp} [{procId}.{_counter++:000}]", $"[{procId}] {module} {exception}");
+                key.Dispose();
             }
         }
 
         public static void SendSetupActions()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordSetupRegistryKey, true);
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordSetupRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Setup", registryKey);
@@ -76,9 +78,9 @@ namespace Chem4Word.Helpers
 
         public static void SendUpdateActions()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordUpdateRegistryKey, true);
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordUpdateRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Update", registryKey);
@@ -87,20 +89,20 @@ namespace Chem4Word.Helpers
 
         public static void SendMsiActions()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMsiActionsRegistryKey, true);
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMsiActionsRegistryKey, true);
             if (registryKey != null)
             {
-                SendValues(module, "Setup", registryKey);
+                SendValues(module, "MsiActions", registryKey);
             }
         }
 
         public static void SendMessages()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMessagesRegistryKey, true);
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMessagesRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Information", registryKey);
@@ -109,9 +111,9 @@ namespace Chem4Word.Helpers
 
         public static void SendExceptions()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
 
-            var registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordExceptionsRegistryKey, true);
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordExceptionsRegistryKey, true);
             if (registryKey != null)
             {
                 SendValues(module, "Exception", registryKey);
@@ -120,24 +122,24 @@ namespace Chem4Word.Helpers
 
         private static void SendValues(string module, string level, RegistryKey registryKey)
         {
-            var keys = registryKey.GetValueNames();
-            var values = new List<RegistryMessage>();
+            string[] keys = registryKey.GetValueNames();
+            List<RegistryMessage> values = new List<RegistryMessage>();
 
-            foreach (var key in keys)
+            foreach (string key in keys)
             {
-                var value = registryKey.GetValue(key).ToString();
+                string value = registryKey.GetValue(key).ToString();
 
-                var timestamp = key;
-                var bracket = timestamp.IndexOf("[", StringComparison.InvariantCulture);
+                string timestamp = key;
+                int bracket = timestamp.IndexOf("[", StringComparison.InvariantCulture);
                 if (bracket > 0)
                 {
                     timestamp = timestamp.Substring(0, bracket).Trim();
                 }
 
-                var temp = new RegistryMessage
-                {
-                    Date = timestamp
-                };
+                RegistryMessage temp = new RegistryMessage
+                                       {
+                                           Date = timestamp
+                                       };
 
                 bracket = value.IndexOf("]", StringComparison.InvariantCulture);
                 if (bracket > 0)
@@ -155,12 +157,12 @@ namespace Chem4Word.Helpers
             }
 
             // Group the messages by day
-            var days = values
-                .GroupBy(g => g.Date.Substring(0, 10))
-                .ToList();
+            List<IGrouping<string, RegistryMessage>> days = values
+                                                            .GroupBy(g => g.Date.Substring(0, 10))
+                                                            .ToList();
 
-            var depth = 0;
-            foreach (var day in days)
+            int depth = 0;
+            foreach (IGrouping<string, RegistryMessage> day in days)
             {
                 SendData(module, level, day.ToList(), ref depth);
             }
@@ -173,13 +175,13 @@ namespace Chem4Word.Helpers
                 depth++;
 
                 // Group messages by process id
-                var processes = messages
-                    .GroupBy(g => g.ProcessId)
-                    .ToList();
+                List<IGrouping<string, RegistryMessage>> processes = messages
+                                                                     .GroupBy(g => g.ProcessId)
+                                                                     .ToList();
 
-                foreach (var process in processes)
+                foreach (IGrouping<string, RegistryMessage> process in processes)
                 {
-                    var message = string.Join(Environment.NewLine, process.ToList());
+                    string message = string.Join(Environment.NewLine, process.ToList());
                     // Maximum length of a message in Azure Service bus is 32K, use 125 for testing
                     if (message.Length < 32_000)
                     {
@@ -189,13 +191,13 @@ namespace Chem4Word.Helpers
                     {
                         if (depth < 4)
                         {
-                            var extra = depth * 3;
+                            int extra = depth * 3;
 
                             // Re-Group by Hour, Minute, Second based on depth
-                            var groups = messages
-                                .GroupBy(g => g.Date.Substring(0, 10 + extra))
-                                .ToList();
-                            foreach (var group in groups)
+                            List<IGrouping<string, RegistryMessage>> groups = messages
+                                                                              .GroupBy(g => g.Date.Substring(0, 10 + extra))
+                                                                              .ToList();
+                            foreach (IGrouping<string, RegistryMessage> group in groups)
                             {
                                 SendData(module, level, group.ToList(), ref depth);
                             }

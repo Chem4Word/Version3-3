@@ -12,6 +12,11 @@
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
+      <Change>Internal: Additional logging in ProcessHelper</Change>
+      <Change>Bug Fix: Fix pasting issue in Library Editor filter text box</Change>
+      <Change>Bug Fix: Fixes for when Unicode Formula is empty</Change>
+      <Change>Bug Fix: Fix molecular weights (some were coming back as negative)</Change>
+      <Change>Security: Exclude Windows 7, 8 and 8.1</Change>
       <Change>Enhancement: Ensure that Substance Name and Tags are persisted</Change>
       <Change>Bug Fix: General - Unicode Formula in Title Bars</Change>
       <Change>Bug Fix: Library Editor - On completion of editing the newly added structure should be selected</Change>

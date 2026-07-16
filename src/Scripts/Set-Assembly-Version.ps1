@@ -27,8 +27,6 @@ function Help {
 function Update-SourceVersion
 {
 	Param ([string]$Version)
-	#$NewVersion = 'AssemblyVersion("' + $Version + '")';
-	#$NewFileVersion = 'AssemblyFileVersion("' + $Version + '")';
 
 	foreach ($o in $input) 
 	{
@@ -61,8 +59,8 @@ function Update-AllAssemblyInfoFiles ($version)
 {
    foreach ($file in "AssemblyInfo.cs" ) 
    {
-		Get-ChildItem $path -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
-		Get-ChildItem "..\..\..\Secure-Libraries\V3.3\Chem4Word.Driver.Closed" -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
+       Get-ChildItem $path -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
+       Get-ChildItem "..\..\..\Secure-Libraries\V3.3\Chem4Word.Driver.Closed" -recurse |? {$_.Name -eq $file} | Update-SourceVersion $version;
    }
 }
 
@@ -209,6 +207,30 @@ $replaceWith = 'string DefaultMsiFile = "https://www.chem4word.co.uk/files3-3/Ch
 (Get-Content $file) | ForEach-Object { $_ -replace $findPattern, $replaceWith } | Set-Content $file
 
 # ---------------------------------------------------------- #
+
+# Update app.manifests
+Write-Host " Updating 'app.manifest' files" -ForegroundColor Yellow
+
+$files = Get-ChildItem -Path "$($pwd)\.." -Filter "app.manifest" -Recurse
+
+$findPattern = 'assemblyIdentity version=".*"'
+
+foreach ($file in $files) {
+    Write-Host "$($file.FullName)" -ForegroundColor Green
+
+    if ($file.FullName -match 'Setup') {
+        $type = 'Setup'
+    }
+    elseif ($file.FullName -match 'Update') {
+        $type = 'Updater'
+    }
+
+    $replaceWith = 'assemblyIdentity version="' + "$($version).$($delta.Days)" + '" name="Chem4Word ' + "$($type)" + '"'
+
+    (Get-Content $file.Fullname) | ForEach-Object { $_ -replace $findPattern, $replaceWith } | Set-Content $file.FullName
+}
+
+# ---------------------------------------------------------- #
  
 # Update TelemetryWriter.cs
 Write-Host " Updating 'TelemetryWriter.cs'" -ForegroundColor Yellow
@@ -216,8 +238,8 @@ Write-Host " Updating 'TelemetryWriter.cs'" -ForegroundColor Yellow
 $file = "$($pwd)\..\Common\Chem4Word.Telemetry\TelemetryWriter.cs"
 Write-Host "$($file)" -ForegroundColor Green
 
-$findPattern = 'var versionNumber = .*'
-$replaceWith = 'var versionNumber = "' + "$($version)" + '.666";';
+$findPattern = 'string versionNumber = .*'
+$replaceWith = 'string versionNumber = "' + "$($version)" + '.666";'
 
 (Get-Content $file) | ForEach-Object { $_ -replace $findPattern, $replaceWith } | Set-Content $file
 
@@ -229,8 +251,8 @@ Write-Host " Updating 'CustomAction.cs'" -ForegroundColor Yellow
 $file = "$($pwd)\..\Installer\WiX.CustomAction\CustomAction.cs"
 Write-Host "$($file)" -ForegroundColor Green
 
-$findPattern = 'var versionNumber = .*'
-$replaceWith = 'var versionNumber = "' + "$($version)" + "." + "$($delta.Days)"  + '";';
+$findPattern = 'string versionNumber = .*'
+$replaceWith = 'string versionNumber = "' + "$($version)" + "." + "$($delta.Days)"  + '";';
 
 (Get-Content $file) | ForEach-Object { $_ -replace $findPattern, $replaceWith } | Set-Content $file
 
