@@ -204,7 +204,7 @@ namespace Chem4Word.ACME
         private (Action redoAction, Action undoAction) AddElectronActions(
             Atom atom, Dictionary<string, CompassPoints> explicitElectrons, Electron newElectron)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var showSymbol = atom.ExplicitC;
 
@@ -321,7 +321,7 @@ namespace Chem4Word.ACME
         private (Action redoAction, Action undoAction) RemoveElectronActions(
            Atom atom, Dictionary<string, CompassPoints> explicitElectrons, Electron oldElectron, List<ElectronPusher> pushers)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var showSymbol = atom.ExplicitC;
 
@@ -396,7 +396,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void AddHydrogens()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             double newBondLength = CurrentBondLength * ModelConstants.ScaleFactorForXaml;
             try
@@ -579,7 +579,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void RemoveHydrogens()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -667,7 +667,7 @@ namespace Chem4Word.ACME
 
         public void SetElement(ElementBase value, List<Atom> selAtoms)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string affectedAtoms = selAtoms == null ? "{null}" : selAtoms.Count.ToString();
@@ -726,7 +726,7 @@ namespace Chem4Word.ACME
 
         public void SetExplicitHPlacement(Atom selAtom, CompassPoints? newPlacement)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             WriteTelemetry(module, "Debug", $"{selAtom}; Placement {newPlacement}");
             CompassPoints oldPlacement = selAtom.ImplicitHPlacement;
 
@@ -762,7 +762,7 @@ namespace Chem4Word.ACME
         /// <param name="atoms"></param>
         public void DeleteAtoms(IEnumerable<Atom> atoms)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string countString = atoms == null ? "{null}" : $"{atoms.Count()}";
@@ -820,7 +820,7 @@ namespace Chem4Word.ACME
         ///
         public void DeleteAtomsAndBonds(IEnumerable<Atom> atomlist = null, IEnumerable<Bond> bondList = null)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string count1 = atomlist == null ? "{null}" : $"{atomlist.Count()}";
@@ -1168,7 +1168,7 @@ namespace Chem4Word.ACME
         /// <param name="atomPropertiesModel"></param>
         public void UpdateAtom(Atom atom, AtomPropertiesModel atomPropertiesModel)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");

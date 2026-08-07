@@ -40,8 +40,20 @@ namespace Chem4Word.Core.Helpers
         // This method leaves the points list unchanged.
         public static List<Point> MakeConvexHull(List<Point> points)
         {
+            // Check to see if we have a valid list of points
+            if (points == null || points.Count == 0)
+            {
+                return new List<Point>();
+            }
+
             // Cull.
             points = HullCull(points);
+
+            // Check to see if we still have a valid list of points
+            if (points == null || points.Count == 0)
+            {
+                return new List<Point>();
+            }
 
             // Find the remaining point with the smallest Y value.
             // if there's a tie, take the one with the smaller X value.
@@ -939,11 +951,12 @@ namespace Chem4Word.Core.Helpers
         /// </summary>
         private static List<Point> RemoveDegenerateVertices(List<Point> points)
         {
-            List<Point> result = new List<Point>(points.Count);
             if (points.Count == 0)
             {
-                return result;
+                return new List<Point>();
             }
+
+            List<Point> result = new List<Point>(points.Count);
 
             // Build without consecutive duplicates
             Point previous = points[points.Count - 1];

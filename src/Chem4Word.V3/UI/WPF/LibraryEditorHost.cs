@@ -31,31 +31,38 @@ namespace Chem4Word.UI.WPF
 
         private IChem4WordLibraryWriter _driver;
 
-        public LibraryEditorHost()
+        private string _source;
+
+        public LibraryEditorHost(string source)
         {
             InitializeComponent();
+            _source = source;
         }
 
         private void OnLoad_LibraryEditorHost(object sender, EventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             if (!PointHelper.PointIsEmpty(TopLeft))
             {
                 Left = (int)TopLeft.X;
                 Top = (int)TopLeft.Y;
-                var screen = Screen.FromControl(this);
-                var sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
+                Screen screen = Screen.FromControl(this);
+                Point sensible = PointHelper.SensibleTopLeft(new Point(Left, Top), screen, Width, Height);
                 Left = (int)sensible.X;
                 Top = (int)sensible.Y;
             }
 
             using (new WaitCursor())
             {
-                var editor = new LibraryEditorControl(Globals.Chem4WordV3.Telemetry);
+                Telemetry.Write(module, "Information", $"Library Editor started from {_source}");
+
+                LibraryEditorControl editor = new LibraryEditorControl(Globals.Chem4WordV3.Telemetry);
                 elementHost1.Child = editor;
                 editor.DefaultBondLength = Globals.Chem4WordV3.SystemOptions.BondLength;
 
-                var details = Globals.Chem4WordV3.ListOfDetectedLibraries.AvailableDatabases
-                                     .FirstOrDefault(l => l.DisplayName.Equals(SelectedDatabase));
+                DatabaseDetails details = Globals.Chem4WordV3.ListOfDetectedLibraries.AvailableDatabases
+                                                 .FirstOrDefault(l => l.DisplayName.Equals(SelectedDatabase));
                 if (details != null)
                 {
                     _driver = (IChem4WordLibraryWriter)Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
@@ -63,7 +70,7 @@ namespace Chem4Word.UI.WPF
                     {
                         _driver.FileName = details.Connection;
 
-                        var controller = new LibraryEditorViewModel(Telemetry, _driver);
+                        LibraryEditorViewModel controller = new LibraryEditorViewModel(Telemetry, _driver);
                         editor.TopLeft = TopLeft;
 
                         editor.SetDriver(_driver);

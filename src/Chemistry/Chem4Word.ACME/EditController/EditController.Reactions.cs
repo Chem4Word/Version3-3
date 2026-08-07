@@ -320,7 +320,7 @@ namespace Chem4Word.ACME
         /// <param name="parentReaction"></param>
         public void SetReactionType(ReactionType value, Reaction parentReaction = null)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 List<Reaction> reactions;
@@ -391,7 +391,7 @@ namespace Chem4Word.ACME
         /// <param name="reaction"></param>
         public void AddReaction(Reaction reaction)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Adding a reaction");
@@ -443,7 +443,7 @@ namespace Chem4Word.ACME
         /// <param name="reactions"></param>
         internal void DeleteReactions(IEnumerable<Reaction> reactions)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -583,7 +583,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void EditReagents()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (SelectedItems.Count > 0)
@@ -605,7 +605,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void EditConditions()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (SelectedItems.Count > 0)
@@ -640,7 +640,7 @@ namespace Chem4Word.ACME
         ///
         public void AssignReactionRoles()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Assign reaction roles");
@@ -712,7 +712,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void ClearReactionRoles()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Clearing reaction roles");

@@ -267,7 +267,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void RemoveAllAdorners()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -298,7 +298,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void UpdateAtomBondAdorners()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (MultiAdorner != null)
@@ -563,7 +563,7 @@ namespace Chem4Word.ACME
         /// <param name="thingsToAdd"></param>
         public void AddObjectListToSelection(List<StructuralObject> thingsToAdd)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -737,7 +737,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void ClearSelection()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 _selectedItems.Clear();
@@ -754,7 +754,7 @@ namespace Chem4Word.ACME
         /// <param name="thingToRemove"></param>
         public void RemoveFromSelection(object thingToRemove)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -772,7 +772,7 @@ namespace Chem4Word.ACME
         /// <param name="thingsToRemove"></param>
         private void RemoveFromSelection(List<object> thingsToRemove)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 // grab all the molecules that contain selected objects
@@ -838,7 +838,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void SelectAll()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 ClearSelection();

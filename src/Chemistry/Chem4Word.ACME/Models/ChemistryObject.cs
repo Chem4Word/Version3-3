@@ -24,7 +24,7 @@ namespace Chem4Word.ACME.Models
     public class ChemistryObject : INotifyPropertyChanged
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private IChem4WordLibraryWriter _driver;
 
@@ -219,7 +219,7 @@ namespace Chem4Word.ACME.Models
 
         private void Save()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (_driver != null)

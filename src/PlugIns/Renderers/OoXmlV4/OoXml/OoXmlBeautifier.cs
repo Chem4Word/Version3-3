@@ -41,7 +41,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         public void Beautify()
         {
-            string module = $"{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -267,7 +267,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void DetectCrossingLines()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Model model = Inputs.Model;
 
@@ -611,55 +611,62 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             {
                 pb.Increment(1);
 
-                List<Point> clippingHull = Outputs.ConvexHulls[path];
-
-                Rect boundingBox = GeometryTool.GetBoundingBox(clippingHull);
-
-                // Select Lines which may require trimming
-                // By using LINQ to implement the following SQL
-                // Where (L.Right Between Cbb.Left And Cbb.Right)
-                //    Or (L.Left Between Cbb.Left And Cbb.Right)
-                //    Or (L.Top Between Cbb.Top And Cbb.Botton)
-                //    Or (L.Bottom Between Cbb.Top And Cbb.Botton)
-
-                List<BondLine> bondLines = (from line in Outputs.BondLines
-                                            where (boundingBox.Left <= line.BoundingBox.Right && line.BoundingBox.Right <= boundingBox.Right)
-                                                  || (boundingBox.Left <= line.BoundingBox.Left && line.BoundingBox.Left <= boundingBox.Right)
-                                                  || (boundingBox.Top <= line.BoundingBox.Top && line.BoundingBox.Top <= boundingBox.Bottom)
-                                                  || (boundingBox.Top <= line.BoundingBox.Bottom && line.BoundingBox.Bottom <= boundingBox.Bottom)
-                                            select line).ToList();
-
-                foreach (BondLine bondLine in bondLines)
+                if (Outputs.ConvexHulls.ContainsKey(path))
                 {
-                    // Exclude any nascent bonds being drawn
-                    if (bondLine.Style != BondLineStyle.Nascent)
+                    List<Point> clippingHull = Outputs.ConvexHulls[path];
+
+                    Rect boundingBox = GeometryTool.GetBoundingBox(clippingHull);
+
+                    // Select Lines which may require trimming
+                    // By using LINQ to implement the following SQL
+                    // Where (L.Right Between Cbb.Left And Cbb.Right)
+                    //    Or (L.Left Between Cbb.Left And Cbb.Right)
+                    //    Or (L.Top Between Cbb.Top And Cbb.Botton)
+                    //    Or (L.Bottom Between Cbb.Top And Cbb.Botton)
+
+                    List<BondLine> bondLines = (from line in Outputs.BondLines
+                                                where (boundingBox.Left <= line.BoundingBox.Right && line.BoundingBox.Right <= boundingBox.Right)
+                                                      || (boundingBox.Left <= line.BoundingBox.Left && line.BoundingBox.Left <= boundingBox.Right)
+                                                      || (boundingBox.Top <= line.BoundingBox.Top && line.BoundingBox.Top <= boundingBox.Bottom)
+                                                      || (boundingBox.Top <= line.BoundingBox.Bottom && line.BoundingBox.Bottom <= boundingBox.Bottom)
+                                                select line).ToList();
+
+                    foreach (BondLine bondLine in bondLines)
                     {
-                        if (!(bondLine.Bond.Stereo == BondStereo.Wedge
-                              || bondLine.Bond.Stereo == BondStereo.Hatch
-                              || bondLine.Bond.Stereo == BondStereo.Thick))
+                        // Exclude any nascent bonds being drawn
+                        if (bondLine.Style != BondLineStyle.Nascent)
                         {
-                            bool intersects = !GeometryTool.Intersects(bondLine.Start, bondLine.End, clippingHull);
-                            if (intersects)
+                            if (!(bondLine.Bond.Stereo == BondStereo.Wedge
+                                  || bondLine.Bond.Stereo == BondStereo.Hatch
+                                  || bondLine.Bond.Stereo == BondStereo.Thick))
                             {
-                                Point[] points = GeometryTool.ClipLineWithPolygon(bondLine.Start, bondLine.End, clippingHull, out bool _);
-
-                                // We only need to consider when the hull of an atom's symbol has cut through a bond line as shown below
-                                //
-                                // -----[H]------
-                                //
-                                if (points.Length == 4)
+                                bool intersects = !GeometryTool.Intersects(bondLine.Start, bondLine.End, clippingHull);
+                                if (intersects)
                                 {
-                                    // 1. Generate new line
-                                    BondLine extraLine = new BondLine(bondLine.Style, points[0], points[1], bondLine.Bond);
-                                    Outputs.BondLines.Add(extraLine);
+                                    Point[] points = GeometryTool.ClipLineWithPolygon(bondLine.Start, bondLine.End, clippingHull, out bool _);
 
-                                    // 2. Trim existing line
-                                    bondLine.Start = points[2];
-                                    bondLine.End = points[3];
+                                    // We only need to consider when the hull of an atom's symbol has cut through a bond line as shown below
+                                    //
+                                    // -----[H]------
+                                    //
+                                    if (points.Length == 4)
+                                    {
+                                        // 1. Generate new line
+                                        BondLine extraLine = new BondLine(bondLine.Style, points[0], points[1], bondLine.Bond);
+                                        Outputs.BondLines.Add(extraLine);
+
+                                        // 2. Trim existing line
+                                        bondLine.Start = points[2];
+                                        bondLine.End = points[3];
+                                    }
                                 }
                             }
                         }
                     }
+                }
+                else
+                {
+                    Inputs.Telemetry.Write(module, "Warning", $"Outputs.ConvexHulls does not contain path '{path}'");
                 }
             }
 

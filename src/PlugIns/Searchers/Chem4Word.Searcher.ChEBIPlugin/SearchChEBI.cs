@@ -30,7 +30,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 {
     public partial class SearchChEBI : Form
     {
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         private const string SearchForTemplate = "{0}/backend/api/public/es_search/?term={1}&page=1&size={2}";
@@ -151,10 +151,10 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     {
                         if (!string.IsNullOrEmpty(apiResult.Content))
                         {
-                            Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                            Telemetry.Write(module, "SearchFailure", apiResult.Content);
                         }
                         ChEbiSearchResult data = ProcessSearchResponse(apiResult.Content);
-                        Telemetry.Write(module, "Exception", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
+                        Telemetry.Write(module, "SearchFailure", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
                 catch (Exception exception)
@@ -212,7 +212,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                 if (!string.IsNullOrEmpty(data.Detail))
                 {
                     ErrorsAndWarnings.Text = data.Detail;
-                    Telemetry.Write(module, "Exception", $"{data.Detail}");
+                    Telemetry.Write(module, "SearchFailure", $"{data.Detail}");
                 }
             }
 
@@ -277,7 +277,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         private void OnClick_ImportButton(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 ImportStructure();
@@ -290,7 +290,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         private void ImportStructure()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (_lastModel != null)
             {
@@ -340,7 +340,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         private void OnMouseDoubleClick_ResultsListView(object sender, MouseEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -375,7 +375,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         private void OnSelectedIndexChanged_ResultsListView(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             ErrorsAndWarnings.Text = "";
             display1.Clear();
@@ -401,7 +401,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         private void OnClick_SearchButton(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string searchFor = TextHelper.StripAsciiControlCharacters(SearchFor.Text).Trim();
@@ -426,7 +426,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         private void OnLoad_SearchChEBI(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (!PointHelper.PointIsEmpty(TopLeft))
@@ -463,7 +463,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         private void UpdateDisplay()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             ErrorsAndWarnings.Text = "";
             display1.Clear();

@@ -50,7 +50,7 @@ namespace WinForms.TestHarness
         private TelemetryWriter _telemetry;
 
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private Model _currentModel;
 
@@ -142,7 +142,7 @@ namespace WinForms.TestHarness
 
         private void OnClick_LoadStructure(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Model model = null;
@@ -300,7 +300,7 @@ namespace WinForms.TestHarness
         private void OnClick_EditLabels(object sender, EventArgs e)
         {
 #if !DEBUG
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
 #endif
@@ -334,7 +334,7 @@ namespace WinForms.TestHarness
         private void OnClick_EditWithAcme(object sender, EventArgs e)
         {
 #if !DEBUG
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
 #endif
@@ -412,7 +412,7 @@ namespace WinForms.TestHarness
 
         private void OnClick_Undo(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Model poppedModel = _undoStack.Pop();
@@ -439,7 +439,7 @@ namespace WinForms.TestHarness
 
         private void OnClick_Redo(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Model poppedModel = _redoStack.Pop();
@@ -489,7 +489,7 @@ namespace WinForms.TestHarness
 
         private void OnClick_EditCml(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -521,7 +521,7 @@ namespace WinForms.TestHarness
 
         private void OnClick_ShowCml(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (_currentModel != null)
@@ -545,7 +545,7 @@ namespace WinForms.TestHarness
 
         private void SaveStructure_Click(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (_currentModel != null)
@@ -688,7 +688,7 @@ namespace WinForms.TestHarness
 
         private void LayoutUsingChemblClean()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             CMLConverter cc = new CMLConverter();
             Model copy = _currentModel.Copy();

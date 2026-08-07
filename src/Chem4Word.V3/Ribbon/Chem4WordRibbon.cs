@@ -20,7 +20,9 @@ using Chem4Word.Navigator;
 using Chem4Word.Telemetry;
 using Chem4Word.UI;
 using Chem4Word.UI.WPF;
+using Chem4Word.WebServices;
 using IChem4Word.Contracts;
+using IChem4Word.Contracts.Dto;
 using Microsoft.Office.Core;
 using Microsoft.Office.Tools.Ribbon;
 using Ookii.Dialogs.WinForms;
@@ -50,7 +52,7 @@ namespace Chem4Word
     public partial class CustomRibbon
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private static object _missing = Type.Missing;
 
@@ -62,15 +64,15 @@ namespace Chem4Word
 
         private void OnLoad_CustomRibbon(object sender, RibbonUIEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
                 Chem4Word.Chem4WordV3.SetGlobalRibbon(this);
 
-                var tab = Tabs[0];
+                RibbonTab tab = Tabs[0];
 
-                var tabLabel = "Chemistry";
+                string tabLabel = "Chemistry";
 #if DEBUG
                 tabLabel += $" (Debug {CoreConstants.Chem4WordVersion})";
 #endif
@@ -78,7 +80,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -99,7 +101,7 @@ namespace Chem4Word
 
         private void OnClick_RenderAs(object sender, RibbonControlEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -252,7 +254,7 @@ namespace Chem4Word
 
         private void AddDynamicMenuItems()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             try
             {
@@ -397,7 +399,7 @@ namespace Chem4Word
 
         private void OnClick_DrawOrEdit(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -422,9 +424,9 @@ namespace Chem4Word
 
         private void LoadSettingsForm(string tabName = null)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            using (var cursor = new WaitCursor())
+            using (WaitCursor cursor = new WaitCursor())
             {
                 bool librariesChanged = false;
 
@@ -433,19 +435,19 @@ namespace Chem4Word
                 if (Globals.Chem4WordV3.EventsEnabled)
                 {
                     Globals.Chem4WordV3.EventsEnabled = false;
-                    var app = Globals.Chem4WordV3.Application;
+                    Word.Application app = Globals.Chem4WordV3.Application;
 
                     try
                     {
-                        var settingsHost = new SettingsHost();
-                        var clonedOptions = Globals.Chem4WordV3.SystemOptions.Clone();
+                        SettingsHost settingsHost = new SettingsHost();
+                        Chem4WordOptions clonedOptions = Globals.Chem4WordV3.SystemOptions.Clone();
                         clonedOptions.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
                         settingsHost.SystemOptions = clonedOptions;
                         settingsHost.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                         settingsHost.SystemOptions.WordTopLeft = Globals.Chem4WordV3.WordTopLeft;
                         settingsHost.ActiveTab = tabName;
 
-                        var dr = settingsHost.ShowDialog();
+                        DialogResult dr = settingsHost.ShowDialog();
                         librariesChanged = settingsHost.LibrariesChanged;
                         if (dr == DialogResult.OK)
                         {
@@ -473,7 +475,7 @@ namespace Chem4Word
                     catch (Exception ex)
                     {
                         cursor.Reset();
-                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                        using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                         {
                             form.ShowDialog();
                         }
@@ -488,9 +490,9 @@ namespace Chem4Word
 
         private void RefreshLibraryPane()
         {
-            var app = Globals.Chem4WordV3.Application;
+            Word.Application app = Globals.Chem4WordV3.Application;
 
-            foreach (var taskPane in Globals.Chem4WordV3.CustomTaskPanes)
+            foreach (CustomTaskPane taskPane in Globals.Chem4WordV3.CustomTaskPanes)
             {
                 if (app.ActiveWindow == taskPane.Window && taskPane.Title == CoreConstants.LibraryTaskPaneTitle)
                 {
@@ -510,9 +512,9 @@ namespace Chem4Word
         {
             if (ShowLibrary.Checked)
             {
-                var app = Globals.Chem4WordV3.Application;
+                Word.Application app = Globals.Chem4WordV3.Application;
 
-                foreach (var taskPane in Globals.Chem4WordV3.CustomTaskPanes)
+                foreach (CustomTaskPane taskPane in Globals.Chem4WordV3.CustomTaskPanes)
                 {
                     if (app.ActiveWindow == taskPane.Window && taskPane.Title == CoreConstants.LibraryTaskPaneTitle)
                     {
@@ -528,7 +530,7 @@ namespace Chem4Word
 
         private void OnClick_ManageLibraries(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -545,7 +547,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -556,7 +558,7 @@ namespace Chem4Word
 
         private void OnClick_EditLibrary(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -567,7 +569,7 @@ namespace Chem4Word
                 RegistryHelper.StoreMessage(module, "Triggered");
             }
 
-            using (var cursor = new WaitCursor())
+            using (WaitCursor cursor = new WaitCursor())
             {
                 if (Globals.Chem4WordV3.EventsEnabled)
                 {
@@ -577,7 +579,9 @@ namespace Chem4Word
                     {
                         CloseLibraryTaskPane();
 
-                        var host = new LibraryEditorHost();
+                        Globals.Chem4WordV3.Telemetry?.Write(module, "Action", $"Editing library '{Globals.Chem4WordV3.GetSelectedDatabaseDetails().DisplayName}'");
+                        LibraryEditorHost host = new LibraryEditorHost("Ribbon");
+
                         host.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                         host.Telemetry = Globals.Chem4WordV3.Telemetry;
                         host.SelectedDatabase = Globals.Chem4WordV3.GetSelectedDatabaseDetails().DisplayName;
@@ -587,7 +591,7 @@ namespace Chem4Word
                     catch (Exception ex)
                     {
                         cursor.Reset();
-                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                        using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                         {
                             form.ShowDialog();
                         }
@@ -602,7 +606,7 @@ namespace Chem4Word
 
         private void OnClick_BuyLibrary(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -613,7 +617,7 @@ namespace Chem4Word
                 RegistryHelper.StoreMessage(module, "Triggered");
             }
 
-            using (var cursor = new WaitCursor())
+            using (WaitCursor cursor = new WaitCursor())
             {
                 if (Globals.Chem4WordV3.EventsEnabled)
                 {
@@ -623,7 +627,7 @@ namespace Chem4Word
                     {
                         CloseLibraryTaskPane();
 
-                        var host = new LibraryDownloadHost();
+                        LibraryDownloadHost host = new LibraryDownloadHost();
                         host.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                         host.ShowDialog();
 
@@ -634,7 +638,7 @@ namespace Chem4Word
                     catch (Exception ex)
                     {
                         cursor.Reset();
-                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                        using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                         {
                             form.ShowDialog();
                         }
@@ -649,7 +653,7 @@ namespace Chem4Word
 
         private void OnClick_Options(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -966,15 +970,15 @@ namespace Chem4Word
 
         public static void PerformEdit()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            using (var cursor = new WaitCursor())
+            using (WaitCursor cursor = new WaitCursor())
             {
                 if (Globals.Chem4WordV3.IsEnabled)
                 {
-                    var application = Globals.Chem4WordV3.Application;
-                    var document = application.ActiveDocument;
-                    var cancelled = true;
+                    Word.Application application = Globals.Chem4WordV3.Application;
+                    Word.Document document = application.ActiveDocument;
+                    bool cancelled = true;
 
                     Word.ContentControl contentControl = null;
 
@@ -988,7 +992,7 @@ namespace Chem4Word
                                 Globals.Chem4WordV3.LoadOptions();
                             }
 
-                            var editor = Globals.Chem4WordV3.GetEditorPlugIn(Globals.Chem4WordV3.SystemOptions.SelectedEditorPlugIn);
+                            IChem4WordEditor editor = Globals.Chem4WordV3.GetEditorPlugIn(Globals.Chem4WordV3.SystemOptions.SelectedEditorPlugIn);
 
                             if (editor == null)
                             {
@@ -1000,24 +1004,24 @@ namespace Chem4Word
                                 if (Globals.Chem4WordV3.ChemistryAllowed)
                                 {
                                     CustomXMLPart customXmlPart = null;
-                                    var beforeCml = editor.RequiresSeedAtom
+                                    string beforeCml = editor.RequiresSeedAtom
                                         ? Properties.Resources.SingleCarbon_cml
                                         : string.Empty;
 
-                                    var isNewDrawing = true;
+                                    bool isNewDrawing = true;
 
-                                    var options = new RenderingOptions
-                                    {
-                                        ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms,
-                                        ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping,
-                                        ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight,
-                                        ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions,
-                                        ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH,
-                                        ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC,
-                                        DefaultBondLength = Globals.Chem4WordV3.SystemOptions.BondLength
-                                    };
+                                    RenderingOptions options = new RenderingOptions
+                                                               {
+                                                                   ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms,
+                                                                   ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping,
+                                                                   ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight,
+                                                                   ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions,
+                                                                   ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH,
+                                                                   ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC,
+                                                                   DefaultBondLength = Globals.Chem4WordV3.SystemOptions.BondLength
+                                                               };
 
-                                    var sel = application.Selection;
+                                    Word.Selection sel = application.Selection;
 
                                     if (sel.ContentControls.Count > 0)
                                     {
@@ -1028,8 +1032,8 @@ namespace Chem4Word
                                             if (customXmlPart != null)
                                             {
                                                 beforeCml = customXmlPart.XML;
-                                                var cmlConverter = new CMLConverter();
-                                                var beforeModel = cmlConverter.Import(beforeCml);
+                                                CMLConverter cmlConverter = new CMLConverter();
+                                                Model beforeModel = cmlConverter.Import(beforeCml);
 
                                                 if (beforeModel.AllErrors.Count > 0)
                                                 {
@@ -1040,11 +1044,11 @@ namespace Chem4Word
                                                     Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, beforeModel.AllWarnings));
                                                 }
 
-                                                var has2D = beforeModel.HasReactions
-                                                            || beforeModel.HasAnnotations
-                                                            || beforeModel.TotalAtomsCount > 0
-                                                            && (beforeModel.TotalBondsCount == 0
-                                                                || beforeModel.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
+                                                bool has2D = beforeModel.HasReactions
+                                                             || beforeModel.HasAnnotations
+                                                             || beforeModel.TotalAtomsCount > 0
+                                                             && (beforeModel.TotalBondsCount == 0
+                                                                 || beforeModel.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
 
                                                 if (!has2D)
                                                 {
@@ -1061,7 +1065,7 @@ namespace Chem4Word
                                             else
                                             {
                                                 Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]");
-                                                var listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
+                                                List<string> listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
                                                 Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, listCustomXmlParts));
 
                                                 UserInteractions.WarnUser("The CML for this chemistry item can't be found!");
@@ -1102,24 +1106,24 @@ namespace Chem4Word
                                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Starting edit existing structure Tag {fullTag} at position {sel.Start}");
                                     }
 
-                                    var used1D = ChemistryHelper.GetUsed1D(document, guidString);
+                                    List<string> used1D = ChemistryHelper.GetUsed1D(document, guidString);
 
                                     editor.Cml = beforeCml;
                                     editor.Used1DProperties = used1D;
 
                                     editor.DefaultRenderingOptions = options.ToJson();
-                                    var chemEditorResult = editor.Edit();
+                                    DialogResult chemEditorResult = editor.Edit();
 
                                     if (chemEditorResult == DialogResult.OK)
                                     {
                                         cancelled = false;
-                                        var cmlConverter = new CMLConverter();
+                                        CMLConverter cmlConverter = new CMLConverter();
 
-                                        var afterModel = cmlConverter.Import(editor.Cml, used1D);
+                                        Model afterModel = cmlConverter.Import(editor.Cml, used1D);
 
                                         if (afterModel.AllErrors.Count == 0 && afterModel.AllWarnings.Count == 0)
                                         {
-                                            var pc = new WebServices.PropertyCalculator(Globals.Chem4WordV3.Telemetry,
+                                            PropertyCalculator pc = new WebServices.PropertyCalculator(Globals.Chem4WordV3.Telemetry,
                                                                                         Globals.Chem4WordV3.WordTopLeft,
                                                                                         Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
                                             if (Globals.Chem4WordV3.Helper != null)
@@ -1133,7 +1137,7 @@ namespace Chem4Word
                                                     afterModel.CreatorGuid = CoreConstants.DummyMachineGuid;
                                                 }
                                             }
-                                            var changedProperties = pc.CalculateProperties(afterModel);
+                                            int changedProperties = pc.CalculateProperties(afterModel);
 
                                             if (isNewDrawing)
                                             {
@@ -1158,7 +1162,7 @@ namespace Chem4Word
                                                 afterModel.ReLabelGuids();
                                                 afterModel.Relabel(true);
 
-                                                using (var host = new EditLabelsHost())
+                                                using (EditLabelsHost host = new EditLabelsHost())
                                                 {
                                                     host.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                                                     host.Cml = cmlConverter.Export(afterModel);
@@ -1167,7 +1171,7 @@ namespace Chem4Word
                                                     host.Message = "Warning: At least one formula or name has changed; Please correct or delete any which are unnecessary or irrelevant !";
 
                                                     // Show Label Editor
-                                                    var dr = host.ShowDialog();
+                                                    DialogResult dr = host.ShowDialog();
                                                     if (dr == DialogResult.OK)
                                                     {
                                                         afterModel = cmlConverter.Import(host.Cml, used1D);
@@ -1188,10 +1192,10 @@ namespace Chem4Word
 
                                             #endregion Show Label Editor
 
-                                            var afterCml = cmlConverter.Export(afterModel);
+                                            string afterCml = cmlConverter.Export(afterModel);
 
                                             Globals.Chem4WordV3.SystemOptions.WordTopLeft = Globals.Chem4WordV3.WordTopLeft;
-                                            var renderer =
+                                            IChem4WordRenderer renderer =
                                                 Globals.Chem4WordV3.GetRendererPlugIn(
                                                     Globals.Chem4WordV3.SystemOptions.SelectedRendererPlugIn);
 
@@ -1205,9 +1209,9 @@ namespace Chem4Word
                                                 renderer.Properties = new Dictionary<string, string> { { "Guid", guidString } };
                                                 renderer.Cml = afterCml;
 
-                                                var tempFileName = renderer.Render();
+                                                string tempFileName = renderer.Render();
 
-                                                var readyToInsert = true;
+                                                bool readyToInsert = true;
 
                                                 // Stop Screen Updating and Disable Document Event Handlers
                                                 application.ScreenUpdating = false;
@@ -1215,7 +1219,7 @@ namespace Chem4Word
 
                                                 if (!isNewDrawing)
                                                 {
-                                                    var id = contentControl.ID;
+                                                    string id = contentControl.ID;
                                                     contentControl = ChemistryHelper.GetContentControl(document, id);
                                                     if (contentControl != null)
                                                     {
@@ -1309,14 +1313,14 @@ namespace Chem4Word
                                                 Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, afterModel.AllWarnings));
                                             }
 
-                                            var importErrors = new ImportErrors();
+                                            ImportErrors importErrors = new ImportErrors();
                                             importErrors.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                                             importErrors.Model = afterModel;
                                             importErrors.ShowDialog();
                                         }
 
 #if DEBUG
-                                        var listChemistryControls = CustomXmlPartHelper.ListChemistryControls(document);
+                                        List<string> listChemistryControls = CustomXmlPartHelper.ListChemistryControls(document);
                                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", string.Join(Environment.NewLine, listChemistryControls));
 #endif
                                     }
@@ -1347,7 +1351,7 @@ namespace Chem4Word
                     catch (Exception ex)
                     {
                         cursor.Reset();
-                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                        using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                         {
                             form.ShowDialog();
                         }
@@ -1385,7 +1389,7 @@ namespace Chem4Word
 
         private void OnClick_ViewCml(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -1399,11 +1403,11 @@ namespace Chem4Word
             if (Globals.Chem4WordV3.EventsEnabled && Globals.Chem4WordV3.ChemistryAllowed)
             {
                 Globals.Chem4WordV3.EventsEnabled = false;
-                var application = Globals.Chem4WordV3.Application;
+                Word.Application application = Globals.Chem4WordV3.Application;
 
                 try
                 {
-                    var selection = application.Selection;
+                    Word.Selection selection = application.Selection;
                     Word.ContentControl contentControl = null;
                     CustomXMLPart customXmlPart = null;
 
@@ -1412,11 +1416,11 @@ namespace Chem4Word
                         contentControl = selection.ContentControls[1];
                         if (contentControl.Title != null && contentControl.Title.Equals(CoreConstants.ContentControlTitle))
                         {
-                            var document = Globals.Chem4WordV3.Application.ActiveDocument;
+                            Word.Document document = Globals.Chem4WordV3.Application.ActiveDocument;
                             customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(document, contentControl.Tag);
                             if (customXmlPart != null)
                             {
-                                var viewer = new XmlViewer();
+                                XmlViewer viewer = new XmlViewer();
                                 viewer.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                                 viewer.XmlString = customXmlPart.XML;
                                 viewer.ShowDialog();
@@ -1427,7 +1431,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -1444,7 +1448,7 @@ namespace Chem4Word
 
         private void OnClick_Import(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -1469,7 +1473,7 @@ namespace Chem4Word
 
         private void OnClick_Export(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -1494,12 +1498,12 @@ namespace Chem4Word
 
         private void ExportFile()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
-                var application = Globals.Chem4WordV3.Application;
-                var selection = application.Selection;
+                Word.Application application = Globals.Chem4WordV3.Application;
+                Word.Selection selection = application.Selection;
                 Word.ContentControl contentControl = null;
                 CustomXMLPart customXmlPart = null;
 
@@ -1508,33 +1512,33 @@ namespace Chem4Word
                     contentControl = selection.ContentControls[1];
                     if (contentControl.Title != null && contentControl.Title.Equals(CoreConstants.ContentControlTitle))
                     {
-                        var document = Globals.Chem4WordV3.Application.ActiveDocument;
+                        Word.Document document = Globals.Chem4WordV3.Application.ActiveDocument;
                         customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(document, contentControl.Tag);
                         if (customXmlPart != null)
                         {
-                            var cmlConverter = new CMLConverter();
-                            var model = cmlConverter.Import(customXmlPart.XML);
+                            CMLConverter cmlConverter = new CMLConverter();
+                            Model model = cmlConverter.Import(customXmlPart.XML);
                             model.CustomXmlPartGuid = "";
 
-                            var sb = new StringBuilder();
+                            StringBuilder sb = new StringBuilder();
                             sb.Append("CML molecule files (*.cml)|*.cml");
                             sb.Append("|MDL molecule files (*.mol, *.sdf)|*.mol;*.sdf");
                             sb.Append("|SketchEl molecule files (*.el)|*.el");
 
-                            var sfd = new SaveFileDialog();
+                            SaveFileDialog sfd = new SaveFileDialog();
                             sfd.Filter = sb.ToString();
-                            var dr = sfd.ShowDialog();
+                            DialogResult dr = sfd.ShowDialog();
                             if (dr == DialogResult.OK)
                             {
-                                var fi = new FileInfo(sfd.FileName);
-                                var before = model.MeanBondLength;
+                                FileInfo fi = new FileInfo(sfd.FileName);
+                                double before = model.MeanBondLength;
                                 double after;
                                 Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Exporting to '{fi.Name}'");
-                                var fileType = Path.GetExtension(sfd.FileName).ToLower();
+                                string fileType = Path.GetExtension(sfd.FileName).ToLower();
                                 switch (fileType)
                                 {
                                     case ".cml":
-                                        var temp = XmlHelper.AddHeader(cmlConverter.Export(model));
+                                        string temp = XmlHelper.AddHeader(cmlConverter.Export(model));
                                         File.WriteAllText(sfd.FileName, temp);
                                         break;
 
@@ -1545,7 +1549,7 @@ namespace Chem4Word
                                         model.ScaleToAverageBondLength(1.54);
                                         after = model.MeanBondLength;
                                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
-                                        var sdFileConverter = new SdFileConverter();
+                                        SdFileConverter sdFileConverter = new SdFileConverter();
                                         File.WriteAllText(sfd.FileName, sdFileConverter.Export(model));
                                         break;
 
@@ -1554,7 +1558,7 @@ namespace Chem4Word
                                         model.ScaleToAverageBondLength(1.5);
                                         after = model.MeanBondLength;
                                         Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
-                                        var sketchElConverter = new SketchElConverter();
+                                        SketchElConverter sketchElConverter = new SketchElConverter();
                                         File.WriteAllText(sfd.FileName, sketchElConverter.Export(model));
                                         break;
                                 }
@@ -1565,7 +1569,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -1574,7 +1578,7 @@ namespace Chem4Word
 
         private void OnClick_EditLabels(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -1585,18 +1589,18 @@ namespace Chem4Word
                 RegistryHelper.StoreMessage(module, "Triggered");
             }
 
-            using (var cursor = new WaitCursor())
+            using (WaitCursor cursor = new WaitCursor())
             {
                 if (Globals.Chem4WordV3.EventsEnabled && Globals.Chem4WordV3.ChemistryAllowed)
                 {
                     Globals.Chem4WordV3.EventsEnabled = false;
 
-                    var application = Globals.Chem4WordV3.Application;
+                    Word.Application application = Globals.Chem4WordV3.Application;
 
                     try
                     {
-                        var selection = application.Selection;
-                        var document = application.ActiveDocument;
+                        Word.Selection selection = application.Selection;
+                        Word.Document document = application.ActiveDocument;
                         Word.ContentControl contentControl = null;
                         CustomXMLPart customXmlPart = null;
 
@@ -1605,26 +1609,26 @@ namespace Chem4Word
                             contentControl = selection.ContentControls[1];
                             if (contentControl.Title != null && contentControl.Title.Equals(CoreConstants.ContentControlTitle))
                             {
-                                var guid = CustomXmlPartHelper.GuidFromTag(contentControl.Tag);
+                                string guid = CustomXmlPartHelper.GuidFromTag(contentControl.Tag);
 
-                                var used1D = ChemistryHelper.GetUsed1D(document, guid);
+                                List<string> used1D = ChemistryHelper.GetUsed1D(document, guid);
                                 customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(document, contentControl.Tag);
                                 if (customXmlPart != null)
                                 {
-                                    var cml = customXmlPart.XML;
+                                    string cml = customXmlPart.XML;
 
-                                    using (var host = new EditLabelsHost())
+                                    using (EditLabelsHost host = new EditLabelsHost())
                                     {
                                         host.TopLeft = Globals.Chem4WordV3.WordTopLeft;
                                         host.Cml = cml;
                                         host.Used1D = used1D;
                                         host.Message = "";
 
-                                        var result = host.ShowDialog();
+                                        DialogResult result = host.ShowDialog();
                                         if (result == DialogResult.OK)
                                         {
-                                            var afterCml = host.Cml;
-                                            var renderer =
+                                            string afterCml = host.Cml;
+                                            IChem4WordRenderer renderer =
                                                 Globals.Chem4WordV3.GetRendererPlugIn(
                                                     Globals.Chem4WordV3.SystemOptions.SelectedRendererPlugIn);
                                             if (renderer == null)
@@ -1637,12 +1641,12 @@ namespace Chem4Word
                                                 renderer.Properties = new Dictionary<string, string> { { "Guid", guid } };
                                                 renderer.Cml = afterCml;
 
-                                                var tempFileName = renderer.Render();
+                                                string tempFileName = renderer.Render();
 
                                                 if (File.Exists(tempFileName))
                                                 {
-                                                    var converter = new CMLConverter();
-                                                    var model = converter.Import(afterCml, used1D);
+                                                    CMLConverter converter = new CMLConverter();
+                                                    Model model = converter.Import(afterCml, used1D);
                                                     ChemistryHelper.UpdateThisStructure(document, model, guid, tempFileName);
 
                                                     if (Globals.Chem4WordV3.Telemetry != null)
@@ -1690,9 +1694,9 @@ namespace Chem4Word
                                 }
                                 else
                                 {
-                                    var message1 = $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]";
-                                    var listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
-                                    var message2 = string.Join(Environment.NewLine, listCustomXmlParts);
+                                    string message1 = $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]";
+                                    List<string> listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
+                                    string message2 = string.Join(Environment.NewLine, listCustomXmlParts);
 
                                     if (Globals.Chem4WordV3.Telemetry != null)
                                     {
@@ -1712,7 +1716,7 @@ namespace Chem4Word
                     catch (Exception ex)
                     {
                         cursor.Reset();
-                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                        using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                         {
                             form.ShowDialog();
                         }
@@ -1732,7 +1736,7 @@ namespace Chem4Word
 
         private void OnLoading_ViewAsItems(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -1752,7 +1756,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -1761,7 +1765,7 @@ namespace Chem4Word
 
         private void OnLoading_SearchItems(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -1780,11 +1784,11 @@ namespace Chem4Word
 
                     if (Globals.Chem4WordV3.Searchers != null)
                     {
-                        foreach (var searcher in Globals.Chem4WordV3.Searchers.OrderBy(s => s.DisplayOrder))
+                        foreach (IChem4WordSearcher searcher in Globals.Chem4WordV3.Searchers.OrderBy(s => s.DisplayOrder))
                         {
                             if (searcher.DisplayOrder >= 0)
                             {
-                                var ribbonButton = Factory.CreateRibbonButton();
+                                RibbonButton ribbonButton = Factory.CreateRibbonButton();
 
                                 ribbonButton.Label = searcher.ShortName;
                                 ribbonButton.Tag = searcher.Name;
@@ -1800,7 +1804,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -1809,7 +1813,7 @@ namespace Chem4Word
 
         private void OnClick_Searcher(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -1823,22 +1827,22 @@ namespace Chem4Word
             if (Globals.Chem4WordV3.EventsEnabled && Globals.Chem4WordV3.ChemistryAllowed)
             {
                 Globals.Chem4WordV3.EventsEnabled = false;
-                var application = Globals.Chem4WordV3.Application;
+                Word.Application application = Globals.Chem4WordV3.Application;
 
                 try
                 {
-                    var clicked = sender as RibbonButton;
+                    RibbonButton clicked = sender as RibbonButton;
                     if (clicked != null)
                     {
                         IChem4WordSearcher searcher = Globals.Chem4WordV3.GetSearcherPlugIn(clicked.Tag);
                         if (searcher != null)
                         {
-                            var dr = searcher.Search();
+                            DialogResult dr = searcher.Search();
                             if (dr == DialogResult.OK && !string.IsNullOrEmpty(searcher.Cml))
                             {
-                                var document = Globals.Chem4WordV3.Application.ActiveDocument;
-                                var cmlConverter = new CMLConverter();
-                                var model = cmlConverter.Import(searcher.Cml);
+                                Word.Document document = Globals.Chem4WordV3.Application.ActiveDocument;
+                                CMLConverter cmlConverter = new CMLConverter();
+                                Model model = cmlConverter.Import(searcher.Cml);
                                 model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");
 
                                 // Set default rendering options
@@ -1855,8 +1859,8 @@ namespace Chem4Word
                                     model.RemoveExplicitHydrogens();
                                 }
 
-                                var outcome = model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength,
-                                                       Globals.Chem4WordV3.SystemOptions.SetBondLengthOnImportFromSearch);
+                                string outcome = model.EnsureBondLength(Globals.Chem4WordV3.SystemOptions.BondLength,
+                                                                        Globals.Chem4WordV3.SystemOptions.SetBondLengthOnImportFromSearch);
                                 if (!string.IsNullOrEmpty(outcome))
                                 {
                                     if (Globals.Chem4WordV3.Telemetry != null)
@@ -1869,7 +1873,7 @@ namespace Chem4Word
                                     }
                                 }
 
-                                var cc = ChemistryHelper.Insert2DChemistry(document, cmlConverter.Export(model), true);
+                                Word.ContentControl cc = ChemistryHelper.Insert2DChemistry(document, cmlConverter.Export(model), true);
                                 if (cc != null)
                                 {
                                     // Move selection point into the Content Control which was just inserted
@@ -1881,7 +1885,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -1898,7 +1902,7 @@ namespace Chem4Word
 
         private void OnClick_SaveToLibrary(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -1915,8 +1919,8 @@ namespace Chem4Word
 
                 try
                 {
-                    var application = Globals.Chem4WordV3.Application;
-                    var selection = application.Selection;
+                    Word.Application application = Globals.Chem4WordV3.Application;
+                    Word.Selection selection = application.Selection;
                     Word.ContentControl cc = null;
                     CustomXMLPart customXmlPart = null;
 
@@ -1926,11 +1930,11 @@ namespace Chem4Word
                         cc = selection.ContentControls[1];
                         if (cc.Title != null && cc.Title.Equals(CoreConstants.ContentControlTitle))
                         {
-                            var document = Globals.Chem4WordV3.Application.ActiveDocument;
+                            Word.Document document = Globals.Chem4WordV3.Application.ActiveDocument;
                             customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(document, cc.Tag);
                             if (customXmlPart != null)
                             {
-                                var cml = customXmlPart.XML;
+                                string cml = customXmlPart.XML;
                                 model = new CMLConverter().Import(cml);
                                 if (model.TotalAtomsCount > 0)
                                 {
@@ -1939,16 +1943,16 @@ namespace Chem4Word
                                         Globals.Chem4WordV3.LoadNamesFromLibrary();
                                     }
 
-                                    var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
+                                    DatabaseDetails details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
                                     if (details != null)
                                     {
-                                        var driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
+                                        IChem4WordLibraryBase driver = Globals.Chem4WordV3.GetDriverPlugIn(details.Driver);
                                         if (driver != null)
                                         {
-                                            var lib = (IChem4WordLibraryWriter)driver;
+                                            IChem4WordLibraryWriter lib = (IChem4WordLibraryWriter)driver;
                                             lib.FileName = details.Connection;
 
-                                            var dto = DtoHelper.CreateFromModel(model, CoreConstants.DefaultSaveFormat);
+                                            ChemistryDataTransferObject dto = DtoHelper.CreateFromModel(model, CoreConstants.DefaultSaveFormat);
                                             lib.AddChemistry(dto);
 
                                             // Re- Read the Library Names
@@ -1966,7 +1970,7 @@ namespace Chem4Word
                             }
 
                             CustomTaskPane custTaskPane = null;
-                            foreach (var taskPane in Globals.Chem4WordV3.CustomTaskPanes)
+                            foreach (CustomTaskPane taskPane in Globals.Chem4WordV3.CustomTaskPanes)
                             {
                                 if (application.ActiveWindow == taskPane.Window && taskPane.Title == CoreConstants.LibraryTaskPaneTitle)
                                 {
@@ -1984,7 +1988,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -1997,7 +2001,7 @@ namespace Chem4Word
 
         private void OnClick_Navigator(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2012,17 +2016,17 @@ namespace Chem4Word
             {
                 //see https://msdn.microsoft.com/en-us/library/bb608620(v=vs.100).aspx
 
-                var application = Globals.Chem4WordV3.Application;
-                var document = application.ActiveDocument;
+                Word.Application application = Globals.Chem4WordV3.Application;
+                Word.Document document = application.ActiveDocument;
 
                 if (Globals.Chem4WordV3.EventsEnabled)
                 {
                     application.System.Cursor = Word.WdCursorType.wdCursorWait;
 
-                    if (application.Documents.Count > 0)
+                    if (Globals.Chem4WordV3.DocumentCount > 0)
                     {
                         CustomTaskPane custTaskPane = null;
-                        foreach (var taskPane in Globals.Chem4WordV3.CustomTaskPanes)
+                        foreach (CustomTaskPane taskPane in Globals.Chem4WordV3.CustomTaskPanes)
                         {
                             if (application.ActiveWindow == taskPane.Window && taskPane.Title == CoreConstants.NavigatorTaskPaneTitle)
                             {
@@ -2034,7 +2038,7 @@ namespace Chem4Word
                         {
                             if (custTaskPane == null)
                             {
-                                var navigatorHost = new NavigatorHost();
+                                NavigatorHost navigatorHost = new NavigatorHost();
                                 custTaskPane =
                                     Globals.Chem4WordV3.CustomTaskPanes.Add(navigatorHost,
                                         CoreConstants.NavigatorTaskPaneTitle, application.ActiveWindow);
@@ -2065,7 +2069,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -2076,19 +2080,19 @@ namespace Chem4Word
 
         private void OnVisibleChanged_NavigatorPane(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
-                var taskPane = sender as CustomTaskPane;
+                CustomTaskPane taskPane = sender as CustomTaskPane;
 
                 if (Globals.Chem4WordV3.EventsEnabled && taskPane != null)
                 {
                     Word.Window window = taskPane.Window;
                     if (window != null)
                     {
-                        var documentName = window.Document.Name;
-                        var activeDocument = Globals.Chem4WordV3.Application.ActiveDocument;
+                        string documentName = window.Document.Name;
+                        Word.Document activeDocument = Globals.Chem4WordV3.Application.ActiveDocument;
 
                         if (documentName.Equals(activeDocument.Name) && ShowNavigator.Checked != taskPane.Visible)
                         {
@@ -2099,7 +2103,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -2108,7 +2112,7 @@ namespace Chem4Word
 
         private void OnClick_ShowLibrary(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2128,15 +2132,15 @@ namespace Chem4Word
                 try
                 {
                     // See https://msdn.microsoft.com/en-us/library/bb608590.aspx
-                    var app = Globals.Chem4WordV3.Application;
+                    Word.Application app = Globals.Chem4WordV3.Application;
                     using (new WaitCursor())
                     {
                         if (Globals.Chem4WordV3.EventsEnabled)
                         {
-                            if (app.Documents.Count > 0)
+                            if (Globals.Chem4WordV3.DocumentCount > 0)
                             {
                                 CustomTaskPane custTaskPane = null;
-                                foreach (var taskPane in Globals.Chem4WordV3.CustomTaskPanes)
+                                foreach (CustomTaskPane taskPane in Globals.Chem4WordV3.CustomTaskPanes)
                                 {
                                     if (app.ActiveWindow == taskPane.Window && taskPane.Title == CoreConstants.LibraryTaskPaneTitle)
                                     {
@@ -2182,7 +2186,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -2201,11 +2205,11 @@ namespace Chem4Word
 
         public void OnVisibleChanged_LibraryPane(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
-                var taskPane = sender as CustomTaskPane;
+                CustomTaskPane taskPane = sender as CustomTaskPane;
 
                 if (Globals.Chem4WordV3.EventsEnabled && taskPane != null)
                 {
@@ -2214,8 +2218,8 @@ namespace Chem4Word
                     Word.Window window = taskPane.Window;
                     if (window != null)
                     {
-                        var documentName = window.Document.Name;
-                        var activeDocument = Globals.Chem4WordV3.Application.ActiveDocument;
+                        string documentName = window.Document.Name;
+                        Word.Document activeDocument = Globals.Chem4WordV3.Application.ActiveDocument;
 
                         if (documentName.Equals(activeDocument.Name))
                         {
@@ -2231,7 +2235,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -2240,7 +2244,7 @@ namespace Chem4Word
 
         private void OnClick_Separate(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2255,8 +2259,8 @@ namespace Chem4Word
             {
                 Globals.Chem4WordV3.EventsEnabled = false;
 
-                var application = Globals.Chem4WordV3.Application;
-                var document = application.ActiveDocument;
+                Word.Application application = Globals.Chem4WordV3.Application;
+                Word.Document document = application.ActiveDocument;
                 Word.ContentControl contentControl = null;
 
                 // Stop Screen Updating and Disable Document Event Handlers
@@ -2266,11 +2270,11 @@ namespace Chem4Word
                 try
                 {
                     CustomXMLPart customXmlPart = null;
-                    var sel = application.Selection;
+                    Word.Selection sel = application.Selection;
 
                     if (sel.ContentControls.Count > 0)
                     {
-                        var renderer =
+                        IChem4WordRenderer renderer =
                             Globals.Chem4WordV3.GetRendererPlugIn(
                                 Globals.Chem4WordV3.SystemOptions.SelectedRendererPlugIn);
                         if (renderer == null)
@@ -2282,15 +2286,15 @@ namespace Chem4Word
                             contentControl = sel.ContentControls[1];
                             if (contentControl.Title != null && contentControl.Title.Equals(CoreConstants.ContentControlTitle))
                             {
-                                var fullTag = contentControl.Tag;
-                                var guidString = CustomXmlPartHelper.GuidFromTag(contentControl.Tag);
+                                string fullTag = contentControl.Tag;
+                                string guidString = CustomXmlPartHelper.GuidFromTag(contentControl.Tag);
 
                                 customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(document, contentControl.Tag);
                                 if (customXmlPart != null)
                                 {
-                                    var beforeCml = customXmlPart.XML;
-                                    var cmlConverter = new CMLConverter();
-                                    var model = cmlConverter.Import(beforeCml);
+                                    string beforeCml = customXmlPart.XML;
+                                    CMLConverter cmlConverter = new CMLConverter();
+                                    Model model = cmlConverter.Import(beforeCml);
 
                                     if (model.HasReactions || model.HasAnnotations)
                                     {
@@ -2299,7 +2303,7 @@ namespace Chem4Word
                                     }
                                     else
                                     {
-                                        var packer = new Packer();
+                                        Packer packer = new Packer();
                                         packer.Model = model;
                                         packer.Pack(model.MeanBondLength * 2);
 
@@ -2308,7 +2312,7 @@ namespace Chem4Word
                                         //separator.Separate(model.MeanBondLength, 99, out loops)
                                         //Debug.WriteLine($"Separate took {loops} loops")
 
-                                        var afterCml = cmlConverter.Export(model);
+                                        string afterCml = cmlConverter.Export(model);
 
                                         if (Globals.Chem4WordV3.SystemOptions == null)
                                         {
@@ -2318,7 +2322,7 @@ namespace Chem4Word
                                         renderer.Properties = new Dictionary<string, string> { { "Guid", guidString } };
                                         renderer.Cml = afterCml;
 
-                                        var tempFileName = renderer.Render();
+                                        string tempFileName = renderer.Render();
 
                                         if (File.Exists(tempFileName))
                                         {
@@ -2379,9 +2383,9 @@ namespace Chem4Word
                                 }
                                 else
                                 {
-                                    var message1 = $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]";
-                                    var listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
-                                    var message2 = string.Join(Environment.NewLine, listCustomXmlParts);
+                                    string message1 = $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]";
+                                    List<string> listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
+                                    string message2 = string.Join(Environment.NewLine, listCustomXmlParts);
 
                                     if (Globals.Chem4WordV3.Telemetry != null)
                                     {
@@ -2402,7 +2406,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -2427,7 +2431,7 @@ namespace Chem4Word
 
         private void OnClick_Update(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2455,7 +2459,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -2469,7 +2473,7 @@ namespace Chem4Word
 
         private void OnClick_ShowAbout(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2480,26 +2484,26 @@ namespace Chem4Word
                 RegistryHelper.StoreMessage(module, "Triggered");
             }
 
-            using (var cursor = new WaitCursor())
+            using (WaitCursor cursor = new WaitCursor())
             {
                 if (Globals.Chem4WordV3.EventsEnabled)
                 {
                     Globals.Chem4WordV3.EventsEnabled = false;
 
-                    var app = Globals.Chem4WordV3.Application;
+                    Word.Application app = Globals.Chem4WordV3.Application;
 
                     try
                     {
-                        var ah = new AboutHost();
+                        AboutHost ah = new AboutHost();
                         ah.TopLeft = Globals.Chem4WordV3.WordTopLeft;
 
-                        var assembly = Assembly.GetExecutingAssembly();
-                        var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+                        Assembly assembly = Assembly.GetExecutingAssembly();
+                        FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
                         UpdateHelper.ReadThisVersion(assembly);
                         if (Globals.Chem4WordV3.ThisVersion != null)
                         {
-                            var temp = Globals.Chem4WordV3.ThisVersion.Root.Element("Number").Value;
-                            var idx = temp.IndexOf(" ", StringComparison.InvariantCulture);
+                            string temp = Globals.Chem4WordV3.ThisVersion.Root.Element("Number").Value;
+                            int idx = temp.IndexOf(" ", StringComparison.InvariantCulture);
                             ah.VersionString = $"Chem4Word 2026 {temp.Substring(idx + 1)}";
                         }
                         else
@@ -2511,7 +2515,7 @@ namespace Chem4Word
                     catch (Exception ex)
                     {
                         cursor.Reset();
-                        using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                        using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                         {
                             form.ShowDialog();
                         }
@@ -2529,7 +2533,7 @@ namespace Chem4Word
 
         private void OnClick_ShowHome(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2550,7 +2554,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -2564,7 +2568,7 @@ namespace Chem4Word
 
         private void OnClick_CheckForUpdates(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2588,7 +2592,7 @@ namespace Chem4Word
 
                 if (Globals.Chem4WordV3.SystemOptions != null)
                 {
-                    var behind = UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency, nameof(OnClick_CheckForUpdates));
+                    int behind = UpdateHelper.CheckForUpdates(Globals.Chem4WordV3.SystemOptions.AutoUpdateFrequency, nameof(OnClick_CheckForUpdates));
                     if (Globals.Chem4WordV3.IsEndOfLife)
                     {
                         UserInteractions.InformUser("This version of Chem4Word is no longer supported");
@@ -2614,7 +2618,7 @@ namespace Chem4Word
 
         private void OnClick_ReadManual(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2632,11 +2636,10 @@ namespace Chem4Word
                 const string fileNameOfManual = "Chem4Word-Version3-3-User-Manual.docx";
                 try
                 {
-                    var userManual = Path.Combine(Globals.Chem4WordV3.AddInInfo.DeploymentPath, "Manual", fileNameOfManual);
+                    string userManual = Path.Combine(Globals.Chem4WordV3.AddInInfo.DeploymentPath, "Manual", fileNameOfManual);
                     if (File.Exists(userManual))
                     {
-                        Globals.Chem4WordV3.Telemetry.Write(module, "ReadManual", userManual);
-                        Globals.Chem4WordV3.Application.Documents.Open(userManual, ReadOnly: true);
+                        OpenManual(userManual);
                     }
                     else
                     {
@@ -2644,14 +2647,20 @@ namespace Chem4Word
                         userManual = Path.Combine(Globals.Chem4WordV3.AddInInfo.DeploymentPath, @"..\..\..\..\docs", fileNameOfManual);
                         if (File.Exists(userManual))
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "ReadManual", userManual);
-                            Globals.Chem4WordV3.Application.Documents.Open(userManual, ReadOnly: true);
+                            OpenManual(userManual);
                         }
+                    }
+
+                    Globals.Chem4WordV3.Telemetry?.Write(module, "ReadManual", userManual);
+                    Word.Documents documents = Globals.Chem4WordV3.AllDocuments;
+                    if (documents != null)
+                    {
+                        documents.Open(userManual, ReadOnly: true);
                     }
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -2665,11 +2674,21 @@ namespace Chem4Word
             }
 
             AfterButtonChecks(sender as RibbonButton);
+
+            void OpenManual(string userManual)
+            {
+                Globals.Chem4WordV3.Telemetry?.Write(module, "ReadManual", userManual);
+                Word.Documents documents = Globals.Chem4WordV3.AllDocuments;
+                if (documents != null)
+                {
+                    documents.Open(userManual, ReadOnly: true);
+                }
+            }
         }
 
         private void OnClick_Donate(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2690,7 +2709,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -2704,7 +2723,7 @@ namespace Chem4Word
 
         private void OnClick_YouTube(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2725,7 +2744,7 @@ namespace Chem4Word
                 }
                 catch (Exception ex)
                 {
-                    using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                    using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                     {
                         form.ShowDialog();
                     }
@@ -2739,7 +2758,7 @@ namespace Chem4Word
 
         private void OnClick_ButtonsDisabled(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             BeforeButtonChecks();
 
@@ -2766,7 +2785,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -2777,7 +2796,7 @@ namespace Chem4Word
 
         private void OnClick_ShowSystemInfo(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
@@ -2792,7 +2811,7 @@ namespace Chem4Word
             {
                 if (Globals.Chem4WordV3.PlugInsHaveBeenLoaded)
                 {
-                    var form = new SystemInfo();
+                    SystemInfo form = new SystemInfo();
                     form.TopLeft = Globals.Chem4WordV3.WordTopLeft;
 
                     form.ShowDialog();
@@ -2804,7 +2823,7 @@ namespace Chem4Word
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -2815,7 +2834,7 @@ namespace Chem4Word
 
         private void OnClick_ExportAllToCML(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
 
             if (Globals.Chem4WordV3.Telemetry != null)
@@ -2841,12 +2860,12 @@ namespace Chem4Word
 
         private static void ExportMultipleFiles(string format)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
-                var application = Globals.Chem4WordV3.Application;
-                var activeDocument = application.ActiveDocument;
+                Word.Application application = Globals.Chem4WordV3.Application;
+                Word.Document activeDocument = application.ActiveDocument;
 
                 CustomXMLPart customXmlPart;
 
@@ -2865,7 +2884,7 @@ namespace Chem4Word
                             customXmlPart = CustomXmlPartHelper.GetCustomXmlPart(activeDocument, contentControl.Tag);
                             if (customXmlPart != null)
                             {
-                                var model = cmlConverter.Import(customXmlPart.XML);
+                                Model model = cmlConverter.Import(customXmlPart.XML);
                                 aggregatedCML.Add(model);
                             }
                         }
@@ -2873,14 +2892,14 @@ namespace Chem4Word
 
                     if (aggregatedCML.Any())
                     {
-                        var browserDialog = new VistaFolderBrowserDialog();
+                        VistaFolderBrowserDialog browserDialog = new VistaFolderBrowserDialog();
                         browserDialog.Description = "Export All Chemistry to Files";
                         browserDialog.UseDescriptionForTitle = true;
 
-                        var dr = browserDialog.ShowDialog();
+                        DialogResult dr = browserDialog.ShowDialog();
                         if (dr == DialogResult.OK)
                         {
-                            var folderInfo = new DirectoryInfo(browserDialog.SelectedPath);
+                            DirectoryInfo folderInfo = new DirectoryInfo(browserDialog.SelectedPath);
 
                             if (folderInfo.GetFiles($"*.{format}").Any()
                                 && UserInteractions.AskUserYesNo(
@@ -2945,7 +2964,7 @@ namespace Chem4Word
 
         private void OnClick_ExportAllToSDFiles(object sender, RibbonControlEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             BeforeButtonChecks();
 
             if (Globals.Chem4WordV3.Telemetry != null)

@@ -32,7 +32,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
     public partial class SearchPubChem : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private const string SearchForTemplate = "{0}entrez/eutils/esearch.fcgi?db=pccompound&term={1}&retmode=xml&relevanceorder=on&usehistory=y&retmax={2}";
         private const string FindMoreTemplate = "{0}entrez/eutils/esearch.fcgi?db=pccompound&term={1}&retmode=xml&relevanceorder=on&usehistory=y&retmax={2}&WebEnv={3}&RetStart={4}";
@@ -68,7 +68,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void OnLoad_SearchPubChem(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (!PointHelper.PointIsEmpty(TopLeft))
@@ -107,7 +107,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void OnClick_SearchButton(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string searchFor = TextHelper.StripAsciiControlCharacters(SearchFor.Text).Trim();
             string webSafe = TextHelper.NormalizeCharacters(WebUtility.HtmlEncode(searchFor));
@@ -124,7 +124,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void OnClick_PreviousButton(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string searchFor = TextHelper.StripAsciiControlCharacters(SearchFor.Text).Trim();
             string webSafe = TextHelper.NormalizeCharacters(WebUtility.HtmlEncode(searchFor));
@@ -138,7 +138,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void OnClick_NextButton(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string searchFor = TextHelper.StripAsciiControlCharacters(SearchFor.Text).Trim();
             string webSafe = TextHelper.NormalizeCharacters(WebUtility.HtmlEncode(searchFor));
@@ -152,7 +152,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void OnClick_ImportButton(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 DialogResult = DialogResult.OK;
@@ -166,7 +166,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void OnSelectedIndexChanged_Results(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 ListView.SelectedListViewItemCollection selected = Results.SelectedItems;
@@ -206,7 +206,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void OnDoubleClick_Results(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Debug.WriteLine("OnDoubleClick_Results");
@@ -221,7 +221,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void ExecuteSearch(string webSafe, int direction)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             using (new WaitCursor())
             {
@@ -287,9 +287,9 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     {
                         if (!string.IsNullOrEmpty(apiResult.Content))
                         {
-                            Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                            Telemetry.Write(module, "SearchFailure", apiResult.Content);
                         }
-                        Telemetry.Write(module, "Exception", $"{apiResult.StatusCode} - {apiResult.Message}");
+                        Telemetry.Write(module, "SearchFailure", $"{apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
                 catch (Exception exception)
@@ -323,7 +323,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void FillListView()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Results.Items.Clear();
             Refresh();
@@ -342,7 +342,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private bool ParseResponseBody(string responseBody)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             bool result = true;
             if (!string.IsNullOrEmpty(responseBody))
@@ -368,7 +368,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     result = false;
                     foreach (string error in errors)
                     {
-                        Telemetry.Write(module, "Exception", error);
+                        Telemetry.Write(module, "SearchFailure", error);
                     }
                 }
 
@@ -376,7 +376,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                 {
                     foreach (string warning in warnings)
                     {
-                        Telemetry.Write(module, "Warning", warning);
+                        Telemetry.Write(module, "SearchFailure", warning);
                     }
                 }
 
@@ -426,7 +426,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void GetData(string idlist)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string webCall = string.Format(CultureInfo.InvariantCulture, GetDetailsTemplate,
                                            UserOptions.PubChemWebServiceUri, idlist);
@@ -498,7 +498,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void DisplayStructure(string sdFile)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             SdFileConverter sdFileConverter = new SdFileConverter();
             Model model = sdFileConverter.Import(sdFile);
@@ -539,7 +539,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private string FetchStructure(string pubChemId)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string result = string.Empty;
 
@@ -583,7 +583,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         private void OnFormClosing_SearchPubChem(object sender, FormClosingEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (DialogResult != DialogResult.OK)

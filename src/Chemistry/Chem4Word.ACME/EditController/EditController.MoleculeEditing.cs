@@ -128,7 +128,7 @@ namespace Chem4Word.ACME
         /// <param name="mol"></param>
         public void DeleteMolecule(Molecule mol)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             HashSet<ElectronPusher> associatedPushers = new HashSet<ElectronPusher>();
 
@@ -210,7 +210,7 @@ namespace Chem4Word.ACME
         /// <param name="flipStereo">If true, will preserve the stereochemistry of the molecule</param>
         public void FlipMolecule(Molecule selMolecule, bool flipVertically, bool flipStereo)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -311,7 +311,7 @@ namespace Chem4Word.ACME
         /// <param name="currentStereo">Current selected bond stereo</param>
         public void JoinMolecules(Atom a, Atom b, string currentOrder, BondStereo currentStereo)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string startAtomInfo = "{null}";
@@ -399,7 +399,7 @@ namespace Chem4Word.ACME
         /// <param name="source"></param>
         public void UpdateMolecule(Molecule target, Molecule source)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -513,7 +513,7 @@ namespace Chem4Word.ACME
 
         private void DeleteMolecules(IEnumerable<Molecule> mols)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");

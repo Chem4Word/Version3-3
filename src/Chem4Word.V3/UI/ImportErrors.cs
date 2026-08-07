@@ -18,7 +18,7 @@ namespace Chem4Word.UI
     public partial class ImportErrors : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public Model Model { get; set; }
 
@@ -33,7 +33,7 @@ namespace Chem4Word.UI
 
         private void OnLoad_ImportErrors(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (!PointHelper.PointIsEmpty(TopLeft))
@@ -65,21 +65,21 @@ namespace Chem4Word.UI
 
         private void OnClick_Continue(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _dialogResult = DialogResult.OK;
             DialogResult = DialogResult.OK;
         }
 
         private void OnClick_Abort(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _dialogResult = DialogResult.Cancel;
             DialogResult = DialogResult.Cancel;
         }
 
         private void OnFormClosing_ImportErrors(object sender, FormClosingEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (_dialogResult == DialogResult.Abort)
             {
                 if (Model.AllErrors.Count > 0)

@@ -120,6 +120,11 @@ namespace Chem4Word.ACME
             {
                 switch (Chemistry)
                 {
+                    case Model model:
+                        chemistryModel = model;
+                        Chemistry = model;
+                        break;
+
                     case string data:
                         if (data.StartsWith("<"))
                         {
@@ -132,6 +137,7 @@ namespace Chem4Word.ACME
                             var error = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "Error.xml");
                             chemistryModel = cmlConverter.Import(error);
                         }
+                        Chemistry = chemistryModel;
                         break;
 
                     case byte[] pbuff:
@@ -139,15 +145,13 @@ namespace Chem4Word.ACME
                         chemistryModel = protocolBufferConverter.Import(pbuff);
                         sw.Stop();
                         Debug.WriteLine($"Protocol Buffer converter took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, {sw.ElapsedTicks} ticks");
-                        break;
-
-                    case Model model:
-                        chemistryModel = model;
+                        Chemistry = chemistryModel;
                         break;
 
                     default:
                         var resource = ResourceHelper.GetStringResource(Assembly.GetExecutingAssembly(), "Error.xml");
                         chemistryModel = cmlConverter.Import(resource);
+                        Chemistry = chemistryModel;
                         break;
                 }
 
@@ -157,8 +161,12 @@ namespace Chem4Word.ACME
                     sw.Reset();
                     sw.Start();
 
-                    chemistryModel.EnsureBondLength(20, false);
-                    chemistryModel.RescaleForXaml(true, CoreConstants.StandardBondLength);
+                    if (!chemistryModel.IsAlreadyScaled)
+                    {
+                        chemistryModel.EnsureBondLength(20, false);
+                        chemistryModel.RescaleForXaml(true, CoreConstants.StandardBondLength);
+                        chemistryModel.IsAlreadyScaled = true;
+                    }
 
                     CurrentController = new Controller(chemistryModel);
                     CurrentController.SetTextParams(chemistryModel.XamlBondLength);

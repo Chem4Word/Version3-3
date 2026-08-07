@@ -30,7 +30,7 @@ namespace Chem4Word.ACME.Controls
     public partial class AcmeSettings : UserControl, INotifyPropertyChanged
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public IChem4WordTelemetry Telemetry { get; set; }
 

@@ -16,7 +16,7 @@ namespace Chem4Word.Library
     public partial class LibraryHost : UserControl
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private LibraryController _libraryController;
 
@@ -32,7 +32,7 @@ namespace Chem4Word.Library
 
         public override void Refresh()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 using (new WaitCursor())

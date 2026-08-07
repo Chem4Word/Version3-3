@@ -22,7 +22,7 @@ namespace Chem4Word.Renderer.OoXmlV4
     public class Renderer : IChem4WordRenderer
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public string Name => CoreConstants.DefaultRendererPlugIn;
         public string Description => "This is the standard renderer for Chem4Word 2026";
@@ -45,7 +45,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         public bool ChangeSettings(Point topLeft)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -77,7 +77,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         public string Render()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string result = null;
 
@@ -90,8 +90,8 @@ namespace Chem4Word.Renderer.OoXmlV4
                 result = OoXmlFile.CreateFromCml(Cml, guid, _rendererOptions, Telemetry, TopLeft);
                 if (!File.Exists(result))
                 {
-                    Telemetry.Write(module, "Exception", "Structure could not be rendered.");
-                    Telemetry.Write(module, "Exception(Data)", Cml);
+                    Telemetry.Write(module, "Warning", "Structure could not be rendered.");
+                    Telemetry.Write(module, "Warning(Data)", Cml);
                     UserInteractions.WarnUser("Sorry this structure could not be rendered.");
                 }
                 // Deliberate crash to test Error Reporting

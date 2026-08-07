@@ -218,8 +218,11 @@ namespace Chem4Word.Core.SqLite
 
                                 // Handle new field(s) which may be null
                                 string molWeight = chemistry["molweight"].ToString();
-                                if (!string.IsNullOrEmpty(molWeight)
-                                    && SafeDouble.TryParse(molWeight, out double result))
+                                if (string.IsNullOrEmpty(molWeight))
+                                {
+                                    dto.MolWeight = -1;
+                                }
+                                else if (SafeDouble.TryParse(molWeight, out double result))
                                 {
                                     dto.MolWeight = result;
                                 }
@@ -376,7 +379,7 @@ namespace Chem4Word.Core.SqLite
             {
                 tags.Add(chemistryTag.Text);
             }
-            AddTagsCommand(conn, id, tags);
+            UpsertTagsCommand(conn, id, tags);
 
             return id;
         }
@@ -454,7 +457,7 @@ namespace Chem4Word.Core.SqLite
                 {
                     tags.Add(chemistryTag.Text);
                 }
-                AddTagsCommand(conn, chemistry.Id, tags);
+                UpsertTagsCommand(conn, chemistry.Id, tags);
             }
         }
 
@@ -560,6 +563,12 @@ namespace Chem4Word.Core.SqLite
 
         public void DeleteChemistryByIdCommand(SQLiteConnection conn, long id)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Deleting Chemistry {id}");
+#endif
+
             StringBuilder sb = new StringBuilder();
 
             using (SQLiteTransaction tr = conn.BeginTransaction())
@@ -575,49 +584,66 @@ namespace Chem4Word.Core.SqLite
 
                 SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
                 command.Parameters.Add("@id", DbType.Int64, 20).Value = id;
-                command.ExecuteNonQuery();
+                int rows = command.ExecuteNonQuery();
+
+#if DEBUG
+                _telemetry.Write(module, "Debug", $"Deleted {rows} for Chemistry {id} from Gallery");
+#endif
 
                 tr.Commit();
             }
         }
 
-        public void AddTags(long id, List<string> tags)
+        public void UpsertTags(long id, List<string> tags)
         {
             using (SQLiteConnection conn = LibraryConnection())
             {
-                AddTagsCommand(conn, id, tags);
+                UpsertTagsCommand(conn, id, tags);
             }
         }
 
-        private void AddTagsCommand(SQLiteConnection conn, long id, List<string> tags)
+        private void UpsertTagsCommand(SQLiteConnection conn, long id, List<string> tags)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("INSERT INTO TaggedChemistry");
-            sb.AppendLine(" (ChemistryId, TagId, Sequence)");
-            sb.AppendLine("VALUES");
-            sb.AppendLine(" (@id, @tagId, @sequence)");
-
-            SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             using (SQLiteTransaction tr = conn.BeginTransaction())
             {
                 DeleteTagsCommand(conn, id);
 
-                int sequence = 0;
-                foreach (string tag in tags)
+                if (tags.Count > 0)
                 {
-                    long tagId = GetTagCommand(conn, tag);
-                    if (tagId == -1)
-                    {
-                        tagId = AddTagCommand(conn, tag);
-                    }
+#if DEBUG
+                    _telemetry.Write(module, "Debug", $"Adding {tags.Count} tags for Chemistry {id} into TaggedChemistry");
+#endif
 
-                    if (tagId > 0)
+                    int sequence = 0;
+                    foreach (string tag in tags)
                     {
-                        command.Parameters.Add("@id", DbType.Int32).Value = id;
-                        command.Parameters.Add("@tagId", DbType.Int32).Value = tagId;
-                        command.Parameters.Add("@sequence", DbType.Int32).Value = sequence++;
-                        command.ExecuteNonQuery();
+                        long tagId = GetTagCommand(conn, tag);
+                        if (tagId == -1)
+                        {
+                            tagId = AddTagCommand(conn, tag);
+                        }
+
+                        if (tagId > 0)
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            sb.AppendLine("INSERT INTO TaggedChemistry");
+                            sb.AppendLine(" (ChemistryId, TagId, Sequence)");
+                            sb.AppendLine("VALUES");
+                            sb.AppendLine(" (@id, @tagId, @sequence)");
+
+                            SQLiteCommand command = new SQLiteCommand(sb.ToString(), conn);
+
+                            command.Parameters.Add("@id", DbType.Int32).Value = id;
+                            command.Parameters.Add("@tagId", DbType.Int32).Value = tagId;
+                            command.Parameters.Add("@sequence", DbType.Int32).Value = sequence++;
+                            command.ExecuteNonQuery();
+
+#if DEBUG
+                            _telemetry.Write(module, "Debug", $"Added a record in TaggedChemistry for '{tag}' to ChemistryId {id} TagId {tagId}");
+#endif
+                        }
                     }
                 }
 
@@ -627,6 +653,12 @@ namespace Chem4Word.Core.SqLite
 
         private long GetTagCommand(SQLiteConnection conn, string tag)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Looking for tag '{tag}'");
+#endif
+
             long result = -1;
 
             StringBuilder sb = new StringBuilder();
@@ -644,6 +676,10 @@ namespace Chem4Word.Core.SqLite
                     while (reader.Read())
                     {
                         result = (long)reader["Id"];
+#if DEBUG
+                        _telemetry.Write(module, "Debug", $"Found tag '{tag}' with id {result}");
+#endif
+                        break;
                     }
                 }
             }
@@ -653,6 +689,12 @@ namespace Chem4Word.Core.SqLite
 
         private long AddTagCommand(SQLiteConnection conn, string tag)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Adding tag '{tag}'");
+#endif
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("INSERT INTO Tags");
             sb.AppendLine(" (Tag)");
@@ -666,7 +708,13 @@ namespace Chem4Word.Core.SqLite
             string sql = "SELECT last_insert_rowid()";
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);
 
-            return (Int64)cmd.ExecuteScalar();
+            long id = (Int64)cmd.ExecuteScalar();
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Tag '{tag}' added with id {id}");
+#endif
+
+            return id;
         }
 
         public List<LibraryTagDataObject> GetAllTags()
@@ -714,6 +762,8 @@ namespace Chem4Word.Core.SqLite
 
         private SQLiteDataReader GetDistinctNamesCommand(SQLiteConnection conn)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("SELECT DISTINCT Name, ChemistryId");
             sb.AppendLine("FROM ChemicalNames");
@@ -730,6 +780,8 @@ namespace Chem4Word.Core.SqLite
 
         private List<ChemistryTagDataObject> GetChemistryTagsCommand(SQLiteConnection conn, long id)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             List<ChemistryTagDataObject> result = new List<ChemistryTagDataObject>();
 
             StringBuilder sb = new StringBuilder();
@@ -765,6 +817,8 @@ namespace Chem4Word.Core.SqLite
 
         private List<ChemistryNameDataObject> GetChemicalNamesCommand(SQLiteConnection conn, long id)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             List<ChemistryNameDataObject> results = new List<ChemistryNameDataObject>();
 
             StringBuilder sb = new StringBuilder();
@@ -799,6 +853,8 @@ namespace Chem4Word.Core.SqLite
 
         private List<ChemistryNameDataObject> GetChemicalFormulaeCommand(SQLiteConnection conn, long id)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             List<ChemistryNameDataObject> results = new List<ChemistryNameDataObject>();
 
             StringBuilder sb = new StringBuilder();
@@ -833,6 +889,8 @@ namespace Chem4Word.Core.SqLite
 
         private List<ChemistryNameDataObject> GetChemicalCaptionsCommand(SQLiteConnection conn, long id)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             List<ChemistryNameDataObject> results = new List<ChemistryNameDataObject>();
 
             StringBuilder sb = new StringBuilder();
@@ -867,6 +925,8 @@ namespace Chem4Word.Core.SqLite
 
         private SQLiteDataReader GetAllChemistryCommand(SQLiteConnection conn)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SELECT Id, Chemistry, Name, Formula, UnicodeFormula, MolWeight, DataType");
@@ -879,46 +939,74 @@ namespace Chem4Word.Core.SqLite
 
         private void DeleteNamesCommand(SQLiteConnection conn, long chemistryId)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("DELETE FROM ChemicalNames");
             sb.AppendLine("WHERE ChemistryId = @id");
 
             SQLiteCommand nameCommand = new SQLiteCommand(sb.ToString(), conn);
             nameCommand.Parameters.Add("@id", DbType.Int64, 20).Value = chemistryId;
-            nameCommand.ExecuteNonQuery();
+            int rows = nameCommand.ExecuteNonQuery();
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalNames");
+#endif
         }
 
         private void DeleteFormulaeCommand(SQLiteConnection conn, long chemistryId)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("DELETE FROM ChemicalFormulae");
             sb.AppendLine("WHERE ChemistryId = @id");
 
             SQLiteCommand nameCommand = new SQLiteCommand(sb.ToString(), conn);
             nameCommand.Parameters.Add("@id", DbType.Int64, 20).Value = chemistryId;
-            nameCommand.ExecuteNonQuery();
+            int rows = nameCommand.ExecuteNonQuery();
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalFormulae");
+#endif
         }
 
         private void DeleteCaptionsCommand(SQLiteConnection conn, long chemistryId)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("DELETE FROM ChemicalCaptions");
             sb.AppendLine("WHERE ChemistryId = @id");
 
             SQLiteCommand nameCommand = new SQLiteCommand(sb.ToString(), conn);
             nameCommand.Parameters.Add("@id", DbType.Int64, 20).Value = chemistryId;
-            nameCommand.ExecuteNonQuery();
+            int rows = nameCommand.ExecuteNonQuery();
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalCaptions");
+#endif
         }
 
         private void DeleteTagsCommand(SQLiteConnection conn, long chemistryId)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Deleting old tags for Chemistry {chemistryId}");
+#endif
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("DELETE FROM TaggedChemistry");
             sb.AppendLine("WHERE ChemistryId = @id");
 
             SQLiteCommand tagCommand = new SQLiteCommand(sb.ToString(), conn);
             tagCommand.Parameters.Add("@id", DbType.Int64, 20).Value = chemistryId;
-            tagCommand.ExecuteNonQuery();
+            int rows = tagCommand.ExecuteNonQuery();
+
+#if DEBUG
+            _telemetry.Write(module, "Debug", $"Deleted {rows} rows for Chemistry {chemistryId} from TaggedChemistry");
+#endif
         }
 
         #endregion Data I/O

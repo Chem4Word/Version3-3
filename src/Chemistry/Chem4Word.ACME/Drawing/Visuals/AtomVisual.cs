@@ -59,25 +59,34 @@ namespace Chem4Word.ACME.Drawing.Visuals
         {
             get
             {
-                List<Point> tempHull = new List<Point>(CoreHull);
-                if (HydrogenChildVisual != null)
+                List<Point> tempHull = CoreHull == null
+                    ? new List<Point>()
+                    : new List<Point>(CoreHull);
+
+                if (HydrogenChildVisual?.FlattenedPath != null)
                 {
                     tempHull.AddRange(HydrogenChildVisual.FlattenedPath);
                 }
 
-                if (IsotopeChildVisual != null)
+                if (IsotopeChildVisual?.Metrics != null)
                 {
                     tempHull.AddRange(IsotopeChildVisual.Metrics.Corners);
                 }
 
-                if (ChargeChildVisual != null)
+                if (ChargeChildVisual?.Metrics?.Corners != null)
                 {
                     tempHull.AddRange(ChargeChildVisual.Metrics.Corners);
                 }
 
-                foreach (ElectronVisual electronVisual in ElectronVisuals.Values)
+                if (ElectronVisuals != null)
                 {
-                    tempHull.AddRange(electronVisual.CoreHull);
+                    foreach (ElectronVisual electronVisual in ElectronVisuals.Values)
+                    {
+                        if (electronVisual.CoreHull != null)
+                        {
+                            tempHull.AddRange(electronVisual.CoreHull);
+                        }
+                    }
                 }
 
                 return GeometryTool.MakeConvexHull(tempHull);

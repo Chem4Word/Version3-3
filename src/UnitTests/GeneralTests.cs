@@ -123,6 +123,51 @@ namespace Chem4WordUnitTests
         }
 
         [Fact]
+        public void Atom_Properties_Chain()
+        {
+            // Arrange
+            var model = ModelHelper.ConstructChain();
+            var atom1 = model.GetAllAtoms().First(a => a.Id.Equals("a1"));
+            var atom3 = model.GetAllAtoms().First(a => a.Id.Equals("a3"));
+            var atom5 = model.GetAllAtoms().First(a => a.Id.Equals("a5"));
+
+            // Act
+            atom3.Element = ModelGlobals.PeriodicTable.N;
+
+            // Assert
+            Assert.False(atom1.IsInRing);
+            Assert.True(atom1.IsTerminal);
+            Assert.False(atom1.IsHetero);
+
+            Assert.True(atom3.IsHetero);
+
+            Assert.False(atom5.IsInRing);
+            Assert.True(atom5.IsTerminal);
+        }
+
+        [Fact]
+        public void Atom_Properties_Ring()
+        {
+            // Arrange
+            var model = ModelHelper.ConstructRing();
+            var atom1 = model.GetAllAtoms().First(a => a.Id.Equals("a1"));
+            var atom3 = model.GetAllAtoms().First(a => a.Id.Equals("a3"));
+            var atom5 = model.GetAllAtoms().First(a => a.Id.Equals("a5"));
+
+            // Act
+
+            // Assert
+            Assert.True(atom1.IsInRing);
+            Assert.False(atom1.IsTerminal);
+            Assert.False(atom1.IsHetero);
+
+            Assert.False(atom3.IsHetero);
+
+            Assert.False(atom5.IsInRing);
+            Assert.True(atom5.IsTerminal);
+        }
+
+        [Fact]
         public void CheckFormulasCanBeAdded()
         {
             var model = new Model();

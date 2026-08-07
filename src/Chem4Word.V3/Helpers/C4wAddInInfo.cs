@@ -17,7 +17,7 @@ namespace Chem4Word.Helpers
     public class C4wAddInInfo
     {
         private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static readonly string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static readonly string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public string AssemblyVersionNumber { get; }
 
@@ -48,7 +48,7 @@ namespace Chem4Word.Helpers
 
         public C4wAddInInfo()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {

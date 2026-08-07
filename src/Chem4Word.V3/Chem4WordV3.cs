@@ -46,7 +46,7 @@ namespace Chem4Word
     public partial class Chem4WordV3
     {
         private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static readonly string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static readonly string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public static CustomRibbon Ribbon;
 
@@ -98,7 +98,11 @@ namespace Chem4Word
         public Dictionary<string, int> LibraryNames;
         public ListOfLibraries ListOfDetectedLibraries;
 
-        private static readonly string[] ContextMenusTargets = { "Text", "Table Text", "Spelling", "Grammar", "Grammar (2)", "Lists", "Table Lists" };
+        private static readonly string[] ContextMenusTargets =
+        {
+            "Text", "Table Text", "Spelling", "Grammar", "Grammar (2)", "Lists", "Table Lists"
+        };
+
         private const string ContextMenuTag = "2829AECC-061C-4DC5-8CC0-CAEC821B9127";
         private const string ContextMenuText = "Convert to Chemistry";
 
@@ -115,6 +119,7 @@ namespace Chem4Word
                     {
                         width = Math.Max(width, commandBar1.Width);
                     }
+
                     var commandBar2 = Application.CommandBars["Status Bar"];
                     if (commandBar2 != null)
                     {
@@ -159,6 +164,7 @@ namespace Chem4Word
                 {
                     // Nothing to do here ...
                 }
+
                 return pp;
             }
         }
@@ -204,9 +210,51 @@ namespace Chem4Word
             Ribbon = ribbon;
         }
 
+        public Word.Documents AllDocuments
+        {
+            get
+            {
+                Word.Documents documents = null;
+
+                try
+                {
+                    documents = Globals.Chem4WordV3.Application.Documents;
+                }
+                catch
+                {
+                    // Nothing to do here
+                }
+
+                return documents;
+            }
+        }
+
+        public int DocumentCount
+        {
+            get
+            {
+
+                int result = 0;
+
+                try
+                {
+                    if (Globals.Chem4WordV3.Application != null)
+                    {
+                        result = Globals.Chem4WordV3.Application.Documents.Count;
+                    }
+                }
+                catch
+                {
+                    // Nothing to do here
+                }
+
+                return result;
+            }
+        }
+
         private void C4WAddIn_Startup(object sender, EventArgs e)
         {
-            var module = $"{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 // Deliberate crash to test Error Reporting
@@ -236,7 +284,8 @@ namespace Chem4Word
 
                     if (!WordIsActivated)
                     {
-                        UserInteractions.AlertUser("Microsoft Word is not activated!\nChem4Word uses features of Word which are only available if it is activated.");
+                        UserInteractions.AlertUser(
+                            "Microsoft Word is not activated!\nChem4Word uses features of Word which are only available if it is activated.");
                     }
                 }
                 else
@@ -246,6 +295,7 @@ namespace Chem4Word
                     {
                         RegistryHelper.StoreMessage(module, "Ribbon is null");
                     }
+
                     RegistryHelper.StoreMessage(module, $"Command line {cmd}");
 #endif
                 }
@@ -259,7 +309,7 @@ namespace Chem4Word
 
         private void CheckIfWordIsActivated()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -301,7 +351,7 @@ namespace Chem4Word
 
         private void C4WAddIn_Shutdown(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Debug.WriteLine("Starting Shutdown ...");
             var stopwatch = new Stopwatch();
@@ -413,7 +463,7 @@ namespace Chem4Word
                     app.DocumentBeforeSave += OnDocumentBeforeSave;
                     ((Word.ApplicationEvents4_Event)Application).NewDocument += OnNewDocument;
 
-                    if (app.Documents.Count > 0)
+                    if (Globals.Chem4WordV3.DocumentCount > 0)
                     {
                         EnableContentControlEvents();
 
@@ -452,7 +502,8 @@ namespace Chem4Word
                     SetButtonStates(ButtonState.Disabled);
                     StartUpTimings.Add(
                         $"{module} chemistry operations disabled because Chem4Word is {VersionsBehind} versions behind!");
-                    RegistryHelper.StoreMessage(module, $"Chem4Word is disabled because it is {VersionsBehind} versions behind!");
+                    RegistryHelper.StoreMessage(
+                        module, $"Chem4Word is disabled because it is {VersionsBehind} versions behind!");
                 }
 
                 // Deliberate crash to test Error Reporting
@@ -500,8 +551,11 @@ namespace Chem4Word
 
                 CollectAndSendMsiLogs();
 
-                // Early check for updates but with longer that normal period
-                UpdateHelper.CheckForUpdates(30, nameof(OnTimerElapsed));
+                if (AddInInfo != null)
+                {
+                    // Early check for updates but with longer that normal period
+                    UpdateHelper.CheckForUpdates(30, nameof(OnTimerElapsed));
+                }
             }
         }
 
@@ -618,7 +672,9 @@ namespace Chem4Word
                     SystemOptions = new Chem4WordOptions(AddInInfo.ProductAppDataPath);
                     if (SystemOptions.Errors.Any())
                     {
-                        RegistryHelper.StoreMessage(module, "Error(s):" + Environment.NewLine + string.Join(Environment.NewLine, SystemOptions.Errors));
+                        RegistryHelper.StoreMessage(
+                            module,
+                            "Error(s):" + Environment.NewLine + string.Join(Environment.NewLine, SystemOptions.Errors));
                         SystemOptions.Errors = new List<string>();
                     }
 
@@ -638,15 +694,13 @@ namespace Chem4Word
                     // Belt and braces ...
                     if (SystemOptions == null)
                     {
-                        SystemOptions = new Chem4WordOptions
-                        {
-                            SettingsPath = AddInInfo.ProductAppDataPath
-                        };
+                        SystemOptions = new Chem4WordOptions { SettingsPath = AddInInfo.ProductAppDataPath };
                     }
 
                     // ... as we are seeing some errors here ?
                     // Re-Initialise Telemetry with granted permissions
-                    Telemetry = new TelemetryWriter(IsBeta || Debugger.IsAttached || SystemOptions.TelemetryEnabled, IsBeta, Helper);
+                    Telemetry = new TelemetryWriter(IsBeta || Debugger.IsAttached || SystemOptions.TelemetryEnabled,
+                                                    IsBeta, Helper);
 
                     try
                     {
@@ -665,7 +719,8 @@ namespace Chem4Word
                                 if (editor == null)
                                 {
                                     SystemOptions.SelectedEditorPlugIn = CoreConstants.DefaultEditorPlugIn;
-                                    RegistryHelper.StoreMessage(module, $"Setting editor to {SystemOptions.SelectedEditorPlugIn}");
+                                    RegistryHelper.StoreMessage(
+                                        module, $"Setting editor to {SystemOptions.SelectedEditorPlugIn}");
                                     settingsChanged = true;
                                 }
                             }
@@ -684,7 +739,8 @@ namespace Chem4Word
                                 if (renderer == null)
                                 {
                                     SystemOptions.SelectedRendererPlugIn = CoreConstants.DefaultRendererPlugIn;
-                                    RegistryHelper.StoreMessage(module, $"Setting renderer to {SystemOptions.SelectedRendererPlugIn}");
+                                    RegistryHelper.StoreMessage(
+                                        module, $"Setting renderer to {SystemOptions.SelectedRendererPlugIn}");
                                     settingsChanged = true;
                                 }
                             }
@@ -696,7 +752,10 @@ namespace Chem4Word
                             SystemOptions.Save();
                             if (SystemOptions.Errors.Any())
                             {
-                                RegistryHelper.StoreMessage(module, "Error(s):" + Environment.NewLine + string.Join(Environment.NewLine, SystemOptions.Errors));
+                                RegistryHelper.StoreMessage(
+                                    module,
+                                    "Error(s):" + Environment.NewLine +
+                                    string.Join(Environment.NewLine, SystemOptions.Errors));
                                 SystemOptions.Errors = new List<string>();
                             }
                         }
@@ -731,7 +790,7 @@ namespace Chem4Word
 
         private void PerformShutDownActions()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -826,7 +885,7 @@ namespace Chem4Word
 
         private void LoadPlugins()
         {
-            var module = $"{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -843,7 +902,7 @@ namespace Chem4Word
                     {
                         try
                         {
-                            if (Application.Documents.Count > 0 && Application.Selection != null)
+                            if (Globals.Chem4WordV3.DocumentCount > 0 && Application.Selection != null)
                             {
                                 OnWindowSelectionChange(Application.Selection);
                             }
@@ -863,7 +922,7 @@ namespace Chem4Word
 
         private void LoadPlugIns(bool mustBeSigned)
         {
-            var module = $"{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{MethodBase.GetCurrentMethod()?.Name}()";
             // http://www.codeproject.com/Articles/453778/Loading-Assemblies-from-Anywhere-into-a-New-AppDom
             var message = $"{module} started at {SafeDate.ToLongDate(DateTime.UtcNow)}";
             StartUpTimings.Add(message);
@@ -898,51 +957,57 @@ namespace Chem4Word
                             #region Find Our Interfaces
 
                             var results = manager.Reflect(file, a =>
-                            {
-                                var names = new List<string>();
+                                                                {
+                                                                    var names = new List<string>();
 
-                                try
-                                {
-                                    #region Get Code Signing Certificate details
+                                                                    try
+                                                                    {
+                                                                        #region Get Code Signing Certificate details
 
-                                    var signedBy = "";
+                                                                        var signedBy = "";
 
-                                    var mod = a.GetModules().First();
-                                    var certificate = mod.GetSignerCertificate();
-                                    if (certificate != null)
-                                    {
-                                        signedBy = certificate.Subject;
-                                        Debug.WriteLine(certificate.Subject);
-                                        Debug.WriteLine(certificate.Issuer);
-                                    }
+                                                                        var mod = a.GetModules().First();
+                                                                        var certificate = mod.GetSignerCertificate();
+                                                                        if (certificate != null)
+                                                                        {
+                                                                            signedBy = certificate.Subject;
+                                                                            Debug.WriteLine(certificate.Subject);
+                                                                            Debug.WriteLine(certificate.Issuer);
+                                                                        }
 
-                                    #endregion Get Code Signing Certificate details
+                                                                        #endregion Get Code Signing Certificate details
 
-                                    var types = a.GetTypes();
-                                    foreach (var t in types)
-                                    {
-                                        if (t.IsClass && t.IsPublic && !t.IsAbstract)
-                                        {
-                                            var ifaces = t.GetInterfaces();
-                                            foreach (var iface in ifaces)
-                                            {
-                                                if (iface.FullName.StartsWith("IChem4Word.Contracts"))
-                                                {
-                                                    var parts = a.FullName.Split(',');
-                                                    var fi = new FileInfo(t.Module.FullyQualifiedName);
-                                                    names.Add($"{parts[0]}|{iface.FullName}|{fi.Name}|{signedBy}");
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (Exception exception)
-                                {
-                                    Debug.WriteLine(exception.Message);
-                                }
+                                                                        var types = a.GetTypes();
+                                                                        foreach (var t in types)
+                                                                        {
+                                                                            if (t.IsClass && t.IsPublic &&
+                                                                                !t.IsAbstract)
+                                                                            {
+                                                                                var ifaces = t.GetInterfaces();
+                                                                                foreach (var iface in ifaces)
+                                                                                {
+                                                                                    if (iface.FullName.StartsWith(
+                                                                                        "IChem4Word.Contracts"))
+                                                                                    {
+                                                                                        var parts = a.FullName.Split(
+                                                                                            ',');
+                                                                                        var fi = new FileInfo(
+                                                                                            t.Module
+                                                                                                .FullyQualifiedName);
+                                                                                        names.Add(
+                                                                                            $"{parts[0]}|{iface.FullName}|{fi.Name}|{signedBy}");
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    catch (Exception exception)
+                                                                    {
+                                                                        Debug.WriteLine(exception.Message);
+                                                                    }
 
-                                return names;
-                            });
+                                                                    return names;
+                                                                });
 
                             #endregion Find Our Interfaces
 
@@ -970,7 +1035,8 @@ namespace Chem4Word
                 var parts = plugIn.Split('|');
                 if (mustBeSigned)
                 {
-                    Debug.WriteLine($"Loading PlugIn {parts[0]} with Interface {parts[1]} from file {parts[2]} signed by {parts[3]}");
+                    Debug.WriteLine(
+                        $"Loading PlugIn {parts[0]} with Interface {parts[1]} from file {parts[2]} signed by {parts[3]}");
                 }
                 else
                 {
@@ -1248,11 +1314,11 @@ namespace Chem4Word
         [HandleProcessCorruptedStateExceptions]
         public void EnableContentControlEvents()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
-                if (Application.Documents.Count > 0)
+                if (Globals.Chem4WordV3.DocumentCount > 0)
                 {
                     // Get reference to active document
                     var vstoObject = Globals.Factory.GetVstoObject(Globals.Chem4WordV3.Application.ActiveDocument);
@@ -1273,6 +1339,7 @@ namespace Chem4Word
                     {
                         Debug.WriteLine(e.Message);
                     }
+
                     // ContentControlOnExit Event Handler
                     try
                     {
@@ -1283,6 +1350,7 @@ namespace Chem4Word
                     {
                         Debug.WriteLine(e.Message);
                     }
+
                     // ContentControlBeforeDelete Event Handler
                     try
                     {
@@ -1293,6 +1361,7 @@ namespace Chem4Word
                     {
                         Debug.WriteLine(e.Message);
                     }
+
                     // ContentControlAfterAdd Event Handler
                     try
                     {
@@ -1316,13 +1385,13 @@ namespace Chem4Word
         [HandleProcessCorruptedStateExceptions]
         public void DisableContentControlEvents()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
                 EventsEnabled = false;
 
-                if (Application.Documents.Count > 0)
+                if (Globals.Chem4WordV3.DocumentCount > 0)
                 {
                     // Get reference to active document
                     var vstoObject = Globals.Factory.GetVstoObject(Globals.Chem4WordV3.Application.ActiveDocument);
@@ -1342,6 +1411,7 @@ namespace Chem4Word
                     {
                         Debug.WriteLine(e.Message);
                     }
+
                     // ContentControlOnExit Event Handler
                     try
                     {
@@ -1351,6 +1421,7 @@ namespace Chem4Word
                     {
                         Debug.WriteLine(e.Message);
                     }
+
                     // ContentControlBeforeDelete Event Handler
                     try
                     {
@@ -1360,6 +1431,7 @@ namespace Chem4Word
                     {
                         Debug.WriteLine(e.Message);
                     }
+
                     // ContentControlAfterAdd Event Handler
                     try
                     {
@@ -1435,6 +1507,7 @@ namespace Chem4Word
                             {
                                 canSaveOrEdit = !databaseDetails.IsLocked();
                             }
+
                             Ribbon.SaveToLibrary.Enabled = canSaveOrEdit;
                             Ribbon.EditLibrary.Enabled = canSaveOrEdit;
                             Ribbon.ArrangeMolecules.Enabled = true;
@@ -1460,6 +1533,7 @@ namespace Chem4Word
                             {
                                 canEdit = !databaseDetails.IsLocked();
                             }
+
                             Ribbon.EditLibrary.Enabled = canEdit;
                             Ribbon.WebSearchMenu.Enabled = plugInsLoaded && Searchers.Count > 0;
                             Ribbon.ArrangeMolecules.Enabled = false;
@@ -1539,7 +1613,8 @@ namespace Chem4Word
                         Ribbon.Update.Image = Properties.Resources.Shield_Danger;
                         Ribbon.Update.Label = "Update to use Chem4Word again";
                         Ribbon.Update.ScreenTip = "You must update to continue using Chem4Word";
-                        Ribbon.Update.SuperTip = $"You are {VersionsBehind} versions behind therefore Chem4Word has been disabled as it is too many versions old.";
+                        Ribbon.Update.SuperTip =
+                            $"You are {VersionsBehind} versions behind therefore Chem4Word has been disabled as it is too many versions old.";
                         SetButtonStates(ButtonState.Disabled);
                         ChemistryProhibitedReason = CoreConstants.Chem4WordTooOld;
                         break;
@@ -1555,7 +1630,8 @@ namespace Chem4Word
                     Ribbon.Update.Image = Properties.Resources.Shield_Danger;
                     Ribbon.Update.Label = "Update to use Chem4Word again";
                     Ribbon.Update.ScreenTip = "You must update to continue using Chem4Word";
-                    Ribbon.Update.SuperTip = $"Your beta version has been disabled, because a production release '{VersionAvailable}' is available.";
+                    Ribbon.Update.SuperTip =
+                        $"Your beta version has been disabled, because a production release '{VersionAvailable}' is available.";
                     SetButtonStates(ButtonState.Disabled);
                     ChemistryProhibitedReason = CoreConstants.Chem4WordIsBeta;
                 }
@@ -1567,7 +1643,8 @@ namespace Chem4Word
                     Ribbon.Update.Image = Properties.Resources.Shield_Danger;
                     Ribbon.Update.Label = "End of Life";
                     Ribbon.Update.ScreenTip = "This version of Chem4Word is no longer supported";
-                    Ribbon.Update.SuperTip = "Please see our website https://www.chem4word.co.uk for details of where to obtain a new version from.";
+                    Ribbon.Update.SuperTip =
+                        "Please see our website https://www.chem4word.co.uk for details of where to obtain a new version from.";
                     SetButtonStates(ButtonState.Disabled);
                     ChemistryProhibitedReason = CoreConstants.Chem4WordTooOld;
                 }
@@ -1576,7 +1653,7 @@ namespace Chem4Word
 
         public void SelectChemistry(Word.Selection sel)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             EventsEnabled = false;
 
@@ -1606,6 +1683,7 @@ namespace Chem4Word
                                     NavigatorSupport.SelectNavigatorItem(CustomXmlPartHelper.GuidFromTag(cc.Tag));
                                     chemistrySelected = true;
                                 }
+
                                 break;
                             }
 
@@ -1618,6 +1696,7 @@ namespace Chem4Word
                                     NavigatorSupport.SelectNavigatorItem(CustomXmlPartHelper.GuidFromTag(cc.Tag));
                                     chemistrySelected = true;
                                 }
+
                                 break;
                             }
                         }
@@ -1668,7 +1747,7 @@ namespace Chem4Word
 
         private void OnWindowBeforeRightClick(Word.Selection selection, ref bool cancel)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (!IsEndOfLife && VersionsBehind < CoreConstants.MaximumVersionsBehind)
             {
@@ -1707,7 +1786,7 @@ namespace Chem4Word
 
         private void OnCommandBarButtonClick(CommandBarButton ctrl, ref bool cancelDefault)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -1730,7 +1809,8 @@ namespace Chem4Word
 
                             if (dto == null)
                             {
-                                UserInteractions.WarnUser($"No match for '{targetWord.ChemicalName}' was found in your selected library");
+                                UserInteractions.WarnUser(
+                                    $"No match for '{targetWord.ChemicalName}' was found in your selected library");
                             }
                             else
                             {
@@ -1794,14 +1874,18 @@ namespace Chem4Word
                                     DisableContentControlEvents();
 
                                     var insertionPoint = targetWord.Start;
-                                    document.Range(targetWord.Start, targetWord.Start + targetWord.ChemicalName.Length).Delete();
+                                    document.Range(targetWord.Start, targetWord.Start + targetWord.ChemicalName.Length)
+                                            .Delete();
 
                                     Application.Selection.SetRange(insertionPoint, insertionPoint);
 
                                     var tag = $"{tagPrefix}:{model.CustomXmlPartGuid}";
-                                    contentControl = ChemistryHelper.Insert1DChemistry(document, targetWord.ChemicalName, false, tag);
+                                    contentControl =
+                                        ChemistryHelper.Insert1DChemistry(
+                                            document, targetWord.ChemicalName, false, tag);
 
-                                    Telemetry.Write(module, "Information", $"Inserted 1D version of {targetWord.ChemicalName} from library");
+                                    Telemetry.Write(module, "Information",
+                                                    $"Inserted 1D version of {targetWord.ChemicalName} from library");
                                 }
                                 catch (Exception e)
                                 {
@@ -1818,7 +1902,8 @@ namespace Chem4Word
                                 if (contentControl != null)
                                 {
                                     document.CustomXMLParts.Add(XmlHelper.AddHeader(cml));
-                                    Application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
+                                    Application.Selection.SetRange(contentControl.Range.Start,
+                                                                   contentControl.Range.End);
                                 }
                             }
 
@@ -1851,7 +1936,7 @@ namespace Chem4Word
 
         private void HandleRightClick(Word.Selection selection)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             _markAsChemistryHandled = false;
 
@@ -1896,7 +1981,8 @@ namespace Chem4Word
                                             {
                                                 foreach (var kvp in LibraryNames)
                                                 {
-                                                    var idx = sentenceText.IndexOf(kvp.Key, StringComparison.InvariantCultureIgnoreCase);
+                                                    var idx = sentenceText.IndexOf(
+                                                        kvp.Key, StringComparison.InvariantCultureIgnoreCase);
                                                     if (idx >= 0)
                                                     {
                                                         var tw = new TargetWord
@@ -1915,7 +2001,8 @@ namespace Chem4Word
                                 }
                                 catch (Exception e)
                                 {
-                                    Telemetry.Write(module, "Exception", $"Handled; Sentences[{i}] of {sentenceCount} not found");
+                                    Telemetry.Write(module, "Exception",
+                                                    $"Handled; Sentences[{i}] of {sentenceCount} not found");
                                     Telemetry.Write(module, "Exception", e.Message);
                                     Telemetry.Write(module, "Exception", e.ToString());
                                 }
@@ -1962,13 +2049,14 @@ namespace Chem4Word
         [HandleProcessCorruptedStateExceptions]
         private void AddChemistryMenuPopup(List<TargetWord> selectedWords)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
-                if (Application.Documents.Count > 0)
+                if (Globals.Chem4WordV3.DocumentCount > 0)
                 {
-                    var vstoObject = WordExtensions.DocumentExtensions.GetVstoObject(Application.ActiveDocument, Globals.Factory);
+                    var vstoObject =
+                        WordExtensions.DocumentExtensions.GetVstoObject(Application.ActiveDocument, Globals.Factory);
                     Application.CustomizationContext = vstoObject.AttachedTemplate;
 
                     foreach (var contextMenuName in ContextMenusTargets)
@@ -2012,13 +2100,14 @@ namespace Chem4Word
         [HandleProcessCorruptedStateExceptions]
         private void ClearChemistryContextMenus()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
-                if (Application.Documents.Count > 0)
+                if (Globals.Chem4WordV3.DocumentCount > 0)
                 {
-                    var vstoObject = WordExtensions.DocumentExtensions.GetVstoObject(Application.ActiveDocument, Globals.Factory);
+                    var vstoObject =
+                        WordExtensions.DocumentExtensions.GetVstoObject(Application.ActiveDocument, Globals.Factory);
                     Application.CustomizationContext = vstoObject.AttachedTemplate;
 
                     foreach (var contextMenuName in ContextMenusTargets)
@@ -2057,7 +2146,7 @@ namespace Chem4Word
 
         private void OnNewDocument(Word.Document document)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (VersionsBehind < CoreConstants.MaximumVersionsBehind)
             {
@@ -2096,6 +2185,7 @@ namespace Chem4Word
                     {
                         autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                     }
+
                     UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnNewDocument));
                 }
             }
@@ -2103,9 +2193,9 @@ namespace Chem4Word
 
         private void OnDocumentChange()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            if (Application.Documents.Count > 0)
+            if (Globals.Chem4WordV3.DocumentCount > 0)
             {
                 if (VersionsBehind < CoreConstants.MaximumVersionsBehind)
                 {
@@ -2176,6 +2266,7 @@ namespace Chem4Word
                         {
                             autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                         }
+
                         UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnDocumentChange));
                     }
                 }
@@ -2209,6 +2300,7 @@ namespace Chem4Word
                                     {
                                         (taskPane.Control as LibraryHost)?.Clear();
                                     }
+
                                     if (!showPane)
                                     {
                                         Ribbon.ShowLibrary.Checked = false;
@@ -2288,14 +2380,15 @@ namespace Chem4Word
 
         private void OnDocumentOpen(Word.Document document)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (VersionsBehind < CoreConstants.MaximumVersionsBehind)
             {
                 try
                 {
 #if DEBUG
-                    Telemetry.Write(module, "Information", $"Checking if upgrade of document [{document.DocID}] is required.");
+                    Telemetry.Write(module, "Information",
+                                    $"Checking if upgrade of document [{document.DocID}] is required.");
 #endif
                     var answer = Upgrader.UpgradeIsRequired(document);
                     switch (answer)
@@ -2324,6 +2417,7 @@ namespace Chem4Word
                         {
                             LoadOptions();
                         }
+
                         Debug.WriteLine(module);
                     }
                 }
@@ -2345,6 +2439,7 @@ namespace Chem4Word
                     {
                         autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                     }
+
                     UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnDocumentOpen));
                 }
             }
@@ -2352,7 +2447,7 @@ namespace Chem4Word
 
         private void OnDocumentBeforeSave(Word.Document document, ref bool saveAsUi, ref bool cancel)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 #if DEBUG
             if (DocumentHasChemistry(document))
             {
@@ -2390,12 +2485,14 @@ namespace Chem4Word
 
                             if (purged > 0)
                             {
-                                Telemetry.Write(module, "Information", $"Purged {purged} Orphaned XmlParts from document [{document.DocID}]");
+                                Telemetry.Write(module, "Information",
+                                                $"Purged {purged} Orphaned XmlParts from document [{document.DocID}]");
                             }
                         }
                         else
                         {
-                            Telemetry.Write(module, "Warning", $"Document [{document.DocID}] could not be purged of Orphaned XmlParts as it has {legacyChemistryCount} legacy Chemistry Items");
+                            Telemetry.Write(module, "Warning",
+                                            $"Document [{document.DocID}] could not be purged of Orphaned XmlParts as it has {legacyChemistryCount} legacy Chemistry Items");
                         }
                     }
                 }
@@ -2439,6 +2536,7 @@ namespace Chem4Word
                     {
                         autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                     }
+
                     UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnDocumentBeforeSave));
                 }
             }
@@ -2446,7 +2544,7 @@ namespace Chem4Word
 
         private void OnDocumentBeforeClose(Word.Document document, ref bool cancel)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
 #if DEBUG
             if (DocumentHasChemistry(document))
@@ -2485,6 +2583,7 @@ namespace Chem4Word
                             // Nothing much we can do here!
                         }
                     }
+
                     if (custTaskPane != null)
                     {
                         try
@@ -2515,6 +2614,7 @@ namespace Chem4Word
                     {
                         autoUpdateFrequency = SystemOptions.AutoUpdateFrequency;
                     }
+
                     UpdateHelper.CheckForUpdates(autoUpdateFrequency, nameof(OnDocumentBeforeClose));
                 }
             }
@@ -2526,7 +2626,7 @@ namespace Chem4Word
 
         private void OnWindowSelectionChange(Word.Selection selection)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (VersionsBehind < CoreConstants.MaximumVersionsBehind)
             {
@@ -2587,7 +2687,7 @@ namespace Chem4Word
 
         public void EvaluateChemistryAllowed(bool inRightClick = false)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var betaValue = Globals.Chem4WordV3.ThisVersion.Root?.Element("IsBeta")?.Value;
             var isBeta = betaValue != null && bool.Parse(betaValue);
@@ -2620,7 +2720,7 @@ namespace Chem4Word
 
                 try
                 {
-                    if (Application.Documents != null && Application.Documents.Count > 0)
+                    if (Globals.Chem4WordV3.DocumentCount > 0)
                     {
                         Word.Document activeDocument = null;
                         try
@@ -2695,7 +2795,8 @@ namespace Chem4Word
 
                                     if (allowed && sel.Paragraphs.Count > 1)
                                     {
-                                        ChemistryProhibitedReason = $"selection contains {sel.Paragraphs.Count} paragraphs.";
+                                        ChemistryProhibitedReason =
+                                            $"selection contains {sel.Paragraphs.Count} paragraphs.";
                                         allowed = false;
                                     }
                                 }
@@ -2712,7 +2813,8 @@ namespace Chem4Word
                                     {
                                         if (sel.Cells.Count > 1)
                                         {
-                                            ChemistryProhibitedReason = "selection contains more than one cell of a table.";
+                                            ChemistryProhibitedReason =
+                                                "selection contains more than one cell of a table.";
                                             allowed = false;
                                         }
                                     }
@@ -2729,14 +2831,16 @@ namespace Chem4Word
                                         var story = sel.StoryType;
                                         if (story != Word.WdStoryType.wdMainTextStory)
                                         {
-                                            ChemistryProhibitedReason = $"selection is in a '{DecodeStoryType(story)}' story.";
+                                            ChemistryProhibitedReason =
+                                                $"selection is in a '{DecodeStoryType(story)}' story.";
                                             allowed = false;
                                         }
                                     }
                                     catch
                                     {
                                         // ComException 0x80004005
-                                        ChemistryProhibitedReason = "can't determine which part of the story the selection point is.";
+                                        ChemistryProhibitedReason =
+                                            "can't determine which part of the story the selection point is.";
                                         allowed = false;
                                     }
                                 }
@@ -2767,11 +2871,13 @@ namespace Chem4Word
 
                                     if (contentControlType != null)
                                     {
-                                        if (!string.IsNullOrEmpty(title) && title.Equals(CoreConstants.ContentControlTitle))
+                                        if (!string.IsNullOrEmpty(title) &&
+                                            title.Equals(CoreConstants.ContentControlTitle))
                                         {
                                             // Handle old Word 2007 style
                                             if (contentControlType != Word.WdContentControlType.wdContentControlRichText
-                                                && contentControlType != Word.WdContentControlType.wdContentControlPicture)
+                                                && contentControlType !=
+                                                Word.WdContentControlType.wdContentControlPicture)
                                             {
                                                 allowed = false;
                                                 ChemistryProhibitedReason =
@@ -2780,7 +2886,8 @@ namespace Chem4Word
                                         }
                                         else
                                         {
-                                            if (contentControlType != Word.WdContentControlType.wdContentControlRichText)
+                                            if (contentControlType !=
+                                                Word.WdContentControlType.wdContentControlRichText)
                                             {
                                                 allowed = false;
                                                 ChemistryProhibitedReason =
@@ -2794,7 +2901,8 @@ namespace Chem4Word
                                                 {
                                                     if (sel.ShapeRange.Count > 0)
                                                     {
-                                                        ChemistryProhibitedReason = "selection contains shape(s) inside Content Control.";
+                                                        ChemistryProhibitedReason =
+                                                            "selection contains shape(s) inside Content Control.";
                                                         allowed = false;
                                                     }
                                                 }
@@ -2866,6 +2974,7 @@ namespace Chem4Word
                             {
                                 RegistryHelper.StoreException(module, cex);
                             }
+
                             break;
                     }
                 }
@@ -3050,7 +3159,7 @@ namespace Chem4Word
         /// If the event procedure sets this argument to True, the default double-click action does not occur when the procedure is finished.</param>
         private void OnWindowBeforeDoubleClick(Word.Selection selection, ref bool cancel)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (VersionsBehind < CoreConstants.MaximumVersionsBehind)
             {
@@ -3062,7 +3171,8 @@ namespace Chem4Word
                         EventsEnabled = false;
                         CustomRibbon.PerformEdit();
                         EventsEnabled = true;
-                        UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency, nameof(OnWindowBeforeDoubleClick));
+                        UpdateHelper.CheckForUpdates(SystemOptions.AutoUpdateFrequency,
+                                                     nameof(OnWindowBeforeDoubleClick));
                         cancel = true;
                     }
                 }
@@ -3091,7 +3201,7 @@ namespace Chem4Word
         /// <param name="window"></param>
         private void OnWindowActivate(Word.Document document, Word.Window window)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             if (VersionsBehind < CoreConstants.MaximumVersionsBehind)
             {
@@ -3130,7 +3240,7 @@ namespace Chem4Word
 
         private void OnContentControlAfterAdd(Word.ContentControl newContentControl, bool inUndoRedo)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -3160,25 +3270,30 @@ namespace Chem4Word
                             var prefix = CustomXmlPartHelper.PrefixFromTag(ccTag);
                             var guid = CustomXmlPartHelper.GuidFromTag(ccTag);
 
-                            var message = $"ContentControl {ccId} added at position {newContentControl.Range.Start}; Looking for structure {ccTag} in this document [{thisDocument.DocID}]";
+                            var message =
+                                $"ContentControl {ccId} added at position {newContentControl.Range.Start}; Looking for structure {ccTag} in this document [{thisDocument.DocID}]";
                             Telemetry.Write(module, "Information", message);
 
                             var cxml = CustomXmlPartHelper.GetCustomXmlPart(thisDocument, guid);
                             if (cxml != null)
                             {
-                                Telemetry.Write(module, "Information", $"Found CustomXmlPart for structure {ccTag} in this document.");
+                                Telemetry.Write(module, "Information",
+                                                $"Found CustomXmlPart for structure {ccTag} in this document.");
                                 xmlPartFound = true;
                             }
                             else
                             {
-                                if (Globals.Chem4WordV3.Application.Documents.Count > 1)
+                                if (Globals.Chem4WordV3.DocumentCount > 1)
                                 {
-                                    Telemetry.Write(module, "Information", $"Searching for structure {ccTag} in all open documents [{Globals.Chem4WordV3.Application.Documents.Count}]");
+                                    Telemetry.Write(module, "Information",
+                                                    $"Searching for structure {ccTag} in all open documents [{Globals.Chem4WordV3.DocumentCount}]");
                                     var foundIn = -1;
-                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(guid, thisDocument.DocID, ref foundIn);
+                                    cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(
+                                        guid, thisDocument.DocID, ref foundIn);
                                     if (cxml != null)
                                     {
-                                        Telemetry.Write(module, "Information", $"Found CustomXmlPart for structure {ccTag} in other document [{foundIn}], adding it into this.");
+                                        Telemetry.Write(module, "Information",
+                                                        $"Found CustomXmlPart for structure {ccTag} in other document [{foundIn}], adding it into this.");
 
                                         // Generate new molecule Guid and apply it
                                         var newGuid = Guid.NewGuid().ToString("N");
@@ -3195,20 +3310,24 @@ namespace Chem4Word
                                         var model = cmlConverter.Import(cxml.XML);
                                         model.CustomXmlPartGuid = newGuid;
 
-                                        thisDocument.CustomXMLParts.Add(XmlHelper.AddHeader(cmlConverter.Export(model)));
-                                        Telemetry.Write(module, "Information", $"Added CustomXmlPart {newGuid} in this document [{thisDocument.DocID}]");
+                                        thisDocument.CustomXMLParts.Add(
+                                            XmlHelper.AddHeader(cmlConverter.Export(model)));
+                                        Telemetry.Write(module, "Information",
+                                                        $"Added CustomXmlPart {newGuid} in this document [{thisDocument.DocID}]");
                                         xmlPartFound = true;
                                     }
                                     else
                                     {
-                                        Telemetry.Write(module, "Error", $"Searching for structure {ccTag} in all other documents failed to find a match.");
+                                        Telemetry.Write(module, "Error",
+                                                        $"Searching for structure {ccTag} in all other documents failed to find a match.");
                                     }
                                 }
                             }
 
                             if (!xmlPartFound)
                             {
-                                Telemetry.Write(module, "Warning", $"CustomXmlPart with tag {ccTag} not found in any open document(s)");
+                                Telemetry.Write(module, "Warning",
+                                                $"CustomXmlPart with tag {ccTag} not found in any open document(s)");
                                 newContentControl.Title = $"{CoreConstants.ContentControlTitle}-Missing";
                             }
                         }
@@ -3217,7 +3336,8 @@ namespace Chem4Word
 
 #if DEBUG
                 var listChemistryControls = CustomXmlPartHelper.ListChemistryControls(thisDocument);
-                Globals.Chem4WordV3.Telemetry.Write(module, "Information", string.Join(Environment.NewLine, listChemistryControls));
+                Globals.Chem4WordV3.Telemetry.Write(module, "Information",
+                                                    string.Join(Environment.NewLine, listChemistryControls));
 #endif
             }
             catch (Exception ex)
@@ -3244,7 +3364,7 @@ namespace Chem4Word
         /// <param name="cancel"></param>
         private void OnContentControlBeforeDelete(Word.ContentControl contentControl, bool cancel)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -3277,7 +3397,7 @@ namespace Chem4Word
         /// <param name="cancel"></param>
         private void OnContentControlOnExit(Word.ContentControl contentControl, ref bool cancel)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -3309,7 +3429,7 @@ namespace Chem4Word
         /// <param name="contentControl"></param>
         private void OnContentControlOnEnter(Word.ContentControl contentControl)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {

@@ -24,7 +24,7 @@ namespace Chem4Word.UI.WPF
     public partial class EditLabelsHost : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public Point TopLeft { get; set; }
         public string Cml { get; set; }
@@ -40,7 +40,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnLoad_EditLabelsHost(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 using (new WaitCursor())

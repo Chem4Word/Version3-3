@@ -239,7 +239,7 @@ namespace Chem4Word.ACME
         /// <param name="atoms">List of atoms to be transformed</param>
         public void TransformAtoms(Transform operation, List<Atom> atoms)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string countString = atoms == null ? "{null}" : $"{atoms.Count}";
@@ -316,7 +316,7 @@ namespace Chem4Word.ACME
         /// <param name="objectsToTransform">List of StructuralObject(s) to transform</param>
         public void TransformObjects(Transform operation, List<StructuralObject> objectsToTransform)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             List<Molecule> molecules = objectsToTransform.OfType<Molecule>().ToList();
             List<Reaction> reactions = objectsToTransform.OfType<Reaction>().ToList();
             List<Annotation> annotations = objectsToTransform.OfType<Annotation>().ToList();
@@ -627,7 +627,7 @@ namespace Chem4Word.ACME
         /// <param name="molecules">List of molecules to transform</param>
         public void MultiTransformMolecules(List<Transform> operations, List<Molecule> molecules)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string countString = molecules == null ? "{null}" : $"{molecules.Count}";
@@ -700,7 +700,7 @@ namespace Chem4Word.ACME
         /// <param name="molecules">List of molecules to transform</param>
         public void TransformMoleculeList(Transform operation, List<Molecule> molecules)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string countString = molecules == null ? "{null}" : $"{molecules.Count}";
@@ -771,7 +771,7 @@ namespace Chem4Word.ACME
         /// <param name="bond">Bond object to invert</param>
         public void InvertStereobond(Bond bond)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -812,7 +812,7 @@ namespace Chem4Word.ACME
         /// <param name="newStereo">New BondStereo value to apply</param>
         public void SetBondAttributes(Bond bond, string newOrder = null, BondStereo? newStereo = null)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string orderParameter = newOrder ?? CurrentBondOrder;
@@ -937,7 +937,7 @@ namespace Chem4Word.ACME
         /// <param name="charge">Int containing the value to set</param>
         public void SetSelectedMoleculeCharge(int charge)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Molecule selectedMol = SelectedItems[0] as Molecule;
@@ -976,7 +976,7 @@ namespace Chem4Word.ACME
         /// <param name="charge">Int contains the value to set</param>
         public void SetCharge(Atom atom, int charge)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug",
@@ -1030,7 +1030,7 @@ namespace Chem4Word.ACME
         /// <param name="spin">Nullable int to set the value. Null clears the radical state</param>
         public void SetSelectedMoleculeRadical(int? spin)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -1069,7 +1069,7 @@ namespace Chem4Word.ACME
         /// <param name="children">List of child molecules</param>
         private void Group(List<Molecule> children)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -1139,7 +1139,7 @@ namespace Chem4Word.ACME
         /// <param name="selection">Active selection within the editor</param>
         public void UnGroup(IEnumerable<object> selection)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -1164,7 +1164,7 @@ namespace Chem4Word.ACME
         /// <param name="selGroups">Active selection of groups within the editor</param>
         private void UnGroup(List<Molecule> selGroups)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 //keep track of parent child relationships for later
@@ -1249,7 +1249,7 @@ namespace Chem4Word.ACME
         /// <param name="selection">Observable collection of ChemistryBase objects</param>
         public void Group(IEnumerable<object> selection)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 //grab just the molecules (to be grouped)

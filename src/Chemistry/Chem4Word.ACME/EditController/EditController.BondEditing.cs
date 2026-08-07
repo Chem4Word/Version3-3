@@ -57,7 +57,7 @@ namespace Chem4Word.ACME
         /// <param name="selectedBonds"></param>
         public void SetBondOption(int? bondOptionId, Bond[] selectedBonds)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (bondOptionId is null)
             {
                 bondOptionId = _selectedBondOptionId;
@@ -137,7 +137,7 @@ namespace Chem4Word.ACME
         /// <param name="existingBond"></param>
         public void IncreaseBondOrder(Bond existingBond)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -200,7 +200,7 @@ namespace Chem4Word.ACME
         /// <param name="newLength"></param>
         public void SetAverageBondLength(double newLength)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", $"Length {newLength / ModelConstants.ScaleFactorForXaml}");
@@ -258,7 +258,7 @@ namespace Chem4Word.ACME
         /// <param name="bonds"></param>
         public void DeleteBonds(IEnumerable<Bond> bonds)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string countString = bonds == null ? "{null}" : $"{bonds.Count()}";
@@ -282,7 +282,7 @@ namespace Chem4Word.ACME
 
         public void UpdateBond(Bond bond, BondPropertiesModel model)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");

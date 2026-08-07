@@ -20,7 +20,7 @@ namespace Chem4Word.WebServices
     public class ChemicalServices
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private IChem4WordTelemetry Telemetry { get; }
         private readonly string _version;
@@ -34,7 +34,7 @@ namespace Chem4Word.WebServices
 
         public ChemicalServicesResult GetChemicalServicesResult(string molfile)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             ChemicalServicesResult data = null;
 

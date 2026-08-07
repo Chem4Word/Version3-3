@@ -27,7 +27,7 @@ namespace Chem4Word.Navigator
     public partial class NavigatorViewControl : UserControl
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public NavigatorViewControl()
         {
@@ -38,7 +38,7 @@ namespace Chem4Word.Navigator
 
         private void OnClick_ItemButton(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -57,7 +57,7 @@ namespace Chem4Word.Navigator
                         {
                             Globals.Chem4WordV3.EventsEnabled = false;
 
-                            if (Globals.Chem4WordV3.Application.Documents.Count > 0
+                            if (Globals.Chem4WordV3.DocumentCount > 0
                                 && ActiveDocument?.ActiveWindow?.Selection != null)
                             {
                                 switch (source.Button)
@@ -194,7 +194,7 @@ namespace Chem4Word.Navigator
 
         private void HandleScrollSpeed(object sender, MouseWheelEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {

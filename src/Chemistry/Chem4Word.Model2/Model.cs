@@ -238,6 +238,7 @@ namespace Chem4Word.Model2
         public List<string> SubstanceTags { get; set; } = new List<string>();
 
         public bool InhibitEvents { get; set; }
+        public bool IsAlreadyScaled { get; set; }
 
         internal List<string> GeneralErrors { get; }
         internal List<string> GeneralWarnings { get; }

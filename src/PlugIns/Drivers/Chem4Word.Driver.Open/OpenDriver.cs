@@ -163,10 +163,10 @@ namespace Chem4Word.Driver.Open
             }
         }
 
-        public void AddTags(long id, List<string> tags)
+        public void UpsertTags(long id, List<string> tags)
         {
             Library library = new Library(Telemetry, FileName, BackupFolder, TopLeft);
-            library.AddTags(id, tags);
+            library.UpsertTags(id, tags);
         }
 
         public List<LibraryTagDataObject> GetAllTags()

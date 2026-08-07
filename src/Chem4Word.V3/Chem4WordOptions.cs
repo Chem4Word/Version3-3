@@ -26,7 +26,7 @@ namespace Chem4Word
         private const bool DefaultCheckingEnabled = true;
 
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         #region Telemetry
 
@@ -179,7 +179,7 @@ namespace Chem4Word
         /// </summary>
         public void Load()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -304,7 +304,7 @@ namespace Chem4Word
 
         private string ReadOptionsFile(string filename)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var result = string.Empty;
 

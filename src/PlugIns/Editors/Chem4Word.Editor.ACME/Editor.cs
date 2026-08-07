@@ -20,7 +20,7 @@ namespace Chem4Word.Editor.ACME
     public class Editor : IChem4WordEditor
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public string Name => CoreConstants.DefaultEditorPlugIn;
 
@@ -51,7 +51,7 @@ namespace Chem4Word.Editor.ACME
 
         public DialogResult Edit()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             var dialogResult = DialogResult.Cancel;
 
             try

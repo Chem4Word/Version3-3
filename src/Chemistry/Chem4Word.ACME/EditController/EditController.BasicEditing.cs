@@ -54,7 +54,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void DeleteSelection()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -110,7 +110,7 @@ namespace Chem4Word.ACME
         /// <param name="annotations"></param>
         public void DeleteAnnotations(IEnumerable<Annotation> annotations)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");

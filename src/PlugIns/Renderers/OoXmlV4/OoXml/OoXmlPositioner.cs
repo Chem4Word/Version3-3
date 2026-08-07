@@ -1026,7 +1026,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         private void CreateElementCharacters(Atom atom)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string atomSymbol = atom.AtomSymbol;
             bool showImplicitHydrogenCharacters = atom.ShowImplicitHydrogenCharacters;

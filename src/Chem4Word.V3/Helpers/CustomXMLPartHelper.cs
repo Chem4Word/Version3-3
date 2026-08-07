@@ -32,24 +32,28 @@ namespace Chem4Word.Helpers
         {
             CustomXMLPart result = null;
 
-            foreach (Word.Document otherDocument in Globals.Chem4WordV3.Application.Documents)
+            Word.Documents documents = Globals.Chem4WordV3.AllDocuments;
+            if (documents != null)
             {
-                if (!otherDocument.DocID.Equals(activeDocumentId))
+                foreach (Word.Document otherDocument in documents)
                 {
-                    foreach (CustomXMLPart customXmlPart in AllChemistryParts(otherDocument))
+                    if (!otherDocument.DocID.Equals(activeDocumentId))
                     {
-                        var molId = GetCmlId(customXmlPart);
-                        if (molId.Equals(id))
+                        foreach (CustomXMLPart customXmlPart in AllChemistryParts(otherDocument))
                         {
-                            result = customXmlPart;
-                            foundInDocumentId = otherDocument.DocID;
-                            break;
+                            var molId = GetCmlId(customXmlPart);
+                            if (molId.Equals(id))
+                            {
+                                result = customXmlPart;
+                                foundInDocumentId = otherDocument.DocID;
+                                break;
+                            }
                         }
                     }
-                }
-                if (result != null)
-                {
-                    break;
+                    if (result != null)
+                    {
+                        break;
+                    }
                 }
             }
 

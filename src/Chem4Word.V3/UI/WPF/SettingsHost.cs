@@ -22,7 +22,7 @@ namespace Chem4Word.UI.WPF
     public partial class SettingsHost : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private bool _closedInCode = false;
 
@@ -75,7 +75,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnLoad_SettingsHost(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 SettingsControl settingsControl = new SettingsControl();

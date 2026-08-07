@@ -25,7 +25,7 @@ namespace Chem4Word.UI
     public partial class AutomaticUpdate : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public XDocument NewVersions { get; set; }
         public XDocument CurrentVersion { get; set; }
@@ -40,7 +40,7 @@ namespace Chem4Word.UI
 
         public AutomaticUpdate(IChem4WordTelemetry telemetry)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 _telemetry = telemetry;
@@ -60,7 +60,7 @@ namespace Chem4Word.UI
 
         private void OnLinkClicked_ReleasesPage(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
 
             try
@@ -76,7 +76,7 @@ namespace Chem4Word.UI
 
         private void OnLinkClicked_RichTextBox(object sender, LinkClickedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
 
             try
@@ -94,7 +94,7 @@ namespace Chem4Word.UI
 
         private void OnFormClosing_AutomaticUpdate(object sender, FormClosingEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (!_closedByCode && e.CloseReason == CloseReason.UserClosing)
@@ -110,7 +110,7 @@ namespace Chem4Word.UI
 
         private void OnClick_UpdateNow(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
 
             try
@@ -166,7 +166,7 @@ namespace Chem4Word.UI
 
         private void OnClick_UpdateLater(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
 
             try
@@ -182,7 +182,7 @@ namespace Chem4Word.UI
 
         private void OnLoad_AutomaticUpdate(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 using (new WaitCursor())

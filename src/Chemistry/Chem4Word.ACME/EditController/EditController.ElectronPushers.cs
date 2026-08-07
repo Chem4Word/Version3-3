@@ -32,7 +32,7 @@ namespace Chem4Word.ACME
                                       ElectronPusherType electronPusherType, Point firstControlPoint,
                                       Point secondControlPoint, bool shiftIsDown)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             ElectronPusher newPusher = new ElectronPusher
             {
                 StartChemistry = startChemistry,
@@ -128,7 +128,7 @@ namespace Chem4Word.ACME
 
         public void DeleteElectronPushers(List<ElectronPusher> electronPushers)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 UndoManager.BeginUndoBlock();
@@ -148,7 +148,7 @@ namespace Chem4Word.ACME
 
         private void DeleteElectronPusher(ElectronPusher pusher)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Information", $"Deleting Electron Pusher {pusher.Path}");
@@ -193,7 +193,7 @@ namespace Chem4Word.ACME
 
         public void EndElectronPusherResize(ElectronPusher parentPusher, Point firstControlPointTemp, Point secondControlPointTemp)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Point old1stControlPoint = parentPusher.FirstControlPoint;
             Point old2ndControlPoint = parentPusher.SecondControlPoint;
             try

@@ -173,6 +173,11 @@ namespace Chem4Word.Model2
                 switch (_element)
                 {
                     case Element _:
+                        if (Parent == null)
+                        {
+                            return false;
+                        }
+
                         return ExplicitC ?? Parent.InheritedC;
 
                     default:
@@ -194,12 +199,8 @@ namespace Chem4Word.Model2
                         {
                             return ExplicitH.Value;
                         }
-                        if (Parent != null)
-                        {
-                            return Parent.InheritedHydrogenLabels;
-                        }
 
-                        return HydrogenLabels.None;
+                        return Parent?.InheritedHydrogenLabels ?? HydrogenLabels.None;
 
                     default:
                         return HydrogenLabels.HeteroAndTerminal;
@@ -215,6 +216,11 @@ namespace Chem4Word.Model2
         {
             get
             {
+                if (Element == null)
+                {
+                    return false;
+                }
+
                 switch (_element)
                 {
                     case Element element:
@@ -230,6 +236,11 @@ namespace Chem4Word.Model2
         {
             get
             {
+                if (Element == null)
+                {
+                    return false;
+                }
+
                 switch (_element)
                 {
                     case Element element:
@@ -245,6 +256,11 @@ namespace Chem4Word.Model2
         {
             get
             {
+                if (Element == null)
+                {
+                    return false;
+                }
+
                 switch (_element)
                 {
                     case Element _:
@@ -456,7 +472,7 @@ namespace Chem4Word.Model2
                 bool result = true;
                 _isAllenic = false;
 
-                if (Element == null)
+                if (Element == null || Parent == null)
                 {
                     result = false;
                 }

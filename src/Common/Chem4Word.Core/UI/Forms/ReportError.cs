@@ -22,7 +22,7 @@ namespace Chem4Word.Core.UI.Forms
         private IChem4WordTelemetry _telemetry;
 
         private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static readonly string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static readonly string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private string _exceptionMessage = string.Empty;
         private string _operation = string.Empty;

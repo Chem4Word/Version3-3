@@ -23,7 +23,7 @@ namespace Chem4Word.Navigator
     public class NavigatorController
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public ObservableCollection<ChemistryObject> NavigatorItems { get; }
 
@@ -40,7 +40,7 @@ namespace Chem4Word.Navigator
 
         public NavigatorController(Document doc) : this()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             //get a reference to the document
             _doc = doc;

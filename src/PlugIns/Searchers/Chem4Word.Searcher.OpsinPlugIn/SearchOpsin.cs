@@ -25,7 +25,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
     public partial class SearchOpsin : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private const string BaseTemplate = "{0}{1}";
 
@@ -49,7 +49,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
 
         private void OnClick_SearchButton(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string searchFor = TextHelper.StripAsciiControlCharacters(SearchFor.Text).Trim();
             string webSafe = TextHelper.NormalizeCharacters(WebUtility.HtmlEncode(searchFor));
@@ -100,9 +100,9 @@ namespace Chem4Word.Searcher.OpsinPlugIn
                 {
                     if (!string.IsNullOrEmpty(apiResult.Content))
                     {
-                        Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                        Telemetry.Write(module, "SearchFailure", apiResult.Content);
                     }
-                    Telemetry.Write(module, "Warning", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode}");
+                    Telemetry.Write(module, "SearchFailure", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode}");
                     LabelInfo.Text = $"No match for '{searchFor}' found";
                     ImportButton.Enabled = false;
                 }

@@ -22,7 +22,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
     {
         #region Fields
 
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
         private ChEBIOptions _searcherOptions = new ChEBIOptions();
 
@@ -67,7 +67,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         public bool ChangeSettings(Point topLeft)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Telemetry.Write(module, "Verbose", "Called");
@@ -98,7 +98,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
         public DialogResult Search()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 _searcherOptions = new ChEBIOptions(SettingsPath);

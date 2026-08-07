@@ -729,7 +729,7 @@ namespace Chem4Word.Telemetry
 
         private void GetExternalIpAddress(object o)
         {
-            string module = $"{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string message;

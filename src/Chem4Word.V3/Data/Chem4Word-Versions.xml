@@ -12,6 +12,10 @@
       <Change>...</Change>
       <Change>...</Change>
       <Change>...</Change>
+      <Change>Internal: Bug Fix Exception in ACME.EditController.UpdateAtom()</Change>
+      <Change>Internal: Bug Fix implementation of CheckForUpdates</Change>
+      <Change>Internal: Bug Fix Exception in UpdateHelper.CheckForUpdates()</Change>
+      <Change>Internal: Bug Fix Exception in OoXmlBeautifier.ShrinkBondLinesThatCrossOtherAtomCharacters()</Change>
       <Change>Internal: Additional logging in ProcessHelper</Change>
       <Change>Bug Fix: Fix pasting issue in Library Editor filter text box</Change>
       <Change>Bug Fix: Fixes for when Unicode Formula is empty</Change>

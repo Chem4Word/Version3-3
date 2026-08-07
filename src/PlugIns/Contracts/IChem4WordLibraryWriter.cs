@@ -30,6 +30,6 @@ namespace IChem4Word.Contracts
 
         void DeleteChemistryById(long id);
 
-        void AddTags(long id, List<string> tags);
+        void UpsertTags(long id, List<string> tags);
     }
 }

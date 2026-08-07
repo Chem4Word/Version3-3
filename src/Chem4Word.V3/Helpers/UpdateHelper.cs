@@ -26,11 +26,11 @@ namespace Chem4Word.Helpers
     public static class UpdateHelper
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public static int CheckForUpdates(int frequency, string source)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Debug.WriteLine($"{module} days: {frequency}");
             try
@@ -39,40 +39,34 @@ namespace Chem4Word.Helpers
 
                 if (Globals.Chem4WordV3.AddInInfo != null)
                 {
-                    if (!string.IsNullOrEmpty(Globals.Chem4WordV3.AddInInfo.DeploymentPath))
+                    #region CheckForUpdate
+
+                    ReadSavedValues();
+
+                    if (frequency == 0)
                     {
-                        #region CheckForUpdate
+                        // We should never get here
+                        string message = "The frequency read from the registry is zero !";
+                        Debug.WriteLine(message);
+                        Debugger.Break();
+                    }
 
-                        ReadSavedValues();
-
-                        if (frequency == 0)
-                        {
-                            // We should never get here
-                            string message = "The frequency read from the registry is zero !";
-                            Debug.WriteLine(message);
-                            Debugger.Break();
-                        }
-
-                        TimeSpan delta = DateTime.Today - Globals.Chem4WordV3.VersionLastChecked;
-                        Debug.WriteLine($"Delta = {delta.TotalDays}");
-                        if (Math.Abs(delta.TotalDays) <= frequency)
-                        {
-                            doCheck = false;
-                        }
-
-                        if (doCheck)
-                        {
-                            int documentsCount = Globals.Chem4WordV3.Application.Documents.Count;
-                            Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Last check {delta.TotalDays:0} day(s) ago; Check frequency {frequency} days; Source: {source}; Documents: {documentsCount}");
-                            Debug.WriteLine("Saving date last checked in Registry as Today");
-                            RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordRegistryKey);
-                            registryKey?.SetValue(CoreConstants.RegistryValueNameLastCheck, DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                        }
+                    TimeSpan delta = DateTime.Today - Globals.Chem4WordV3.VersionLastChecked;
+                    Debug.WriteLine($"Delta = {delta.TotalDays}");
+                    if (Math.Abs(delta.TotalDays) <= frequency)
+                    {
+                        doCheck = false;
                     }
 
                     if (doCheck)
                     {
-                        bool update = false;
+                        int documentsCount = Globals.Chem4WordV3.DocumentCount;
+                        Globals.Chem4WordV3.Telemetry.Write(module, "AutomaticUpdate", $"Last check {delta.TotalDays:0} day(s) ago; Check frequency {frequency} days; Source: {source}; Documents: {documentsCount}");
+                        Debug.WriteLine("Saving date last checked in Registry as Today");
+                        RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(CoreConstants.Chem4WordRegistryKey);
+                        registryKey?.SetValue(CoreConstants.RegistryValueNameLastCheck, DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+
+                        bool update;
                         using (new WaitCursor())
                         {
                             update = FetchUpdateInfo();
@@ -83,8 +77,9 @@ namespace Chem4Word.Helpers
                             ShowUpdateForm();
                         }
 
-                        #endregion CheckForUpdate
                     }
+
+                    #endregion CheckForUpdate
                 }
             }
             catch (Exception ex)
@@ -106,7 +101,7 @@ namespace Chem4Word.Helpers
 
         public static void ReadSavedValues()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -235,7 +230,7 @@ namespace Chem4Word.Helpers
 
         public static bool FetchUpdateInfo()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             bool updateRequired = false;
 
@@ -310,7 +305,7 @@ namespace Chem4Word.Helpers
 
         public static void ShowUpdateForm()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             using (var au = new AutomaticUpdate(Globals.Chem4WordV3.Telemetry)
             {
@@ -325,7 +320,7 @@ namespace Chem4Word.Helpers
 
         private static string GetVersionsXmlFile()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string primaryDomain = CoreConstants.OurDomains.First();
             string versionsFileMarker = "<Id>f3c4f4db-2fff-46db-b14a-feb8e09f7742</Id>";
@@ -433,7 +428,7 @@ namespace Chem4Word.Helpers
 
         public static void ClearSettings()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {

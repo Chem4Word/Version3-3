@@ -52,7 +52,7 @@ namespace Chem4Word.ACME.Controls
 
         public static readonly DependencyProperty DisplayWidthProperty =
             DependencyProperty.Register("DisplayWidth", typeof(double), typeof(ChemistryItem),
-                                        new FrameworkPropertyMetadata(double.NaN,
+                                        new FrameworkPropertyMetadata(180.0,
                                                                       FrameworkPropertyMetadataOptions.AffectsRender
                                                                       | FrameworkPropertyMetadataOptions.AffectsArrange
                                                                       | FrameworkPropertyMetadataOptions.AffectsMeasure));
@@ -65,7 +65,7 @@ namespace Chem4Word.ACME.Controls
 
         public static readonly DependencyProperty DisplayHeightProperty =
             DependencyProperty.Register("DisplayHeight", typeof(double), typeof(ChemistryItem),
-                                        new FrameworkPropertyMetadata(double.NaN,
+                                        new FrameworkPropertyMetadata(180.0,
                                                                       FrameworkPropertyMetadataOptions.AffectsRender
                                                                       | FrameworkPropertyMetadataOptions.AffectsArrange
                                                                       | FrameworkPropertyMetadataOptions.AffectsMeasure));

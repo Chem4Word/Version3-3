@@ -25,7 +25,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
     [SuppressMessage("Minor Code Smell", "S3220:Method calls should not resolve ambiguously to overloads with \"params\"", Justification = "<OoXml>")]
     public static class OoXmlFile
     {
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         /// <returns></returns>
         public static string CreateFromCml(string cml, string guid, OoXmlV4Options options, IChem4WordTelemetry telemetry, Point topLeft)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             CMLConverter cc = new CMLConverter();
             Model model = cc.Import(cml);
@@ -52,7 +52,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
                 if (model.AllWarnings.Count > 0)
                 {
-                    telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.AllWarnings));
+                    telemetry.Write(module, "Warning", string.Join(Environment.NewLine, model.AllWarnings));
                 }
             }
 
@@ -97,7 +97,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                                            $"  HasReactions:{model.HasReactions}"
                                        };
 
-                telemetry.Write(module, "Information", string.Join(Environment.NewLine, message));
+                telemetry.Write(module, "Warning", string.Join(Environment.NewLine, message));
             }
 
             return fileName;

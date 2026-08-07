@@ -801,8 +801,8 @@ namespace Chem4Word.UI.WPF
                 && !library.Locked.Equals("Yes"))
             {
                 Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{library.Name}'");
+                LibraryEditorHost editor = new LibraryEditorHost("Library Manager");
 
-                LibraryEditorHost editor = new LibraryEditorHost();
                 editor.TopLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
                 editor.Telemetry = Globals.Chem4WordV3.Telemetry;
                 editor.SelectedDatabase = library.Name;

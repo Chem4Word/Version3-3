@@ -256,7 +256,7 @@ namespace Chem4Word.ACME
 
         public void CutSelection()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -274,7 +274,7 @@ namespace Chem4Word.ACME
 
         public void PasteCML(string pastedCml, Point? pasteAt = null)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");
@@ -291,7 +291,7 @@ namespace Chem4Word.ACME
 
         public void PasteModel(Model buffer, bool fromCML = false, bool rescale = true, Point? pasteAt = null)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", "Called");

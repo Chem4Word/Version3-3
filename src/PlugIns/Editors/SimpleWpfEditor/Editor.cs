@@ -19,7 +19,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
     public class Editor : IChem4WordEditor
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public string Name => "Example Wpf Structure Editor";
 
@@ -55,7 +55,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
         {
             var dialogResult = DialogResult.Cancel;
 
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Telemetry.Write(module, "Verbose", "Called");

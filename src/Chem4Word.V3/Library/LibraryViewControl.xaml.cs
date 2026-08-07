@@ -12,6 +12,8 @@ using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
 using Chem4Word.UI.WPF;
+using IChem4Word.Contracts;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -44,7 +46,7 @@ namespace Chem4Word.Library
             ReLoadListOfLibraries();
 
             // Sort the list of structures by lower case name
-            var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
+            ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
             if (view != null)
             {
                 view.CustomSort = new ChemistryObjectComparer();
@@ -56,14 +58,14 @@ namespace Chem4Word.Library
             // Disable the selection changed event while loading the combo box
             LibrarySelector.SelectionChanged -= OnSelectionChanged_LibrarySelector;
 
-            var libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+            ListOfLibraries libraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
             if (libraries != null)
             {
                 _selectedLibrary = libraries.SelectedLibrary;
 
                 LibrarySelector.Items.Clear();
-                var index = 0;
-                foreach (var database in libraries.AvailableDatabases)
+                int index = 0;
+                foreach (DatabaseDetails database in libraries.AvailableDatabases)
                 {
                     LibrarySelector.Items.Add(database.DisplayName);
                     if (database.DisplayName.Equals(libraries.SelectedLibrary))
@@ -94,7 +96,7 @@ namespace Chem4Word.Library
                         {
                             Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Library changed to '{selected}'");
 
-                            var listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
+                            ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
                             listOfDetectedLibraries.SelectedLibrary = selected;
 
                             new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
@@ -109,17 +111,17 @@ namespace Chem4Word.Library
 
                             _selectedLibrary = selected;
 
-                            var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
+                            LibraryController controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
                             DataContext = controller;
 
                             // Sort the list of structures by lower case name
-                            var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
+                            ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
                             if (view != null)
                             {
                                 view.CustomSort = new ChemistryObjectComparer();
                             }
 
-                            var sel = Globals.Chem4WordV3.Application.Selection;
+                            Selection sel = Globals.Chem4WordV3.Application.Selection;
                             Globals.Chem4WordV3.SelectChemistry(sel);
                         }
                     }
@@ -129,7 +131,7 @@ namespace Chem4Word.Library
 
         private void EnableEditThisLibraryButton()
         {
-            var details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
+            DatabaseDetails details = Globals.Chem4WordV3.GetSelectedDatabaseDetails();
             if (details != null)
             {
                 EditThisLibrary.IsEnabled = !details.IsLocked();
@@ -147,17 +149,17 @@ namespace Chem4Word.Library
                 {
                     Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Source: {source.Button} Data: {source.ButtonDetails}");
 
-                    var parts = source.ButtonDetails.Split('=');
-                    var item = long.Parse(parts[1]);
+                    string[] parts = source.ButtonDetails.Split('=');
+                    long item = long.Parse(parts[1]);
 
                     if (DataContext is LibraryController controller)
                     {
-                        var clicked = controller.ChemistryItems.FirstOrDefault(c => c.Id == item);
+                        ChemistryObject clicked = controller.ChemistryItems.FirstOrDefault(c => c.Id == item);
                         if (clicked != null)
                         {
                             Globals.Chem4WordV3.EventsEnabled = false;
 
-                            if (Globals.Chem4WordV3.Application.Documents.Count > 0
+                            if (Globals.Chem4WordV3.DocumentCount > 0
                                 && Globals.Chem4WordV3.Application.ActiveDocument?.ActiveWindow?.Selection != null)
                             {
                                 switch (source.Button)
@@ -175,7 +177,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -203,7 +205,7 @@ namespace Chem4Word.Library
 
         private void OnTextChanged_SearchBox(object sender, TextChangedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (string.IsNullOrWhiteSpace(SearchBox.Text))
@@ -219,7 +221,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -233,11 +235,11 @@ namespace Chem4Word.Library
         /// <param name="e"></param>
         private void OnClick_SearchButton(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
             try
             {
-                var searchFor = TextHelper.StripAsciiControlCharacters(SearchBox.Text).Trim();
+                string searchFor = TextHelper.StripAsciiControlCharacters(SearchBox.Text).Trim();
                 if (!string.IsNullOrEmpty(searchFor)
                     && DataContext != null)
                 {
@@ -250,8 +252,8 @@ namespace Chem4Word.Library
                         //then try to match part of either its name or an alternative name to the string typed in
                         view.Filter = ci =>
                                       {
-                                          var item = ci as ChemistryObject;
-                                          var queryString = searchFor.ToUpper();
+                                          ChemistryObject item = ci as ChemistryObject;
+                                          string queryString = searchFor.ToUpper();
                                           return item != null
                                                  && (item.SubstanceName.ToUpper().Contains(queryString)
                                                      || item.ChemicalNames.Any(n => n.ToUpper().Contains(queryString)));
@@ -261,7 +263,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -270,7 +272,7 @@ namespace Chem4Word.Library
 
         private void OnClick_ClearButton(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 SearchBox.Clear();
@@ -286,7 +288,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                using (var form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
+                using (ReportError form = new ReportError(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.WordTopLeft, module, ex))
                 {
                     form.ShowDialog();
                 }
@@ -298,24 +300,24 @@ namespace Chem4Word.Library
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{_selectedLibrary}'");
+            LibraryEditorHost editor = new LibraryEditorHost("Library Task Pane");
 
-            var editor = new LibraryEditorHost();
             editor.TopLeft = Globals.Chem4WordV3.WordTopLeft;
             editor.Telemetry = Globals.Chem4WordV3.Telemetry;
             editor.SelectedDatabase = _selectedLibrary;
             editor.ShowDialog();
 
-            var controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
+            LibraryController controller = new LibraryController(Globals.Chem4WordV3.Telemetry);
             DataContext = controller;
 
             // Sort the list of structures by lower case name
-            var view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
+            ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(LibraryList.ItemsSource);
             if (view != null)
             {
                 view.CustomSort = new ChemistryObjectComparer();
             }
 
-            var sel = Globals.Chem4WordV3.Application.Selection;
+            Selection sel = Globals.Chem4WordV3.Application.Selection;
             Globals.Chem4WordV3.SelectChemistry(sel);
         }
 
@@ -331,9 +333,9 @@ namespace Chem4Word.Library
 
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(o); i++)
             {
-                var child = VisualTreeHelper.GetChild(o, i);
+                DependencyObject child = VisualTreeHelper.GetChild(o, i);
 
-                var result = GetScrollViewer(child);
+                DependencyObject result = GetScrollViewer(child);
                 if (result != null)
                 {
                     return result;
@@ -345,16 +347,16 @@ namespace Chem4Word.Library
 
         private void HandleScrollSpeed(object sender, MouseWheelEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
                 if (sender is DependencyObject dependencyObject
                     && GetScrollViewer(dependencyObject) is ScrollViewer scrollViewer)
                 {
-                    var items = scrollViewer.ExtentHeight;
-                    var current = scrollViewer.VerticalOffset;
-                    var amount = Math.Max(Math.Min(scrollViewer.ViewportHeight, 3), 1);
+                    double items = scrollViewer.ExtentHeight;
+                    double current = scrollViewer.VerticalOffset;
+                    double amount = Math.Max(Math.Min(scrollViewer.ViewportHeight, 3), 1);
 
                     // e.Delta is +ve for scroll up and -ve for scroll down
                     if (e.Delta > 0 && current > 0)

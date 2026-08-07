@@ -30,13 +30,13 @@ namespace Chem4Word.Helpers
     public static class Upgrader
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private static object _missing = Type.Missing;
 
         public static DialogResult UpgradeIsRequired(Word.Document document)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var result = DialogResult.Cancel;
 
@@ -123,7 +123,7 @@ namespace Chem4Word.Helpers
 
         public static int LegacyChemistryCount(Word.Document document)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var count = 0;
 
@@ -148,7 +148,7 @@ namespace Chem4Word.Helpers
 
         public static void DoUpgrade(Word.Document document)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var sel = Globals.Chem4WordV3.Application.Selection.Range.Start;
             Globals.Chem4WordV3.DisableContentControlEvents();
@@ -285,7 +285,7 @@ namespace Chem4Word.Helpers
 
         private static void EraseChemistryZones(Word.Document doc)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             foreach (CustomXMLPart xmlPart in doc.CustomXMLParts)
             {
@@ -299,7 +299,7 @@ namespace Chem4Word.Helpers
 
         private static string GetDepictionValue(string cml, string xPath)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             string result = null;
 
@@ -329,7 +329,7 @@ namespace Chem4Word.Helpers
 
         private static List<UpgradeTarget> CollectData(Word.Document document)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var targets = new List<UpgradeTarget>();
 

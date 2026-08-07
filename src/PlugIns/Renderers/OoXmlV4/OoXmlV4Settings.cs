@@ -21,7 +21,7 @@ namespace Chem4Word.Renderer.OoXmlV4
     public partial class OoXmlV4Settings : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public Point TopLeft { get; set; }
 
@@ -41,7 +41,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnLoad_Settings(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (!PointHelper.PointIsEmpty(TopLeft))
@@ -76,7 +76,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnClick_Ok(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -93,7 +93,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnClick_SetDefaults(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -140,7 +140,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnFormClosing_Settings(object sender, FormClosingEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -178,7 +178,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ClipLines(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -193,7 +193,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowRingCentres(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -208,7 +208,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowMoleculeBox(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -223,7 +223,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowCharacterBox(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -238,7 +238,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowAtomCentres(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -253,7 +253,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowConvexHulls(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -268,7 +268,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowDoubleBondTrimmingLines(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -283,7 +283,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowBondDirection(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -298,7 +298,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowCharacterGroupsBox(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -313,7 +313,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ShowBondCrossingPoints(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -328,7 +328,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
         private void OnCheckedChanged_ClipCrossingBonds(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {

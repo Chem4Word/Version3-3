@@ -20,7 +20,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
     public class Searcher : IChem4WordSearcher
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private PubChemOptions _searcherOptions;
 
@@ -54,7 +54,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         public bool ChangeSettings(Point topLeft)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Telemetry.Write(module, "Verbose", "Called");
@@ -84,7 +84,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
         public DialogResult Search()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             DialogResult result = DialogResult.Cancel;
             try
             {

@@ -26,7 +26,7 @@ namespace Chem4Word.ACME
         /// <param name="objects"></param>
         public void AlignMiddles(List<StructuralObject> objects)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", $"Aligning middles of {objects.Count} objects");
@@ -105,7 +105,7 @@ namespace Chem4Word.ACME
         /// <param name="objects"></param>
         public void AlignTops(List<StructuralObject> objects)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", $"Aligning tops of {objects.Count} objects");
@@ -167,7 +167,7 @@ namespace Chem4Word.ACME
         /// <param name="transforms"></param>
         public void AlignAnnotations(List<Annotation> annotationsToAlign, List<Transform> transforms)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Action redo = () =>
@@ -205,7 +205,7 @@ namespace Chem4Word.ACME
         /// <param name="objects"></param>
         public void AlignBottoms(List<StructuralObject> objects)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", $"Aligning bottoms of {objects.Count} objects");
@@ -267,7 +267,7 @@ namespace Chem4Word.ACME
         /// <param name="objects"></param>
         public void AlignCentres(List<StructuralObject> objects)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", $"Aligning centres of {objects.Count} objects");
@@ -349,7 +349,7 @@ namespace Chem4Word.ACME
         /// <param name="transforms"></param>
         public void AlignReactions(List<Reaction> reactionsToAlign, List<Transform> transforms)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Action redo = () =>
@@ -391,7 +391,7 @@ namespace Chem4Word.ACME
         /// <param name="objects"></param>
         public void AlignLefts(List<StructuralObject> objects)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", $"Aligning lefts of {objects.Count} objects");
@@ -453,7 +453,7 @@ namespace Chem4Word.ACME
         /// <param name="objects"></param>
         public void AlignRights(List<StructuralObject> objects)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WriteTelemetry(module, "Debug", $"Aligning rights of {objects.Count} objects");
@@ -515,7 +515,7 @@ namespace Chem4Word.ACME
         /// <param name="transforms"></param>
         private void AlignMolecules(List<Molecule> molsToAlign, List<Transform> transforms)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             //first check to see whether we have an equal number of transforms and molecules
             if (molsToAlign.Count == transforms.Count)

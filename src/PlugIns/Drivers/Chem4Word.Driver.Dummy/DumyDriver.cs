@@ -85,7 +85,7 @@ namespace Chem4Word.Driver.Dummy
 
         public List<LibraryTagDataObject> GetAllTags() => new List<LibraryTagDataObject>();
 
-        public void AddTags(long id, List<string> tags)
+        public void UpsertTags(long id, List<string> tags)
         {
             Debugger.Break();
         }

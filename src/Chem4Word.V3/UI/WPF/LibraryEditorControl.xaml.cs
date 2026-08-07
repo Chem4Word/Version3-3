@@ -95,7 +95,7 @@ namespace Chem4Word.UI.WPF
 
         public static readonly DependencyProperty ItemSizeProperty =
             DependencyProperty.Register("ItemSize", typeof(Size), typeof(LibraryEditorControl),
-                                        new FrameworkPropertyMetadata(Size.Empty,
+                                        new FrameworkPropertyMetadata(new Size(180.0, 180.0),
                                                                       FrameworkPropertyMetadataOptions.AffectsRender
                                                                       | FrameworkPropertyMetadataOptions.AffectsArrange
                                                                       | FrameworkPropertyMetadataOptions.AffectsMeasure));
@@ -108,7 +108,7 @@ namespace Chem4Word.UI.WPF
 
         public static readonly DependencyProperty DisplayWidthProperty =
             DependencyProperty.Register("DisplayWidth", typeof(double), typeof(LibraryEditorControl),
-                                        new FrameworkPropertyMetadata(double.NaN,
+                                        new FrameworkPropertyMetadata(180.0,
                                                                       FrameworkPropertyMetadataOptions.AffectsRender
                                                                       | FrameworkPropertyMetadataOptions.AffectsArrange
                                                                       | FrameworkPropertyMetadataOptions.AffectsMeasure));
@@ -121,7 +121,7 @@ namespace Chem4Word.UI.WPF
 
         public static readonly DependencyProperty DisplayHeightProperty =
             DependencyProperty.Register("DisplayHeight", typeof(double), typeof(LibraryEditorControl),
-                                        new FrameworkPropertyMetadata(double.NaN,
+                                        new FrameworkPropertyMetadata(180.0,
                                                                       FrameworkPropertyMetadataOptions.AffectsRender
                                                                       | FrameworkPropertyMetadataOptions.AffectsArrange
                                                                       | FrameworkPropertyMetadataOptions.AffectsMeasure));
@@ -140,7 +140,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_ChemistryItem(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
 
             if (e.OriginalSource is WpfEventArgs source
@@ -172,7 +172,7 @@ namespace Chem4Word.UI.WPF
 
         private void PerformEdit(ChemistryObject item)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Action", "Triggered");
 
             IChem4WordEditor editor = Globals.Chem4WordV3.GetEditorPlugIn(Globals.Chem4WordV3.SystemOptions.SelectedEditorPlugIn);
@@ -364,7 +364,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnTextChanged_SearchBox(object sender, TextChangedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (string.IsNullOrWhiteSpace(SearchBox.Text))
@@ -389,7 +389,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnSelectionChanged_SortBy(object sender, SelectionChangedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 if (!_isLoading)
@@ -1273,7 +1273,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnLostFocus_TaggingControl(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
@@ -1294,7 +1294,7 @@ namespace Chem4Word.UI.WPF
         // Save the Tags to the database and update the used frequencies
         private void UpdateTags(TagControlModel tcm)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             // Collate new tags for database
             List<string> tags = new List<string>();
@@ -1317,22 +1317,22 @@ namespace Chem4Word.UI.WPF
                     string userTagsFile = Path.Combine(Globals.Chem4WordV3.SystemOptions.SettingsPath, UserTagsFileName);
                     string jsonOut = JsonConvert.SerializeObject(_userTags, Formatting.Indented);
                     File.WriteAllText(userTagsFile, jsonOut);
-
-                    if (DataContext is LibraryEditorViewModel editorViewModel)
-                    {
-                        // Update the database
-                        Stopwatch sw = new Stopwatch();
-                        sw.Start();
-
-                        _driver.AddTags(editorViewModel.SelectedChemistryObject.Id, tags);
-
-                        sw.Stop();
-                        _telemetry.Write(module, "Timing", $"Writing {tags.Count} tags for Id: {editorViewModel.SelectedChemistryObject.Id} took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
-
-                        // Update the grid view
-                        editorViewModel.SelectedChemistryObject.Tags = tags;
-                    }
                 }
+            }
+
+            if (DataContext is LibraryEditorViewModel editorViewModel)
+            {
+                // Update the database
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
+                _driver.UpsertTags(editorViewModel.SelectedChemistryObject.Id, tags);
+
+                sw.Stop();
+                _telemetry.Write(module, "Timing", $"Updating {tags.Count} tags for Id: {editorViewModel.SelectedChemistryObject.Id} took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+
+                // Update the grid view
+                editorViewModel.SelectedChemistryObject.Tags = tags;
             }
 
             _lastTags = tags;
@@ -1340,7 +1340,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnClick_CancelButton(object sender, RoutedEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             _cancelRequested = true;
 

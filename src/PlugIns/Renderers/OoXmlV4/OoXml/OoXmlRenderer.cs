@@ -45,7 +45,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         // EMU Calculator
         // http://lcorneliussen.de/raw/dashboards/ooxml/
 
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         private readonly Model _chemistryModel;
@@ -68,7 +68,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         public OoXmlRenderer(Model model, OoXmlV4Options options, IChem4WordTelemetry telemetry, Point topLeft)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             _telemetry = telemetry;
             _telemetry.Write(module, "Verbose", "Called");
@@ -83,7 +83,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
         public Run GenerateRun()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             _telemetry.Write(module, "Verbose", "Called");
 
             Stopwatch swr = new Stopwatch();

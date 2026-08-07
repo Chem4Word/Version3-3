@@ -49,7 +49,7 @@ namespace Chem4Word.ACME
     public partial class EditController : Controller
     {
         private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static readonly string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static readonly string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         #region Fields
 
@@ -270,7 +270,7 @@ namespace Chem4Word.ACME
         /// <param name="value">ValueTuple consisting of the message, the formula and the molecular weight</param>
         internal void SendStatus((string message, string formula, string molecularWeight) value)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 WpfEventArgs args = new WpfEventArgs { Message = value.message };
@@ -605,7 +605,7 @@ namespace Chem4Word.ACME
 
         public bool VerifyRingPlacements(List<NewAtomPlacement> placements)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             WriteTelemetry(module, "Debug", ListRingPlacements(placements));
 

@@ -25,7 +25,7 @@ namespace Chem4Word.Editor.ACME
     public partial class EditorHost : Form
     {
         private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static readonly string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static readonly string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public Point TopLeft { get; set; }
         public IChem4WordTelemetry Telemetry { get; set; }
@@ -144,7 +144,7 @@ namespace Chem4Word.Editor.ACME
 
         private void OnClick_Ok(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             var cc = new CMLConverter();
             DialogResult = DialogResult.Cancel;
@@ -161,7 +161,7 @@ namespace Chem4Word.Editor.ACME
 
         private void OnClick_Cancel(object sender, EventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             DialogResult = DialogResult.Cancel;
             Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
             Hide();
@@ -169,7 +169,7 @@ namespace Chem4Word.Editor.ACME
 
         private void OnFormClosing_EditorHost(object sender, FormClosingEventArgs e)
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
             {
                 if (elementHost1.Child is Chem4Word.ACME.Editor editor

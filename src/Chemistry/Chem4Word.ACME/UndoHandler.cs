@@ -28,7 +28,7 @@ namespace Chem4Word.ACME
     public class UndoHandler
     {
         private static readonly string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static readonly string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static readonly string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         private struct UndoRecord
         {
@@ -154,7 +154,7 @@ namespace Chem4Word.ACME
 
         public void RecordAction(Action undoAction, Action redoAction, [CallerMemberName] string desc = null)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 //performing a new action should clear the redo
@@ -182,7 +182,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void BeginUndoBlock()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 //push a buffer record onto the stack
@@ -208,7 +208,7 @@ namespace Chem4Word.ACME
         /// </summary>
         public void EndUndoBlock()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 int before = _transactionLevel;
@@ -249,7 +249,7 @@ namespace Chem4Word.ACME
 
         public void Undo()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 UndoActions();
@@ -264,7 +264,7 @@ namespace Chem4Word.ACME
 
         private void UndoActions()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             //the very first record on the undo stack should be a buffer record
             var br = _undoStack.Pop();
@@ -300,7 +300,7 @@ namespace Chem4Word.ACME
 
         public void Redo()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 RedoActions();
@@ -315,7 +315,7 @@ namespace Chem4Word.ACME
 
         private void RedoActions()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             //the very first record on the redo stack should be a buffer record
             var br = _redoStack.Pop();

@@ -67,7 +67,7 @@ namespace Chem4Word.Helpers
 
         public static void SendSetupActions()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordSetupRegistryKey, true);
             if (registryKey != null)
@@ -78,7 +78,7 @@ namespace Chem4Word.Helpers
 
         public static void SendUpdateActions()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordUpdateRegistryKey, true);
             if (registryKey != null)
@@ -89,7 +89,7 @@ namespace Chem4Word.Helpers
 
         public static void SendMsiActions()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMsiActionsRegistryKey, true);
             if (registryKey != null)
@@ -100,7 +100,7 @@ namespace Chem4Word.Helpers
 
         public static void SendMessages()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMessagesRegistryKey, true);
             if (registryKey != null)
@@ -111,7 +111,7 @@ namespace Chem4Word.Helpers
 
         public static void SendExceptions()
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordExceptionsRegistryKey, true);
             if (registryKey != null)

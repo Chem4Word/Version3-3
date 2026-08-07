@@ -18,7 +18,7 @@ namespace Chem4Word.UI.WPF
     public partial class AboutHost : Form
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public string VersionString { get; set; }
         public Point TopLeft { get; set; }
@@ -30,7 +30,7 @@ namespace Chem4Word.UI.WPF
 
         private void OnLoad_AboutHost(object sender, EventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 using (new WaitCursor())

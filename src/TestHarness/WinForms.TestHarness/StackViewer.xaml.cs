@@ -24,7 +24,7 @@ namespace WinForms.TestHarness
     public partial class StackViewer : UserControl
     {
         private static string _product = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        private static string _class = MethodBase.GetCurrentMethod().DeclaringType?.Name;
+        private static string _class = MethodBase.GetCurrentMethod()?.DeclaringType?.Name;
 
         public StackViewer()
         {
@@ -67,7 +67,7 @@ namespace WinForms.TestHarness
 
         private void HandleScrollSpeed(object sender, MouseWheelEventArgs e)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {

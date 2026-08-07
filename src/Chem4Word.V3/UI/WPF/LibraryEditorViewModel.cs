@@ -83,7 +83,8 @@ namespace Chem4Word.UI.WPF
                 // Search for structures with missing MolWeights or Unicode Formula
                 foreach (ChemistryDataTransferObject chemistryDto in dataObjects)
                 {
-                    if (chemistryDto.MolWeight == 0.0
+                    // MolWeight is -1 if it needs to be calculated
+                    if (chemistryDto.MolWeight < 0.0
                         || string.IsNullOrEmpty(chemistryDto.UnicodeFormula))
                     {
                         idsToUpdate.Add(chemistryDto.Id);

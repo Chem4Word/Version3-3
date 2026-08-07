@@ -352,7 +352,7 @@ namespace Chem4Word.ACME
         public Atom AddAtomChain(Atom lastAtom, Point newAtomPos, ClockDirections dir, ElementBase elem = null,
                                  string bondOrder = null, BondStereo? stereo = null)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string atomInfo = lastAtom == null
@@ -504,7 +504,7 @@ namespace Chem4Word.ACME
         /// <param name="startAt"></param>
         public void DrawRing(List<NewAtomPlacement> newAtomPlacements, bool unsaturated, int startAt = 0)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string count = newAtomPlacements == null ? "{null}" : $"{newAtomPlacements.Count}";
@@ -639,7 +639,7 @@ namespace Chem4Word.ACME
 
         public void DrawChain(List<Point> placements, Atom startAtom = null)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 string atomInfo = startAtom == null
@@ -703,7 +703,7 @@ namespace Chem4Word.ACME
 
         public void RotateHydrogen(Atom parentAtom)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 CompassPoints oldPlacement = parentAtom.ImplicitHPlacement;
@@ -752,7 +752,7 @@ namespace Chem4Word.ACME
         /// <param name="symbolText">Text to display</param>
         public void AddFloatingSymbol(Point pos, string symbolText)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 AddAnnotation(pos, symbolText, false);
@@ -765,7 +765,7 @@ namespace Chem4Word.ACME
 
         private void AddAnnotation(Point pos, string text, bool isEditable = true)
         {
-            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod().Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
