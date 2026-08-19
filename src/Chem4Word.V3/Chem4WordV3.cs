@@ -233,7 +233,6 @@ namespace Chem4Word
         {
             get
             {
-
                 int result = 0;
 
                 try
@@ -561,64 +560,72 @@ namespace Chem4Word
 
         private void CollectAndSendMsiLogs()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            var downloadPath = FolderHelper.GetPath(KnownFolder.Downloads);
+            string downloadPath = FolderHelper.GetPath(KnownFolder.Downloads);
             if (!Directory.Exists(downloadPath))
             {
                 downloadPath = Path.GetTempPath();
             }
 
-            var logFiles = Directory.GetFiles(downloadPath, "Chem4Word-Setup.*.log");
-            foreach (var logFile in logFiles)
+            string[] logFiles = Directory.GetFiles(downloadPath, "Chem4Word-Setup.*.log");
+
+            if (FileSystemHelper.UserHasWritePermission(downloadPath))
             {
-                if (FileHelper.FileIsInUse(logFile, out var message))
+                foreach (string logFile in logFiles)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Warning", message);
-                }
-                else
-                {
-                    try
+                    if (FileHelper.FileIsInUse(logFile, out string message))
                     {
-                        var fileInfo = new FileInfo(logFile);
-                        var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
-                        var zipFile = Path.Combine(fileInfo.DirectoryName, $"{fileName}.zip");
-
-                        ZipLogFile(logFile, zipFile);
-
-                        if (File.Exists(zipFile))
+                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Warning, message);
+                    }
+                    else
+                    {
+                        try
                         {
-                            var fileBytes = File.ReadAllBytes(zipFile);
-                            Globals.Chem4WordV3.Telemetry.SendZipFile(fileBytes, $"{fileName}.zip");
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"{fileName}.zip uploaded");
+                            FileInfo fileInfo = new FileInfo(logFile);
+                            string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+                            string zipFile = Path.Combine(fileInfo.DirectoryName, $"{fileName}.zip");
 
-                            Thread.Sleep(25);
-                            File.Delete(zipFile);
-                            Thread.Sleep(25);
-                            File.Delete(logFile);
+                            ZipLogFile(logFile, zipFile);
+
+                            if (File.Exists(zipFile))
+                            {
+                                byte[] fileBytes = File.ReadAllBytes(zipFile);
+                                Globals.Chem4WordV3.Telemetry.SendZipFile(fileBytes, $"{fileName}.zip");
+                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"{fileName}.zip uploaded");
+
+                                Thread.Sleep(25);
+                                File.Delete(zipFile);
+                                Thread.Sleep(25);
+                                File.Delete(logFile);
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            if (Telemetry != null)
+                            {
+                                Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                                Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
+                            }
+                            else
+                            {
+                                RegistryHelper.StoreException(module, exception);
+                            }
                         }
                     }
-                    catch (Exception exception)
-                    {
-                        if (Telemetry != null)
-                        {
-                            Telemetry.Write(module, "Exception", exception.Message);
-                            Telemetry.Write(module, "Exception", exception.StackTrace);
-                        }
-                        else
-                        {
-                            RegistryHelper.StoreException(module, exception);
-                        }
-                    }
                 }
+            }
+            else
+            {
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Warning, $"Found {logFiles.Length} log files, but user does not have write permission to {downloadPath}");
             }
         }
 
         private static void ZipLogFile(string logFilePath, string zipFilePath)
         {
-            using (var zipToOpen = new FileStream(zipFilePath, FileMode.Create))
+            using (FileStream zipToOpen = new FileStream(zipFilePath, FileMode.Create))
             {
-                using (var archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
                 {
                     archive.CreateEntryFromFile(logFilePath, Path.GetFileName(logFilePath));
                 }
@@ -645,8 +652,8 @@ namespace Chem4Word
             {
                 if (Telemetry != null)
                 {
-                    Telemetry.Write(module, "Exception", exception.Message);
-                    Telemetry.Write(module, "Exception", exception.StackTrace);
+                    Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                    Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
                 }
                 else
                 {
@@ -1203,7 +1210,7 @@ namespace Chem4Word
                 if (plugin == null)
                 {
                     string message = $"Could not find driver plug in [{name}]";
-                    Telemetry.Write(module, "Warning", message);
+                    Telemetry.Write(module, LoggingLevel.Warning, message);
                     Debug.WriteLine(message);
                     Debugger.Break();
                 }
@@ -1236,7 +1243,7 @@ namespace Chem4Word
                 if (plugin == null)
                 {
                     string message = $"Could not find editor plug in [{name}]";
-                    Telemetry.Write(module, "Warning", message);
+                    Telemetry.Write(module, LoggingLevel.Warning, message);
                     Debug.WriteLine(message);
                     Debugger.Break();
                 }
@@ -1269,7 +1276,7 @@ namespace Chem4Word
                 if (plugin == null)
                 {
                     string message = $"Could not find renderer plug in [{name}]";
-                    Telemetry.Write(module, "Warning", message);
+                    Telemetry.Write(module, LoggingLevel.Warning, message);
                     Debug.WriteLine(message);
                     Debugger.Break();
                 }
@@ -1302,7 +1309,7 @@ namespace Chem4Word
                 if (plugin == null)
                 {
                     string message = $"Could not find searcher plug in [{name}]";
-                    Telemetry.Write(module, "Warning", message);
+                    Telemetry.Write(module, LoggingLevel.Warning, message);
                     Debug.WriteLine(message);
                     Debugger.Break();
                 }
@@ -1884,13 +1891,13 @@ namespace Chem4Word
                                         ChemistryHelper.Insert1DChemistry(
                                             document, targetWord.ChemicalName, false, tag);
 
-                                    Telemetry.Write(module, "Information",
+                                    Telemetry.Write(module, LoggingLevel.Information,
                                                     $"Inserted 1D version of {targetWord.ChemicalName} from library");
                                 }
                                 catch (Exception e)
                                 {
-                                    Telemetry.Write(module, "Exception", e.Message);
-                                    Telemetry.Write(module, "Exception", e.StackTrace);
+                                    Telemetry.Write(module, LoggingLevel.Exception, e.Message);
+                                    Telemetry.Write(module, LoggingLevel.Exception, e.StackTrace);
                                 }
                                 finally
                                 {
@@ -2001,10 +2008,10 @@ namespace Chem4Word
                                 }
                                 catch (Exception e)
                                 {
-                                    Telemetry.Write(module, "Exception",
+                                    Telemetry.Write(module, LoggingLevel.Exception,
                                                     $"Handled; Sentences[{i}] of {sentenceCount} not found");
-                                    Telemetry.Write(module, "Exception", e.Message);
-                                    Telemetry.Write(module, "Exception", e.ToString());
+                                    Telemetry.Write(module, LoggingLevel.Exception, e.Message);
+                                    Telemetry.Write(module, LoggingLevel.Exception, e.ToString());
                                 }
                             }
                         }
@@ -2023,17 +2030,17 @@ namespace Chem4Word
 
                     default:
                         // Keep exception hidden from end user.
-                        Telemetry.Write(module, "Exception", $"ErrorCode: {comCode}");
-                        Telemetry.Write(module, "Exception", cex.Message);
-                        Telemetry.Write(module, "Exception", cex.ToString());
+                        Telemetry.Write(module, LoggingLevel.Exception, $"ErrorCode: {comCode}");
+                        Telemetry.Write(module, LoggingLevel.Exception, cex.Message);
+                        Telemetry.Write(module, LoggingLevel.Exception, cex.ToString());
                         break;
                 }
             }
             catch (Exception ex)
             {
                 // Keep exception hidden from end user.
-                Telemetry.Write(module, "Exception", ex.Message);
-                Telemetry.Write(module, "Exception", ex.ToString());
+                Telemetry.Write(module, LoggingLevel.Exception, ex.Message);
+                Telemetry.Write(module, LoggingLevel.Exception, ex.ToString());
             }
 
             ClearChemistryContextMenus();
@@ -2387,7 +2394,7 @@ namespace Chem4Word
                 try
                 {
 #if DEBUG
-                    Telemetry.Write(module, "Information",
+                    Telemetry.Write(module, LoggingLevel.Information,
                                     $"Checking if upgrade of document [{document.DocID}] is required.");
 #endif
                     var answer = Upgrader.UpgradeIsRequired(document);
@@ -2403,7 +2410,7 @@ namespace Chem4Word
                             break;
 
                         case DialogResult.No:
-                            Telemetry.Write(module, "Information", "User chose not to upgrade");
+                            Telemetry.Write(module, LoggingLevel.Information, "User chose not to upgrade");
                             break;
 
                         case DialogResult.Cancel:
@@ -2451,7 +2458,7 @@ namespace Chem4Word
 #if DEBUG
             if (DocumentHasChemistry(document))
             {
-                Telemetry.Write(module, "Information", $"About to save document [{document.DocID}]");
+                Telemetry.Write(module, LoggingLevel.Information, $"About to save document [{document.DocID}]");
             }
 #endif
 
@@ -2485,13 +2492,13 @@ namespace Chem4Word
 
                             if (purged > 0)
                             {
-                                Telemetry.Write(module, "Information",
+                                Telemetry.Write(module, LoggingLevel.Information,
                                                 $"Purged {purged} Orphaned XmlParts from document [{document.DocID}]");
                             }
                         }
                         else
                         {
-                            Telemetry.Write(module, "Warning",
+                            Telemetry.Write(module, LoggingLevel.Warning,
                                             $"Document [{document.DocID}] could not be purged of Orphaned XmlParts as it has {legacyChemistryCount} legacy Chemistry Items");
                         }
                     }
@@ -2502,16 +2509,16 @@ namespace Chem4Word
                     switch (comCode)
                     {
                         case "0xE0041804":
-                            Telemetry.Write(module, "Exception", $"ErrorCode: {comCode}");
-                            Telemetry.Write(module, "Exception", $"Handled {cex.Message}");
-                            Telemetry.Write(module, "Exception", cex.ToString());
+                            Telemetry.Write(module, LoggingLevel.Exception, $"ErrorCode: {comCode}");
+                            Telemetry.Write(module, LoggingLevel.Exception, $"Handled {cex.Message}");
+                            Telemetry.Write(module, LoggingLevel.Exception, cex.ToString());
                             break;
 
                         default:
                             // Keep exception hidden from end user.
-                            Telemetry.Write(module, "Exception", $"ErrorCode: {comCode}");
-                            Telemetry.Write(module, "Exception", cex.Message);
-                            Telemetry.Write(module, "Exception", cex.ToString());
+                            Telemetry.Write(module, LoggingLevel.Exception, $"ErrorCode: {comCode}");
+                            Telemetry.Write(module, LoggingLevel.Exception, cex.Message);
+                            Telemetry.Write(module, LoggingLevel.Exception, cex.ToString());
                             break;
                     }
                 }
@@ -2549,7 +2556,7 @@ namespace Chem4Word
 #if DEBUG
             if (DocumentHasChemistry(document))
             {
-                Telemetry.Write(module, "Information", $"Closing document [{document.DocID}]");
+                Telemetry.Write(module, LoggingLevel.Information, $"Closing document [{document.DocID}]");
             }
 #endif
             if (VersionsBehind < CoreConstants.MaximumVersionsBehind)
@@ -2966,9 +2973,9 @@ namespace Chem4Word
                             if (Telemetry != null)
                             {
                                 // Keep exception hidden from end user.
-                                Telemetry.Write(module, "Exception", $"ErrorCode: {comCode}");
-                                Telemetry.Write(module, "Exception", cex.Message);
-                                Telemetry.Write(module, "Exception", cex.ToString());
+                                Telemetry.Write(module, LoggingLevel.Exception, $"ErrorCode: {comCode}");
+                                Telemetry.Write(module, LoggingLevel.Exception, cex.Message);
+                                Telemetry.Write(module, LoggingLevel.Exception, cex.ToString());
                             }
                             else
                             {
@@ -2983,8 +2990,8 @@ namespace Chem4Word
                     if (Telemetry != null)
                     {
                         // Keep exception hidden from end user.
-                        Telemetry.Write(module, "Exception", ex.Message);
-                        Telemetry.Write(module, "Exception", ex.ToString());
+                        Telemetry.Write(module, LoggingLevel.Exception, ex.Message);
+                        Telemetry.Write(module, LoggingLevel.Exception, ex.ToString());
                     }
                     else
                     {
@@ -3167,7 +3174,7 @@ namespace Chem4Word
                 {
                     if (EventsEnabled && _chemistrySelected)
                     {
-                        Telemetry.Write(module, "Information", "Double click on Chemistry");
+                        Telemetry.Write(module, LoggingLevel.Information, "Double click on Chemistry");
                         EventsEnabled = false;
                         CustomRibbon.PerformEdit();
                         EventsEnabled = true;
@@ -3272,12 +3279,12 @@ namespace Chem4Word
 
                             var message =
                                 $"ContentControl {ccId} added at position {newContentControl.Range.Start}; Looking for structure {ccTag} in this document [{thisDocument.DocID}]";
-                            Telemetry.Write(module, "Information", message);
+                            Telemetry.Write(module, LoggingLevel.Information, message);
 
                             var cxml = CustomXmlPartHelper.GetCustomXmlPart(thisDocument, guid);
                             if (cxml != null)
                             {
-                                Telemetry.Write(module, "Information",
+                                Telemetry.Write(module, LoggingLevel.Information,
                                                 $"Found CustomXmlPart for structure {ccTag} in this document.");
                                 xmlPartFound = true;
                             }
@@ -3285,14 +3292,14 @@ namespace Chem4Word
                             {
                                 if (Globals.Chem4WordV3.DocumentCount > 1)
                                 {
-                                    Telemetry.Write(module, "Information",
+                                    Telemetry.Write(module, LoggingLevel.Information,
                                                     $"Searching for structure {ccTag} in all open documents [{Globals.Chem4WordV3.DocumentCount}]");
                                     var foundIn = -1;
                                     cxml = CustomXmlPartHelper.FindCustomXmlPartInOtherDocuments(
                                         guid, thisDocument.DocID, ref foundIn);
                                     if (cxml != null)
                                     {
-                                        Telemetry.Write(module, "Information",
+                                        Telemetry.Write(module, LoggingLevel.Information,
                                                         $"Found CustomXmlPart for structure {ccTag} in other document [{foundIn}], adding it into this.");
 
                                         // Generate new molecule Guid and apply it
@@ -3312,13 +3319,13 @@ namespace Chem4Word
 
                                         thisDocument.CustomXMLParts.Add(
                                             XmlHelper.AddHeader(cmlConverter.Export(model)));
-                                        Telemetry.Write(module, "Information",
+                                        Telemetry.Write(module, LoggingLevel.Information,
                                                         $"Added CustomXmlPart {newGuid} in this document [{thisDocument.DocID}]");
                                         xmlPartFound = true;
                                     }
                                     else
                                     {
-                                        Telemetry.Write(module, "Error",
+                                        Telemetry.Write(module, LoggingLevel.Error,
                                                         $"Searching for structure {ccTag} in all other documents failed to find a match.");
                                     }
                                 }
@@ -3326,7 +3333,7 @@ namespace Chem4Word
 
                             if (!xmlPartFound)
                             {
-                                Telemetry.Write(module, "Warning",
+                                Telemetry.Write(module, LoggingLevel.Warning,
                                                 $"CustomXmlPart with tag {ccTag} not found in any open document(s)");
                                 newContentControl.Title = $"{CoreConstants.ContentControlTitle}-Missing";
                             }
@@ -3336,7 +3343,7 @@ namespace Chem4Word
 
 #if DEBUG
                 var listChemistryControls = CustomXmlPartHelper.ListChemistryControls(thisDocument);
-                Globals.Chem4WordV3.Telemetry.Write(module, "Information",
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information,
                                                     string.Join(Environment.NewLine, listChemistryControls));
 #endif
             }

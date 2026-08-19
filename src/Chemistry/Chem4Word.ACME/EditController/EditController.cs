@@ -290,7 +290,7 @@ namespace Chem4Word.ACME
             }
             catch (Exception exception)
             {
-                Telemetry.Write(module, "Exception", exception.ToString());
+                Telemetry.Write(module, LoggingLevel.Exception, exception.ToString());
             }
         }
 
@@ -499,7 +499,7 @@ namespace Chem4Word.ACME
         /// <param name="source">Calling procedure name</param>
         /// <param name="level">Error level</param>
         /// <param name="message">Actual error message</param>
-        public void WriteTelemetry(string source, string level, string message)
+        public void WriteTelemetry(string source, LoggingLevel level, string message)
         {
             Telemetry?.Write(source, level, message);
         }
@@ -513,8 +513,8 @@ namespace Chem4Word.ACME
         {
             if (Telemetry != null)
             {
-                Telemetry.Write(source, "Exception", exception.Message);
-                Telemetry.Write(source, "Exception", exception.StackTrace);
+                Telemetry.Write(source, LoggingLevel.Exception, exception.Message);
+                Telemetry.Write(source, LoggingLevel.Exception, exception.StackTrace);
             }
             else
             {
@@ -527,14 +527,14 @@ namespace Chem4Word.ACME
         /// <summary>
         /// Checks the integrity of the model after an editor operation
         /// </summary>
-        /// <param name="module">Name of calling module in which this was invoked</param>
-        private void CheckModelIntegrity(string module)
+        /// <param name="source">Name of calling module in which this was invoked</param>
+        private void CheckModelIntegrity(string source)
         {
 #if DEBUG
             List<string> integrity = Model.CheckIntegrity();
             if (integrity.Count > 0)
             {
-                Telemetry?.Write(module, "Integrity", string.Join(Environment.NewLine, integrity));
+                Telemetry?.Write(source, LoggingLevel.Integrity, string.Join(Environment.NewLine, integrity));
             }
 #endif
         }
@@ -607,7 +607,7 @@ namespace Chem4Word.ACME
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            WriteTelemetry(module, "Debug", ListRingPlacements(placements));
+            WriteTelemetry(module, LoggingLevel.Debug, ListRingPlacements(placements));
 
             bool result = true;
 
@@ -621,7 +621,7 @@ namespace Chem4Word.ACME
 
                     if (placement.ExistingAtom != null && placement.ExistingAtom.Parent.InternalId != start)
                     {
-                        WriteTelemetry(module, "Warning", "Can't create new ring because at least one new atom would have a different parent molecule!");
+                        WriteTelemetry(module, LoggingLevel.Warning, "Can't create new ring because at least one new atom would have a different parent molecule!");
                         result = false;
                         break;
                     }

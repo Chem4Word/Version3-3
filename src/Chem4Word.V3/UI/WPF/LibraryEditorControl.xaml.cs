@@ -141,7 +141,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ChemistryItem(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             if (e.OriginalSource is WpfEventArgs source
                 && DataContext is LibraryEditorViewModel viewModel)
@@ -173,7 +173,7 @@ namespace Chem4Word.UI.WPF
         private void PerformEdit(ChemistryObject item)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             IChem4WordEditor editor = Globals.Chem4WordV3.GetEditorPlugIn(Globals.Chem4WordV3.SystemOptions.SelectedEditorPlugIn);
             if (editor != null)
@@ -340,7 +340,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (!_isLoading)
             {
-                _telemetry.Write(module, "Action", $"Display size changed to {Slider.Value}");
+                _telemetry.Write(module, LoggingLevel.Action, $"Display size changed to {Slider.Value}");
             }
             ItemSize = new Size(Slider.Value, Slider.Value + 65);
             DisplayWidth = Slider.Value - 20;
@@ -394,7 +394,7 @@ namespace Chem4Word.UI.WPF
             {
                 if (!_isLoading)
                 {
-                    _telemetry.Write(module, "Action", "Triggered");
+                    _telemetry.Write(module, LoggingLevel.Action, "Triggered");
                 }
                 if (DataContext != null)
                 {
@@ -410,7 +410,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ClearButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
             try
             {
                 CheckedFilterButton.IsChecked = false;
@@ -431,7 +431,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_SearchButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
             try
             {
                 CheckedFilterButton.IsChecked = false;
@@ -439,7 +439,7 @@ namespace Chem4Word.UI.WPF
                 if (!string.IsNullOrWhiteSpace(searchFor)
                     && DataContext != null)
                 {
-                    _telemetry.Write(module, "Information", $"Filter library by '{searchFor}'");
+                    _telemetry.Write(module, LoggingLevel.Information, $"Filter library by '{searchFor}'");
                     FilterByText(searchFor);
                     UpdateStatusBar();
                 }
@@ -456,7 +456,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_CheckedFilterButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             try
             {
@@ -526,7 +526,7 @@ namespace Chem4Word.UI.WPF
                     string propertyName = selectedItem.Content.ToString();
                     if (!_isLoading)
                     {
-                        _telemetry.Write(module, "Action", $"Sorting structures by {propertyName}");
+                        _telemetry.Write(module, LoggingLevel.Action, $"Sorting structures by {propertyName}");
                     }
                     if (propertyName.Equals("Name"))
                     {
@@ -617,7 +617,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_AddNewButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Adding new structure");
+            _telemetry.Write(module, LoggingLevel.Action, "Adding new structure");
             try
             {
                 PerformEdit(new ChemistryObject());
@@ -634,7 +634,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                _telemetry.Write(module, "Action", "Editing structure meta data");
+                _telemetry.Write(module, LoggingLevel.Action, "Editing structure meta data");
                 Point topLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
 
                 using (EditLabelsHost editLabelsHost =
@@ -677,7 +677,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_DeleteButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             try
             {
@@ -718,7 +718,7 @@ namespace Chem4Word.UI.WPF
                         _driver.CommitTransaction();
 
                         sw.Stop();
-                        _telemetry.Write(module, "Timing", $"Delete of {progress} structures from '{_driver.FileName}' took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+                        _telemetry.Write(module, LoggingLevel.Timing, $"Delete of {progress} structures from '{_driver.FileName}' took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
 
                         _checkedItems = 0;
                         DeleteButton.IsEnabled = false;
@@ -746,7 +746,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ImportButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
             try
             {
                 SetButtonStates(false);
@@ -854,7 +854,7 @@ namespace Chem4Word.UI.WPF
                                     File.WriteAllText(doneFile, $"{fileCount} cml files imported into library");
                                     FileInfo fi = new FileInfo(doneFile);
                                     fi.Attributes = FileAttributes.Hidden;
-                                    _telemetry.Write(module, "Information", $"Imported {fileCount} structures into '{_driver.FileName}'");
+                                    _telemetry.Write(module, LoggingLevel.Information, $"Imported {fileCount} structures into '{_driver.FileName}'");
                                     _driver.CommitTransaction();
                                 }
                             }
@@ -866,7 +866,7 @@ namespace Chem4Word.UI.WPF
 
                             sw.Stop();
 
-                            _telemetry.Write(module, "Timing", $"Import of {progress} files took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+                            _telemetry.Write(module, LoggingLevel.Timing, $"Import of {progress} files took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
                         }
                     }
                 }
@@ -929,7 +929,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_CalculateButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             int updated = 0;
             int progress = 0;
@@ -1023,7 +1023,7 @@ namespace Chem4Word.UI.WPF
                     Cancel.Visibility = Visibility.Collapsed;
                     _cancelRequested = false;
 
-                    _telemetry.Write(module, "Information", $"Updated properties for {updated}/{total} structures");
+                    _telemetry.Write(module, LoggingLevel.Information, $"Updated properties for {updated}/{total} structures");
                 }
             }
             catch (Exception exception)
@@ -1054,7 +1054,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ExportButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
             try
             {
                 SetButtonStates(false);
@@ -1137,7 +1137,7 @@ namespace Chem4Word.UI.WPF
                             if (exported > 0)
                             {
                                 UserInteractions.InformUser($"Exported {exported} structures to {browser.SelectedPath}");
-                                _telemetry.Write(module, "Information", $"Exported {exported} structures from '{_driver.FileName}'");
+                                _telemetry.Write(module, LoggingLevel.Information, $"Exported {exported} structures from '{_driver.FileName}'");
                             }
                         }
                     }
@@ -1157,7 +1157,7 @@ namespace Chem4Word.UI.WPF
         private void OnTagRemoved_TagControlModel(object sender, WpfEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
             if (sender is TagControlModel tcm)
             {
                 UpdateTags(tcm);
@@ -1226,8 +1226,8 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception ex)
             {
-                _telemetry.Write(module, "Exception", ex.Message);
-                _telemetry.Write(module, "Exception(Data)", ex.StackTrace);
+                _telemetry.Write(module, LoggingLevel.Exception, ex.Message);
+                _telemetry.Write(module, LoggingLevel.ExceptionData, ex.StackTrace);
                 new ReportError(_telemetry, TopLeft, "PasteHandler", ex).ShowDialog();
             }
         }
@@ -1285,8 +1285,8 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception ex)
             {
-                _telemetry.Write(module, "Exception", ex.Message);
-                _telemetry.Write(module, "Exception(Data)", ex.StackTrace);
+                _telemetry.Write(module, LoggingLevel.Exception, ex.Message);
+                _telemetry.Write(module, LoggingLevel.ExceptionData, ex.StackTrace);
                 new ReportError(_telemetry, TopLeft, "TaggingControlUpdate", ex).ShowDialog();
             }
         }
@@ -1329,7 +1329,7 @@ namespace Chem4Word.UI.WPF
                 _driver.UpsertTags(editorViewModel.SelectedChemistryObject.Id, tags);
 
                 sw.Stop();
-                _telemetry.Write(module, "Timing", $"Updating {tags.Count} tags for Id: {editorViewModel.SelectedChemistryObject.Id} took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+                _telemetry.Write(module, LoggingLevel.Timing, $"Updating {tags.Count} tags for Id: {editorViewModel.SelectedChemistryObject.Id} took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
 
                 // Update the grid view
                 editorViewModel.SelectedChemistryObject.Tags = tags;
@@ -1344,7 +1344,7 @@ namespace Chem4Word.UI.WPF
 
             _cancelRequested = true;
 
-            _telemetry.Write(module, "Information", "Initiating cancel of Property Calculations");
+            _telemetry.Write(module, LoggingLevel.Information, "Initiating cancel of Property Calculations");
         }
 
         public void UpdateStatusBar()

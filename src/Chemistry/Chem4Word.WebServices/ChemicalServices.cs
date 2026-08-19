@@ -57,20 +57,20 @@ namespace Chem4Word.WebServices
                 {
                     if (data.Messages.Any())
                     {
-                        Telemetry.Write(module, "Timing", string.Join(Environment.NewLine, data.Messages));
+                        Telemetry.Write(module, LoggingLevel.Timing, string.Join(Environment.NewLine, data.Messages));
                     }
 
                     if (data.Errors.Any())
                     {
-                        Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, data.Errors));
+                        Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, data.Errors));
                     }
                 }
             }
             else
             {
-                Telemetry.Write(module, "Exception", apiResult.Message);
+                Telemetry.Write(module, LoggingLevel.Exception, apiResult.Message);
             }
-            Telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
+            Telemetry.Write(module, LoggingLevel.Timing, $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
 
             return data;
         }

@@ -43,9 +43,9 @@ namespace Chem4Word.Helpers
             }
             else
             {
-                _telemetry.Write(module, "Exception", apiResult.Message);
+                _telemetry.Write(module, LoggingLevel.Exception, apiResult.Message);
             }
-            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
+            _telemetry.Write(module, LoggingLevel.Timing, $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
 
             return result;
         }
@@ -63,9 +63,9 @@ namespace Chem4Word.Helpers
             }
             else
             {
-                _telemetry.Write(module, "Exception", apiResult.Message);
+                _telemetry.Write(module, LoggingLevel.Exception, apiResult.Message);
             }
-            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
+            _telemetry.Write(module, LoggingLevel.Timing, $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
 
             return result;
         }
@@ -83,9 +83,9 @@ namespace Chem4Word.Helpers
             }
             else
             {
-                _telemetry.Write(module, "Exception", apiResult.Message);
+                _telemetry.Write(module, LoggingLevel.Exception, apiResult.Message);
             }
-            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
+            _telemetry.Write(module, LoggingLevel.Timing, $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
 
             return result;
         }
@@ -104,9 +104,9 @@ namespace Chem4Word.Helpers
             }
             else
             {
-                _telemetry.Write(module, "Exception", apiResult.Message);
+                _telemetry.Write(module, LoggingLevel.Exception, apiResult.Message);
             }
-            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
+            _telemetry.Write(module, LoggingLevel.Timing, $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
         }
 
         public void DownloadDriver(Dictionary<string, string> formData, string path, int timeout)
@@ -123,9 +123,9 @@ namespace Chem4Word.Helpers
             }
             else
             {
-                _telemetry.Write(module, "Exception", apiResult.Message);
+                _telemetry.Write(module, LoggingLevel.Exception, apiResult.Message);
             }
-            _telemetry.Write(module, "Timing", $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
+            _telemetry.Write(module, LoggingLevel.Timing, $"Calling API took {SafeDouble.AsString0(apiResult.Duration.TotalMilliseconds)}ms");
         }
     }
 }

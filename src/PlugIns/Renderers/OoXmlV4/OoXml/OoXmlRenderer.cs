@@ -71,7 +71,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             _telemetry = telemetry;
-            _telemetry.Write(module, "Verbose", "Called");
+            _telemetry.Write(module, LoggingLevel.Verbose, "Called");
 
             _options = options;
             _topLeft = topLeft;
@@ -84,7 +84,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
         public Run GenerateRun()
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Verbose", "Called");
+            _telemetry.Write(module, LoggingLevel.Verbose, "Called");
 
             Stopwatch swr = new Stopwatch();
             swr.Start();
@@ -247,7 +247,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 RenderDiagnostics();
             }
 
-            _telemetry.Write(module, "Timing", $"Rendering {_chemistryModel.TotalMoleculesCount} molecules with {_chemistryModel.TotalAtomsCount} atoms and {_chemistryModel.TotalBondsCount} bonds took {SafeDouble.AsString0(swr.ElapsedMilliseconds)} ms; Average Bond Length: {SafeDouble.AsString(_chemistryModel.MeanBondLength)}");
+            _telemetry.Write(module, LoggingLevel.Timing, $"Rendering {_chemistryModel.TotalMoleculesCount} molecules with {_chemistryModel.TotalAtomsCount} atoms and {_chemistryModel.TotalBondsCount} bonds took {SafeDouble.AsString0(swr.ElapsedMilliseconds)} ms; Average Bond Length: {SafeDouble.AsString(_chemistryModel.MeanBondLength)}");
 
             ShutDownProgress(progress);
 

@@ -42,7 +42,7 @@ namespace Chem4Word.Searcher.ExamplePlugIn
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
 
                 if (!PointHelper.PointIsEmpty(TopLeft))
                 {

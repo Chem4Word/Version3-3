@@ -54,7 +54,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             string searchFor = TextHelper.StripAsciiControlCharacters(SearchFor.Text).Trim();
             string webSafe = TextHelper.NormalizeCharacters(WebUtility.HtmlEncode(searchFor));
 
-            Telemetry.Write(module, "Information", $"User searched for '{searchFor}'");
+            Telemetry.Write(module, LoggingLevel.Information, $"User searched for '{searchFor}'");
 
             display1.Clear();
             LabelInfo.Text = "";
@@ -73,8 +73,8 @@ namespace Chem4Word.Searcher.OpsinPlugIn
                 {
                     if (apiResult.Content.ToLower().Contains("<!doctype html"))
                     {
-                        Telemetry.Write(module, "Warning", "Showing user html result of web call");
-                        Telemetry.Write(module, "Debug", apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
+                        Telemetry.Write(module, LoggingLevel.Warning, "Showing user html result of web call");
+                        Telemetry.Write(module, LoggingLevel.Debug, apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
 
                         Screen screen = Screen.FromControl(SearchButton);
                         HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL OPSIN Search Error", apiResult.Content);
@@ -100,9 +100,9 @@ namespace Chem4Word.Searcher.OpsinPlugIn
                 {
                     if (!string.IsNullOrEmpty(apiResult.Content))
                     {
-                        Telemetry.Write(module, "SearchFailure", apiResult.Content);
+                        Telemetry.Write(module, LoggingLevel.SearchFailure, apiResult.Content);
                     }
-                    Telemetry.Write(module, "SearchFailure", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode}");
+                    Telemetry.Write(module, LoggingLevel.SearchFailure, $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode}");
                     LabelInfo.Text = $"No match for '{searchFor}' found";
                     ImportButton.Enabled = false;
                 }

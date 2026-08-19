@@ -57,7 +57,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
                 _searcherOptions = new PubChemOptions(SettingsPath);
 
                 PubChemSettings settings = new PubChemSettings();
@@ -101,7 +101,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                 if (result == DialogResult.OK)
                 {
                     Properties = new Dictionary<string, string>();
-                    Telemetry.Write(module, "Information", $"Importing Id {searcher.PubChemId}");
+                    Telemetry.Write(module, LoggingLevel.Information, $"Importing Id {searcher.PubChemId}");
                     Cml = searcher.Cml;
                 }
             }

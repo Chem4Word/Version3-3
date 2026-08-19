@@ -5,7 +5,6 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.ACME;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
@@ -20,6 +19,7 @@ using Chem4Word.Searcher.PubChemPlugIn;
 using Chem4Word.Shared;
 using Chem4Word.Telemetry;
 using Chem4Word.WebServices;
+using IChem4Word.Contracts;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -232,7 +232,7 @@ namespace WinForms.TestHarness
                     {
                         if (model.AllWarnings.Count > 0)
                         {
-                            _telemetry.Write(module, "Warnings", string.Join(Environment.NewLine, model.AllWarnings));
+                            _telemetry.Write(module, LoggingLevel.WarningData, string.Join(Environment.NewLine, model.AllWarnings));
                             MessageBox.Show(string.Join(Environment.NewLine, model.AllWarnings), "Model has warnings!");
                         }
 
@@ -257,13 +257,13 @@ namespace WinForms.TestHarness
                             stopwatch.Stop();
                             elapsed2 = stopwatch.Elapsed;
 
-                            _telemetry.Write(module, "Information", $"File: '{filename}'; Original bond length {originalBondLength:#,##0.00}");
-                            _telemetry.Write(module, "Timing", $"Import took {elapsed1}; Export took {elapsed2}");
+                            _telemetry.Write(module, LoggingLevel.Information, $"File: '{filename}'; Original bond length {originalBondLength:#,##0.00}");
+                            _telemetry.Write(module, LoggingLevel.Timing, $"Import took {elapsed1}; Export took {elapsed2}");
                             ShowChemistry(filename, model);
                         }
                         else
                         {
-                            _telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.AllErrors));
+                            _telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, model.AllErrors));
                             MessageBox.Show(string.Join(Environment.NewLine, model.AllErrors), "Model has Errors!");
                         }
                     }
@@ -271,8 +271,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -324,8 +324,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
 #endif
@@ -361,8 +361,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
 #endif
@@ -431,8 +431,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -458,8 +458,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -513,8 +513,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -529,7 +529,7 @@ namespace WinForms.TestHarness
                     CMLConverter cmlConverter = new CMLConverter();
                     string cml = cmlConverter.Export(_currentModel);
 
-                    using (ShowCml f = new ShowCml { Cml = cml })
+                    using (ShowCml f = new ShowCml { Cml = XmlHelper.AddHeader(cml) })
                     {
                         f.ShowDialog(this);
                     }
@@ -537,8 +537,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -569,7 +569,7 @@ namespace WinForms.TestHarness
                         if (dr == DialogResult.OK)
                         {
                             FileInfo fi = new FileInfo(sfd.FileName);
-                            _telemetry.Write(module, "Information", $"Exporting to '{fi.Name}'");
+                            _telemetry.Write(module, LoggingLevel.Information, $"Exporting to '{fi.Name}'");
                             string fileType = Path.GetExtension(sfd.FileName).ToLower();
                             switch (fileType)
                             {
@@ -585,7 +585,7 @@ namespace WinForms.TestHarness
                                     // Set bond length to 1.54 angstroms (Å)
                                     copy.ScaleToAverageBondLength(1.54);
                                     double after = copy.MeanBondLength;
-                                    _telemetry.Write(module, "Information", $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
+                                    _telemetry.Write(module, LoggingLevel.Information, $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
                                     SdFileConverter sdFileConverter = new SdFileConverter();
                                     File.WriteAllText(sfd.FileName, sdFileConverter.Export(copy));
                                     break;
@@ -610,8 +610,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"Exception: {exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"Exception: {exception}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -742,16 +742,16 @@ namespace WinForms.TestHarness
                         }
                         catch (Exception innerException)
                         {
-                            _telemetry.Write(module, "Exception", innerException.Message);
-                            _telemetry.Write(module, "Exception", innerException.ToString());
+                            _telemetry.Write(module, LoggingLevel.Exception, innerException.Message);
+                            _telemetry.Write(module, LoggingLevel.Exception, innerException.ToString());
                             Debug.WriteLine(innerException.Message);
                         }
                     }
                 }
                 catch (Exception exception)
                 {
-                    _telemetry.Write(module, "Exception", exception.Message);
-                    _telemetry.Write(module, "Exception", exception.ToString());
+                    _telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                    _telemetry.Write(module, LoggingLevel.Exception, exception.ToString());
                     Debug.WriteLine(exception.Message);
                 }
             }
@@ -777,12 +777,9 @@ namespace WinForms.TestHarness
                                                      }
                                                  }
             };
+
             string tempFileName = renderer.Render();
-            if (string.IsNullOrEmpty(tempFileName))
-            {
-                MessageBox.Show("Something went wrong!", "Error");
-            }
-            else
+            if (!string.IsNullOrEmpty(tempFileName))
             {
                 Debug.WriteLine($"File {tempFileName} was created, opening it in Word");
                 // Start word in quiet mode [/q] without any add ins loaded [/a]

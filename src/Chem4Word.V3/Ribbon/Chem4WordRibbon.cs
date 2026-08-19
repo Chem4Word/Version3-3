@@ -105,7 +105,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -198,19 +198,19 @@ namespace Chem4Word
                                                     string text;
                                                     if (chosenState.Equals("c0"))
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Render structure as Overall ConciseFormula");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Render structure as Overall ConciseFormula");
                                                         text = model.UnicodeFormula;
                                                     }
                                                     else if (chosenState.Equals("w0"))
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Render structure as Molecular Weight");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Render structure as Molecular Weight");
                                                         text = SafeDouble.AsCMLString(model.MolecularWeight);
                                                     }
                                                     else
                                                     {
                                                         string source;
                                                         text = ChemistryHelper.GetInlineText(model, chosenState, out source);
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Render structure as {source}");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Render structure as {source}");
                                                     }
                                                     ChemistryHelper.Insert1D(document, contentControl.ID, text, chosenState + ":" + guid);
                                                 }
@@ -255,7 +255,7 @@ namespace Chem4Word
         private void AddDynamicMenuItems()
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             try
             {
                 ShowAsMenu.Items.Clear();
@@ -403,7 +403,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -459,7 +459,7 @@ namespace Chem4Word
                                 Globals.Chem4WordV3.Helper);
                             if (settingsHost.SystemOptions.Errors.Any())
                             {
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", string.Join(Environment.NewLine, settingsHost.SystemOptions.Errors));
+                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, string.Join(Environment.NewLine, settingsHost.SystemOptions.Errors));
                             }
                         }
 
@@ -534,7 +534,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -562,7 +562,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -579,7 +579,7 @@ namespace Chem4Word
                     {
                         CloseLibraryTaskPane();
 
-                        Globals.Chem4WordV3.Telemetry?.Write(module, "Action", $"Editing library '{Globals.Chem4WordV3.GetSelectedDatabaseDetails().DisplayName}'");
+                        Globals.Chem4WordV3.Telemetry?.Write(module, LoggingLevel.Action, $"Editing library '{Globals.Chem4WordV3.GetSelectedDatabaseDetails().DisplayName}'");
                         LibraryEditorHost host = new LibraryEditorHost("Ribbon");
 
                         host.TopLeft = Globals.Chem4WordV3.WordTopLeft;
@@ -610,7 +610,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -657,7 +657,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -693,12 +693,12 @@ namespace Chem4Word
                     DialogResult dialogResult = ofd.ShowDialog();
                     if (dialogResult == DialogResult.OK)
                     {
-                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Importing file '{ofd.SafeFileName}'");
+                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Importing file '{ofd.SafeFileName}'");
                         if (ofd.FileName != null)
                         {
                             if (FileHelper.IsBinary(ofd.FileName))
                             {
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Warning", $"File '{ofd.SafeFileName}' detected as binary");
+                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Warning, $"File '{ofd.SafeFileName}' detected as binary");
                                 UserInteractions.InformUser("Sorry, Binary files such as images and office documents etc can't be imported");
                             }
                             else
@@ -740,7 +740,7 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
-                                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", "CML File:" + Environment.NewLine + data);
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, "CML File:" + Environment.NewLine + data);
                                         }
                                         break;
 
@@ -761,7 +761,7 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
-                                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", "MOL/SDF File:" + Environment.NewLine + data);
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, "MOL/SDF File:" + Environment.NewLine + data);
                                         }
                                         break;
 
@@ -781,7 +781,7 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
-                                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", "SketchEl File:" + Environment.NewLine + data);
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, "SketchEl File:" + Environment.NewLine + data);
                                         }
                                         break;
 
@@ -797,11 +797,11 @@ namespace Chem4Word
                                     {
                                         if (model.AllErrors.Count > 0)
                                         {
-                                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.AllErrors));
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, model.AllErrors));
                                         }
                                         if (model.AllWarnings.Count > 0)
                                         {
-                                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.AllWarnings));
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, model.AllWarnings));
                                         }
 
                                         ImportErrors importErrors = new ImportErrors();
@@ -828,7 +828,7 @@ namespace Chem4Word
                                                                Globals.Chem4WordV3.SystemOptions.SetBondLengthOnImportFromFile);
                                         if (!string.IsNullOrEmpty(outcome))
                                         {
-                                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", outcome);
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, outcome);
                                         }
 
                                         CMLConverter cmlConverter = new CMLConverter();
@@ -986,7 +986,7 @@ namespace Chem4Word
                     {
                         if (document != null)
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Started editing structure in document [{document.DocID}] ");
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Started editing structure in document [{document.DocID}] ");
                             if (Globals.Chem4WordV3.SystemOptions == null)
                             {
                                 Globals.Chem4WordV3.LoadOptions();
@@ -1011,15 +1011,15 @@ namespace Chem4Word
                                     bool isNewDrawing = true;
 
                                     RenderingOptions options = new RenderingOptions
-                                                               {
-                                                                   ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms,
-                                                                   ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping,
-                                                                   ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight,
-                                                                   ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions,
-                                                                   ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH,
-                                                                   ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC,
-                                                                   DefaultBondLength = Globals.Chem4WordV3.SystemOptions.BondLength
-                                                               };
+                                    {
+                                        ShowColouredAtoms = Globals.Chem4WordV3.SystemOptions.ShowColouredAtoms,
+                                        ShowMoleculeGrouping = Globals.Chem4WordV3.SystemOptions.ShowMoleculeGrouping,
+                                        ShowMolecularWeight = Globals.Chem4WordV3.SystemOptions.ShowMolecularWeight,
+                                        ShowMoleculeCaptions = Globals.Chem4WordV3.SystemOptions.ShowMoleculeCaptions,
+                                        ExplicitH = Globals.Chem4WordV3.SystemOptions.ExplicitH,
+                                        ExplicitC = Globals.Chem4WordV3.SystemOptions.ExplicitC,
+                                        DefaultBondLength = Globals.Chem4WordV3.SystemOptions.BondLength
+                                    };
 
                                     Word.Selection sel = application.Selection;
 
@@ -1037,20 +1037,15 @@ namespace Chem4Word
 
                                                 if (beforeModel.AllErrors.Count > 0)
                                                 {
-                                                    Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, beforeModel.AllErrors));
+                                                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, beforeModel.AllErrors));
                                                 }
                                                 if (beforeModel.AllWarnings.Count > 0)
                                                 {
-                                                    Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, beforeModel.AllWarnings));
+                                                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, beforeModel.AllWarnings));
                                                 }
 
-                                                bool has2D = beforeModel.HasReactions
-                                                             || beforeModel.HasAnnotations
-                                                             || beforeModel.TotalAtomsCount > 0
-                                                             && (beforeModel.TotalBondsCount == 0
-                                                                 || beforeModel.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
 
-                                                if (!has2D)
+                                                if (!beforeModel.Has2D)
                                                 {
                                                     UserInteractions.InformUser("This chemistry item has no 2D data to edit!\nPlease use the 'Edit Labels' button.");
                                                     return;
@@ -1064,9 +1059,9 @@ namespace Chem4Word
                                             }
                                             else
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]");
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, $"Can't find CML for {contentControl.Tag} in Active document [{document.DocID}]");
                                                 List<string> listCustomXmlParts = CustomXmlPartHelper.ListCustomXmlParts(document);
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, listCustomXmlParts));
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, listCustomXmlParts));
 
                                                 UserInteractions.WarnUser("The CML for this chemistry item can't be found!");
                                                 return;
@@ -1099,11 +1094,11 @@ namespace Chem4Word
 
                                     if (isNewDrawing)
                                     {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Starting create new structure Tag {fullTag} at position {sel.Start}");
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Starting create new structure Tag {fullTag} at position {sel.Start}");
                                     }
                                     else
                                     {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Starting edit existing structure Tag {fullTag} at position {sel.Start}");
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Starting edit existing structure Tag {fullTag} at position {sel.Start}");
                                     }
 
                                     List<string> used1D = ChemistryHelper.GetUsed1D(document, guidString);
@@ -1123,9 +1118,10 @@ namespace Chem4Word
 
                                         if (afterModel.AllErrors.Count == 0 && afterModel.AllWarnings.Count == 0)
                                         {
-                                            PropertyCalculator pc = new WebServices.PropertyCalculator(Globals.Chem4WordV3.Telemetry,
-                                                                                        Globals.Chem4WordV3.WordTopLeft,
-                                                                                        Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
+                                            PropertyCalculator pc = new PropertyCalculator(Globals.Chem4WordV3.Telemetry,
+                                                Globals.Chem4WordV3.WordTopLeft,
+                                                Globals.Chem4WordV3.AddInInfo.AssemblyVersionNumber);
+
                                             if (Globals.Chem4WordV3.Helper != null)
                                             {
                                                 if (!string.IsNullOrEmpty(Globals.Chem4WordV3.Helper.MachineId))
@@ -1141,11 +1137,11 @@ namespace Chem4Word
 
                                             if (isNewDrawing)
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Finished creating new structure Tag {fullTag}");
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Finished creating new structure Tag {fullTag}");
                                             }
                                             else
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Finished editing existing structure Tag {fullTag}");
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Finished editing existing structure Tag {fullTag}");
                                             }
 
                                             // Copy back CustomXmlPartGuid which will get lost if edited via ChemDoodle Web
@@ -1175,11 +1171,11 @@ namespace Chem4Word
                                                     if (dr == DialogResult.OK)
                                                     {
                                                         afterModel = cmlConverter.Import(host.Cml, used1D);
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Labels updated");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Labels updated");
                                                     }
                                                     else
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Labels accepted");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Labels accepted");
                                                     }
 
                                                     host.Close();
@@ -1187,7 +1183,7 @@ namespace Chem4Word
                                             }
                                             else
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Properties not changed");
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Properties not changed");
                                             }
 
                                             #endregion Show Label Editor
@@ -1223,7 +1219,7 @@ namespace Chem4Word
                                                     contentControl = ChemistryHelper.GetContentControl(document, id);
                                                     if (contentControl != null)
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Erasing old ContentControl {contentControl.ID}");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Erasing old ContentControl {contentControl.ID}");
 
                                                         // Erase old CC
                                                         contentControl.LockContents = false;
@@ -1240,7 +1236,7 @@ namespace Chem4Word
                                                     }
                                                     else
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Error", $"Can't find old ContentControl {id}");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Error, $"Can't find old ContentControl {id}");
 
                                                         readyToInsert = false;
                                                     }
@@ -1250,7 +1246,7 @@ namespace Chem4Word
                                                 {
                                                     // Insert a new CC
                                                     contentControl = document.ContentControls.Add(Word.WdContentControlType.wdContentControlRichText, ref _missing);
-                                                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"New ContentControl {contentControl.ID} created. HasReactions:{afterModel.HasReactions} HasAnnotations:{afterModel.HasAnnotations}");
+                                                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"New ContentControl {contentControl.ID} created. HasReactions:{afterModel.HasReactions} HasAnnotations:{afterModel.HasAnnotations}");
 
                                                     contentControl.Title = CoreConstants.ContentControlTitle;
                                                     if (isNewDrawing)
@@ -1270,11 +1266,11 @@ namespace Chem4Word
 
                                                         if (customXmlPart != null)
                                                         {
-                                                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {fullTag}");
+                                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {fullTag}");
                                                             customXmlPart.Delete();
                                                         }
 
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding XmlPart Tag: {fullTag}");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Adding XmlPart Tag: {fullTag}");
                                                         document.CustomXMLParts.Add(XmlHelper.AddHeader(afterCml));
 
                                                         #endregion Replace CustomXMLPart with our new cml
@@ -1294,7 +1290,7 @@ namespace Chem4Word
                                                     }
                                                     else
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Warning", $"Unable to insert structure into ContentControl Tag {contentControl.Tag}");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Warning, $"Unable to insert structure into ContentControl Tag {contentControl.Tag}");
                                                         contentControl.Delete();
                                                         contentControl = null;
                                                     }
@@ -1306,11 +1302,11 @@ namespace Chem4Word
                                             // Editing aborted due to errors
                                             if (afterModel.AllErrors.Count > 0)
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, afterModel.AllErrors));
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, afterModel.AllErrors));
                                             }
                                             if (afterModel.AllWarnings.Count > 0)
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, afterModel.AllWarnings));
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, afterModel.AllWarnings));
                                             }
 
                                             ImportErrors importErrors = new ImportErrors();
@@ -1321,7 +1317,7 @@ namespace Chem4Word
 
 #if DEBUG
                                         List<string> listChemistryControls = CustomXmlPartHelper.ListChemistryControls(document);
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", string.Join(Environment.NewLine, listChemistryControls));
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, string.Join(Environment.NewLine, listChemistryControls));
 #endif
                                     }
                                     else
@@ -1344,8 +1340,8 @@ namespace Chem4Word
                         }
                         else
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception", cex.Message);
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Exception", cex.StackTrace);
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, cex.Message);
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, cex.StackTrace);
                         }
                     }
                     catch (Exception ex)
@@ -1362,19 +1358,19 @@ namespace Chem4Word
                         {
                             if (cancelled)
                             {
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; User canceled edit");
+                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Finished; User canceled edit");
                             }
                             else
                             {
                                 // Move selection point into the Content Control which was just edited or added
                                 application.Selection.SetRange(contentControl.Range.Start, contentControl.Range.End);
                                 Globals.Chem4WordV3.SelectChemistry(application.Selection);
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; Structure was updated");
+                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Finished; Structure was updated");
                             }
                         }
                         else
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Finished; User canceled insert");
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Finished; User canceled insert");
                         }
 
                         // Tidy Up - Resume Screen Updating and Enable Document Event Handlers
@@ -1393,7 +1389,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -1452,7 +1448,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -1477,7 +1473,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -1533,7 +1529,7 @@ namespace Chem4Word
                                 FileInfo fi = new FileInfo(sfd.FileName);
                                 double before = model.MeanBondLength;
                                 double after;
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Exporting to '{fi.Name}'");
+                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Exporting to '{fi.Name}'");
                                 string fileType = Path.GetExtension(sfd.FileName).ToLower();
                                 switch (fileType)
                                 {
@@ -1548,7 +1544,7 @@ namespace Chem4Word
                                         // Set bond length to 1.54 angstroms (Å)
                                         model.ScaleToAverageBondLength(1.54);
                                         after = model.MeanBondLength;
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
                                         SdFileConverter sdFileConverter = new SdFileConverter();
                                         File.WriteAllText(sfd.FileName, sdFileConverter.Export(model));
                                         break;
@@ -1557,7 +1553,7 @@ namespace Chem4Word
                                         // Set bond length to 1.5 angstroms (Å)
                                         model.ScaleToAverageBondLength(1.5);
                                         after = model.MeanBondLength;
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Structure rescaled from {SafeDouble.AsString(before)} to {SafeDouble.AsString(after)}");
                                         SketchElConverter sketchElConverter = new SketchElConverter();
                                         File.WriteAllText(sfd.FileName, sketchElConverter.Export(model));
                                         break;
@@ -1582,7 +1578,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -1651,7 +1647,7 @@ namespace Chem4Word
 
                                                     if (Globals.Chem4WordV3.Telemetry != null)
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
                                                     }
                                                     else
                                                     {
@@ -1677,7 +1673,7 @@ namespace Chem4Word
                                                 {
                                                     if (Globals.Chem4WordV3.Telemetry != null)
                                                     {
-                                                        Globals.Chem4WordV3.Telemetry.Write(module, "Warning", $"Unable to insert structure into ContentControl {contentControl.Tag}");
+                                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Warning, $"Unable to insert structure into ContentControl {contentControl.Tag}");
                                                     }
                                                     else
                                                     {
@@ -1700,8 +1696,8 @@ namespace Chem4Word
 
                                     if (Globals.Chem4WordV3.Telemetry != null)
                                     {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception", message1);
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", message2);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, message1);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, message2);
                                     }
                                     else
                                     {
@@ -1740,7 +1736,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -1769,7 +1765,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -1817,7 +1813,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -1865,7 +1861,7 @@ namespace Chem4Word
                                 {
                                     if (Globals.Chem4WordV3.Telemetry != null)
                                     {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", outcome);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, outcome);
                                     }
                                     else
                                     {
@@ -1906,7 +1902,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -1959,7 +1955,7 @@ namespace Chem4Word
                                             Globals.Chem4WordV3.LoadNamesFromLibrary();
 
                                             UserInteractions.InformUser($"Structure '{dto.SubstanceName}' added into Library");
-                                            Globals.Chem4WordV3.Telemetry?.Write(module, "Information", $"Structure '{model.ConciseFormula}' added into Library");
+                                            Globals.Chem4WordV3.Telemetry?.Write(module, LoggingLevel.Information, $"Structure '{model.ConciseFormula}' added into Library");
                                         }
                                     }
                                 }
@@ -2005,7 +2001,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2116,7 +2112,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2248,7 +2244,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2344,7 +2340,7 @@ namespace Chem4Word
 
                                             if (Globals.Chem4WordV3.Telemetry != null)
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Deleting XmlPart Id:{customXmlPart.Id} Tag: {contentControl.Tag}");
                                             }
                                             else
                                             {
@@ -2370,7 +2366,7 @@ namespace Chem4Word
                                         {
                                             if (Globals.Chem4WordV3.Telemetry != null)
                                             {
-                                                Globals.Chem4WordV3.Telemetry.Write(module, "Warning", $"Unable to insert structure into ContentControl Tag {contentControl.Tag}");
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Warning, $"Unable to insert structure into ContentControl Tag {contentControl.Tag}");
                                             }
                                             else
                                             {
@@ -2389,8 +2385,8 @@ namespace Chem4Word
 
                                     if (Globals.Chem4WordV3.Telemetry != null)
                                     {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception", message1);
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Exception(Data)", message2);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, message1);
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, message2);
                                     }
                                     else
                                     {
@@ -2435,7 +2431,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2477,7 +2473,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2537,7 +2533,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2572,7 +2568,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2622,7 +2618,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2651,7 +2647,7 @@ namespace Chem4Word
                         }
                     }
 
-                    Globals.Chem4WordV3.Telemetry?.Write(module, "ReadManual", userManual);
+                    Globals.Chem4WordV3.Telemetry?.Write(module, LoggingLevel.ReadManual, userManual);
                     Word.Documents documents = Globals.Chem4WordV3.AllDocuments;
                     if (documents != null)
                     {
@@ -2677,7 +2673,7 @@ namespace Chem4Word
 
             void OpenManual(string userManual)
             {
-                Globals.Chem4WordV3.Telemetry?.Write(module, "ReadManual", userManual);
+                Globals.Chem4WordV3.Telemetry?.Write(module, LoggingLevel.ReadManual, userManual);
                 Word.Documents documents = Globals.Chem4WordV3.AllDocuments;
                 if (documents != null)
                 {
@@ -2692,7 +2688,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2727,7 +2723,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2764,7 +2760,7 @@ namespace Chem4Word
 
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2800,7 +2796,7 @@ namespace Chem4Word
             BeforeButtonChecks();
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2839,7 +2835,7 @@ namespace Chem4Word
 
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {
@@ -2909,7 +2905,7 @@ namespace Chem4Word
                                 return;
                             }
 
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information",
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information,
                                                                 $"Exporting to '{folderInfo.FullName}'");
                             int tempCount = 1;
                             foreach (Model model in aggregatedCML)
@@ -2969,7 +2965,7 @@ namespace Chem4Word
 
             if (Globals.Chem4WordV3.Telemetry != null)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             }
             else
             {

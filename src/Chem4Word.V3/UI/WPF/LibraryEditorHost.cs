@@ -55,7 +55,7 @@ namespace Chem4Word.UI.WPF
 
             using (new WaitCursor())
             {
-                Telemetry.Write(module, "Information", $"Library Editor started from {_source}");
+                Telemetry.Write(module, LoggingLevel.Information, $"Library Editor started from {_source}");
 
                 LibraryEditorControl editor = new LibraryEditorControl(Globals.Chem4WordV3.Telemetry);
                 elementHost1.Child = editor;

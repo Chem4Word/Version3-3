@@ -8,6 +8,7 @@
 using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Interfaces;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 List<Atom> atoms = SelectedItems.OfType<Atom>().ToList();
                 List<Bond> bonds = SelectedItems.OfType<Bond>().ToList();
@@ -113,7 +114,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 UndoManager.BeginUndoBlock();
                 foreach (Annotation a in annotations)

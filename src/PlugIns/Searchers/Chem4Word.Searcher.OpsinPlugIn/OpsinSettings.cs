@@ -42,7 +42,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
 
                 if (!PointHelper.PointIsEmpty(TopLeft))
                 {
@@ -65,7 +65,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
         private void OnClick_SetDefaults(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Telemetry.Write(module, "Action", "Triggered");
+            Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             try
             {
                 DialogResult dr = UserInteractions.AskUserOkCancel("Restore default settings");
@@ -85,7 +85,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
         private void OnClick_Ok(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Telemetry.Write(module, "Action", "Triggered");
+            Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             try
             {
                 SearcherOptions.Save();
@@ -170,7 +170,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
         private void OnValueChanged_DisplayOrder(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Telemetry.Write(module, "Action", $"Triggered; New value: {DisplayOrder.Value}");
+            Telemetry.Write(module, LoggingLevel.Action, $"Triggered; New value: {DisplayOrder.Value}");
             try
             {
                 SearcherOptions.DisplayOrder = (int)DisplayOrder.Value;

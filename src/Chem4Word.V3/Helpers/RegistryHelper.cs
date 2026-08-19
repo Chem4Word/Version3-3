@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core;
+using IChem4Word.Contracts;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -72,7 +73,7 @@ namespace Chem4Word.Helpers
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordSetupRegistryKey, true);
             if (registryKey != null)
             {
-                SendValues(module, "Setup", registryKey);
+                SendValues(module, LoggingLevel.Setup, registryKey);
             }
         }
 
@@ -83,7 +84,7 @@ namespace Chem4Word.Helpers
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordUpdateRegistryKey, true);
             if (registryKey != null)
             {
-                SendValues(module, "Update", registryKey);
+                SendValues(module, LoggingLevel.Update, registryKey);
             }
         }
 
@@ -94,7 +95,7 @@ namespace Chem4Word.Helpers
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMsiActionsRegistryKey, true);
             if (registryKey != null)
             {
-                SendValues(module, "MsiActions", registryKey);
+                SendValues(module, LoggingLevel.MsiActions, registryKey);
             }
         }
 
@@ -105,7 +106,7 @@ namespace Chem4Word.Helpers
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordMessagesRegistryKey, true);
             if (registryKey != null)
             {
-                SendValues(module, "Information", registryKey);
+                SendValues(module, LoggingLevel.Information, registryKey);
             }
         }
 
@@ -116,11 +117,11 @@ namespace Chem4Word.Helpers
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(CoreConstants.Chem4WordExceptionsRegistryKey, true);
             if (registryKey != null)
             {
-                SendValues(module, "Exception", registryKey);
+                SendValues(module, LoggingLevel.Exception, registryKey);
             }
         }
 
-        private static void SendValues(string module, string level, RegistryKey registryKey)
+        private static void SendValues(string module, LoggingLevel level, RegistryKey registryKey)
         {
             string[] keys = registryKey.GetValueNames();
             List<RegistryMessage> values = new List<RegistryMessage>();
@@ -137,9 +138,9 @@ namespace Chem4Word.Helpers
                 }
 
                 RegistryMessage temp = new RegistryMessage
-                                       {
-                                           Date = timestamp
-                                       };
+                {
+                    Date = timestamp
+                };
 
                 bracket = value.IndexOf("]", StringComparison.InvariantCulture);
                 if (bracket > 0)
@@ -168,7 +169,7 @@ namespace Chem4Word.Helpers
             }
         }
 
-        private static void SendData(string module, string level, List<RegistryMessage> messages, ref int depth)
+        private static void SendData(string module, LoggingLevel level, List<RegistryMessage> messages, ref int depth)
         {
             if (messages.Any())
             {

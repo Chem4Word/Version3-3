@@ -9,6 +9,7 @@ using Chem4Word.ACME.Models;
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Helpers;
 using Chem4Word.Model2.Converters.CML;
+using IChem4Word.Contracts;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Word;
 using System;
@@ -45,7 +46,7 @@ namespace Chem4Word.Navigator
             //get a reference to the document
             _doc = doc;
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"NavigatorController({doc.DocID})");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"NavigatorController({doc.DocID})");
             Parts = _doc.CustomXMLParts.SelectByNamespace(CMLNamespaces.cml.NamespaceName);
 
             Parts.PartAfterLoad -= OnAfterLoad_CustomXmlPart;
@@ -90,7 +91,7 @@ namespace Chem4Word.Navigator
 
                     var chemistryObjects = items.ToList();
 
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Found {chemistryObjects.Count} XmlParts in document [{_doc.DocID}]");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Found {chemistryObjects.Count} XmlParts in document [{_doc.DocID}]");
 
                     foreach (var chemistryObject in chemistryObjects)
                     {
@@ -102,7 +103,7 @@ namespace Chem4Word.Navigator
                         }
                     }
 
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Number of Navigator items loaded = {NavigatorItems.Count}");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Number of Navigator items loaded = {NavigatorItems.Count}");
                 }
             }
             catch (Exception ex)
@@ -123,12 +124,12 @@ namespace Chem4Word.Navigator
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"XmlPart Id:{oldXmlPart.Id} has been removed from document [{_doc.DocID}]");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"XmlPart Id:{oldXmlPart.Id} has been removed from document [{_doc.DocID}]");
                 var chemistryObject = NavigatorItems.FirstOrDefault(ni
                                                                 => CustomXmlPartHelper.GuidFromTag(ni.CustomControlTag) == CustomXmlPartHelper.GetCmlId(oldXmlPart));
                 if (chemistryObject != null)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Removing Tag {chemistryObject.CustomControlTag} from items in navigator for document [{_doc.DocID}]");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Removing Tag {chemistryObject.CustomControlTag} from items in navigator for document [{_doc.DocID}]");
                     NavigatorItems.Remove(chemistryObject);
                 }
             }
@@ -152,7 +153,7 @@ namespace Chem4Word.Navigator
             try
             {
                 var cmlId = CustomXmlPartHelper.GetCmlId(newXmlPart);
-                Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"XmlPart Id:{newXmlPart.Id} Tag {cmlId} has been added to document [{_doc.DocID}]");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"XmlPart Id:{newXmlPart.Id} Tag {cmlId} has been added to document [{_doc.DocID}]");
                 var converter = new CMLConverter();
 
                 //get the chemistry
@@ -166,7 +167,7 @@ namespace Chem4Word.Navigator
                                       orderby cc.Range.Start
                                       where CustomXmlPartHelper.GuidFromTag(cc.Tag) == cmlId
                                       select cc).First();
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Found Content Control {matchingCC.ID} with Tag {matchingCC.Tag}");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Found Content Control {matchingCC.ID} with Tag {matchingCC.Tag}");
 
                     //get the ordinal position of the content control
                     var start = 0;
@@ -192,19 +193,19 @@ namespace Chem4Word.Navigator
                     {
                         if (start < NavigatorItems.Count)
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding Tag {newNavItem.CustomControlTag} into navigator at position {start} for document [{_doc.DocID}]");
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Adding Tag {newNavItem.CustomControlTag} into navigator at position {start} for document [{_doc.DocID}]");
                             NavigatorItems.Insert(start, newNavItem);
                         }
                         else
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Adding Tag {newNavItem.CustomControlTag} into navigator at end for document [{_doc.DocID}]");
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Adding Tag {newNavItem.CustomControlTag} into navigator at end for document [{_doc.DocID}]");
                             NavigatorItems.Add(newNavItem);
                         }
                     }
                     catch (ArgumentOutOfRangeException) //can happen when there are more content controls than navigator items
                     {
                         //so simply insert the new navigator item at the end
-                        Globals.Chem4WordV3.Telemetry.Write(module, "Warning", $"Adding Tag {newNavItem.CustomControlTag} into navigator at end for document [{_doc.DocID}]");
+                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Warning, $"Adding Tag {newNavItem.CustomControlTag} into navigator at end for document [{_doc.DocID}]");
                         NavigatorItems.Add(newNavItem);
                     }
                 }

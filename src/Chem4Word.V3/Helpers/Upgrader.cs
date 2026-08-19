@@ -9,6 +9,7 @@ using Chem4Word.Core;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
+using IChem4Word.Contracts;
 using Microsoft.Office.Core;
 using System;
 using System.Collections;
@@ -55,7 +56,7 @@ namespace Chem4Word.Helpers
                 result = UserInteractions.AskUserYesNo(sb.ToString());
                 if (Globals.Chem4WordV3.Telemetry != null)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Detected {count} legacy chemistry ContentControl(s)");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Detected {count} legacy chemistry ContentControl(s)");
                 }
                 else
                 {
@@ -138,8 +139,8 @@ namespace Chem4Word.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"{ex.Message}");
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Exception", $"{ex.StackTrace}");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, $"{ex.Message}");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, $"{ex.StackTrace}");
                 }
             }
 
@@ -273,7 +274,7 @@ namespace Chem4Word.Helpers
             {
                 if (Globals.Chem4WordV3.Telemetry != null)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Upgraded {upgradedCCs} Chemistry Objects for {upgradedXml} Structures");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Upgraded {upgradedCCs} Chemistry Objects for {upgradedXml} Structures");
                 }
                 else
                 {

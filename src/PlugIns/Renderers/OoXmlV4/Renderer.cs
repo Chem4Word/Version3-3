@@ -49,7 +49,7 @@ namespace Chem4Word.Renderer.OoXmlV4
 
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
                 _rendererOptions = new OoXmlV4Options(SettingsPath);
 
                 OoXmlV4Settings settings = new OoXmlV4Settings();
@@ -83,25 +83,39 @@ namespace Chem4Word.Renderer.OoXmlV4
 
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
                 _rendererOptions = new OoXmlV4Options(SettingsPath);
 
-                string guid = Properties["Guid"];
-                result = OoXmlFile.CreateFromCml(Cml, guid, _rendererOptions, Telemetry, TopLeft);
-                if (!File.Exists(result))
+                if (string.IsNullOrEmpty(Cml))
                 {
-                    Telemetry.Write(module, "Warning", "Structure could not be rendered.");
-                    Telemetry.Write(module, "Warning(Data)", Cml);
+                    Telemetry.Write(module, LoggingLevel.Warning, "Cml IsNullOrEmpty() thus could not be rendered.");
                     UserInteractions.WarnUser("Sorry this structure could not be rendered.");
                 }
-                // Deliberate crash to test Error Reporting
-                //int ii = 2;
-                //int dd = 0;
-                //int bang = ii / dd;
+                else
+                {
+                    string guid = Properties["Guid"];
+                    result = OoXmlFile.CreateFromCml(Cml, guid, _rendererOptions, Telemetry, TopLeft);
+                    if (!File.Exists(result))
+                    {
+                        // OoXmlFile.CreateFromCml will have thrown an exception if it fails to create the file, so no need to log Cml again.
+                        UserInteractions.WarnUser("Sorry this structure could not be rendered.");
+                    }
+
+                    // Deliberate crash to test Error Reporting
+                    //int ii = 2;
+                    //int dd = 0;
+                    //int bang = ii / dd;
+                }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                new ReportError(Telemetry, TopLeft, module, ex).ShowDialog();
+                Telemetry.Write(module, LoggingLevel.Exception, "Structure could not be rendered.");
+                if (!string.IsNullOrEmpty(Cml))
+                {
+                    Telemetry.Write(module, LoggingLevel.ExceptionData, Cml);
+                }
+
+                new ReportError(Telemetry, TopLeft, module, exception).ShowDialog();
             }
 
             return result;

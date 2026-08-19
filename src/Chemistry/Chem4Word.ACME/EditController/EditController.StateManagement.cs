@@ -12,6 +12,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Geometry;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -133,7 +134,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 CMLConverter converter = new CMLConverter();
                 Model tempModel = new Model();
@@ -259,7 +260,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 UndoManager.BeginUndoBlock();
                 CopySelection();
@@ -277,7 +278,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 CMLConverter cc = new CMLConverter();
                 Model buffer = cc.Import(pastedCml);
@@ -294,7 +295,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
                 ClearSelection();
                 // Match to current model's settings
                 buffer.Relabel(true);

@@ -70,7 +70,7 @@ namespace Chem4Word.Core.SqLite
                     if (path != null && !path.Contains(executingPath))
                     {
 #if DEBUG
-                        _telemetry.Write(module, "Information", $"Adding {GdprHelper.ReplaceDl3Path(executingPath)} to path");
+                        _telemetry.Write(module, LoggingLevel.Information, $"Adding {GdprHelper.ReplaceDl3Path(executingPath)} to path");
 #endif
                         Environment.SetEnvironmentVariable("PATH", executingPath + ";" + path);
                     }
@@ -87,11 +87,11 @@ namespace Chem4Word.Core.SqLite
                 Database.IsSqliteDatabase = false;
                 Database.Checked = true;
 
-                _telemetry.Write(module, "Exception", $"{exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"{exception.StackTrace}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
 
                 string assembliesLoaded = FileHelper.AssembliesLoaded();
-                _telemetry.Write(module, "Exception(Data)", $"{assembliesLoaded}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{assembliesLoaded}");
             }
         }
 
@@ -164,7 +164,7 @@ namespace Chem4Word.Core.SqLite
                 sw.Stop();
 #if DEBUG
                 // Task 810
-                _telemetry.Write(module, "Timing", $"Reading {SafeDouble.AsString0(allNames.Count)} Chemical names from '{_databaseFile.Name}' took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+                _telemetry.Write(module, LoggingLevel.Timing, $"Reading {SafeDouble.AsString0(allNames.Count)} Chemical names from '{_databaseFile.Name}' took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
 #endif
             }
             catch (Exception ex)
@@ -257,7 +257,7 @@ namespace Chem4Word.Core.SqLite
                     sw.Stop();
                     long taken = sw.ElapsedMilliseconds;
 
-                    _telemetry?.Write(module, "Timing", $"Reading {SafeDouble.AsString0(results.Count)} structures [{sb2}] from '{_databaseFile.Name}' took {SafeDouble.AsString0(taken)}ms");
+                    _telemetry?.Write(module, LoggingLevel.Timing, $"Reading {SafeDouble.AsString0(results.Count)} structures [{sb2}] from '{_databaseFile.Name}' took {SafeDouble.AsString0(taken)}ms");
                 }
             }
             catch (Exception ex)
@@ -388,7 +388,7 @@ namespace Chem4Word.Core.SqLite
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            _telemetry.Write(module, "Information",
+            _telemetry.Write(module, LoggingLevel.Information,
                              $"Updating Id:{chemistry.Id}{Environment.NewLine}Formula: {chemistry.UnicodeFormula}{Environment.NewLine}SubstanceName: {chemistry.SubstanceName}");
 
             using (SQLiteConnection conn = LibraryConnection())
@@ -566,7 +566,7 @@ namespace Chem4Word.Core.SqLite
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Deleting Chemistry {id}");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Deleting Chemistry {id}");
 #endif
 
             StringBuilder sb = new StringBuilder();
@@ -587,7 +587,7 @@ namespace Chem4Word.Core.SqLite
                 int rows = command.ExecuteNonQuery();
 
 #if DEBUG
-                _telemetry.Write(module, "Debug", $"Deleted {rows} for Chemistry {id} from Gallery");
+                _telemetry.Write(module, LoggingLevel.Debug, $"Deleted {rows} for Chemistry {id} from Gallery");
 #endif
 
                 tr.Commit();
@@ -613,7 +613,7 @@ namespace Chem4Word.Core.SqLite
                 if (tags.Count > 0)
                 {
 #if DEBUG
-                    _telemetry.Write(module, "Debug", $"Adding {tags.Count} tags for Chemistry {id} into TaggedChemistry");
+                    _telemetry.Write(module, LoggingLevel.Debug, $"Adding {tags.Count} tags for Chemistry {id} into TaggedChemistry");
 #endif
 
                     int sequence = 0;
@@ -641,7 +641,7 @@ namespace Chem4Word.Core.SqLite
                             command.ExecuteNonQuery();
 
 #if DEBUG
-                            _telemetry.Write(module, "Debug", $"Added a record in TaggedChemistry for '{tag}' to ChemistryId {id} TagId {tagId}");
+                            _telemetry.Write(module, LoggingLevel.Debug, $"Added a record in TaggedChemistry for '{tag}' to ChemistryId {id} TagId {tagId}");
 #endif
                         }
                     }
@@ -656,7 +656,7 @@ namespace Chem4Word.Core.SqLite
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Looking for tag '{tag}'");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Looking for tag '{tag}'");
 #endif
 
             long result = -1;
@@ -677,7 +677,7 @@ namespace Chem4Word.Core.SqLite
                     {
                         result = (long)reader["Id"];
 #if DEBUG
-                        _telemetry.Write(module, "Debug", $"Found tag '{tag}' with id {result}");
+                        _telemetry.Write(module, LoggingLevel.Debug, $"Found tag '{tag}' with id {result}");
 #endif
                         break;
                     }
@@ -692,7 +692,7 @@ namespace Chem4Word.Core.SqLite
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Adding tag '{tag}'");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Adding tag '{tag}'");
 #endif
 
             StringBuilder sb = new StringBuilder();
@@ -711,7 +711,7 @@ namespace Chem4Word.Core.SqLite
             long id = (Int64)cmd.ExecuteScalar();
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Tag '{tag}' added with id {id}");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Tag '{tag}' added with id {id}");
 #endif
 
             return id;
@@ -950,7 +950,7 @@ namespace Chem4Word.Core.SqLite
             int rows = nameCommand.ExecuteNonQuery();
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalNames");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalNames");
 #endif
         }
 
@@ -967,7 +967,7 @@ namespace Chem4Word.Core.SqLite
             int rows = nameCommand.ExecuteNonQuery();
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalFormulae");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalFormulae");
 #endif
         }
 
@@ -984,7 +984,7 @@ namespace Chem4Word.Core.SqLite
             int rows = nameCommand.ExecuteNonQuery();
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalCaptions");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Deleted {rows} rows for Chemistry {chemistryId} from table ChemicalCaptions");
 #endif
         }
 
@@ -993,7 +993,7 @@ namespace Chem4Word.Core.SqLite
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Deleting old tags for Chemistry {chemistryId}");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Deleting old tags for Chemistry {chemistryId}");
 #endif
 
             StringBuilder sb = new StringBuilder();
@@ -1005,7 +1005,7 @@ namespace Chem4Word.Core.SqLite
             int rows = tagCommand.ExecuteNonQuery();
 
 #if DEBUG
-            _telemetry.Write(module, "Debug", $"Deleted {rows} rows for Chemistry {chemistryId} from TaggedChemistry");
+            _telemetry.Write(module, LoggingLevel.Debug, $"Deleted {rows} rows for Chemistry {chemistryId} from TaggedChemistry");
 #endif
         }
 
@@ -1067,11 +1067,11 @@ namespace Chem4Word.Core.SqLite
                 Database.IsSqliteDatabase = false;
                 Database.Checked = true;
 
-                _telemetry.Write(module, "Exception", $"{exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"{exception.StackTrace}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
 
                 string assembliesLoaded = FileHelper.AssembliesLoaded();
-                _telemetry.Write(module, "Exception(Data)", $"{assembliesLoaded}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{assembliesLoaded}");
             }
         }
 
@@ -1186,14 +1186,14 @@ namespace Chem4Word.Core.SqLite
                         {
                             try
                             {
-                                _telemetry.Write(module, "Information", $"Applying {patch.Version} patch '{script}' to {_databaseFile.FullName}");
+                                _telemetry.Write(module, LoggingLevel.Information, $"Applying {patch.Version} patch '{script}' to {_databaseFile.FullName}");
                                 SQLiteCommand command = new SQLiteCommand(script, conn);
                                 command.ExecuteNonQuery();
                             }
                             catch (Exception exception)
                             {
                                 Debug.WriteLine(exception);
-                                _telemetry.Write(module, "Exception", exception.ToString());
+                                _telemetry.Write(module, LoggingLevel.Exception, exception.ToString());
                             }
                         }
                         WritePatchRecordCommand(conn, patch.Version);
@@ -1202,7 +1202,7 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception ex)
             {
-                _telemetry.Write(module, "Exception", $"Exception {ex.Message}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception {ex.Message}");
                 result = false;
             }
 
@@ -1258,7 +1258,7 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception ex)
             {
-                _telemetry.Write(module, "Exception", $"Exception {ex.Message}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"Exception {ex.Message}");
             }
         }
 
@@ -1308,8 +1308,8 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"{exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"{exception.StackTrace}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
 
                 Debugger.Break();
             }
@@ -1348,8 +1348,8 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"{exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"{exception.StackTrace}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
 
                 Debugger.Break();
             }
@@ -1395,8 +1395,8 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, "Exception", $"{exception.Message}");
-                _telemetry.Write(module, "Exception(Data)", $"{exception.StackTrace}");
+                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
 
                 Debugger.Break();
             }

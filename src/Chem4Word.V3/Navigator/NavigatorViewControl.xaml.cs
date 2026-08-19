@@ -8,6 +8,7 @@
 using Chem4Word.Core.UI.Forms;
 using Chem4Word.Core.UI.Wpf;
 using Chem4Word.Helpers;
+using IChem4Word.Contracts;
 using Microsoft.Office.Interop.Word;
 using System;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace Chem4Word.Navigator
                 if (Globals.Chem4WordV3.EventsEnabled
                     && e.OriginalSource is WpfEventArgs source)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Source: {source.Button} Data: {source.ButtonDetails}");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Source: {source.Button} Data: {source.ButtonDetails}");
 
                     var parts = source.ButtonDetails.Split('=');
                     var item = parts[1];
@@ -220,8 +221,8 @@ namespace Chem4Word.Navigator
             }
             catch (Exception ex)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", ex.Message);
-                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", ex.StackTrace);
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.Message);
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.StackTrace);
             }
         }
     }

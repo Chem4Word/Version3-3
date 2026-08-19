@@ -70,7 +70,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
                 _searcherOptions = new ChEBIOptions(SettingsPath);
 
                 ChEBISettings settings = new ChEBISettings();
@@ -117,7 +117,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     if (dr == DialogResult.OK)
                     {
                         Properties = new Dictionary<string, string>();
-                        Telemetry.Write(module, "Information", $"Importing Id {searcher.ChebiId}");
+                        Telemetry.Write(module, LoggingLevel.Information, $"Importing Id {searcher.ChebiId}");
                         Cml = searcher.Cml;
                     }
 

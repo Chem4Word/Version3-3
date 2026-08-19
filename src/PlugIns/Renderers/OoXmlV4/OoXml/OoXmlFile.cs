@@ -47,24 +47,18 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             {
                 if (model.AllErrors.Count > 0)
                 {
-                    telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, model.AllErrors));
+                    telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, model.AllErrors));
                 }
 
                 if (model.AllWarnings.Count > 0)
                 {
-                    telemetry.Write(module, "Warning", string.Join(Environment.NewLine, model.AllWarnings));
+                    telemetry.Write(module, LoggingLevel.Warning, string.Join(Environment.NewLine, model.AllWarnings));
                 }
             }
 
             string fileName = string.Empty;
 
-            bool canRender = model.HasReactions
-                             || model.HasAnnotations
-                             || model.TotalAtomsCount > 0
-                             && (model.TotalBondsCount == 0
-                                 || model.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
-
-            if (canRender)
+            if (model.Has2D)
             {
                 fileName = Path.Combine(Path.GetTempPath(), $"Chem4Word-V3-{guid}.docx");
 
@@ -86,18 +80,8 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
             else
             {
-                List<string> message = new List<string>
-                                       {
-                                           "Unable to render this structure",
-                                           $"  Molecules:{model.TotalMoleculesCount}",
-                                           $"  Bonds:{model.TotalBondsCount}",
-                                           $"  Atoms:{model.TotalAtomsCount}",
-                                           $"  MeanBondLength:{model.MeanBondLength}",
-                                           $"  HasAnnotations:{model.HasAnnotations}",
-                                           $"  HasReactions:{model.HasReactions}"
-                                       };
-
-                telemetry.Write(module, "Warning", string.Join(Environment.NewLine, message));
+                telemetry.Write(module, LoggingLevel.Warning, "Model (from CML) has no 2D structure");
+                telemetry.Write(module, LoggingLevel.WarningCml, cml);
             }
 
             return fileName;

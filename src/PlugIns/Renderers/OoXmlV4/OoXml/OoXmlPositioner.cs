@@ -15,6 +15,7 @@ using Chem4Word.Renderer.OoXmlV4.Entities;
 using Chem4Word.Renderer.OoXmlV4.Entities.Diagnostic;
 using Chem4Word.Renderer.OoXmlV4.Enums;
 using Chem4Word.Renderer.OoXmlV4.TTF;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -285,7 +286,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 stringBuilder.AppendLine($"Point[{i}]: {PointHelper.AsCMLString(point)}");
             }
 
-            Inputs.Telemetry.Write(module, "Warning", stringBuilder.ToString().Trim());
+            Inputs.Telemetry.Write(module, LoggingLevel.Warning, stringBuilder.ToString().Trim());
         }
 
         private Point[] DetermineBarbEnds(Point endPoint, Point controlPoint,

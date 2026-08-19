@@ -48,7 +48,7 @@ namespace Chem4Word.Searcher.ExamplePlugIn
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
                 _searcherOptions = new ExampleOptions(SettingsPath);
 
                 ExampleSettings settings = new ExampleSettings();

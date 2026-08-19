@@ -15,7 +15,7 @@ namespace Chem4Word.ACME.Adorners.Feedback
 {
     public class AtomHoverAdorner : BaseHoverAdorner
     {
-        public AtomHoverAdorner(UIElement adornedElement, AtomVisual targetedVisual) 
+        public AtomHoverAdorner(UIElement adornedElement, AtomVisual targetedVisual)
             : base(adornedElement, targetedVisual)
         {
             //calls directly into base constructor

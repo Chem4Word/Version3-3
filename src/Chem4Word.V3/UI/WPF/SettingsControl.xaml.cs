@@ -134,7 +134,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_OkButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             WpfEventArgs args = new WpfEventArgs();
             args.Button = "Ok";
@@ -145,7 +145,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_CancelButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             WpfEventArgs args = new WpfEventArgs();
             args.Button = "Cancel";
@@ -156,7 +156,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_DefaultsButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             try
             {
@@ -184,7 +184,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_SelectedEditorSettings(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             IChem4WordEditor editor = Globals.Chem4WordV3.GetEditorPlugIn(SelectEditorPlugIn.SelectedItem.ToString());
             editor.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
@@ -195,7 +195,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_SelectedRendererSettings(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             IChem4WordRenderer renderer = Globals.Chem4WordV3.GetRendererPlugIn(SelectRendererPlugIn.SelectedItem.ToString());
             renderer.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
@@ -206,7 +206,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_SelectedSearcherSettings(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             IChem4WordSearcher searcher = Globals.Chem4WordV3.GetSearcherPlugIn(SelectSearcherPlugIn.SelectedItem.ToString());
             searcher.SettingsPath = Globals.Chem4WordV3.AddInInfo.ProductAppDataPath;
@@ -219,7 +219,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (!_loading)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
                 PlugInComboItem pci = SelectEditorPlugIn.SelectedItem as PlugInComboItem;
                 SystemOptions.SelectedEditorPlugIn = pci?.Name;
@@ -237,7 +237,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (!_loading)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
                 PlugInComboItem pci = SelectRendererPlugIn.SelectedItem as PlugInComboItem;
                 SystemOptions.SelectedRendererPlugIn = pci?.Name;
@@ -255,7 +255,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (!_loading)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
                 PlugInComboItem pci = SelectSearcherPlugIn.SelectedItem as PlugInComboItem;
                 SelectedSearcherDescription.Text = pci?.Description;
@@ -273,7 +273,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (!_loading)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
                 if (DefaultBondLength.SelectedItem is ComboBoxItem cbi)
                 {
@@ -288,7 +288,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_RemoveExplicitOnImportFile(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.RemoveExplicitHydrogensOnImportFromFile = RemoveExplicitOnImportFile.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -297,7 +297,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_RemoveExplicitOnImportSearch(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.RemoveExplicitHydrogensOnImportFromSearch = RemoveExplicitOnImportSearch.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -306,7 +306,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_RemoveExplicitOnImportLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.RemoveExplicitHydrogensOnImportFromLibrary = RemoveExplicitOnImportLibrary.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -315,7 +315,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ApplyDefaultOnImportFile(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.SetBondLengthOnImportFromFile = ApplyDefaultOnImportFile.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -324,7 +324,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ApplyDefaultOnImportSearch(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.SetBondLengthOnImportFromSearch = ApplyDefaultOnImportSearch.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -333,7 +333,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ApplyDefaultOnImportLibrary(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.SetBondLengthOnImportFromLibrary = ApplyDefaultOnImportLibrary.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -342,7 +342,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ApplyShowAtomsInColour(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.ShowColouredAtoms = ShowAtomsInColour.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -351,7 +351,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ApplyShowAllCarbonAtoms(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.ExplicitC = ShowAllCarbonAtoms.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -363,7 +363,7 @@ namespace Chem4Word.UI.WPF
 
             if (!_loading)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
                 if (ImplicitHydrogenMode.SelectedItem is ComboBoxItem cbi)
                 {
@@ -381,7 +381,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ShowGroupingOfMolecules(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.ShowMoleculeGrouping = ShowGroupingOfMolecules.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -390,7 +390,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ShowMolecularWeight(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.ShowMolecularWeight = ShowMolecularWeight.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -399,7 +399,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ShowMoleculeCaptions(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             SystemOptions.ShowMoleculeCaptions = ShowMoleculeCaptions.IsChecked.Value;
             Dirty = true;
             EnableButtons();
@@ -414,7 +414,7 @@ namespace Chem4Word.UI.WPF
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             if (!_loading)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
                 SystemOptions.TelemetryEnabled = TelemetryEnabled.IsChecked.Value;
                 Dirty = true;
                 EnableButtons();
@@ -429,7 +429,7 @@ namespace Chem4Word.UI.WPF
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             VistaFolderBrowserDialog browser = new VistaFolderBrowserDialog();
             browser.Description = "Select a folder to set as your default location";
@@ -442,7 +442,7 @@ namespace Chem4Word.UI.WPF
             if (result == Forms.DialogResult.OK
                 && Directory.Exists(browser.SelectedPath))
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Changing default library path to '{browser.SelectedPath}'");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Changing default library path to '{browser.SelectedPath}'");
 
                 DefaultLocation.Text = browser.SelectedPath;
                 ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
@@ -566,12 +566,12 @@ namespace Chem4Word.UI.WPF
 
                                 if (canRename && isUnique == null)
                                 {
-                                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Renaming {oldFileName} to {newFileName}");
+                                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Renaming {oldFileName} to {newFileName}");
 
                                     File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName), Path.Combine(fileInfo.DirectoryName, newFileName));
                                     if (File.Exists(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic"))))
                                     {
-                                        Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Renaming {oldFileName.Replace(".db", ".lic")} to {newFileName.Replace(".db", ".lic")}");
+                                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Renaming {oldFileName.Replace(".db", ".lic")} to {newFileName.Replace(".db", ".lic")}");
                                         File.Move(Path.Combine(fileInfo.DirectoryName, oldFileName.Replace(".db", ".lic")), Path.Combine(fileInfo.DirectoryName, newFileName.Replace(".db", ".lic")));
                                     }
 
@@ -591,7 +591,7 @@ namespace Chem4Word.UI.WPF
                                 else
                                 {
                                     string message = $"Name clash; Can't rename '{oldFileName}' to '{newFileName}' in '{fileInfo.DirectoryName}'";
-                                    Globals.Chem4WordV3.Telemetry.Write(module, "Warning", message);
+                                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Warning, message);
                                     UserInteractions.WarnUser(message);
                                 }
 
@@ -609,8 +609,8 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception exception)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", exception.Message);
-                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", exception.StackTrace);
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
             }
         }
 
@@ -618,7 +618,7 @@ namespace Chem4Word.UI.WPF
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             Forms.OpenFileDialog browser = new Forms.OpenFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
@@ -661,7 +661,7 @@ namespace Chem4Word.UI.WPF
                             // Prevent add if there is a name clash
                             if (unique == null)
                             {
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Added existing library {details.DisplayName}");
+                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Added existing library {details.DisplayName}");
                                 listOfDetectedLibraries.AvailableDatabases.Add(details);
 
                                 new LibraryFileHelper(Globals.Chem4WordV3.Telemetry, Globals.Chem4WordV3.AddInInfo.ProgramDataPath)
@@ -697,7 +697,7 @@ namespace Chem4Word.UI.WPF
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             Forms.SaveFileDialog browser = new Forms.SaveFileDialog();
             browser.InitialDirectory = Globals.Chem4WordV3.ListOfDetectedLibraries.DefaultLocation;
@@ -735,7 +735,7 @@ namespace Chem4Word.UI.WPF
                                 ShortFileName = fileInfo.Name
                             };
 
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Created new library {details.DisplayName}");
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Created new library {details.DisplayName}");
                             driver.CreateNewDatabase(details.Connection);
 
                             listOfDetectedLibraries.AvailableDatabases.Add(details);
@@ -759,7 +759,7 @@ namespace Chem4Word.UI.WPF
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             LibraryDownloadHost host = new LibraryDownloadHost();
             host.TopLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
@@ -773,12 +773,12 @@ namespace Chem4Word.UI.WPF
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             if (LibrariesList.SelectedItem is LibrariesSettingsGridSource library
                 && !library.Name.Equals(_selectedLibrary))
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Removing library '{library.Name}'");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Removing library '{library.Name}'");
 
                 ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
                 DatabaseDetails item = listOfDetectedLibraries.AvailableDatabases.FirstOrDefault(r => r.DisplayName.Equals(library.Name));
@@ -800,7 +800,7 @@ namespace Chem4Word.UI.WPF
             if (LibrariesList.SelectedItem is LibrariesSettingsGridSource library
                 && !library.Locked.Equals("Yes"))
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{library.Name}'");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Editing library '{library.Name}'");
                 LibraryEditorHost editor = new LibraryEditorHost("Library Manager");
 
                 editor.TopLeft = new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset);
@@ -915,7 +915,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ExploreSettingsFolder(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             try
             {
@@ -930,7 +930,7 @@ namespace Chem4Word.UI.WPF
         private void OnClick_ExploreCommonFolder(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             try
             {

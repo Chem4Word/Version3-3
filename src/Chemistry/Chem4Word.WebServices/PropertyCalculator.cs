@@ -131,7 +131,7 @@ namespace Chem4Word.WebServices
                 }
                 catch (Exception exception)
                 {
-                    _telemetry.Write(module, "Exception", $"{exception}");
+                    _telemetry.Write(module, LoggingLevel.Exception, $"{exception}");
                 }
             }
 

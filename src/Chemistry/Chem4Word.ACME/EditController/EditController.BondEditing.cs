@@ -10,6 +10,7 @@ using Chem4Word.ACME.Enums;
 using Chem4Word.ACME.Models;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -70,7 +71,7 @@ namespace Chem4Word.ACME
                     BondOption bondOption = _bondOptions[bondOptionId.Value];
                     string stereoValue = bondOption.Stereo.HasValue ? bondOption.Stereo.Value.ToString() : "{null}";
                     int affectedBonds = selectedBonds.Count();
-                    WriteTelemetry(module, "Debug",
+                    WriteTelemetry(module, LoggingLevel.Debug,
                                    $"Order: {bondOption.Order}; Stereo: {stereoValue}; Affected Bonds: {affectedBonds}");
 
                     if (selectedBonds.Any())
@@ -113,8 +114,8 @@ namespace Chem4Word.ACME
                 }
                 else
                 {
-                    WriteTelemetry(module, "Warning", "_selectedBondOptionId is {null}");
-                    WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+                    WriteTelemetry(module, LoggingLevel.Warning, "_selectedBondOptionId is {null}");
+                    WriteTelemetry(module, LoggingLevel.StackTrace, Environment.StackTrace);
 
                     // We should never get here
                     string message = $"_selectedBondOptionId is null";
@@ -140,7 +141,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 BondStereo stereo = existingBond.Stereo;
                 string order = existingBond.Order;
@@ -203,7 +204,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Length {newLength / ModelConstants.ScaleFactorForXaml}");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Length {newLength / ModelConstants.ScaleFactorForXaml}");
 
                 double currentLength = Model.MeanBondLength;
                 double currentSelection = Math.Round(currentLength / ModelConstants.ScaleFactorForXaml / 5.0) * 5 *
@@ -262,7 +263,7 @@ namespace Chem4Word.ACME
             try
             {
                 string countString = bonds == null ? "{null}" : $"{bonds.Count()}";
-                WriteTelemetry(module, "Debug", $"Bonds {countString}");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Bonds {countString}");
 
                 DeleteAtomsAndBonds(bondList: bonds);
             }
@@ -285,7 +286,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 double bondOrderBefore = bond.OrderValue.Value;
                 BondStereo stereoBefore = bond.Stereo;

@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Model2;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,7 +30,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Aligning middles of {objects.Count} objects");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Aligning middles of {objects.Count} objects");
 
                 List<Transform> moleculeTransforms = new List<Transform>();
                 List<Transform> annotationTransforms = new List<Transform>();
@@ -108,7 +109,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Aligning tops of {objects.Count} objects");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Aligning tops of {objects.Count} objects");
 
                 List<Transform> moleculeTransforms = new List<Transform>();
                 List<Transform> annotationTransforms = new List<Transform>();
@@ -208,7 +209,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Aligning bottoms of {objects.Count} objects");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Aligning bottoms of {objects.Count} objects");
 
                 List<Transform> moleculeTransforms = new List<Transform>();
                 List<Transform> annotationTransforms = new List<Transform>();
@@ -270,7 +271,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Aligning centres of {objects.Count} objects");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Aligning centres of {objects.Count} objects");
 
                 List<Transform> moleculeTransforms = new List<Transform>();
                 List<Transform> annotationTransforms = new List<Transform>();
@@ -394,7 +395,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Aligning lefts of {objects.Count} objects");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Aligning lefts of {objects.Count} objects");
 
                 List<Transform> moleculeTransforms = new List<Transform>();
                 List<Transform> annotationTransforms = new List<Transform>();
@@ -456,7 +457,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", $"Aligning rights of {objects.Count} objects");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Aligning rights of {objects.Count} objects");
 
                 List<Transform> moleculeTransforms = new List<Transform>();
                 List<Transform> annotationTransforms = new List<Transform>();
@@ -527,11 +528,11 @@ namespace Chem4Word.ACME
             }
             else
             {
-                WriteTelemetry(module, "Warning", "Number of transforms and molecules are not equal");
-                WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+                WriteTelemetry(module, LoggingLevel.Warning, "Number of transforms and molecules are not equal");
+                WriteTelemetry(module, LoggingLevel.StackTrace, Environment.StackTrace);
 
                 // We should never get here
-                string message = $"Number of transforms and molecules are not equal";
+                string message = "Number of transforms and molecules are not equal";
                 Debug.WriteLine(message);
                 Debugger.Break();
             }

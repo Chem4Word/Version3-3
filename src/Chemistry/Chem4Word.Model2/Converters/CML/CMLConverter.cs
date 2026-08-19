@@ -344,194 +344,211 @@ namespace Chem4Word.Model2.Converters.CML
 
         public string Export(Model model, bool compressed = false, CmlFormat format = CmlFormat.Default)
         {
-            RelabelIfRequired();
-
-            CmlFormat selectedFormat = model.Molecules.Count > 1
-                ? CmlFormat.Default :
-                format;
-
-            XDocument xd = new XDocument();
-            XElement root = null;
-
-            switch (selectedFormat)
+            if (model != null)
             {
-                case CmlFormat.Default:
-                    root = new XElement(CMLNamespaces.cml + ModelConstants.NSCML);
+                RelabelIfRequired();
 
-                    // Only export if set and format is default
-                    if (!string.IsNullOrEmpty(model.CustomXmlPartGuid))
-                    {
-                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagXmlPartGuid, model.CustomXmlPartGuid));
-                    }
+                CmlFormat selectedFormat = model.Molecules.Count > 1
+                    ? CmlFormat.Default :
+                    format;
 
-                    // Top Level settings
-                    root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagExplicitC, model.ExplicitC));
-                    root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagExplicitH, model.ExplicitH));
-                    root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowColouredAtoms, model.ShowColouredAtoms));
-                    root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowMoleculeGrouping, model.ShowMoleculeGrouping));
-                    root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagMolecularWeight, SafeDouble.AsCMLString(model.MolecularWeight)));
-                    root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowMolecularWeight, model.ShowMolecularWeight));
-                    root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowMoleculeCaptions, model.ShowMoleculeCaptions));
+                XDocument xd = new XDocument();
+                XElement root = null;
 
-                    // Substance Name and Tags (originating from a library)
-                    if (!string.IsNullOrEmpty(model.SubstanceName))
-                    {
-                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagSubstanceName, model.SubstanceName));
-                    }
+                switch (selectedFormat)
+                {
+                    case CmlFormat.Default:
+                        root = new XElement(CMLNamespaces.cml + ModelConstants.NSCML);
 
-                    if (model.SubstanceTags.Any())
-                    {
-                        root.Add(GetXElement(model.SubstanceTags));
-                    }
-
-                    // Build document
-                    foreach (Molecule molecule in model.Molecules.Values)
-                    {
-                        root.Add(GetMoleculeElement(molecule));
-                    }
-
-                    if (model.HasReactions)
-                    {
-                        foreach (ReactionScheme scheme in model.ReactionSchemes.Values)
+                        // Only export if set and format is default
+                        if (!string.IsNullOrEmpty(model.CustomXmlPartGuid))
                         {
-                            root.Add(GetXElement(scheme));
+                            root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagXmlPartGuid, model.CustomXmlPartGuid));
                         }
-                    }
 
-                    if (model.HasAnnotations)
-                    {
-                        foreach (Annotation annotation in model.Annotations.Values)
+                        // Top Level settings
+                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagExplicitC, model.ExplicitC));
+                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagExplicitH, model.ExplicitH));
+                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowColouredAtoms, model.ShowColouredAtoms));
+                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowMoleculeGrouping, model.ShowMoleculeGrouping));
+                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagMolecularWeight, SafeDouble.AsCMLString(model.MolecularWeight)));
+                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowMolecularWeight, model.ShowMolecularWeight));
+                        root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagShowMoleculeCaptions, model.ShowMoleculeCaptions));
+
+                        // Substance Name and Tags (originating from a library)
+                        if (!string.IsNullOrEmpty(model.SubstanceName))
                         {
-                            root.Add(GetXElement(annotation));
+                            root.Add(new XElement(CMLNamespaces.c4w + ModelConstants.TagSubstanceName, model.SubstanceName));
                         }
-                    }
 
-                    if (model.HasElectronPushers)
-                    {
-                        foreach (ElectronPusher electronPusher in model.ElectronPushers.Values)
+                        if (model.SubstanceTags.Any())
                         {
-                            XElement element = GetXElement(electronPusher);
-                            if (element != null)
+                            root.Add(GetXElement(model.SubstanceTags));
+                        }
+
+                        // Build document
+                        foreach (Molecule molecule in model.Molecules.Values)
+                        {
+                            root.Add(GetMoleculeElement(molecule));
+                        }
+
+                        if (model.HasReactions)
+                        {
+                            foreach (ReactionScheme scheme in model.ReactionSchemes.Values)
                             {
-                                root.Add(element);
+                                root.Add(GetXElement(scheme));
                             }
                         }
-                    }
-                    // Add namespaces etc
-                    root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.TagConventions, CMLNamespaces.conventions));
-                    root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.NSCML, CMLNamespaces.cml));
-                    root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.TagCmlDict, CMLNamespaces.cmlDict));
-                    root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.TagNameDict, CMLNamespaces.nameDict));
-                    root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.NSC4W, CMLNamespaces.c4w));
-                    root.Add(new XAttribute(ModelConstants.TagConventions, ModelConstants.TagConventionMolecular));
 
-                    break;
+                        if (model.HasAnnotations)
+                        {
+                            foreach (Annotation annotation in model.Annotations.Values)
+                            {
+                                root.Add(GetXElement(annotation));
+                            }
+                        }
 
-                case CmlFormat.ChemDraw:
-                    // Build document
-                    root = GetMoleculeElement(model.Molecules.Values.First(), format);
+                        if (model.HasElectronPushers)
+                        {
+                            foreach (ElectronPusher electronPusher in model.ElectronPushers.Values)
+                            {
+                                XElement element = GetXElement(electronPusher);
+                                if (element != null)
+                                {
+                                    root.Add(element);
+                                }
+                            }
+                        }
+                        // Add namespaces etc
+                        root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.TagConventions, CMLNamespaces.conventions));
+                        root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.NSCML, CMLNamespaces.cml));
+                        root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.TagCmlDict, CMLNamespaces.cmlDict));
+                        root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.TagNameDict, CMLNamespaces.nameDict));
+                        root.Add(new XAttribute(XNamespace.Xmlns + ModelConstants.NSC4W, CMLNamespaces.c4w));
+                        root.Add(new XAttribute(ModelConstants.TagConventions, ModelConstants.TagConventionMolecular));
 
-                    // Add namespaces etc
-                    root.Add(new XAttribute("xmlns", CMLNamespaces.cml));
+                        break;
 
-                    break;
+                    case CmlFormat.ChemDraw:
+                        // Build document
+                        root = GetMoleculeElement(model.Molecules.Values.First(), format);
 
-                case CmlFormat.MarvinJs:
-                    root = new XElement(CMLNamespaces.chemaxion + ModelConstants.NSCML);
+                        // Add namespaces etc
+                        root.Add(new XAttribute("xmlns", CMLNamespaces.cml));
 
-                    // Build document structure
-                    XElement mDocument = new XElement(CMLNamespaces.chemaxion + "MDocument");
-                    root.Add(mDocument);
-                    XElement mChemicalStructure = new XElement(CMLNamespaces.chemaxion + "MChemicalStruct");
-                    mDocument.Add(mChemicalStructure);
+                        break;
 
-                    // Import the molecule
-                    mChemicalStructure.Add(GetMoleculeElement(model.Molecules.Values.First(), format));
+                    case CmlFormat.MarvinJs:
+                        root = new XElement(CMLNamespaces.chemaxion + ModelConstants.NSCML);
 
-                    // Correct the namespaces of the imported molecule
-                    foreach (XElement element in mChemicalStructure.Descendants())
-                    {
-                        element.Name = CMLNamespaces.chemaxion + element.Name.LocalName;
-                    }
+                        // Build document structure
+                        XElement mDocument = new XElement(CMLNamespaces.chemaxion + "MDocument");
+                        root.Add(mDocument);
+                        XElement mChemicalStructure = new XElement(CMLNamespaces.chemaxion + "MChemicalStruct");
+                        mDocument.Add(mChemicalStructure);
 
-                    // Add namespaces etc
-                    root.Add(new XAttribute("xmlns", CMLNamespaces.chemaxion));
-                    root.Add(new XAttribute("version", "ChemAxon file format v20.20.0, generated by vunknown"));
+                        // Import the molecule
+                        mChemicalStructure.Add(GetMoleculeElement(model.Molecules.Values.First(), format));
 
-                    break;
+                        // Correct the namespaces of the imported molecule
+                        foreach (XElement element in mChemicalStructure.Descendants())
+                        {
+                            element.Name = CMLNamespaces.chemaxion + element.Name.LocalName;
+                        }
+
+                        // Add namespaces etc
+                        root.Add(new XAttribute("xmlns", CMLNamespaces.chemaxion));
+                        root.Add(new XAttribute("version", "ChemAxon file format v20.20.0, generated by vunknown"));
+
+                        break;
+                }
+
+                if (root != null)
+                {
+                    xd.Add(root);
+                }
+
+                return compressed ? xd.ToString(SaveOptions.DisableFormatting) : xd.ToString();
             }
 
-            if (root != null)
-            {
-                xd.Add(root);
-            }
-
-            return compressed ? xd.ToString(SaveOptions.DisableFormatting) : xd.ToString();
+            return string.Empty;
 
             // Local Function
             void RelabelIfRequired()
             {
                 bool relabelRequired = false;
 
-                // Handle case where id's are null
-                foreach (Molecule molecule in model.Molecules.Values)
+                if (model != null)
                 {
-                    if (string.IsNullOrEmpty(molecule.Id))
+                    if (model.Molecules.Any())
                     {
-                        relabelRequired = true;
-                        break;
-                    }
-
-                    foreach (Atom atom in molecule.Atoms.Values)
-                    {
-                        if (string.IsNullOrEmpty(atom.Id))
+                        // Handle case where id's are null
+                        foreach (Molecule molecule in model.Molecules.Values)
                         {
-                            relabelRequired = true;
-                            break;
+                            if (string.IsNullOrEmpty(molecule.Id))
+                            {
+                                relabelRequired = true;
+                                break;
+                            }
+
+                            foreach (Atom atom in molecule.Atoms.Values)
+                            {
+                                if (string.IsNullOrEmpty(atom.Id))
+                                {
+                                    relabelRequired = true;
+                                    break;
+                                }
+                            }
+
+                            foreach (Bond bond in molecule.Bonds)
+                            {
+                                if (string.IsNullOrEmpty(bond.Id))
+                                {
+                                    relabelRequired = true;
+                                    break;
+                                }
+                            }
                         }
                     }
 
-                    foreach (Bond bond in molecule.Bonds)
+                    if (model.ReactionSchemes.Any())
                     {
-                        if (string.IsNullOrEmpty(bond.Id))
+                        foreach (ReactionScheme scheme in model.ReactionSchemes.Values)
                         {
-                            relabelRequired = true;
-                            break;
+                            if (string.IsNullOrEmpty(scheme.Id))
+                            {
+                                relabelRequired = true;
+                                break;
+                            }
+
+                            foreach (Reaction reaction in scheme.Reactions.Values)
+                            {
+                                if (string.IsNullOrEmpty(reaction.Id))
+                                {
+                                    relabelRequired = true;
+                                    break;
+                                }
+                            }
                         }
                     }
-                }
 
-                foreach (ReactionScheme scheme in model.ReactionSchemes.Values)
-                {
-                    if (string.IsNullOrEmpty(scheme.Id))
+                    if (model.Annotations.Values.Any())
                     {
-                        relabelRequired = true;
-                        break;
-                    }
-
-                    foreach (Reaction reaction in scheme.Reactions.Values)
-                    {
-                        if (string.IsNullOrEmpty(reaction.Id))
+                        foreach (Annotation annotation in model.Annotations.Values)
                         {
-                            relabelRequired = true;
-                            break;
+                            if (string.IsNullOrEmpty(annotation.Id))
+                            {
+                                relabelRequired = true;
+                                break;
+                            }
                         }
                     }
-                }
 
-                foreach (Annotation annotation in model.Annotations.Values)
-                {
-                    if (string.IsNullOrEmpty(annotation.Id))
+                    // Finally do the re label if required
+                    if (relabelRequired)
                     {
-                        relabelRequired = true;
-                        break;
+                        model.Relabel(false);
                     }
-                }
-
-                // Finally do the re label if required
-                if (relabelRequired)
-                {
-                    model.Relabel(false);
                 }
             }
         }

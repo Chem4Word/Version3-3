@@ -8,6 +8,7 @@
 using Chem4Word.ACME.Adorners.Sketching;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Chem4Word.ACME
 
             try
             {
-                WriteTelemetry(module, "Information", $"Adding Electron Pusher starting at '{startChemistry.Path}'");
+                WriteTelemetry(module, LoggingLevel.Information, $"Adding Electron Pusher starting at '{startChemistry.Path}'");
 
                 //check to see if we're forming a new bond between atoms
                 if (startChemistry is Atom startAtom
@@ -98,7 +99,7 @@ namespace Chem4Word.ACME
                     newPusher.EndChemistries.Add(targetChemistry);
                 }
 
-                WriteTelemetry(module, "Information",
+                WriteTelemetry(module, LoggingLevel.Information,
                                newPusher.EndChemistries.Count == 1
                                    ? $"Electron Pusher EndChemistries[0] is '{newPusher.EndChemistriesAsString()}'"
                                    : $"Electron Pusher EndChemistries are '{newPusher.EndChemistriesAsString()}'");
@@ -151,7 +152,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Information", $"Deleting Electron Pusher {pusher.Path}");
+                WriteTelemetry(module, LoggingLevel.Information, $"Deleting Electron Pusher {pusher.Path}");
 
                 UndoManager.BeginUndoBlock();
 
@@ -198,7 +199,7 @@ namespace Chem4Word.ACME
             Point old2ndControlPoint = parentPusher.SecondControlPoint;
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 UndoManager.BeginUndoBlock();
 

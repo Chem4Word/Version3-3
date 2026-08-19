@@ -135,8 +135,8 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     {
                         if (apiResult.Content.ToLower().Contains("<!doctype html"))
                         {
-                            Telemetry.Write(module, "Warning", "Showing user html result of web call");
-                            Telemetry.Write(module, "Debug", apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
+                            Telemetry.Write(module, LoggingLevel.Warning, "Showing user html result of web call");
+                            Telemetry.Write(module, LoggingLevel.Debug, apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
 
                             Screen screen = Screen.FromControl(SearchButton);
                             HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL OPSIN Search Error", apiResult.Content);
@@ -151,22 +151,22 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     {
                         if (!string.IsNullOrEmpty(apiResult.Content))
                         {
-                            Telemetry.Write(module, "SearchFailure", apiResult.Content);
+                            Telemetry.Write(module, LoggingLevel.SearchFailure, apiResult.Content);
                         }
                         ChEbiSearchResult data = ProcessSearchResponse(apiResult.Content);
-                        Telemetry.Write(module, "SearchFailure", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
+                        Telemetry.Write(module, LoggingLevel.SearchFailure, $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
                 catch (Exception exception)
                 {
                     ErrorsAndWarnings.Text = exception.Message;
-                    Telemetry.Write(module, "Exception", exception.Message);
-                    Telemetry.Write(module, "Exception", exception.StackTrace);
+                    Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                    Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
                 }
             }
 
             stopwatch.Stop();
-            Telemetry.Write(module, "Information", $"Search for {searchFor} took {stopwatch.Elapsed}");
+            Telemetry.Write(module, LoggingLevel.Information, $"Search for {searchFor} took {stopwatch.Elapsed}");
         }
 
         private ChEbiSearchResult ProcessSearchResponse(string body)
@@ -212,7 +212,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                 if (!string.IsNullOrEmpty(data.Detail))
                 {
                     ErrorsAndWarnings.Text = data.Detail;
-                    Telemetry.Write(module, "SearchFailure", $"{data.Detail}");
+                    Telemetry.Write(module, LoggingLevel.SearchFailure, $"{data.Detail}");
                 }
             }
 
@@ -232,7 +232,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             {
                 try
                 {
-                    Telemetry.Write(module, "Information", $"Fetching structure for '{chebiId}'");
+                    Telemetry.Write(module, LoggingLevel.Information, $"Fetching structure for '{chebiId}'");
 
                     string api = string.Format(CultureInfo.InvariantCulture, GetMolfileTemplate,
                                                UserOptions.ChEBIWebService2Uri, chebiId.Replace("CHEBI:", ""));
@@ -249,9 +249,9 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     {
                         if (!string.IsNullOrEmpty(apiResult.Content))
                         {
-                            Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                            Telemetry.Write(module, LoggingLevel.ExceptionData, apiResult.Content);
                         }
-                        Telemetry.Write(module, "Exception", $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
+                        Telemetry.Write(module, LoggingLevel.Exception, $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
                 catch (Exception exception)
@@ -263,14 +263,14 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     else
                     {
                         ErrorsAndWarnings.Text = exception.Message;
-                        Telemetry.Write(module, "Exception", exception.Message);
-                        Telemetry.Write(module, "Exception", exception.StackTrace);
+                        Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                        Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
                     }
                 }
             }
 
             stopwatch.Stop();
-            Telemetry.Write(module, "Information", $"Get SDF for '{ChebiId}' took {stopwatch.Elapsed}");
+            Telemetry.Write(module, LoggingLevel.Information, $"Get SDF for '{ChebiId}' took {stopwatch.Elapsed}");
 
             return result;
         }
@@ -301,7 +301,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     double before = _lastModel.MeanBondLength;
                     _lastModel.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
                     double after = _lastModel.MeanBondLength;
-                    Telemetry.Write(module, "Information", $"Structure rescaled from {before.ToString("#0.00")} to {after.ToString("#0.00")}");
+                    Telemetry.Write(module, LoggingLevel.Information, $"Structure rescaled from {before.ToString("#0.00")} to {after.ToString("#0.00")}");
                     _lastModel.Relabel(true);
                     Model expModel = _lastModel;
 
@@ -408,7 +408,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
 
                 if (!string.IsNullOrEmpty(searchFor))
                 {
-                    Telemetry.Write(module, "Information", $"User searched for '{searchFor}'");
+                    Telemetry.Write(module, LoggingLevel.Information, $"User searched for '{searchFor}'");
 
                     _lastModel = null;
                     _lastMolfile = string.Empty;
@@ -486,7 +486,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     {
                         if (Debugger.IsAttached)
                         {
-                            Telemetry.Write(module, "Information", $"Structure '{ChebiId}' found in cache");
+                            Telemetry.Write(module, LoggingLevel.Information, $"Structure '{ChebiId}' found in cache");
                         }
                     }
 
@@ -509,14 +509,14 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                                 List<string> lines = new List<string>();
                                 if (_lastModel.AllErrors.Count > 0)
                                 {
-                                    Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, _lastModel.AllErrors));
-                                    Telemetry.Write(module, "Exception(Data)", chemStructure);
+                                    Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, _lastModel.AllErrors));
+                                    Telemetry.Write(module, LoggingLevel.ExceptionData, chemStructure);
                                     lines.Add("Errors(s)");
                                     lines.AddRange(_lastModel.AllErrors);
                                 }
                                 if (_lastModel.AllWarnings.Count > 0)
                                 {
-                                    Telemetry.Write(module, "Exception(Data)", string.Join(Environment.NewLine, _lastModel.AllWarnings));
+                                    Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, _lastModel.AllWarnings));
                                     lines.Add("Warnings(s)");
                                     lines.AddRange(_lastModel.AllWarnings);
                                 }

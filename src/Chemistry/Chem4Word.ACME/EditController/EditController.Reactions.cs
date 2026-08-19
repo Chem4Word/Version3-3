@@ -11,6 +11,7 @@ using Chem4Word.ACME.Drawing.Visuals;
 using Chem4Word.ACME.Enums;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -334,7 +335,7 @@ namespace Chem4Word.ACME
                 }
 
                 int affectedReactions = reactions.Count;
-                WriteTelemetry(module, "Debug",
+                WriteTelemetry(module, LoggingLevel.Debug,
                                $"Type: {SelectedReactionType}; Affected Reactions {affectedReactions}");
 
                 if (reactions.Any())
@@ -394,7 +395,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Adding a reaction");
+                WriteTelemetry(module, LoggingLevel.Debug, "Adding a reaction");
 
                 Action redo = () =>
                               {
@@ -446,7 +447,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 UndoManager.BeginUndoBlock();
                 foreach (Reaction r in reactions)
@@ -643,7 +644,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Assign reaction roles");
+                WriteTelemetry(module, LoggingLevel.Debug, "Assign reaction roles");
 
                 Reaction selectedReaction = SelectedItems.OfType<Reaction>().ToList()[0];
 
@@ -715,7 +716,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Clearing reaction roles");
+                WriteTelemetry(module, LoggingLevel.Debug, "Clearing reaction roles");
 
                 Reaction selectedReaction = SelectedItems.OfType<Reaction>().ToList()[0];
 

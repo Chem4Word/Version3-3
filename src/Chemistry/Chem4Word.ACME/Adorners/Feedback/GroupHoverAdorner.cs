@@ -15,7 +15,7 @@ namespace Chem4Word.ACME.Adorners.Feedback
     {
         private const double Spacing = 2.0;
 
-        public GroupHoverAdorner(UIElement adornedElement, GroupVisual targetedVisual) 
+        public GroupHoverAdorner(UIElement adornedElement, GroupVisual targetedVisual)
             : base(adornedElement, targetedVisual)
         {
             //calls directly into base constructor

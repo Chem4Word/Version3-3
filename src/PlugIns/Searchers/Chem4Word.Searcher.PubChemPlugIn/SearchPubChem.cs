@@ -112,7 +112,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             string searchFor = TextHelper.StripAsciiControlCharacters(SearchFor.Text).Trim();
             string webSafe = TextHelper.NormalizeCharacters(WebUtility.HtmlEncode(searchFor));
 
-            Telemetry.Write(module, "Information", $"User searched for '{searchFor}'");
+            Telemetry.Write(module, LoggingLevel.Information, $"User searched for '{searchFor}'");
 
             ErrorsAndWarnings.Text = "";
             display1.Clear();
@@ -188,7 +188,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     {
                         if (Debugger.IsAttached)
                         {
-                            Telemetry.Write(module, "Information", $"Structure '{pubChemId}' found in cache");
+                            Telemetry.Write(module, LoggingLevel.Information, $"Structure '{pubChemId}' found in cache");
                         }
                     }
 
@@ -229,7 +229,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                 {
                     if (_lastSearch > DateTime.MinValue && DateTime.UtcNow.Subtract(_lastSearch).TotalSeconds < 1)
                     {
-                        Telemetry.Write(module, "Information", "Searches are being throttled to 1 per second");
+                        Telemetry.Write(module, LoggingLevel.Information, "Searches are being throttled to 1 per second");
                         ErrorsAndWarnings.Text = "PubChem searches are limited to 1 per second, please try again";
                         return;
                     }
@@ -266,8 +266,8 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     {
                         if (apiResult.Content.ToLower().Contains("<!doctype html"))
                         {
-                            Telemetry.Write(module, "Warning", "Showing user html result of web call");
-                            Telemetry.Write(module, "Debug", apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
+                            Telemetry.Write(module, LoggingLevel.Warning, "Showing user html result of web call");
+                            Telemetry.Write(module, LoggingLevel.Debug, apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
 
                             Screen screen = Screen.FromControl(SearchButton);
                             HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL PubChem Search Error", apiResult.Content);
@@ -277,7 +277,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                         {
                             if (ParseResponseBody(apiResult.Content))
                             {
-                                Telemetry.Write(module, "Information", $"Showing {_firstResult + 1} to {_lastResult} [of {_resultsCount}]");
+                                Telemetry.Write(module, LoggingLevel.Information, $"Showing {_firstResult + 1} to {_lastResult} [of {_resultsCount}]");
                                 EnableButtons();
                                 FillListView();
                             }
@@ -287,15 +287,15 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     {
                         if (!string.IsNullOrEmpty(apiResult.Content))
                         {
-                            Telemetry.Write(module, "SearchFailure", apiResult.Content);
+                            Telemetry.Write(module, LoggingLevel.SearchFailure, apiResult.Content);
                         }
-                        Telemetry.Write(module, "SearchFailure", $"{apiResult.StatusCode} - {apiResult.Message}");
+                        Telemetry.Write(module, LoggingLevel.SearchFailure, $"{apiResult.StatusCode} - {apiResult.Message}");
                     }
                 }
                 catch (Exception exception)
                 {
-                    Telemetry.Write(module, "Exception", exception.Message);
-                    Telemetry.Write(module, "Exception", exception.StackTrace);
+                    Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                    Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
                 }
             }
         }
@@ -368,7 +368,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     result = false;
                     foreach (string error in errors)
                     {
-                        Telemetry.Write(module, "SearchFailure", error);
+                        Telemetry.Write(module, LoggingLevel.SearchFailure, error);
                     }
                 }
 
@@ -376,7 +376,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                 {
                     foreach (string warning in warnings)
                     {
-                        Telemetry.Write(module, "SearchFailure", warning);
+                        Telemetry.Write(module, LoggingLevel.SearchFailure, warning);
                     }
                 }
 
@@ -436,8 +436,8 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             {
                 if (apiResult.Content.ToLower().Contains("<!doctype html"))
                 {
-                    Telemetry.Write(module, "Warning", "Showing user html result of web call");
-                    Telemetry.Write(module, "Debug", apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
+                    Telemetry.Write(module, LoggingLevel.Warning, "Showing user html result of web call");
+                    Telemetry.Write(module, LoggingLevel.Debug, apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
 
                     Screen screen = Screen.FromControl(SearchButton);
                     HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL PubChem Search Error", apiResult.Content);
@@ -479,9 +479,9 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             {
                 if (!string.IsNullOrEmpty(apiResult.Content))
                 {
-                    Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                    Telemetry.Write(module, LoggingLevel.ExceptionData, apiResult.Content);
                 }
-                Telemetry.Write(module, "Exception", $"{apiResult.StatusCode} - {apiResult.Message}");
+                Telemetry.Write(module, LoggingLevel.Exception, $"{apiResult.StatusCode} - {apiResult.Message}");
             }
         }
 
@@ -511,11 +511,11 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
             if (model.AllWarnings.Count > 0 || model.AllErrors.Count > 0)
             {
-                Telemetry.Write(module, "Exception(Data)", _lastMolfile);
+                Telemetry.Write(module, LoggingLevel.ExceptionData, _lastMolfile);
                 List<string> lines = new List<string>();
                 if (model.AllErrors.Count > 0)
                 {
-                    Telemetry.Write(module, "Exception(Data)",
+                    Telemetry.Write(module, LoggingLevel.ExceptionData,
                                     string.Join(Environment.NewLine, model.AllErrors));
                     lines.Add("Errors(s)");
                     lines.AddRange(model.AllErrors);
@@ -523,7 +523,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
 
                 if (model.AllWarnings.Count > 0)
                 {
-                    Telemetry.Write(module, "Warning",
+                    Telemetry.Write(module, LoggingLevel.Warning,
                                     string.Join(Environment.NewLine, model.AllWarnings));
                     lines.Add("Warnings(s)");
                     lines.AddRange(model.AllWarnings);
@@ -547,7 +547,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
             {
                 try
                 {
-                    Telemetry.Write(module, "Information", $"Fetching structure for '{pubChemId}'");
+                    Telemetry.Write(module, LoggingLevel.Information, $"Fetching structure for '{pubChemId}'");
 
                     string webCall = string.Format(CultureInfo.InvariantCulture, FetchStructureTemplate,
                                                    UserOptions.PubChemRestApiUri, pubChemId);
@@ -564,7 +564,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                     {
                         if (!string.IsNullOrEmpty(apiResult.Content))
                         {
-                            Telemetry.Write(module, "Exception(Data)", apiResult.Content);
+                            Telemetry.Write(module, LoggingLevel.ExceptionData, apiResult.Content);
                         }
                         StringBuilder sb = new StringBuilder();
                         sb.AppendLine($"Bad request. Status code: {apiResult.StatusCode}");
@@ -573,8 +573,8 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                 }
                 catch (Exception exception)
                 {
-                    Telemetry.Write(module, "Exception", exception.Message);
-                    Telemetry.Write(module, "Exception", exception.StackTrace);
+                    Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                    Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
                 }
             }
 

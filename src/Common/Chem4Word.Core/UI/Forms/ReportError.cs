@@ -89,22 +89,22 @@ namespace Chem4Word.Core.UI.Forms
             {
                 if (!string.IsNullOrEmpty(_exceptionMessage))
                 {
-                    _telemetry.Write(_operation, "Exception", _exceptionMessage);
+                    _telemetry.Write(_operation, LoggingLevel.Exception, _exceptionMessage);
                 }
                 if (!string.IsNullOrEmpty(_callStack))
                 {
-                    _telemetry.Write(_operation, "Exception", _callStack);
+                    _telemetry.Write(_operation, LoggingLevel.Exception, _callStack);
                 }
 
                 if (DialogResult == DialogResult.OK)
                 {
                     if (!string.IsNullOrEmpty(UserEmailAddress.Text))
                     {
-                        _telemetry.Write(_operation, "Exception(Data)", UserEmailAddress.Text);
+                        _telemetry.Write(_operation, LoggingLevel.ExceptionData, UserEmailAddress.Text);
                     }
                     if (!string.IsNullOrEmpty(UserComments.Text))
                     {
-                        _telemetry.Write(_operation, "Exception(Data)", UserComments.Text);
+                        _telemetry.Write(_operation, LoggingLevel.ExceptionData, UserComments.Text);
                     }
                 }
             }
@@ -113,7 +113,7 @@ namespace Chem4Word.Core.UI.Forms
         private void OnLinkClicked_KBLinkLabel(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            _telemetry.Write(module, "Action", "Triggered");
+            _telemetry.Write(module, LoggingLevel.Action, "Triggered");
             Process.Start("https://www.chem4word.co.uk/knowledge-base/");
         }
 

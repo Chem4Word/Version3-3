@@ -13,6 +13,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
 using Chem4Word.Model2.Enums;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -213,16 +214,16 @@ namespace Chem4Word.ACME
                 }
 
                 string orderInfo = order ?? CurrentBondOrder;
-                WriteTelemetry(module, "Debug",
+                WriteTelemetry(module, LoggingLevel.Debug,
                                $"StartAtom: {startAtomInfo}; EndAtom: {endAtomInfo}; BondOrder; {orderInfo}");
 
                 // Bond can only be created if both atoms are children of the molecule passed in
                 bool canAdd = a.Parent == mol && b.Parent == mol;
                 if (!canAdd)
                 {
-                    WriteTelemetry(module, "Warning",
+                    WriteTelemetry(module, LoggingLevel.Warning,
                                    $"Not adding bond to molecule because atoms don't have same parent molecule{Environment.NewLine}StartAtom: {a.Path}{Environment.NewLine}EndAtom: {b.Path}");
-                    WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+                    WriteTelemetry(module, LoggingLevel.StackTrace, Environment.StackTrace);
                     Debugger.Break();
                 }
 
@@ -230,11 +231,11 @@ namespace Chem4Word.ACME
                 canAdd = a.InternalId != b.InternalId;
                 if (!canAdd)
                 {
-                    WriteTelemetry(module, "Warning",
+                    WriteTelemetry(module, LoggingLevel.Warning,
                                    $"Not adding bond to molecule because StartAtom == EndAtom{Environment.NewLine}StartAtom: {a.Path}{Environment.NewLine}EndAtom: {b.Path}");
                     if (Debugger.IsAttached)
                     {
-                        WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+                        WriteTelemetry(module, LoggingLevel.StackTrace, Environment.StackTrace);
                         Debugger.Break();
                     }
                 }
@@ -322,11 +323,11 @@ namespace Chem4Word.ACME
                 }
                 else
                 {
-                    WriteTelemetry(module, "Warning",
+                    WriteTelemetry(module, LoggingLevel.Warning,
                                    $"Molecule: {mol.Path}{Environment.NewLine}StartAtom: {a.Path} EndAtom: {b.Path}");
                     if (Debugger.IsAttached)
                     {
-                        WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+                        WriteTelemetry(module, LoggingLevel.StackTrace, Environment.StackTrace);
                         Debugger.Break();
                     }
                 }
@@ -359,7 +360,7 @@ namespace Chem4Word.ACME
                     ? "{null}"
                     : $"{lastAtom.Element.Symbol} @ {PointHelper.AsString(lastAtom.Position)}";
                 string eleInfo = elem == null ? $"{_selectedElement.Symbol}" : $"{elem.Symbol}";
-                WriteTelemetry(module, "Debug",
+                WriteTelemetry(module, LoggingLevel.Debug,
                                $"LastAtom: {atomInfo}; NewAtom: {eleInfo} @ {PointHelper.AsString(newAtomPos)}");
 
                 //create the new atom based on the current selection
@@ -508,7 +509,7 @@ namespace Chem4Word.ACME
             try
             {
                 string count = newAtomPlacements == null ? "{null}" : $"{newAtomPlacements.Count}";
-                WriteTelemetry(module, "Debug", $"Atoms: {count}; Unsaturated: {unsaturated}; StartAt: {startAt}");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Atoms: {count}; Unsaturated: {unsaturated}; StartAt: {startAt}");
                 if (VerifyRingPlacements(newAtomPlacements))
                 {
                     UndoManager.BeginUndoBlock();
@@ -530,8 +531,8 @@ namespace Chem4Word.ACME
                                                              ModelConstants.OrderSingle, BondStereo.None);
                             if (insertedAtom == null)
                             {
-                                WriteTelemetry(module, "Warning", "Inserted Atom is null");
-                                WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+                                WriteTelemetry(module, LoggingLevel.Warning, "Inserted Atom is null");
+                                WriteTelemetry(module, LoggingLevel.StackTrace, Environment.StackTrace);
                                 Debugger.Break();
                             }
 
@@ -646,8 +647,8 @@ namespace Chem4Word.ACME
                     ? "{null}"
                     : $"{startAtom.SymbolText} @ {PointHelper.AsString(startAtom.Position)}";
                 string count = placements == null ? "{null}" : $"{placements.Count}";
-                WriteTelemetry(module, "Debug", $"Atoms: {count}; StartAtom: {atomInfo}");
-                WriteTelemetry(module, "Debug", ListChainPoints(placements));
+                WriteTelemetry(module, LoggingLevel.Debug, $"Atoms: {count}; StartAtom: {atomInfo}");
+                WriteTelemetry(module, LoggingLevel.Debug, ListChainPoints(placements));
 
                 UndoManager.BeginUndoBlock();
                 Atom lastAtom = startAtom;
@@ -658,8 +659,8 @@ namespace Chem4Word.ACME
                                             stereo: BondStereo.None);
                     if (lastAtom == null)
                     {
-                        WriteTelemetry(module, "Warning", "lastAtom is null");
-                        WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+                        WriteTelemetry(module, LoggingLevel.Warning, "lastAtom is null");
+                        WriteTelemetry(module, LoggingLevel.StackTrace, Environment.StackTrace);
                         Debugger.Break();
                     }
                 }
@@ -671,8 +672,8 @@ namespace Chem4Word.ACME
                                             stereo: BondStereo.None);
                     if (lastAtom == null)
                     {
-                        WriteTelemetry(module, "Warning", "lastAtom is null");
-                        WriteTelemetry(module, "StackTrace", Environment.StackTrace);
+                        WriteTelemetry(module, LoggingLevel.Warning, "lastAtom is null");
+                        WriteTelemetry(module, LoggingLevel.StackTrace, Environment.StackTrace);
                         Debugger.Break();
                     }
 
@@ -769,7 +770,7 @@ namespace Chem4Word.ACME
 
             try
             {
-                WriteTelemetry(module, "Debug", $"Adding Annotation '{text}'");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Adding Annotation '{text}'");
 
                 Annotation newSymbol = new Annotation { Position = pos, IsEditable = isEditable, SymbolSize = BlockTextSize };
                 XElement docElement = new XElement(CMLNamespaces.xaml + "FlowDocument",

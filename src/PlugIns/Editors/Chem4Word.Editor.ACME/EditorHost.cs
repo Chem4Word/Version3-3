@@ -155,7 +155,7 @@ namespace Chem4Word.Editor.ACME
                 DialogResult = DialogResult.OK;
                 OutputCml = cc.Export(editor.EditedModel);
             }
-            Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
+            Telemetry.Write(module, LoggingLevel.Verbose, $"Result: {DialogResult}");
             Hide();
         }
 
@@ -163,7 +163,7 @@ namespace Chem4Word.Editor.ACME
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             DialogResult = DialogResult.Cancel;
-            Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
+            Telemetry.Write(module, LoggingLevel.Verbose, $"Result: {DialogResult}");
             Hide();
         }
 
@@ -194,13 +194,13 @@ namespace Chem4Word.Editor.ACME
                             model.ReLabelGuids();
                             var cc = new CMLConverter();
                             OutputCml = cc.Export(model);
-                            Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
+                            Telemetry.Write(module, LoggingLevel.Verbose, $"Result: {DialogResult}");
                             Hide();
                             editor = null;
                             break;
 
                         case DialogResult.No:
-                            Telemetry.Write(module, "Verbose", $"Result: {DialogResult}");
+                            Telemetry.Write(module, LoggingLevel.Verbose, $"Result: {DialogResult}");
                             editor = null;
                             break;
                     }

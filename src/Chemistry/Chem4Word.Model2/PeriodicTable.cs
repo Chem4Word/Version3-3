@@ -231,7 +231,7 @@ namespace Chem4Word.Model2
         private int GetValence(Element element, int sumOfBondOrder)
         {
             if (element.Valencies.Length > 0)
-                //find the first possible valence that accommodates the bond order sum
+            //find the first possible valence that accommodates the bond order sum
             {
                 foreach (int v in element.Valencies)
                 {

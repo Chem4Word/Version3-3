@@ -624,9 +624,9 @@ namespace Chem4Word.Telemetry
             // https://www.autoitscript.com/autoit3/docs/appendix/OSLangCodes.htm
 
             ConnectionOptions options = new ConnectionOptions
-                                        {
-                                            Locale = "MS_409" // en-US
-                                        };
+            {
+                Locale = "MS_409" // en-US
+            };
             ManagementScope scope = new ManagementScope($"{nameSpace}", options);
             scope.Connect();
 

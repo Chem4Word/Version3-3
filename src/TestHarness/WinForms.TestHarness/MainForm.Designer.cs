@@ -188,7 +188,7 @@
             this.EditCml.Name = "EditCml";
             this.EditCml.Size = new System.Drawing.Size(75, 23);
             this.EditCml.TabIndex = 15;
-            this.EditCml.Text = "CML";
+            this.EditCml.Text = "Edit CML";
             this.EditCml.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.EditCml.UseVisualStyleBackColor = true;
             this.EditCml.Click += new System.EventHandler(this.OnClick_EditCml);
@@ -315,7 +315,7 @@
             this.ShowCml.Name = "ShowCml";
             this.ShowCml.Size = new System.Drawing.Size(156, 23);
             this.ShowCml.TabIndex = 18;
-            this.ShowCml.Text = "Show CML";
+            this.ShowCml.Text = "View CML";
             this.ShowCml.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ShowCml.UseVisualStyleBackColor = true;
             this.ShowCml.Click += new System.EventHandler(this.OnClick_ShowCml);
@@ -353,7 +353,7 @@
             this.RenderOoXml.Name = "RenderOoXml";
             this.RenderOoXml.Size = new System.Drawing.Size(156, 23);
             this.RenderOoXml.TabIndex = 21;
-            this.RenderOoXml.Text = "Show OoXml in Word";
+            this.RenderOoXml.Text = "Render in Word";
             this.RenderOoXml.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.RenderOoXml.UseVisualStyleBackColor = true;
             this.RenderOoXml.Click += new System.EventHandler(this.OnClick_RenderOoXml);

@@ -68,13 +68,13 @@ namespace Chem4Word.Helpers
                     if (fileInfo.Name.StartsWith("20"))
                     {
                         // Move files '20*.db' to backups folder
-                        _telemetry.Write(module, "Information", $"Moving {fileInfo.Name} to Backups folder");
+                        _telemetry.Write(module, LoggingLevel.Information, $"Moving {fileInfo.Name} to Backups folder");
                         FileHelper.BackupFile(fileInfo, backupDirectory, false, true);
                     }
                     else
                     {
                         // Move other files to Libraries folder
-                        _telemetry.Write(module, "Information", $"Moving {fileInfo.Name} to Libraries folder");
+                        _telemetry.Write(module, LoggingLevel.Information, $"Moving {fileInfo.Name} to Libraries folder");
                         var library = FileHelper.BackupFile(fileInfo, librariesDirectory, false, true);
 
                         // Add its details
@@ -94,7 +94,7 @@ namespace Chem4Word.Helpers
                 var starterPath = Path.Combine(librariesPath, "Starter Library.db");
                 if (!File.Exists(starterPath))
                 {
-                    _telemetry.Write(module, "Information", "Creating 'Starter Library'");
+                    _telemetry.Write(module, LoggingLevel.Information, "Creating 'Starter Library'");
 
                     var stream = ResourceHelper.GetBinaryResource(Assembly.GetExecutingAssembly(), "Starter Library.zip");
                     if (stream != null)
@@ -118,7 +118,7 @@ namespace Chem4Word.Helpers
                 var essentialOilsPath = Path.Combine(librariesPath, "Plant Essential Oils.db");
                 if (!File.Exists(essentialOilsPath))
                 {
-                    _telemetry.Write(module, "Information", "Creating 'Plant Essential Oils'");
+                    _telemetry.Write(module, LoggingLevel.Information, "Creating 'Plant Essential Oils'");
 
                     var stream = ResourceHelper.GetBinaryResource(Assembly.GetExecutingAssembly(), "Plant Essential Oils.zip");
                     if (stream != null)
@@ -179,14 +179,14 @@ namespace Chem4Word.Helpers
                     {
                         var usableLibraries = new List<string> { $"Libraries [{result.AvailableDatabases.Count}]:" };
                         usableLibraries.AddRange(result.AvailableDatabases.Select(l => $"  '{l.DisplayName}' [{l.Properties["Count"]}]"));
-                        _telemetry.Write(module, "Information", string.Join(Environment.NewLine, usableLibraries));
+                        _telemetry.Write(module, LoggingLevel.Information, string.Join(Environment.NewLine, usableLibraries));
                     }
                 }
                 else
                 {
                     if (!silent)
                     {
-                        _telemetry.Write(module, "Warning", "No usable databases found!");
+                        _telemetry.Write(module, LoggingLevel.Warning, "No usable databases found!");
                     }
                     DeleteSettingsFile();
                     result = null;
@@ -196,7 +196,7 @@ namespace Chem4Word.Helpers
             sw.Stop();
             if (!silent)
             {
-                _telemetry.Write(module, "Timing", $"Took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
+                _telemetry.Write(module, LoggingLevel.Timing, $"Took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms");
             }
 
             return result;

@@ -94,7 +94,7 @@ namespace Chem4Word.Library
                     {
                         using (new WaitCursor())
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Library changed to '{selected}'");
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Library changed to '{selected}'");
 
                             ListOfLibraries listOfDetectedLibraries = Globals.Chem4WordV3.ListOfDetectedLibraries;
                             listOfDetectedLibraries.SelectedLibrary = selected;
@@ -147,7 +147,7 @@ namespace Chem4Word.Library
                 if (Globals.Chem4WordV3.EventsEnabled
                     && e.OriginalSource is WpfEventArgs source)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Source: {source.Button} Data: {source.ButtonDetails}");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Source: {source.Button} Data: {source.ButtonDetails}");
 
                     string[] parts = source.ButtonDetails.Split('=');
                     long item = long.Parse(parts[1]);
@@ -236,14 +236,14 @@ namespace Chem4Word.Library
         private void OnClick_SearchButton(object sender, RoutedEventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
             try
             {
                 string searchFor = TextHelper.StripAsciiControlCharacters(SearchBox.Text).Trim();
                 if (!string.IsNullOrEmpty(searchFor)
                     && DataContext != null)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Information", $"Filter library by '{searchFor}'");
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Filter library by '{searchFor}'");
 
                     //get the view from the listbox's source
                     ICollectionView view = CollectionViewSource.GetDefaultView(((LibraryController)DataContext).ChemistryItems);
@@ -299,7 +299,7 @@ namespace Chem4Word.Library
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Editing library '{_selectedLibrary}'");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Editing library '{_selectedLibrary}'");
             LibraryEditorHost editor = new LibraryEditorHost("Library Task Pane");
 
             editor.TopLeft = Globals.Chem4WordV3.WordTopLeft;
@@ -373,8 +373,8 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", ex.Message);
-                Globals.Chem4WordV3.Telemetry.Write(module, "Exception", ex.StackTrace);
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.Message);
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.StackTrace);
             }
         }
     }

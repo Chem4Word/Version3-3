@@ -52,7 +52,7 @@ namespace Chem4Word.Telemetry
             _azureServiceBusWriter = new AzureServiceBusWriter(new AzureSettings(true));
         }
 
-        public void Write(string source, string level, string message)
+        public void Write(string source, LoggingLevel level, string message)
         {
             string unwanted = "Chem4Word.V3.";
             if (source.StartsWith(unwanted))
@@ -81,18 +81,18 @@ namespace Chem4Word.Telemetry
                 // Always write to log file
                 string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                                                $@"Chem4Word.V3\Telemetry\{SafeDate.ToIsoShortDate(DateTime.UtcNow)}.log");
-                using (StreamWriter w = File.AppendText(fileName))
+                using (StreamWriter streamWriter = File.AppendText(fileName))
                 {
                     if (!_machineIdWritten)
                     {
                         if (_helper != null && _helper.MachineId != Guid.Empty.ToString("D"))
                         {
-                            w.WriteLine($"[{SafeDate.ToShortTime(DateTime.UtcNow)}] * InstallationId: {_helper.MachineId}");
+                            streamWriter.WriteLine($"[{SafeDate.ToShortTime(DateTime.UtcNow)}] * InstallationId: {_helper.MachineId}");
                             _machineIdWritten = true;
                         }
                     }
-                    string logMessage = $"[{SafeDate.ToShortTime(DateTime.UtcNow)}] {source} - {level} - {message}";
-                    w.WriteLine(logMessage);
+                    string logMessage = $"[{SafeDate.ToShortTime(DateTime.UtcNow)}] {source} - {level.GetDescription()} - {message}";
+                    streamWriter.WriteLine(logMessage);
                 }
             }
             catch
@@ -152,7 +152,7 @@ namespace Chem4Word.Telemetry
                             MessageBox.Show(@"Git fetch failed\nYou need to run 'git config --global --unset credential.helper' from a command prompt.", "WARNING");
                         }
 
-                        WritePrivate("StartUp", "Information", _helper.GitStatus);
+                        WritePrivate("StartUp", LoggingLevel.Information, _helper.GitStatus);
                         _gitInfoSent = true;
                     }
                 }
@@ -202,17 +202,17 @@ namespace Chem4Word.Telemetry
             FixUpWordVersion();
             AddChartGeneratorProperties();
 
-            WritePrivate("StartUp", "Information", $"Internal Version {_helper.WordVersion}");
+            WritePrivate("StartUp", LoggingLevel.Information, $"Internal Version {_helper.WordVersion}");
             if (!string.IsNullOrEmpty(_helper.Click2RunProductIds))
             {
-                WritePrivate("StartUp", "Information", $"{_helper.Click2RunProductIds}");
+                WritePrivate("StartUp", LoggingLevel.Information, $"{_helper.Click2RunProductIds}");
             }
 
-            WritePrivate("StartUp", "Information", Environment.GetCommandLineArgs()[0]);
+            WritePrivate("StartUp", LoggingLevel.Information, Environment.GetCommandLineArgs()[0]);
 
             if (_helper.StartUpTimings != null)
             {
-                WritePrivate("StartUp", "Timing", string.Join(Environment.NewLine, _helper.StartUpTimings));
+                WritePrivate("StartUp", LoggingLevel.Timing, string.Join(Environment.NewLine, _helper.StartUpTimings));
             }
 
             List<string> lines = new List<string>();
@@ -238,20 +238,21 @@ namespace Chem4Word.Telemetry
                     lines.Add($"System UTC DateTime is {delta} behind Server time");
                 }
 
-                WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, lines));
+                WritePrivate("StartUp", LoggingLevel.Information, string.Join(Environment.NewLine, lines));
             }
 
             // Log Wmi Gathered Data
-            lines = new List<string>();
-
-            lines.Add($"SYS: {_wmiHelper?.Manufacturer} - {_wmiHelper?.Model} - {_wmiHelper?.SystemFamily}");
-            lines.Add($"CPU: {_wmiHelper?.CpuName}");
-            lines.Add($"CPU Cores: {_wmiHelper?.LogicalProcessors}");
-            lines.Add($"CPU Speed: {_wmiHelper?.CpuSpeed}");
-            lines.Add($"Memory: {_wmiHelper?.TotalPhysicalMemory}");
-            lines.Add($"Booted Up: {_helper.LastBootUpTime}");
-            lines.Add($"Logged In: {_helper.LastLoginTime}");
-            lines.Add($"Type: {_wmiHelper?.ProductType}");
+            lines = new List<string>
+                    {
+                        $"SYS: {_wmiHelper?.Manufacturer} - {_wmiHelper?.Model} - {_wmiHelper?.SystemFamily}",
+                        $"CPU: {_wmiHelper?.CpuName}",
+                        $"CPU Cores: {_wmiHelper?.LogicalProcessors}",
+                        $"CPU Speed: {_wmiHelper?.CpuSpeed}",
+                        $"Memory: {_wmiHelper?.TotalPhysicalMemory}",
+                        $"Booted Up: {_helper.LastBootUpTime}",
+                        $"Logged In: {_helper.LastLoginTime}",
+                        $"Type: {_wmiHelper?.ProductType}"
+                    };
 
             if (!string.IsNullOrEmpty(_wmiHelper?.AntiVirusStatus))
             {
@@ -266,7 +267,7 @@ namespace Chem4Word.Telemetry
             // Log Screen Sizes
             lines.Add($"Screens: {_helper.Screens}");
 
-            WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, lines));
+            WritePrivate("StartUp", LoggingLevel.Information, string.Join(Environment.NewLine, lines));
 
             // Log All Add Ins
             if (_helper.AllAddIns != null && _helper.AllAddIns.Count > 0)
@@ -279,7 +280,7 @@ namespace Chem4Word.Telemetry
                         lines.Add($"{addIn.KeyName} '{addIn.Description}' [{addIn.LoadBehaviour}] {addIn.Manifest}".Trim());
                     }
                 }
-                WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, lines));
+                WritePrivate("StartUp", LoggingLevel.Information, string.Join(Environment.NewLine, lines));
             }
 
 #if DEBUG
@@ -316,13 +317,13 @@ namespace Chem4Word.Telemetry
             lines.Add($"Debug - AddIn Location: {_helper.AddInLocation}");
             lines.Add($"Debug - Environment.CommandLine: {Environment.CommandLine}");
 
-            WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, lines));
+            WritePrivate("StartUp", LoggingLevel.Information, string.Join(Environment.NewLine, lines));
 
-            WritePrivate("StartUp", "Information", $"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
-            WritePrivate("StartUp", "Information", $"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
+            WritePrivate("StartUp", LoggingLevel.Information, $"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
+            WritePrivate("StartUp", LoggingLevel.Information, $"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
 #endif
 
-            WritePrivate("StartUp", "Information", string.Join(Environment.NewLine, OfficeHelper.GetWinWordSearchPaths()));
+            WritePrivate("StartUp", LoggingLevel.Information, string.Join(Environment.NewLine, OfficeHelper.GetWinWordSearchPaths()));
 
             AddChartGeneratorProperties();
 
@@ -336,41 +337,37 @@ namespace Chem4Word.Telemetry
             // OS Info
             if (string.IsNullOrEmpty(_wmiHelper.OSVersion) || string.IsNullOrEmpty(_wmiHelper.OSCaption))
             {
-                WritePrivate("StartUp", "Information", $"{_helper.SystemOs}");
+                WritePrivate("StartUp", LoggingLevel.Information, $"{_helper.SystemOs}");
             }
             else
             {
                 string bits = Environment.Is64BitOperatingSystem ? "64bit" : "32bit";
                 string culture = CultureInfo.CurrentCulture.Name;
-                WritePrivate("StartUp", "Information", $"{_wmiHelper.OSCaption} {bits} [{_wmiHelper.OSVersion}] {culture}");
+                WritePrivate("StartUp", LoggingLevel.Information, $"{_wmiHelper.OSCaption} {bits} [{_wmiHelper.OSVersion}] {culture}");
             }
 
-            if (string.IsNullOrEmpty(_helper.DeviceId))
-            {
-                WritePrivate("StartUp", "Information", $"UUID: {_wmiHelper.Uuid}");
-            }
-            else
-            {
-                WritePrivate("StartUp", "Information", $"IDS: {_wmiHelper.Uuid}|{_helper.DeviceId}");
-            }
+            WritePrivate("StartUp", LoggingLevel.Information,
+                         string.IsNullOrEmpty(_helper.DeviceId)
+                             ? $"UUID: {_wmiHelper.Uuid}"
+                             : $"IDS: {_wmiHelper.Uuid}|{_helper.DeviceId}");
 #if DEBUG
-            WritePrivate("StartUp", "Information", $"User: {_helper.UserName}");
+            WritePrivate("StartUp", LoggingLevel.Information, $"User: {_helper.UserName}");
 #endif
 
             // Dot Net Version
-            WritePrivate("StartUp", "Information", $"{_helper.DotNetVersion}");
+            WritePrivate("StartUp", LoggingLevel.Information, $"{_helper.DotNetVersion}");
 
             // Word Version
-            WritePrivate("StartUp", "Information", $"{_helper.WordProduct}");
+            WritePrivate("StartUp", LoggingLevel.Information, $"{_helper.WordProduct}");
 
             // Add-In Version
-            WritePrivate("StartUp", "Information", $"{_helper.AddInVersion}");
+            WritePrivate("StartUp", LoggingLevel.Information, $"{_helper.AddInVersion}");
 
             // IP Address
             if (!_helper.IpAddress.Contains("8.8.8.8"))
             {
-                WritePrivate("StartUp", "Information", $"{_helper.IpAddress}"); // ** Used by nightly chart generator
-                WritePrivate("StartUp", "Information", $"{_helper.IpObtainedFrom}");
+                WritePrivate("StartUp", LoggingLevel.Information, $"{_helper.IpAddress}"); // ** Used by nightly chart generator
+                WritePrivate("StartUp", LoggingLevel.Information, $"{_helper.IpObtainedFrom}");
             }
         }
 
@@ -381,9 +378,9 @@ namespace Chem4Word.Telemetry
             return productVersion.ToString();
         }
 
-        private void WritePrivate(string operation, string level, string message)
+        private void WritePrivate(string operation, LoggingLevel level, string message)
         {
-            Debug.WriteLine($"{operation} - {level} - {message}");
+            Debug.WriteLine($"{operation} - {level.GetDescription()} - {message}");
 
             // Default values to ensure we have something to log
             int processId = 666;
@@ -441,7 +438,7 @@ namespace Chem4Word.Telemetry
             {
                 MachineId = machineId,
                 Operation = operation,
-                Level = level,
+                Level = level.GetDescription(),
                 Message = message,
                 AssemblyVersionNumber = versionNumber
             };

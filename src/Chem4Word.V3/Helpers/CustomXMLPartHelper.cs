@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Core;
+using IChem4Word.Contracts;
 using Microsoft.Office.Core;
 using System;
 using System.Collections.Generic;
@@ -242,7 +243,7 @@ namespace Chem4Word.Helpers
                             var replace = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + Environment.NewLine;
                             var xml = customXmlPart.XML;
                             File.WriteAllText(filePath, xml.Replace(find, replace));
-                            Globals.Chem4WordV3.Telemetry.Write(module, "Information, ", $"Saved Orphaned XmlPart Id:{customXmlPart.Id} Tag: {molId} from document [{document.DocID}] as {fileName}");
+                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Saved Orphaned XmlPart Id:{customXmlPart.Id} Tag: {molId} from document [{document.DocID}] as {fileName}");
                         }
                         catch (Exception exception)
                         {
@@ -262,7 +263,7 @@ namespace Chem4Word.Helpers
                         {
                             try
                             {
-                                Globals.Chem4WordV3.Telemetry.Write(module, "Information, ", $"Purging Orphaned XmlPart Id:{customXmlPart.Id} Tag: {molId} from document [{document.DocID}]");
+                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, $"Purging Orphaned XmlPart Id:{customXmlPart.Id} Tag: {molId} from document [{document.DocID}]");
                                 customXmlPart.Delete();
                                 result++;
                             }

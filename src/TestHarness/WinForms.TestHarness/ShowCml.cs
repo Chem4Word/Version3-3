@@ -5,11 +5,13 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
-using Chem4Word.Core.Helpers;
 using ScintillaNET;
 using System;
 using System.Drawing;
+using System.Windows;
 using System.Windows.Forms;
+using Style = ScintillaNET.Style;
+using SystemColors = System.Drawing.SystemColors;
 
 namespace WinForms.TestHarness
 {
@@ -78,7 +80,7 @@ namespace WinForms.TestHarness
             scintilla.Styles[Style.Xml.SingleString].ForeColor = Color.Blue;
 
             scintilla.ReadOnly = false;
-            scintilla.Text = XmlHelper.AddHeader(Cml);
+            scintilla.Text = Cml;
             scintilla.ReadOnly = true;
 
             timer1.Enabled = true;
@@ -86,15 +88,26 @@ namespace WinForms.TestHarness
 
         private void OnTick_timer1(object sender, EventArgs e)
         {
+            timer1.Enabled = false;
+
             foreach (var line in scintilla.Lines)
             {
-                if (line.Text.Contains("cml:molecule") || line.Text.Contains("cml:reactionScheme"))
+                string text = line.Text.Trim();
+
+                switch (text)
                 {
-                    line.FoldChildren(FoldAction.Contract);
+                    case "<cml:molecule>":
+                        line.FoldLevelFlags = FoldLevelFlags.Header;
+                        break;
+
+                    case "<cml:atomArray>":
+                    case "<cml:bondArray>":
+                    case var _ when text.StartsWith("<cml:reactionScheme"):
+                        line.FoldLevelFlags = FoldLevelFlags.Header;
+                        line.ToggleFold();
+                        break;
                 }
             }
-
-            timer1.Enabled = false;
         }
     }
 }

@@ -57,11 +57,11 @@ namespace Chem4Word.Shared
             WriteMsiAction($"MsiExec Arguments: '{arguments}'");
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo
-                                                {
-                                                    WorkingDirectory = fileInfo.DirectoryName,
-                                                    FileName = msiExec,
-                                                    Arguments = arguments
-                                                };
+            {
+                WorkingDirectory = fileInfo.DirectoryName,
+                FileName = msiExec,
+                Arguments = arguments
+            };
             using (Process process = Process.Start(processStartInfo))
             {
                 if (process == null)

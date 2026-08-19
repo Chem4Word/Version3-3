@@ -57,7 +57,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
                 _searcherOptions = new SearcherOptions(SettingsPath);
 
                 Settings settings = new Settings();

@@ -58,7 +58,7 @@ namespace Chem4Word.Editor.SimpleWpfEditor
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
 
                 using (var host = new EditorHost(Cml))
                 {

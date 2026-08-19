@@ -56,7 +56,7 @@ namespace Chem4Word.Editor.ACME
 
             try
             {
-                Telemetry.Write(module, "Verbose", "Called");
+                Telemetry.Write(module, LoggingLevel.Verbose, "Called");
 
                 if (string.IsNullOrEmpty(DefaultRenderingOptions))
                 {

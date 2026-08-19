@@ -13,6 +13,7 @@ using Chem4Word.ACME.Models;
 using Chem4Word.Core.Enums;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -208,7 +209,7 @@ namespace Chem4Word.ACME
 
             var showSymbol = atom.ExplicitC;
 
-            WriteTelemetry(module, "Information", $"Adding a {newElectron.TypeOfElectron} Electron to {atom.Path}");
+            WriteTelemetry(module, LoggingLevel.Information, $"Adding a {newElectron.TypeOfElectron} Electron to {atom.Path}");
 
             Action redoAction = () =>
                                 {
@@ -325,7 +326,7 @@ namespace Chem4Word.ACME
 
             var showSymbol = atom.ExplicitC;
 
-            WriteTelemetry(module, "Information", $"Deleting a {oldElectron.TypeOfElectron} Electron from {atom.Path}");
+            WriteTelemetry(module, LoggingLevel.Information, $"Deleting a {oldElectron.TypeOfElectron} Electron from {atom.Path}");
 
             Action redoAction = () =>
             {
@@ -401,7 +402,7 @@ namespace Chem4Word.ACME
             double newBondLength = CurrentBondLength * ModelConstants.ScaleFactorForXaml;
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 List<Atom> targetAtoms = new List<Atom>();
                 List<Molecule> mols = SelectedItems.OfType<Molecule>().ToList();
@@ -582,7 +583,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 HydrogenTargets targets;
                 List<Molecule> molecules = SelectedItems.OfType<Molecule>().ToList();
@@ -672,7 +673,7 @@ namespace Chem4Word.ACME
             {
                 string affectedAtoms = selAtoms == null ? "{null}" : selAtoms.Count.ToString();
                 string countString = selAtoms == null ? "{null}" : $"{selAtoms.Count}";
-                WriteTelemetry(module, "Debug",
+                WriteTelemetry(module, LoggingLevel.Debug,
                                $"Atoms: {countString}; Symbol: {value?.Symbol ?? "{null}"}; Affected Atoms {affectedAtoms}");
 
                 if (selAtoms != null && selAtoms.Any())
@@ -727,7 +728,7 @@ namespace Chem4Word.ACME
         public void SetExplicitHPlacement(Atom selAtom, CompassPoints? newPlacement)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
-            WriteTelemetry(module, "Debug", $"{selAtom}; Placement {newPlacement}");
+            WriteTelemetry(module, LoggingLevel.Debug, $"{selAtom}; Placement {newPlacement}");
             CompassPoints oldPlacement = selAtom.ImplicitHPlacement;
 
             Action undo = () =>
@@ -766,7 +767,7 @@ namespace Chem4Word.ACME
             try
             {
                 string countString = atoms == null ? "{null}" : $"{atoms.Count()}";
-                WriteTelemetry(module, "Debug", $"Atoms: {countString}");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Atoms: {countString}");
 
                 Atom[] atomList = atoms.ToArray();
                 //Add all the selected atoms to a set A
@@ -826,7 +827,7 @@ namespace Chem4Word.ACME
                 string count1 = atomlist == null ? "{null}" : $"{atomlist.Count()}";
                 string count2 = bondList == null ? "{null}" : $"{bondList.Count()}";
 
-                WriteTelemetry(module, "Debug", $"Atoms: {count1}; Bonds: {count2}");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Atoms: {count1}; Bonds: {count2}");
 
                 HashSet<Atom> deleteAtoms = new HashSet<Atom>();
                 HashSet<Bond> deleteBonds = new HashSet<Bond>();
@@ -1171,7 +1172,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 ElementBase elementBaseBefore = atom.Element;
                 int? chargeBefore = atom.FormalCharge;

@@ -17,7 +17,7 @@ namespace Chem4Word.Core.Helpers
     {
         public static string GetDescription(this Enum value)
         {
-            var field = value.GetType().GetField(value.ToString());
+            FieldInfo field = value.GetType().GetField(value.ToString());
             if (field != null && Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
             {
                 return attribute.Description;

@@ -344,6 +344,15 @@ namespace Chem4Word.Model2
             }
         }
 
+        public bool Has2D
+        {
+            get
+            {
+                return HasReactions || HasAnnotations || TotalAtomsCount > 0
+                       && (TotalBondsCount == 0 || MeanBondLength > CoreConstants.BondLengthTolerance / 2);
+            }
+        }
+
         /// <summary>
         /// True if this model has nested molecules
         /// </summary>

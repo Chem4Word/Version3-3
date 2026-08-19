@@ -76,7 +76,7 @@ namespace Chem4Word.UI.WPF
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Obtaining list of libraries available for download");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Obtaining list of libraries available for download");
 
             using (new WaitCursor())
             {
@@ -159,8 +159,8 @@ namespace Chem4Word.UI.WPF
                 }
                 catch (Exception exception)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Exception", exception.Message);
-                    Globals.Chem4WordV3.Telemetry.Write(module, "Exception", exception.StackTrace);
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
+                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
                 }
             }
         }
@@ -169,7 +169,7 @@ namespace Chem4Word.UI.WPF
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Information", "Obtaining list of libraries paid for by this user");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Information, "Obtaining list of libraries paid for by this user");
 
             _paidFor = new List<string>();
 
@@ -196,7 +196,7 @@ namespace Chem4Word.UI.WPF
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             var validated = true;
 
@@ -427,7 +427,7 @@ namespace Chem4Word.UI.WPF
             {
                 var fileInfo = new FileInfo(downloadedFile);
 
-                Globals.Chem4WordV3.Telemetry.Write(module, "Timing", $"Downloading of '{fileInfo.Name}' took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)}ms");
+                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Timing, $"Downloading of '{fileInfo.Name}' took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)}ms");
             }
         }
 
@@ -454,7 +454,7 @@ namespace Chem4Word.UI.WPF
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
-            Globals.Chem4WordV3.Telemetry.Write(module, "Action", "Triggered");
+            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, "Triggered");
 
             try
             {
@@ -474,7 +474,7 @@ namespace Chem4Word.UI.WPF
 
                         var productPage = $"https://www.chem4word.co.uk/product/{data.Sku}";
 
-                        Globals.Chem4WordV3.Telemetry.Write(module, "Action", $"Opening {productPage}");
+                        Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Action, $"Opening {productPage}");
                         Process.Start(productPage);
                     }
                 }

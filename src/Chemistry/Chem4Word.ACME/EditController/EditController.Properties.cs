@@ -13,6 +13,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Geometry;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -244,7 +245,7 @@ namespace Chem4Word.ACME
             {
                 string countString = atoms == null ? "{null}" : $"{atoms.Count}";
                 string transform = string.Join(";", DecodeTransform(operation));
-                WriteTelemetry(module, "Debug", $"Atoms: {countString} Transform: {transform}");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Atoms: {countString} Transform: {transform}");
 
                 if (atoms.Any())
                 {
@@ -371,12 +372,12 @@ namespace Chem4Word.ACME
                     SuppressEditorRedraw(true);
                     ClearSelection();
 
-                    WriteTelemetry(module, "Debug", $"Transform: {inverseTransformAsString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Transform: {inverseTransformAsString}");
 
-                    WriteTelemetry(module, "Debug", $"Molecules: {countMolString}");
-                    WriteTelemetry(module, "Debug", $"Reactions: {countReactString}");
-                    WriteTelemetry(module, "Debug", $"Annotations: {countAnnotationString}");
-                    WriteTelemetry(module, "Debug", $"Pushers: {countPushersString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Molecules: {countMolString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Reactions: {countReactString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Annotations: {countAnnotationString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Pushers: {countPushersString}");
 
                     foreach (Molecule molecule in moleculesToTransform)
                     {
@@ -443,12 +444,12 @@ namespace Chem4Word.ACME
                     SuppressEditorRedraw(true);
                     ClearSelection();
 
-                    WriteTelemetry(module, "Debug", $"Transform: {transformAsString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Transform: {transformAsString}");
 
-                    WriteTelemetry(module, "Debug", $"Molecules: {countMolString}");
-                    WriteTelemetry(module, "Debug", $"Reactions: {countReactString}");
-                    WriteTelemetry(module, "Debug", $"Annotations: {countAnnotationString}");
-                    WriteTelemetry(module, "Debug", $"Pushers: {countPushersString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Molecules: {countMolString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Reactions: {countReactString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Annotations: {countAnnotationString}");
+                    WriteTelemetry(module, LoggingLevel.Debug, $"Pushers: {countPushersString}");
 
                     foreach (Molecule molecule in moleculesToTransform)
                     {
@@ -645,7 +646,7 @@ namespace Chem4Word.ACME
                     {
                         GeneralTransform inverse = operations[i].Inverse;
                         string transform = string.Join(";", DecodeTransform(inverse));
-                        WriteTelemetry(module, "Debug", $"Molecule[{i}] Transform: {transform}");
+                        WriteTelemetry(module, LoggingLevel.Debug, $"Molecule[{i}] Transform: {transform}");
                         Transform(moleculesToTransform[i], (Transform)inverse);
                     }
 
@@ -666,7 +667,7 @@ namespace Chem4Word.ACME
                     for (int i = 0; i < moleculesToTransform.Length; i++)
                     {
                         string transform = string.Join(";", DecodeTransform(operations[i]));
-                        WriteTelemetry(module, "Debug", $"Molecule[{i}] Transform: {transform}");
+                        WriteTelemetry(module, LoggingLevel.Debug, $"Molecule[{i}] Transform: {transform}");
                         Transform(moleculesToTransform[i], operations[i]);
                     }
 
@@ -705,7 +706,7 @@ namespace Chem4Word.ACME
             {
                 string countString = molecules == null ? "{null}" : $"{molecules.Count}";
                 string transform = string.Join(";", DecodeTransform(operation));
-                WriteTelemetry(module, "Debug", $"Molecules: {countString} Transform: {transform}");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Molecules: {countString} Transform: {transform}");
 
                 GeneralTransform inverse = operation.Inverse;
                 if (inverse != null)
@@ -774,7 +775,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 Atom originalStartAtom = bond.StartAtom;
                 Atom originalEndAtom = bond.EndAtom;
@@ -817,7 +818,7 @@ namespace Chem4Word.ACME
             {
                 string orderParameter = newOrder ?? CurrentBondOrder;
                 BondStereo stereoParameter = newStereo ?? CurrentStereo;
-                WriteTelemetry(module, "Debug", $"Order: {orderParameter}; Stereo: {stereoParameter}");
+                WriteTelemetry(module, LoggingLevel.Debug, $"Order: {orderParameter}; Stereo: {stereoParameter}");
 
                 string order = bond.Order;
                 BondStereo stereo = bond.Stereo;
@@ -979,7 +980,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug",
+                WriteTelemetry(module, LoggingLevel.Debug,
                                $"Atom: {atom.Path}; Charge: {charge}");
                 int? lastCharge = atom.FormalCharge;
                 if (charge != lastCharge)
@@ -1072,7 +1073,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 Molecule parent = new Molecule();
                 Action redo = () =>
@@ -1142,7 +1143,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 List<Molecule> selGroups;
                 //grab just the grouped molecules first

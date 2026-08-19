@@ -13,6 +13,7 @@ using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Model2.Interfaces;
+using IChem4Word.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -151,7 +152,7 @@ namespace Chem4Word.ACME
 
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 Action redo = () =>
                               {
@@ -213,7 +214,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 int scaleX = 1;
                 int scaleY = 1;
@@ -341,7 +342,7 @@ namespace Chem4Word.ACME
                 }
 
                 string orderInfo = currentOrder ?? CurrentBondOrder;
-                WriteTelemetry(module, "Debug",
+                WriteTelemetry(module, LoggingLevel.Debug,
                                $"StartAtom: {startAtomInfo}; EndAtom: {endAtomInfo}; BondOrder; {orderInfo}");
 
                 Molecule molA = a.Parent;
@@ -402,7 +403,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 bool? showBefore = target.ShowMoleculeBrackets;
                 bool? showCarbonBefore = target.ExplicitC;
@@ -516,7 +517,7 @@ namespace Chem4Word.ACME
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
-                WriteTelemetry(module, "Debug", "Called");
+                WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 UndoManager.BeginUndoBlock();
 

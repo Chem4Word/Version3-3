@@ -12,6 +12,7 @@ using Chem4Word.Model2;
 using Chem4Word.Model2.Enums;
 using Chem4Word.Renderer.OoXmlV4.Entities;
 using Chem4Word.Renderer.OoXmlV4.Enums;
+using IChem4Word.Contracts;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -72,7 +73,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
 
             BeautifyStereoBondLines();
 
-            Inputs.Telemetry.Write(module, "Timing", $"Beautify took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)}ms");
+            Inputs.Telemetry.Write(module, LoggingLevel.Timing, $"Beautify took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)}ms");
         }
 
         private static bool IsLonger(Vector v1, Vector v2)
@@ -280,7 +281,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 Outputs.CrossingPoints.Add(crossedBond.Value.CrossingPoint);
             }
             sw.Stop();
-            Inputs.Telemetry.Write(module, "Timing", $"Detection of {model.CrossedBonds.Count} line crossing points took {SafeDouble.AsString0(sw.ElapsedMilliseconds)} ms");
+            Inputs.Telemetry.Write(module, LoggingLevel.Timing, $"Detection of {model.CrossedBonds.Count} line crossing points took {SafeDouble.AsString0(sw.ElapsedMilliseconds)} ms");
         }
 
         private void GenerateOutlinePoints(List<BondLine> bondLines)
@@ -507,7 +508,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                     stringBuilder.AppendLine($"Point[{i}]: {PointHelper.AsCMLString(point)}");
                 }
 
-                Inputs.Telemetry.Write(module, "Warning", stringBuilder.ToString().Trim());
+                Inputs.Telemetry.Write(module, LoggingLevel.Warning, stringBuilder.ToString().Trim());
             }
         }
 
@@ -582,7 +583,7 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
             }
 
             stopwatch.Stop();
-            Inputs.Telemetry.Write(module, "Timing", $"Clipping Bond Lines [{Inputs.Options.HullMode}] - Pass 1 took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)} ms");
+            Inputs.Telemetry.Write(module, LoggingLevel.Timing, $"Clipping Bond Lines [{Inputs.Options.HullMode}] - Pass 1 took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)} ms");
         }
 
         // Shrink bond lines so that they do not overlap any atom's label characters
@@ -666,12 +667,12 @@ namespace Chem4Word.Renderer.OoXmlV4.OoXml
                 }
                 else
                 {
-                    Inputs.Telemetry.Write(module, "Warning", $"Outputs.ConvexHulls does not contain path '{path}'");
+                    Inputs.Telemetry.Write(module, LoggingLevel.Warning, $"Outputs.ConvexHulls does not contain path '{path}'");
                 }
             }
 
             stopwatch.Stop();
-            Inputs.Telemetry.Write(module, "Timing", $"Clipping Bond Lines [{Inputs.Options.HullMode}] - Pass 2 took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)} ms");
+            Inputs.Telemetry.Write(module, LoggingLevel.Timing, $"Clipping Bond Lines [{Inputs.Options.HullMode}] - Pass 2 took {SafeDouble.AsString0(stopwatch.ElapsedMilliseconds)} ms");
         }
 
         private bool TrimBondLine(BondLine leftOrRight, BondLine line, bool isInRing)

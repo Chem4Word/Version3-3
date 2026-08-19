@@ -83,6 +83,7 @@
     <Compile Include="Dto\ChemistryDataTransferObject.cs" />
     <Compile Include="Dto\ChemistryTagDataObject.cs" />
     <Compile Include="Dto\LibraryTagDataObject.cs" />
+    <Compile Include="LoggingLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
