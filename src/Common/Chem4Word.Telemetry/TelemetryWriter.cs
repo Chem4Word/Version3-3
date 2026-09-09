@@ -386,7 +386,7 @@ namespace Chem4Word.Telemetry
             int processId = 666;
             string machineId = Guid.Empty.ToString("D");
             // This is updated automatically by Set-Assembly-Version.ps1
-            string versionNumber = "3.3.17.666";
+            string versionNumber = "3.3.18.666";
 
             try
             {

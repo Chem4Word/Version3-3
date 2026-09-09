@@ -35,7 +35,7 @@ namespace Chem4WordSetup
         private const string DetectV2AddIn = @"Chemistry Add-in for Word\Chem4Word.AddIn.vsto";
         private const string DetectV3AddIn = @"Chem4Word V3\Chem4Word.V3.dll";
 
-        private const string DefaultMsiFile = "https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.17.Release.15.msi";
+        private const string DefaultMsiFile = "https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.18.Release.16.msi";
         private const string VstoInstaller = "https://www.chem4word.co.uk/files3-3/vstor_redist.exe";
         private const string WebView2Installer = "https://www.chem4word.co.uk/files3-2/MicrosoftEdgeWebview2Setup.exe";
 

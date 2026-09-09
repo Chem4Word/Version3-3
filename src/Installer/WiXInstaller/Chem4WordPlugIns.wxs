@@ -22,6 +22,14 @@
                 <File Id="Chem4Word.Searcher.PubChemPlugIn.dll" Source="$(var.Chem4Word.V3.TargetDir)\PlugIns\Chem4Word.Searcher.PubChemPlugIn.dll" />
                 <File Id="Chem4Word.Searcher.PubChemPlugIn.pdb" Source="$(var.Chem4Word.V3.TargetDir)\PlugIns\Chem4Word.Searcher.PubChemPlugIn.pdb" />
             </Component>
+            <Component Id="Chem4Word.Driver.Open">
+                <File Id="Chem4Word.Driver.Open.dll" Source="$(var.Chem4Word.V3.TargetDir)\PlugIns\Chem4Word.Driver.Open.dll" />
+                <File Id="Chem4Word.Driver.Open.pdb" Source="$(var.Chem4Word.V3.TargetDir)\PlugIns\Chem4Word.Driver.Open.pdb" />
+            </Component>
+            <Component Id="Chem4Word.Driver.Closed">
+                <File Id="Chem4Word.Driver.Closed.dll" Source="$(var.Chem4Word.V3.TargetDir)\PlugIns\Chem4Word.Driver.Closed.dll" />
+                <File Id="Chem4Word.Driver.Closed.pdb" Source="$(var.Chem4Word.V3.TargetDir)\PlugIns\Chem4Word.Driver.Closed.pdb" />
+            </Component>
         </ComponentGroup>
     </Fragment>
 </Wix>
