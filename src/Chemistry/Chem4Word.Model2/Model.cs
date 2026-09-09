@@ -344,12 +344,23 @@ namespace Chem4Word.Model2
             }
         }
 
+        public bool HasValidBondLengths
+        {
+            get
+            {
+                return MeanBondLength > CoreConstants.MinimumBondLength - CoreConstants.BondLengthTolerance
+                       && MeanBondLength < CoreConstants.MaximumBondLength + CoreConstants.BondLengthTolerance;
+            }
+        }
+
         public bool Has2D
         {
             get
             {
-                return HasReactions || HasAnnotations || TotalAtomsCount > 0
-                       && (TotalBondsCount == 0 || MeanBondLength > CoreConstants.BondLengthTolerance / 2);
+                bool hasAtoms = TotalAtomsCount > 0;
+                bool hasValidBonds = TotalBondsCount > 0 && MeanBondLength > CoreConstants.MinimumBondLength;
+
+                return HasReactions || HasAnnotations || hasAtoms || hasValidBonds;
             }
         }
 
@@ -1186,8 +1197,7 @@ namespace Chem4Word.Model2
                     }
                     else
                     {
-                        if (MeanBondLength < CoreConstants.MinimumBondLength - CoreConstants.BondLengthTolerance
-                            || MeanBondLength > CoreConstants.MaximumBondLength + CoreConstants.BondLengthTolerance)
+                        if (!HasValidBondLengths)
                         {
                             result = $"Adjusted BondLength from {SafeDouble.AsString(MeanBondLength)} to {SafeDouble.AsString(target)}";
                             ScaleToAverageBondLength(target);
@@ -1213,7 +1223,7 @@ namespace Chem4Word.Model2
 
         public void ScaleToAverageBondLength(double newLength, Point centre)
         {
-            if ((TotalBondsCount + DefaultReactionScheme.Reactions.Count) > 0 && MeanBondLength > 0)
+            if (TotalBondsCount + DefaultReactionScheme.Reactions.Count > 0 && MeanBondLength > 0)
             {
                 ScaleToAverageBondLength(newLength);
 

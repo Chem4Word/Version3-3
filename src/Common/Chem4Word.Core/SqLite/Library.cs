@@ -1017,6 +1017,8 @@ namespace Chem4Word.Core.SqLite
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
+            FileInfo info = new FileInfo(_databaseFile.FullName);
+
             try
             {
                 if (File.Exists(_databaseFile.FullName))
@@ -1063,9 +1065,11 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception exception)
             {
-                // If we get an Exception assume this is NOT a SQLite database
+                // If we get an Exception this is either NOT a SQLite database or it has errors
                 Database.IsSqliteDatabase = false;
                 Database.Checked = true;
+
+                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Database '{_databaseFile.FullName}' file size size is {info.Length:N0} bytes");
 
                 _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
                 _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");

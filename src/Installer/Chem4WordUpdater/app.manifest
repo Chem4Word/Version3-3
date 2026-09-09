@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
-    <assemblyIdentity version="3.3.17.9740" name="Chem4Word Updater"/>
+    <assemblyIdentity version="3.3.17.9748" name="Chem4Word Updater"/>
 
     <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
         <security>

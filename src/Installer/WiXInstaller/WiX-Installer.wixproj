@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AcceptEula>wix7</AcceptEula>
     <EnableFramework45>true</EnableFramework45>
-    <OutputName>Chem4Word-Setup.3.2.27.Release.23</OutputName>
+    <OutputName>Chem4Word-Setup.3.3.17.Release.15</OutputName>
     <Name>WiX-Installer</Name>
     <Configurations>Debug;Release;Setup;Vso-Ci</Configurations>
   </PropertyGroup>
@@ -16,7 +16,6 @@
     <Content Include="EULA.rtf" />
     <Content Include="Test.cmd" />
     <Content Include="Testing\Insert Test Messages.reg" />
-    <Content Include="Testing\Insert-Legacy-Versions.reg" />
     <Content Include="WixUIBanner.bmp" />
     <Content Include="WixUIDialog.bmp" />
   </ItemGroup>

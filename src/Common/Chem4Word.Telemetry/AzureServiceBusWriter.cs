@@ -70,17 +70,23 @@ namespace Chem4Word.Telemetry
 
         public void QueueMessage(OutputMessage message)
         {
+            bool startThread = false;
+
             lock (QueueLock)
             {
                 _mainBuffer.Enqueue(message);
-                Monitor.PulseAll(QueueLock);
+
+                if (!_running)
+                {
+                    _running = true;
+                    startThread = true;
+                }
             }
 
-            if (!_running)
+            if (startThread)
             {
                 var t = new Thread(WriteOnThread);
-                t.SetApartmentState(ApartmentState.STA);
-                _running = true;
+                t.IsBackground = true;
                 t.Start();
             }
         }
@@ -104,11 +110,10 @@ namespace Chem4Word.Telemetry
 
                 while (_secondaryBuffer.Count > 0)
                 {
-                    var task = WriteMessage(_secondaryBuffer.Dequeue());
-                    task.Wait();
+                    WriteMessageAsync(_secondaryBuffer.Dequeue()).GetAwaiter().GetResult();
 
                     // Small micro sleep between each message
-                    Thread.Sleep(5);
+                    Thread.Sleep(TimeSpan.FromMilliseconds(5));
                 }
 
                 lock (QueueLock)
@@ -122,12 +127,12 @@ namespace Chem4Word.Telemetry
             }
         }
 
-        public void SendZipFileMessage(ServiceBusMessage message)
+        public async Task SendZipFileMessageAsync(ServiceBusMessage message)
         {
-            _sender.SendMessageAsync(message);
+            await _sender.SendMessageAsync(message);
         }
 
-        private async Task WriteMessage(OutputMessage message)
+        private async Task<Task> WriteMessageAsync(OutputMessage message)
         {
             var securityProtocol = ServicePointManager.SecurityProtocol;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -181,6 +186,8 @@ namespace Chem4Word.Telemetry
             {
                 ServicePointManager.SecurityProtocol = securityProtocol;
             }
+
+            return Task.CompletedTask;
         }
     }
 }

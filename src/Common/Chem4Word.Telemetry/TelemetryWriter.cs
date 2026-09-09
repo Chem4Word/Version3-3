@@ -170,7 +170,7 @@ namespace Chem4Word.Telemetry
             message.ApplicationProperties.Add("MachineId", _helper.MachineId);
             message.ApplicationProperties.Add("Chem4WordVersion", _helper.AddInVersion);
 
-            _azureServiceBusWriter.SendZipFileMessage(message);
+            _azureServiceBusWriter.SendZipFileMessageAsync(message).GetAwaiter().GetResult();
         }
 
         /// <summary>

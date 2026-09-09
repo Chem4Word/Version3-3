@@ -6,6 +6,7 @@
 // ---------------------------------------------------------------------------
 
 using Chem4Word.Shared;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -34,10 +35,11 @@ namespace Chem4WordUpdater
         public Updater(string[] args)
         {
             InitializeComponent();
+
             if (args.Length > 0)
             {
                 bool ok = true;
-                string[] parts = args[0].ToLower().Split(new char[] { '/', '.', '-' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] parts = args[0].ToLower().Split(new[] { '/', '.', '-' }, StringSplitOptions.RemoveEmptyEntries);
 
                 // Check 1 ensure that website is the source
                 if (!(parts[0].Equals("https:") || parts[0].Equals("http:")))
@@ -63,11 +65,29 @@ namespace Chem4WordUpdater
 
                 if (ok)
                 {
-                    RegistryHelper.WriteAction("Update Started");
-                    _downloadTarget = args[0];
-                    if (DownloadFile(_downloadTarget))
+                    Show();
+
+                    if (!IsWebView2Installed())
                     {
-                        StartTimer();
+                        Information.Text = "Microsoft Edge WebView2 is not installed.\nPlease install it then run setup again.";
+
+                        DialogResult answer = MessageBox.Show("Microsoft Edge WebView2 runtime is missing\n\nWould you like to download it",
+                                                              "Microsoft WebView2",
+                                                              MessageBoxButtons.YesNo,
+                                                              MessageBoxIcon.Question);
+                        if (answer == DialogResult.Yes)
+                        {
+                            Process.Start("https://developer.microsoft.com/en-gb/microsoft-edge/webview2/consumer");
+                        }
+                    }
+                    else
+                    {
+                        RegistryHelper.WriteAction("Update Started");
+                        _downloadTarget = args[0];
+                        if (DownloadFile(_downloadTarget))
+                        {
+                            StartTimer();
+                        }
                     }
                 }
                 else
@@ -82,14 +102,51 @@ namespace Chem4WordUpdater
             }
         }
 
+        private bool IsWebView2Installed()
+        {
+            string webView2Version = GetRegistryValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", "pv");
+
+            if (string.IsNullOrEmpty(webView2Version))
+            {
+                webView2Version = GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", "pv");
+            }
+
+            if (string.IsNullOrEmpty(webView2Version))
+            {
+                webView2Version = GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", "pv");
+            }
+
+            return !string.IsNullOrEmpty(webView2Version);
+        }
+
+        private string GetRegistryValue(string keyName, string valueName = "")
+        {
+            string result = "";
+
+            try
+            {
+                object value = Registry.GetValue(keyName, valueName, null);
+                if (value != null)
+                {
+                    result = value.ToString();
+                }
+            }
+            catch
+            {
+                // Just return empty string
+            }
+
+            return result;
+        }
+
         private void OnClick_Cancel(object sender, EventArgs e)
         {
             RegistryHelper.WriteAction("Update was cancelled by User");
-            timer1.Enabled = false;
+            Timer1.Enabled = false;
             _userCancelledUpdate = true;
             try
             {
-                _webClient.CancelAsync();
+                _webClient?.CancelAsync();
             }
             catch
             {
@@ -98,13 +155,13 @@ namespace Chem4WordUpdater
             Close();
         }
 
-        private void OnTick_timer1(object sender, EventArgs e)
+        private void OnTick_Timer1(object sender, EventArgs e)
         {
             int wordCount = ShowWordProcesses();
             if (wordCount == 0 && _downloadCompleted)
             {
                 RegistryHelper.WriteAction("Conditions right to run Update");
-                timer1.Enabled = false;
+                Timer1.Enabled = false;
 
                 Application.DoEvents();
                 Thread.Sleep(1000);
@@ -167,7 +224,7 @@ namespace Chem4WordUpdater
 
         private void StartTimer()
         {
-            timer1.Enabled = true;
+            Timer1.Enabled = true;
         }
 
         private bool DownloadFile(string url)
@@ -181,7 +238,7 @@ namespace Chem4WordUpdater
 
             try
             {
-                progressBar1.Value = 0;
+                ProgressBar1.Value = 0;
 
                 RegistryHelper.WriteAction($"Downloading {url}");
 
@@ -227,7 +284,7 @@ namespace Chem4WordUpdater
         private void OnDownloadComplete(object sender, AsyncCompletedEventArgs e)
         {
             RegistryHelper.WriteAction("Download complete");
-            progressBar1.Value = 100;
+            ProgressBar1.Value = 100;
             _sw.Stop();
 
             if (e.Cancelled)
@@ -280,7 +337,7 @@ namespace Chem4WordUpdater
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            progressBar1.Value = e.ProgressPercentage;
+            ProgressBar1.Value = e.ProgressPercentage;
         }
 
         private void OnFormClosing_Updater(object sender, FormClosingEventArgs e)

@@ -93,18 +93,18 @@ namespace Chem4Word.Renderer.OoXmlV4
                 }
                 else
                 {
-                    string guid = Properties["Guid"];
-                    result = OoXmlFile.CreateFromCml(Cml, guid, _rendererOptions, Telemetry, TopLeft);
-                    if (!File.Exists(result))
-                    {
-                        // OoXmlFile.CreateFromCml will have thrown an exception if it fails to create the file, so no need to log Cml again.
-                        UserInteractions.WarnUser("Sorry this structure could not be rendered.");
-                    }
-
                     // Deliberate crash to test Error Reporting
                     //int ii = 2;
                     //int dd = 0;
                     //int bang = ii / dd;
+
+                    string guid = Properties["Guid"];
+                    // OoXmlFile.CreateFromCml will throw an exception if it fails to create the file, which will log the cml
+                    result = OoXmlFile.CreateFromCml(Cml, guid, _rendererOptions, Telemetry, TopLeft);
+                    if (!File.Exists(result))
+                    {
+                        UserInteractions.WarnUser("Sorry this structure could not be rendered.");
+                    }
                 }
             }
             catch (Exception exception)
@@ -112,7 +112,7 @@ namespace Chem4Word.Renderer.OoXmlV4
                 Telemetry.Write(module, LoggingLevel.Exception, "Structure could not be rendered.");
                 if (!string.IsNullOrEmpty(Cml))
                 {
-                    Telemetry.Write(module, LoggingLevel.ExceptionData, Cml);
+                    Telemetry.Write(module, LoggingLevel.ExceptionCml, Cml);
                 }
 
                 new ReportError(Telemetry, TopLeft, module, exception).ShowDialog();

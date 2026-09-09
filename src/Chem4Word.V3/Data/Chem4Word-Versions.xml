@@ -5,13 +5,13 @@
   <Version>
     <Number>3.3.17 Release 15</Number>
     <IsBeta>false</IsBeta>
-    <Released>01-Sep-2026</Released>
+    <Released>09-Sep-2026</Released>
     <Changes>
-      <Change>...</Change>
-      <Change>...</Change>
-      <Change>...</Change>
-      <Change>...</Change>
-      <Change>...</Change>
+      <Change>Bug Fix: Check that WebView2 is installed. [MS WebView2 download:](https://developer.microsoft.com/en-gb/microsoft-edge/webview2/consumer)</Change>
+      <Change>Bug Fix: Prevent potential Check for Updates loop in start up</Change>
+      <Change>Bug Fix: Handle Exception in ACME.EditController.UpdateAtom()</Change>
+      <Change>Bug Fix: Check that user has Write Permission to downloads folder, before attempting to zip up old installer log files</Change>
+      <Change>Internal: Change Telemetry to use enums for logging level</Change>
       <Change>Internal: Bug Fix Exception in ACME.EditController.UpdateAtom()</Change>
       <Change>Internal: Bug Fix implementation of CheckForUpdates</Change>
       <Change>Internal: Bug Fix Exception in UpdateHelper.CheckForUpdates()</Change>
@@ -21,7 +21,7 @@
       <Change>Bug Fix: Fixes for when Unicode Formula is empty</Change>
       <Change>Bug Fix: Fix molecular weights (some were coming back as negative)</Change>
       <Change>Security: Exclude Windows 7, 8 and 8.1</Change>
-      <Change>Enhancement: Ensure that Substance Name and Tags are persisted</Change>
+      <Change>Enhancement: Ensure that Substance Name and Tags are persisted to cml</Change>
       <Change>Bug Fix: General - Unicode Formula in Title Bars</Change>
       <Change>Bug Fix: Library Editor - On completion of editing the newly added structure should be selected</Change>
       <Change>Bug Fix: Library Editor - Is sometimes overwriting user-assigned name</Change>

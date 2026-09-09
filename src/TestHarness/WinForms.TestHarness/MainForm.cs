@@ -61,6 +61,11 @@ namespace WinForms.TestHarness
         {
             InitializeComponent();
 
+            //foreach (string enumDescription in EnumHelper.GetEnumDescriptions<LoggingLevel>())
+            //{
+            //    Debug.WriteLine($"\"{enumDescription}\",");
+            //}
+
             SetButtonStates(FormState.Disabled);
 
             _helper = new SystemHelper();
@@ -143,6 +148,7 @@ namespace WinForms.TestHarness
         private void OnClick_LoadStructure(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             try
             {
                 Model model = null;
@@ -178,17 +184,12 @@ namespace WinForms.TestHarness
 
                     switch (fileType)
                     {
-                        case ".mol":
-                        case ".sdf":
-                            stopwatch = new Stopwatch();
-                            stopwatch.Start();
-                            model = fileConverter.Import(mol);
-                            stopwatch.Stop();
-                            elapsed1 = stopwatch.Elapsed;
-                            break;
-
                         case ".cml":
                         case ".xml":
+                            if (Debugger.IsAttached)
+                            {
+                                _telemetry.Write(module, LoggingLevel.DataCml, mol);
+                            }
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
                             model = cmlConverter.Import(mol);
@@ -196,16 +197,24 @@ namespace WinForms.TestHarness
                             elapsed1 = stopwatch.Elapsed;
                             break;
 
-                        case ".json":
+                        case ".mol":
+                        case ".sdf":
+                            if (Debugger.IsAttached)
+                            {
+                                _telemetry.Write(module, LoggingLevel.DataMol, mol);
+                            }
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
-                            JSONConverter jsonConvertor = new JSONConverter();
-                            model = jsonConvertor.Import(mol);
+                            model = fileConverter.Import(mol);
                             stopwatch.Stop();
                             elapsed1 = stopwatch.Elapsed;
                             break;
 
                         case ".el":
+                            if (Debugger.IsAttached)
+                            {
+                                _telemetry.Write(module, LoggingLevel.DataSketch, mol);
+                            }
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
                             SketchElConverter sketchElConverter = new SketchElConverter();
@@ -223,6 +232,15 @@ namespace WinForms.TestHarness
                             byte[] inputBytes = File.ReadAllBytes(openFileDialog1.FileName);
                             model = protocolBufferConverter.Import(inputBytes);
 
+                            stopwatch.Stop();
+                            elapsed1 = stopwatch.Elapsed;
+                            break;
+
+                        case ".json":
+                            stopwatch = new Stopwatch();
+                            stopwatch.Start();
+                            JSONConverter jsonConvertor = new JSONConverter();
+                            model = jsonConvertor.Import(mol);
                             stopwatch.Stop();
                             elapsed1 = stopwatch.Elapsed;
                             break;
@@ -529,7 +547,7 @@ namespace WinForms.TestHarness
                     CMLConverter cmlConverter = new CMLConverter();
                     string cml = cmlConverter.Export(_currentModel);
 
-                    using (ShowCml f = new ShowCml { Cml = XmlHelper.AddHeader(cml) })
+                    using (ShowData f = new ShowData { Data = XmlHelper.AddHeader(cml) })
                     {
                         f.ShowDialog(this);
                     }
@@ -683,7 +701,7 @@ namespace WinForms.TestHarness
         private void OnClick_LayoutStructure(object sender, EventArgs e)
         {
             // No Longer working ...
-            // LayoutUsingChemblClean()
+            // Would call LayoutUsingChemblClean(), but that API no longer present
         }
 
         private void LayoutUsingChemblClean()
@@ -789,6 +807,8 @@ namespace WinForms.TestHarness
 
         private void OnClick_SearchChEBI(object sender, EventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             using (SearchChEBI searcher = new SearchChEBI())
             {
                 searcher.Telemetry = _telemetry;
@@ -798,6 +818,7 @@ namespace WinForms.TestHarness
                 DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
+                    _telemetry.Write(module, LoggingLevel.DataCml, searcher.Cml);
                     HandleChangedCml(searcher.Cml, "ChEBI Search result");
                 }
             }
@@ -809,6 +830,8 @@ namespace WinForms.TestHarness
 
         private void OnClick_SearchPubChem(object sender, EventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             using (SearchPubChem searcher = new SearchPubChem())
             {
                 searcher.Telemetry = _telemetry;
@@ -818,6 +841,7 @@ namespace WinForms.TestHarness
                 DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
+                    _telemetry.Write(module, LoggingLevel.DataCml, searcher.Cml);
                     HandleChangedCml(searcher.Cml, "PubChem Search result");
                 }
             }
@@ -829,6 +853,8 @@ namespace WinForms.TestHarness
 
         private void OnClick_SearchOpsin(object sender, EventArgs e)
         {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
             using (SearchOpsin searcher = new SearchOpsin())
             {
                 searcher.Telemetry = _telemetry;
@@ -838,6 +864,7 @@ namespace WinForms.TestHarness
                 DialogResult result = searcher.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
+                    _telemetry.Write(module, LoggingLevel.DataCml, searcher.Cml);
                     HandleChangedCml(searcher.Cml, "ChEBI Search result");
                 }
             }
@@ -913,6 +940,28 @@ namespace WinForms.TestHarness
                 timer1.Enabled = false;
                 Thread.Sleep(250);
                 SetButtonStates(FormState.OpenOrCreate);
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            int count = _telemetry.BufferCount();
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            while (count > 0)
+            {
+                Debug.WriteLine($"{DateTime.Now:HH:mm:ss.fff} Telemetry count is {count}");
+
+                if (stopwatch.Elapsed > TimeSpan.FromSeconds(30))
+                {
+                    Debug.WriteLine($"Aborting after {stopwatch.Elapsed}");
+                    break;
+                }
+
+                Thread.Sleep(TimeSpan.FromMilliseconds(250));
+                count = _telemetry.BufferCount();
             }
         }
     }

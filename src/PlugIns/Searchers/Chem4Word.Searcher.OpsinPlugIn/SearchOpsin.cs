@@ -54,7 +54,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
             string searchFor = TextHelper.StripAsciiControlCharacters(SearchFor.Text).Trim();
             string webSafe = TextHelper.NormalizeCharacters(WebUtility.HtmlEncode(searchFor));
 
-            Telemetry.Write(module, LoggingLevel.Information, $"User searched for '{searchFor}'");
+            Telemetry.Write(module, LoggingLevel.Search, $"User searched for '{searchFor}'");
 
             display1.Clear();
             LabelInfo.Text = "";
@@ -74,7 +74,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
                     if (apiResult.Content.ToLower().Contains("<!doctype html"))
                     {
                         Telemetry.Write(module, LoggingLevel.Warning, "Showing user html result of web call");
-                        Telemetry.Write(module, LoggingLevel.Debug, apiResult.Content.Substring(0, Math.Min(apiResult.Content.Length, 32_000)));
+                        Telemetry.Write(module, LoggingLevel.WarningData, apiResult.Content.Trim());
 
                         Screen screen = Screen.FromControl(SearchButton);
                         HtmlViewer viewer = new HtmlViewer(new Point(TopLeft.X + CoreConstants.TopLeftOffset, TopLeft.Y + CoreConstants.TopLeftOffset), screen, "EXTERNAL OPSIN Search Error", apiResult.Content);
@@ -84,8 +84,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
                     {
                         CMLConverter cmlConverter = new CMLConverter();
                         Model2.Model model = cmlConverter.Import(apiResult.Content);
-                        if (model.MeanBondLength < CoreConstants.MinimumBondLength - CoreConstants.BondLengthTolerance
-                            || model.MeanBondLength > CoreConstants.MaximumBondLength + CoreConstants.BondLengthTolerance)
+                        if (!model.HasValidBondLengths)
                         {
                             model.ScaleToAverageBondLength(CoreConstants.StandardBondLength);
                         }
@@ -100,7 +99,7 @@ namespace Chem4Word.Searcher.OpsinPlugIn
                 {
                     if (!string.IsNullOrEmpty(apiResult.Content))
                     {
-                        Telemetry.Write(module, LoggingLevel.SearchFailure, apiResult.Content);
+                        Telemetry.Write(module, LoggingLevel.SearchFailureData, apiResult.Content.Trim());
                     }
                     Telemetry.Write(module, LoggingLevel.SearchFailure, $"[{(int)apiResult.StatusCode}] {apiResult.StatusCode}");
                     LabelInfo.Text = $"No match for '{searchFor}' found";

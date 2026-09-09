@@ -37,8 +37,11 @@ namespace Chem4WordSetup
 
         private const string DefaultMsiFile = "https://www.chem4word.co.uk/files3-3/Chem4Word-Setup.3.3.17.Release.15.msi";
         private const string VstoInstaller = "https://www.chem4word.co.uk/files3-3/vstor_redist.exe";
+        private const string WebView2Installer = "https://www.chem4word.co.uk/files3-2/MicrosoftEdgeWebview2Setup.exe";
 
         private bool _isHigherVersionInstalled;
+        private bool _isWebView2Installed;
+
         private Version _currentVersion;
 
         private WebClient _webClient;
@@ -119,6 +122,32 @@ namespace Chem4WordSetup
 
             #endregion .Net Framework
 
+            #region Detect WebView2
+
+            string webView2Version = GetRegistryValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", "pv");
+
+            if (string.IsNullOrEmpty(webView2Version))
+            {
+                webView2Version = GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", "pv");
+            }
+
+            if (string.IsNullOrEmpty(webView2Version))
+            {
+                webView2Version = GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", "pv");
+            }
+
+            if (string.IsNullOrEmpty(webView2Version))
+            {
+                WebView2Installed.Indicator = Properties.Resources.Waiting;
+            }
+            else
+            {
+                WebView2Installed.Indicator = Properties.Resources.Yes;
+                _isWebView2Installed = true;
+            }
+
+            #endregion Detect WebView2
+
             #region Detect Design Time VSTO
 
             string feature = GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VSTO_DT\VS10\Feature");
@@ -167,12 +196,17 @@ namespace Chem4WordSetup
                 }
             }
 
-            #endregion Detect Runtime VSTO
-
             if (isDesignTimeInstalled || isRuntimeInstalled)
             {
                 VstoInstalled.Indicator = Properties.Resources.Yes;
-                _state = State.DownloadChem4Word;
+                if (_isWebView2Installed)
+                {
+                    _state = State.DownloadChem4Word;
+                }
+                else
+                {
+                    _state = State.DownloadWebView;
+                }
             }
             else
             {
@@ -180,6 +214,8 @@ namespace Chem4WordSetup
                 _state = State.DownloadVsto;
             }
             Application.DoEvents();
+
+            #endregion Detect Runtime VSTO
 
             #region Is Chem4Word Installed
 
@@ -426,6 +462,7 @@ namespace Chem4WordSetup
                     break;
 
                 case State.WaitingForVstoDownload:
+                    // Nothing to do here
                     break;
 
                 case State.InstallVsto:
@@ -445,12 +482,77 @@ namespace Chem4WordSetup
                             case 3010: // Success - Reboot required.
                                 VstoInstalled.Indicator = Properties.Resources.Yes;
                                 _retryCount = 0;
-                                _state = State.DownloadChem4Word;
+                                _state = _isWebView2Installed
+                                    ? State.DownloadChem4Word
+                                    : State.DownloadWebView;
                                 break;
 
                             default:
                                 VstoInstalled.Indicator = Properties.Resources.No;
                                 Information.Text = $"Error installing VSTO; ExitCode: {exitCode}";
+                                Action.Text = "Exit";
+                                _state = State.Done;
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Information.Text = ex.Message;
+                        Debug.WriteLine(ex.Message);
+                        Action.Text = "Exit";
+                        Action.Enabled = true;
+                        timer1.Enabled = false;
+                        _state = State.Done;
+                    }
+                    break;
+
+                case State.DownloadWebView:
+                    // Download WebView2
+                    RegistryHelper.WriteAction("Downloading WebView2");
+                    Information.Text = "Downloading WebView2 ...";
+                    WebView2Installed.Indicator = Properties.Resources.Downloading;
+                    if (DownloadFile(ChangeDomain(WebView2Installer)))
+                    {
+                        _previousState = _state;
+                        _state = State.WaitingForWebViewDownload;
+                    }
+                    else
+                    {
+                        WebView2Installed.Indicator = Properties.Resources.No;
+                        Information.Text = $"Error downloading WebView2; {Information.Text}";
+                        Action.Text = "Exit";
+                        _state = State.DownloadChem4Word;
+                    }
+                    break;
+
+                case State.WaitingForWebViewDownload:
+                    // Nothing to do here
+                    break;
+
+                case State.InstallWebView:
+                    // Install WebView2
+                    RegistryHelper.WriteAction("Installing WebView2");
+                    Information.Text = "Installing WebView2 ...";
+                    try
+                    {
+                        WebView2Installed.Indicator = Properties.Resources.Runing;
+                        _state = State.WaitingForInstaller;
+                        int exitCode = RunProcess(_downloadedFile, "");
+                        RegistryHelper.WriteAction($"WebView2 ExitCode: {exitCode}");
+                        switch (exitCode)
+                        {
+                            case 0:    // Success.
+                            case 1641: // Success - Reboot started.
+                            case 3010: // Success - Reboot required.
+                                WebView2Installed.Indicator = Properties.Resources.Yes;
+                                _isWebView2Installed = true;
+                                _retryCount = 0;
+                                _state = State.DownloadChem4Word;
+                                break;
+
+                            default:
+                                WebView2Installed.Indicator = Properties.Resources.No;
+                                Information.Text = $"Error installing WebView2; ExitCode: {exitCode}";
                                 Action.Text = "Exit";
                                 _state = State.Done;
                                 break;
@@ -663,8 +765,11 @@ namespace Chem4WordSetup
             };
             using (Process process = Process.Start(processStartInfo))
             {
-                process.WaitForExit();
-                exitCode = process.ExitCode;
+                if (process != null)
+                {
+                    process.WaitForExit();
+                    exitCode = process.ExitCode;
+                }
             }
 
             return exitCode;
@@ -795,10 +900,15 @@ namespace Chem4WordSetup
                     double kiloBytes = fi.Length / 1024.0;
                     double speed = kiloBytes / seconds / 1000.0;
                     RegistryHelper.WriteAction($"Download speed {speed.ToString("#,##0.000", CultureInfo.InvariantCulture)}MiB/s");
+
                     switch (_state)
                     {
                         case State.WaitingForVstoDownload:
                             _state = State.InstallVsto;
+                            break;
+
+                        case State.WaitingForWebViewDownload:
+                            _state = State.InstallWebView;
                             break;
 
                         case State.WaitingForChem4WordDownload:

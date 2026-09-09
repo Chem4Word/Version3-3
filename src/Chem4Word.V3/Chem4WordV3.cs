@@ -18,6 +18,7 @@ using Chem4Word.Shared;
 using Chem4Word.Telemetry;
 using IChem4Word.Contracts;
 using Microsoft.Office.Core;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -64,6 +65,7 @@ namespace Chem4Word
         public XDocument ThisVersion;
 
         public bool EventsEnabled = true;
+        public bool PlugInsHaveBeenLoaded;
 
         public bool ChemistryAllowed;
         public string ChemistryProhibitedReason = "";
@@ -87,8 +89,6 @@ namespace Chem4Word
         public TelemetryWriter Telemetry;
 
         private System.Timers.Timer _timer;
-
-        public bool PlugInsHaveBeenLoaded;
 
         public List<IChem4WordEditor> Editors = new List<IChem4WordEditor>();
         public List<IChem4WordRenderer> Renderers = new List<IChem4WordRenderer>();
@@ -306,6 +306,64 @@ namespace Chem4Word
             }
         }
 
+        private bool IfVebView2IsInstalled()
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            bool found = false;
+
+            try
+            {
+                string[] hklmPaths =
+                {
+                    @"SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}",
+                    @"SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
+                };
+
+                foreach (string keyPath in hklmPaths)
+                {
+                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath))
+                    {
+                        string version = key?.GetValue("pv") as string;
+
+                        if (!string.IsNullOrWhiteSpace(version))
+                        {
+                            found = true;
+                            RegistryHelper.StoreMessage(module, $"Found WebView2 {version} in {key.Name}");
+                        }
+                    }
+                }
+
+                if (!found)
+                {
+                    string[] hkcuPaths =
+                    {
+                        @"SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
+                    };
+
+                    foreach (string keyPath in hkcuPaths)
+                    {
+                        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(keyPath))
+                        {
+                            string version = key?.GetValue("pv") as string;
+
+                            if (!string.IsNullOrWhiteSpace(version))
+                            {
+                                found = true;
+                                RegistryHelper.StoreMessage(module, $"Found WebView2 {version} in {key.Name}");
+                            }
+                        }
+                    }
+                }
+
+                return found;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private void CheckIfWordIsActivated()
         {
             var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
@@ -375,17 +433,18 @@ namespace Chem4Word
 
         private void SlowOperations()
         {
-            var module = $"{MethodBase.GetCurrentMethod()?.Name}()";
-            var securityProtocol = ServicePointManager.SecurityProtocol;
+            string module = $"{MethodBase.GetCurrentMethod()?.Name}()";
+
+            SecurityProtocolType securityProtocol = ServicePointManager.SecurityProtocol;
 
             try
             {
-                var message = $"{module} started at {SafeDate.ToLongDate(DateTime.UtcNow)}";
+                string message = $"{module} started at {SafeDate.ToLongDate(DateTime.UtcNow)}";
 
                 Debug.WriteLine(message);
                 StartUpTimings.Add(message);
 
-                var sw = new Stopwatch();
+                Stopwatch sw = new Stopwatch();
                 sw.Start();
 
                 LoadPlugins();
@@ -405,6 +464,14 @@ namespace Chem4Word
                 message = $"{module} took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms";
                 Debug.WriteLine(message);
                 StartUpTimings.Add(message);
+
+                if (!IfVebView2IsInstalled())
+                {
+                    if (UserInteractions.AskUserYesNo("Microsoft Edge WebView2 is not installed.\n\nDo you want to download it from Microsoft?") == DialogResult.Yes)
+                    {
+                        Process.Start("https://developer.microsoft.com/en-gb/microsoft-edge/webview2/consumer");
+                    }
+                }
             }
             catch // (ThreadAbortException threadAbortException)
             {
@@ -530,7 +597,7 @@ namespace Chem4Word
             }
         }
 
-        private bool CanSendTelemetry() =>
+        private bool CanSendTelemetry =>
             Telemetry != null
             && Helper != null
             && !string.IsNullOrEmpty(Helper.IpAddress)
@@ -539,7 +606,7 @@ namespace Chem4Word
 
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            if (CanSendTelemetry())
+            if (CanSendTelemetry)
             {
                 _timer.Enabled = false;
                 _timer.Elapsed -= OnTimerElapsed;
@@ -797,27 +864,16 @@ namespace Chem4Word
 
         private void PerformShutDownActions()
         {
-            var module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
 
             try
             {
-                Debug.WriteLine("Checking if Slow Operations thread is alive");
-                if (_slowOperationsThread != null)
-                {
-                    Debug.WriteLine("Joining Slow Operations thread");
-                    _slowOperationsThread.Join();
-                    if (_slowOperationsThread.IsAlive)
-                    {
-                        _slowOperationsThread.Abort();
-                    }
-                }
-
                 Debug.WriteLine("Shutting down Editor Plug Ins");
                 if (Editors != null)
                 {
-                    for (var i = 0; i < Editors.Count; i++)
+                    for (int i = 0; i < Editors.Count; i++)
                     {
-                        Debug.WriteLine($" Shutting down {Editors[i].Name} Plug In");
+                        Debug.WriteLine($" Shutting down '{Editors[i].Name}' Plug In");
                         Editors[i].Telemetry = null;
                         Editors[i] = null;
                     }
@@ -826,9 +882,9 @@ namespace Chem4Word
                 Debug.WriteLine("Shutting down Renderer Plug Ins");
                 if (Renderers != null)
                 {
-                    for (var i = 0; i < Renderers.Count; i++)
+                    for (int i = 0; i < Renderers.Count; i++)
                     {
-                        Debug.WriteLine($" Shutting down {Renderers[i].Name} Plug In");
+                        Debug.WriteLine($" Shutting down '{Renderers[i].Name}' Plug In");
                         Renderers[i].Telemetry = null;
                         Renderers[i] = null;
                     }
@@ -837,9 +893,9 @@ namespace Chem4Word
                 Debug.WriteLine("Shutting down Searcher Plug Ins");
                 if (Searchers != null)
                 {
-                    for (var i = 0; i < Searchers.Count; i++)
+                    for (int i = 0; i < Searchers.Count; i++)
                     {
-                        Debug.WriteLine($" Shutting down {Searchers[i].Name} Plug In");
+                        Debug.WriteLine($" Shutting down '{Searchers[i].Name}' Plug In");
                         Searchers[i].Telemetry = null;
                         Searchers[i] = null;
                     }
@@ -848,9 +904,9 @@ namespace Chem4Word
                 Debug.WriteLine("Shutting down Driver Plug Ins");
                 if (Drivers != null)
                 {
-                    for (var i = 0; i < Drivers.Count; i++)
+                    for (int i = 0; i < Drivers.Count; i++)
                     {
-                        Debug.WriteLine($" Shutting down {Drivers[i].Name} Plug In");
+                        Debug.WriteLine($" Shutting down '{Drivers[i].Name}' Plug In");
                         Drivers[i].Telemetry = null;
                         Drivers[i] = null;
                     }
@@ -862,20 +918,40 @@ namespace Chem4Word
                 Debug.WriteLine("Disposing of Reference Keeper");
                 _keeper?.Dispose();
 
-#if DEBUG
-                // Wait up to 5 seconds for all telemetry to be sent
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                while (Globals.Chem4WordV3.Telemetry.BufferCount() > 0)
+                Debug.WriteLine("Checking if Slow Operations thread is alive");
+                if (_slowOperationsThread?.IsAlive == true)
                 {
-                    Debug.WriteLine($"Buffer count is {Globals.Chem4WordV3.Telemetry.BufferCount()}");
-                    Thread.Sleep(25);
-                    if (stopwatch.ElapsedMilliseconds > 5000)
+                    Debug.WriteLine("  Joining Slow Operations thread");
+                    _slowOperationsThread.Join();
+                    Debug.WriteLine("  Aborting Slow Operations thread");
+                    _slowOperationsThread.Abort();
+                }
+
+                if (CanSendTelemetry)
+                {
+                    Debug.WriteLine("Ensuring that all Telemetry data has been sent");
+
+                    // Wait for up to 30 seconds to allow all telemetry to be sent
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
+                    int count = Globals.Chem4WordV3.Telemetry.BufferCount();
+                    Debug.WriteLine($"  Telemetry count is {count}");
+
+                    while (count > 0)
                     {
-                        break;
+                        if (stopwatch.Elapsed > TimeSpan.FromSeconds(30))
+                        {
+                            Debug.WriteLine($"Aborting after {stopwatch.Elapsed}");
+                            break;
+                        }
+
+                        Thread.Sleep(TimeSpan.FromMilliseconds(250));
+
+                        count = Globals.Chem4WordV3.Telemetry.BufferCount();
+                        Debug.WriteLine($"  Telemetry count is {count}");
                     }
                 }
-#endif
 
                 Debug.WriteLine("Waiting for garbage collection");
                 GC.Collect();

@@ -180,6 +180,7 @@ namespace Chem4Word.Model2.Converters.CML
                                 newElectronPusher.StartChemistry = startChemistry;
                             }
                         }
+
                         //there may be more than one secondRef, so split it
                         string[] secondPaths = secondRefs.Split(' ');
                         foreach (string path in secondPaths)

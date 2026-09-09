@@ -150,7 +150,10 @@ Write-Host " Updating 'Product.wxs'" -ForegroundColor Yellow
 $wixFile = "$($pwd)\..\Installer\WiXInstaller\Product.wxs"
 Write-Host "$($wixFile)" -ForegroundColor Green
 
-$xml = [xml](Get-Content $wixFile)
+$xml = New-Object System.Xml.XmlDocument
+$xml.PreserveWhitespace = $true
+$xml.Load($wixFile)
+
 $xml.Wix.Package.Version = "$($version).$($delta.Days)"
 $xml.Wix.Package.Name = "Chemistry Add-In for Microsoft Word 2026 $($name)"
 $xml.Save($wixFile)
@@ -162,7 +165,10 @@ Write-Host " Updating 'Wix-Installer.wixproj'" -ForegroundColor Yellow
 $wixProj = "$($pwd)\..\Installer\WiXInstaller\Wix-Installer.wixproj"
 Write-Host "$($wixProj)" -ForegroundColor Green
 
-$xml = [xml](Get-Content $wixProj)
+$xml = New-Object System.Xml.XmlDocument
+$xml.PreserveWhitespace = $true
+$xml.Load( $wixProj)
+
 $dottedname = $name.Replace(" ", ".")
 $xml.Project.PropertyGroup.OutputName = "Chem4Word-Setup.$($version).$($dottedname)"
 $xml.Save($wixProj)

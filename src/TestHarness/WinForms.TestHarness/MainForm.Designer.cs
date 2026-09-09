@@ -393,6 +393,7 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ACME Test Bed";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.OnLoad_FlexForm);
             this.LayoutPanel.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);

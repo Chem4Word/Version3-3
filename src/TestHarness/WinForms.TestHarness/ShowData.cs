@@ -8,31 +8,58 @@
 using ScintillaNET;
 using System;
 using System.Drawing;
-using System.Windows;
 using System.Windows.Forms;
-using Style = ScintillaNET.Style;
-using SystemColors = System.Drawing.SystemColors;
 
 namespace WinForms.TestHarness
 {
-    public partial class ShowCml : Form
+    public partial class ShowData : Form
     {
-        public string Cml { get; set; }
+        public string Data { get; set; }
 
-        public ShowCml()
+        public ShowData()
         {
             InitializeComponent();
         }
 
-        private void OnLoad_ShowCml(object sender, EventArgs e)
+        private void OnLoad_ShowData(object sender, EventArgs e)
+        {
+            Timer1.Enabled = true;
+        }
+
+        private void SetBasicStyles(Scintilla scintilla)
+        {
+            scintilla.Lexer = Lexer.Null;
+
+            // Show line numbers
+            scintilla.Margins[0].Width = 50;
+            scintilla.Margins[1].Width = 0;
+
+            // Disable folding
+            scintilla.SetProperty("fold", "0");
+
+            // Reset the styles
+            scintilla.StyleResetDefault();
+            scintilla.Styles[Style.Default].Font = "Consolas";
+            scintilla.Styles[Style.Default].Size = 10;
+            scintilla.StyleClearAll();
+        }
+
+        private void SetXmlStyles(Scintilla scintilla)
         {
             // Set the XML Lexer
             scintilla.Lexer = Lexer.Xml;
 
-            // Show line numbers
-            scintilla.Margins[0].Width = 30;
-            scintilla.Margins[1].Width = 0;
+            scintilla.Styles[Style.Xml.Attribute].ForeColor = Color.Red;
+            scintilla.Styles[Style.Xml.Entity].ForeColor = Color.Red;
+            scintilla.Styles[Style.Xml.Comment].ForeColor = Color.Green;
+            scintilla.Styles[Style.Xml.Tag].ForeColor = Color.DarkRed;
+            scintilla.Styles[Style.Xml.TagEnd].ForeColor = Color.DarkRed;
+            scintilla.Styles[Style.Xml.DoubleString].ForeColor = Color.Blue;
+            scintilla.Styles[Style.Xml.SingleString].ForeColor = Color.Blue;
+        }
 
+        private void SetXmlFolding(Scintilla scintilla)
+        {
             // Enable folding
             scintilla.SetProperty("fold", "1");
             scintilla.SetProperty("fold.compact", "1");
@@ -45,11 +72,15 @@ namespace WinForms.TestHarness
             scintilla.Margins[2].Width = 20;
 
             // Reset folder markers
-            for (var i = Marker.FolderEnd; i <= Marker.FolderOpen; i++)
+            for (int i = Marker.FolderEnd; i <= Marker.FolderOpen; i++)
             {
                 scintilla.Markers[i].SetForeColor(SystemColors.ControlLightLight);
                 scintilla.Markers[i].SetBackColor(SystemColors.ControlDark);
             }
+
+            // Enable automatic folding
+            scintilla.AutomaticFold = AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change;
+            scintilla.SetFoldFlags(FoldFlags.LineAfterContracted);
 
             // Style the folder markers
             scintilla.Markers[Marker.Folder].Symbol = MarkerSymbol.BoxPlus;
@@ -62,35 +93,7 @@ namespace WinForms.TestHarness
             scintilla.Markers[Marker.FolderSub].Symbol = MarkerSymbol.VLine;
             scintilla.Markers[Marker.FolderTail].Symbol = MarkerSymbol.LCorner;
 
-            // Enable automatic folding
-            scintilla.AutomaticFold = (AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change);
-
-            // Set the Styles
-            scintilla.StyleResetDefault();
-            scintilla.Styles[Style.Default].Font = "Consolas";
-            scintilla.Styles[Style.Default].Size = 11;
-            scintilla.StyleClearAll();
-
-            scintilla.Styles[Style.Xml.Attribute].ForeColor = Color.Red;
-            scintilla.Styles[Style.Xml.Entity].ForeColor = Color.Red;
-            scintilla.Styles[Style.Xml.Comment].ForeColor = Color.Green;
-            scintilla.Styles[Style.Xml.Tag].ForeColor = Color.DarkRed;
-            scintilla.Styles[Style.Xml.TagEnd].ForeColor = Color.DarkRed;
-            scintilla.Styles[Style.Xml.DoubleString].ForeColor = Color.Blue;
-            scintilla.Styles[Style.Xml.SingleString].ForeColor = Color.Blue;
-
-            scintilla.ReadOnly = false;
-            scintilla.Text = Cml;
-            scintilla.ReadOnly = true;
-
-            timer1.Enabled = true;
-        }
-
-        private void OnTick_timer1(object sender, EventArgs e)
-        {
-            timer1.Enabled = false;
-
-            foreach (var line in scintilla.Lines)
+            foreach (Line line in scintilla.Lines)
             {
                 string text = line.Text.Trim();
 
@@ -107,6 +110,28 @@ namespace WinForms.TestHarness
                         line.ToggleFold();
                         break;
                 }
+            }
+        }
+
+        private void SetData(Scintilla scintilla)
+        {
+            scintilla.ReadOnly = false;
+            scintilla.Text = Data;
+            scintilla.ReadOnly = true;
+        }
+
+        private void OnTick_timer1(object sender, EventArgs e)
+        {
+            Timer1.Enabled = false;
+
+            SetBasicStyles(Scintilla1);
+
+            SetData(Scintilla1);
+
+            if (Data.Contains("cml"))
+            {
+                SetXmlStyles(Scintilla1);
+                SetXmlFolding(Scintilla1);
             }
         }
     }

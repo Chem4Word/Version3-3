@@ -281,44 +281,51 @@ namespace Chem4Word.ACME
                 WriteTelemetry(module, LoggingLevel.Debug, "Called");
 
                 CMLConverter cc = new CMLConverter();
-                Model buffer = cc.Import(pastedCml);
-                PasteModel(buffer, true, !buffer.FromChem4Word, pasteAt: pasteAt);
+                Model pastedModel = cc.Import(pastedCml);
+                PasteModel(pastedModel, pastedCml, !pastedModel.FromChem4Word, pasteAt: pasteAt);
             }
             catch (Exception exception)
             {
                 WriteTelemetryException(module, exception);
+                WriteTelemetry(module, LoggingLevel.ExceptionCml, pastedCml);
             }
         }
 
-        public void PasteModel(Model buffer, bool fromCML = false, bool rescale = true, Point? pasteAt = null)
+        public void PasteModel(Model pastedModelIn, string pastedModelSource, bool fromCML = false, bool rescale = true, Point? pasteAt = null)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            string existingModelAsCml = new CMLConverter().Export(Model);
+
             try
             {
                 WriteTelemetry(module, LoggingLevel.Debug, "Called");
+
                 ClearSelection();
                 // Match to current model's settings
-                buffer.Relabel(true);
+                pastedModelIn.Relabel(true);
+
                 // above should be buffer.StripLabels(true)
                 if (rescale)
                 {
-                    buffer.ScaleToAverageBondLength(Model.XamlBondLength);
+                    pastedModelIn.ScaleToAverageBondLength(Model.XamlBondLength);
                 }
 
-                if (!fromCML && buffer.Molecules.Count > 1)
+                if (!fromCML && pastedModelIn.Molecules.Count > 1)
                 {
-                    Packer packer = new Packer { Model = buffer };
+                    Packer packer = new Packer { Model = pastedModelIn };
                     packer.Pack(Model.XamlBondLength * 2);
                 }
 
-                List<Molecule> molList = buffer.Molecules.Values.ToList();
-                List<Reaction> reactionList = buffer.DefaultReactionScheme.Reactions.Values.ToList();
-                List<Annotation> annotationList = buffer.Annotations.Values.ToList();
-                List<ElectronPusher> pusherList = buffer.ElectronPushers.Values.ToList();
+                List<Molecule> moleculesToAdd = pastedModelIn.Molecules.Values.ToList();
+                List<Reaction> reactionsToAdd = pastedModelIn.DefaultReactionScheme.Reactions.Values.ToList();
+                List<Annotation> annotationsToAdd = pastedModelIn.Annotations.Values.ToList();
+                List<ElectronPusher> pushersToAdd = pastedModelIn.ElectronPushers.Values.ToList();
+
                 if (pasteAt != null)
                 {
                     //offset the pasted content so that its centroid is at the pasteAt location
-                    buffer.CenterOn(pasteAt.Value);
+                    pastedModelIn.CenterOn(pasteAt.Value);
                 }
                 else
                 {
@@ -327,39 +334,41 @@ namespace Chem4Word.ACME
                     double editorControlViewportWidth = EditorControl.ViewportWidth;
                     double editorControlVerticalOffset = EditorControl.VerticalOffset;
                     double editorControlViewportHeight = EditorControl.ViewportHeight;
+
                     //to center on the X coordinate, we need to set the left extent of the model to the horizontal offset
                     //plus half the viewport width, minus half the model width
                     //Similar for the height
                     double leftCenter = editorControlHorizontalOffset + editorControlViewportWidth / 2;
                     double topCenter = editorControlVerticalOffset + editorControlViewportHeight / 2;
+
                     //these two coordinates now give us the point where the new model should be centered
-                    buffer.CenterOn(new Point(leftCenter, topCenter));
+                    pastedModelIn.CenterOn(new Point(leftCenter, topCenter));
                 }
 
                 Action undo = () =>
                               {
-                                  foreach (Molecule mol in molList)
+                                  foreach (Molecule mol in moleculesToAdd)
                                   {
                                       RemoveFromSelection(mol);
                                       Model.RemoveMolecule(mol);
                                       mol.Parent = null;
                                   }
 
-                                  foreach (Reaction reaction in reactionList)
+                                  foreach (Reaction reaction in reactionsToAdd)
                                   {
                                       RemoveFromSelection(reaction);
                                       Model.DefaultReactionScheme.RemoveReaction(reaction);
                                       reaction.Parent = null;
                                   }
 
-                                  foreach (Annotation annotation in annotationList)
+                                  foreach (Annotation annotation in annotationsToAdd)
                                   {
                                       RemoveFromSelection(annotation);
                                       Model.RemoveAnnotation(annotation);
                                       annotation.Parent = null;
                                   }
 
-                                  foreach (ElectronPusher pusher in pusherList)
+                                  foreach (ElectronPusher pusher in pushersToAdd)
                                   {
                                       RemoveFromSelection(pusher);
                                       Model.RemoveElectronPusher(pusher);
@@ -368,31 +377,32 @@ namespace Chem4Word.ACME
 
                                   Model.Relabel(false);
                               };
+
                 Action redo = () =>
                               {
                                   ClearSelection();
-                                  foreach (Molecule mol in molList)
+                                  foreach (Molecule mol in moleculesToAdd)
                                   {
                                       mol.Parent = Model;
                                       Model.AddMolecule(mol);
                                       AddToSelection(mol);
                                   }
 
-                                  foreach (Reaction reaction in reactionList)
+                                  foreach (Reaction reaction in reactionsToAdd)
                                   {
                                       reaction.Parent = Model.DefaultReactionScheme;
                                       Model.DefaultReactionScheme.AddReaction(reaction);
                                       AddToSelection(reaction);
                                   }
 
-                                  foreach (Annotation annotation in annotationList)
+                                  foreach (Annotation annotation in annotationsToAdd)
                                   {
                                       annotation.Parent = Model;
                                       Model.AddAnnotation(annotation);
                                       AddToSelection(annotation);
                                   }
 
-                                  foreach (ElectronPusher pusher in pusherList)
+                                  foreach (ElectronPusher pusher in pushersToAdd)
                                   {
                                       pusher.Parent = Model;
                                       Model.AddElectronPusher(pusher);
@@ -409,6 +419,8 @@ namespace Chem4Word.ACME
             catch (Exception exception)
             {
                 WriteTelemetryException(module, exception);
+                WriteTelemetry(module, LoggingLevel.DataCml, existingModelAsCml);
+                WriteTelemetry(module, LoggingLevel.ExceptionData, pastedModelSource);
             }
         }
 

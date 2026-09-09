@@ -23,31 +23,37 @@ namespace Chem4Word.ACME.Commands.Editing
 
         public override bool CanExecute(object parameter)
         {
-            var canExecute = Clipboard.ContainsData(ModelConstants.FormatCML) || Clipboard.ContainsData(ModelConstants.FormatSDFile) || Clipboard.ContainsText();
+            bool canExecute = Clipboard.ContainsData(ModelConstants.FormatCML) || Clipboard.ContainsData(ModelConstants.FormatSDFile) || Clipboard.ContainsText();
             return canExecute;
         }
 
         public override void Execute(object parameter)
         {
-            var cmlConverter = new CMLConverter();
-            var sdfConverter = new SdFileConverter();
-            var sketchElConverter = new SketchElConverter();
+            CMLConverter cmlConverter = new CMLConverter();
+            SdFileConverter sdfConverter = new SdFileConverter();
+            SketchElConverter sketchElConverter = new SketchElConverter();
+
+            string pastedData = string.Empty;
 
             if (Clipboard.ContainsData(ModelConstants.FormatCML))
             {
                 string pastedCML = (string)Clipboard.GetData(ModelConstants.FormatCML);
+                pastedData = pastedCML;
                 EditController.PasteCML(pastedCML, parameter as Point?);
             }
             else if (Clipboard.ContainsText())
             {
                 bool failedCML = false;
                 bool failedOther = false;
+
                 string pastedText = Clipboard.GetText();
-                Model buffer = null;
+                pastedData = pastedText;
+
+                Model model = null;
                 //try to convert the pasted text with the CML converter first
                 try
                 {
-                    buffer = cmlConverter.Import(pastedText);
+                    model = cmlConverter.Import(pastedText);
                 }
                 catch
                 {
@@ -58,13 +64,13 @@ namespace Chem4Word.ACME.Commands.Editing
                 {
                     if (pastedText.Contains(ModelConstants.M_END))
                     {
-                        buffer = sdfConverter.Import(pastedText);
-                        failedOther = buffer.AllErrors.Any();
+                        model = sdfConverter.Import(pastedText);
+                        failedOther = model.AllErrors.Any();
                     }
                     else if (pastedText.StartsWith("SketchEl!"))
                     {
-                        buffer = sketchElConverter.Import(pastedText);
-                        failedOther = buffer.AllErrors.Any();
+                        model = sketchElConverter.Import(pastedText);
+                        failedOther = model.AllErrors.Any();
                     }
                     else
                     {
@@ -74,9 +80,9 @@ namespace Chem4Word.ACME.Commands.Editing
 
                 if (failedCML && failedOther)
                 {
-                    if (buffer != null && buffer.AllErrors.Any())
+                    if (model != null && model.AllErrors.Any())
                     {
-                        Core.UserInteractions.InformUser("Unable to paste text as chemistry: " + Environment.NewLine + string.Join(Environment.NewLine, buffer.AllErrors));
+                        Core.UserInteractions.InformUser("Unable to paste text as chemistry: " + Environment.NewLine + string.Join(Environment.NewLine, model.AllErrors));
                     }
                     else
                     {
@@ -85,7 +91,7 @@ namespace Chem4Word.ACME.Commands.Editing
                 }
                 else
                 {
-                    EditController.PasteModel(buffer, pasteAt: (Point)parameter);
+                    EditController.PasteModel(model, pastedData, pasteAt: (Point)parameter);
                 }
             }
         }

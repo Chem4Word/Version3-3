@@ -723,6 +723,10 @@ namespace Chem4Word
                                         CMLConverter cmlConverter = new CMLConverter();
                                         try
                                         {
+                                            if (Debugger.IsAttached)
+                                            {
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.DataCml, data);
+                                            }
                                             model = cmlConverter.Import(data);
                                             if (!data.Contains("<c4w:showColouredAtoms>"))
                                             {
@@ -740,7 +744,7 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
-                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, "CML File:" + Environment.NewLine + data);
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionCml, data);
                                         }
                                         break;
 
@@ -748,6 +752,10 @@ namespace Chem4Word
                                     case ".sdf":
                                         try
                                         {
+                                            if (Debugger.IsAttached)
+                                            {
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.DataMol, data);
+                                            }
                                             SdFileConverter sdFileConverter = new SdFileConverter();
                                             model = sdFileConverter.Import(data);
 
@@ -761,13 +769,17 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
-                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, "MOL/SDF File:" + Environment.NewLine + data);
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionMol, data);
                                         }
                                         break;
 
                                     case ".el":
                                         try
                                         {
+                                            if (Debugger.IsAttached)
+                                            {
+                                                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.DataSketch, data);
+                                            }
                                             SketchElConverter sketchElConverter = new SketchElConverter();
                                             model = sketchElConverter.Import(data);
 
@@ -781,7 +793,7 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
-                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, "SketchEl File:" + Environment.NewLine + data);
+                                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionSketch, data);
                                         }
                                         break;
 
@@ -834,13 +846,7 @@ namespace Chem4Word
                                         CMLConverter cmlConverter = new CMLConverter();
                                         string cml = cmlConverter.Export(model);
 
-                                        bool has2D = model.HasReactions
-                                                     || model.HasAnnotations
-                                                     || model.TotalAtomsCount > 0
-                                                     && (model.TotalBondsCount == 0
-                                                         || model.MeanBondLength > CoreConstants.BondLengthTolerance / 2);
-
-                                        if (has2D)
+                                        if (model.Has2D)
                                         {
                                             Word.ContentControl cc = ChemistryHelper.Insert2DChemistry(activeDocument, cml, true);
                                             if (cc != null)
@@ -853,13 +859,17 @@ namespace Chem4Word
                                         {
                                             if (model.Molecules.Any() && model.Molecules.Values.First().Names.Any())
                                             {
-                                                Word.ContentControl cc = ChemistryHelper.Insert1DChemistry(activeDocument, model.Molecules.Values.First().Names[0].Value, false,
-                                                                                           $"{model.Molecules.Values.First().Names[0].Id}:{model.CustomXmlPartGuid}");
-                                                activeDocument.CustomXMLParts.Add(XmlHelper.AddHeader(cml));
-                                                if (cc != null)
+                                                if (model.Molecules.Values.First().Names.Any())
                                                 {
-                                                    // Move selection point into the Content Control which was just inserted
-                                                    application.Selection.SetRange(cc.Range.Start, cc.Range.End);
+                                                    string text = model.Molecules.Values.First().Names[0].Value;
+                                                    string tag = $"{model.Molecules.Values.First().Names[0].Id}:{model.CustomXmlPartGuid}";
+                                                    Word.ContentControl cc = ChemistryHelper.Insert1DChemistry(activeDocument, text, false, tag);
+                                                    activeDocument.CustomXMLParts.Add(XmlHelper.AddHeader(cml));
+                                                    if (cc != null)
+                                                    {
+                                                        // Move selection point into the Content Control which was just inserted
+                                                        application.Selection.SetRange(cc.Range.Start, cc.Range.End);
+                                                    }
                                                 }
                                             }
                                         }
@@ -1043,7 +1053,6 @@ namespace Chem4Word
                                                 {
                                                     Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionData, string.Join(Environment.NewLine, beforeModel.AllWarnings));
                                                 }
-
 
                                                 if (!beforeModel.Has2D)
                                                 {
@@ -1836,7 +1845,13 @@ namespace Chem4Word
                             DialogResult dr = searcher.Search();
                             if (dr == DialogResult.OK && !string.IsNullOrEmpty(searcher.Cml))
                             {
+                                if (Debugger.IsAttached)
+                                {
+                                    Globals.Chem4WordV3.Telemetry?.Write(module, LoggingLevel.DataCml, searcher.Cml);
+                                }
+
                                 Word.Document document = Globals.Chem4WordV3.Application.ActiveDocument;
+
                                 CMLConverter cmlConverter = new CMLConverter();
                                 Model model = cmlConverter.Import(searcher.Cml);
                                 model.CustomXmlPartGuid = Guid.NewGuid().ToString("N");

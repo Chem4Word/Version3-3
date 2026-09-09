@@ -11,26 +11,64 @@ namespace IChem4Word.Contracts
 {
     public enum LoggingLevel
     {
-        [Description("Verbose")]
-        Verbose,
+        // Please keep this list in alphabetical order
+
+        [Description("Action")]
+        Action,
+
+        [Description("AutomaticUpdate")]
+        AutomaticUpdate,
+
+        [Description("Data (CML)")]
+        DataCml,
+
+        [Description("Data (MDL)")]
+        DataMol,
+
+        [Description("Data (SketchEl!)")]
+        DataSketch,
 
         [Description("Debug")]
         Debug,
 
+        [Description("Error")]
+        Error,
+
+        [Description("Exception")]
+        Exception,
+
+        [Description("Exception (CML)")]
+        ExceptionCml,
+
+        [Description("Exception (Data)")]
+        ExceptionData,
+
+        [Description("Exception (MDL)")]
+        ExceptionMol,
+
+        [Description("Data (SketchEl!)")]
+        ExceptionSketch,
+
         [Description("Information")]
         Information,
 
-        [Description("Warning")]
-        Warning,
+        [Description("Integrity")]
+        Integrity,
 
-        [Description("Warning (Data)")]
-        WarningData,
+        [Description("LicenceCheck")]
+        LicenceCheck,
 
-        [Description("Warning (CML)")]
-        WarningCml,
+        [Description("Msi Actions")]
+        MsiActions,
 
-        [Description("Error")]
-        Error,
+        [Description("Read Manual")]
+        ReadManual,
+
+        [Description("Setup")]
+        Setup,
+
+        [Description("Search")]
+        Search,
 
         [Description("Search Failure")]
         SearchFailure,
@@ -38,40 +76,28 @@ namespace IChem4Word.Contracts
         [Description("Search Failure (Data)")]
         SearchFailureData,
 
-        [Description("Exception")]
-        Exception,
+        [Description("Search Warning (Data)")]
+        SearchWarningData,
 
-        [Description("Exception (Data)")]
-        ExceptionData,
-
-        [Description("Exception (CML)")]
-        ExceptionCml,
-
-        [Description("StackTrace")]
+        [Description("Exception (StackTrace)")]
         StackTrace,
 
-        [Description("Action")]
-        Action,
+        [Description("Timing")]
+        Timing,
 
         [Description("Update")]
         Update,
 
-        [Description("Msi Actions")]
-        MsiActions,
+        [Description("Verbose")]
+        Verbose,
 
-        [Description("Setup")]
-        Setup,
+        [Description("Warning")]
+        Warning,
 
-        [Description("Read Manual")]
-        ReadManual,
+        [Description("Warning (CML)")]
+        WarningCml,
 
-        [Description("AutomaticUpdate")]
-        AutomaticUpdate,
-
-        [Description("Integrity")]
-        Integrity,
-
-        [Description("Timing")]
-        Timing,
+        [Description("Warning (Data)")]
+        WarningData,
     }
 }

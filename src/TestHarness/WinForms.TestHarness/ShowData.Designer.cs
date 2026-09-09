@@ -1,6 +1,6 @@
 ﻿namespace WinForms.TestHarness
 {
-    partial class ShowCml
+    partial class ShowData
     {
         /// <summary>
         /// Required designer variable.
@@ -29,43 +29,43 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShowCml));
-            this.scintilla = new ScintillaNET.Scintilla();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShowData));
+            this.Scintilla1 = new ScintillaNET.Scintilla();
+            this.Timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
-            // scintilla
+            // Scintilla1
             // 
-            this.scintilla.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scintilla.Location = new System.Drawing.Point(0, 0);
-            this.scintilla.Name = "scintilla";
-            this.scintilla.Size = new System.Drawing.Size(1018, 450);
-            this.scintilla.TabIndex = 0;
-            this.scintilla.Text = "...";
+            this.Scintilla1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Scintilla1.Location = new System.Drawing.Point(0, 0);
+            this.Scintilla1.Name = "Scintilla1";
+            this.Scintilla1.Size = new System.Drawing.Size(1018, 450);
+            this.Scintilla1.TabIndex = 0;
+            this.Scintilla1.Text = "...";
             // 
-            // timer1
+            // Timer1
             // 
-            this.timer1.Interval = 125;
-            this.timer1.Tick += new System.EventHandler(this.OnTick_timer1);
+            this.Timer1.Interval = 125;
+            this.Timer1.Tick += new System.EventHandler(this.OnTick_timer1);
             // 
-            // ShowCml
+            // ShowData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1018, 450);
-            this.Controls.Add(this.scintilla);
+            this.Controls.Add(this.Scintilla1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "ShowCml";
+            this.Name = "ShowData";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ShowCml";
-            this.Load += new System.EventHandler(this.OnLoad_ShowCml);
+            this.Load += new System.EventHandler(this.OnLoad_ShowData);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private ScintillaNET.Scintilla scintilla;
-        private System.Windows.Forms.Timer timer1;
+        private ScintillaNET.Scintilla Scintilla1;
+        private System.Windows.Forms.Timer Timer1;
     }
 }
