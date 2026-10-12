@@ -23,6 +23,7 @@ namespace Chem4Word.ACME.Models
     {
         public class TagControlModel : DependencyObject
         {
+            private readonly HashSet<char> _legalCharacters = new HashSet<char>("[]{}()-,.:");
             private readonly SortedDictionary<string, long> _userTags = new SortedDictionary<string, long>();
 
             /// <summary>
@@ -202,8 +203,8 @@ namespace Chem4Word.ACME.Models
                         // Grab the last character of the textbox
                         var lastChar = autoCompleteBox.Text[autoCompleteBox.Text.Length - 1];
 
-                        // Any punctuation mark is acceptable, but exclude '-' as terminator because we want it!
-                        if (char.IsPunctuation(lastChar) && !lastChar.Equals('-'))
+                        // Any punctuation mark is acceptable, but exclude '[],-.' as terminator because we want them!
+                        if (char.IsPunctuation(lastChar) && !_legalCharacters.Contains(lastChar))
                         {
                             AddNewTag(autoCompleteBox, true);
                         }

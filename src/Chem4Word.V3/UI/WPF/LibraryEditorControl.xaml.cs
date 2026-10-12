@@ -1305,9 +1305,10 @@ namespace Chem4Word.UI.WPF
 
             if (tags.Count > 0)
             {
+                tags.Sort();
                 // Prevent the files being written any more than necessary
-                string lastTags = string.Join(",", _lastTags);
-                string currentTags = string.Join(",", tags);
+                string lastTags = string.Join("|", _lastTags);
+                string currentTags = string.Join("|", tags);
 
                 if (!lastTags.Equals(currentTags)
                     && Globals.Chem4WordV3.SystemOptions != null
@@ -1336,6 +1337,7 @@ namespace Chem4Word.UI.WPF
             }
 
             _lastTags = tags;
+            _lastTags.Sort();
         }
 
         private void OnClick_CancelButton(object sender, RoutedEventArgs e)
