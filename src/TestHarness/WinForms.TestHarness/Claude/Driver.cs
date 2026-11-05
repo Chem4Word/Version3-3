@@ -55,8 +55,7 @@ namespace WinForms.TestHarness.Claude
         public static void TestDrive(string[] args)
         {
             string outDir = args[0];
-            StringBuilder html =
-                new StringBuilder("<html><body style='font-family:sans-serif'><div style='display:flex;flex-wrap:wrap'>");
+            StringBuilder html = new StringBuilder("<html><body style='font-family:sans-serif'><div style='display:flex;flex-wrap:wrap'>");
             foreach ((string name, string smiles) in Tests)
             {
                 try
