@@ -5,6 +5,7 @@
 //  at the root directory of the distribution.
 // ---------------------------------------------------------------------------
 
+using Chem4Word.ACME;
 using Chem4Word.Core.Helpers;
 using Chem4Word.Model2;
 using Chem4Word.Model2.Converters.CML;
@@ -12,6 +13,7 @@ using Chem4Word.Model2.Converters.JSON;
 using Chem4Word.Model2.Converters.MDL;
 using Chem4Word.Model2.Converters.ProtocolBuffers;
 using Chem4Word.Model2.Converters.SketchEl;
+using Chem4Word.Model2.Converters.Smiles;
 using Chem4Word.Renderer.OoXmlV4;
 using Chem4Word.Searcher.ChEBIPlugin;
 using Chem4Word.Searcher.OpsinPlugIn;
@@ -57,6 +59,10 @@ namespace WinForms.TestHarness
         private OoXmlV4Options _renderOptions;
         private ConfigWatcher _configWatcher;
 
+        public Display AcmeDisplay;
+        public StackViewer RedoStackViewer;
+        public StackViewer UndoStackViewer;
+
         public MainForm()
         {
             InitializeComponent();
@@ -79,6 +85,48 @@ namespace WinForms.TestHarness
             _renderOptions = new OoXmlV4Options(null);
         }
 
+        private void OnLoad_MainForm(object sender, EventArgs e)
+        {
+            AcmeDisplay = new Display();
+            AcmeDisplay.InitializeComponent();
+            AcmeDisplay.HighlightActive = false;
+            DisplayHost.Child = AcmeDisplay;
+            DisplayHost.Dock = DockStyle.Fill;
+
+            RedoStackViewer = new StackViewer();
+            RedoHost.Child = RedoStackViewer;
+
+            UndoStackViewer = new StackViewer();
+            UndoHost.Child = UndoStackViewer;
+
+            // ToDo: [MAW] Check if we still need the config watcher
+            string location = Assembly.GetExecutingAssembly().Location;
+            string path = Path.GetDirectoryName(location);
+            _configWatcher = new ConfigWatcher(path);
+        }
+
+        private void OnFormClosing_MainForm(object sender, FormClosingEventArgs e)
+        {
+            int count = _telemetry.BufferCount();
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            while (count > 0)
+            {
+                Debug.WriteLine($"{DateTime.Now:HH:mm:ss.fff} Telemetry count is {count}");
+
+                if (stopwatch.Elapsed > TimeSpan.FromSeconds(30))
+                {
+                    Debug.WriteLine($"Aborting after {stopwatch.Elapsed}");
+                    break;
+                }
+
+                Thread.Sleep(TimeSpan.FromMilliseconds(250));
+                count = _telemetry.BufferCount();
+            }
+        }
+
         private void SetButtonStates(FormState state)
         {
             switch (state)
@@ -93,12 +141,15 @@ namespace WinForms.TestHarness
                     SaveStructure.Enabled = false;
                     ClearChemistry.Enabled = false;
                     EditLabels.Enabled = false;
-                    LayoutStructure.Enabled = false;
+                    LayoutStructureV1.Enabled = false;
+                    LayoutStructureV2.Enabled = false;
                     RenderOoXml.Enabled = false;
                     ChangeOoXmlSettings.Enabled = false;
                     SearchChEBI.Enabled = false;
-                    SearchOpsin.Enabled = false;
                     SearchPubChem.Enabled = false;
+                    SearchOpsin.Enabled = false;
+                    ParseSmiles.Enabled = false;
+                    SmilesString.Enabled = false;
                     CalculateProperties.Enabled = false;
                     break;
 
@@ -106,8 +157,10 @@ namespace WinForms.TestHarness
                     LoadStructure.Enabled = true;
                     EditWithAcme.Enabled = true;
                     SearchChEBI.Enabled = true;
-                    SearchOpsin.Enabled = true;
                     SearchPubChem.Enabled = true;
+                    SearchOpsin.Enabled = true;
+                    ParseSmiles.Enabled = true;
+                    SmilesString.Enabled = true;
                     break;
 
                 case FormState.Edit:
@@ -127,7 +180,8 @@ namespace WinForms.TestHarness
             ShowCml.Enabled = true;
             ClearChemistry.Enabled = true;
             SaveStructure.Enabled = true;
-            LayoutStructure.Enabled = true;
+            LayoutStructureV1.Enabled = true;
+            LayoutStructureV2.Enabled = true;
             RenderOoXml.Enabled = true;
 
             Renderer renderer = new Renderer();
@@ -289,9 +343,8 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
-                MessageBox.Show(exception.StackTrace, exception.Message);
+                _telemetry.LogException(module, exception);
+                MessageBox.Show(exception.ToString());
             }
         }
 
@@ -342,8 +395,7 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
+               _telemetry.LogException(module, exception);
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
 #endif
@@ -379,8 +431,7 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
+                _telemetry.LogException(module, exception);
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
 #endif
@@ -388,27 +439,24 @@ namespace WinForms.TestHarness
 
         private void ShowChemistry(string filename, Model model)
         {
-            Display.Clear();
+            AcmeDisplay.Clear();
 
             if (model != null)
             {
-                if (model.AllErrors.Any())
+                if (model.AllErrors.Any() || model.AllWarnings.Any())
                 {
-                    List<string> lines = new List<string>();
-
-                    if (model.AllErrors.Any())
-                    {
-                        lines.Add("All Error(s)");
-                        lines.AddRange(model.AllErrors);
-                    }
-
-                    MessageBox.Show(string.Join(Environment.NewLine, lines));
+                    ShowErrorsAndWarnings(model);
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(filename))
                     {
                         Text = filename;
+                    }
+
+                    if (string.IsNullOrEmpty(model.SubstanceName))
+                    {
+                        model.SubstanceName = filename;
                     }
 
                     Information1.Text = $"Formula: {model.ConciseFormula} Unicode: {model.UnicodeFormula}";
@@ -419,7 +467,7 @@ namespace WinForms.TestHarness
                     Information2.Text = stringBuilder.ToString();
 
                     // MUST Use a copy as the display modifies BondLength
-                    Display.Chemistry = model.Copy();
+                    AcmeDisplay.Chemistry = model.Copy();
 
                     Debug.WriteLine($"FlexForm is displaying {model.ConciseFormula}");
 
@@ -428,29 +476,48 @@ namespace WinForms.TestHarness
             }
         }
 
+        private static void ShowErrorsAndWarnings(Model model)
+        {
+            List<string> lines = new List<string>();
+
+            if (model.AllErrors.Any())
+            {
+                lines.Add("Error(s)");
+                lines.AddRange(model.AllErrors);
+            }
+
+            if (model.AllWarnings.Any())
+            {
+                lines.Add("Warnings(s)");
+                lines.AddRange(model.AllWarnings);
+            }
+
+            MessageBox.Show(string.Join(Environment.NewLine, lines), "Error(s) / Warning(s)");
+        }
+
         private void OnClick_Undo(object sender, EventArgs e)
         {
             string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
             try
             {
                 Model poppedModel = _undoStack.Pop();
-                Debug.WriteLine(
-                    $"Popped F: {poppedModel.ConciseFormula} BL: {SafeDouble.AsString0(poppedModel.MeanBondLength)} from Undo Stack");
+                Debug.WriteLine($"Popped F: {poppedModel.ConciseFormula} BL: {SafeDouble.AsString0(poppedModel.MeanBondLength)} from Undo Stack");
 
                 if (_currentModel != null)
                 {
-                    Debug.WriteLine(
-                        $"Pushing F: {_currentModel.ConciseFormula} BL: {SafeDouble.AsString0(_currentModel.MeanBondLength)} onto Redo Stack");
+                    Debug.WriteLine($"Pushing F: {_currentModel.ConciseFormula} BL: {SafeDouble.AsString0(_currentModel.MeanBondLength)} onto Redo Stack");
                     _redoStack.Push(_currentModel);
                 }
 
                 _currentModel = poppedModel;
-                ShowChemistry($"Undo -> {_currentModel.UnicodeFormula}", _currentModel);
+                ShowChemistry(
+                    string.IsNullOrEmpty(_currentModel.SubstanceName)
+                        ? $"Undo -> {_currentModel.UnicodeFormula}"
+                        : $"Undo -> {_currentModel.SubstanceName}", _currentModel);
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
+                _telemetry.LogException(module, exception);
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -466,18 +533,20 @@ namespace WinForms.TestHarness
 
                 if (_currentModel != null)
                 {
-                    Debug.WriteLine(
-                        $"Pushing F: {_currentModel.ConciseFormula} BL: {SafeDouble.AsString0(_currentModel.MeanBondLength)} onto Undo Stack");
+                    Debug.WriteLine($"Pushing F: {_currentModel.ConciseFormula} BL: {SafeDouble.AsString0(_currentModel.MeanBondLength)} onto Undo Stack");
                     _undoStack.Push(_currentModel);
                 }
 
                 _currentModel = poppedModel;
-                ShowChemistry($"Redo -> {_currentModel.UnicodeFormula}", _currentModel);
+
+                ShowChemistry(
+                    string.IsNullOrEmpty(_currentModel.SubstanceName)
+                        ? $"Undo -> {_currentModel.UnicodeFormula}"
+                        : $"Undo -> {_currentModel.SubstanceName}", _currentModel);
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
+                _telemetry.LogException(module, exception);
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -489,8 +558,11 @@ namespace WinForms.TestHarness
                 Debug.WriteLine("Undo Stack");
                 foreach (Model model in _undoStack)
                 {
-                    Debug.WriteLine(
-                        $"{model.ConciseFormula} [{model.GetHashCode()}] {model.MeanBondLength.ToString("#,##0.00")}");
+                    if (model != null)
+                    {
+                        Debug.WriteLine(
+                            $"{model.ConciseFormula} [{model.GetHashCode()}] {model.MeanBondLength.ToString("#,##0.00")}");
+                    }
                 }
             }
 
@@ -499,8 +571,11 @@ namespace WinForms.TestHarness
                 Debug.WriteLine("Redo Stack");
                 foreach (Model model in _redoStack)
                 {
-                    Debug.WriteLine(
-                        $"{model.ConciseFormula} [{model.GetHashCode()}] {model.MeanBondLength.ToString("#,##0.00")}");
+                    if (model != null)
+                    {
+                        Debug.WriteLine(
+                            $"{model.ConciseFormula} [{model.GetHashCode()}] {model.MeanBondLength.ToString("#,##0.00")}");
+                    }
                 }
             }
         }
@@ -531,8 +606,7 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
+                _telemetry.LogException(module, exception);
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -555,8 +629,7 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
+                _telemetry.LogException(module, exception);
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -628,8 +701,7 @@ namespace WinForms.TestHarness
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"Exception: {exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"Exception: {exception}");
+                _telemetry.LogException(module, exception);
                 MessageBox.Show(exception.StackTrace, exception.Message);
             }
         }
@@ -647,18 +719,8 @@ namespace WinForms.TestHarness
             _undoStack.Push(_currentModel);
             _currentModel = null;
 
-            Display.Clear();
+            AcmeDisplay.Clear();
             SetButtonStates(FormState.Edit);
-        }
-
-        private void OnLoad_FlexForm(object sender, EventArgs e)
-        {
-            Display.HighlightActive = false;
-
-            // ToDo: [MAW] Check if we still need the config watcher
-            string location = Assembly.GetExecutingAssembly().Location;
-            string path = Path.GetDirectoryName(location);
-            _configWatcher = new ConfigWatcher(path);
         }
 
         private void OptionsChanged()
@@ -692,16 +754,48 @@ namespace WinForms.TestHarness
         private void UpdateControls()
         {
             // MUST Use a copy as the display modifies BondLength
-            Display.Chemistry = _currentModel.Copy();
+            AcmeDisplay.Chemistry = _currentModel.Copy();
 
             UndoStackViewer.Reload(_undoStack);
             RedoStackViewer.Reload(_redoStack);
         }
 
-        private void OnClick_LayoutStructure(object sender, EventArgs e)
+        private void OnClick_LayoutStructureV1(object sender, EventArgs e)
         {
-            // No Longer working ...
-            // Would call LayoutUsingChemblClean(), but that API no longer present
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            Stopwatch stopwatch = new Stopwatch();
+
+            Model copy = _currentModel.Copy();
+
+            stopwatch.Start();
+            Chem4Word.Model2.Cleaners.V1.Cleaner.Clean(copy);
+            stopwatch.Stop();
+
+            _undoStack.Push(_currentModel);
+            _currentModel = copy;
+
+            _telemetry.Write(module, LoggingLevel.Timing, $"Cleaning V1 took [{stopwatch.Elapsed}]");
+            ShowChemistry($"Cleaning V1 took [{stopwatch.Elapsed}]", copy);
+        }
+
+        private void OnClick_LayoutStructureV2(object sender, EventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            Stopwatch stopwatch = new Stopwatch();
+
+            Model copy = _currentModel.Copy();
+
+            stopwatch.Start();
+            Chem4Word.Model2.Cleaners.V2.Cleaner.Clean(copy);
+            stopwatch.Stop();
+
+            _undoStack.Push(_currentModel);
+            _currentModel = copy;
+
+            _telemetry.Write(module, LoggingLevel.Timing, $"Cleaning V2 took [{stopwatch.Elapsed}]");
+            ShowChemistry($"Cleaning V2 took [{stopwatch.Elapsed}]", copy);
         }
 
         private void LayoutUsingChemblClean()
@@ -874,6 +968,56 @@ namespace WinForms.TestHarness
             Activate();
         }
 
+        private void OnKeyPress_SmilesString(object sender, KeyPressEventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            if (e.KeyChar == (char)Keys.Return)
+            {
+                e.Handled = true;
+                ParseSmilesString();
+            }
+        }
+
+        private void OnClick_ParseSmiles(object sender, EventArgs e)
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            ParseSmilesString();
+        }
+
+        private void ParseSmilesString()
+        {
+            string module = $"{_product}.{_class}.{MethodBase.GetCurrentMethod()?.Name}()";
+
+            if (!string.IsNullOrEmpty(SmilesString.Text.Trim()))
+            {
+                Stopwatch stopwatch = new Stopwatch();
+
+                stopwatch.Start();
+
+                Model model = new SmilesConverter().Import(SmilesString.Text.Trim());
+
+                stopwatch.Stop();
+
+                _telemetry.Write(module, LoggingLevel.Timing, $"Import of SMILES took [{stopwatch.Elapsed}]");
+
+                if (model != null)
+                {
+                    if (model.TotalAtomsCount > 0)
+                    {
+                        string cml = new CMLConverter().Export(model);
+                        HandleChangedCml(cml, $"Import of SMILES took [{stopwatch.Elapsed}]");
+                    }
+
+                    if (model.AllErrors.Any() || model.AllWarnings.Any())
+                    {
+                        ShowErrorsAndWarnings(model);
+                    }
+                }
+            }
+        }
+
         private void HandleChangedCml(string cml, string captionPrefix)
         {
             CMLConverter cc = new CMLConverter();
@@ -940,28 +1084,6 @@ namespace WinForms.TestHarness
                 timer1.Enabled = false;
                 Thread.Sleep(250);
                 SetButtonStates(FormState.OpenOrCreate);
-            }
-        }
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            int count = _telemetry.BufferCount();
-
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            while (count > 0)
-            {
-                Debug.WriteLine($"{DateTime.Now:HH:mm:ss.fff} Telemetry count is {count}");
-
-                if (stopwatch.Elapsed > TimeSpan.FromSeconds(30))
-                {
-                    Debug.WriteLine($"Aborting after {stopwatch.Elapsed}");
-                    break;
-                }
-
-                Thread.Sleep(TimeSpan.FromMilliseconds(250));
-                count = _telemetry.BufferCount();
             }
         }
     }

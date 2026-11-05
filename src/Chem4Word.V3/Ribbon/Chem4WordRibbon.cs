@@ -744,6 +744,7 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
+                                            Globals.Chem4WordV3.Telemetry.LogException(module, exception);
                                             Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionCml, data);
                                         }
                                         break;
@@ -769,6 +770,7 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
+                                            Globals.Chem4WordV3.Telemetry.LogException(module, exception);
                                             Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionMol, data);
                                         }
                                         break;
@@ -793,6 +795,7 @@ namespace Chem4Word
                                         catch (Exception exception)
                                         {
                                             converterException = exception.Message + Environment.NewLine + exception.StackTrace;
+                                            Globals.Chem4WordV3.Telemetry.LogException(module, exception);
                                             Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.ExceptionSketch, data);
                                         }
                                         break;
@@ -1349,8 +1352,7 @@ namespace Chem4Word
                         }
                         else
                         {
-                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, cex.Message);
-                            Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, cex.StackTrace);
+                            Globals.Chem4WordV3.Telemetry.LogException(module, cex);
                         }
                     }
                     catch (Exception ex)

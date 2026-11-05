@@ -93,8 +93,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                         catch (Exception exception)
                         {
                             Debug.WriteLine(exception.Message);
-                            Errors.Add(exception.Message);
-                            Errors.Add(exception.StackTrace);
+                            Errors.Add(exception.ToString());
 
                             RestoreDefaults();
                             PersistOptions(optionsFile);
@@ -109,8 +108,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
             catch (Exception exception)
             {
-                Errors.Add(exception.Message);
-                Errors.Add(exception.StackTrace);
+                Errors.Add(exception.ToString());
             }
         }
 
@@ -131,8 +129,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
             }
             catch (Exception exception)
             {
-                Errors.Add(exception.Message);
-                Errors.Add(exception.StackTrace);
+                Errors.Add(exception.ToString());
             }
         }
 

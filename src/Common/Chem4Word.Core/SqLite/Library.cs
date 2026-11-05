@@ -87,8 +87,7 @@ namespace Chem4Word.Core.SqLite
                 Database.IsSqliteDatabase = false;
                 Database.Checked = true;
 
-                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
+                _telemetry.LogException(module, exception);
 
                 string assembliesLoaded = FileHelper.AssembliesLoaded();
                 _telemetry.Write(module, LoggingLevel.ExceptionData, $"{assembliesLoaded}");
@@ -1071,8 +1070,7 @@ namespace Chem4Word.Core.SqLite
 
                 _telemetry.Write(module, LoggingLevel.ExceptionData, $"Database '{_databaseFile.FullName}' file size size is {info.Length:N0} bytes");
 
-                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
+                _telemetry.LogException(module, exception);
 
                 string assembliesLoaded = FileHelper.AssembliesLoaded();
                 _telemetry.Write(module, LoggingLevel.ExceptionData, $"{assembliesLoaded}");
@@ -1312,8 +1310,7 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
+                _telemetry.LogException(module, exception);
 
                 Debugger.Break();
             }
@@ -1352,8 +1349,7 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
+                _telemetry.LogException(module, exception);
 
                 Debugger.Break();
             }
@@ -1399,8 +1395,7 @@ namespace Chem4Word.Core.SqLite
             }
             catch (Exception exception)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, $"{exception.Message}");
-                _telemetry.Write(module, LoggingLevel.ExceptionData, $"{exception.StackTrace}");
+                _telemetry.LogException(module, exception);
 
                 Debugger.Break();
             }

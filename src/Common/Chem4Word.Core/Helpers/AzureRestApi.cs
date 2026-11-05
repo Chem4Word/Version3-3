@@ -59,7 +59,7 @@ namespace Chem4Word.Core.Helpers
             }
             catch (Exception exception)
             {
-                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
+                result.Message = exception.ToString();
                 result.HasException = true;
                 Debug.WriteLine(module + Environment.NewLine + result.Message);
             }
@@ -110,7 +110,7 @@ namespace Chem4Word.Core.Helpers
             }
             catch (Exception exception)
             {
-                result.Message = NestedExceptionMessages(exception) + Environment.NewLine + exception.StackTrace;
+                result.Message = exception.ToString();
                 result.HasException = true;
                 Debug.WriteLine(module + Environment.NewLine + result.Message);
             }

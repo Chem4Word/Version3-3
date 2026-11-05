@@ -1,0 +1,26 @@
+﻿Where it lives: it’s in the WinForms.TestHarness namespace next to CleanerV2, because Model.GeneralErrors is internal and CleanerV2 sits in the test harness. If you later move CleanerV2 into Model2, this can go to Converters/SMILES alongside the SketchEl converter, which I used as the pattern. Parse errors go into molecule.Errors and warnings into molecule.Warnings, so they show up in model.AllErrors and AllWarnings.
+
+What it covers from the Wikipedia definition:
+
+organic subset atoms and bracket atoms (isotope, H count, charge, atom class)
+all bond symbols, branches, and ring closures including %nn and %(nnn)
+aromatic atoms, converted to alternating single and double bonds, since Chem4Word draws Kekulé structures
+@ and @@ drawn as wedge or hatch bonds, and / \ double-bond geometry
+. separated parts become child molecules, as SdFileConverter does
+
+How it uses CleanerV2: CleanerV2 does the layout. After that, the converter flips one side of any acyclic double bond drawn the wrong way round, because the cleaner doesn’t read / and \. It then places the wedges, since they only make sense once the atoms have positions.
+
+Testing: the 2D layout here came from RDKit (a free chemistry toolkit), not from your CleanerV2, because I don’t have its Depictor part. I built it with the .NET 10 compiler at C# 7.3 with no errors or warnings, using stand-ins for the Model2 classes that copy Chem4Word’s own hydrogen-counting rules. I then converted every result back and compared it with RDKit’s reading of the original SMILES:
+
+all the Wikipedia examples match, apart from [Ti++++], which RDKit itself won’t read
+1,543 of 1,547 rewritten versions match (the same molecules written in other valid orders, in both aromatic and alternating-bond forms)
+
+The 4 mismatches need a decision from you. They are all sulfoxides that start with the chiral sulfur, e.g. [S@@](C)(=O)c1ccccc1. Toolkits disagree on where the lone pair counts when the chiral atom starts the string. I followed the Perl OpenSMILES library’s rule: the lone pair is always understood as being the second in the order of neighbour enumeration, except when the atom with the lone pair starts a chain. In that case lone pair is the first. RDKit gives the opposite answer. To match RDKit instead, change HasPrevious ? 1 : 0 to HasPrevious ? 1 : 3 in AssignWedges. 
+debian
+
+Choices I made you may want to change:
+
+* becomes the R element.
+$ (quadruple bond) becomes order other, with a warning.
+If a bracket atom states fewer hydrogens than Chem4Word would assume (e.g. [CH3], [CH2]), I add radical or carbenoid electrons to make up the difference. If it states more, I add explicit H atoms.
+The messages are plain English like the existing converters. The i18n-crawler and backend-string-crawler skills weren’t available here, so they may need to go through your localisation process.

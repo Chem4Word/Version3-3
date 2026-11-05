@@ -300,8 +300,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                 }
                 catch (Exception exception)
                 {
-                    Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
-                    Telemetry.Write(module, LoggingLevel.StackTrace, exception.StackTrace);
+                    Telemetry.LogException(module, exception);
                 }
             }
         }
@@ -577,8 +576,7 @@ namespace Chem4Word.Searcher.PubChemPlugIn
                 }
                 catch (Exception exception)
                 {
-                    Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
-                    Telemetry.Write(module, LoggingLevel.StackTrace, exception.StackTrace);
+                    Telemetry.LogException(module, exception);
                 }
             }
 

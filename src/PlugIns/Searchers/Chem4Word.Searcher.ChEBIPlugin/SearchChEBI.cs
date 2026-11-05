@@ -160,8 +160,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                 catch (Exception exception)
                 {
                     ErrorsAndWarnings.Text = exception.Message;
-                    Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
-                    Telemetry.Write(module, LoggingLevel.StackTrace, exception.StackTrace);
+                    Telemetry.LogException(module, exception);
                 }
             }
 
@@ -263,8 +262,7 @@ namespace Chem4Word.Searcher.ChEBIPlugin
                     else
                     {
                         ErrorsAndWarnings.Text = exception.Message;
-                        Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
-                        Telemetry.Write(module, LoggingLevel.StackTrace, exception.StackTrace);
+                        Telemetry.LogException(module, exception);
                     }
                 }
             }

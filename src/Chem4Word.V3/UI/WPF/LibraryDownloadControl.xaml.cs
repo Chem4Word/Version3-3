@@ -159,8 +159,7 @@ namespace Chem4Word.UI.WPF
                 }
                 catch (Exception exception)
                 {
-                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
-                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
+                    Globals.Chem4WordV3.Telemetry.LogException(module, exception);
                 }
             }
         }

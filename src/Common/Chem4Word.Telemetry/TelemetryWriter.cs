@@ -159,6 +159,30 @@ namespace Chem4Word.Telemetry
             }
         }
 
+        public void LogException(string source, Exception exception, string extraInfo = null)
+        {
+            List<string> output = new List<string>();
+
+            if (!string.IsNullOrEmpty(extraInfo))
+            {
+                output.Add(extraInfo);
+                output.Add("");
+            }
+
+            output.Add(exception.ToString());
+
+            //if (exception.InnerException != null)
+            //{
+            //    output.Add("--- Inner Exception ---");
+            //    output.Add(exception.InnerException.Message);
+            //    output.Add(exception.InnerException.StackTrace);
+            //}
+
+            string message = string.Join(Environment.NewLine, output);
+
+            Write(source, LoggingLevel.StackTrace, message);
+        }
+
         public void SendZipFile(byte[] bytes, string fileName)
         {
             ServiceBusMessage message = new ServiceBusMessage(bytes)

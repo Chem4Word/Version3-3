@@ -212,13 +212,8 @@ namespace Chem4Word.Telemetry
                 {
                     Debug.WriteLine(ex.Message);
                     string result = $"Exception in '{functionName}'"
-                                    + Environment.NewLine + ex.Message
-                                    + Environment.NewLine + ex.StackTrace;
-                    if (ex.InnerException != null)
-                    {
-                        result += ex.InnerException.Message
-                                  + Environment.NewLine + ex.InnerException.StackTrace;
-                    }
+                                    + Environment.NewLine
+                                    + ex.ToString();
                     WordProduct = result;
                 }
 

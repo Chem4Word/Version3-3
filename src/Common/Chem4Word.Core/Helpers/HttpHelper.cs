@@ -40,14 +40,14 @@ namespace Chem4Word.Core.Helpers
                 {
                     result.StatusCode = HttpStatusCode.InternalServerError;
                     result.Message = httpRequestException.Message;
-                    result.Content = httpRequestException.Message + Environment.NewLine + httpRequestException.StackTrace;
+                    result.Content = httpRequestException.ToString();
                     Debugger.Break();
                 }
                 catch (Exception exception)
                 {
                     result.StatusCode = HttpStatusCode.InternalServerError;
                     result.Message = exception.Message;
-                    result.Content = exception.Message + Environment.NewLine + exception.StackTrace;
+                    result.Content = exception.ToString();
                     Debugger.Break();
                 }
             }

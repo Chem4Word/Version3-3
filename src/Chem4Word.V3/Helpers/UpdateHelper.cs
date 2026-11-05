@@ -85,13 +85,7 @@ namespace Chem4Word.Helpers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.Message);
-                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.StackTrace);
-                if (ex.InnerException != null)
-                {
-                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.InnerException.Message);
-                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.InnerException.StackTrace);
-                }
+                Globals.Chem4WordV3.Telemetry.LogException(module, ex);
             }
 
             Globals.Chem4WordV3.ShowOrHideUpdateShield();
@@ -210,13 +204,7 @@ namespace Chem4Word.Helpers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.Message);
-                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.StackTrace);
-                if (ex.InnerException != null)
-                {
-                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.InnerException.Message);
-                    Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.InnerException.StackTrace);
-                }
+                Globals.Chem4WordV3.Telemetry.LogException(module, ex);
             }
         }
 

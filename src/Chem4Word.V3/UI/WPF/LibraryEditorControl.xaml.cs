@@ -1226,8 +1226,7 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception ex)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, ex.Message);
-                _telemetry.Write(module, LoggingLevel.ExceptionData, ex.StackTrace);
+                _telemetry.LogException(module, ex);
                 new ReportError(_telemetry, TopLeft, "PasteHandler", ex).ShowDialog();
             }
         }
@@ -1285,8 +1284,7 @@ namespace Chem4Word.UI.WPF
             }
             catch (Exception ex)
             {
-                _telemetry.Write(module, LoggingLevel.Exception, ex.Message);
-                _telemetry.Write(module, LoggingLevel.ExceptionData, ex.StackTrace);
+                _telemetry.LogException(module, ex);
                 new ReportError(_telemetry, TopLeft, "TaggingControlUpdate", ex).ShowDialog();
             }
         }

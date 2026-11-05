@@ -513,8 +513,7 @@ namespace Chem4Word.ACME
         {
             if (Telemetry != null)
             {
-                Telemetry.Write(source, LoggingLevel.Exception, exception.Message);
-                Telemetry.Write(source, LoggingLevel.Exception, exception.StackTrace);
+                Telemetry.LogException(source, exception);
             }
             else
             {

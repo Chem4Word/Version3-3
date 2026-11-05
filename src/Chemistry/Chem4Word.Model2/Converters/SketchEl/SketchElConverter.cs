@@ -232,7 +232,7 @@ namespace Chem4Word.Model2.Converters.SketchEl
         {
             // {element}={x},{y};{charge},{unpaired}[,i{implicit}][,e{explicit}][,n{mapnum}][,...]
 
-            Debug.WriteLine($"Processing atom line #{index} - {line}");
+            // Debug.WriteLine($"Processing atom line #{index} - {line}");
 
             var parts = line.Split(new[] { '=', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -266,7 +266,7 @@ namespace Chem4Word.Model2.Converters.SketchEl
 
                 atom.FormalCharge = int.Parse(parts[3]);
 
-                Debug.WriteLine($"We don't use unpaired {parts[4]}");
+                //Debug.WriteLine($"We don't use unpaired {parts[4]}");
 
                 // Process the remaining optional parts
                 for (var i = 5; i < parts.Length; i++)
@@ -358,7 +358,7 @@ namespace Chem4Word.Model2.Converters.SketchEl
         {
             // {from}-{to}={order},{type}[,...]
 
-            Debug.WriteLine($"Processing bond line #{line}");
+            //Debug.WriteLine($"Processing bond line #{line}");
             var parts = line.Split(new[] { '=', '-', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (parts.Length < 4)
@@ -429,16 +429,16 @@ namespace Chem4Word.Model2.Converters.SketchEl
                             break;
                     }
 
-                    for (var i = 3; i < parts.Length; i++)
-                    {
-                        switch (parts[i].Substring(0, 1).ToLower())
-                        {
-                            default:
-                                // We don't need to implement "x" "y"
-                                Debug.WriteLine(parts[i]);
-                                break;
-                        }
-                    }
+                    //for (var i = 3; i < parts.Length; i++)
+                    //{
+                    //    switch (parts[i].Substring(0, 1).ToLower())
+                    //    {
+                    //        default:
+                    //            // We don't need to implement "x" "y"
+                    //            Debug.WriteLine(parts[i]);
+                    //            break;
+                    //    }
+                    //}
 
                     if (!bond.StartAtomInternalId.Equals(bond.EndAtomInternalId))
                     {

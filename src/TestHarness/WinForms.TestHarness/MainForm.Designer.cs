@@ -38,16 +38,16 @@
             this.Redo = new System.Windows.Forms.Button();
             this.LayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.DisplayHost = new System.Windows.Forms.Integration.ElementHost();
-            this.Display = new Chem4Word.ACME.Display();
             this.RedoHost = new System.Windows.Forms.Integration.ElementHost();
-            this.RedoStackViewer = new WinForms.TestHarness.StackViewer();
             this.UndoHost = new System.Windows.Forms.Integration.ElementHost();
-            this.UndoStackViewer = new WinForms.TestHarness.StackViewer();
             this.Information1 = new System.Windows.Forms.Label();
             this.EditCml = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.SmilesString = new System.Windows.Forms.TextBox();
+            this.ParseSmiles = new System.Windows.Forms.Button();
+            this.LayoutStructureV2 = new System.Windows.Forms.Button();
             this.CalculateProperties = new System.Windows.Forms.Button();
-            this.LayoutStructure = new System.Windows.Forms.Button();
+            this.LayoutStructureV1 = new System.Windows.Forms.Button();
             this.SearchOpsin = new System.Windows.Forms.Button();
             this.EditLabels = new System.Windows.Forms.Button();
             this.SearchChEBI = new System.Windows.Forms.Button();
@@ -69,7 +69,7 @@
             // 
             this.LoadStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.LoadStructure.Enabled = false;
-            this.LoadStructure.Location = new System.Drawing.Point(12, 525);
+            this.LoadStructure.Location = new System.Drawing.Point(12, 570);
             this.LoadStructure.Name = "LoadStructure";
             this.LoadStructure.Size = new System.Drawing.Size(75, 23);
             this.LoadStructure.TabIndex = 0;
@@ -85,7 +85,7 @@
             // EditWithAcme
             // 
             this.EditWithAcme.Enabled = false;
-            this.EditWithAcme.Location = new System.Drawing.Point(6, 19);
+            this.EditWithAcme.Location = new System.Drawing.Point(6, 18);
             this.EditWithAcme.Name = "EditWithAcme";
             this.EditWithAcme.Size = new System.Drawing.Size(75, 23);
             this.EditWithAcme.TabIndex = 2;
@@ -98,7 +98,7 @@
             // 
             this.Undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Undo.Enabled = false;
-            this.Undo.Location = new System.Drawing.Point(186, 525);
+            this.Undo.Location = new System.Drawing.Point(186, 570);
             this.Undo.Name = "Undo";
             this.Undo.Size = new System.Drawing.Size(75, 23);
             this.Undo.TabIndex = 11;
@@ -111,7 +111,7 @@
             // 
             this.Redo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Redo.Enabled = false;
-            this.Redo.Location = new System.Drawing.Point(186, 583);
+            this.Redo.Location = new System.Drawing.Point(186, 628);
             this.Redo.Name = "Redo";
             this.Redo.Size = new System.Drawing.Size(75, 23);
             this.Redo.TabIndex = 12;
@@ -137,7 +137,7 @@
             this.LayoutPanel.Name = "LayoutPanel";
             this.LayoutPanel.RowCount = 1;
             this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.LayoutPanel.Size = new System.Drawing.Size(1160, 468);
+            this.LayoutPanel.Size = new System.Drawing.Size(1160, 513);
             this.LayoutPanel.TabIndex = 13;
             // 
             // DisplayHost
@@ -146,36 +146,36 @@
             this.DisplayHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DisplayHost.Location = new System.Drawing.Point(278, 3);
             this.DisplayHost.Name = "DisplayHost";
-            this.DisplayHost.Size = new System.Drawing.Size(604, 462);
+            this.DisplayHost.Size = new System.Drawing.Size(604, 507);
             this.DisplayHost.TabIndex = 1;
             this.DisplayHost.Text = "centreHost";
-            this.DisplayHost.Child = this.Display;
+            this.DisplayHost.Child = null;
             // 
             // RedoHost
             // 
             this.RedoHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RedoHost.Location = new System.Drawing.Point(888, 3);
             this.RedoHost.Name = "RedoHost";
-            this.RedoHost.Size = new System.Drawing.Size(269, 462);
+            this.RedoHost.Size = new System.Drawing.Size(269, 507);
             this.RedoHost.TabIndex = 2;
             this.RedoHost.Text = "rightHost";
-            this.RedoHost.Child = this.RedoStackViewer;
+            this.RedoHost.Child = null;
             // 
             // UndoHost
             // 
             this.UndoHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.UndoHost.Location = new System.Drawing.Point(3, 3);
             this.UndoHost.Name = "UndoHost";
-            this.UndoHost.Size = new System.Drawing.Size(269, 462);
+            this.UndoHost.Size = new System.Drawing.Size(269, 507);
             this.UndoHost.TabIndex = 3;
             this.UndoHost.Text = "leftHost";
-            this.UndoHost.Child = this.UndoStackViewer;
+            this.UndoHost.Child = null;
             // 
             // Information1
             // 
             this.Information1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Information1.AutoSize = true;
-            this.Information1.Location = new System.Drawing.Point(12, 487);
+            this.Information1.Location = new System.Drawing.Point(12, 532);
             this.Information1.Name = "Information1";
             this.Information1.Size = new System.Drawing.Size(16, 13);
             this.Information1.TabIndex = 14;
@@ -184,7 +184,7 @@
             // EditCml
             // 
             this.EditCml.Enabled = false;
-            this.EditCml.Location = new System.Drawing.Point(6, 48);
+            this.EditCml.Location = new System.Drawing.Point(6, 72);
             this.EditCml.Name = "EditCml";
             this.EditCml.Size = new System.Drawing.Size(75, 23);
             this.EditCml.TabIndex = 15;
@@ -196,25 +196,62 @@
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.SmilesString);
+            this.groupBox1.Controls.Add(this.ParseSmiles);
+            this.groupBox1.Controls.Add(this.LayoutStructureV2);
             this.groupBox1.Controls.Add(this.CalculateProperties);
-            this.groupBox1.Controls.Add(this.LayoutStructure);
+            this.groupBox1.Controls.Add(this.LayoutStructureV1);
             this.groupBox1.Controls.Add(this.SearchOpsin);
             this.groupBox1.Controls.Add(this.EditLabels);
             this.groupBox1.Controls.Add(this.SearchChEBI);
             this.groupBox1.Controls.Add(this.SearchPubChem);
             this.groupBox1.Controls.Add(this.EditWithAcme);
             this.groupBox1.Controls.Add(this.EditCml);
-            this.groupBox1.Location = new System.Drawing.Point(921, 504);
+            this.groupBox1.Location = new System.Drawing.Point(759, 549);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(251, 102);
+            this.groupBox1.Size = new System.Drawing.Size(413, 102);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Edit / Search / WebServices";
             // 
+            // SmilesString
+            // 
+            this.SmilesString.AcceptsReturn = true;
+            this.SmilesString.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.SmilesString.Location = new System.Drawing.Point(8, 46);
+            this.SmilesString.Name = "SmilesString";
+            this.SmilesString.Size = new System.Drawing.Size(396, 20);
+            this.SmilesString.TabIndex = 23;
+            this.SmilesString.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress_SmilesString);
+            // 
+            // ParseSmiles
+            // 
+            this.ParseSmiles.Enabled = false;
+            this.ParseSmiles.Location = new System.Drawing.Point(330, 18);
+            this.ParseSmiles.Name = "ParseSmiles";
+            this.ParseSmiles.Size = new System.Drawing.Size(75, 23);
+            this.ParseSmiles.TabIndex = 22;
+            this.ParseSmiles.Text = "SMILES";
+            this.ParseSmiles.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.ParseSmiles.UseVisualStyleBackColor = true;
+            this.ParseSmiles.Click += new System.EventHandler(this.OnClick_ParseSmiles);
+            // 
+            // LayoutStructureV2
+            // 
+            this.LayoutStructureV2.Enabled = false;
+            this.LayoutStructureV2.Location = new System.Drawing.Point(330, 72);
+            this.LayoutStructureV2.Name = "LayoutStructureV2";
+            this.LayoutStructureV2.Size = new System.Drawing.Size(75, 23);
+            this.LayoutStructureV2.TabIndex = 21;
+            this.LayoutStructureV2.Text = "Layout V2";
+            this.LayoutStructureV2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.LayoutStructureV2.UseVisualStyleBackColor = true;
+            this.LayoutStructureV2.Click += new System.EventHandler(this.OnClick_LayoutStructureV2);
+            // 
             // CalculateProperties
             // 
             this.CalculateProperties.Enabled = false;
-            this.CalculateProperties.Location = new System.Drawing.Point(87, 77);
+            this.CalculateProperties.Location = new System.Drawing.Point(168, 72);
             this.CalculateProperties.Name = "CalculateProperties";
             this.CalculateProperties.Size = new System.Drawing.Size(75, 23);
             this.CalculateProperties.TabIndex = 17;
@@ -223,22 +260,22 @@
             this.CalculateProperties.UseVisualStyleBackColor = true;
             this.CalculateProperties.Click += new System.EventHandler(this.OnClick_CalculateProperties);
             // 
-            // LayoutStructure
+            // LayoutStructureV1
             // 
-            this.LayoutStructure.Enabled = false;
-            this.LayoutStructure.Location = new System.Drawing.Point(87, 48);
-            this.LayoutStructure.Name = "LayoutStructure";
-            this.LayoutStructure.Size = new System.Drawing.Size(75, 23);
-            this.LayoutStructure.TabIndex = 20;
-            this.LayoutStructure.Text = "Layout";
-            this.LayoutStructure.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LayoutStructure.UseVisualStyleBackColor = true;
-            this.LayoutStructure.Click += new System.EventHandler(this.OnClick_LayoutStructure);
+            this.LayoutStructureV1.Enabled = false;
+            this.LayoutStructureV1.Location = new System.Drawing.Point(249, 72);
+            this.LayoutStructureV1.Name = "LayoutStructureV1";
+            this.LayoutStructureV1.Size = new System.Drawing.Size(75, 23);
+            this.LayoutStructureV1.TabIndex = 20;
+            this.LayoutStructureV1.Text = "Layout V1";
+            this.LayoutStructureV1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.LayoutStructureV1.UseVisualStyleBackColor = true;
+            this.LayoutStructureV1.Click += new System.EventHandler(this.OnClick_LayoutStructureV1);
             // 
             // SearchOpsin
             // 
             this.SearchOpsin.Enabled = false;
-            this.SearchOpsin.Location = new System.Drawing.Point(168, 77);
+            this.SearchOpsin.Location = new System.Drawing.Point(249, 18);
             this.SearchOpsin.Name = "SearchOpsin";
             this.SearchOpsin.Size = new System.Drawing.Size(75, 23);
             this.SearchOpsin.TabIndex = 5;
@@ -250,7 +287,7 @@
             // EditLabels
             // 
             this.EditLabels.Enabled = false;
-            this.EditLabels.Location = new System.Drawing.Point(6, 77);
+            this.EditLabels.Location = new System.Drawing.Point(87, 72);
             this.EditLabels.Name = "EditLabels";
             this.EditLabels.Size = new System.Drawing.Size(75, 23);
             this.EditLabels.TabIndex = 16;
@@ -262,7 +299,7 @@
             // SearchChEBI
             // 
             this.SearchChEBI.Enabled = false;
-            this.SearchChEBI.Location = new System.Drawing.Point(168, 48);
+            this.SearchChEBI.Location = new System.Drawing.Point(87, 18);
             this.SearchChEBI.Name = "SearchChEBI";
             this.SearchChEBI.Size = new System.Drawing.Size(75, 23);
             this.SearchChEBI.TabIndex = 3;
@@ -274,7 +311,7 @@
             // SearchPubChem
             // 
             this.SearchPubChem.Enabled = false;
-            this.SearchPubChem.Location = new System.Drawing.Point(168, 19);
+            this.SearchPubChem.Location = new System.Drawing.Point(168, 18);
             this.SearchPubChem.Name = "SearchPubChem";
             this.SearchPubChem.Size = new System.Drawing.Size(75, 23);
             this.SearchPubChem.TabIndex = 4;
@@ -287,7 +324,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox2.Controls.Add(this.ChangeOoXmlSettings);
-            this.groupBox2.Location = new System.Drawing.Point(279, 525);
+            this.groupBox2.Location = new System.Drawing.Point(279, 570);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(108, 81);
             this.groupBox2.TabIndex = 17;
@@ -311,7 +348,7 @@
             // 
             this.ShowCml.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ShowCml.Enabled = false;
-            this.ShowCml.Location = new System.Drawing.Point(12, 554);
+            this.ShowCml.Location = new System.Drawing.Point(12, 599);
             this.ShowCml.Name = "ShowCml";
             this.ShowCml.Size = new System.Drawing.Size(156, 23);
             this.ShowCml.TabIndex = 18;
@@ -324,7 +361,7 @@
             // 
             this.SaveStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SaveStructure.Enabled = false;
-            this.SaveStructure.Location = new System.Drawing.Point(93, 525);
+            this.SaveStructure.Location = new System.Drawing.Point(93, 570);
             this.SaveStructure.Name = "SaveStructure";
             this.SaveStructure.Size = new System.Drawing.Size(75, 23);
             this.SaveStructure.TabIndex = 19;
@@ -337,7 +374,7 @@
             // 
             this.ClearChemistry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ClearChemistry.Enabled = false;
-            this.ClearChemistry.Location = new System.Drawing.Point(186, 554);
+            this.ClearChemistry.Location = new System.Drawing.Point(186, 599);
             this.ClearChemistry.Name = "ClearChemistry";
             this.ClearChemistry.Size = new System.Drawing.Size(75, 23);
             this.ClearChemistry.TabIndex = 0;
@@ -349,7 +386,7 @@
             // 
             this.RenderOoXml.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RenderOoXml.Enabled = false;
-            this.RenderOoXml.Location = new System.Drawing.Point(12, 583);
+            this.RenderOoXml.Location = new System.Drawing.Point(12, 628);
             this.RenderOoXml.Name = "RenderOoXml";
             this.RenderOoXml.Size = new System.Drawing.Size(156, 23);
             this.RenderOoXml.TabIndex = 21;
@@ -362,7 +399,7 @@
             // 
             this.Information2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Information2.AutoSize = true;
-            this.Information2.Location = new System.Drawing.Point(12, 504);
+            this.Information2.Location = new System.Drawing.Point(12, 549);
             this.Information2.Name = "Information2";
             this.Information2.Size = new System.Drawing.Size(16, 13);
             this.Information2.TabIndex = 22;
@@ -376,7 +413,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1184, 611);
+            this.ClientSize = new System.Drawing.Size(1184, 656);
             this.Controls.Add(this.Information2);
             this.Controls.Add(this.RenderOoXml);
             this.Controls.Add(this.ClearChemistry);
@@ -393,10 +430,11 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ACME Test Bed";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.Load += new System.EventHandler(this.OnLoad_FlexForm);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing_MainForm);
+            this.Load += new System.EventHandler(this.OnLoad_MainForm);
             this.LayoutPanel.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -409,7 +447,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Integration.ElementHost DisplayHost;
         private System.Windows.Forms.Button EditWithAcme;
-        private Chem4Word.ACME.Display Display;
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.Button Undo;
         private System.Windows.Forms.Button Redo;
@@ -424,7 +461,7 @@
         private System.Windows.Forms.Button SaveStructure;
         private System.Windows.Forms.Button ClearChemistry;
         private System.Windows.Forms.Button EditLabels;
-        private System.Windows.Forms.Button LayoutStructure;
+        private System.Windows.Forms.Button LayoutStructureV1;
         private System.Windows.Forms.Button RenderOoXml;
         private System.Windows.Forms.Button ChangeOoXmlSettings;
         private System.Windows.Forms.Button SearchChEBI;
@@ -433,8 +470,9 @@
         private System.Windows.Forms.Button CalculateProperties;
         private System.Windows.Forms.Label Information2;
         private System.Windows.Forms.Timer timer1;
-        private StackViewer RedoStackViewer;
-        private StackViewer UndoStackViewer;
+        private System.Windows.Forms.Button LayoutStructureV2;
+        private System.Windows.Forms.Button ParseSmiles;
+        private System.Windows.Forms.TextBox SmilesString;
     }
 }
 

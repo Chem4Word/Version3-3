@@ -161,7 +161,7 @@ namespace Chem4Word.ACME.Controls
 
             if (_controller != null && _controller.Model != null)
             {
-                Debug.WriteLine($"MeasureOverride() #{GetHashCode()} Formula: '{_controller.Model.ConciseFormula}'");
+                //Debug.WriteLine($"MeasureOverride() #{GetHashCode()} Formula: '{_controller.Model.ConciseFormula}'");
 
                 if (!_positionOffsetApplied)
                 {

@@ -671,8 +671,7 @@ namespace Chem4Word
                         {
                             if (Telemetry != null)
                             {
-                                Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
-                                Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
+                                Telemetry.LogException(module, exception);
                             }
                             else
                             {
@@ -719,8 +718,7 @@ namespace Chem4Word
             {
                 if (Telemetry != null)
                 {
-                    Telemetry.Write(module, LoggingLevel.Exception, exception.Message);
-                    Telemetry.Write(module, LoggingLevel.Exception, exception.StackTrace);
+                    Telemetry.LogException(module, exception);
                 }
                 else
                 {
@@ -1972,8 +1970,7 @@ namespace Chem4Word
                                 }
                                 catch (Exception e)
                                 {
-                                    Telemetry.Write(module, LoggingLevel.Exception, e.Message);
-                                    Telemetry.Write(module, LoggingLevel.Exception, e.StackTrace);
+                                    Telemetry.LogException(module, e);
                                 }
                                 finally
                                 {

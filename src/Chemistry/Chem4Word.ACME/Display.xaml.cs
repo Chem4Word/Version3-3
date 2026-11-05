@@ -174,7 +174,7 @@ namespace Chem4Word.ACME
                     DrawChemistry(CurrentController);
 
                     sw.Stop();
-                    Debug.WriteLine($"Draw Chemistry took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, [{sw.ElapsedTicks} ticks]");
+                    //Debug.WriteLine($"Draw Chemistry took {SafeDouble.AsString0(sw.ElapsedMilliseconds)}ms, [{sw.ElapsedTicks} ticks]");
                 }
             }
         }

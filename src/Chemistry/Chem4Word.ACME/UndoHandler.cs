@@ -143,8 +143,7 @@ namespace Chem4Word.ACME
         {
             if (_telemetry != null)
             {
-                _telemetry.Write(source, LoggingLevel.Exception, exception.Message);
-                _telemetry.Write(source, LoggingLevel.Exception, exception.StackTrace);
+                _telemetry.LogException(source, exception);
             }
             else
             {

@@ -227,8 +227,7 @@ namespace Chem4Word
                         catch (Exception exception)
                         {
                             Debug.WriteLine(exception.Message);
-                            Errors.Add(exception.Message);
-                            Errors.Add(exception.StackTrace);
+                            Errors.Add(exception.ToString());
 
                             if (fileContents != null)
                             {
@@ -253,8 +252,7 @@ namespace Chem4Word
             }
             catch (Exception exception)
             {
-                Errors.Add(exception.Message);
-                Errors.Add(exception.StackTrace);
+                Errors.Add(exception.ToString());
             }
         }
 
@@ -323,8 +321,7 @@ namespace Chem4Word
             }
             catch (Exception exception)
             {
-                Errors.Add(exception.Message);
-                Errors.Add(exception.StackTrace);
+                Errors.Add(exception.ToString());
             }
 
             return result.Trim();
@@ -348,8 +345,7 @@ namespace Chem4Word
             }
             catch (Exception exception)
             {
-                Errors.Add(exception.Message);
-                Errors.Add(exception.StackTrace);
+                Errors.Add(exception.ToString());
             }
         }
 

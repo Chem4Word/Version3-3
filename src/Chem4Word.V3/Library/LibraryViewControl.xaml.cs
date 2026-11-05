@@ -373,8 +373,7 @@ namespace Chem4Word.Library
             }
             catch (Exception ex)
             {
-                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.Message);
-                Globals.Chem4WordV3.Telemetry.Write(module, LoggingLevel.Exception, ex.StackTrace);
+                Globals.Chem4WordV3.Telemetry.LogException(module, ex);
             }
         }
     }
